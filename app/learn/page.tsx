@@ -70,7 +70,7 @@ export default function LearnHub(): JSX.Element {
           <h2 className="text-display text-3xl font-bold text-slate-900 dark:text-white">Choose Your Path</h2>
           <div className="h-px flex-1 bg-gradient-to-r from-slate-200 dark:from-slate-800 to-transparent" />
         </div>
-        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
           {/* TanStack Query Path */}
           <div className="group relative flex flex-col gap-8 rounded-[2.5rem] glass-card p-12 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
@@ -92,6 +92,29 @@ export default function LearnHub(): JSX.Element {
               </Link>
             </div>
             <div className="absolute top-0 right-0 h-32 w-32 bg-blue-50 dark:bg-blue-950/200/5 rounded-bl-full -mr-10 -mt-10 group-hover:bg-blue-50 dark:bg-blue-950/200/10 transition-colors" />
+          </div>
+
+          {/* NestJS Elite Path */}
+          <div className="group relative flex flex-col gap-8 rounded-[2.5rem] glass-card p-12 hover:shadow-2xl hover:shadow-red-500/10 transition-all duration-500 hover:-translate-y-2 overflow-hidden">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-600 text-white shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+            </div>
+            <div>
+              <h3 className="text-display text-3xl font-bold text-slate-900 dark:text-white mb-4">
+                NestJS Elite
+              </h3>
+              <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-10">
+                Architectural mastery for the backend. Build scalable, testable,
+                and production-grade APIs using modern patterns.
+              </p>
+              <Link
+                href="/learn/nestjs"
+                className="inline-flex items-center gap-3 text-lg font-bold text-red-600 dark:text-red-400 dark:text-red-400 hover:text-red-700 transition-colors"
+              >
+                Deep Dive <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+              </Link>
+            </div>
+            <div className="absolute top-0 right-0 h-32 w-32 bg-red-50 dark:bg-red-950/20 rounded-bl-full -mr-10 -mt-10 group-hover:bg-red-50 dark:bg-red-950/30 transition-colors" />
           </div>
 
           {/* Next.js Path */}
