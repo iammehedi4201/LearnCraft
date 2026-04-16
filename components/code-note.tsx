@@ -28,42 +28,71 @@ export function CodeNote({
   whenToUse,
 }: CodeNoteProps): JSX.Element {
   return (
-    <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-md mb-8">
-      <div className="mb-6 pb-4 border-b-2 border-blue-200">
-        <h3 className="text-lg font-bold text-gray-800">
-          {featureCode} — {featureName}
-        </h3>
+    <div className="group relative glass-card rounded-3xl p-8 mb-12 overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
+      <div className="relative z-10">
+        <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-200">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-white shadow-lg shadow-primary/20">
+            <span className="font-display font-bold text-sm tracking-wider">{featureCode}</span>
+          </div>
+          <h2 className="font-display text-2xl font-bold text-slate-900">
+            {featureName}
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center">
+                <div className="h-1.5 w-1.5 rounded-full bg-blue-600" />
+              </div>
+              <h4 className="font-display text-xs font-bold text-blue-600 uppercase tracking-widest">
+                TanStack Concept
+              </h4>
+            </div>
+            <p className="text-slate-600 text-sm leading-relaxed">{tanstackConcept}</p>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-5 w-5 rounded-full bg-indigo-500/10 flex items-center justify-center">
+                <div className="h-1.5 w-1.5 rounded-full bg-indigo-600" />
+              </div>
+              <h4 className="font-display text-xs font-bold text-indigo-600 uppercase tracking-widest">
+                Under the Hood
+              </h4>
+            </div>
+            <p className="text-slate-600 text-sm leading-relaxed">{howItWorks}</p>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-5 w-5 rounded-full bg-purple-500/10 flex items-center justify-center">
+                <div className="h-1.5 w-1.5 rounded-full bg-purple-600" />
+              </div>
+              <h4 className="font-display text-xs font-bold text-purple-600 uppercase tracking-widest">
+                Next.js Integration
+              </h4>
+            </div>
+            <p className="text-slate-600 text-sm leading-relaxed">{nextjsConcept}</p>
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-5 w-5 rounded-full bg-pink-500/10 flex items-center justify-center">
+                <div className="h-1.5 w-1.5 rounded-full bg-pink-600" />
+              </div>
+              <h4 className="font-display text-xs font-bold text-pink-600 uppercase tracking-widest">
+                When to Use
+              </h4>
+            </div>
+            <p className="text-slate-600 text-sm leading-relaxed">{whenToUse}</p>
+          </div>
+        </div>
       </div>
 
-      <div className="space-y-6">
-        <div>
-          <h4 className="font-semibold text-gray-700 mb-2 text-sm uppercase tracking-wide">
-            TanStack Query Concept
-          </h4>
-          <p className="text-gray-700 leading-relaxed">{tanstackConcept}</p>
-        </div>
-
-        <div>
-          <h4 className="font-semibold text-gray-700 mb-2 text-sm uppercase tracking-wide">
-            How It Works Under the Hood
-          </h4>
-          <p className="text-gray-700 leading-relaxed">{howItWorks}</p>
-        </div>
-
-        <div>
-          <h4 className="font-semibold text-gray-700 mb-2 text-sm uppercase tracking-wide">
-            Next.js Concept
-          </h4>
-          <p className="text-gray-700 leading-relaxed">{nextjsConcept}</p>
-        </div>
-
-        <div>
-          <h4 className="font-semibold text-gray-700 mb-2 text-sm uppercase tracking-wide">
-            When to Use This
-          </h4>
-          <p className="text-gray-700 leading-relaxed">{whenToUse}</p>
-        </div>
-      </div>
+      {/* Decorative Blur */}
+      <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-primary/5 blur-3xl group-hover:bg-primary/10 transition-colors duration-500" />
     </div>
   );
 }
+

@@ -36,17 +36,20 @@ export default function RootLayout({
   children: ReactNode;
 }): JSX.Element {
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <head>
-        <title>Next.js + TanStack Query Learning</title>
-        <meta name="description" content="Learn Next.js 14+ & TanStack Query v5" />
+        <title>LearnCraft — Master Modern Web Tech</title>
+        <meta name="description" content="Redesigned Learning Hub for Next.js & TanStack Query" />
       </head>
-      <body>
+      <body className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-50 via-slate-50 to-indigo-50 selection:bg-blue-100 selection:text-blue-900">
         <QueryClientProvider client={queryClient}>
-          {children}
+          <div className="relative flex min-h-screen flex-col">
+            {children}
+          </div>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </body>
     </html>
   );
 }
+
