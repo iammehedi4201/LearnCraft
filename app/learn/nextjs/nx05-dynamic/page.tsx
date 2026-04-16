@@ -22,11 +22,11 @@ export default function NX05Dynamic(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Dynamic Route Patterns</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Dynamic Route Patterns</h2>
 
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Single Dynamic Segment</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Single Dynamic Segment</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto mb-4">
 {`// File: app/posts/[id]/page.tsx
 export default async function Post({ params }: { params: { id: string } }) {
@@ -47,8 +47,8 @@ export default async function Post({ params }: { params: { id: string } }) {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Multiple Dynamic Segments</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Multiple Dynamic Segments</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto mb-4">
 {`// File: app/users/[userId]/posts/[postId]/page.tsx
 export default async function UserPost({ params }) {
@@ -66,8 +66,8 @@ export default async function UserPost({ params }) {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Catch-All Routes</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Catch-All Routes</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto mb-4">
 {`// File: app/docs/[...slug]/page.tsx
 export default async function Docs({ params }) {
@@ -82,8 +82,8 @@ export default async function Docs({ params }) {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Optional Catch-All Routes</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Optional Catch-All Routes</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto mb-4">
 {`// File: app/blog/[[...slug]]/page.tsx
 export default async function Blog({ params }) {
@@ -99,9 +99,9 @@ export default async function Blog({ params }) {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• [id] creates a dynamic segment matching any single value</li>
               <li>• [...slug] is a catch-all matching any remaining path segments</li>
               <li>• [[...slug]] is optional catch-all (matches route with or without segments)</li>

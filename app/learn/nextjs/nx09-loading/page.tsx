@@ -23,10 +23,10 @@ export default function NX09Loading(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Loading States Pattern</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Loading States Pattern</h2>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900">File Structure</h3>
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6 mb-6">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">File Structure</h3>
             <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`app/
 ├── dashboard/
@@ -42,11 +42,11 @@ export default function NX09Loading(): JSX.Element {
             </pre>
           </div>
 
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">Code Examples</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Code Examples</h3>
 
           <div className="space-y-6">
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Simple Loading Skeleton</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Simple Loading Skeleton</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/dashboard/loading.tsx
 export default function Loading() {
@@ -67,7 +67,7 @@ export default function Loading() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Async Page with Loading.tsx</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Async Page with Loading.tsx</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/dashboard/page.tsx (async)
 export default async function Dashboard() {
@@ -86,7 +86,7 @@ export default async function Dashboard() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Skeleton Component Pattern</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Skeleton Component Pattern</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// components/post-skeleton.tsx
 export function PostSkeleton() {
@@ -115,7 +115,7 @@ export default function PostsLoading() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Suspense Boundaries</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Suspense Boundaries</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// Fine-grained loading with Suspense
 
@@ -152,9 +152,9 @@ export default function Page() {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• loading.tsx shows while page.tsx is rendering</li>
               <li>• Automatically wrapped in React Suspense</li>
               <li>• Use animated skeletons for better UX</li>

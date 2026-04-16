@@ -50,24 +50,24 @@ export default function TQ11PlaceholderData(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Smooth Pagination (No Flicker)
           </h2>
 
           <div className="grid md:grid-cols-4 gap-4 mb-6">
-            <div className="p-4 bg-white rounded border">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
               <p className="text-xs text-gray-600">Current Page</p>
               <p className="font-bold text-2xl">{page}</p>
             </div>
-            <div className="p-4 bg-white rounded border">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
               <p className="text-xs text-gray-600">Status</p>
               <p className="font-bold">{postsQuery.isPending ? "🔄" : "✓"}</p>
             </div>
-            <div className="p-4 bg-white rounded border">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
               <p className="text-xs text-gray-600">Is Refetching</p>
               <p className="font-bold">{postsQuery.isRefetching ? "Yes" : "No"}</p>
             </div>
-            <div className="p-4 bg-white rounded border">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
               <p className="text-xs text-gray-600">Items</p>
               <p className="font-bold">{postsQuery.data?.items.length || 0}</p>
             </div>
@@ -77,13 +77,13 @@ export default function TQ11PlaceholderData(): JSX.Element {
           {postsQuery.data && (
             <div className={`space-y-3 mb-6 max-h-80 overflow-y-auto ${postsQuery.isRefetching ? "opacity-60" : ""}`}>
               {postsQuery.data.items.map((post: Post) => (
-                <div key={post.id} className="p-4 bg-white rounded border border-gray-200">
-                  <h4 className="font-semibold text-gray-900">#{post.id}: {post.title}</h4>
-                  <p className="text-gray-700 text-sm mt-1">{post.body}</p>
+                <div key={post.id} className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+                  <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white">#{post.id}: {post.title}</h4>
+                  <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 text-sm mt-1">{post.body}</p>
                 </div>
               ))}
               {postsQuery.isRefetching && (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded text-center text-blue-600">
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border border-blue-200 rounded text-center text-blue-600 dark:text-blue-400 dark:text-blue-400">
                   🔄 Fetching page {page}...
                 </div>
               )}
@@ -91,7 +91,7 @@ export default function TQ11PlaceholderData(): JSX.Element {
           )}
 
           {/* Pagination Controls */}
-          <div className="flex justify-between gap-4 p-4 bg-white rounded border">
+          <div className="flex justify-between gap-4 p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
@@ -118,8 +118,8 @@ export default function TQ11PlaceholderData(): JSX.Element {
             </button>
           </div>
 
-          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded">
-            <p className="text-sm text-green-900">
+          <div className="mt-6 p-4 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border border-green-200 rounded">
+            <p className="text-sm text-green-900 dark:text-green-400 dark:text-green-400">
               <strong>✨ Notice the difference:</strong> When you click a page button,
               you see the old page briefly (with 60% opacity), then the new page appears.
               No jarring empty state! This is placeholderData at work.
@@ -128,7 +128,7 @@ export default function TQ11PlaceholderData(): JSX.Element {
         </section>
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Implementation</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Implementation</h2>
           <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
 {`// With placeholderData: smooth transition
 const query = useQuery({
@@ -142,8 +142,8 @@ const query = useQuery({
           </pre>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-yellow-900">Next: <strong>P-03 — useInfiniteQuery</strong> for infinite scroll!</p>
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">Next: <strong>P-03 — useInfiniteQuery</strong> for infinite scroll!</p>
         </section>
       </div>
     </>

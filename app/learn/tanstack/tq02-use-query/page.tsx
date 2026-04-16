@@ -65,16 +65,16 @@ export default function TQ02UseQuery(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Live Example: Fetching Posts
           </h2>
 
           {/* Status Display */}
-          <div className="mb-6 p-6 bg-white rounded-lg border border-gray-200">
+          <div className="mb-6 p-6 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
                 <p className="text-sm text-gray-600">Status</p>
-                <p className="font-bold text-lg text-blue-600">{status}</p>
+                <p className="font-bold text-lg text-blue-600 dark:text-blue-400 dark:text-blue-400">{status}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Is Loading</p>
@@ -97,8 +97,8 @@ export default function TQ02UseQuery(): JSX.Element {
 
           {/* Loading State */}
           {isLoading && (
-            <div className="p-6 bg-blue-50 border-l-4 border-blue-500 rounded mb-6">
-              <p className="text-blue-900 font-semibold">🔄 Loading posts...</p>
+            <div className="p-6 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 rounded mb-6">
+              <p className="text-blue-900 dark:text-blue-400 dark:text-blue-400 font-semibold">🔄 Loading posts...</p>
               <p className="text-blue-800 text-sm mt-2">
                 The query function is being called. Data will appear here soon.
               </p>
@@ -118,19 +118,19 @@ export default function TQ02UseQuery(): JSX.Element {
           {/* Success State */}
           {posts && posts.length > 0 && (
             <div className="space-y-4">
-              <p className="text-gray-700 font-semibold">
+              <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 font-semibold">
                 ✓ Successfully fetched {posts.length} posts:
               </p>
               <div className="grid gap-3 max-h-96 overflow-y-auto">
                 {posts.slice(0, 10).map((post: Post) => (
                   <div
                     key={post.id}
-                    className="p-4 bg-white border border-gray-200 rounded hover:shadow-md transition-shadow"
+                    className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded hover:shadow-md transition-shadow"
                   >
-                    <h4 className="font-semibold text-gray-900 mb-1">
+                    <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-1">
                       #{post.id}: {post.title}
                     </h4>
-                    <p className="text-gray-700 text-sm line-clamp-2">
+                    <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 text-sm line-clamp-2">
                       {post.body}
                     </p>
                   </div>
@@ -145,12 +145,12 @@ export default function TQ02UseQuery(): JSX.Element {
 
         {/* Code Breakdown */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Code Breakdown
           </h2>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Basic useQuery Call
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -166,11 +166,11 @@ export default function TQ02UseQuery(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               What happens under the hood:
             </h3>
-            <ol className="space-y-3 text-gray-700">
+            <ol className="space-y-3 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>
                 <strong>1. Component mounts:</strong> useQuery sees data with
                 queryKey ["posts"] isn't in cache.
@@ -197,11 +197,11 @@ export default function TQ02UseQuery(): JSX.Element {
             </ol>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Query Status Values
             </h3>
-            <ul className="space-y-2 text-gray-700 text-sm">
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300 text-sm">
               <li>
                 <strong>"pending":</strong> Query hasn't completed yet (first
                 load or refetching).
@@ -218,11 +218,11 @@ export default function TQ02UseQuery(): JSX.Element {
         </section>
 
         {/* Key Takeaways */}
-        <section className="mt-12 p-6 bg-green-50 border-l-4 border-green-500 rounded">
-          <h3 className="font-semibold text-lg mb-3 text-green-900">
+        <section className="mt-12 p-6 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 rounded">
+          <h3 className="font-semibold text-lg mb-3 text-green-900 dark:text-green-400 dark:text-green-400">
             Key Takeaways
           </h3>
-          <ul className="space-y-2 text-green-900 text-sm">
+          <ul className="space-y-2 text-green-900 dark:text-green-400 dark:text-green-400 text-sm">
             <li>
               ✓ useQuery takes a queryKey (for caching) and queryFn (async function)
             </li>
@@ -241,11 +241,11 @@ export default function TQ02UseQuery(): JSX.Element {
           </ul>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-yellow-900">
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <h3 className="font-semibold text-lg mb-3 text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             📝 Next Step
           </h3>
-          <p className="text-yellow-900">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             Now that you understand useQuery, move to <strong>F-03 — Query Keys</strong> to learn
             how caching works with different keys!
           </p>

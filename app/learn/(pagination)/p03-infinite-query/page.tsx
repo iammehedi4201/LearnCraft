@@ -65,21 +65,21 @@ export default function P03InfiniteQuery(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Infinite Scroll (Scroll to Load More)
           </h2>
 
           {/* Status */}
           <div className="grid md:grid-cols-3 gap-4 mb-6">
-            <div className="p-4 bg-white rounded border">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
               <p className="text-xs text-gray-600">Posts Loaded</p>
               <p className="font-bold text-2xl">{allPosts.length}</p>
             </div>
-            <div className="p-4 bg-white rounded border">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
               <p className="text-xs text-gray-600">Pages Loaded</p>
               <p className="font-bold text-2xl">{data?.pages.length || 0}</p>
             </div>
-            <div className="p-4 bg-white rounded border">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
               <p className="text-xs text-gray-600">Has More?</p>
               <p className="font-bold text-lg">{hasNextPage ? "Yes" : "No"}</p>
             </div>
@@ -87,8 +87,8 @@ export default function P03InfiniteQuery(): JSX.Element {
 
           {/* Initial Loading */}
           {isLoading && (
-            <div className="p-6 text-center bg-blue-50 rounded border border-blue-200">
-              <p className="text-blue-600 font-semibold">🔄 Loading first page...</p>
+            <div className="p-6 text-center bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 rounded border border-blue-200">
+              <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400 font-semibold">🔄 Loading first page...</p>
             </div>
           )}
 
@@ -96,9 +96,9 @@ export default function P03InfiniteQuery(): JSX.Element {
           {allPosts.length > 0 && (
             <div className="space-y-3 mb-6 max-h-96 overflow-y-auto">
               {allPosts.map((post: Post) => (
-                <div key={post.id} className="p-4 bg-white rounded border border-gray-200">
-                  <h4 className="font-semibold text-gray-900">#{post.id}: {post.title}</h4>
-                  <p className="text-gray-700 text-sm mt-1">{post.body}</p>
+                <div key={post.id} className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+                  <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white">#{post.id}: {post.title}</h4>
+                  <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 text-sm mt-1">{post.body}</p>
                 </div>
               ))}
 
@@ -118,8 +118,8 @@ export default function P03InfiniteQuery(): JSX.Element {
             </div>
           )}
 
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded">
-            <p className="text-sm text-blue-900">
+          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border border-blue-200 rounded">
+            <p className="text-sm text-blue-900 dark:text-blue-400 dark:text-blue-400">
               <strong>💡 How it works:</strong> Scroll down in the posts list. When
               the "Load more" indicator comes into view, fetchNextPage() is triggered
               automatically. More posts appear without clicking anything!
@@ -128,7 +128,7 @@ export default function P03InfiniteQuery(): JSX.Element {
         </section>
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Implementation</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Implementation</h2>
           <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
 {`const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery({
   queryKey: ["posts"],
@@ -152,12 +152,12 @@ const allPosts = data?.pages.flatMap(page => page.posts) ?? [];`}
           </pre>
         </section>
 
-        <section className="mt-12 p-6 bg-green-50 border border-green-200 rounded-lg">
-          <h3 className="font-semibold text-lg text-green-900 mb-3">
+        <section className="mt-12 p-6 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border border-green-200 rounded-lg">
+          <h3 className="font-semibold text-lg text-green-900 dark:text-green-400 dark:text-green-400 mb-3">
             🎓 Pagination Complete!
           </h3>
-          <p className="text-green-900 text-sm mb-3">You've learned all pagination patterns:</p>
-          <ul className="text-green-900 text-sm space-y-1">
+          <p className="text-green-900 dark:text-green-400 dark:text-green-400 text-sm mb-3">You've learned all pagination patterns:</p>
+          <ul className="text-green-900 dark:text-green-400 dark:text-green-400 text-sm space-y-1">
             <li>✓ P-01: Traditional pagination</li>
             <li>✓ P-02: Smooth transitions with placeholderData</li>
             <li>✓ P-03: Infinite scroll with useInfiniteQuery</li>

@@ -34,7 +34,7 @@ export default function A05Enabled(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border">
             <h3 className="font-semibold text-lg mb-4">Select User (Query Paused Until Selection)</h3>
             <div className="flex gap-2 flex-wrap mb-4">
               {[1, 2, 3].map((id) => (
@@ -66,7 +66,7 @@ export default function A05Enabled(): JSX.Element {
 
             {userId && (
               <>
-                {postsQuery.isLoading && <p className="text-blue-600">🔄 Loading...</p>}
+                {postsQuery.isLoading && <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading...</p>}
                 {postsQuery.data && (
                   <div className="text-sm">
                     <p className="font-semibold mb-2">{postsQuery.data.length} posts</p>

@@ -45,28 +45,28 @@ export default function NX01AppRouter(): JSX.Element {
 └── globals.css             # Global styles`}</pre>
           </div>
 
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">How Routing Works</h3>
-          <table className="w-full border border-gray-200 rounded-lg overflow-hidden mb-6">
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">How Routing Works</h3>
+          <table className="w-full border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg overflow-hidden mb-6">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-2 text-left border-b border-gray-200">File/Folder</th>
-                <th className="px-4 py-2 text-left border-b border-gray-200">Route</th>
+                <th className="px-4 py-2 text-left border-b border-gray-200 dark:border-slate-800 dark:border-slate-800">File/Folder</th>
+                <th className="px-4 py-2 text-left border-b border-gray-200 dark:border-slate-800 dark:border-slate-800">Route</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-gray-200">
+              <tr className="border-b border-gray-200 dark:border-slate-800 dark:border-slate-800">
                 <td className="px-4 py-2 font-mono text-sm">app/page.tsx</td>
                 <td className="px-4 py-2">/</td>
               </tr>
-              <tr className="border-b border-gray-200">
+              <tr className="border-b border-gray-200 dark:border-slate-800 dark:border-slate-800">
                 <td className="px-4 py-2 font-mono text-sm">app/learn/page.tsx</td>
                 <td className="px-4 py-2">/learn</td>
               </tr>
-              <tr className="border-b border-gray-200">
+              <tr className="border-b border-gray-200 dark:border-slate-800 dark:border-slate-800">
                 <td className="px-4 py-2 font-mono text-sm">app/learn/tanstack/page.tsx</td>
                 <td className="px-4 py-2">/learn/tanstack</td>
               </tr>
-              <tr className="border-b border-gray-200">
+              <tr className="border-b border-gray-200 dark:border-slate-800 dark:border-slate-800">
                 <td className="px-4 py-2 font-mono text-sm">app/learn/tanstack/tq01-setup/page.tsx</td>
                 <td className="px-4 py-2">/learn/tanstack/tq01-setup</td>
               </tr>
@@ -77,32 +77,32 @@ export default function NX01AppRouter(): JSX.Element {
             </tbody>
           </table>
 
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">Key Concepts</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Key Concepts</h3>
           <div className="space-y-4 mb-6">
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-2">📁 Segments</h4>
-              <p className="text-gray-700">
+            <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 p-4 rounded-lg border border-blue-200">
+              <h4 className="font-semibold text-blue-900 dark:text-blue-400 dark:text-blue-400 mb-2">📁 Segments</h4>
+              <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300">
                 Folder names become URL segments. Nested folders create nested routes. E.g., /app/learn/tanstack/tq01-setup/ creates URL /learn/tanstack/tq01-setup.
               </p>
             </div>
 
             <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
               <h4 className="font-semibold text-purple-900 mb-2">📄 page.tsx</h4>
-              <p className="text-gray-700">
+              <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300">
                 Makes a route segment publicly accessible. File name doesn't matter, only page.tsx. For example, /app/learn/page.tsx makes /learn route work.
               </p>
             </div>
 
-            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <h4 className="font-semibold text-green-900 mb-2">🎨 layout.tsx</h4>
-              <p className="text-gray-700">
+            <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 p-4 rounded-lg border border-green-200">
+              <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">🎨 layout.tsx</h4>
+              <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300">
                 Shared UI for a route and all nested routes. Can contain providers, navigation, or shared components. Resets don't happen between layout-level navigation.
               </p>
             </div>
 
             <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
               <h4 className="font-semibold text-orange-900 mb-2">📌 Server Components (default)</h4>
-              <p className="text-gray-700">
+              <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300">
                 Pages are Server Components by default. They can access databases, call async functions directly, and keep secrets. No hydration overhead.
               </p>
             </div>

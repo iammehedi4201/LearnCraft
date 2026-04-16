@@ -22,11 +22,11 @@ export default function NX06ServerFetch(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Server-side Fetching Patterns</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Server-side Fetching Patterns</h2>
 
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Basic Async Fetch</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Basic Async Fetch</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto mb-4">
 {`// app/posts/page.tsx - Server Component (default)
 export default async function Posts() {
@@ -48,8 +48,8 @@ export default async function Posts() {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Dynamic Routes with Server Fetch</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Dynamic Routes with Server Fetch</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto mb-4">
 {`// app/posts/[id]/page.tsx
 export default async function Post({ params }: { params: { id: string } }) {
@@ -75,8 +75,8 @@ export async function generateStaticParams() {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Error Handling</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Error Handling</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto mb-4">
 {`// app/posts/page.tsx
 export default async function Posts() {
@@ -98,8 +98,8 @@ export default async function Posts() {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Revalidation Strategies</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Revalidation Strategies</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto mb-4">
 {`// Set cache duration with next/fetch options
 const res = await fetch('https://api.example.com/posts', {
@@ -117,9 +117,9 @@ export const revalidate = 3600; // Page revalidates every hour`}
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• Server Components can use await directly</li>
               <li>• Fetch in layouts or pages—data loads before HTML is sent</li>
               <li>• No loading states or waterfalls with server-side fetching</li>

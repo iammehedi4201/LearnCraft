@@ -23,11 +23,11 @@ export default function NX16SSG(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Static Generation</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Static Generation</h2>
 
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Static Page (Default)</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Static Page (Default)</h3>
               <pre className="bg-gray-900 text-white p4 rounded text-sm overflow-x-auto">
 {`// app/blog/page.tsx
 // This page is pre-rendered at build time (SSG)
@@ -49,8 +49,8 @@ export default async function BlogList() {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Dynamic Static Routes</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Dynamic Static Routes</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/blog/[slug]/page.tsx
 export async function generateStaticParams() {
@@ -74,8 +74,8 @@ export default async function Post({ params }) {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Incremental Static Regeneration (ISR)</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Incremental Static Regeneration (ISR)</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/products/page.tsx
 export const revalidate = 3600; // Revalidate every hour
@@ -103,9 +103,9 @@ const res = await fetch('...', {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• SSG pages are pre-rendered at build time (fastest)</li>
               <li>• Uses generateStaticParams for dynamic routes</li>
               <li>• ISR allows revalidating at intervals</li>

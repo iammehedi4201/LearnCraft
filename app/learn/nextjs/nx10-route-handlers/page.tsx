@@ -23,10 +23,10 @@ export default function NX10RouteHandlers(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Route Handlers Setup</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Route Handlers Setup</h2>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900">File Structure</h3>
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6 mb-6">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">File Structure</h3>
             <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`app/api/
 ├── route.ts           ← Handles /api endpoint (GET, POST, etc.)
@@ -43,11 +43,11 @@ export default function NX10RouteHandlers(): JSX.Element {
             </pre>
           </div>
 
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">Code Examples</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Code Examples</h3>
 
           <div className="space-y-6">
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">GET Request Handler</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">GET Request Handler</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/api/posts/route.ts
 export async function GET(request: Request) {
@@ -69,7 +69,7 @@ al API, etc.
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">POST Request Handler</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">POST Request Handler</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/api/posts/route.ts (same file, different method)
 export async function POST(request: Request) {
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Dynamic Route Handler</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Dynamic Route Handler</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/api/posts/[id]/route.ts
 export async function GET(
@@ -131,7 +131,7 @@ export async function DELETE(
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Error Handling</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Error Handling</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/api/posts/route.ts
 export async function POST(request: Request) {
@@ -161,9 +161,9 @@ export async function POST(request: Request) {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• route.ts files create API endpoints</li>
               <li>• Export functions named after HTTP methods: GET, POST, PUT, DELETE</li>
               <li>• Access database, external APIs, and secrets safely</li>

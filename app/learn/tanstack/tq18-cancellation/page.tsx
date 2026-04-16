@@ -31,9 +31,9 @@ export default function TQ18Cancellation(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border">
             <h3 className="font-semibold text-lg mb-4">Cancellable Query</h3>
-            {postsQuery.isLoading && <p className="text-blue-600">🔄 Loading...</p>}
+            {postsQuery.isLoading && <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading...</p>}
             {postsQuery.data && (
               <>
                 <p className="text-green-600 mb-2">✓ Loaded {postsQuery.data.length} posts</p>

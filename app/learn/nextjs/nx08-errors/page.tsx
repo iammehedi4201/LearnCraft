@@ -23,10 +23,10 @@ export default function NX08Errors(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Error Boundary Setup</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Error Boundary Setup</h2>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900">File Structure</h3>
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6 mb-6">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">File Structure</h3>
             <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`app/
 ├── error.tsx                    ← Root error boundary
@@ -41,11 +41,11 @@ export default function NX08Errors(): JSX.Element {
             </pre>
           </div>
 
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">Code Examples</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Code Examples</h3>
 
           <div className="space-y-6">
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Root Error Boundary</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Root Error Boundary</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/error.tsx
 "use client";
@@ -74,7 +74,7 @@ export default function RootError({
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Segment-Specific Error Handler</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Segment-Specific Error Handler</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/admin/error.tsx
 "use client";
@@ -105,7 +105,7 @@ export default function AdminError({
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Throwing Errors Intentionally</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Throwing Errors Intentionally</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/dashboard/page.tsx
 export default async function Dashboard() {
@@ -123,9 +123,9 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• error.tsx creates an error boundary for a route segment</li>
               <li>• Error component receives error object and reset function</li>
               <li>• Must be a client component ("use client")</li>

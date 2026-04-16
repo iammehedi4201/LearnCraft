@@ -23,11 +23,11 @@ export default function NX13Images(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Image Optimization</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Image Optimization</h2>
 
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Basic Image Usage</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Basic Image Usage</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`import Image from 'next/image';
 
@@ -50,8 +50,8 @@ export default function Profile() {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Fill Mode (Responsive)</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Fill Mode (Responsive)</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`import Image from 'next/image';
 
@@ -73,8 +73,8 @@ export default function Banner() {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Responsive Sizes</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Responsive Sizes</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`import Image from 'next/image';
 
@@ -98,8 +98,8 @@ export default function ResponsiveImage() {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Placeholder & Blur</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Placeholder & Blur</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`import Image from 'next/image';
 
@@ -123,9 +123,9 @@ export default function BlurImage() {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• Use next/image instead of HTML img</li>
               <li>• Automatic format conversion (WebP, AVIF)</li>
               <li>• Lazy loading by default</li>

@@ -54,11 +54,11 @@ export default function NX02Routing(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Routing Examples</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Routing Examples</h2>
 
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Static Routes</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Static Routes</h3>
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-100">
@@ -87,8 +87,8 @@ export default function NX02Routing(): JSX.Element {
               </table>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Dynamic Routes</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Dynamic Routes</h3>
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-gray-100">
@@ -113,7 +113,7 @@ export default function NX02Routing(): JSX.Element {
             </div>
           </div>
 
-          <h3 className="text-xl font-semibold mt-8 mb-4 text-gray-900">Code Example</h3>
+          <h3 className="text-xl font-semibold mt-8 mb-4 text-gray-900 dark:text-white dark:text-white">Code Example</h3>
           <pre className="bg-gray-900 text-white p-6 rounded-lg overflow-x-auto text-sm mb-6">
 {`// app/posts/[id]/page.tsx
 export default async function Post({ params }: { params: { id: string } }) {
@@ -126,9 +126,9 @@ export default async function Post({ params }: { params: { id: string } }) {
 // params.id automatically contains the dynamic segment value`}
           </pre>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• Folder structure = URL structure (intuitive and self-documenting)</li>
               <li>• page.tsx files make routes public and accessible</li>
               <li>• Dynamic segments [id] create catch-all routes for that segment</li>

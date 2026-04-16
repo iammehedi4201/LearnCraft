@@ -30,9 +30,9 @@ export default function A07GlobalError(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border">
             <h3 className="font-semibold text-lg mb-4">Global Error Handling</h3>
-            {postsQuery.isLoading && <p className="text-blue-600">🔄 Loading...</p>}
+            {postsQuery.isLoading && <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading...</p>}
             {postsQuery.error && (
               <div className="p-4 bg-red-50 border border-red-200 rounded">
                 <p className="text-red-900 font-semibold">Error handled globally!</p>

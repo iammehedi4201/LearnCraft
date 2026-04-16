@@ -23,11 +23,11 @@ export default function NX17ISR(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">ISR Patterns</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">ISR Patterns</h2>
 
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Time-Based Revalidation</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Time-Based Revalidation</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/articles/[id]/page.tsx
 export const revalidate = 3600; // Revalidate every hour
@@ -55,8 +55,8 @@ export default async function Article({ params }) {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">On-Demand Revalidation</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">On-Demand Revalidation</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/api/revalidate/route.ts
 import { revalidatePath } from 'next/cache';
@@ -82,8 +82,8 @@ export async function POST(request: Request) {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Per-Fetch Revalidation</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Per-Fetch Revalidation</h3>
               <pre className="bg-gray-900 text-white p4 rounded text-sm overflow-x-auto">
 {`// app/page.tsx - Different revalidation times per fetch
 
@@ -109,9 +109,9 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• ISR = static performance + fresh content</li>
               <li>• Pages revalidate on schedule (time-based)</li>
               <li>• On-demand revalidation via webhooks</li>

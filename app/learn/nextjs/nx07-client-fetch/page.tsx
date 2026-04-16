@@ -83,9 +83,9 @@ export default function NX07ClientFetch(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Live Example: Search Posts</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Live Example: Search Posts</h2>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6 mb-6">
             <input
               type="text"
               placeholder="Search posts..."
@@ -110,8 +110,8 @@ export default function NX07ClientFetch(): JSX.Element {
               <div className="space-y-4">
                 <p className="text-sm text-gray-600">✅ Found {posts.length} posts</p>
                 {posts.map((post) => (
-                  <div key={post.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-                    <h3 className="font-semibold text-gray-900">{post.title}</h3>
+                  <div key={post.id} className="p-4 bg-gray-50 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+                    <h3 className="font-semibold text-gray-900 dark:text-white dark:text-white">{post.title}</h3>
                     <p className="text-sm text-gray-600 mt-2">{post.body}</p>
                   </div>
                 ))}
@@ -119,11 +119,11 @@ export default function NX07ClientFetch(): JSX.Element {
             )}
           </div>
 
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">Code Examples</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Code Examples</h3>
 
           <div className="space-y-6">
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Basic useEffect Pattern</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Basic useEffect Pattern</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`"use client";
 
@@ -163,7 +163,7 @@ export default function Posts() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Search/Filter Pattern</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Search/Filter Pattern</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`"use client";
 
@@ -209,7 +209,7 @@ export default function SearchPosts() {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">TanStack Query Alternative</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">TanStack Query Alternative</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`"use client";
 
@@ -239,9 +239,9 @@ export default function Posts() {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• "use client" required for useEffect and interactive fetching</li>
               <li>• useEffect with empty deps runs once on mount</li>
               <li>• Update dependencies to re-execute the effect</li>

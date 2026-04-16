@@ -22,9 +22,9 @@ export default function NX04Layouts(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Layout Hierarchy</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Layout Hierarchy</h2>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6 mb-6">
             <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`app/
 ├── layout.tsx                    ← Root layout (entire app)
@@ -46,12 +46,12 @@ export default function NX04Layouts(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-            <h3 className="font-semibold text-blue-900 mb-3">✨ Key Feature: Layouts Don't Re-render</h3>
-            <p className="text-gray-700 mb-3">
+          <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border border-blue-200 rounded-lg p-6 mb-6">
+            <h3 className="font-semibold text-blue-900 dark:text-blue-400 dark:text-blue-400 mb-3">✨ Key Feature: Layouts Don't Re-render</h3>
+            <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 mb-3">
               When you click a link from /learn/tanstack/tq01 to /learn/tanstack/tq02:
             </p>
-            <ul className="space-y-2 text-gray-700 text-sm">
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300 text-sm">
               <li>✅ app/layout.tsx stays mounted (persists)</li>
               <li>✅ app/learn/layout.tsx stays mounted (persists)</li>
               <li>✅ app/learn/tanstack/layout.tsx stays mounted (persists)</li>
@@ -59,11 +59,11 @@ export default function NX04Layouts(): JSX.Element {
             </ul>
           </div>
 
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">Code Examples</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Code Examples</h3>
 
           <div className="space-y-6">
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Root Layout</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Root Layout</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/layout.tsx
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -85,7 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Segment Layout</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Segment Layout</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/learn/layout.tsx
 import Sidebar from '@/components/sidebar';
@@ -102,7 +102,7 @@ export default function LearnLayout({ children }: { children: React.ReactNode })
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Route Groups (Optional Grouping)</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Route Groups (Optional Grouping)</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// Files in (auth) folder don't add /auth to URL
 
@@ -117,9 +117,9 @@ app/
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• layout.tsx files wrap nested routes with shared UI</li>
               <li>• Layouts persist across navigation (better performance)</li>
               <li>• Root layout (app/layout.tsx) wraps entire application</li>

@@ -61,7 +61,7 @@ export default function TQ13Prefetching(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
             <h3 className="font-semibold text-lg mb-4">Select a User (Hover to Prefetch)</h3>
             <div className="flex gap-2 flex-wrap">
               {[1, 2, 3, 4, 5].map((id) => (
@@ -87,10 +87,10 @@ export default function TQ13Prefetching(): JSX.Element {
           {/* Results */}
           {selectedUserId && (
             <div className="grid md:grid-cols-2 gap-6">
-              <div className="p-4 bg-white rounded border">
+              <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
                 <h4 className="font-semibold mb-3">User Info</h4>
                 {userQuery.isLoading ? (
-                  <p className="text-blue-600">🔄 Loading...</p>
+                  <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading...</p>
                 ) : userQuery.data ? (
                   <div className="text-sm space-y-1">
                     <p><strong>{(userQuery.data as User).name}</strong></p>
@@ -99,10 +99,10 @@ export default function TQ13Prefetching(): JSX.Element {
                 ) : null}
               </div>
 
-              <div className="p-4 bg-white rounded border">
+              <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border">
                 <h4 className="font-semibold mb-3">Posts</h4>
                 {postsQuery.isLoading ? (
-                  <p className="text-blue-600">🔄 Loading...</p>
+                  <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading...</p>
                 ) : postsQuery.data ? (
                   <p className="text-sm">
                     {postsQuery.data.length} posts by this user

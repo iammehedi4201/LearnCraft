@@ -34,7 +34,7 @@ export default function TQ16Polling(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-semibold text-lg">Live Users (Polling Every 5s)</h3>
               <button
@@ -49,7 +49,7 @@ export default function TQ16Polling(): JSX.Element {
               </button>
             </div>
 
-            {usersQuery.isLoading && <p className="text-blue-600">🔄 Loading...</p>}
+            {usersQuery.isLoading && <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading...</p>}
             {usersQuery.data && (
               <div className="space-y-1 text-sm">
                 <p className="text-gray-600 mb-2">

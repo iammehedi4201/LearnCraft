@@ -53,11 +53,11 @@ export default function NX12Metadata(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Metadata Examples</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Metadata Examples</h2>
 
           <div className="space-y-6">
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Static Metadata</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Static Metadata</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/page.tsx
 import { Metadata } from 'next';
@@ -93,8 +93,8 @@ export default function Home() {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Dynamic Metadata</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Dynamic Metadata</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/posts/[id]/page.tsx
 import { Metadata } from 'next';
@@ -133,8 +133,8 @@ export default async function Post({ params }) {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Root Metadata with Icons</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Root Metadata with Icons</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/layout.tsx
 import { Metadata } from 'next';
@@ -166,8 +166,8 @@ export default function RootLayout({ children }) {
               </pre>
             </div>
 
-            <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <h3 className="text-xl font-semibold mb-4 text-gray-900">Common Metadata Fields</h3>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Common Metadata Fields</h3>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// Common SEO-related fields
 {
@@ -198,9 +198,9 @@ export default function RootLayout({ children }) {
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6 mb-6">
-            <h4 className="font-semibold text-blue-900 mb-3">💡 Title Template Pattern</h4>
-            <p className="text-gray-700 mb-3">
+          <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border border-blue-200 rounded-lg p-6 mt-6 mb-6">
+            <h4 className="font-semibold text-blue-900 dark:text-blue-400 dark:text-blue-400 mb-3">💡 Title Template Pattern</h4>
+            <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 mb-3">
               In your root layout, set a title template. Child pages automatically use this format:
             </p>
             <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
@@ -224,9 +224,9 @@ export const metadata: Metadata = {
             </pre>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• Export metadata object or generateMetadata function</li>
               <li>• Metadata cascades: child pages override parent layout metadata</li>
               <li>• Use title templates for consistent branding across pages</li>

@@ -141,7 +141,7 @@ export default function TQ08Optimistic(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Interactive Example: Edit Posts with Optimistic Updates
           </h2>
 
@@ -151,7 +151,7 @@ export default function TQ08Optimistic(): JSX.Element {
               className={`p-4 rounded-lg mb-6 font-semibold ${
                 message.startsWith("❌")
                   ? "bg-red-50 text-red-900 border border-red-200"
-                  : "bg-green-50 text-green-900 border border-green-200"
+                  : "bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 text-green-900 dark:text-green-400 dark:text-green-400 border border-green-200"
               }`}
             >
               {message}
@@ -160,7 +160,7 @@ export default function TQ08Optimistic(): JSX.Element {
 
           {/* Posts List */}
           {postsQuery.isLoading && (
-            <p className="text-blue-600">🔄 Loading posts...</p>
+            <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading posts...</p>
           )}
 
           {postsQuery.data && (
@@ -168,7 +168,7 @@ export default function TQ08Optimistic(): JSX.Element {
               {postsQuery.data.slice(0, 5).map((post: Post) => (
                 <div
                   key={post.id}
-                  className="p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                  className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg hover:shadow-md transition-shadow"
                 >
                   {editingId === post.id ? (
                     // Edit Mode
@@ -203,10 +203,10 @@ export default function TQ08Optimistic(): JSX.Element {
                   ) : (
                     // View Mode
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">
+                      <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-1">
                         #{post.id}: {post.title}
                       </h4>
-                      <p className="text-gray-700 text-sm mb-3">{post.body}</p>
+                      <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 text-sm mb-3">{post.body}</p>
                       <button
                         onClick={() => handleEdit(post)}
                         className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -221,11 +221,11 @@ export default function TQ08Optimistic(): JSX.Element {
           )}
 
           {/* Information Box */}
-          <div className="mt-6 p-6 bg-blue-50 border-l-4 border-blue-500 rounded">
-            <h3 className="font-semibold text-blue-900 mb-3">
+          <div className="mt-6 p-6 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 rounded">
+            <h3 className="font-semibold text-blue-900 dark:text-blue-400 dark:text-blue-400 mb-3">
               ✨ How Optimistic Updates Work Here
             </h3>
-            <ol className="space-y-2 text-blue-900 text-sm">
+            <ol className="space-y-2 text-blue-900 dark:text-blue-400 dark:text-blue-400 text-sm">
               <li>
                 <strong>1. You click "Edit Title"</strong> — Post enters edit mode
               </li>
@@ -256,12 +256,12 @@ export default function TQ08Optimistic(): JSX.Element {
 
         {/* Code Breakdown */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Implementation Pattern
           </h2>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Full Optimistic Update Pattern
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -305,8 +305,8 @@ export default function TQ08Optimistic(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Trigger the Mutation
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -323,8 +323,8 @@ export default function TQ08Optimistic(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Mutation Callbacks Timeline
             </h3>
             <div className="space-y-3 text-sm font-mono">
@@ -334,23 +334,23 @@ export default function TQ08Optimistic(): JSX.Element {
                 </p>
               </div>
               <div className="ml-4 border-l-2 border-gray-300 pl-4 py-2">
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded">
-                  <p className="font-semibold text-blue-900">
+                <div className="p-3 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border border-blue-200 rounded">
+                  <p className="font-semibold text-blue-900 dark:text-blue-400 dark:text-blue-400">
                     2. onMutate() → Update cache optimistically
                   </p>
                 </div>
               </div>
               <div className="ml-4 border-l-2 border-gray-300 pl-4 py-2">
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
-                  <p className="font-semibold text-yellow-900">
+                <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded">
+                  <p className="font-semibold text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
                     3. mutationFn() → Make API request
                   </p>
                 </div>
               </div>
               <div className="ml-4 border-l-2 border-gray-300 pl-4 py-2">
                 <div className="flex gap-2">
-                  <div className="flex-1 p-3 bg-green-50 border border-green-200 rounded">
-                    <p className="font-semibold text-green-900">
+                  <div className="flex-1 p-3 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border border-green-200 rounded">
+                    <p className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400">
                       4a. onSuccess() ✓
                     </p>
                   </div>
@@ -362,8 +362,8 @@ export default function TQ08Optimistic(): JSX.Element {
                 </div>
               </div>
               <div className="ml-4 border-l-2 border-gray-300 pl-4 py-2">
-                <div className="p-3 bg-gray-50 border border-gray-200 rounded">
-                  <p className="font-semibold text-gray-900">
+                <div className="p-3 bg-gray-50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded">
+                  <p className="font-semibold text-gray-900 dark:text-white dark:text-white">
                     5. onSettled() → Clean up (both paths)
                   </p>
                 </div>
@@ -371,11 +371,11 @@ export default function TQ08Optimistic(): JSX.Element {
             </div>
           </div>
 
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
-            <h3 className="font-semibold text-lg mb-3 text-blue-900">
+          <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded">
+            <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-400 dark:text-blue-400">
               Critical Points
             </h3>
-            <ul className="space-y-2 text-blue-900 text-sm">
+            <ul className="space-y-2 text-blue-900 dark:text-blue-400 dark:text-blue-400 text-sm">
               <li>
                 ✓ onMutate runs BEFORE the API call — update cache immediately
               </li>
@@ -395,11 +395,11 @@ export default function TQ08Optimistic(): JSX.Element {
           </div>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-yellow-900">
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <h3 className="font-semibold text-lg mb-3 text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             📝 Next Step
           </h3>
-          <p className="text-yellow-900">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             Now that you understand optimistic updates, move to <strong>M-03 — Query Invalidation</strong> to learn
             how to keep cache in sync after mutations!
           </p>

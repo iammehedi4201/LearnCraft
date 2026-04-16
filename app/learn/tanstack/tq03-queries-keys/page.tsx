@@ -100,13 +100,13 @@ export default function TQ03QueryKeys(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Interactive Example: Query Keys in Action
           </h2>
 
           {/* Controls */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               1. Select a User (triggers different query key)
             </h3>
             <div className="flex gap-2 flex-wrap mb-4">
@@ -117,7 +117,7 @@ export default function TQ03QueryKeys(): JSX.Element {
                   className={`px-4 py-2 rounded font-medium transition-colors ${
                     selectedUserId === userId
                       ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                      : "bg-gray-200 text-gray-800 dark:text-slate-200 dark:text-slate-200 hover:bg-gray-300"
                   }`}
                 >
                   User {userId}
@@ -128,7 +128,7 @@ export default function TQ03QueryKeys(): JSX.Element {
                 className={`px-4 py-2 rounded font-medium transition-colors ${
                   selectedUserId === null
                     ? "bg-red-600 text-white"
-                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                    : "bg-gray-200 text-gray-800 dark:text-slate-200 dark:text-slate-200 hover:bg-gray-300"
                 }`}
               >
                 Clear Selection
@@ -141,15 +141,15 @@ export default function TQ03QueryKeys(): JSX.Element {
           </div>
 
           {/* All Posts Query */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-2 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Query Key: ["posts"]
             </h3>
             <p className="text-xs text-gray-600 mb-3 font-mono bg-gray-100 p-2 rounded">
               Fetches ALL posts (no parameters)
             </p>
             {allPostsQuery.status === "pending" ? (
-              <p className="text-blue-600">🔄 Loading all posts...</p>
+              <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading all posts...</p>
             ) : allPostsQuery.error ? (
               <p className="text-red-600">❌ Error: {allPostsQuery.error.message}</p>
             ) : (
@@ -158,7 +158,7 @@ export default function TQ03QueryKeys(): JSX.Element {
               </p>
             )}
             {allPostsQuery.data && (
-              <ul className="mt-3 space-y-1 text-sm text-gray-700">
+              <ul className="mt-3 space-y-1 text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
                 {allPostsQuery.data.slice(0, 3).map((post: Post) => (
                   <li key={post.id}>• Post #{post.id}: {post.title}</li>
                 ))}
@@ -168,11 +168,11 @@ export default function TQ03QueryKeys(): JSX.Element {
 
           {/* User Posts Query */}
           {selectedUserId && (
-            <div className="bg-white p-6 rounded-lg border border-blue-300 mb-6 border-l-4">
-              <h3 className="font-semibold text-lg mb-2 text-gray-800">
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-blue-300 mb-6 border-l-4">
+              <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-slate-200 dark:text-slate-200">
                 Query Key: ["posts", {"{ userId: " + selectedUserId + " }"}]
               </h3>
-              <p className="text-xs text-gray-600 mb-3 font-mono bg-blue-50 p-2 rounded">
+              <p className="text-xs text-gray-600 mb-3 font-mono bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 p-2 rounded">
                 Fetches only posts by User {selectedUserId}
               </p>
               <p className="text-sm text-blue-700 mb-2">
@@ -180,7 +180,7 @@ export default function TQ03QueryKeys(): JSX.Element {
                 If you select User 1, then User 2, both queries' data stays cached!
               </p>
               {userPostsQuery.status === "pending" ? (
-                <p className="text-blue-600">🔄 Loading user posts...</p>
+                <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading user posts...</p>
               ) : userPostsQuery.error ? (
                 <p className="text-red-600">❌ Error</p>
               ) : (
@@ -189,7 +189,7 @@ export default function TQ03QueryKeys(): JSX.Element {
                 </p>
               )}
               {userPostsQuery.data && userPostsQuery.data.length > 0 && (
-                <ul className="mt-3 space-y-1 text-sm text-gray-700">
+                <ul className="mt-3 space-y-1 text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
                   {userPostsQuery.data.slice(0, 5).map((post: Post) => (
                     <li key={post.id}>• Post #{post.id}: {post.title}</li>
                   ))}
@@ -200,19 +200,19 @@ export default function TQ03QueryKeys(): JSX.Element {
 
           {/* User Details Query */}
           {selectedUserId && (
-            <div className="bg-white p-6 rounded-lg border border-purple-300 mb-6 border-l-4">
-              <h3 className="font-semibold text-lg mb-2 text-gray-800">
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-purple-300 mb-6 border-l-4">
+              <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-slate-200 dark:text-slate-200">
                 Query Key: ["users", {selectedUserId}]
               </h3>
               <p className="text-xs text-gray-600 mb-3 font-mono bg-purple-50 p-2 rounded">
                 Fetches a single user's details
               </p>
               {userQuery.status === "pending" ? (
-                <p className="text-blue-600">🔄 Loading user details...</p>
+                <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading user details...</p>
               ) : userQuery.error ? (
                 <p className="text-red-600">❌ Error</p>
               ) : userQuery.data ? (
-                <div className="text-gray-700 text-sm">
+                <div className="text-gray-700 dark:text-slate-300 dark:text-slate-300 text-sm">
                   <p>
                     <strong>User:</strong> {(userQuery.data as User).name}
                   </p>
@@ -225,7 +225,7 @@ export default function TQ03QueryKeys(): JSX.Element {
           )}
 
           {/* Cache Debug Info */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
             <button
               onClick={() => setShowCacheInfo(!showCacheInfo)}
               className="px-4 py-2 bg-gray-800 text-white rounded font-medium hover:bg-gray-900"
@@ -235,7 +235,7 @@ export default function TQ03QueryKeys(): JSX.Element {
 
             {showCacheInfo && (
               <div className="mt-4">
-                <h3 className="font-semibold text-sm mb-3 text-gray-800">
+                <h3 className="font-semibold text-sm mb-3 text-gray-800 dark:text-slate-200 dark:text-slate-200">
                   Current Queries in Cache:
                 </h3>
                 <div className="space-y-3 text-sm">
@@ -244,13 +244,13 @@ export default function TQ03QueryKeys(): JSX.Element {
                       key={idx}
                       className="p-3 bg-gray-100 rounded font-mono text-xs"
                     >
-                      <p className="text-gray-800">
+                      <p className="text-gray-800 dark:text-slate-200 dark:text-slate-200">
                         <strong>Key:</strong> {JSON.stringify(item.queryKey)}
                       </p>
-                      <p className="text-gray-800">
+                      <p className="text-gray-800 dark:text-slate-200 dark:text-slate-200">
                         <strong>Status:</strong> {item.state.status}
                       </p>
-                      <p className="text-gray-800">
+                      <p className="text-gray-800 dark:text-slate-200 dark:text-slate-200">
                         <strong>Data:</strong> {item.state.data}
                       </p>
                       <p className="text-gray-600 text-xs">
@@ -266,12 +266,12 @@ export default function TQ03QueryKeys(): JSX.Element {
 
         {/* Code Breakdown */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Understanding Query Keys
           </h2>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Query Key Patterns
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -292,8 +292,8 @@ queryKey: ["users", 5, "posts"]`}
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Key Matching & Invalidation
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -310,18 +310,18 @@ await queryClient.invalidateQueries({
 // Invalidate all queries
 await queryClient.invalidateQueries();`}
             </pre>
-            <p className="text-gray-700 text-sm mt-3">
+            <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 text-sm mt-3">
               This hierarchical structure is powerful: invalidating ["posts"] will
               clear ["posts", 1], ["posts", {"{ userId: 2 }"}], etc. — everything
               under that namespace.
             </p>
           </div>
 
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
-            <h3 className="font-semibold text-lg mb-3 text-blue-900">
+          <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded">
+            <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-400 dark:text-blue-400">
               Best Practices
             </h3>
-            <ul className="space-y-2 text-blue-900 text-sm">
+            <ul className="space-y-2 text-blue-900 dark:text-blue-400 dark:text-blue-400 text-sm">
               <li>
                 ✓ Use arrays for query keys (enables partial matching)
               </li>
@@ -341,11 +341,11 @@ await queryClient.invalidateQueries();`}
           </div>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-yellow-900">
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <h3 className="font-semibold text-lg mb-3 text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             📝 Next Step
           </h3>
-          <p className="text-yellow-900">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             Now that you understand query keys, move to <strong>F-04 — staleTime & gcTime</strong> to learn
             when data refetches!
           </p>

@@ -54,9 +54,9 @@ export default function NX03ServerClient(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Server vs Client Comparison</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Server vs Client Comparison</h2>
 
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden mb-6">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg overflow-hidden mb-6">
             <table className="w-full">
               <thead className="bg-gray-100">
                 <tr>
@@ -66,27 +66,27 @@ export default function NX03ServerClient(): JSX.Element {
                 </tr>
               </thead>
               <tbody className="text-sm">
-                <tr className="border-b border-gray-200">
+                <tr className="border-b border-gray-200 dark:border-slate-800 dark:border-slate-800">
                   <td className="px-4 py-3 font-semibold">JavaScript to Browser</td>
                   <td className="px-4 py-3">❌ None</td>
                   <td className="px-4 py-3">✅ Full bundle</td>
                 </tr>
-                <tr className="border-b border-gray-200 bg-gray-50">
+                <tr className="border-b border-gray-200 dark:border-slate-800 dark:border-slate-800 bg-gray-50">
                   <td className="px-4 py-3 font-semibold">React Hooks</td>
                   <td className="px-4 py-3">❌ No (useState, useEffect)</td>
                   <td className="px-4 py-3">✅ Yes</td>
                 </tr>
-                <tr className="border-b border-gray-200">
+                <tr className="border-b border-gray-200 dark:border-slate-800 dark:border-slate-800">
                   <td className="px-4 py-3 font-semibold">Database Access</td>
                   <td className="px-4 py-3">✅ Direct</td>
                   <td className="px-4 py-3">❌ Via API only</td>
                 </tr>
-                <tr className="border-b border-gray-200 bg-gray-50">
+                <tr className="border-b border-gray-200 dark:border-slate-800 dark:border-slate-800 bg-gray-50">
                   <td className="px-4 py-3 font-semibold">Secrets/API Keys</td>
                   <td className="px-4 py-3">✅ Safe</td>
                   <td className="px-4 py-3">❌ Exposed</td>
                 </tr>
-                <tr className="border-b border-gray-200">
+                <tr className="border-b border-gray-200 dark:border-slate-800 dark:border-slate-800">
                   <td className="px-4 py-3 font-semibold">Browser APIs</td>
                   <td className="px-4 py-3">❌ No (window, localStorage)</td>
                   <td className="px-4 py-3">✅ Yes</td>
@@ -100,11 +100,11 @@ export default function NX03ServerClient(): JSX.Element {
             </table>
           </div>
 
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">Code Examples</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Code Examples</h3>
 
           <div className="space-y-6">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-              <h4 className="font-semibold text-blue-900 mb-3">🖥️ Server Component (Default)</h4>
+            <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border border-blue-200 rounded-lg p-6">
+              <h4 className="font-semibold text-blue-900 dark:text-blue-400 dark:text-blue-400 mb-3">🖥️ Server Component (Default)</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/posts/page.tsx - No "use client" = Server Component
 export default async function Posts() {
@@ -148,8 +148,8 @@ export default function Counter() {
               </pre>
             </div>
 
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-              <h4 className="font-semibold text-green-900 mb-3">🎯 Hybrid Pattern (Recommended)</h4>
+            <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border border-green-200 rounded-lg p-6">
+              <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-3">🎯 Hybrid Pattern (Recommended)</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// app/products/page.tsx - Server Component for data
 export default async function Products() {
@@ -184,9 +184,9 @@ function ProductCard({ product }) {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• Server Components are the default - better for data fetching and security</li>
               <li>• Use "use client" directive only when you need interactivity</li>
               <li>• Server Components send zero JavaScript to the browser</li>

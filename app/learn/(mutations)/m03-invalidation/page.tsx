@@ -108,7 +108,7 @@ export default function M03Invalidation(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Interactive Example: Create & Delete with Invalidation
           </h2>
 
@@ -118,7 +118,7 @@ export default function M03Invalidation(): JSX.Element {
               className={`p-4 rounded-lg mb-6 font-semibold ${
                 message.startsWith("❌")
                   ? "bg-red-50 text-red-900 border border-red-200"
-                  : "bg-green-50 text-green-900 border border-green-200"
+                  : "bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 text-green-900 dark:text-green-400 dark:text-green-400 border border-green-200"
               }`}
             >
               {message}
@@ -127,8 +127,8 @@ export default function M03Invalidation(): JSX.Element {
 
           <div className="grid md:grid-cols-2 gap-6 mb-6">
             {/* Create Form */}
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="font-semibold text-lg mb-4 text-gray-800">
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+              <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
                 Create a Post
               </h3>
               <form onSubmit={handleCreatePost} className="space-y-3">
@@ -163,14 +163,14 @@ export default function M03Invalidation(): JSX.Element {
             </div>
 
             {/* Status */}
-            <div className="bg-white p-6 rounded-lg border border-gray-200">
-              <h3 className="font-semibold text-lg mb-4 text-gray-800">
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+              <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
                 Cache Status
               </h3>
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="text-gray-600">Posts in Cache</p>
-                  <p className="font-bold text-lg text-blue-600">
+                  <p className="font-bold text-lg text-blue-600 dark:text-blue-400 dark:text-blue-400">
                     {postsQuery.data?.length ?? 0}
                   </p>
                 </div>
@@ -187,13 +187,13 @@ export default function M03Invalidation(): JSX.Element {
           </div>
 
           {/* Posts List */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Posts (showing 5 of {postsQuery.data?.length ?? 0})
             </h3>
 
             {postsQuery.isLoading && (
-              <p className="text-blue-600">🔄 Loading posts...</p>
+              <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading posts...</p>
             )}
 
             {postsQuery.data && (
@@ -201,10 +201,10 @@ export default function M03Invalidation(): JSX.Element {
                 {postsQuery.data.slice(0, 5).map((post: Post) => (
                   <div
                     key={post.id}
-                    className="p-3 bg-gray-50 rounded border border-gray-200 flex justify-between items-start gap-3"
+                    className="p-3 bg-gray-50 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800 flex justify-between items-start gap-3"
                   >
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-gray-900 line-clamp-1">
+                      <p className="font-semibold text-sm text-gray-900 dark:text-white dark:text-white line-clamp-1">
                         #{post.id}: {post.title}
                       </p>
                       <p className="text-xs text-gray-600 mt-1 line-clamp-2">
@@ -225,11 +225,11 @@ export default function M03Invalidation(): JSX.Element {
           </div>
 
           {/* Information */}
-          <div className="mt-6 p-6 bg-blue-50 border-l-4 border-blue-500 rounded">
-            <h3 className="font-semibold text-blue-900 mb-3">
+          <div className="mt-6 p-6 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 rounded">
+            <h3 className="font-semibold text-blue-900 dark:text-blue-400 dark:text-blue-400 mb-3">
               ✨ How Invalidation Works Here
             </h3>
-            <ol className="space-y-2 text-blue-900 text-sm">
+            <ol className="space-y-2 text-blue-900 dark:text-blue-400 dark:text-blue-400 text-sm">
               <li>
                 <strong>1. You create a post:</strong> Form data sent to server
               </li>
@@ -255,12 +255,12 @@ export default function M03Invalidation(): JSX.Element {
 
         {/* Code Breakdown */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Implementation Pattern
           </h2>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Basic Pattern: Invalidate on Success
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -278,8 +278,8 @@ export default function M03Invalidation(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Partial Key Invalidation (Hierarchy)
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -300,8 +300,8 @@ await queryClient.invalidateQueries({
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Real-World Example: Full CRUD with Invalidation
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -332,8 +332,8 @@ const deleteMutation = useMutation({
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Advanced: Invalidation with Refetch Options
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -352,11 +352,11 @@ const deleteMutation = useMutation({
             </pre>
           </div>
 
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
-            <h3 className="font-semibold text-lg mb-3 text-blue-900">
+          <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded">
+            <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-400 dark:text-blue-400">
               Invalidation Strategies
             </h3>
-            <div className="space-y-3 text-blue-900 text-sm">
+            <div className="space-y-3 text-blue-900 dark:text-blue-400 dark:text-blue-400 text-sm">
               <div>
                 <p className="font-semibold">Broad Invalidation (Simple)</p>
                 <p>invalidate(["posts"]) — for simple apps, always works</p>
@@ -375,47 +375,47 @@ const deleteMutation = useMutation({
 
         {/* Comparison */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             When to Use Each Approach
           </h2>
 
           <div className="space-y-3">
-            <div className="p-4 bg-white border-l-4 border-purple-500 rounded">
-              <p className="font-semibold text-gray-800 mb-2">Invalidation (Most Common)</p>
-              <p className="text-sm text-gray-700">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border-l-4 border-purple-500 rounded">
+              <p className="font-semibold text-gray-800 dark:text-slate-200 dark:text-slate-200 mb-2">Invalidation (Most Common)</p>
+              <p className="text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
                 Simplest approach. After mutation, mark queries stale and let them refetch. Works for all scenarios.
               </p>
             </div>
 
-            <div className="p-4 bg-white border-l-4 border-green-500 rounded">
-              <p className="font-semibold text-gray-800 mb-2">Optimistic Updates (UX)</p>
-              <p className="text-sm text-gray-700">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border-l-4 border-green-500 rounded">
+              <p className="font-semibold text-gray-800 dark:text-slate-200 dark:text-slate-200 mb-2">Optimistic Updates (UX)</p>
+              <p className="text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
                 Update cache immediately for faster perceived performance. Use when operation rarely fails.
               </p>
             </div>
 
-            <div className="p-4 bg-white border-l-4 border-blue-500 rounded">
-              <p className="font-semibold text-gray-800 mb-2">Both Together (Best Practice)</p>
-              <p className="text-sm text-gray-700">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border-l-4 border-blue-500 rounded">
+              <p className="font-semibold text-gray-800 dark:text-slate-200 dark:text-slate-200 mb-2">Both Together (Best Practice)</p>
+              <p className="text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
                 Use optimistic updates in onMutate for instant UX. Use invalidation in onSuccess to sync with server.
               </p>
             </div>
           </div>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-yellow-900">
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <h3 className="font-semibold text-lg mb-3 text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             🎓 Mutations Complete!
           </h3>
-          <p className="text-yellow-900 mb-3">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400 mb-3">
             You've learned all the mutation patterns:
           </p>
-          <ul className="text-yellow-900 text-sm space-y-1 mb-4">
+          <ul className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400 text-sm space-y-1 mb-4">
             <li>✓ M-01: useMutation basics</li>
             <li>✓ M-02: Optimistic updates</li>
             <li>✓ M-03: Query invalidation</li>
           </ul>
-          <p className="text-yellow-900">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             Next, move to <strong>Pagination</strong> to learn how to handle large datasets!
           </p>
         </section>

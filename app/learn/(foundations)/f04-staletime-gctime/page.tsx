@@ -77,7 +77,7 @@ export default function F04StaleTimeGcTime(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Interactive Demo: Staleness Over Time
           </h2>
 
@@ -88,7 +88,7 @@ export default function F04StaleTimeGcTime(): JSX.Element {
               className={`px-4 py-2 rounded font-medium transition-colors ${
                 tab === "fresh"
                   ? "bg-green-600 text-white"
-                  : "bg-gray-200 text-gray-800"
+                  : "bg-gray-200 text-gray-800 dark:text-slate-200 dark:text-slate-200"
               }`}
             >
               Fresh Data (staleTime: 30s)
@@ -98,7 +98,7 @@ export default function F04StaleTimeGcTime(): JSX.Element {
               className={`px-4 py-2 rounded font-medium transition-colors ${
                 tab === "stale"
                   ? "bg-red-600 text-white"
-                  : "bg-gray-200 text-gray-800"
+                  : "bg-gray-200 text-gray-800 dark:text-slate-200 dark:text-slate-200"
               }`}
             >
               Stale Data (staleTime: 0s)
@@ -107,9 +107,9 @@ export default function F04StaleTimeGcTime(): JSX.Element {
 
           {/* Fresh Data Tab */}
           {tab === "fresh" && (
-            <div className="bg-white p-6 rounded-lg border-2 border-green-300">
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border-2 border-green-300">
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="p-3 bg-green-50 rounded">
+                <div className="p-3 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 rounded">
                   <p className="text-xs text-gray-600">Status</p>
                   <p className="font-bold text-lg text-green-600">
                     {freshQuery.isLoading && "🔄 Loading"}
@@ -117,7 +117,7 @@ export default function F04StaleTimeGcTime(): JSX.Element {
                     {!freshQuery.isLoading && !freshQuery.isRefetching && "✓ Fresh"}
                   </p>
                 </div>
-                <div className="p-3 bg-green-50 rounded">
+                <div className="p-3 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 rounded">
                   <p className="text-xs text-gray-600">Data Count</p>
                   <p className="font-bold text-lg">
                     {freshQuery.data?.length ?? 0}
@@ -126,10 +126,10 @@ export default function F04StaleTimeGcTime(): JSX.Element {
               </div>
 
               <div className="mb-6 p-4 bg-green-100 border border-green-300 rounded">
-                <p className="font-semibold text-green-900 mb-2">
+                <p className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">
                   ✓ Data is Fresh
                 </p>
-                <p className="text-green-800 text-sm">
+                <p className="text-green-800 dark:text-green-300 dark:text-green-300 text-sm">
                   This query was fetched less than 30 seconds ago. If you click
                   "Refresh", TanStack Query will use the cached data immediately
                   without making a new API call. Users get instant results!
@@ -144,7 +144,7 @@ export default function F04StaleTimeGcTime(): JSX.Element {
                 Click "Refresh" (will use cache)
               </button>
               {freshQuery.data && (
-                <div className="mt-4 text-sm text-gray-700">
+                <div className="mt-4 text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
                   <p className="font-semibold mb-2">Users:</p>
                   <ul className="space-y-1">
                     {freshQuery.data.slice(0, 3).map((user: User) => (
@@ -158,7 +158,7 @@ export default function F04StaleTimeGcTime(): JSX.Element {
 
           {/* Stale Data Tab */}
           {tab === "stale" && (
-            <div className="bg-white p-6 rounded-lg border-2 border-red-300">
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border-2 border-red-300">
               <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="p-3 bg-red-50 rounded">
                   <p className="text-xs text-gray-600">Status</p>
@@ -195,7 +195,7 @@ export default function F04StaleTimeGcTime(): JSX.Element {
                 Click "Refresh" (will refetch in background)
               </button>
               {staleQuery.data && (
-                <div className="mt-4 text-sm text-gray-700">
+                <div className="mt-4 text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
                   <p className="font-semibold mb-2">Users:</p>
                   <ul className="space-y-1">
                     {staleQuery.data.slice(0, 3).map((user: User) => (
@@ -210,12 +210,12 @@ export default function F04StaleTimeGcTime(): JSX.Element {
 
         {/* Code Breakdown */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Configuration Deep Dive
           </h2>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Setting staleTime in a Query
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -228,17 +228,17 @@ export default function F04StaleTimeGcTime(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Understanding the Timeline
             </h3>
-            <div className="space-y-3 text-sm text-gray-700">
-              <div className="p-3 bg-green-50 border border-green-200 rounded">
-                <p className="font-semibold text-green-900">Fresh Phase (0 to staleTime)</p>
+            <div className="space-y-3 text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
+              <div className="p-3 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border border-green-200 rounded">
+                <p className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400">Fresh Phase (0 to staleTime)</p>
                 <p>Data is considered fresh. Cached data is returned instantly. No refetch.</p>
               </div>
-              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
-                <p className="font-semibold text-yellow-900">Stale-but-cached Phase (staleTime to gcTime)</p>
+              <div className="p-3 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded">
+                <p className="font-semibold text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">Stale-but-cached Phase (staleTime to gcTime)</p>
                 <p>Data is stale but still in memory. Background refetch triggered on access.</p>
               </div>
               <div className="p-3 bg-red-50 border border-red-200 rounded">
@@ -248,8 +248,8 @@ export default function F04StaleTimeGcTime(): JSX.Element {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Real-World staleTime Examples
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -267,11 +267,11 @@ staleTime: 1000 * 60 * 60 // 1 hour`}
             </pre>
           </div>
 
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
-            <h3 className="font-semibold text-lg mb-3 text-blue-900">
+          <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded">
+            <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-400 dark:text-blue-400">
               Key Insights
             </h3>
-            <ul className="space-y-2 text-blue-900 text-sm">
+            <ul className="space-y-2 text-blue-900 dark:text-blue-400 dark:text-blue-400 text-sm">
               <li>
                 ✓ staleTime = 0 (default) means data is immediately considered stale on access
               </li>
@@ -291,11 +291,11 @@ staleTime: 1000 * 60 * 60 // 1 hour`}
           </div>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-yellow-900">
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <h3 className="font-semibold text-lg mb-3 text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             📝 Next Step
           </h3>
-          <p className="text-yellow-900">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             Now that you understand staleness, move to <strong>F-05 — Dependent Queries</strong> to learn
             how to chain queries where one depends on another!
           </p>

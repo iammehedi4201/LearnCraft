@@ -23,10 +23,10 @@ export default function NX11Middleware(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Middleware Patterns</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">Middleware Patterns</h2>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
-            <h3 className="text-xl font-semibold mb-4 text-gray-900">File Location</h3>
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-800 dark:border-slate-800 rounded-lg p-6 mb-6">
+            <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">File Location</h3>
             <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`middleware.ts (or .js) goes at the root of your project:
 
@@ -38,11 +38,11 @@ your-project/
             </pre>
           </div>
 
-          <h3 className="text-xl font-semibold mb-4 text-gray-900">Code Examples</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white dark:text-white">Code Examples</h3>
 
           <div className="space-y-6">
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Authentication Middleware</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Authentication Middleware</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
@@ -68,7 +68,7 @@ export const config = {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Add Security Headers</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Add Security Headers</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
@@ -91,7 +91,7 @@ export const config = {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Redirect Based on URL Pattern</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Redirect Based on URL Pattern</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
@@ -120,7 +120,7 @@ export const config = {
             </div>
 
             <div>
-              <h4 className="font-semibold text-gray-900 mb-2">Request Logging</h4>
+              <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white mb-2">Request Logging</h4>
               <pre className="bg-gray-900 text-white p-4 rounded text-sm overflow-x-auto">
 {`// middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
@@ -140,9 +140,9 @@ export function middleware(request: NextRequest) {
             </div>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-6">
-            <h4 className="font-semibold text-green-900 mb-2">✅ Key Takeaways</h4>
-            <ul className="space-y-2 text-gray-700">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-4 rounded mt-6">
+            <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">✅ Key Takeaways</h4>
+            <ul className="space-y-2 text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <li>• middleware.ts runs on every request before routing</li>
               <li>• Ideal for authentication, logging, security headers</li>
               <li>• Can redirect or deny requests</li>

@@ -55,7 +55,7 @@ export default function TQ19Mutations(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border">
             <button
               onClick={handleCreate}
               disabled={mutation.isPending}

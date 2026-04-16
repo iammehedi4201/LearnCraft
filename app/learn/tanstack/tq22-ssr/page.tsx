@@ -39,13 +39,13 @@ export default function TQ22SSR(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border border-gray-200">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
             <h3 className="font-semibold text-lg mb-4">Posts (Hydrated from Server)</h3>
-            {postsQuery.isLoading && <p className="text-blue-600">Loading...</p>}
+            {postsQuery.isLoading && <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">Loading...</p>}
             {postsQuery.data && (
               <div className="space-y-2 max-h-64 overflow-y-auto">
                 {postsQuery.data.slice(0, 5).map((post: Post) => (
-                  <p key={post.id} className="text-sm text-gray-700">
+                  <p key={post.id} className="text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
                     • {post.title.substring(0, 50)}...
                   </p>
                 ))}
@@ -53,7 +53,7 @@ export default function TQ22SSR(): JSX.Element {
             )}
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded text-sm text-blue-900">
+          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border border-blue-200 rounded text-sm text-blue-900 dark:text-blue-400 dark:text-blue-400">
             <p><strong>💡 In a real app:</strong> This data would be fetched on the server using getQueryClient(), dehydrated, and sent to the client. The component would wrap in HydrationBoundary({"{ state }"}) for instant data.</p>
           </div>
 

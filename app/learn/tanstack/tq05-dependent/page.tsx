@@ -68,13 +68,13 @@ export default function TQ05Dependent(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Interactive Example: User → Posts Flow
           </h2>
 
           {/* Query 1: Users List */}
-          <div className="bg-white p-6 rounded-lg border-2 border-blue-300 mb-6">
-            <h3 className="font-semibold text-lg mb-2 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border-2 border-blue-300 mb-6">
+            <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Query 1: Fetch All Users (Always Enabled)
             </h3>
             <p className="text-xs text-gray-600 mb-3 font-mono bg-blue-100 p-2 rounded">
@@ -82,14 +82,14 @@ export default function TQ05Dependent(): JSX.Element {
             </p>
 
             {usersQuery.isLoading && (
-              <p className="text-blue-600">🔄 Loading users...</p>
+              <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading users...</p>
             )}
             {usersQuery.error && (
               <p className="text-red-600">❌ Error: {usersQuery.error.message}</p>
             )}
             {usersQuery.data && (
               <div>
-                <p className="text-gray-700 mb-3 font-semibold">
+                <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 mb-3 font-semibold">
                   ✓ Loaded {usersQuery.data.length} users. Click one to fetch their posts:
                 </p>
                 <div className="flex gap-2 flex-wrap">
@@ -100,7 +100,7 @@ export default function TQ05Dependent(): JSX.Element {
                       className={`px-3 py-2 rounded font-medium transition-colors ${
                         selectedUserId === user.id
                           ? "bg-blue-600 text-white"
-                          : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                          : "bg-gray-100 text-gray-800 dark:text-slate-200 dark:text-slate-200 hover:bg-gray-200"
                       }`}
                     >
                       {user.name}
@@ -112,8 +112,8 @@ export default function TQ05Dependent(): JSX.Element {
           </div>
 
           {/* Query 2: User's Posts */}
-          <div className="bg-white p-6 rounded-lg border-2 border-purple-300">
-            <h3 className="font-semibold text-lg mb-2 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border-2 border-purple-300">
+            <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Query 2: Fetch Posts by Selected User (Dependent)
             </h3>
             <p className="text-xs text-gray-600 mb-3 font-mono bg-purple-100 p-2 rounded">
@@ -145,7 +145,7 @@ export default function TQ05Dependent(): JSX.Element {
                 )}
                 {userPostsQuery.data && (
                   <div>
-                    <p className="text-gray-700 mb-3 font-semibold">
+                    <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 mb-3 font-semibold">
                       ✓ Found {userPostsQuery.data.length} posts by{" "}
                       {usersQuery.data?.find(u => u.id === selectedUserId)?.name}:
                     </p>
@@ -155,10 +155,10 @@ export default function TQ05Dependent(): JSX.Element {
                           key={post.id}
                           className="p-3 bg-purple-50 border border-purple-200 rounded"
                         >
-                          <p className="font-semibold text-gray-900 text-sm">
+                          <p className="font-semibold text-gray-900 dark:text-white dark:text-white text-sm">
                             {post.title}
                           </p>
-                          <p className="text-gray-700 text-xs mt-1 line-clamp-2">
+                          <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 text-xs mt-1 line-clamp-2">
                             {post.body}
                           </p>
                         </div>
@@ -172,11 +172,11 @@ export default function TQ05Dependent(): JSX.Element {
 
           {/* Query Flow Visualization */}
           {selectedUserId && (
-            <div className="mt-6 p-6 bg-green-50 border-l-4 border-green-500 rounded">
-              <p className="text-green-900 font-semibold mb-3">
+            <div className="mt-6 p-6 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 rounded">
+              <p className="text-green-900 dark:text-green-400 dark:text-green-400 font-semibold mb-3">
                 ✓ Data Flow Visualized
               </p>
-              <div className="space-y-3 text-sm text-green-800 font-mono">
+              <div className="space-y-3 text-sm text-green-800 dark:text-green-300 dark:text-green-300 font-mono">
                 <div className="flex items-center gap-2">
                   <span className="px-3 py-1 bg-blue-200 rounded">Query 1</span>
                   <span>→ Fetches all users</span>
@@ -198,12 +198,12 @@ export default function TQ05Dependent(): JSX.Element {
 
         {/* Code Breakdown */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             How to Implement Dependent Queries
           </h2>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Step 1: Main Query (Always Enabled)
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -215,8 +215,8 @@ export default function TQ05Dependent(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Step 2: Dependent Query (Conditionally Enabled)
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -235,8 +235,8 @@ const userPostsQuery = useQuery({
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               More Complex Dependency Chain
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -263,11 +263,11 @@ const firstOrderDetailsQuery = useQuery({
             </pre>
           </div>
 
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
-            <h3 className="font-semibold text-lg mb-3 text-blue-900">
+          <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded">
+            <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-400 dark:text-blue-400">
               Best Practices
             </h3>
-            <ul className="space-y-2 text-blue-900 text-sm">
+            <ul className="space-y-2 text-blue-900 dark:text-blue-400 dark:text-blue-400 text-sm">
               <li>
                 ✓ Use enabled for clean, declarative data dependencies
               </li>
@@ -289,27 +289,27 @@ const firstOrderDetailsQuery = useQuery({
 
         {/* Common Patterns */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Common Patterns
           </h2>
 
           <div className="space-y-4">
-            <div className="bg-white p-4 rounded border border-gray-200">
-              <h4 className="font-semibold text-gray-800 mb-2">Pattern: Optional Query</h4>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-4 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+              <h4 className="font-semibold text-gray-800 dark:text-slate-200 dark:text-slate-200 mb-2">Pattern: Optional Query</h4>
               <pre className="bg-gray-900 text-white p-3 rounded text-xs overflow-x-auto">
 {`enabled: searchTerm !== ""  // Only search when term is not empty`}
               </pre>
             </div>
 
-            <div className="bg-white p-4 rounded border border-gray-200">
-              <h4 className="font-semibold text-gray-800 mb-2">Pattern: Auth Gate</h4>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-4 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+              <h4 className="font-semibold text-gray-800 dark:text-slate-200 dark:text-slate-200 mb-2">Pattern: Auth Gate</h4>
               <pre className="bg-gray-900 text-white p-3 rounded text-xs overflow-x-auto">
 {`enabled: isAuthenticated  // Only fetch private data if logged in`}
               </pre>
             </div>
 
-            <div className="bg-white p-4 rounded border border-gray-200">
-              <h4 className="font-semibold text-gray-800 mb-2">Pattern: Multi-Step Sequential</h4>
+            <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-4 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+              <h4 className="font-semibold text-gray-800 dark:text-slate-200 dark:text-slate-200 mb-2">Pattern: Multi-Step Sequential</h4>
               <pre className="bg-gray-900 text-white p-3 rounded text-xs overflow-x-auto">
 {`enabled: query1.isSuccess && !!query1.data?.id`}
               </pre>
@@ -317,11 +317,11 @@ const firstOrderDetailsQuery = useQuery({
           </div>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-yellow-900">
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <h3 className="font-semibold text-lg mb-3 text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             📝 Next Step
           </h3>
-          <p className="text-yellow-900">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             Now that you understand dependent queries, move to <strong>F-06 — Parallel Queries</strong> to learn
             how to fetch multiple independent resources simultaneously!
           </p>

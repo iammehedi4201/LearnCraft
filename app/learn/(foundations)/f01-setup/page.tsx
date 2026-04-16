@@ -50,12 +50,12 @@ export default function F01Setup(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Setup Checklist
           </h2>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               1. Install Dependencies
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto">
@@ -63,8 +63,8 @@ export default function F01Setup(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               2. Create QueryClient Config
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -86,8 +86,8 @@ export const queryClient = new QueryClient({
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               3. Wrap Root Layout with QueryClientProvider
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -117,25 +117,25 @@ export default function RootLayout({
             </pre>
           </div>
 
-          <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
-            <h3 className="font-semibold text-lg mb-3 text-green-900">
+          <div className="bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 p-6 rounded">
+            <h3 className="font-semibold text-lg mb-3 text-green-900 dark:text-green-400 dark:text-green-400">
               ✓ You're Done!
             </h3>
-            <p className="text-green-800 mb-3">
+            <p className="text-green-800 dark:text-green-300 dark:text-green-300 mb-3">
               Your app is now set up to use TanStack Query. Every page and component
               can now use useQuery, useMutation, and other hooks.
             </p>
-            <p className="text-green-800 text-sm">
+            <p className="text-green-800 dark:text-green-300 dark:text-green-300 text-sm">
               <strong>Tip:</strong> Open React Query Devtools (lower right corner) and navigate
               to other features — you'll see queries being added to the cache in real-time!
             </p>
           </div>
 
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded mt-6">
-            <h3 className="font-semibold text-lg mb-3 text-blue-900">
+          <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded mt-6">
+            <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-400 dark:text-blue-400">
               Key Config Options Explained
             </h3>
-            <ul className="space-y-3 text-blue-900 text-sm">
+            <ul className="space-y-3 text-blue-900 dark:text-blue-400 dark:text-blue-400 text-sm">
               <li>
                 <strong>staleTime (0ms):</strong> How long until fetched data is considered "stale" and needs refetching. 0 means immediately.
               </li>
@@ -152,11 +152,11 @@ export default function RootLayout({
           </div>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-yellow-900">
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <h3 className="font-semibold text-lg mb-3 text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             📝 Next Step
           </h3>
-          <p className="text-yellow-900">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             Now that your project is set up, move to <strong>F-02 — useQuery Basics</strong> to learn how to fetch data!
           </p>
         </section>

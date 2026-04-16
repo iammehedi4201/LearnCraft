@@ -216,7 +216,7 @@ export default function TanStackHub(): JSX.Element {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-3xl">
               <h1 className="text-display text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
-                TanStack Query <span className="text-blue-600">v5</span>
+                TanStack Query <span className="text-blue-600 dark:text-blue-400 dark:text-blue-400">v5</span>
               </h1>
               <p className="text-lg text-slate-600 leading-relaxed">
                 22 comprehensive lessons taking you from absolute foundations
@@ -224,7 +224,7 @@ export default function TanStackHub(): JSX.Element {
               </p>
             </div>
             <div className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-100 px-4 py-2 rounded-full">
-              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+              <div className="h-2 w-2 rounded-full bg-green-50 dark:bg-green-950/20 dark:bg-green-950/200 animate-pulse" />
               Progress: 0 / 22 Complete
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function TanStackHub(): JSX.Element {
               Foundations
             </h2>
             <div className="h-px flex-1 bg-gradient-to-r from-blue-200 to-transparent" />
-            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-widest">TQ-01 to TQ-06</span>
+            <span className="text-xs font-bold text-blue-600 dark:text-blue-400 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 px-3 py-1 rounded-full uppercase tracking-widest">TQ-01 to TQ-06</span>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {foundations.map((f) => (
@@ -298,12 +298,12 @@ export default function TanStackHub(): JSX.Element {
               </div>
             </div>
             <div className="flex-shrink-0">
-              <div className="h-24 w-24 rounded-3xl bg-white/10 backdrop-blur flex items-center justify-center border border-white/20">
+              <div className="h-24 w-24 rounded-3xl bg-white dark:bg-slate-900/50 dark:bg-slate-900/50/10 backdrop-blur flex items-center justify-center border border-white/20">
                 <svg className="w-12 h-12 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" /><path d="M8 6h10" /><path d="M8 10h10" /><path d="M8 14h10" /></svg>
               </div>
             </div>
           </div>
-          <div className="absolute -right-16 -bottom-16 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl group-hover:bg-blue-500/30 transition-colors duration-500" />
+          <div className="absolute -right-16 -bottom-16 h-64 w-64 rounded-full bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/200/20 blur-3xl group-hover:bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/200/30 transition-colors duration-500" />
         </div>
       </div>
     </>

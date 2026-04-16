@@ -44,7 +44,7 @@ export default function TQ20CustomHooks(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border">
             <div className="mb-4">
               <input
                 type="text"
@@ -63,7 +63,7 @@ export default function TQ20CustomHooks(): JSX.Element {
             </div>
 
             <h3 className="font-semibold text-lg mb-2">Posts (using usePosts hook)</h3>
-            {postsQuery.isLoading && <p className="text-blue-600">🔄 Loading...</p>}
+            {postsQuery.isLoading && <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading...</p>}
             {postsQuery.data && (
               <div className="text-sm space-y-1 max-h-40 overflow-y-auto">
                 {postsQuery.data.slice(0, 3).map((p: any) => (
@@ -112,11 +112,11 @@ export default function Component() {
           </pre>
         </section>
 
-        <section className="mt-12 p-6 bg-green-50 border border-green-200 rounded-lg">
-          <h3 className="font-semibold text-lg text-green-900 mb-3">
+        <section className="mt-12 p-6 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border border-green-200 rounded-lg">
+          <h3 className="font-semibold text-lg text-green-900 dark:text-green-400 dark:text-green-400 mb-3">
             🎓 Advanced Complete!
           </h3>
-          <p className="text-green-900 text-sm">
+          <p className="text-green-900 dark:text-green-400 dark:text-green-400 text-sm">
             You've learned production-grade TanStack Query patterns. You're now ready
             to build complex data-driven applications!
           </p>

@@ -84,18 +84,18 @@ export default function M01UseMutation(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Interactive Example: Create a Post
           </h2>
 
           {/* Form */}
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Create a New Post (Demo)
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 dark:text-slate-300 mb-2">
                   Title *
                 </label>
                 <input
@@ -110,7 +110,7 @@ export default function M01UseMutation(): JSX.Element {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 dark:text-slate-300 mb-2">
                   Body *
                 </label>
                 <textarea
@@ -145,7 +145,7 @@ export default function M01UseMutation(): JSX.Element {
 
           {/* Status Display */}
           <div className="grid md:grid-cols-3 gap-4 mb-6">
-            <div className="p-4 bg-white rounded-lg border border-gray-200">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
               <p className="text-xs text-gray-600 uppercase">Status</p>
               <p className="font-bold text-lg">
                 {createPostMutation.isPending && "🔄 Pending"}
@@ -157,13 +157,13 @@ export default function M01UseMutation(): JSX.Element {
                   "Idle"}
               </p>
             </div>
-            <div className="p-4 bg-white rounded-lg border border-gray-200">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
               <p className="text-xs text-gray-600 uppercase">Response ID</p>
               <p className="font-bold text-lg">
                 {createPostMutation.data?.id ?? "—"}
               </p>
             </div>
-            <div className="p-4 bg-white rounded-lg border border-gray-200">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
               <p className="text-xs text-gray-600 uppercase">Error</p>
               <p className="font-bold text-lg text-red-600">
                 {createPostMutation.error ? "Yes" : "No"}
@@ -173,11 +173,11 @@ export default function M01UseMutation(): JSX.Element {
 
           {/* Success Message */}
           {createPostMutation.isSuccess && (
-            <div className="p-6 bg-green-50 border-l-4 border-green-500 rounded mb-6">
-              <h4 className="font-semibold text-green-900 mb-2">
+            <div className="p-6 bg-green-50 dark:bg-green-950/20 dark:bg-green-950/20 border-l-4 border-green-500 rounded mb-6">
+              <h4 className="font-semibold text-green-900 dark:text-green-400 dark:text-green-400 mb-2">
                 ✓ Post Created Successfully!
               </h4>
-              <div className="text-green-800 text-sm space-y-1">
+              <div className="text-green-800 dark:text-green-300 dark:text-green-300 text-sm space-y-1">
                 <p>
                   <strong>ID:</strong> {createPostMutation.data?.id}
                 </p>
@@ -209,8 +209,8 @@ export default function M01UseMutation(): JSX.Element {
           )}
 
           {/* Info Box */}
-          <div className="p-6 bg-blue-50 border-l-4 border-blue-500 rounded">
-            <p className="text-blue-900 font-semibold mb-2">
+          <div className="p-6 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 rounded">
+            <p className="text-blue-900 dark:text-blue-400 dark:text-blue-400 font-semibold mb-2">
               ℹ️ About This API
             </p>
             <p className="text-blue-800 text-sm">
@@ -223,12 +223,12 @@ export default function M01UseMutation(): JSX.Element {
 
         {/* Code Breakdown */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             How to Use useMutation
           </h2>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Step 1: Define the Mutation
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -245,8 +245,8 @@ export default function M01UseMutation(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Step 2: Trigger with mutate()
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -263,8 +263,8 @@ export default function M01UseMutation(): JSX.Element {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Step 3: Handle State
             </h3>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
@@ -284,11 +284,11 @@ if (createPostMutation.error) {
             </pre>
           </div>
 
-          <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
               Mutation State Properties
             </h3>
-            <div className="space-y-3 text-sm text-gray-700">
+            <div className="space-y-3 text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
               <div className="p-3 bg-gray-50 rounded">
                 <p className="font-semibold">isPending</p>
                 <p className="text-gray-600">true while mutation is running</p>
@@ -316,11 +316,11 @@ if (createPostMutation.error) {
             </div>
           </div>
 
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
-            <h3 className="font-semibold text-lg mb-3 text-blue-900">
+          <div className="bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded">
+            <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-400 dark:text-blue-400">
               Key Difference: useQuery vs useMutation
             </h3>
-            <ul className="space-y-2 text-blue-900 text-sm">
+            <ul className="space-y-2 text-blue-900 dark:text-blue-400 dark:text-blue-400 text-sm">
               <li>
                 <strong>useQuery:</strong> Runs automatically on mount, caches results,
                 used for reads (GET)
@@ -333,11 +333,11 @@ if (createPostMutation.error) {
           </div>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-yellow-900">
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <h3 className="font-semibold text-lg mb-3 text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             📝 Next Step
           </h3>
-          <p className="text-yellow-900">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             Now that you understand useMutation, move to <strong>M-02 — Optimistic Updates</strong> to learn
             how to update UI before the server responds!
           </p>

@@ -44,11 +44,11 @@ export default function TQ21Suspense(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border">
             <h3 className="font-semibold text-lg mb-4">Posts (with Suspense)</h3>
             <Suspense
               fallback={
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded text-blue-600">
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border border-blue-200 rounded text-blue-600 dark:text-blue-400 dark:text-blue-400">
                   🔄 Loading posts...
                 </div>
               }

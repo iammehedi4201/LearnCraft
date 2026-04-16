@@ -49,42 +49,42 @@ export default function P01Paginated(): JSX.Element {
         />
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Paginated Posts (10 per page)
           </h2>
 
           {/* Status */}
           <div className="grid md:grid-cols-3 gap-4 mb-6">
-            <div className="p-4 bg-white rounded border border-gray-200">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
               <p className="text-xs text-gray-600">Current Page</p>
-              <p className="font-bold text-2xl text-blue-600">{page}</p>
+              <p className="font-bold text-2xl text-blue-600 dark:text-blue-400 dark:text-blue-400">{page}</p>
             </div>
-            <div className="p-4 bg-white rounded border border-gray-200">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
               <p className="text-xs text-gray-600">Items This Page</p>
               <p className="font-bold text-2xl">{postsQuery.data?.items.length || 0}</p>
             </div>
-            <div className="p-4 bg-white rounded border border-gray-200">
+            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
               <p className="text-xs text-gray-600">Total Pages</p>
               <p className="font-bold text-2xl">{postsQuery.data?.totalPages || 0}</p>
             </div>
           </div>
 
           {/* Posts */}
-          {postsQuery.isLoading && <p className="text-blue-600">🔄 Loading...</p>}
+          {postsQuery.isLoading && <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading...</p>}
 
           {postsQuery.data && (
             <div className="space-y-3 mb-6 max-h-80 overflow-y-auto">
               {postsQuery.data.items.map((post: Post) => (
-                <div key={post.id} className="p-4 bg-white rounded border border-gray-200">
-                  <h4 className="font-semibold text-gray-900">#{post.id}: {post.title}</h4>
-                  <p className="text-gray-700 text-sm mt-1">{post.body}</p>
+                <div key={post.id} className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
+                  <h4 className="font-semibold text-gray-900 dark:text-white dark:text-white">#{post.id}: {post.title}</h4>
+                  <p className="text-gray-700 dark:text-slate-300 dark:text-slate-300 text-sm mt-1">{post.body}</p>
                 </div>
               ))}
             </div>
           )}
 
           {/* Pagination Controls */}
-          <div className="flex justify-between items-center gap-4 p-4 bg-white rounded border border-gray-200">
+          <div className="flex justify-between items-center gap-4 p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded border border-gray-200 dark:border-slate-800 dark:border-slate-800">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1 || postsQuery.isLoading}
@@ -100,7 +100,7 @@ export default function P01Paginated(): JSX.Element {
                   className={`px-3 py-1 rounded ${
                     page === i + 1
                       ? "bg-blue-600 text-white"
-                      : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                      : "bg-gray-200 text-gray-800 dark:text-slate-200 dark:text-slate-200 hover:bg-gray-300"
                   }`}
                 >
                   {i + 1}
@@ -116,8 +116,8 @@ export default function P01Paginated(): JSX.Element {
             </button>
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded">
-            <p className="text-sm text-blue-900">
+          <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 border border-blue-200 rounded">
+            <p className="text-sm text-blue-900 dark:text-blue-400 dark:text-blue-400">
               <strong>💡 Tip:</strong> Each page is cached separately. Click back to page 1,
               then forward to page 2 — it loads instantly because page 1 is still cached!
             </p>
@@ -125,7 +125,7 @@ export default function P01Paginated(): JSX.Element {
         </section>
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white dark:text-white">
             Implementation Pattern
           </h2>
 
@@ -144,8 +144,8 @@ const postsQuery = useQuery({
           </pre>
         </section>
 
-        <section className="mt-12 p-6 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p className="text-yellow-900">
+        <section className="mt-12 p-6 bg-yellow-50 dark:bg-yellow-950/20 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-900/50 dark:border-yellow-900/50 rounded-lg">
+          <p className="text-yellow-900 dark:text-yellow-400 dark:text-yellow-400">
             Next: <strong>P-02 — keepPreviousData</strong> to eliminate loading flicker between pages!
           </p>
         </section>

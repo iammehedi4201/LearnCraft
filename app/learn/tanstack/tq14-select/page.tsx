@@ -32,13 +32,13 @@ export default function TQ14Select(): JSX.Element {
         />
 
         <section className="mt-12">
-          <div className="bg-white p-6 rounded-lg border">
+          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border">
             <h3 className="font-semibold text-lg mb-4">Post Titles Only (using select)</h3>
-            {titlesQuery.isLoading && <p className="text-blue-600">🔄 Loading...</p>}
+            {titlesQuery.isLoading && <p className="text-blue-600 dark:text-blue-400 dark:text-blue-400">🔄 Loading...</p>}
             {titlesQuery.data && (
               <div className="space-y-1 max-h-64 overflow-y-auto">
                 {titlesQuery.data.slice(0, 5).map((item) => (
-                  <div key={item.id} className="text-sm text-gray-700">
+                  <div key={item.id} className="text-sm text-gray-700 dark:text-slate-300 dark:text-slate-300">
                     • {item.title.substring(0, 60)}...
                   </div>
                 ))}
