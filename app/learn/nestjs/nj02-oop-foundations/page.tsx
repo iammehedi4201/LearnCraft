@@ -81,11 +81,21 @@ export default function NJ02OOP(): JSX.Element {
           <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-amber-500/5 blur-3xl group-hover:bg-amber-500/10 transition-colors duration-500" />
         </div>
 
-        {/* Section 1: Classes & Constructors */}
+        {/* Section 1: Classes & Objects */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. Classes & Constructors</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">A class is a blueprint. The constructor runs when you create an instance. TypeScript adds access modifiers that JavaScript doesn't have.</p>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. Classes & Objects</h2>
+          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6 font-sans">
+            <div className="p-6 bg-amber-500/5 rounded-2xl border border-amber-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-amber-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">The "Lego" Metaphor: Instructions vs. The Build</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Think of a **Class** as the Lego instruction booklet. It tells you exactly how to build a castle, but it's not the castle itself. An **Object** (or instance) is the actual Lego castle you built using those instructions. You can use one booklet to build 100 identical castles!
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`// ✅ Basic class with constructor
 class User {
@@ -133,9 +143,19 @@ console.log(product.name);    // ✅ "Laptop"
 
         {/* Section 2: Encapsulation */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Encapsulation — Hide the Internals</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">Encapsulation means exposing only what's necessary and hiding internal implementation. This is exactly how NestJS Services work — controllers call service methods without knowing the implementation.</p>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Encapsulation — Hiding the Mess</h2>
+          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6 font-sans">
+            <div className="p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">The "Car Hood" Metaphor: Don't touch the engine!</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  When you drive a car, you use the steering wheel and pedals. You don't need to touch the hot, messy engine to turn left. **Encapsulation** means we hide the "messy" inner parts of our code (using <code className="text-blue-600">private</code>) and only show the "clean" controls (using <code className="text-blue-600">public</code> methods).
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`class BankAccount {
   private balance: number = 0;
@@ -166,8 +186,19 @@ console.log(product.name);    // ✅ "Laptop"
 
         {/* Section 3: Inheritance */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">3. Inheritance — Share & Extend Behavior</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">3. Inheritance — Family Traits</h2>
+          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6 font-sans">
+            <div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">The "Family" Metaphor: Passing down traits</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  **Inheritance** is like passing down your last name or eye color to your children. In code, a "Parent" class can pass all its skills and data down to a "Child" class (using <code className="text-emerald-600">extends</code>). This saves you from writing the same code over and over again for different items that are basically the same.
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`// ✅ Base class (parent)
 class BaseEntity {
@@ -217,9 +248,19 @@ console.log(user.createdAt);  // ✅ Inherited property
 
         {/* Section 4: Polymorphism */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">4. Polymorphism — Same Interface, Different Behavior</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">Same method name, different implementations. This is how NestJS Guards and Pipes work — they all implement the same interface but behave differently.</p>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">4. Polymorphism — The Universal Remote</h2>
+          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6 font-sans">
+            <div className="p-6 bg-purple-500/5 rounded-2xl border border-purple-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-purple-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">The "Remote" Metaphor: One button, many results</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Think of a "Power" button on a universal remote. When you press it, the TV turns on, the Stereo turns on, and the Lights dim. They all responded to the *same* button, but they each did their own thing. In code, **Polymorphism** lets you call the same method name (like <code className="text-purple-600">.send()</code>) on different objects, and each one knows how to handle it.
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`// ✅ Interface defines the contract
 interface NotificationService {
@@ -262,8 +303,19 @@ notify(new SmsNotification(), "+880...", "Your OTP is 1234");
 
         {/* Section 5: Abstraction */}
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">5. Abstraction — Abstract Classes</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">5. Abstraction — The Light Switch</h2>
+          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6 font-sans">
+            <div className="p-6 bg-rose-500/5 rounded-2xl border border-rose-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-rose-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-rose-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">The "Light Switch" Metaphor: Usage vs. Complexity</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  When you want to turn on the light, you flip a switch. You don't need to know about the wires, the power plant, or the physics of electricity. **Abstraction** means hiding the massive complexity behind a simple "Interface." In NestJS, we use **Abstract Classes** to define what something *should* do, without worrying yet about *how* it does it.
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`// ✅ Abstract class — cannot be instantiated directly
 abstract class BaseRepository<T> {

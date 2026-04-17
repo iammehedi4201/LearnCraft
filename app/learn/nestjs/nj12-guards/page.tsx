@@ -14,19 +14,36 @@ export default function NJ12Guards(): JSX.Element {
           <div className="relative z-10">
             <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500 text-white shadow-lg shadow-purple-500/20"><span className="font-display font-bold text-sm tracking-wider">NJ-12</span></div>
-              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Guards & Authorization</h2>
+              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">The "Bouncer" (Guards & Auth)</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-purple-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-purple-600" /></div><h4 className="font-display text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest">NestJS Concept</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Guards determine whether a request can proceed. They implement CanActivate and return true/false. Used for authentication, authorization, and role-based access.</p></div>
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Express.js Comparison</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Express uses middleware functions for auth. NestJS guards are more powerful — they have access to execution context and metadata.</p></div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-purple-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-purple-600" /></div><h4 className="font-display text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest">Plain English</h4></div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Guards are the bouncers at the door. If a user tries to enter a restricted area, the Guard checks their "ID" (Token/Role) and says either "Come in" (true) or "Go away" (false).</p>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Express.js Comparison</h4></div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">In Express, you use normal middleware for auth. In NestJS, Guards are a special tool built exactly for answering one question: "Is this user allowed here?"</p>
+              </div>
             </div>
           </div>
           <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-purple-500/5 blur-3xl group-hover:bg-purple-500/10 transition-colors duration-500" />
         </div>
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. Basic Auth Guard</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. The Basic Bouncer (AuthGuard)</h2>
+          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6 font-sans">
+            <div className="p-6 bg-purple-500/5 rounded-2xl border border-purple-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-purple-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">The "Bouncer" Metaphor: Show your ID</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Before anyone is allowed to see the sensitive data in a Controller, a **Guard** steps in. The Guard asks to see a "Token" (which is like a digital VIP pass). If you have a valid pass, the Guard returns <code className="text-green-600 font-bold">true</code>. If not, the Guard returns an error and kicks you out!
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 
@@ -66,8 +83,19 @@ export class TasksController {
         </section>
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Role-Based Guard</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. The VIP List (Role-Based Guards)</h2>
+          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6 font-sans">
+            <div className="p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">The "VIP" Metaphor: Only Admins Allowed</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Sometimes, just having an ID isn't enough. You need to be on the **VIP List**. The <code className="text-blue-600">@Roles('admin')</code> sticker tells the Guard to check the list. The Guard looks at your ID, compares it to the list, and blocks you if you're not an Admin.
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`import { SetMetadata } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';

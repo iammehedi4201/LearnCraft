@@ -298,7 +298,7 @@ create(@Body() dto: CreateUserDto) {
         <section className="mt-6 p-6 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/50 rounded-lg">
           <h3 className="font-semibold text-lg mb-3 text-green-900 dark:text-green-400">🎉 Foundations Complete!</h3>
           <p className="text-green-900 dark:text-green-300">
-            You've finished the NestJS Foundations! You understand Modules, Controllers, Services, DI, and Validation. 
+            You've finished the NestJS Foundations! You understand Modules, Controllers, Services, DI, and Validation.
             Move to <Link href="/learn/nestjs/nj11-pipes" className="font-bold underline hover:text-green-600">NJ-11 — Pipes & Transformation</Link> to start the Intermediate section.
           </p>
         </section>

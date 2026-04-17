@@ -376,7 +376,7 @@ class AppService {
         <section className="mt-6 p-6 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/50 rounded-lg">
           <h3 className="font-semibold text-lg mb-3 text-green-900 dark:text-green-400">🎉 Prerequisites Complete!</h3>
           <p className="text-green-900 dark:text-green-300">
-            You now have the TypeScript, OOP, Decorator, and SOLID foundations that NestJS demands. 
+            You now have the TypeScript, OOP, Decorator, and SOLID foundations that NestJS demands.
             Time to dive into the framework itself! Move to <Link href="/learn/nestjs/nj05-setup" className="font-bold underline hover:text-green-600">NJ-05 — Project Setup & Architecture</Link> to create your first NestJS application.
           </p>
         </section>

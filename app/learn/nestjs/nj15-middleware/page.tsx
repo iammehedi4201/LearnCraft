@@ -14,11 +14,17 @@ export default function NJ15Middleware(): JSX.Element {
           <div className="relative z-10">
             <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500 text-white shadow-lg shadow-purple-500/20"><span className="font-display font-bold text-sm tracking-wider">NJ-15</span></div>
-              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Middleware</h2>
+              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">"Lobby Security" (Middleware)</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-purple-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-purple-600" /></div><h4 className="font-display text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest">NestJS Concept</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Middleware runs BEFORE the route handler. It has access to req, res, and next() — exactly like Express middleware. NestJS supports both class-based and functional middleware.</p></div>
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Express.js Comparison</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Identical to Express middleware! NestJS actually uses Express middleware under the hood. All Express middleware packages work in NestJS.</p></div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-purple-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-purple-600" /></div><h4 className="font-display text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest">Plain English</h4></div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Middleware is the security desk in the lobby of a building. It's the very first thing everyone must pass through before they can even speak to the Bouncer (Guard) or use the Filter (Pipe).</p>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Express.js Comparison</h4></div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">It's exactly the same! If you know Express middleware (<code className="font-bold">req, res, next</code>), you know NestJS middleware. In fact, all Express middleware works in NestJS perfectly.</p>
+              </div>
             </div>
           </div>
           <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-purple-500/5 blur-3xl group-hover:bg-purple-500/10 transition-colors duration-500" />
@@ -102,18 +108,16 @@ async function bootstrap() {
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">3. NestJS Request Lifecycle</h2>
           <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`// 🔄 Full NestJS Request Pipeline:
+              {`// 🔄 The "Office Building" Request Order:
 //
-// 1. Middleware       → req/res/next (Express-style)
-// 2. Guards           → CanActivate (yes/no access)
-// 3. Interceptors     → BEFORE handler (transform, log, cache)
-// 4. Pipes            → Validate/transform parameters
-// 5. Controller       → Route handler
-// 6. Interceptors     → AFTER handler (transform response)
-// 7. Exception Filter → Catch and format errors
-//
-// Think of it as:
-// Middleware → Guards → Interceptors(pre) → Pipes → Handler → Interceptors(post) → Filter`}
+// 1. Middleware       → Lobby Security (Logs you in the front desk book)
+// 2. Guards           → The Bouncer at the elevator (Checks if you're allowed upstairs)
+// 3. Interceptors     → Quality Control BEFORE cooking (Starts a timer)
+// 4. Pipes            → The Water Filter (Makes sure your data is perfectly clean)
+// 5. Controller       → The Manager (Takes your request and hands it to the chef)
+// 6. Interceptors     → Quality Control AFTER cooking (Wraps the food in a nice box)
+// 7. Exception Filter → The Safety Net (Catches you if you fall out the window!)
+`}
             </pre>
           </div>
           <div className="bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded">

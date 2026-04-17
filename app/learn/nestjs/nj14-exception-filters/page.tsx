@@ -14,11 +14,17 @@ export default function NJ14ExceptionFilters(): JSX.Element {
           <div className="relative z-10">
             <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500 text-white shadow-lg shadow-purple-500/20"><span className="font-display font-bold text-sm tracking-wider">NJ-14</span></div>
-              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Exception Filters</h2>
+              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">The "Safety Net" (Exception Filters)</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-purple-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-purple-600" /></div><h4 className="font-display text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest">NestJS Concept</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Exception filters catch unhandled exceptions and format error responses. NestJS has a built-in filter, but custom filters give you full control over error formatting.</p></div>
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Express.js Comparison</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Express uses error-handling middleware (4 params). NestJS uses catch decorators with typed exception handling.</p></div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-purple-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-purple-600" /></div><h4 className="font-display text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest">Plain English</h4></div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Exception Filters are a giant Safety Net under your code. If your code trips and falls (an error happens), the net catches the error and politely tells the user without crashing the server.</p>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Express.js Comparison</h4></div>
+                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">In Express, you typically write a massive error-handling middleware. NestJS has built-in typed exceptions (like NotFoundException), making error throwing super clean.</p>
+              </div>
             </div>
           </div>
           <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-purple-500/5 blur-3xl group-hover:bg-purple-500/10 transition-colors duration-500" />
@@ -62,8 +68,19 @@ export class UsersService {
         </section>
 
         <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Custom Exception Filter</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Building Your Own Safety Net</h2>
+          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6 font-sans">
+            <div className="p-6 bg-red-500/5 rounded-2xl border border-red-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-red-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-red-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">The "Customer Service" Metaphor</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  When a chef burns the food (an unhandled error), you don't want the kitchen exploding in front of the customer. A **Custom Exception Filter** is like a friendly Customer Service rep. They grab the burned food, throw it away, and bring the customer a polite note saying: <span className="italic">"Sorry, we're having trouble. Here is exactly what went wrong."</span>
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 
