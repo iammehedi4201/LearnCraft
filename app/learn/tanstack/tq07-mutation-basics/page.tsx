@@ -89,8 +89,8 @@ export default function TQ07MutationBasics(): JSX.Element {
           </h2>
 
           {/* Form */}
-          <div className="bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200 dark:text-slate-200">
+          <div className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 p-6 rounded-lg mb-6 shadow-sm">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-white">
               Create a New Post (Demo)
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -104,7 +104,7 @@ export default function TQ07MutationBasics(): JSX.Element {
                   onChange={(e) => setTitle(e.target.value)}
                   disabled={createPostMutation.isPending}
                   placeholder="Enter post title"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                  className="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
                   required
                 />
               </div>
@@ -119,7 +119,7 @@ export default function TQ07MutationBasics(): JSX.Element {
                   disabled={createPostMutation.isPending}
                   placeholder="Enter post content"
                   rows={5}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                  className="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
                   required
                 />
               </div>
@@ -145,27 +145,27 @@ export default function TQ07MutationBasics(): JSX.Element {
 
           {/* Status Display */}
           <div className="grid md:grid-cols-3 gap-4 mb-6">
-            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
-              <p className="text-xs text-gray-600 uppercase">Status</p>
-              <p className="font-bold text-lg">
+            <div className="p-4 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg shadow-sm">
+              <p className="text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-1">Status</p>
+              <p className="font-bold text-lg text-slate-900 dark:text-white">
                 {createPostMutation.isPending && "🔄 Pending"}
-                {createPostMutation.isSuccess && "✓ Success"}
-                {createPostMutation.isError && "❌ Error"}
+                {createPostMutation.isSuccess && <span className="text-green-600 dark:text-green-400">✓ Success</span>}
+                {createPostMutation.isError && <span className="text-red-600 dark:text-red-400">❌ Error</span>}
                 {!createPostMutation.isPending &&
                   !createPostMutation.isSuccess &&
                   !createPostMutation.isError &&
                   "Idle"}
               </p>
             </div>
-            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
-              <p className="text-xs text-gray-600 uppercase">Response ID</p>
-              <p className="font-bold text-lg">
+            <div className="p-4 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg shadow-sm">
+              <p className="text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-1">Response ID</p>
+              <p className="font-bold text-lg text-slate-900 dark:text-white">
                 {createPostMutation.data?.id ?? "—"}
               </p>
             </div>
-            <div className="p-4 bg-white dark:bg-slate-900/50 dark:bg-slate-900/50 rounded-lg border border-gray-200 dark:border-slate-800 dark:border-slate-800">
-              <p className="text-xs text-gray-600 uppercase">Error</p>
-              <p className="font-bold text-lg text-red-600">
+            <div className="p-4 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-lg shadow-sm">
+              <p className="text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wider mb-1">Error</p>
+              <p className={`font-bold text-lg ${createPostMutation.error ? 'text-red-600' : 'text-slate-900 dark:text-white'}`}>
                 {createPostMutation.error ? "Yes" : "No"}
               </p>
             </div>

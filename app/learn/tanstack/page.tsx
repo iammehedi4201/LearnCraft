@@ -190,10 +190,10 @@ export default function TanStackHub(): JSX.Element {
             {code}
           </span>
         </div>
-        <h3 className="font-display font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors">
+        <h3 className="font-display font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">
           {name}
         </h3>
-        <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{desc}</p>
       </div>
       <div className={`absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-0 translate-x-4`}>
         <svg className={`w-5 h-5 text-${color}-500`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
@@ -215,10 +215,10 @@ export default function TanStackHub(): JSX.Element {
           </Link>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-3xl">
-              <h1 className="text-display text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
-                TanStack Query <span className="text-blue-600 dark:text-blue-400 dark:text-blue-400">v5</span>
+              <h1 className="text-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl mb-4">
+                TanStack Query <span className="text-blue-600 dark:text-blue-400">v5</span>
               </h1>
-              <p className="text-lg text-slate-600 leading-relaxed">
+              <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
                 22 comprehensive lessons taking you from absolute foundations
                 to advanced production patterns and server-side integration.
               </p>
@@ -233,11 +233,11 @@ export default function TanStackHub(): JSX.Element {
         {/* Foundations */}
         <section className="mb-20">
           <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-display text-2xl font-bold text-slate-900">
+            <h2 className="text-display text-2xl font-bold text-slate-900 dark:text-white">
               Foundations
             </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-blue-200 to-transparent" />
-            <span className="text-xs font-bold text-blue-600 dark:text-blue-400 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/20 px-3 py-1 rounded-full uppercase tracking-widest">TQ-01 to TQ-06</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-blue-200 dark:from-blue-900/50 to-transparent" />
+            <span className="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full uppercase tracking-widest">TQ-01 to TQ-06</span>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {foundations.map((f) => (
@@ -249,11 +249,11 @@ export default function TanStackHub(): JSX.Element {
         {/* Intermediate */}
         <section className="mb-20">
           <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-display text-2xl font-bold text-slate-900">
+            <h2 className="text-display text-2xl font-bold text-slate-900 dark:text-white">
               Intermediate
             </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-indigo-200 to-transparent" />
-            <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full uppercase tracking-widest">TQ-07 to TQ-12</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-indigo-200 dark:from-indigo-900/50 to-transparent" />
+            <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-3 py-1 rounded-full uppercase tracking-widest">TQ-07 to TQ-12</span>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {intermediate.map((f) => (
@@ -265,11 +265,11 @@ export default function TanStackHub(): JSX.Element {
         {/* Advanced */}
         <section className="mb-20">
           <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-display text-2xl font-bold text-slate-900">
+            <h2 className="text-display text-2xl font-bold text-slate-900 dark:text-white">
               Advanced Patterns
             </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-pink-200 to-transparent" />
-            <span className="text-xs font-bold text-pink-600 bg-pink-50 px-3 py-1 rounded-full uppercase tracking-widest">TQ-13 to TQ-22</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-pink-200 dark:from-pink-900/50 to-transparent" />
+            <span className="text-xs font-bold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-900/20 px-3 py-1 rounded-full uppercase tracking-widest">TQ-13 to TQ-22</span>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {advanced.map((f) => (
@@ -303,7 +303,7 @@ export default function TanStackHub(): JSX.Element {
               </div>
             </div>
           </div>
-          <div className="absolute -right-16 -bottom-16 h-64 w-64 rounded-full bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/200/20 blur-3xl group-hover:bg-blue-50 dark:bg-blue-950/20 dark:bg-blue-950/200/30 transition-colors duration-500" />
+          <div className="absolute -right-16 -bottom-16 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl group-hover:bg-blue-500/20 transition-colors duration-500" />
         </div>
       </div>
     </>

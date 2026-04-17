@@ -176,10 +176,10 @@ export default function NextJsHub(): JSX.Element {
             {code}
           </span>
         </div>
-        <h3 className="font-display font-bold text-slate-900 mb-2 group-hover:text-primary transition-colors">
+        <h3 className="font-display font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">
           {name}
         </h3>
-        <p className="text-slate-500 text-sm leading-relaxed">{desc}</p>
+        <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{desc}</p>
       </div>
       <div className={`absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-0 translate-x-4`}>
         <svg className={`w-5 h-5 text-${color}-500`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
@@ -201,10 +201,10 @@ export default function NextJsHub(): JSX.Element {
           </Link>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="max-w-3xl">
-              <h1 className="text-display text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl mb-4">
-                Next.js <span className="text-purple-600">14+</span>
+              <h1 className="text-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl mb-4">
+                Next.js <span className="text-purple-600 dark:text-purple-400">14+</span>
               </h1>
-              <p className="text-lg text-slate-600 leading-relaxed">
+              <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
                 Master the world's most popular React framework. From basic routing
                 to advanced rendering strategies and performance optimizations.
               </p>
@@ -219,11 +219,11 @@ export default function NextJsHub(): JSX.Element {
         {/* Basics */}
         <section className="mb-20">
           <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-display text-2xl font-bold text-slate-900">
+            <h2 className="text-display text-2xl font-bold text-slate-900 dark:text-white">
               Foundations
             </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-purple-200 to-transparent" />
-            <span className="text-xs font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full uppercase tracking-widest">NX-01 to NX-06</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-purple-200 dark:from-purple-900/50 to-transparent" />
+            <span className="text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 px-3 py-1 rounded-full uppercase tracking-widest">NX-01 to NX-06</span>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {basics.map((f) => (
@@ -235,11 +235,11 @@ export default function NextJsHub(): JSX.Element {
         {/* Intermediate */}
         <section className="mb-20">
           <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-display text-2xl font-bold text-slate-900">
+            <h2 className="text-display text-2xl font-bold text-slate-900 dark:text-white">
               Intermediate
             </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-orange-200 to-transparent" />
-            <span className="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-full uppercase tracking-widest">NX-07 to NX-12</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-orange-200 dark:from-orange-900/50 to-transparent" />
+            <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-3 py-1 rounded-full uppercase tracking-widest">NX-07 to NX-12</span>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {intermediate.map((f) => (
@@ -251,11 +251,11 @@ export default function NextJsHub(): JSX.Element {
         {/* Advanced */}
         <section className="mb-20">
           <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-display text-2xl font-bold text-slate-900">
+            <h2 className="text-display text-2xl font-bold text-slate-900 dark:text-white">
               Advanced Performance
             </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-pink-200 to-transparent" />
-            <span className="text-xs font-bold text-pink-600 bg-pink-50 px-3 py-1 rounded-full uppercase tracking-widest">NX-13 to NX-20</span>
+            <div className="h-px flex-1 bg-gradient-to-r from-pink-200 dark:from-pink-900/50 to-transparent" />
+            <span className="text-xs font-bold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-900/20 px-3 py-1 rounded-full uppercase tracking-widest">NX-13 to NX-20</span>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {advanced.map((f) => (
@@ -284,7 +284,7 @@ export default function NextJsHub(): JSX.Element {
               </div>
             </div>
             <div className="flex-shrink-0">
-              <div className="h-24 w-24 rounded-3xl bg-white dark:bg-slate-900/50 dark:bg-slate-900/50/10 backdrop-blur flex items-center justify-center border border-white/20">
+              <div className="h-24 w-24 rounded-3xl bg-white dark:bg-slate-900/50 backdrop-blur flex items-center justify-center border border-white/20">
                 <svg className="w-12 h-12 text-purple-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
               </div>
             </div>
