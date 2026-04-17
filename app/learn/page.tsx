@@ -86,12 +86,12 @@ export default function LearnHub(): JSX.Element {
               </p>
               <Link
                 href="/learn/tanstack"
-                className="inline-flex items-center gap-3 text-lg font-bold text-blue-600 dark:text-blue-400 dark:text-blue-400 hover:text-blue-700 transition-colors"
+                className="inline-flex items-center gap-3 text-lg font-bold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
               >
                 Deep Dive <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </Link>
             </div>
-            <div className="absolute top-0 right-0 h-32 w-32 bg-blue-50 dark:bg-blue-950/200/5 rounded-bl-full -mr-10 -mt-10 group-hover:bg-blue-50 dark:bg-blue-950/200/10 transition-colors" />
+            <div className="absolute top-0 right-0 h-32 w-32 bg-blue-50/50 dark:bg-blue-500/10 rounded-bl-full -mr-10 -mt-10 group-hover:bg-blue-50 dark:group-hover:bg-blue-500/20 transition-colors" />
           </div>
 
           {/* NestJS Elite Path */}
@@ -109,12 +109,12 @@ export default function LearnHub(): JSX.Element {
               </p>
               <Link
                 href="/learn/nestjs"
-                className="inline-flex items-center gap-3 text-lg font-bold text-red-600 dark:text-red-400 dark:text-red-400 hover:text-red-700 transition-colors"
+                className="inline-flex items-center gap-3 text-lg font-bold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
               >
                 Deep Dive <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </Link>
             </div>
-            <div className="absolute top-0 right-0 h-32 w-32 bg-red-50 dark:bg-red-950/20 rounded-bl-full -mr-10 -mt-10 group-hover:bg-red-50 dark:bg-red-950/30 transition-colors" />
+            <div className="absolute top-0 right-0 h-32 w-32 bg-red-50/50 dark:bg-red-500/10 rounded-bl-full -mr-10 -mt-10 group-hover:bg-red-50 dark:group-hover:bg-red-500/20 transition-colors" />
           </div>
 
           {/* Next.js Path */}
@@ -132,53 +132,66 @@ export default function LearnHub(): JSX.Element {
               </p>
               <Link
                 href="/learn/nextjs"
-                className="inline-flex items-center gap-3 text-lg font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-400 transition-colors"
+                className="inline-flex items-center gap-3 text-lg font-bold text-slate-900 dark:text-slate-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
               >
                 Deep Dive <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 group-hover:translate-x-2 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </Link>
             </div>
-            <div className="absolute top-0 right-0 h-32 w-32 bg-primary/5 rounded-bl-full -mr-10 -mt-10 group-hover:bg-primary/10 transition-colors" />
+            <div className="absolute top-0 right-0 h-32 w-32 bg-indigo-50/50 dark:bg-indigo-500/10 rounded-bl-full -mr-10 -mt-10 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/20 transition-colors" />
           </div>
         </div>
       </div >
 
       {/* Roadmap Section */}
-      < div className="bg-slate-50 dark:bg-slate-900/50 py-32 overflow-hidden relative border-y border-slate-100 dark:border-slate-800" >
+      <section className="relative py-32 overflow-hidden border-y border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/20 transition-colors">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-24">
-            <h2 className="text-display text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">The Roadmap to <span className="text-blue-600 dark:text-blue-400 dark:text-blue-400">Mastery</span></h2>
-            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400">A step-by-step curriculum designed to take you from a junior developer to a senior architect.</p>
+            <h2 className="text-display text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl text-glow">
+              The Roadmap to <span className="text-gradient">Mastery</span>
+            </h2>
+            <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
+              A step-by-step curriculum designed to take you from a junior developer to a senior architect.
+            </p>
           </div>
 
           <div className="relative">
-            {/* Connector Line */}
-            <div className="absolute left-8 top-0 h-full w-1 flex flex-col gap-4">
-              <div className="h-1/3 bg-blue-50 dark:bg-blue-950/200 rounded-full" />
-              <div className="h-1/3 bg-blue-50 dark:bg-blue-950/200/30 dark:bg-blue-400/20 rounded-full" />
-              <div className="h-1/3 bg-slate-200 dark:bg-slate-800 rounded-full" />
+            {/* Premium Connector Line */}
+            <div className="absolute left-[31px] sm:left-8 top-0 h-full w-[2px] bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+              <div 
+                className="absolute top-0 left-0 w-full h-[60%] bg-gradient-to-b from-blue-600 via-indigo-500 to-transparent animate-flow" 
+              />
+              <div className="absolute top-0 left-0 w-full h-[60%] blur-[4px] bg-blue-400 opacity-40 animate-pulse" />
             </div>
 
-            <div className="space-y-12 relative z-10">
+            <div className="space-y-16 relative z-10">
               {roadmap.map((item, i) => (
-                <div key={i} className="flex gap-12 group">
-                  <div className={`flex-shrink-0 h-16 w-16 rounded-full border-4 shadow-xl flex items-center justify-center font-bold text-xl transition-all
-                        ${item.status === 'completed' ? 'bg-blue-600 text-white border-white dark:border-slate-900' :
-                      item.status === 'current' ? 'bg-white dark:bg-slate-900/50 dark:bg-slate-900 text-blue-600 dark:text-blue-400 dark:text-blue-400 border-blue-500 animate-pulse' :
-                        'bg-white dark:bg-slate-900/50 dark:bg-slate-900 text-slate-300 dark:text-slate-700 border-slate-100 dark:border-slate-800'}`}>
+                <div key={i} className="flex gap-8 sm:gap-12 group perspective-1000">
+                  <div className={`flex-shrink-0 h-16 w-16 rounded-full border-4 shadow-2xl flex items-center justify-center font-black text-xl transition-all duration-500 scale-100 group-hover:scale-110
+                        ${item.status === 'completed' ? 'bg-blue-600 text-white border-white dark:border-slate-900 shadow-blue-500/20' :
+                      item.status === 'current' ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 border-blue-500 animate-float shadow-blue-500/20 ring-4 ring-blue-500/10' :
+                        'bg-white dark:bg-slate-900 text-slate-300 dark:text-slate-700 border-slate-100 dark:border-slate-800'}`}>
                     {i + 1}
                   </div>
-                  <div className={`flex-1 rounded-3xl p-8 transition-all duration-300
-                ${item.status === 'current' ? 'glass-card border-blue-100 dark:border-blue-900/30 shadow-xl shadow-blue-500/5' : 'hover:bg-white dark:bg-slate-900/50 dark:hover:bg-slate-800/50 hover:shadow-lg'}`}>
-                    <h4 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{item.title}</h4>
-                    <p className="text-slate-600 dark:text-slate-400">{item.desc}</p>
+                  <div className={`flex-1 rounded-[2.5rem] p-8 sm:p-10 transition-all duration-500 transform-gpu
+                ${item.status === 'current' 
+                  ? 'glass-card border-blue-100 dark:border-blue-900/30 shadow-2xl shadow-blue-500/5 -translate-y-1' 
+                  : 'hover:bg-white dark:hover:bg-slate-800/40 hover:shadow-xl hover:-translate-y-1 border border-transparent hover:border-slate-100 dark:hover:border-slate-800'}`}>
+                    <h4 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-3">
+                      {item.title}
+                      {item.status === 'completed' && <svg className="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>}
+                    </h4>
+                    <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         </div >
-        <div className="absolute top-0 right-0 -mr-32 -mt-32 h-[500px] w-[500px] rounded-full bg-blue-50 dark:bg-blue-950/200/5 blur-[100px]" />
-      </div >
+        {/* Fixed Background Glows */}
+        <div className="absolute top-0 right-0 -mr-40 -mt-40 h-[600px] w-[600px] rounded-full bg-blue-400/10 dark:bg-indigo-600/5 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 -ml-40 -mb-40 h-[600px] w-[600px] rounded-full bg-indigo-400/10 dark:bg-blue-600/5 blur-[120px] pointer-events-none" />
+      </section >
+
 
       {/* Testimonials */}
       < div className="py-32 relative group" >
