@@ -99,8 +99,40 @@ export default function NJ01TypeScript(): JSX.Element {
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. Basic Types</h2>
 
           <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200">Primitive Types</h3>
-            <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">TypeScript has explicit types for strings, numbers, booleans, arrays, and more. These catch type errors before your code even runs.</p>
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200">Primitive & Core Types</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="space-y-4">
+                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white mb-1">Primitives</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">The building blocks: <code className="text-blue-600">string</code>, <code className="text-blue-600">number</code>, and <code className="text-blue-600">boolean</code>. They enforce data integrity at the lowest level.</p>
+                </div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white mb-1">Collections</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed"><code className="text-blue-600">Array</code> for lists and <code className="text-blue-600">Tuple</code> for fixed-length arrays with specific positions (e.g., <code className="text-blue-600">[lat, lng]</code>).</p>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white mb-1">Any vs Unknown</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed"><code className="text-red-500 font-bold">Avoid any</code> as it disables type checking. Use <code className="text-blue-600 font-bold">unknown</code> when you don't know the type yet—it forces you to verify it before use.</p>
+                </div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                  <h4 className="font-bold text-sm text-slate-900 dark:text-white mb-1">Enums</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">Named constants that make your code more readable and prevent "magic strings" in your logic.</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6 bg-amber-500/5 rounded-2xl border border-amber-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-amber-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">The "Aha!" Moment: The DNA of your data</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Think of types as **DNA**. Just as DNA tells a cell whether it's part of a muscle or a bone, TypeScript tells your editor what a variable is allowed to do. If you try to make it do something "unnatural" (like calling <code className="text-amber-600">.toUpperCase()</code> on a number), TypeScript warns you immediately.
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`// ✅ Basic Types
 let userName: string = "Mehedi";
@@ -143,7 +175,40 @@ function throwError(msg: string): never {
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Interfaces vs Type Aliases</h2>
 
           <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200">When to use each</h3>
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200">Choosing the Right Tool</h3>
+            <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700 mb-8">
+              <ul className="space-y-4">
+                <li className="flex gap-4">
+                  <div className="h-6 w-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                    <span className="text-blue-600 text-xs font-bold">1</span>
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-slate-900 dark:text-white text-sm">Interfaces for Entities & DTOs</h5>
+                    <p className="text-slate-500 text-xs mt-1">NestJS heavily favors interfaces for defining the shape of data. They support "Declaration Merging," meaning you can add properties to existing interfaces from different files.</p>
+                  </div>
+                </li>
+                <li className="flex gap-4">
+                  <div className="h-6 w-6 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
+                    <span className="text-indigo-600 text-xs font-bold">2</span>
+                  </div>
+                  <div>
+                    <h5 className="font-bold text-slate-900 dark:text-white text-sm">Types for Unions & Aliases</h5>
+                    <p className="text-slate-500 text-xs mt-1">Use Type Aliases for complex combinations like Union types (<code className="text-indigo-600">string | number</code>) or Intersection types. Once a Type is declared, it cannot be changed.</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div className="p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">Mental Model: The Architectural Blueprint</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  An **Interface** is like a house blueprint. It doesn't build the house, but it defines where the doors and windows *must* go. You use Interfaces to set a "Contract" for objects. **Types**, on the other hand, are like "Nicknames" (Aliases) for shortcuts or complex instructions.
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`// ✅ Interface — best for object shapes (NestJS prefers these)
 interface User {
@@ -201,7 +266,30 @@ interface Config {
 
           <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
             <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200">Why Generics Matter</h3>
-            <p className="text-slate-600 dark:text-slate-400 text-sm mb-4">Generics let you write reusable code that works with <em>any</em> type while still being type-safe. NestJS uses generics heavily in its core APIs.</p>
+            <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 leading-relaxed">
+              Generics are "type variables." They allow you to define a component (function, class, or interface) that can work with any type, while maintaining full type safety. Think of it as a <span className="font-bold text-blue-600">placeholder</span> that gets replaced with a real type when the code is used.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div className="p-4 rounded-xl border border-blue-100 dark:border-blue-900/30 bg-blue-500/5">
+                <h5 className="text-xs font-bold text-blue-600 uppercase mb-1">Flexibility</h5>
+                <p className="text-[11px] text-slate-500">Works with strings today, objects tomorrow—without repeating code.</p>
+              </div>
+              <div className="p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/30 bg-emerald-500/5">
+                <h5 className="text-xs font-bold text-emerald-600 uppercase mb-1">Precision</h5>
+                <p className="text-[11px] text-slate-500">Unlike <code className="text-slate-700 font-bold">any</code>, generics remember the exact type that was passed in.</p>
+              </div>
+            </div>
+            <div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">Metaphor: The Universal Adapter</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Imagine a shipping crate (a **Generic**). It doesn't care if it's carrying toys, electronics, or food—it handles them all the same. However, once you label it as a "Toy Crate," TypeScript ensures you only pull out toys. Generics let you build powerful, reusable tools without losing track of what's inside.
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`// ✅ Generic function
 function wrapInArray<T>(item: T): T[] {
@@ -259,6 +347,35 @@ function findById<T extends HasId>(items: T[], id: number): T | undefined {
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">4. Type Narrowing & Type Guards</h2>
 
           <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
+            <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200">How to handle multiple types safely</h3>
+            <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 leading-relaxed">
+              When a variable could be one of several types (a <span className="italic">union</span>), you must "narrow" it down before you can access specific properties. TypeScript "remembers" the narrowing logic within that scope.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center text-xs">
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                <span className="font-bold text-slate-900 dark:text-white block mb-1">typeof</span>
+                Checks primitive types like <code className="text-blue-500">string</code> or <code className="text-blue-500">number</code>.
+              </div>
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                <span className="font-bold text-slate-900 dark:text-white block mb-1">instanceof</span>
+                Checks if an object is an instance of a specific <code className="text-blue-500">class</code>.
+              </div>
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
+                <span className="font-bold text-slate-900 dark:text-white block mb-1">in</span>
+                Checks if a specific property exists on an object.
+              </div>
+            </div>
+            <div className="p-6 bg-purple-500/5 rounded-2xl border border-purple-500/10 mb-8 flex gap-5 items-start">
+              <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-purple-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>
+              </div>
+              <div>
+                <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">Mental Model: The Logical Security Gate</h5>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Type Narrowing is like a security checkpoint. If you have any identity (a <span className="italic">union type</span>), you're not allowed in the VIP room. But, if you provide a specific ID card (using <code className="text-purple-600">typeof</code> or <code className="text-purple-600">instanceof</code>), the gate opens, and for that moment, TypeScript *guarantees* you are who you say you are.
+                </p>
+              </div>
+            </div>
             <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
               {`// ✅ typeof guard
 function processInput(input: string | number) {
