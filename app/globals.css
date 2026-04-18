@@ -21,6 +21,15 @@
   --glass-border: rgba(30, 41, 59, 0.5);
 }
 
+.sepia {
+  --background: #f4ecd8;
+  --foreground: #433422;
+  --primary: #b8860b;
+  --primary-foreground: #ffffff;
+  --glass-bg: rgba(244, 236, 216, 0.85);
+  --glass-border: rgba(184, 134, 11, 0.2);
+}
+
 @layer base {
   body {
     @apply bg-background text-foreground font-sans antialiased selection:bg-blue-500/30;

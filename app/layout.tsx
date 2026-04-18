@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Inter, Rajdhani } from "next/font/google";
 import "./globals.css";
+import "@/components/reading-control-panel.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/components/query-provider";
+import { ReadingControlPanel } from "@/components/reading-control-panel";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -31,9 +33,11 @@ export default function RootLayout({
                 <QueryProvider>
                     <ThemeProvider>
                         {children}
+                        <ReadingControlPanel />
                     </ThemeProvider>
                 </QueryProvider>
             </body>
         </html>
     );
 }
+

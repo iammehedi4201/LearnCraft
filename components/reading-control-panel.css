@@ -1,0 +1,722 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Reading Control Panel — Styles
+ *  A premium floating panel for reading preference customization.
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ── Google Fonts: Lexend (dyslexia-friendly) ── */
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap");
+
+/* ── Root-level reading variables ── */
+:root {
+  --reading-font-size: 16px;
+  --reading-line-height: 1.7;
+}
+
+/* ── Sepia theme variables ── */
+.sepia {
+  --background: #f4ecd8;
+  --foreground: #433422;
+  --primary: #b8860b;
+  --primary-foreground: #ffffff;
+  --glass-bg: rgba(244, 236, 216, 0.85);
+  --glass-border: rgba(184, 134, 11, 0.2);
+}
+
+/* ── High contrast mode overrides ── */
+.high-contrast {
+  --foreground: #000000 !important;
+  --background: #ffffff !important;
+}
+.high-contrast.dark {
+  --foreground: #ffffff !important;
+  --background: #000000 !important;
+}
+.high-contrast.sepia {
+  --foreground: #1a0f00 !important;
+  --background: #fff8e7 !important;
+}
+
+/* ── Dyslexia-friendly font ── */
+.font-dyslexia,
+.font-dyslexia body,
+.font-dyslexia p,
+.font-dyslexia li,
+.font-dyslexia span,
+.font-dyslexia td,
+.font-dyslexia th,
+.font-dyslexia pre,
+.font-dyslexia code,
+.font-dyslexia blockquote {
+  font-family: "Lexend", sans-serif !important;
+  letter-spacing: 0.02em;
+}
+
+/* ── Focus mode: hide sidebars & nav, center content ── */
+.focus-mode nav,
+.focus-mode aside,
+.focus-mode [data-sidebar],
+.focus-mode footer {
+  display: none !important;
+}
+.focus-mode main {
+  max-width: 720px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-top: 2rem !important;
+}
+
+/* ── Apply reading font-size & line-height to content areas ── */
+main p,
+main li,
+main td,
+main th,
+main blockquote,
+main pre,
+.reading-content {
+  font-size: var(--reading-font-size);
+  line-height: var(--reading-line-height);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Panel Root & Trigger
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-root {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  font-family: "Inter", var(--font-inter), system-ui, sans-serif;
+}
+
+/* ── Trigger Button ── */
+.rcp-trigger {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: #ffffff;
+  box-shadow:
+    0 4px 16px rgba(99, 102, 241, 0.35),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.rcp-trigger:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow:
+    0 8px 28px rgba(99, 102, 241, 0.45),
+    0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.rcp-trigger:active {
+  transform: scale(0.95);
+}
+
+.rcp-trigger--active {
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ef4444, #ec4899);
+  box-shadow:
+    0 4px 16px rgba(239, 68, 68, 0.35),
+    0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.rcp-trigger__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.rcp-trigger:hover .rcp-trigger__icon {
+  transform: rotate(45deg);
+}
+
+.rcp-trigger--active .rcp-trigger__icon {
+  transform: rotate(0deg);
+}
+
+/* ── Pulse ring animation behind trigger ── */
+.rcp-trigger::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  opacity: 0;
+  z-index: -1;
+  animation: rcp-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes rcp-pulse {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50% { opacity: 0.15; transform: scale(1.15); }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Panel
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-panel {
+  position: absolute;
+  bottom: 64px;
+  right: 0;
+  width: 340px;
+  border-radius: 20px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.95);
+  transform-origin: bottom right;
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    visibility 0.25s ease;
+
+  /* Glassmorphism */
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.dark .rcp-panel {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: rgba(51, 65, 85, 0.5);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.45),
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.sepia .rcp-panel {
+  background: rgba(244, 236, 216, 0.92);
+  border-color: rgba(184, 134, 11, 0.2);
+  box-shadow:
+    0 24px 80px rgba(67, 52, 34, 0.12),
+    0 8px 24px rgba(67, 52, 34, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.rcp-panel--open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Header
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark .rcp-header {
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
+.sepia .rcp-header {
+  border-bottom-color: rgba(184, 134, 11, 0.12);
+}
+
+.rcp-header__title {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #0f172a;
+  margin: 0;
+}
+
+.dark .rcp-header__title {
+  color: #f1f5f9;
+}
+
+.sepia .rcp-header__title {
+  color: #433422;
+}
+
+.rcp-header__badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: white;
+  letter-spacing: 0.04em;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Body
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-body {
+  padding: 6px 20px 8px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.rcp-section {
+  padding: 12px 0;
+}
+
+.rcp-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 10px;
+  user-select: none;
+}
+
+.dark .rcp-label {
+  color: #94a3b8;
+}
+
+.sepia .rcp-label {
+  color: #6b5d4d;
+}
+
+.rcp-label__icon {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+
+.rcp-label__value {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.dark .rcp-label__value {
+  color: #818cf8;
+  background: rgba(129, 140, 248, 0.12);
+}
+
+.rcp-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 0, 0, 0.08) 50%,
+    transparent
+  );
+  margin: 2px 0;
+}
+
+.dark .rcp-divider {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent
+  );
+}
+
+.rcp-hint {
+  font-size: 11px;
+  color: #6366f1;
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: rgba(99, 102, 241, 0.06);
+  border-radius: 6px;
+  border-left: 2px solid #6366f1;
+}
+
+.dark .rcp-hint {
+  color: #818cf8;
+  background: rgba(129, 140, 248, 0.08);
+  border-left-color: #818cf8;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Font Size Controls
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-font-size {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rcp-btn {
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.rcp-btn--icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.08);
+  color: #6366f1;
+}
+
+.dark .rcp-btn--icon {
+  background: rgba(129, 140, 248, 0.1);
+  color: #818cf8;
+}
+
+.sepia .rcp-btn--icon {
+  background: rgba(184, 134, 11, 0.1);
+  color: #b8860b;
+}
+
+.rcp-btn--icon:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.18);
+  transform: scale(1.08);
+}
+
+.rcp-btn--icon:active:not(:disabled) {
+  transform: scale(0.92);
+}
+
+.rcp-btn--icon:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.rcp-font-size__track {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.dark .rcp-font-size__track {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sepia .rcp-font-size__track {
+  background: rgba(184, 134, 11, 0.1);
+}
+
+.rcp-font-size__fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6366f1, #3b82f6);
+  transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Theme Switcher
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-theme-switcher {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.rcp-theme-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  background: transparent;
+}
+
+.rcp-theme-btn--light {
+  background: rgba(248, 250, 252, 0.8);
+  border-color: rgba(0, 0, 0, 0.06);
+  color: #334155;
+}
+
+.dark .rcp-theme-btn--light {
+  background: rgba(30, 41, 59, 0.4);
+  border-color: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+}
+
+.rcp-theme-btn--dark {
+  background: rgba(15, 23, 42, 0.08);
+  border-color: rgba(0, 0, 0, 0.06);
+  color: #334155;
+}
+
+.dark .rcp-theme-btn--dark {
+  background: rgba(30, 41, 59, 0.6);
+  border-color: rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+}
+
+.rcp-theme-btn--sepia {
+  background: rgba(244, 236, 216, 0.5);
+  border-color: rgba(184, 134, 11, 0.1);
+  color: #6b5d4d;
+}
+
+.dark .rcp-theme-btn--sepia {
+  background: rgba(67, 52, 34, 0.3);
+  border-color: rgba(184, 134, 11, 0.1);
+  color: #94a3b8;
+}
+
+.rcp-theme-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.rcp-theme-btn--active {
+  border-color: #6366f1 !important;
+  box-shadow:
+    0 0 0 3px rgba(99, 102, 241, 0.15),
+    0 4px 12px rgba(99, 102, 241, 0.12);
+}
+
+.rcp-theme-btn__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(99, 102, 241, 0.08);
+  transition: background 0.2s ease;
+}
+
+.rcp-theme-btn--active .rcp-theme-btn__icon {
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+  color: white;
+}
+
+.rcp-theme-btn__label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Segmented Controls (Line Spacing, Font Family)
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-segmented {
+  display: flex;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.dark .rcp-segmented {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sepia .rcp-segmented {
+  background: rgba(184, 134, 11, 0.06);
+}
+
+.rcp-segmented__btn {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.dark .rcp-segmented__btn {
+  color: #64748b;
+}
+
+.rcp-segmented__btn:hover:not(.rcp-segmented__btn--active) {
+  color: #334155;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.dark .rcp-segmented__btn:hover:not(.rcp-segmented__btn--active) {
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.rcp-segmented__btn--active {
+  background: white;
+  color: #6366f1;
+  font-weight: 700;
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(99, 102, 241, 0.08);
+}
+
+.dark .rcp-segmented__btn--active {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(129, 140, 248, 0.15);
+}
+
+.sepia .rcp-segmented__btn--active {
+  background: rgba(255, 255, 255, 0.7);
+  color: #b8860b;
+}
+
+.rcp-segmented__btn--lexend {
+  font-family: "Lexend", sans-serif;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Toggle Switch
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rcp-toggle-row .rcp-label {
+  margin-bottom: 0;
+}
+
+.rcp-switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.12);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.3s ease;
+  flex-shrink: 0;
+}
+
+.dark .rcp-switch {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.rcp-switch--on {
+  background: linear-gradient(135deg, #6366f1, #3b82f6);
+}
+
+.rcp-switch__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.rcp-switch--on .rcp-switch__thumb {
+  transform: translateX(20px);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Footer
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-footer {
+  padding: 12px 20px 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.dark .rcp-footer {
+  border-top-color: rgba(255, 255, 255, 0.04);
+}
+
+.rcp-btn--reset {
+  width: 100%;
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.06);
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: all 0.2s ease;
+}
+
+.rcp-btn--reset:hover {
+  background: rgba(239, 68, 68, 0.12);
+  transform: translateY(-1px);
+}
+
+.rcp-btn--reset:active {
+  transform: scale(0.98);
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Responsive
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+@media (max-width: 400px) {
+  .rcp-root {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .rcp-panel {
+    width: calc(100vw - 32px);
+    right: 0;
+    bottom: 60px;
+  }
+
+  .rcp-trigger {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Scrollbar for panel body
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+.rcp-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.rcp-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.rcp-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 999px;
+}
+
+.dark .rcp-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
