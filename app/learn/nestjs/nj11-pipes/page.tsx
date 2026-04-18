@@ -13,7 +13,7 @@ export default function NJ11Pipes(): JSX.Element {
         <div className="group relative glass-card rounded-3xl p-8 mb-12 overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
           <div className="relative z-10">
             <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500 text-white shadow-lg shadow-purple-500/20"><span className="font-display font-bold text-sm tracking-wider">NJ-11</span></div>
+              <div className="flex h-12 w-16 items-center justify-center rounded-2xl bg-purple-500 text-white shadow-lg shadow-purple-500/20"><span className="font-display font-bold text-sm tracking-wider whitespace-nowrap">NJ-11</span></div>
               <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Pipes & Transformation</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
@@ -165,3 +165,4 @@ app.useGlobalPipes(new ValidationPipe({
     </>
   );
 }
+
