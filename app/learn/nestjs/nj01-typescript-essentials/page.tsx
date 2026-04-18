@@ -129,40 +129,65 @@ export default function NJ01TypeScript(): JSX.Element {
                 </p>
               </div>
             </div>
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`// ✅ Basic Types
+            <div className="space-y-6">
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                  <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span> 
+                  Plain TypeScript Example
+                </h4>
+                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
+                  {`// 1. The Basic Blocks
 let userName: string = "Mehedi";
 let age: number = 25;
 let isActive: boolean = true;
 
-// ✅ Arrays
-let scores: number[] = [95, 87, 92];
-let names: Array<string> = ["Alice", "Bob"];
+// 2. Lists (Arrays & Tuples)
+let roles: string[] = ["admin", "user"];
+let userTuple: [string, number] = ["Mehedi", 25]; // Strict list: [Name, Age]
 
-// ✅ Tuple — fixed-length array with specific types
-let user: [string, number] = ["Mehedi", 25];
+// 3. The "I Don't Know" Box
+let unknownValue: any = "anything";      // ⚠️ Turns off all rules (Dangerous!)
+let safeValue: unknown = "check first";  // ✅ Must check before using (Safe!)
 
-// ✅ Enum — named constants
+// 4. Enums (Dropdown Menus)
 enum Role {
   USER = "USER",
   ADMIN = "ADMIN",
-  MODERATOR = "MODERATOR",
-}
-let myRole: Role = Role.ADMIN;
-
-// ✅ Any vs Unknown
-let flexible: any = "anything";      // ⚠️ Avoid — disables type checking
-let safe: unknown = "check first";   // ✅ Better — forces type checking before use
-
-// ✅ Void & Never
-function logMessage(msg: string): void {
-  console.log(msg);  // returns nothing
-}
-
-function throwError(msg: string): never {
-  throw new Error(msg);  // never returns
 }`}
-            </pre>
+                </pre>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                  <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">2</span> 
+                  How it is used in NestJS
+                </h4>
+                <p className="text-sm text-slate-500 mb-3">In NestJS, we use these basic types and enums to define exactly what data a Controller or Service expects.</p>
+                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
+                  {`import { Controller, Get, Param, Query } from '@nestjs/common';
+
+@Controller('users')
+export class UsersController {
+  
+  @Get(':id')
+  // The 'id' parameter is strictly forced to be a string
+  // The function promises to return a string
+  getUser(@Param('id') id: string): string {
+    return \`User ID: \${id}\`;
+  }
+  
+  @Get()
+  // The 'role' must be one of our exact Enum choices
+  getUsersByRole(@Query('role') role: Role): string[] {
+    if (role === Role.ADMIN) {
+      return ["Alice", "Bob"];
+    }
+    return [];
+  }
+}`}
+                </pre>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -205,45 +230,62 @@ function throwError(msg: string): never {
                 </p>
               </div>
             </div>
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`// ✅ Interface — best for object shapes (NestJS prefers these)
+            <div className="space-y-6">
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                  <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span> 
+                  Plain TypeScript Example
+                </h4>
+                <p className="text-sm text-slate-500 mb-3">An interface is a blueprint for an object.</p>
+                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
+                  {`// 1. Interfaces = Blueprints for objects
 interface User {
-  id: number;
   name: string;
   email: string;
-  role: "admin" | "user";       // union type for specific values
-  avatar?: string;              // optional property
-  readonly createdAt: Date;     // cannot be reassigned
+  age: number;
 }
 
-// ✅ Extending interfaces (common in NestJS DTOs)
+const newUser: User = {
+  name: "Alice",
+  email: "alice@example.com",
+  age: 28
+};
+
+// 2. Types = Nicknames
+// An IDType can be EITHER a number OR a string
+type IDType = number | string;
+
+let myId: IDType = 101; 
+let yourId: IDType = "USER-101";`}
+                </pre>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                  <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">2</span> 
+                  How it is used in NestJS
+                </h4>
+                <p className="text-sm text-slate-500 mb-3">In NestJS, Interfaces (and Classes) act as DTOs (Data Transfer Objects). They serve as the exact blueprint for incoming request bodies!</p>
+                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
+                  {`// NestJS DTO blueprint
 interface CreateUserDto {
   name: string;
   email: string;
 }
 
-interface UpdateUserDto extends Partial<CreateUserDto> {
-  // All fields are now optional
-}
-
-// ✅ Type alias — best for unions, intersections, primitives
-type ID = string | number;
-type ApiResponse<T> = {
-  data: T;
-  status: number;
-  message: string;
-};
-
-// 🔑 KEY DIFFERENCE:
-// Interfaces can be merged (declaration merging)
-// Types cannot — they are fixed once declared
-interface Config {
-  host: string;
-}
-interface Config {
-  port: number;    // ✅ Merges with above — Config now has host + port
+@Controller('users')
+export class UsersController {
+  
+  @Post()
+  // NestJS uses the CreateUserDto blueprint to validate
+  // the incoming request body before the code even runs!
+  create(@Body() body: CreateUserDto) {
+    return \`Creating user \${body.name} with email \${body.email}\`;
+  }
 }`}
-            </pre>
+                </pre>
+              </div>
+            </div>
           </div>
 
           <div className="bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded">
@@ -286,55 +328,78 @@ interface Config {
                 </p>
               </div>
             </div>
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`// ✅ Generic function
-function wrapInArray<T>(item: T): T[] {
-  return [item];
+            <div className="space-y-6">
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                  <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span> 
+                  Plain TypeScript Example
+                </h4>
+                <p className="text-sm text-slate-500 mb-3">A generic "fill-in-the-blank" function.</p>
+                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
+                  {`// 1. A generic Class (Matches the "Item Box" analogy)
+class ItemBox<T> {
+  item: T;
+  
+  constructor(item: T) {
+    this.item = item;
+  }
+  
+  getItem(): T {
+    return this.item;
+  }
 }
 
-wrapInArray<string>("hello");  // string[]
-wrapInArray<number>(42);       // number[]
+const stringBox = new ItemBox<string>("A shiny new toy");
+const myToy = stringBox.getItem();  // TS remembers this is a string
 
-// ✅ Generic interface (common in NestJS API responses)
+// 2. A generic Interface (Matches the "Animal List" analogy)
+interface AnimalList<T> {
+  animals: T[];
+  add(animal: T): void;
+}
+
+type Dog = { name: string, barks: boolean };
+type Cat = { name: string, purrs: boolean };
+
+// Create a list completely strictly tailored to Dogs!
+const dogList: AnimalList<Dog> = {
+  animals: [],
+  add: (dog) => console.log("Added dog: " + dog.name)
+};`}
+                </pre>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                  <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">2</span> 
+                  How it is used in NestJS
+                </h4>
+                <p className="text-sm text-slate-500 mb-3">In NestJS, Generics are used heavily to create reusable API wrappers and reusable Database services.</p>
+                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
+                  {`// Universal API Response Wrapper
 interface ApiResponse<T> {
   success: boolean;
   data: T;
   timestamp: Date;
 }
 
-// Usage:
-const userResponse: ApiResponse<User> = {
-  success: true,
-  data: { id: 1, name: "Mehedi", email: "m@e.com", role: "admin", createdAt: new Date() },
-  timestamp: new Date(),
-};
-
-// ✅ Generic class (NestJS repository pattern)
-class BaseRepository<T> {
-  private items: T[] = [];
-
-  findAll(): T[] {
-    return this.items;
+@Injectable()
+export class UserService {
+  
+  // This service returns an ApiResponse, filled in with a 'User' object
+  getUser(id: number): ApiResponse<User> {
+    const user: User = { id, name: 'Alice', email: 'alice@test.com' };
+    
+    return {
+      success: true,
+      data: user, // Must match the <User> type!
+      timestamp: new Date()
+    };
   }
-
-  create(item: T): T {
-    this.items.push(item);
-    return item;
-  }
-}
-
-const userRepo = new BaseRepository<User>();
-const productRepo = new BaseRepository<Product>();
-
-// ✅ Generic with constraints
-interface HasId {
-  id: number;
-}
-
-function findById<T extends HasId>(items: T[], id: number): T | undefined {
-  return items.find(item => item.id === id);
 }`}
-            </pre>
+                </pre>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -347,18 +412,43 @@ function findById<T extends HasId>(items: T[], id: number): T | undefined {
             <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 leading-relaxed">
               Sometimes a variable can be an "A" **OR** a "B". Before you can do something that only "A" is allowed to do, you must prove to TypeScript that the variable is an "A". This is called **Type Narrowing**.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 text-center text-xs">
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                <span className="font-bold text-slate-900 dark:text-white block mb-1">typeof</span>
-                Use this to check if something is simple text, like <code className="text-blue-500">typeof name === "string"</code>.
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-xs text-left">
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 h-full">
+                <span className="font-bold text-slate-900 dark:text-white block mb-2 border-b border-slate-200 dark:border-slate-600 pb-2">
+                  <code className="text-blue-600 dark:text-blue-400 bg-blue-100/50 dark:bg-blue-900/30 px-1 rounded mr-1">typeof</code>
+                  — For primitive values
+                </span>
+                <p className="text-slate-600 dark:text-slate-400 mb-2 font-medium">Use this when dealing with:</p>
+                <ul className="space-y-1 text-slate-500 dark:text-slate-400 pl-4 list-disc marker:text-slate-400">
+                  <li><code className="text-blue-600 dark:text-blue-400">string</code></li>
+                  <li><code className="text-emerald-600 dark:text-emerald-400">number</code></li>
+                  <li><code className="text-rose-600 dark:text-rose-400">boolean</code></li>
+                  <li><code className="text-amber-600 dark:text-amber-500">undefined</code></li>
+                </ul>
               </div>
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                <span className="font-bold text-slate-900 dark:text-white block mb-1">instanceof</span>
-                Use this to check if something was created using a specific <code className="text-blue-500">class</code>.
+              
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 h-full">
+                <span className="font-bold text-slate-900 dark:text-white block mb-2 border-b border-slate-200 dark:border-slate-600 pb-2">
+                  <code className="text-blue-600 dark:text-blue-400 bg-blue-100/50 dark:bg-blue-900/30 px-1 rounded mr-1">instanceof</code>
+                  — For classes (real objects)
+                </span>
+                <p className="text-slate-600 dark:text-slate-400 mb-2 font-medium">Use this when working with:</p>
+                <ul className="space-y-1 text-slate-500 dark:text-slate-400 pl-4 list-disc marker:text-slate-400">
+                  <li>classes</li>
+                  <li>objects created using <code className="text-pink-600 dark:text-pink-400">new</code></li>
+                </ul>
               </div>
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg">
-                <span className="font-bold text-slate-900 dark:text-white block mb-1">in</span>
-                Check if a specific setting exists, like <code className="text-blue-500">"age" in user</code>.
+              
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 h-full">
+                <span className="font-bold text-slate-900 dark:text-white block mb-2 border-b border-slate-200 dark:border-slate-600 pb-2">
+                  <code className="text-blue-600 dark:text-blue-400 bg-blue-100/50 dark:bg-blue-900/30 px-1 rounded mr-1">in</code>
+                  — For checking object properties
+                </span>
+                <p className="text-slate-600 dark:text-slate-400 mb-2 font-medium">Use this when:</p>
+                <ul className="space-y-1 text-slate-500 dark:text-slate-400 pl-4 list-disc marker:text-slate-400">
+                  <li>you don't know the exact type</li>
+                  <li>but you want to check if a property exists</li>
+                </ul>
               </div>
             </div>
             <div className="p-6 bg-purple-500/5 rounded-2xl border border-purple-500/10 mb-8 flex gap-5 items-start">
@@ -372,49 +462,70 @@ function findById<T extends HasId>(items: T[], id: number): T | undefined {
                 </p>
               </div>
             </div>
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`// ✅ typeof guard
-function processInput(input: string | number) {
+            <div className="space-y-6">
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                  <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span> 
+                  Plain TypeScript Example
+                </h4>
+                <p className="text-sm text-slate-500 mb-3"><code className="text-slate-900 dark:text-white font-bold bg-slate-200 dark:bg-slate-800 px-1 rounded">typeof</code> proves whether it's a string or number before you use it.</p>
+                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
+                  {`// 1. typeof
+function parseInput(input: string | number) {
   if (typeof input === "string") {
-    return input.toUpperCase();   // TS knows it's string here
+    return input.toUpperCase();  // TypeScript knows it's a string here!
   }
-  return input.toFixed(2);        // TS knows it's number here
 }
 
-// ✅ instanceof guard
-class HttpError {
-  constructor(public status: number, public message: string) {}
-}
+// 2. instanceof
+class CustomError { message = "Something broke!"; }
 
 function handleError(error: unknown) {
-  if (error instanceof HttpError) {
-    console.log(error.status);    // TS knows it's HttpError
+  if (error instanceof CustomError) {
+    console.log(error.message);  // TypeScript knows it's a CustomError class!
   }
 }
 
-// ✅ Custom type guard (used in NestJS guards & pipes)
-interface AdminUser {
-  role: "admin";
-  permissions: string[];
-}
+// 3. in
+type AdminUser = { role: "admin", privileges: string[] };
 
-interface RegularUser {
-  role: "user";
-}
-
-type AppUser = AdminUser | RegularUser;
-
-function isAdmin(user: AppUser): user is AdminUser {
-  return user.role === "admin";
-}
-
-function getPermissions(user: AppUser) {
-  if (isAdmin(user)) {
-    return user.permissions;   // TS knows it's AdminUser
+function getPrivileges(user: any) {
+  if ("privileges" in user) {
+    return user.privileges;  // TypeScript knows this object has a privileges array!
   }
-  return [];
 }`}
-            </pre>
+                </pre>
+              </div>
+
+              <div>
+                <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
+                  <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">2</span> 
+                  How it is used in NestJS
+                </h4>
+                <p className="text-sm text-slate-500 mb-3">In NestJS, you use Type Narrowing inside Exception Filters to see exactly what kind of error just crashed your app!</p>
+                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
+                  {`import { Catch, ExceptionFilter, ArgumentsHost, HttpException } from '@nestjs/common';
+
+@Catch()
+export class GlobalErrorFilter implements ExceptionFilter {
+  catch(exception: unknown, host: ArgumentsHost) {
+    const response = host.switchToHttp().getResponse();
+    
+    // Type Narrowing! Is the unknown error an instance of an HttpException?
+    if (exception instanceof HttpException) {
+      // Yes! We are safe to check its status code
+      const status = exception.getStatus();
+      response.status(status).json({ message: exception.message });
+      
+    } else {
+      // No! It's some other random crash.
+      response.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+}`}
+                </pre>
+              </div>
+            </div>
           </div>
         </section>
 
