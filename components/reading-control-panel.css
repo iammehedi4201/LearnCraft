@@ -66,15 +66,29 @@
 }
 
 /* ── Apply reading font-size & line-height to content areas ── */
-main p,
-main li,
-main td,
-main th,
-main blockquote,
-main pre,
+/* Applied broadly since pages may not use <main>. 
+   The panel itself (.rcp-root) is excluded to keep its own UI stable. */
+body:not(.rcp-root) {
+  font-size: var(--reading-font-size);
+  line-height: var(--reading-line-height);
+}
+
+p:not(.rcp-root *),
+li:not(.rcp-root *),
+td:not(.rcp-root *),
+th:not(.rcp-root *),
+blockquote:not(.rcp-root *),
+span:not(.rcp-root *),
 .reading-content {
   font-size: var(--reading-font-size);
   line-height: var(--reading-line-height);
+}
+
+/* Keep the panel's own text at a fixed size */
+.rcp-root,
+.rcp-root * {
+  font-size: revert;
+  line-height: revert;
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
