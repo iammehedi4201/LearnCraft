@@ -1,4 +1,5 @@
 import { QuickCheck } from "@/components/quick-check";
+import { EnhancedCodeBlock, ExplainerSection } from "@/components/enhanced-code-display";
 
 export function SectionUtilityTypes() {
   return (
@@ -6,10 +7,12 @@ export function SectionUtilityTypes() {
       <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2.5 Utility Types — Built-in Shortcuts</h2>
 
       <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-        <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200">TypeScript&apos;s Built-in Power Tools</h3>
-        <p className="text-slate-600 dark:text-slate-400 text-sm mb-6 leading-relaxed">
+        <ExplainerSection 
+          title="TypeScript's Built-in Power Tools"
+          icon={<svg className="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" /></svg>}
+        >
           TypeScript comes with built-in shortcuts called <strong>Utility Types</strong>. Instead of rewriting interfaces from scratch, you can transform existing ones. Think of them as <strong>photo filters</strong> — you start with one interface and apply a &quot;filter&quot; to create a new version.
-        </p>
+        </ExplainerSection>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div className="p-4 rounded-xl border border-orange-100 dark:border-orange-900/30 bg-orange-500/5">
@@ -36,31 +39,50 @@ export function SectionUtilityTypes() {
               <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span>
               Step-by-Step Example
             </h4>
-            <p className="text-sm text-slate-500 mb-3">Start from one interface, derive everything else.</p>
-            <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-              {`// Step 1: Define the full object shape
-interface Post {
+            <ExplainerSection title="Deriving types" variant="warning">
+              Start from one interface, derive everything else.
+            </ExplainerSection>
+
+            <ExplainerSection title="Step 1: Define the base" variant="info">
+              <code className="text-slate-900 dark:text-white bg-slate-200 dark:bg-slate-800 px-1 rounded">interface Post</code> contains all the fields: id, title, content, author, and createdAt.
+            </ExplainerSection>
+
+            <EnhancedCodeBlock 
+              code={`interface Post {
   id: number;
   title: string;
   content: string;
   author: string;
   createdAt: Date;
-}
+}`}
+            />
 
-// Step 2: Omit — "Copy Post, but REMOVE id and createdAt"
-// Why? When creating a post, the server generates id and createdAt.
-type CreatePostDto = Omit<Post, 'id' | 'createdAt'>;
-// Result: { title: string; content: string; author: string; }
+            <ExplainerSection title="Step 2: Omit for creation" variant="info">
+              When creating a post, the server generates <code>id</code> and <code>createdAt</code> automatically. So remove them from the creation DTO.
+            </ExplainerSection>
 
-// Step 3: Partial — "Copy CreatePostDto, but make everything OPTIONAL"
-// Why? When updating, users only send the fields they want to change.
-type UpdatePostDto = Partial<CreatePostDto>;
-// Result: { title?: string; content?: string; author?: string; }
+            <EnhancedCodeBlock 
+              code={`type CreatePostDto = Omit<Post, 'id' | 'createdAt'>;
+// Result: { title: string; content: string; author: string; }`}
+            />
 
-// Step 4: Pick — "Copy Post, but ONLY keep title and author"
-type PostPreview = Pick<Post, 'title' | 'author'>;
+            <ExplainerSection title="Step 3: Partial for updates" variant="info">
+              When updating a post, users only send the fields they want to change. Make everything optional.
+            </ExplainerSection>
+
+            <EnhancedCodeBlock 
+              code={`type UpdatePostDto = Partial<CreatePostDto>;
+// Result: { title?: string; content?: string; author?: string; }`}
+            />
+
+            <ExplainerSection title="Step 4: Pick for preview" variant="info">
+              For a blog preview, only show the title and author—everything else is hidden.
+            </ExplainerSection>
+
+            <EnhancedCodeBlock 
+              code={`type PostPreview = Pick<Post, 'title' | 'author'>;
 // Result: { title: string; author: string; }`}
-            </pre>
+            />
           </div>
 
           <div>
@@ -68,21 +90,36 @@ type PostPreview = Pick<Post, 'title' | 'author'>;
               <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">2</span>
               How it is used in NestJS
             </h4>
-            <p className="text-sm text-slate-500 mb-3">NestJS DTOs heavily use Utility Types to avoid code duplication.</p>
-            <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-              {`// In NestJS, you define ONE base interface...
-interface User {
+            <ExplainerSection title="NestJS DTOs" variant="info">
+              NestJS DTOs heavily use Utility Types to avoid code duplication. Define ONE base interface, then derive all your DTOs from it.
+            </ExplainerSection>
+            
+            <ExplainerSection title="The Base User Interface" variant="success">
+              This contains all possible user fields that come from the database. You'll never use this directly for endpoints—always derive a specialized DTO instead.
+            </ExplainerSection>
+
+            <EnhancedCodeBlock 
+              code={`interface User {
   id: number;
   name: string;
   email: string;
   password: string;
   createdAt: Date;
-}
+}`}
+            />
 
-// ...and derive ALL your DTOs from it:
-type CreateUserDto = Omit<User, 'id' | 'createdAt'>;
+            <ExplainerSection title="Derived DTOs for different purposes" variant="success">
+              <ul className="text-xs space-y-1 list-disc pl-4">
+                <li><code>CreateUserDto</code> - Remove id & createdAt (server generates these)</li>
+                <li><code>UpdateUserDto</code> - Make everything optional</li>
+                <li><code>PublicUserDto</code> - Remove password (never send to frontend)</li>
+              </ul>
+            </ExplainerSection>
+
+            <EnhancedCodeBlock 
+              code={`type CreateUserDto = Omit<User, 'id' | 'createdAt'>;
 type UpdateUserDto = Partial<CreateUserDto>;
-type PublicUserDto = Omit<User, 'password'>; // Hide password from API responses
+type PublicUserDto = Omit<User, 'password'>;
 
 @Controller('users')
 export class UsersController {
@@ -92,7 +129,7 @@ export class UsersController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateUserDto) { /* ... */ }
 }`}
-            </pre>
+            />
           </div>
         </div>
 

@@ -30,6 +30,7 @@
 import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { useState } from "react";
+import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 
 // ─── Reusable Quick Check Component ─────────────────────────────────
 function QuickCheck({
@@ -203,8 +204,8 @@ export default function NJ02OOP(): JSX.Element {
                   <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span>
                   Plain TypeScript — The Long Way
                 </h4>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`// A basic class with a constructor
+                <EnhancedCodeBlock
+                  code={`// A basic class with a constructor
 class User {
   public name: string;       // Anyone can access
   private email: string;     // Only this class can access  
@@ -229,7 +230,8 @@ const user = new User(1, "Mehedi", "m@test.com", "admin");
 console.log(user.name);       // ✅ "Mehedi" — public
 // console.log(user.email);   // ❌ Error — private!
 // user.id = 999;             // ❌ Error — readonly!`}
-                </pre>
+                  language="typescript"
+                />
               </div>
 
               <div>
@@ -238,8 +240,8 @@ console.log(user.name);       // ✅ "Mehedi" — public
                   TypeScript Shorthand — What NestJS Actually Uses
                 </h4>
                 <p className="text-sm text-slate-500 mb-3">TypeScript has a shorthand that declares AND assigns properties in the constructor. NestJS uses this <strong>everywhere</strong>.</p>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`// ✅ Shorthand — declare + assign in one line!
+                <EnhancedCodeBlock
+                  code={`// ✅ Shorthand — declare + assign in one line!
 class Product {
   constructor(
     public readonly id: number,   // same as: this.id = id
@@ -253,7 +255,22 @@ class Product {
 const product = new Product(1, "Laptop", 999, 50);
 console.log(product.name);    // ✅ "Laptop"
 // console.log(product.stock); // ❌ Error — private`}
-                </pre>
+                  language="typescript"
+                />
+              </div>
+
+              {/* Constructor Shorthand Pattern Explanation */}
+              <div className="p-5 bg-sky-500/5 rounded-2xl border border-sky-200/50 dark:border-sky-500/15">
+                <h4 className="font-bold text-sm text-sky-700 dark:text-sky-400 mb-3 flex items-center gap-2">
+                  <span className="text-base">🎯</span>
+                  Why TypeScript Shorthand is Essential for NestJS
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+                  NestJS heavily relies on dependency injection through constructor parameters. Using the shorthand syntax with <code className="text-sky-600">public</code>/<code className="text-sky-600">private</code> modifiers is the idiomatic way to declare and inject dependencies in a single, clean statement.
+                </p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Without shorthand, a service with 5 dependencies needs 15+ lines of boilerplate code. With shorthand, it's just 5 lines. This is why every NestJS service you'll see uses this pattern.
+                </p>
               </div>
 
               {/* NEW: Side-by-side comparison */}
@@ -310,8 +327,8 @@ console.log(product.name);    // ✅ "Laptop"
                   <span className="text-base">💥</span>
                   Without Encapsulation — What Goes Wrong
                 </h4>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`// ❌ No encapsulation — anyone can mess with the balance directly
+                <EnhancedCodeBlock
+                  code={`// ❌ No encapsulation — anyone can mess with the balance directly
 class UnsafeBankAccount {
   public balance: number = 0;  // Anyone can change this!
 }
@@ -320,7 +337,8 @@ const account = new UnsafeBankAccount();
 account.balance = 1000000;   // 💰 Just gave myself a million dollars!
 account.balance = -500;      // 💥 Negative balance? No rules!
 // No validation, no logging, no protection.`}
-                </pre>
+                  language="typescript"
+                />
               </div>
 
               {/* With Encapsulation */}
@@ -329,8 +347,8 @@ account.balance = -500;      // 💥 Negative balance? No rules!
                   <span className="bg-emerald-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">✓</span>
                   With Encapsulation — The Safe Way
                 </h4>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`class BankAccount {
+                <EnhancedCodeBlock
+                  code={`class BankAccount {
   private balance: number = 0;  // 🔒 Hidden! Nobody can touch this directly.
 
   // ✅ Controlled access — deposit MUST go through this method
@@ -356,7 +374,8 @@ const account = new BankAccount();
 account.deposit(500);           // ✅ Goes through validation
 // account.balance = 1000000;   // ❌ Error — private!
 console.log(account.getBalance()); // ✅ Read-only access`}
-                </pre>
+                  language="typescript"
+                />
               </div>
 
               {/* How NestJS uses this */}
@@ -428,8 +447,8 @@ console.log(account.getBalance()); // ✅ Read-only access`}
                   <span className="text-base">😫</span>
                   Without Inheritance — Copy-Paste Nightmare
                 </h4>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`// ❌ Without inheritance — you repeat the SAME code in every class
+                <EnhancedCodeBlock
+                  code={`// ❌ Without inheritance — you repeat the SAME code in every class
 class UserEntity {
   id: number;
   createdAt: Date = new Date();    // ← repeated
@@ -453,7 +472,19 @@ class OrderEntity {
   total: number;
 }
 // id, createdAt, updatedAt are duplicated 3 times!`}
-                </pre>
+                  language="typescript"
+                />
+              </div>
+
+              {/* DRY Principle Explanation */}
+              <div className="p-5 bg-amber-500/5 rounded-2xl border border-amber-500/10">
+                <h4 className="font-bold text-sm text-amber-700 dark:text-amber-400 mb-3 flex items-center gap-2">
+                  <span className="text-base">🏗️</span>
+                  The DRY Principle: Don't Repeat Yourself
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  The example above demonstrates the <strong>DRY principle</strong> — if you need the same properties on 10 different entity classes, define them once in a parent class. Inheritance lets you reuse code instead of copy-pasting. This makes maintenance easier: change the parent, and all children automatically get the update.
+                </p>
               </div>
 
               {/* With inheritance */}
@@ -462,8 +493,8 @@ class OrderEntity {
                   <span className="bg-emerald-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">✓</span>
                   With Inheritance — Write Once, Reuse Everywhere
                 </h4>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`// ✅ Step 1: Write shared logic ONCE in a parent class
+                <EnhancedCodeBlock
+                  code={`// ✅ Step 1: Write shared logic ONCE in a parent class
 class BaseEntity {
   constructor(
     public id: number,
@@ -502,7 +533,8 @@ const user = new UserEntity(1, "Mehedi", "m@e.com");
 user.updateTimestamp();        // ✅ Inherited method!
 console.log(user.createdAt);  // ✅ Inherited property!
 console.log(user.name);       // ✅ Own property`}
-                </pre>
+                  language="typescript"
+                />
               </div>
 
               {/* NestJS real-world usage */}
@@ -512,8 +544,8 @@ console.log(user.name);       // ✅ Own property`}
                   How NestJS Uses Inheritance
                 </h4>
                 <p className="text-sm text-slate-500 mb-3">NestJS&apos;s own exception classes are a perfect real-world family tree:</p>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`// NestJS built-in exception hierarchy:
+                <EnhancedCodeBlock
+                  code={`// NestJS built-in exception hierarchy:
 //
 //   HttpException (parent)
 //     ├── BadRequestException     (400)  ← extends HttpException
@@ -525,7 +557,8 @@ console.log(user.name);       // ✅ Own property`}
 
 throw new NotFoundException('User not found');
 // Automatically gets: status=404, message="User not found"`}
-                </pre>
+                  language="typescript"
+                />
               </div>
 
               {/* super() explainer */}
@@ -581,8 +614,8 @@ throw new NotFoundException('User not found');
                   <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span>
                   Step-by-Step: Building a Notification System
                 </h4>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`// Step 1: Define the CONTRACT (interface)
+                <EnhancedCodeBlock
+                  code={`// Step 1: Define the CONTRACT (interface)
 // "Any notification service MUST have a send() method"
 interface NotificationService {
   send(to: string, message: string): void;
@@ -616,7 +649,22 @@ function notify(service: NotificationService, to: string, msg: string) {
 notify(new EmailNotification(), "user@mail.com", "Welcome!");
 notify(new SmsNotification(), "+880...", "Your OTP is 1234");
 notify(new PushNotification(), "user123", "New message!");`}
-                </pre>
+                  language="typescript"
+                />
+              </div>
+
+              {/* Interface Contracts Explanation */}
+              <div className="p-5 bg-indigo-500/5 rounded-2xl border border-indigo-200/50 dark:border-indigo-500/20">
+                <h4 className="font-bold text-sm text-indigo-700 dark:text-indigo-400 mb-3 flex items-center gap-2">
+                  <span className="text-base">📋</span>
+                  Interfaces as Contracts
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+                  An <strong>interface</strong> defines a contract that all implementations must follow. <code className="text-indigo-600">NotificationService</code> says: "Any class that implements this must have a <code>send()</code> method with this exact signature."
+                </p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  This guarantee allows your code to work with <em>any</em> notification type without knowing the specifics — Email, SMS, Push, WebSocket, etc. All must follow the same interface.
+                </p>
               </div>
 
               {/* Why polymorphism matters */}
@@ -637,8 +685,8 @@ notify(new PushNotification(), "user123", "New message!");`}
                   How NestJS Uses Polymorphism
                 </h4>
                 <p className="text-sm text-slate-500 mb-3">All NestJS Guards implement the same <code className="text-blue-600">CanActivate</code> interface, but each behaves differently:</p>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`// NestJS Guards — same interface, different implementations
+                <EnhancedCodeBlock
+                  code={`// NestJS Guards — same interface, different implementations
 // All implement: canActivate(context): boolean
 
 // AuthGuard     → checks if user is logged in
@@ -655,7 +703,8 @@ class RolesGuard implements CanActivate {
     return user.role === 'admin';
   }
 }`}
-                </pre>
+                  language="typescript"
+                />
               </div>
             </div>
 
@@ -738,8 +787,8 @@ class RolesGuard implements CanActivate {
                   <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span>
                   Step-by-Step: Abstract Repository Pattern
                 </h4>
-                <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-                  {`// Step 1: Define the abstract class — the "contract"
+                <EnhancedCodeBlock
+                  code={`// Step 1: Define the abstract class — the "contract"
 // This says WHAT a repository must do, not HOW
 abstract class BaseRepository<T> {
   // ✅ Concrete method — shared logic (children inherit this for free)
@@ -784,7 +833,19 @@ class UserRepository extends BaseRepository<User> {
 // Step 3: Use it!
 // const repo = new BaseRepository();  // ❌ Error — abstract classes can't be instantiated!
 const repo = new UserRepository();     // ✅ Works — it's a concrete implementation`}
-                </pre>
+                  language="typescript"
+                />
+              </div>
+
+              {/* Abstract Classes vs Concrete Classes */}
+              <div className="p-5 bg-purple-500/5 rounded-2xl border border-purple-500/10">
+                <h4 className="font-bold text-sm text-purple-700 dark:text-purple-400 mb-3 flex items-center gap-2">
+                  <span className="text-base">📚</span>
+                  Blueprint vs Instance
+                </h4>
+                <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <code className="text-purple-600">BaseRepository</code> is like an instruction manual — it's abstract and can't be used directly. <code className="text-purple-600">UserRepository</code> is the actual implementation. When you need data access, you use concrete classes like <code className="text-purple-600">UserRepository</code>, <code className="text-purple-600">ProductRepository</code>, etc., but they all follow the same blueprint defined in the abstract parent.
+                </p>
               </div>
 
               {/* Why abstract? */}
@@ -814,8 +875,8 @@ const repo = new UserRepository();     // ✅ Works — it's a concrete implemen
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800">
               <h3 className="font-semibold text-lg mb-4 text-red-600 dark:text-red-400">Express (Procedural)</h3>
-              <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-                {`// Functions + middleware chains
+              <EnhancedCodeBlock
+                code={`// Functions + middleware chains
 const express = require("express");
 const app = express();
 
@@ -834,15 +895,16 @@ function authMiddleware(req, res, next) {
 }
 
 app.use(authMiddleware);`}
-              </pre>
+                language="javascript"
+              />
               <p className="text-xs text-red-600 dark:text-red-400 mt-3 italic">
                 ⚠️ Logic is scattered across standalone functions. No structure enforced — you organize it yourself (or don&apos;t).
               </p>
             </div>
             <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800">
-              <h3 className="font-semibold text-lg mb-4 text-emerald-600 dark:text-emerald-400">NestJS (OOP)</h3>
-              <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-                {`// Classes + decorators + DI
+              <h3 className="font-semibold text-lg mb-4 text-emerald-600 dark:text-emerald-400">NestJS (OOP) — Structured &amp; Organized</h3>
+              <EnhancedCodeBlock
+                code={`// Classes + decorators + DI
 @Controller('users')
 class UsersController {
   constructor(
@@ -862,7 +924,8 @@ class AuthGuard implements CanActivate {
     return !!context.getRequest().token;
   }
 }`}
-              </pre>
+                language="typescript"
+              />
               <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-3 italic">
                 ✅ Clear structure. Controller handles routes, Service handles logic, Guard handles auth. Each is a class with a single responsibility.
               </p>
@@ -884,8 +947,8 @@ class AuthGuard implements CanActivate {
           </ul>
 
           <Collapsible title="💡 Show Solution (try it yourself first!)">
-            <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-              {`// 1. Abstract class — the contract
+            <EnhancedCodeBlock
+              code={`// 1. Abstract class — the contract
 abstract class NotificationChannel {
   // Concrete method — shared by all channels
   log(message: string): void {
@@ -934,7 +997,8 @@ emailManager.notify("user@test.com", "Welcome!");
 
 const smsManager = new NotificationManager(new SmsChannel());
 smsManager.notify("+880123456", "Your OTP is 9999");`}
-            </pre>
+              language="typescript"
+            />
           </Collapsible>
         </section>
 

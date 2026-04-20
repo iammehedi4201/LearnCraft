@@ -1,4 +1,5 @@
 import { Collapsible } from "@/components/collapsible";
+import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 
 export function SectionMiniChallenge() {
   return (
@@ -17,9 +18,9 @@ export function SectionMiniChallenge() {
       </ul>
 
       <Collapsible title="💡 Show Solution (try it yourself first!)">
-        <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-          {`// 1. The full Post interface
-interface Post {
+        <div className="mt-4">
+          <EnhancedCodeBlock 
+            code={`interface Post {
   id: number;
   title: string;
   content: string;
@@ -28,15 +29,12 @@ interface Post {
   createdAt: Date;
 }
 
-// 2. CreatePostDto — Omit id and createdAt (server generates these)
 type CreatePostDto = Omit<Post, 'id' | 'createdAt'>;
 // Result: { title: string; content: string; author: string; tags: string[]; }
 
-// 3. UpdatePostDto — Make everything optional (only send what changed)
 type UpdatePostDto = Partial<CreatePostDto>;
 // Result: { title?: string; content?: string; author?: string; tags?: string[]; }
 
-// 4. Generic PaginatedResponse — works for any entity
 interface PaginatedResponse<T> {
   data: T[];
   total: number;
@@ -44,14 +42,28 @@ interface PaginatedResponse<T> {
   limit: number;
 }
 
-// Usage examples:
 const postPage: PaginatedResponse<Post> = {
   data: [{ id: 1, title: "Hello", content: "...", author: "Alice", tags: ["ts"], createdAt: new Date() }],
   total: 50,
   page: 1,
   limit: 10
 };`}
-        </pre>
+          />
+          <div className="mt-4 space-y-3 text-xs text-amber-800 dark:text-amber-300">
+            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-amber-800">
+              <strong className="text-amber-900 dark:text-amber-400">Step 1:</strong> The full Post interface contains all fields.
+            </div>
+            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-amber-800">
+              <strong className="text-amber-900 dark:text-amber-400">Step 2:</strong> CreatePostDto omits id and createdAt because the server generates these.
+            </div>
+            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-amber-800">
+              <strong className="text-amber-900 dark:text-amber-400">Step 3:</strong> UpdatePostDto makes everything optional so users only send what changed.
+            </div>
+            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-100 dark:border-amber-800">
+              <strong className="text-amber-900 dark:text-amber-400">Step 4:</strong> PaginatedResponse is a generic that works for any entity (Post, User, etc.)
+            </div>
+          </div>
+        </div>
       </Collapsible>
     </section>
   );

@@ -1,4 +1,5 @@
-import { QuickCheck } from "@/components/quick-check";
+﻿import { QuickCheck } from "@/components/quick-check";
+import { EnhancedCodeBlock, ExplainerSection } from "@/components/enhanced-code-display";
 
 export function SectionInterfaces() {
   return (
@@ -64,17 +65,12 @@ export function SectionInterfaces() {
           </table>
         </div>
 
-        <div className="p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10 mb-8 flex gap-5 items-start">
-          <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
-            <svg className="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>
-          </div>
-          <div>
-            <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1">Simple Concept: A List of Rules</h5>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              An <strong>Interface</strong> is just a simple &quot;List of Rules&quot; for an object. For example, if you say a <strong>User</strong> object <em>must</em> have a name and an email, TypeScript will make sure you don&apos;t forget them. It&apos;s like a contract—as long as you follow the rules, your code is safe.
-            </p>
-          </div>
-        </div>
+        <ExplainerSection 
+          title="Simple Concept: A List of Rules"
+          icon={<svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>}
+        >
+          An <strong>Interface</strong> is just a simple &quot;List of Rules&quot; for an object. For example, if you say a <strong>User</strong> object <em>must</em> have a name and an email, TypeScript will make sure you don&apos;t forget them. It&apos;s like a contract—as long as you follow the rules, your code is safe.
+        </ExplainerSection>
 
         <div className="space-y-6">
           <div>
@@ -82,10 +78,13 @@ export function SectionInterfaces() {
               <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span>
               Plain TypeScript Example
             </h4>
-            <p className="text-sm text-slate-500 mb-3">An interface is a blueprint for an object.</p>
-            <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-              {`// 1. Interfaces = Blueprints for objects
-interface User {
+
+            <ExplainerSection title="Interfaces as Blueprints" variant="info">
+              An interface is a blueprint for an object. Define what properties must exist and what types they should be.
+            </ExplainerSection>
+
+            <EnhancedCodeBlock 
+              code={`interface User {
   name: string;
   email: string;
   age: number;
@@ -95,39 +94,46 @@ const newUser: User = {
   name: "Alice",
   email: "alice@example.com",
   age: 28
-};
+};`}
+            />
 
-// 2. Types = Nicknames
-// An IDType can be EITHER a number OR a string
-type IDType = number | string;
+            <ExplainerSection title="Types as Nicknames" variant="info">
+              A type can be a "nickname" for a union (multiple possible types). An <code>IDType</code> can be either a number OR a string.
+            </ExplainerSection>
+
+            <EnhancedCodeBlock 
+              code={`type IDType = number | string;
 
 let myId: IDType = 101; 
 let yourId: IDType = "USER-101";`}
-            </pre>
+            />
           </div>
 
-          <div className="p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+          <div>
             <h4 className="font-bold text-sm text-red-700 dark:text-red-400 mb-2 flex items-center gap-2">
               <span className="text-base">💥</span>
               What happens when you break the rules?
             </h4>
-            <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-              {`interface User {
+
+            <ExplainerSection title="Contract Enforcement" variant="danger">
+              An interface is a <strong>binding contract</strong>. If your object is missing a required property or includes something extra not defined in the blueprint, TypeScript will highlight it as an error immediately.
+            </ExplainerSection>
+
+            <EnhancedCodeBlock 
+              code={`interface User {
   name: string;
   email: string;
 }
 
 // ❌ TypeScript ERROR — missing 'email' property!
 const badUser: User = { name: "Alice" };
-//    ^^^^^^^ Property 'email' is missing in type '{ name: string; }'
 
 // ❌ TypeScript ERROR — extra property not in the blueprint!
 const anotherBad: User = { name: "Bob", email: "bob@test.com", phone: "123" };
-//                                                              ^^^^^ 'phone' does not exist
 
 // ✅ Correct — follows the blueprint exactly
 const goodUser: User = { name: "Alice", email: "alice@test.com" };`}
-            </pre>
+            />
           </div>
 
           <div>
@@ -135,10 +141,11 @@ const goodUser: User = { name: "Alice", email: "alice@test.com" };`}
               <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">2</span>
               How it is used in NestJS
             </h4>
-            <p className="text-sm text-slate-500 mb-3">In NestJS, Interfaces (and Classes) act as DTOs (Data Transfer Objects). They serve as the exact blueprint for incoming request bodies!</p>
-            <pre className="bg-gray-900 text-slate-300 p-4 rounded-xl overflow-x-auto text-sm border border-slate-800">
-              {`// NestJS DTO blueprint
-interface CreateUserDto {
+            <ExplainerSection title="NestJS Context" variant="success">
+              In NestJS, Interfaces (and Classes) act as DTOs (Data Transfer Objects). They serve as the exact blueprint for incoming request bodies. NestJS automatically validates the incoming request against the DTO blueprint before your code even runs!
+            </ExplainerSection>
+            <EnhancedCodeBlock 
+              code={`interface CreateUserDto {
   name: string;
   email: string;
 }
@@ -147,13 +154,11 @@ interface CreateUserDto {
 export class UsersController {
   
   @Post()
-  // NestJS uses the CreateUserDto blueprint to validate
-  // the incoming request body before the code even runs!
   create(@Body() body: CreateUserDto) {
     return \`Creating user \${body.name} with email \${body.email}\`;
   }
 }`}
-            </pre>
+            />
           </div>
         </div>
 
