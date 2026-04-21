@@ -32,24 +32,24 @@ export function SectionTypeNarrowing() {
           <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 h-full">
             <span className="font-bold text-slate-900 dark:text-white block mb-2 border-b border-slate-200 dark:border-slate-600 pb-2">
               <code className="text-blue-600 dark:text-blue-400 bg-blue-100/50 dark:bg-blue-900/30 px-1 rounded mr-1">instanceof</code>
-              — For classes (real objects)
+              — For classes
             </span>
-            <p className="text-slate-600 dark:text-slate-400 mb-2 font-medium">Use this when working with:</p>
+            <p className="text-slate-600 dark:text-slate-400 mb-2 font-medium">Was this object created from this class?</p>
             <ul className="space-y-1 text-slate-500 dark:text-slate-400 pl-4 list-disc marker:text-slate-400">
-              <li>classes</li>
-              <li>objects created using <code className="text-pink-600 dark:text-pink-400">new</code></li>
+              <li>Works with <code className="text-pink-600 dark:text-pink-400">new</code> keyword</li>
+              <li>Checks class lineage</li>
             </ul>
           </div>
           
           <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700 h-full">
             <span className="font-bold text-slate-900 dark:text-white block mb-2 border-b border-slate-200 dark:border-slate-600 pb-2">
               <code className="text-blue-600 dark:text-blue-400 bg-blue-100/50 dark:bg-blue-900/30 px-1 rounded mr-1">in</code>
-              — For checking object properties
+              — For property checks
             </span>
             <p className="text-slate-600 dark:text-slate-400 mb-2 font-medium">Use this when:</p>
             <ul className="space-y-1 text-slate-500 dark:text-slate-400 pl-4 list-disc marker:text-slate-400">
               <li>you have a union of object types</li>
-              <li>and want to check if a property exists</li>
+              <li>checking if a property exists</li>
             </ul>
           </div>
         </div>
@@ -68,24 +68,30 @@ export function SectionTypeNarrowing() {
               <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span>
               Plain TypeScript Example
             </h4>
-            <ExplainerSection title="Proving types with typeof" variant="warning">
-              <code className="text-slate-900 dark:text-white font-bold bg-slate-200 dark:bg-slate-800 px-1 rounded">typeof</code> proves whether it&apos;s a string or number before you use it.
+            <ExplainerSection title="Proving types with typeof and instanceof" variant="warning">
+              <code className="text-slate-900 dark:text-white font-bold bg-slate-200 dark:bg-slate-800 px-1 rounded">typeof</code> is for basics, <code className="text-slate-900 dark:text-white font-bold bg-slate-200 dark:bg-slate-800 px-1 rounded">instanceof</code> is for classes.
             </ExplainerSection>
             <EnhancedCodeBlock 
               code={`// 1. typeof — for primitive values
 function parseInput(input: string | number) {
   if (typeof input === "string") {
-    return input.toUpperCase();  // TypeScript knows it's a string here!
+    return input.toUpperCase();  // TS knows it's a string!
   }
-  return input.toFixed(2);       // TypeScript knows it's a number here!
+  return input.toFixed(2);       // TS knows it's a number!
 }
 
-// 2. instanceof — for classes
-class CustomError { message = "Something broke!"; }
+// 2. instanceof — "Was this created from this class?"
+class User {}
+class Admin {}
 
-function handleError(error: unknown) {
-  if (error instanceof CustomError) {
-    console.log(error.message);  // TypeScript knows it's a CustomError class!
+const u = new User();
+
+u instanceof User   // true
+u instanceof Admin  // false
+
+function checkPermissions(person: User | Admin) {
+  if (person instanceof Admin) {
+    // TypeScript now allows admin-only actions!
   }
 }
 
