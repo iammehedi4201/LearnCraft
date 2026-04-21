@@ -29,7 +29,7 @@ export default function LearnHub(): JSX.Element {
       <div className="relative isolate px-6 pt-14 lg:px-8 overflow-hidden">
         <div className="mx-auto max-w-4xl pt-24 pb-16 sm:pt-32 sm:pb-24">
           <div className="text-center">
-            <h1 className="text-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-7xl mb-6">
+            <h1 className="text-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-7xl mb-6 flex flex-wrap items-center justify-center gap-x-4">
               Master the <span className="text-gradient">Modern Web</span>
             </h1>
             <p className="mt-6 text-lg leading-8 text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
@@ -78,7 +78,7 @@ export default function LearnHub(): JSX.Element {
             </div>
             <div>
               <h3 className="text-display text-3xl font-bold text-slate-900 dark:text-white mb-4">
-                TanStack Query v5
+                TanStack Query <span className="inline-block align-baseline text-3xl font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-3 py-0.5 rounded-lg -translate-y-0.5 ml-1">v5</span>
               </h3>
               <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-10">
                 Master asynchronous state management. Learn caching, synchronization,
@@ -101,7 +101,7 @@ export default function LearnHub(): JSX.Element {
             </div>
             <div>
               <h3 className="text-display text-3xl font-bold text-slate-900 dark:text-white mb-4">
-                NestJS Elite
+                NestJS <span className="inline-block align-baseline text-3xl font-bold bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-0.5 rounded-lg -translate-y-0.5 ml-1">Elite</span>
               </h3>
               <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-10">
                 Architectural mastery for the backend. Build scalable, testable,
@@ -124,7 +124,7 @@ export default function LearnHub(): JSX.Element {
             </div>
             <div>
               <h3 className="text-display text-3xl font-bold text-slate-900 dark:text-white mb-4">
-                Next.js 14+
+                Next.js <span className="inline-block align-baseline text-3xl font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-3 py-0.5 rounded-lg -translate-y-0.5 ml-1">14+</span>
               </h3>
               <p className="text-slate-600 dark:text-slate-400 text-lg leading-relaxed mb-10">
                 Build the future of full-stack. Explore App Router, Server Components,
@@ -146,7 +146,7 @@ export default function LearnHub(): JSX.Element {
       <section className="relative py-32 overflow-hidden border-y border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-slate-900/20 transition-colors">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center mb-24">
-            <h2 className="text-display text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl text-glow">
+            <h2 className="text-display text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl text-glow flex items-center justify-center gap-4">
               The Roadmap to <span className="text-gradient">Mastery</span>
             </h2>
             <p className="mt-6 text-lg text-slate-600 dark:text-slate-400 max-w-lg mx-auto leading-relaxed">
