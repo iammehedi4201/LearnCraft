@@ -3,7 +3,7 @@ import { QuickCheck } from "./quick-check";
 
 export function PolymorphismSection() {
   return (
-    <section className="mt-12">
+    <section>
       <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
         4. Polymorphism — The Universal Remote
       </h2>

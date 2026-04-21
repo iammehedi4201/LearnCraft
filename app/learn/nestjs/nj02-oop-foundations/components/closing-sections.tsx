@@ -7,7 +7,7 @@ export function ClosingSections() {
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       {/* Section 6: Express vs NestJS Comparison                            */}
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="mt-12">
+      <section>
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
           6. Express vs NestJS — Paradigm Shift
         </h2>

@@ -3,7 +3,7 @@ import { QuickCheck } from "./quick-check";
 
 export function EncapsulationSection() {
   return (
-    <section className="mt-12">
+    <section>
       <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
         2. Encapsulation — Hiding the Mess
       </h2>
