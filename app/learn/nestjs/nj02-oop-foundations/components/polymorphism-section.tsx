@@ -3,11 +3,16 @@ import { QuickCheck } from "./quick-check";
 
 export function PolymorphismSection() {
   return (
-    <section>
-      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-        4. Polymorphism — The Universal Remote
-      </h2>
-      <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6 font-sans">
+    <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+      <div className="bg-white dark:bg-slate-900/80 p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl mb-12">
+        <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800/50">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 font-black">
+            4
+          </div>
+          <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+            Polymorphism
+          </h2>
+        </div>
         {/* What is Polymorphism? */}
         <div className="p-5 bg-sky-500/5 rounded-2xl border border-sky-200/50 dark:border-sky-500/15 mb-8">
           <h3 className="font-bold text-base text-sky-700 dark:text-sky-400 mb-2">

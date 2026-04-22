@@ -10,7 +10,7 @@ export function ClosingSections() {
       <section>
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
           6. Express vs NestJS — Paradigm Shift
-        </h2>
+            </h2>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800">
             <h3 className="font-semibold text-lg mb-4 text-red-600 dark:text-red-400">
@@ -86,293 +86,142 @@ class AuthGuard implements CanActivate {
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       {/* Mini Challenge                                                     */}
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="mt-12 p-6 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg">
-        <h3 className="font-semibold text-lg mb-3 text-amber-900 dark:text-amber-400">
-          🏋️ Mini Challenge
-        </h3>
-        <p className="text-amber-900 dark:text-amber-300 mb-2">
-          Build a simple notification system using OOP. This combines
-          everything you learned:
-        </p>
-        <p className="text-amber-800 dark:text-amber-300 text-sm mb-4 italic">
-          Hint: You&apos;ll use abstraction (abstract class), inheritance
-          (extends), encapsulation (private channel), and polymorphism
-          (swappable channels) — all in one exercise!
-        </p>
-        <ul className="text-amber-800 dark:text-amber-300 text-sm space-y-2 list-disc pl-5">
-          <li>
-            Create an abstract{" "}
-            <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">
-              NotificationChannel
-            </code>{" "}
-            class with an abstract{" "}
-            <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">
-              send()
-            </code>{" "}
-            method and a concrete{" "}
-            <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">
-              log()
-            </code>{" "}
-            method that all children share
-          </li>
-          <li>
-            Implement 3 child classes:{" "}
-            <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">
-              EmailChannel
-            </code>
-            ,{" "}
-            <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">
-              SmsChannel
-            </code>
-            , and{" "}
-            <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">
-              SlackChannel
-            </code>{" "}
-            — each with its own{" "}
-            <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">
-              send()
-            </code>
-          </li>
-          <li>
-            Create a{" "}
-            <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">
-              NotificationManager
-            </code>{" "}
-            class that accepts any channel via its constructor (use{" "}
-            <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">
-              private
-            </code>{" "}
-            for encapsulation)
-          </li>
-          <li>
-            This is the exact pattern NestJS uses for Dependency Injection!
-          </li>
-        </ul>
-
-        <Collapsible title="💡 Show Solution (try it yourself first!)">
-          <EnhancedCodeBlock
-            code={`// 1. Abstract class — the contract
-// Defines WHAT a channel must do, plus shared logging code
+      <section>
+        <div className="bg-amber-500/5 dark:bg-amber-500/10 p-8 lg:p-12 rounded-[2.5rem] border border-amber-200/50 dark:border-amber-500/20 shadow-xl shadow-amber-500/5 mb-8 relative overflow-hidden group">
+          <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-amber-500/5 blur-3xl group-hover:bg-amber-500/10 transition-colors" />
+          
+          <h3 className="text-2xl font-black mb-6 text-amber-900 dark:text-amber-400 flex items-center gap-3">
+            <span className="text-3xl">🏋️</span> Mini Challenge
+          </h3>
+          <p className="text-amber-900/80 dark:text-amber-300/80 mb-6 text-lg font-medium leading-relaxed">
+            Build a simple notification system using OOP. This combines
+            everything you learned:
+          </p>
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <div className="space-y-4">
+              <p className="text-amber-800 dark:text-amber-300 font-bold italic bg-amber-500/10 px-4 py-2 rounded-xl inline-block">
+                Hint: You&apos;ll use abstraction, inheritance, encapsulation, and polymorphism — all in one exercise!
+              </p>
+              <ul className="text-amber-800/80 dark:text-amber-300/70 space-y-3 list-none">
+                {[
+                  "Create an abstract NotificationChannel class",
+                  "Implement 3 child classes: Email, SMS, and Slack",
+                  "Create a NotificationManager that accepts any channel",
+                  "This is the exact pattern NestJS uses for Dependency Injection!"
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3">
+                    <div className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
+                    <span className="text-sm font-medium">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="relative">
+               <Collapsible title="💡 Show Solution (try it yourself first!)">
+                <div className="mt-4 rounded-2xl overflow-hidden border border-amber-500/20">
+                  <EnhancedCodeBlock
+                    code={`// 1. Abstract class — the contract
 abstract class NotificationChannel {
-  // Concrete method — shared by ALL channels (inherited for free)
   log(message: string): void {
     console.log(\`[\${new Date().toISOString()}] \${message}\`);
   }
-
-  // Abstract method — each channel MUST implement this differently
   abstract send(to: string, message: string): void;
 }
 
-// 2. Concrete implementations — each fills in the "how"
+// 2. Concrete implementations
 class EmailChannel extends NotificationChannel {
   send(to: string, message: string): void {
-    this.log(\`📧 Sending email to \${to}\`);  // ← inherited log()
+    this.log(\`📧 Sending email to \${to}\`);
     console.log(\`Email body: \${message}\`);
   }
 }
 
-class SmsChannel extends NotificationChannel {
-  send(to: string, message: string): void {
-    this.log(\`📱 Sending SMS to \${to}\`);
-    console.log(\`SMS: \${message}\`);
-  }
-}
-
-class SlackChannel extends NotificationChannel {
-  send(to: string, message: string): void {
-    this.log(\`💬 Sending Slack message to \${to}\`);
-    console.log(\`Slack: \${message}\`);
-  }
-}
-
-// 3. NotificationManager — uses constructor injection (like NestJS!)
-// This is ENCAPSULATION: the channel is private
-// This is POLYMORPHISM: it accepts ANY NotificationChannel
+// 3. Manager using Dependency Injection
 class NotificationManager {
   constructor(private channel: NotificationChannel) {}
-  //          ☝️ Accepts ANY channel — polymorphism!
-  //          ☝️ "private" = encapsulation!
-
   notify(to: string, message: string): void {
     this.channel.send(to, message);
   }
-}
-
-// 4. Usage — swap channels freely without changing NotificationManager!
-const emailManager = new NotificationManager(new EmailChannel());
-emailManager.notify("user@test.com", "Welcome!");
-
-const smsManager = new NotificationManager(new SmsChannel());
-smsManager.notify("+880123456", "Your OTP is 9999");`}
-            language="typescript"
-          />
-        </Collapsible>
+}`}
+                    language="typescript"
+                  />
+                </div>
+              </Collapsible>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       {/* Common Mistakes                                                    */}
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="mt-6 p-6 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 rounded-lg">
-        <h3 className="font-semibold text-lg mb-3 text-red-900 dark:text-red-400">
-          ⚠️ Common Mistakes &amp; How to Avoid Them
-        </h3>
-        <ul className="text-red-800 dark:text-red-300 text-sm space-y-4 list-disc pl-5">
-          <li>
-            <strong>Making everything public</strong> — Use{" "}
-            <code className="bg-red-200/50 dark:bg-red-800/30 px-1 rounded">
-              private
-            </code>{" "}
-            by default, and only add{" "}
-            <code className="bg-red-200/50 dark:bg-red-800/30 px-1 rounded">
-              public
-            </code>{" "}
-            when you have a reason to.
-            <br />
-            <span className="text-xs text-red-600 dark:text-red-400 italic">
-              ✅ Fix: Ask yourself &quot;does code outside this class need
-              to access this?&quot; If not, keep it private.
-            </span>
-          </li>
-          <li>
-            <strong>Deep inheritance chains</strong> (more than 2-3
-            levels like A → B → C → D) become very hard to follow.
-            <br />
-            <span className="text-xs text-red-600 dark:text-red-400 italic">
-              ✅ Fix: Prefer <strong>composition over inheritance</strong>{" "}
-              — instead of &quot;class D extends C extends B extends
-              A&quot;, have D <em>use</em> instances of A, B, C as
-              properties.
-            </span>
-          </li>
-          <li>
-            <strong>
-              Forgetting{" "}
-              <code className="bg-red-200/50 dark:bg-red-800/30 px-1 rounded">
-                super()
-              </code>
-            </strong>{" "}
-            in child constructors — TypeScript will catch this, but
-            understand <em>why</em> it&apos;s needed.
-            <br />
-            <span className="text-xs text-red-600 dark:text-red-400 italic">
-              ✅ Fix: Always call super() as the first line in any child
-              constructor, passing the values the parent needs.
-            </span>
-          </li>
-          <li>
-            <strong>Not using interfaces</strong> — coding directly to a
-            specific class makes your code rigid and hard to test.
-            <br />
-            <span className="text-xs text-red-600 dark:text-red-400 italic">
-              ✅ Fix: Code to an interface, not an implementation. This
-              lets you swap implementations easily (e.g., swap a real
-              database for a mock during tests).
-            </span>
-          </li>
-          <li>
-            <strong>Confusing Abstraction and Encapsulation</strong> —
-            they sound similar but solve different problems.
-            <br />
-            <span className="text-xs text-red-600 dark:text-red-400 italic">
-              ✅ Remember: Encapsulation = <strong>hiding data</strong>{" "}
-              (private properties + public methods). Abstraction ={" "}
-              <strong>hiding complexity</strong> (abstract
-              classes/interfaces that define &quot;what&quot; without
-              &quot;how&quot;).
-            </span>
-          </li>
-        </ul>
+      <section>
+        <div className="bg-rose-500/5 dark:bg-rose-500/10 p-8 lg:p-12 rounded-[2.5rem] border border-rose-200/50 dark:border-rose-500/20 mb-8">
+          <h3 className="text-2xl font-black mb-8 text-rose-900 dark:text-rose-400 flex items-center gap-3">
+            <span className="text-3xl">⚠️</span> Common Mistakes
+          </h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {[
+              {
+                title: "Making everything public",
+                fix: "Use private by default. Only expose what's necessary."
+              },
+              {
+                title: "Deep inheritance chains",
+                fix: "Prefer composition over inheritance. Keep it flat."
+              },
+              {
+                title: "Forgetting super()",
+                fix: "Always call super() first in child constructors."
+              },
+              {
+                title: "Not using interfaces",
+                fix: "Code to an interface, not an implementation."
+              }
+            ].map((item, i) => (
+              <div key={i} className="p-5 bg-white/50 dark:bg-slate-900/50 rounded-2xl border border-rose-500/10 hover:border-rose-500/30 transition-colors">
+                <h4 className="font-bold text-rose-900 dark:text-rose-300 mb-2">{item.title}</h4>
+                <p className="text-xs text-rose-800/70 dark:text-rose-400/70 leading-relaxed italic">
+                  ✅ Fix: {item.fix}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       {/* Summary                                                            */}
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section className="mt-6 p-6 bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 rounded-lg">
-        <h3 className="font-semibold text-lg mb-4 text-slate-900 dark:text-white flex items-center gap-2">
-          🧠 Quick Summary — What You Learned
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-            <span className="bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold px-2 py-1 rounded shrink-0">
-              1
-            </span>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              <strong className="text-slate-900 dark:text-white">
-                Classes &amp; Objects
-              </strong>{" "}
-              — A class is a blueprint (the Lego instructions), an object
-              is the instance you build from it. NestJS uses the
-              constructor shorthand to declare and assign properties in
-              one line.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-            <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-bold px-2 py-1 rounded shrink-0">
-              2
-            </span>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              <strong className="text-slate-900 dark:text-white">
-                Encapsulation
-              </strong>{" "}
-              — Hide internal data with private, expose safe controls
-              with public methods (getters/setters). NestJS layers
-              (controllers → services → repositories) are encapsulation
-              in action.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-            <span className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 text-xs font-bold px-2 py-1 rounded shrink-0">
-              3
-            </span>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              <strong className="text-slate-900 dark:text-white">
-                Inheritance
-              </strong>{" "}
-              — Child classes reuse parent code using{" "}
-              <code>extends</code>, call{" "}
-              <code>super()</code> in constructors to set up the
-              parent&apos;s properties first. Avoid chains deeper than
-              2-3 levels.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-            <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-xs font-bold px-2 py-1 rounded shrink-0">
-              4
-            </span>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              <strong className="text-slate-900 dark:text-white">
-                Polymorphism
-              </strong>{" "}
-              — Same method name, different behavior. Interfaces define
-              the contract, implementations provide the specifics. Add
-              new types without editing existing code.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-            <span className="bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 text-xs font-bold px-2 py-1 rounded shrink-0">
-              5
-            </span>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              <strong className="text-slate-900 dark:text-white">
-                Abstraction
-              </strong>{" "}
-              — Define WHAT something does (abstract methods), not HOW.
-              Abstract classes can also include shared working code
-              (concrete methods) that children inherit for free.
-            </p>
-          </div>
-          <div className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
-            <span className="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 text-xs font-bold px-2 py-1 rounded shrink-0">
-              🎯
-            </span>
-            <p className="text-xs text-slate-600 dark:text-slate-400">
-              <strong className="text-slate-900 dark:text-white">
-                NestJS Foundation
-              </strong>{" "}
-              — Every NestJS building block (controllers, services,
-              guards, interceptors, pipes) is a class that uses these OOP
-              pillars. Master these, and NestJS will feel natural.
-            </p>
+      <section>
+        <div className="bg-slate-900 dark:bg-slate-900 p-8 lg:p-12 rounded-[2.5rem] border border-slate-800 shadow-2xl relative overflow-hidden group">
+          <div className="absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
+          
+          <h3 className="text-2xl font-black mb-8 text-white flex items-center gap-3">
+            <span className="text-3xl">🧠</span> Quick Summary
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { id: 1, title: "Classes & Objects", desc: "Blueprints vs Instances. Master the constructor shorthand." },
+              { id: 2, title: "Encapsulation", desc: "Hide data with private, control access with methods." },
+              { id: 3, title: "Inheritance", desc: "Reuse code with extends and super(). Stay DRY." },
+              { id: 4, title: "Polymorphism", desc: "Same name, different behavior. Power of interfaces." },
+              { id: 5, title: "Abstraction", desc: "Hide complexity. Define 'what' without the 'how'." },
+              { id: "🎯", title: "NestJS Ready", desc: "You now understand the core of every NestJS app." }
+            ].map((item, i) => (
+              <div key={i} className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group/item">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="h-7 w-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-black text-xs">
+                    {item.id}
+                  </span>
+                  <h4 className="font-bold text-slate-100 group-hover/item:text-blue-400 transition-colors">{item.title}</h4>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
