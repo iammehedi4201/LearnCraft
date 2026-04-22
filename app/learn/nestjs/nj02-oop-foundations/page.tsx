@@ -45,7 +45,7 @@ export default function NJ02OOP(): JSX.Element {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B1120] text-slate-300 selection:bg-primary/30">
+    <div className="min-h-screen text-slate-300 selection:bg-primary/30">
       {/* Ambient Glows */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
