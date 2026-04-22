@@ -27,7 +27,7 @@ const roadmap = [
 
 export function Roadmap() {
   return (
-    <section className="py-12 relative overflow-hidden">
+    <section className="py-20 relative overflow-hidden">
       {/* Decorative Glow */}
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-blue-600/5 blur-[120px] -z-10" />
 

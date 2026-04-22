@@ -13,7 +13,7 @@ export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="py-12">
+    <section className="py-20">
       <div className="container mx-auto px-6">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-4xl lg:text-5xl font-black text-foreground mb-16 text-center tracking-tight">Common Questions</h2>
@@ -22,7 +22,7 @@ export function FAQ() {
             {faqs.map((faq, i) => (
               <div
                 key={i}
-                className={`rounded-[2rem] glass-card transition-all duration-300 overflow-hidden ${openIndex === i ? 'ring-2 ring-blue-500/30' : 'hover:border-white/20'
+                className={`rounded-[1rem] glass-card transition-all duration-300 overflow-hidden ${openIndex === i ? 'ring-2 ring-blue-500/30' : 'hover:border-white/20'
                   }`}
               >
                 <button

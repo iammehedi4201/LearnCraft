@@ -52,7 +52,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative pt-12 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+    <section className="relative pt-20 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[120px] animate-pulse" />

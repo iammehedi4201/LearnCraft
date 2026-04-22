@@ -7,7 +7,7 @@ export function Footer() {
   const [email, setEmail] = useState("");
 
   return (
-    <footer className="pt-12 pb-16 bg-background border-t border-slate-200 dark:border-white/5">
+    <footer className="pt-20 pb-16 bg-background border-t border-slate-200 dark:border-white/5">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
           <div className="col-span-1 md:col-span-2">
