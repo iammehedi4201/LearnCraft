@@ -24,25 +24,25 @@ export default function LearnHub(): JSX.Element {
       <Nav />
 
       <main className="max-w-7xl mx-auto">
-        {/* Hero Section - High impact entry point with interactive code snippets */}
+
         <Hero />
 
-        {/* Stats Section - Social proof and platform scale */}
+
         <Stats />
 
-        {/* Course Paths - Interactive entry points to curriculums */}
+
         <CoursePaths />
 
-        {/* Roadmap Section - Visual progression guide */}
+
         <Roadmap />
 
-        {/* Testimonials - Trusted by industry experts */}
+
         <Testimonials />
 
-        {/* Community Hub - Discord and GitHub integration */}
+
         <Community />
 
-        {/* FAQ - Addressing common student inquiries */}
+
         <FAQ />
       </main>
 
