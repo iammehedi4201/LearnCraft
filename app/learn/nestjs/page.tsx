@@ -259,7 +259,7 @@ export default function NestJSHub(): JSX.Element {
               <h1 className="text-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl mb-4">
                 NestJS <span className="text-red-600 dark:text-red-400">Elite</span> Mastery
               </h1>
-            <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+              <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
                 27 comprehensive lessons — from TypeScript & OOP foundations to production-grade
                 backend APIs. Project-based, with Express.js comparisons at every step.
               </p>
