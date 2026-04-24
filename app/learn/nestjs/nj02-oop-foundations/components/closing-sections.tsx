@@ -1,84 +1,108 @@
 import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 import { Collapsible } from "./collapsible";
+import { QuickCheck } from "./quick-check";
 
 export function ClosingSections() {
   return (
     <>
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      {/* Section 6: Express vs NestJS Comparison                            */}
+      {/* Section 6: Express vs NestJS                                       */}
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section>
-        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-          6. Express vs NestJS — Paradigm Shift
+      <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <div className="bg-white dark:bg-slate-800/40 p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl mb-12">
+          <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800/50">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500/10 text-orange-600 font-black">
+              6
+            </div>
+            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+              Express vs NestJS
             </h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800">
-            <h3 className="font-semibold text-lg mb-4 text-red-600 dark:text-red-400">
-              Express (Function-Based)
-            </h3>
-            <EnhancedCodeBlock
-              code={`// Functions + middleware chains
-const express = require("express");
-const app = express();
+          </div>
 
-// Route handler — a plain standalone function
+          <div className="mb-16">
+            <div className="p-5 bg-orange-500/5 rounded-2xl border border-orange-200/50 dark:border-orange-500/15 mb-6">
+              <h3 className="font-bold text-xl text-orange-700 dark:text-orange-400 mb-2">
+                1. What is the difference?
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                Express is built with simple, standalone functions. NestJS is built entirely with Classes, Objects, and the OOP rules you just learned. 
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+                Express gives you zero rules. You can throw all your code into one massive file if you want. This works for tiny apps, but becomes a messy nightmare on big apps. NestJS uses Object-Oriented Programming to <em>force</em> you to stay organized.
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+              <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+                <li>
+                  <strong>Express:</strong> You write a function. It handles the website request directly.
+                </li>
+                <li>
+                  <strong>NestJS:</strong> You create a Class. It implements an Interface. It extends an Abstract Repository. It encapsulates data. It uses Polymorphism to talk to other classes.
+                </li>
+              </ol>
+            </div>
+
+            <div className="mb-6">
+              <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-red-500/5 p-5 rounded-xl border border-red-500/10">
+                  <h5 className="font-bold text-red-700 dark:text-red-400 mb-3 text-sm">
+                    Express (Just simple functions)
+                  </h5>
+                  <EnhancedCodeBlock
+                    code={`// Route handler — a plain standalone function
 app.get("/users", (req, res) => {
   const users = getUsersFromDB();
   res.json(users);
-});
-
-// Middleware — another plain function
-function authMiddleware(req, res, next) {
-  if (!req.headers.token) {
-    return res.status(401).send();
-  }
-  next();  // Call next() to pass control forward
-}
-
-app.use(authMiddleware);`}
-              language="javascript"
-            />
-            <p className="text-xs text-red-600 dark:text-red-400 mt-3 italic">
-              ⚠️ Logic is scattered across standalone functions. You decide
-              the structure yourself — Express doesn&apos;t enforce any
-              organization pattern. This works for small apps, but gets
-              messy as projects grow.
-            </p>
-          </div>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800">
-            <h3 className="font-semibold text-lg mb-4 text-emerald-600 dark:text-emerald-400">
-              NestJS (Class-Based &amp; Organized)
-            </h3>
-            <EnhancedCodeBlock
-              code={`// Classes + decorators + dependency injection
+});`}
+                    language="javascript"
+                  />
+                </div>
+                <div className="bg-emerald-500/5 p-5 rounded-xl border border-emerald-500/10">
+                  <h5 className="font-bold text-emerald-700 dark:text-emerald-400 mb-3 text-sm">
+                    NestJS (Organized Classes)
+                  </h5>
+                  <EnhancedCodeBlock
+                    code={`// A class that handles routes
 @Controller('users')
 class UsersController {
-  // NestJS automatically injects UsersService here
-  constructor(
-    private usersService: UsersService
-  ) {}
+  constructor(private usersService: UsersService) {}
 
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
-}
-
-// Guard — a class implementing an interface
-@Injectable()
-class AuthGuard implements CanActivate {
-  canActivate(context) {
-    return !!context.getRequest().token;
-  }
 }`}
-              language="typescript"
+                    language="typescript"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+              <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+                <span>⚠️</span> Common mistake
+              </h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                <strong>Writing NestJS code like Express code:</strong> Many beginners try to shove simple functions inside NestJS files without using classes. NestJS will reject this. You must play by the OOP rules.
+              </p>
+            </div>
+
+            <div className="mb-6">
+              <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400">Express uses loose functions. NestJS uses strict Object-Oriented classes. This is why you need to understand OOP to use NestJS.</p>
+            </div>
+
+            <QuickCheck
+              question="Does NestJS prefer you to use loose, floating functions or organized Classes?"
+              answer="NestJS strongly requires organized Classes."
             />
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-3 italic">
-              ✅ Clear, enforced structure. Controller handles routes,
-              Service handles logic, Guard handles auth. Each is a class
-              with a single responsibility. NestJS uses every OOP pillar
-              you learned in this lesson.
-            </p>
           </div>
         </div>
       </section>
@@ -89,25 +113,25 @@ class AuthGuard implements CanActivate {
       <section>
         <div className="bg-amber-500/5 dark:bg-amber-500/10 p-8 lg:p-12 rounded-[2.5rem] border border-amber-200/50 dark:border-amber-500/20 shadow-xl shadow-amber-500/5 mb-8 relative overflow-hidden group">
           <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-amber-500/5 blur-3xl group-hover:bg-amber-500/10 transition-colors" />
-          
+
           <h3 className="text-2xl font-black mb-6 text-amber-900 dark:text-amber-400 flex items-center gap-3">
-            <span className="text-3xl">🏋️</span> Mini Challenge
+            <span className="text-3xl">🏋️</span> Final Challenge
           </h3>
           <p className="text-amber-900/80 dark:text-amber-300/80 mb-6 text-lg font-medium leading-relaxed">
-            Build a simple notification system using OOP. This combines
-            everything you learned:
+            Build a simple notification system. Prove you understand the concepts!
           </p>
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             <div className="space-y-4">
               <p className="text-amber-800 dark:text-amber-300 font-bold italic bg-amber-500/10 px-4 py-2 rounded-xl inline-block">
-                Hint: You&apos;ll use abstraction, inheritance, encapsulation, and polymorphism — all in one exercise!
+                Hint: You will use abstraction, inheritance, and polymorphism here.
               </p>
               <ul className="text-amber-800/80 dark:text-amber-300/70 space-y-3 list-none">
                 {[
-                  "Create an abstract NotificationChannel class",
-                  "Implement 3 child classes: Email, SMS, and Slack",
-                  "Create a NotificationManager that accepts any channel",
-                  "This is the exact pattern NestJS uses for Dependency Injection!"
+                  "Create an abstract class called Notification.",
+                  "Give it an abstract method called send().",
+                  "Create two child classes: Email and SMS. Make them extend Notification.",
+                  "Write the actual send() code in both children.",
+                  "Make a function that accepts ANY Notification and calls send()."
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3">
                     <div className="h-1.5 w-1.5 rounded-full bg-amber-500 shrink-0" />
@@ -116,34 +140,37 @@ class AuthGuard implements CanActivate {
                 ))}
               </ul>
             </div>
-            
+
             <div className="relative">
-               <Collapsible title="💡 Show Solution (try it yourself first!)">
+              <Collapsible title="💡 Show Solution (try it yourself first!)">
                 <div className="mt-4 rounded-2xl overflow-hidden border border-amber-500/20">
                   <EnhancedCodeBlock
-                    code={`// 1. Abstract class — the contract
-abstract class NotificationChannel {
-  log(message: string): void {
-    console.log(\`[\${new Date().toISOString()}] \${message}\`);
-  }
-  abstract send(to: string, message: string): void;
+                    code={`// 1. Abstract class
+abstract class Notification {
+  abstract send(message: string): void;
 }
 
-// 2. Concrete implementations
-class EmailChannel extends NotificationChannel {
-  send(to: string, message: string): void {
-    this.log(\`📧 Sending email to \${to}\`);
-    console.log(\`Email body: \${message}\`);
+// 2. Child class 1
+class Email extends Notification {
+  send(message: string): void {
+    console.log(\`Email sent: \${message}\`);
   }
 }
 
-// 3. Manager using Dependency Injection
-class NotificationManager {
-  constructor(private channel: NotificationChannel) {}
-  notify(to: string, message: string): void {
-    this.channel.send(to, message);
+// 3. Child class 2
+class SMS extends Notification {
+  send(message: string): void {
+    console.log(\`SMS sent: \${message}\`);
   }
-}`}
+}
+
+// 4. Polymorphism! This function works with ANY notification.
+function alertUser(notifier: Notification) {
+  notifier.send("Hello World!");
+}
+
+alertUser(new Email());
+alertUser(new SMS());`}
                     language="typescript"
                   />
                 </div>
@@ -154,61 +181,23 @@ class NotificationManager {
       </section>
 
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      {/* Common Mistakes                                                    */}
-      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-      <section>
-        <div className="bg-rose-500/5 dark:bg-rose-500/10 p-8 lg:p-12 rounded-[2.5rem] border border-rose-200/50 dark:border-rose-500/20 mb-8">
-          <h3 className="text-2xl font-black mb-8 text-rose-900 dark:text-rose-400 flex items-center gap-3">
-            <span className="text-3xl">⚠️</span> Common Mistakes
-          </h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            {[
-              {
-                title: "Making everything public",
-                fix: "Use private by default. Only expose what's necessary."
-              },
-              {
-                title: "Deep inheritance chains",
-                fix: "Prefer composition over inheritance. Keep it flat."
-              },
-              {
-                title: "Forgetting super()",
-                fix: "Always call super() first in child constructors."
-              },
-              {
-                title: "Not using interfaces",
-                fix: "Code to an interface, not an implementation."
-              }
-            ].map((item, i) => (
-              <div key={i} className="p-5 bg-white/50 dark:bg-slate-900/50 rounded-2xl border border-rose-500/10 hover:border-rose-500/30 transition-colors">
-                <h4 className="font-bold text-rose-900 dark:text-rose-300 mb-2">{item.title}</h4>
-                <p className="text-xs text-rose-800/70 dark:text-rose-400/70 leading-relaxed italic">
-                  ✅ Fix: {item.fix}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       {/* Summary                                                            */}
       {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
       <section>
-        <div className="bg-slate-900 dark:bg-slate-900 p-8 lg:p-12 rounded-[2.5rem] border border-slate-800 shadow-2xl relative overflow-hidden group">
+        <div className="bg-slate-800 dark:bg-slate-800/50 p-8 lg:p-12 rounded-[2.5rem] border border-slate-700 shadow-2xl relative overflow-hidden group">
           <div className="absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
-          
+
           <h3 className="text-2xl font-black mb-8 text-white flex items-center gap-3">
-            <span className="text-3xl">🧠</span> Quick Summary
+            <span className="text-3xl">🧠</span> Module Summary
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { id: 1, title: "Classes & Objects", desc: "Blueprints vs Instances. Master the constructor shorthand." },
-              { id: 2, title: "Encapsulation", desc: "Hide data with private, control access with methods." },
-              { id: 3, title: "Inheritance", desc: "Reuse code with extends and super(). Stay DRY." },
-              { id: 4, title: "Polymorphism", desc: "Same name, different behavior. Power of interfaces." },
-              { id: 5, title: "Abstraction", desc: "Hide complexity. Define 'what' without the 'how'." },
-              { id: "🎯", title: "NestJS Ready", desc: "You now understand the core of every NestJS app." }
+              { id: 1, title: "Classes & Objects", desc: "Classes are the blueprints. Objects are the actual houses." },
+              { id: 2, title: "Encapsulation", desc: "Use 'private' to hide data. Use methods to safely change it." },
+              { id: 3, title: "Inheritance", desc: "Use 'extends' to copy a parent class. Call super() first." },
+              { id: 4, title: "Polymorphism", desc: "Same method name, different behavior. Say goodbye to huge if/else blocks." },
+              { id: 5, title: "Abstraction", desc: "An 'abstract' class is a half-finished plan. Children must finish it." },
+              { id: "🎯", title: "NestJS Ready", desc: "You now understand the core ideas that power the entire NestJS framework." }
             ].map((item, i) => (
               <div key={i} className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group/item">
                 <div className="flex items-center gap-3 mb-3">

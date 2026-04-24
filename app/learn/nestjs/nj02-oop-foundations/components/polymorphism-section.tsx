@@ -4,7 +4,7 @@ import { QuickCheck } from "./quick-check";
 export function PolymorphismSection() {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-      <div className="bg-white dark:bg-slate-900/80 p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl mb-12">
+      <div className="bg-white dark:bg-slate-800/40 p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl mb-12">
         <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800/50">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-600 font-black">
             4
@@ -13,238 +13,388 @@ export function PolymorphismSection() {
             Polymorphism
           </h2>
         </div>
-        {/* What is Polymorphism? */}
-        <div className="p-5 bg-sky-500/5 rounded-2xl border border-sky-200/50 dark:border-sky-500/15 mb-8">
-          <h3 className="font-bold text-base text-sky-700 dark:text-sky-400 mb-2">
-            What is Polymorphism?
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
-            Polymorphism means <strong>&quot;many forms.&quot;</strong> It
-            lets you call the <em>same method name</em> on different
-            objects, and each object responds in its own way. You write your
-            code against a <strong>shared shape</strong> (called an{" "}
-            <em>interface</em>), and the specific object decides what
-            actually happens.
-          </p>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-            <strong>Why does it matter?</strong> Without polymorphism,
-            every time you add a new type (e.g., a new notification
-            channel), you&apos;d have to edit existing code with more{" "}
-            <code className="text-sky-600">if/else</code> blocks. With
-            polymorphism, you just add a new class — the existing code
-            doesn&apos;t change at all. This makes your app easier to
-            extend and less likely to break.
-          </p>
-        </div>
 
-        {/* Remote Metaphor */}
-        <div className="p-6 bg-purple-500/5 rounded-2xl border border-purple-500/10 mb-8 flex gap-5 items-start">
-          <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center shrink-0">
-            <svg
-              className="w-5 h-5 text-purple-600"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
-              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-            </svg>
-          </div>
-          <div>
-            <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">
-              The &quot;Remote&quot; Metaphor: One button, many results
-            </h5>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              Think of a &quot;Power&quot; button on a universal remote.
-              When you press it, the TV turns on, the Stereo turns on, and
-              the Lights dim. They all responded to the <em>same</em>{" "}
-              button press, but each device did its own thing. In code,{" "}
-              <strong>Polymorphism</strong> lets you call the same method
-              name (like <code className="text-purple-600">.send()</code>)
-              on different objects, and each one knows how to handle it
-              in its own way.
+        {/* CORE TOPIC 1: Polymorphism */}
+        <div className="mb-16">
+          <div className="p-5 bg-sky-500/5 rounded-2xl border border-sky-200/50 dark:border-sky-500/15 mb-6">
+            <h3 className="font-bold text-xl text-sky-700 dark:text-sky-400 mb-2">
+              1. What is Polymorphism?
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Polymorphism means "many forms". It lets you call the exact same method name on different objects, but each object handles the action in its own unique way.
             </p>
           </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              Without it, you have to write massive `if/else` blocks to check what kind of object you are dealing with before telling it what to do. Polymorphism removes the `if/else` entirely. You just give the command, and the object figures out the details.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> Instead of checking "If this is a dog, bark. If this is a cat, meow", you just say `animal.makeSound()`. The animal handles the rest.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>Create the classes:</strong> Make several classes that have a method with the exact same name.
+              </li>
+              <li>
+                <strong>Change the behavior:</strong> Put different code inside that method for each class.
+              </li>
+              <li>
+                <strong>Call the method:</strong> Write a function that calls that method without checking which class it is talking to.
+              </li>
+            </ol>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> The "Power" button on a universal remote is polymorphic. You press it, and the TV turns on. You press the same button, and the DVD player turns on. One button, many forms.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> Sending notifications. We have different classes that all have a `send()` method.</p>
+              <EnhancedCodeBlock
+                code={`class EmailNotification {
+  send(message: string) { console.log(\`📧 Email: \${message}\`); }
+}
+
+class SmsNotification {
+  send(message: string) { console.log(\`📱 SMS: \${message}\`); }
+}
+
+// This function doesn't know or care WHICH notification it gets.
+// It just knows it can call .send()!
+function alertUser(notification: any, message: string) {
+  notification.send(message); // Polymorphism!
+}
+
+alertUser(new EmailNotification(), "Hello");
+alertUser(new SmsNotification(), "Hello");`}
+                language="typescript"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Using massive if/else chains:</strong> If you find yourself checking the type of an object to decide what function to run, you are failing to use polymorphism. Let the objects handle their own behavior.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs block">if (type === "email") sendEmail()</code>
+                <code className="text-xs block">else if (type === "sms") sendSms()</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs block">notification.send()</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Polymorphism means many forms. It allows different classes to share the same method name, but implement it differently. It removes the need for large `if/else` checks.</p>
+          </div>
+
+          <QuickCheck
+            question="If three payment classes (CreditCard, PayPal, Crypto) all share the same 'pay()' method name but handle the math differently, what is this called?"
+            answer="Polymorphism."
+          />
         </div>
 
-        <div className="space-y-6">
-          {/* Without polymorphism — bad example */}
-          <div className="p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
-            <h4 className="font-bold text-sm text-red-700 dark:text-red-400 mb-2 flex items-center gap-2">
-              <span className="text-base">💥</span>
-              Without Polymorphism — The if/else Nightmare
-            </h4>
-            <EnhancedCodeBlock
-              code={`// ❌ Without polymorphism — messy if/else for every type
-function sendNotification(type: string, to: string, msg: string) {
-  if (type === "email") {
-    console.log(\`📧 Email to \${to}: \${msg}\`);
-  } else if (type === "sms") {
-    console.log(\`📱 SMS to \${to}: \${msg}\`);
-  } else if (type === "push") {
-    console.log(\`🔔 Push to \${to}: \${msg}\`);
+        <hr className="border-slate-100 dark:border-slate-800/50 mb-16" />
+
+        {/* CORE TOPIC 2: Interfaces */}
+        <div className="mb-16">
+          <div className="p-5 bg-indigo-500/5 rounded-2xl border border-indigo-500/10 mb-6">
+            <h3 className="font-bold text-xl text-indigo-700 dark:text-indigo-400 mb-2">
+              2. Interfaces (Contracts)
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              An <strong>interface</strong> is a strict contract. It lists the methods a class MUST have, but it does not contain any actual code inside those methods.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              In the previous example, we trusted that every notification class would have a `send()` method. What if someone forgot to add it? The program would crash. An interface forces a class to include the exact methods you need.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> If a class signs an interface contract that requires a `send()` method, TypeScript will show a giant red error if the developer forgets to write `send()`.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>Write the interface:</strong> Use the `interface` keyword and list the method names.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">interface Mailer {'{'} send(): void; {'}'}</div>
+              </li>
+              <li>
+                <strong>Sign the contract:</strong> Use the `implements` keyword on your class.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">class Gmail implements Mailer {'{'} ... {'}'}</div>
+              </li>
+              <li>
+                <strong>Write the code:</strong> You must now write the `send()` method inside the class.
+              </li>
+            </ol>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> An interface is a job posting. It says "You must be able to drive a forklift". The `implements` keyword is you saying "I accept the job and I promise I can drive the forklift".</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> We force all payment processors to have a `processPayment` method.</p>
+              <EnhancedCodeBlock
+                code={`// 1. The Contract (No code inside, just rules)
+interface PaymentProcessor {
+  processPayment(amount: number): boolean;
+}
+
+// 2. Signing the contract
+class StripeProcessor implements PaymentProcessor {
+  // If we delete this method, TypeScript throws an error!
+  processPayment(amount: number): boolean {
+    console.log(\`Charging \${amount} via Stripe\`);
+    return true;
   }
-  // Want to add WhatsApp? You must edit THIS function.
-  // Want to add Slack? Edit it again.
-  // Every change risks breaking existing behavior.
-  // This gets ugly FAST with 10+ notification types.
 }`}
-              language="typescript"
-            />
+                language="typescript"
+              />
+            </div>
           </div>
 
-          {/* Step-by-step example */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span className="bg-emerald-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">
-                ✓
-              </span>
-              With Polymorphism — Clean and Extensible
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
             </h4>
-            <EnhancedCodeBlock
-              code={`// Step 1: Define the CONTRACT (interface)
-// An interface is a promise: "Any class that implements this
-// MUST have a send() method with this exact shape."
-interface NotificationService {
-  send(to: string, message: string): void;
-}
-
-// Step 2: Create DIFFERENT implementations of the same contract
-// Each class fulfills the promise differently
-class EmailNotification implements NotificationService {
-  send(to: string, message: string): void {
-    console.log(\`📧 Email to \${to}: \${message}\`);
-  }
-}
-
-class SmsNotification implements NotificationService {
-  send(to: string, message: string): void {
-    console.log(\`📱 SMS to \${to}: \${message}\`);
-  }
-}
-
-class PushNotification implements NotificationService {
-  send(to: string, message: string): void {
-    console.log(\`🔔 Push to \${to}: \${message}\`);
-  }
-}
-
-// Step 3: Write code that works with ANY notification service!
-// This function doesn't know or care which type it gets.
-function notify(service: NotificationService, to: string, msg: string) {
-  service.send(to, msg);  // Same method call — different behavior!
-}
-
-// Step 4: Swap implementations without changing the function
-notify(new EmailNotification(), "user@mail.com", "Welcome!");
-notify(new SmsNotification(), "+880...", "Your OTP is 1234");
-notify(new PushNotification(), "user123", "New message!");
-
-// ✅ Want to add WhatsApp? Just create a new class.
-// The notify() function doesn't change at all!`}
-              language="typescript"
-            />
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Putting actual code inside an interface:</strong> Interfaces only define the <em>shape</em> of the code (the names and types). They cannot contain actual logic or brackets `{}`.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs block">interface Worker {'{'}</code>
+                <code className="text-xs block">  work() {'{'} return true; {'}'}</code>
+                <code className="text-xs block">{'}'}</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs block">interface Worker {'{'}</code>
+                <code className="text-xs block">  work(): boolean;</code>
+                <code className="text-xs block">{'}'}</code>
+              </div>
+            </div>
           </div>
 
-          {/* Interfaces as Contracts */}
-          <div className="p-5 bg-indigo-500/5 rounded-2xl border border-indigo-200/50 dark:border-indigo-500/20">
-            <h4 className="font-bold text-sm text-indigo-700 dark:text-indigo-400 mb-3 flex items-center gap-2">
-              <span className="text-base">📋</span>
-              Interfaces as Contracts
-            </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
-              An <strong>interface</strong> is like a job description. It
-              says: &quot;Any class that takes this job must be able to do
-              these specific things.&quot; The{" "}
-              <code className="text-indigo-600">NotificationService</code>{" "}
-              interface says: &quot;You must have a{" "}
-              <code>send()</code> method that takes a recipient and a
-              message.&quot;
-            </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              The <code className="text-indigo-600">implements</code>{" "}
-              keyword is the class saying &quot;I accept this job and I
-              promise to provide everything the interface requires.&quot;
-              If you forget to add the{" "}
-              <code>send()</code> method, TypeScript will throw an error
-              at compile time — before your code even runs.
-            </p>
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">An interface is a contract. It forces any class that uses `implements` to include specific methods. It prevents missing method errors.</p>
           </div>
 
-          {/* Why polymorphism matters */}
-          <div className="p-5 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
-            <h4 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 mb-2 flex items-center gap-2">
-              <span className="text-base">💡</span>
-              Why this is powerful — The Open/Closed Principle
-            </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
-              The{" "}
-              <code className="text-emerald-600">notify()</code> function
-              doesn&apos;t know or care if it&apos;s sending an email, SMS,
-              or push notification. You can add a{" "}
-              <code className="text-emerald-600">WhatsAppNotification</code>{" "}
-              class next week and{" "}
-              <strong>the function doesn&apos;t change at all</strong>.
-            </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              This follows a principle called{" "}
-              <strong>&quot;Open/Closed&quot;</strong>: your code is{" "}
-              <em>open</em> for extension (you can add new notification
-              types freely) but <em>closed</em> for modification (you
-              don&apos;t have to edit existing, working code to add new
-              features). In plain terms: <strong>add new things without
-              breaking old things</strong>.
-            </p>
-          </div>
-
-          {/* NestJS Guards Example */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">
-                N
-              </span>
-              How NestJS Uses Polymorphism
-            </h4>
-            <p className="text-sm text-slate-500 mb-3">
-              All NestJS Guards implement the same{" "}
-              <code className="text-blue-600">CanActivate</code> interface,
-              but each guard behaves differently:
-            </p>
-            <EnhancedCodeBlock
-              code={`// NestJS Guards — same interface, different implementations
-// All must implement: canActivate(context): boolean
-
-// AuthGuard     → checks if user is logged in
-// RolesGuard    → checks if user has the right role  
-// ThrottlerGuard → checks if user is sending too many requests
-
-// NestJS doesn't care WHICH guard you use — it just calls:
-//   guard.canActivate(context)  ← polymorphism!
-
-@Injectable()
-class RolesGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
-    // Get the logged-in user from the request
-    const user = context.switchToHttp().getRequest().user;
-    // Check if they have admin role
-    return user.role === 'admin';
-  }
-}
-// You can swap RolesGuard for AuthGuard without changing
-// any of the code that calls canActivate() — that's the power!`}
-              language="typescript"
-            />
-          </div>
+          <QuickCheck
+            question="What keyword does a class use to agree to follow an interface?"
+            answer="The 'implements' keyword."
+          />
         </div>
 
-        <QuickCheck
-          question={`You have 3 payment classes: CreditCard, PayPal, and BankTransfer. They all have a "pay(amount)" method. What OOP concept is this?`}
-          answer={`This is Polymorphism! All 3 classes share the same method name "pay(amount)" but each processes the payment differently inside. You could define a PaymentService interface with a pay() method, then write a function like "processOrder(paymentMethod: PaymentService, amount: number)" that works with ANY payment type — without knowing the specific implementation. Adding a new payment type (like Crypto) means just adding a new class, not editing processOrder().`}
-        />
+        <hr className="border-slate-100 dark:border-slate-800/50 mb-16" />
+
+        {/* CORE TOPIC 3: The Open/Closed Principle */}
+        <div className="mb-16">
+          <div className="p-5 bg-amber-500/5 rounded-2xl border border-amber-500/10 mb-6">
+            <h3 className="font-bold text-xl text-amber-700 dark:text-amber-400 mb-2">
+              3. The Open/Closed Principle
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              This is a famous coding rule. Your code should be <strong>Open</strong> to adding new features, but <strong>Closed</strong> to editing old, working code.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              Every time you edit a file that already works perfectly, you risk breaking it. The safest way to add a feature is to write a brand new file without touching the old ones. Interfaces and polymorphism make this possible.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> If you need to add WhatsApp notifications, you should just create a new `WhatsAppNotification` class file. You should NOT have to open up `NotificationManager` and add a new `if` statement.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>Write an interface:</strong> This defines how the feature must work.
+              </li>
+              <li>
+                <strong>Write a function that expects the interface:</strong> The function asks for the interface, not a specific class.
+              </li>
+              <li>
+                <strong>Add new classes later:</strong> Create a new class that implements the interface. Pass it into the function. The old function never changes!
+              </li>
+            </ol>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> The USB port on your computer is Open/Closed. You can plug in a new mouse (Open for new things) without having to take apart the computer and rewire the motherboard (Closed to changes).</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> Our checkout function expects a `PaymentProcessor` interface. It doesn't care which one.</p>
+              <EnhancedCodeBlock
+                code={`// This function is CLOSED to changes. You never need to edit it!
+function checkout(processor: PaymentProcessor, amount: number) {
+  processor.processPayment(amount);
+}
+
+// Tomorrow, your boss asks you to add Apple Pay.
+// You do not edit the checkout function at all.
+// You just create a NEW class (OPEN for new features).
+class ApplePay implements PaymentProcessor {
+  processPayment(amount: number): boolean {
+    return true; // Apple Pay logic
+  }
+}
+
+checkout(new ApplePay(), 100); // It just works!`}
+                language="typescript"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Hardcoding specific classes:</strong> If your function specifically asks for a `StripeProcessor`, you cannot pass it an `ApplePay` processor later. It breaks the Open/Closed rule. Always ask for the Interface.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs block">checkout(processor: StripeProcessor)</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs block">checkout(processor: PaymentProcessor)</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Open/Closed means you should be able to add new features without changing old code. You do this by making your code rely on Interfaces instead of exact classes.</p>
+          </div>
+
+          <QuickCheck
+            question="What does the 'Closed' part of the Open/Closed principle mean?"
+            answer="It means your existing code should be closed to modification. You shouldn't have to edit old, working files just to add a new feature."
+          />
+        </div>
+
+        <hr className="border-slate-100 dark:border-slate-800/50 mb-16" />
+
+        {/* CORE TOPIC 4: NestJS Guards */}
+        <div className="mb-16">
+          <div className="p-5 bg-purple-500/5 rounded-2xl border border-purple-500/10 mb-6">
+            <h3 className="font-bold text-xl text-purple-700 dark:text-purple-400 mb-2">
+              4. How NestJS Uses Polymorphism (Guards)
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              NestJS uses interfaces and polymorphism everywhere. The best example is a <strong>Guard</strong>, which protects your routes.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              NestJS needs to run your custom security checks, but it doesn't know what you are going to write. By forcing you to use the `CanActivate` interface, NestJS knows exactly which method to call to run your check.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> You might write a guard that checks passwords, or a guard that checks if it is Tuesday. NestJS doesn't care. It just calls `yourGuard.canActivate()` and trusts your code.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>NestJS provides the interface:</strong> They give you `CanActivate`.
+              </li>
+              <li>
+                <strong>You build the Guard:</strong> You create a class that `implements CanActivate`.
+              </li>
+              <li>
+                <strong>You write the rule:</strong> You write the `canActivate()` method. It must return `true` (let them in) or `false` (block them).
+              </li>
+            </ol>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> The club owner (NestJS) hires a bouncer (Guard). The owner gives one rule: "You must be able to answer Yes or No when someone tries to enter." How the bouncer decides is up to them.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> Checking if a user has an "admin" role before letting them view a page.</p>
+              <EnhancedCodeBlock
+                code={`// 1. We sign the NestJS contract
+class RolesGuard implements CanActivate {
+  
+  // 2. We MUST write this exact method
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    
+    // 3. Return true to allow, false to block
+    if (user.role === 'admin') {
+      return true; // Welcome in!
+    } else {
+      return false; // Access Denied!
+    }
+  }
+}`}
+                language="typescript"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Forgetting to return a boolean:</strong> The `CanActivate` interface demands that your method returns `true` or `false`. If you return a string, or return nothing, NestJS will crash or fail closed.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs block">return "Yes, allowed"</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs block">return true</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">NestJS Guards are a perfect example of polymorphism. They all implement `CanActivate`, which guarantees they have a `canActivate()` method that returns true or false.</p>
+          </div>
+
+          <QuickCheck
+            question="What is the name of the interface that every NestJS Guard must implement?"
+            answer="CanActivate."
+          />
+        </div>
+
       </div>
     </section>
   );

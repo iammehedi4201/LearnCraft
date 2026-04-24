@@ -1,9 +1,9 @@
 export function HeaderSection() {
   return (
-    <div className="group relative bg-white dark:bg-slate-900/80 rounded-[1rem] p-10 lg:p-14 mb-12 overflow-hidden border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl">
+    <div className="group relative bg-white dark:bg-slate-800/40 rounded-[1rem] p-10 lg:p-14 mb-12 overflow-hidden border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl">
       {/* Top Gradient Bar */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-slate-100 dark:via-slate-800 to-transparent" />
-      
+
       <div className="relative z-10">
         <div className="flex items-center gap-6 mb-12 pb-8 border-b border-slate-100 dark:border-slate-800/50">
           <div className="flex h-14 w-20 items-center justify-center rounded-[1.2rem] bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-orange-500/20 ring-4 ring-orange-500/10">
@@ -27,11 +27,11 @@ export function HeaderSection() {
               </h4>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed font-medium">
-              OOP (Object-Oriented Programming) is a way of organizing code
-              by grouping related <strong className="text-slate-900 dark:text-slate-200">data</strong> and{" "}
-              <strong className="text-slate-900 dark:text-slate-200">actions</strong> together into units called{" "}
-              <em className="text-slate-600 dark:text-slate-300 italic">classes</em>. Instead of loose functions scattered across
-              files, you bundle everything into one place — like putting all &quot;user&quot; logic inside a{" "}
+              OOP (Object-Oriented Programming) is a way to organize code.
+              You put related <strong className="text-slate-900 dark:text-slate-200">data</strong> and{" "}
+              <strong className="text-slate-900 dark:text-slate-200">actions</strong> together in units called{" "}
+              <em className="text-slate-600 dark:text-slate-300 italic">classes</em>. Instead of many loose functions in
+              different files, you group everything in one place — like putting all "user" code inside a{" "}
               <span className="px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold text-sm">User</span> class.
             </p>
           </div>
@@ -46,11 +46,11 @@ export function HeaderSection() {
               </h4>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed font-medium">
-              NestJS is built entirely around OOP. Controllers, services,
-              guards, pipes, interceptors — they are all{" "}
+              NestJS is built on OOP. Controllers, services,
+              guards, pipes — they are all{" "}
               <strong className="text-slate-900 dark:text-slate-200">classes</strong>. If you understand OOP, you understand
-              how every piece of NestJS works. This lesson comes first
-              because it&apos;s the foundation everything else stands on.
+              how NestJS works. This lesson teaches the basics that
+              everything else is built on.
             </p>
           </div>
 
@@ -65,10 +65,10 @@ export function HeaderSection() {
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-[15px] leading-relaxed font-medium">
               Express uses a <strong className="text-slate-900 dark:text-slate-200">function-based</strong> style — you
-              write standalone functions and wire them with middleware.
-              NestJS uses a <strong className="text-slate-900 dark:text-slate-200">class-based</strong> style — you organize
-              everything into classes and let NestJS connect them
-              automatically. OOP is the bridge between the two.
+              write separate functions and connect them yourself.
+              NestJS uses a <strong className="text-slate-900 dark:text-slate-200">class-based</strong> style — you put
+              everything into classes and NestJS connects them for you.
+              OOP is what makes this possible.
             </p>
           </div>
 
@@ -94,7 +94,7 @@ export function HeaderSection() {
           </div>
         </div>
       </div>
-      
+
       {/* Decorative Blur */}
       <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-amber-500/5 blur-3xl group-hover:bg-amber-500/10 transition-colors duration-700" />
       <div className="absolute -left-24 -bottom-24 h-64 w-64 rounded-full bg-blue-500/5 blur-3xl group-hover:bg-blue-500/10 transition-colors duration-700" />

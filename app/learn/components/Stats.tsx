@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+
 
 const stats = [
   { label: "Active Lessons", value: "48+", color: "from-blue-500 to-indigo-500" },
@@ -14,7 +14,7 @@ export function Stats() {
     <section className="py-20">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat, i) => (
+          {stats.map((stat) => (
             <div
               key={stat.label}
               className="relative group p-8 rounded-[1rem] glass-card transition-all hover:-translate-y-1"

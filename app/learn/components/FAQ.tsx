@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const faqs = [
   { q: "Is this course kept current?", a: "Yes, we update our lessons with every major Next.js and TanStack Query release. We are currently fully compatible with Next.js 15 and TanStack v5." },

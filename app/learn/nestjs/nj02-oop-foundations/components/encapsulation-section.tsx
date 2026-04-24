@@ -4,7 +4,7 @@ import { QuickCheck } from "./quick-check";
 export function EncapsulationSection() {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-      <div className="bg-white dark:bg-slate-900/80 p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl mb-12">
+      <div className="bg-white dark:bg-slate-800/40 p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl mb-12">
         <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800/50">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 font-black">
             2
@@ -13,215 +13,303 @@ export function EncapsulationSection() {
             Encapsulation
           </h2>
         </div>
-        {/* What is Encapsulation? intro */}
-        <div className="p-5 bg-sky-500/5 rounded-2xl border border-sky-200/50 dark:border-sky-500/15 mb-8">
-          <h3 className="font-bold text-base text-sky-700 dark:text-sky-400 mb-2">
-            What is Encapsulation?
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
-            Encapsulation means{" "}
-            <strong>
-              hiding internal details and controlling access through methods
-            </strong>
-            . Instead of letting anyone directly change a value (which could
-            break things), you force them to go through a
-            &quot;gatekeeper&quot; method that validates the change first.
-          </p>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-            <strong>Why does it matter?</strong> Without encapsulation, any
-            part of your code can reach in and change any value at any time.
-            In a small project, that might seem fine. But in a large app
-            with 50+ files, it becomes impossible to track where a value
-            was changed and why it broke. Encapsulation prevents this chaos
-            by forcing all changes to go through a controlled entry point.
-          </p>
-        </div>
 
-        {/* Car Hood Metaphor */}
-        <div className="p-6 bg-blue-500/5 rounded-2xl border border-blue-500/10 mb-8 flex gap-5 items-start">
-          <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
-            <svg
-              className="w-5 h-5 text-blue-600"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4" />
-              <path d="M12 8h.01" />
-            </svg>
-          </div>
-          <div>
-            <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">
-              The &quot;Car Hood&quot; Metaphor: Don&apos;t touch the
-              engine!
-            </h5>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              When you drive a car, you use the steering wheel and pedals.
-              You don&apos;t need to touch the hot, messy engine to turn
-              left. <strong>Encapsulation</strong> means we hide the
-              &quot;messy&quot; inner parts of our code (using{" "}
-              <code className="text-blue-600">private</code>) and only show
-              the &quot;clean&quot; controls (using{" "}
-              <code className="text-blue-600">public</code> methods). The
-              driver (your code) interacts only with the steering wheel
-              (public methods), never with the engine (private data).
+        {/* CORE TOPIC 1: Encapsulation */}
+        <div className="mb-16">
+          <div className="p-5 bg-sky-500/5 rounded-2xl border border-sky-200/50 dark:border-sky-500/15 mb-6">
+            <h3 className="font-bold text-xl text-sky-700 dark:text-sky-400 mb-2">
+              1. What is Encapsulation?
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Encapsulation means <strong>hiding the inside parts</strong> of your code and only showing safe controls. Instead of letting anyone touch a value directly, you force them to go through a "guard" function.
             </p>
           </div>
-        </div>
 
-        <div className="space-y-6">
-          {/* Without Encapsulation */}
-          <div className="p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
-            <h4 className="font-bold text-sm text-red-700 dark:text-red-400 mb-2 flex items-center gap-2">
-              <span className="text-base">💥</span>
-              Without Encapsulation — What Goes Wrong
-            </h4>
-            <EnhancedCodeBlock
-              code={`// ❌ No encapsulation — anyone can mess with the balance directly
-class UnsafeBankAccount {
-  public balance: number = 0;  // Anyone can change this!
-}
-
-const account = new UnsafeBankAccount();
-account.balance = 1000000;   // 💰 Just gave myself a million dollars!
-account.balance = -500;      // 💥 Negative balance? No rules!
-// No validation, no logging, no protection.
-// Any file in your project can change this to anything.`}
-              language="typescript"
-            />
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              If you leave all your data open, any part of your app can change it by accident. This causes bugs that are very hard to track down. By locking the data inside the class, you protect it from bad changes.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> Think of a bank app. If the account balance is open, anyone can change it to a negative number or give themselves a million dollars. Encapsulation hides the balance and forces changes through a `deposit()` function that checks the rules first.
+            </p>
           </div>
 
-          {/* With Encapsulation */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span className="bg-emerald-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">
-                ✓
-              </span>
-              With Encapsulation — The Safe Way
-            </h4>
-            <EnhancedCodeBlock
-              code={`class BankAccount {
-  private balance: number = 0;  // 🔒 Hidden! Nobody can touch this directly.
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>Make data private:</strong> Use the `private` keyword so no one outside the class can touch it.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">private balance: number = 0;</div>
+              </li>
+              <li>
+                <strong>Create a safe function:</strong> Write a `public` method that other code can call to change the data safely.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">public deposit(amount) {'{'} ... {'}'}</div>
+              </li>
+            </ol>
+          </div>
 
-  // ✅ Controlled access — deposit MUST go through this method
-  deposit(amount: number): void {
-    if (amount <= 0) throw new Error("Amount must be positive");
-    this.balance += amount;
-    console.log(\`Deposited \${amount}. New balance: \${this.balance}\`);
-  }
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> When you drive a car, you use the steering wheel and pedals. You do not touch the hot engine to turn left. The messy, dangerous parts are hidden (`private`). You only get safe controls (`public`).</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> In a game, a player's health must stay between 0 and 100. By hiding the health, you force the game to use a `takeDamage()` function that stops exactly at 0.</p>
+              <EnhancedCodeBlock
+                code={`class Player {
+  // 1. Hide the data
+  private health: number = 100;
 
-  // ✅ Controlled access — withdrawal has rules
-  withdraw(amount: number): void {
-    if (amount > this.balance) throw new Error("Insufficient funds!");
-    this.balance -= amount;
-  }
-
-  // ✅ Getter method — gives read-only access to the balance
-  // (outsiders can SEE the balance, but can't CHANGE it directly)
-  getBalance(): number {
-    return this.balance;
+  // 2. Make a safe way to change it
+  public takeDamage(amount: number): void {
+    this.health -= amount;
+    
+    // Safety rule!
+    if (this.health < 0) {
+      this.health = 0;
+    }
   }
 }
 
-const account = new BankAccount();
-account.deposit(500);           // ✅ Goes through validation
-// account.balance = 1000000;   // ❌ Error — private!
-console.log(account.getBalance()); // ✅ Read-only access`}
-              language="typescript"
-            />
-          </div>
-
-          {/* Getter/Setter explanation */}
-          <div className="p-5 bg-purple-500/5 rounded-2xl border border-purple-500/10">
-            <h4 className="font-bold text-sm text-purple-700 dark:text-purple-400 mb-3 flex items-center gap-2">
-              <span className="text-base">🔑</span>
-              Getters and Setters — The Gatekeepers
-            </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
-              A <strong>getter</strong> is a method that lets outsiders{" "}
-              <em>read</em> a private value without being able to change
-              it (like <code className="text-purple-600">getBalance()</code>{" "}
-              above). A <strong>setter</strong> is a method that lets
-              outsiders <em>change</em> a private value, but only after
-              running your validation rules first (like{" "}
-              <code className="text-purple-600">deposit()</code> and{" "}
-              <code className="text-purple-600">withdraw()</code> above).
-            </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              The pattern is simple: make data{" "}
-              <code className="text-purple-600">private</code>, then create{" "}
-              <code className="text-purple-600">public</code> methods to
-              control how that data is read and changed. This way you can
-              add validation, logging, or any other rules without changing
-              the code that uses this class.
-            </p>
-          </div>
-
-          {/* How NestJS uses this */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">
-                N
-              </span>
-              How NestJS Uses Encapsulation
-            </h4>
-            <p className="text-sm text-slate-500 mb-3">
-              NestJS enforces encapsulation through a layered architecture.
-              Each layer has a specific job and hides its details from the
-              layer above it — just like departments in a company.
-            </p>
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
-              <div className="flex flex-col gap-2 text-xs text-slate-600 dark:text-slate-400">
-                <div className="flex items-center gap-3">
-                  <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-bold px-2 py-1 rounded text-[10px] w-24 text-center shrink-0">
-                    Controller
-                  </span>
-                  <span>
-                    → The &quot;front desk.&quot; Receives HTTP requests
-                    from users and passes them along. It never processes
-                    business logic itself.
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-bold px-2 py-1 rounded text-[10px] w-24 text-center shrink-0">
-                    Service
-                  </span>
-                  <span>
-                    → The &quot;back office.&quot; Contains the actual
-                    business rules (e.g., &quot;can this user make this
-                    purchase?&quot;). Controllers call services, but never
-                    know the details of how they work.
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 font-bold px-2 py-1 rounded text-[10px] w-24 text-center shrink-0">
-                    Repository
-                  </span>
-                  <span>
-                    → The &quot;vault.&quot; Handles direct database access.
-                    Only services can talk to the database through this
-                    layer — controllers can&apos;t.
-                  </span>
-                </div>
-              </div>
-              <p className="text-[11px] text-slate-500 mt-3 italic">
-                The controller never touches the database directly —
-                that&apos;s encapsulation in action! Each layer only
-                exposes what the layer above it needs.
-              </p>
+const p1 = new Player();
+// p1.health = -500; // ❌ Error! Hidden.
+p1.takeDamage(200);  // ✅ Works safely. Health stops at 0.`}
+                language="typescript"
+              />
             </div>
           </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Making everything public out of laziness:</strong> It is tempting to make all data `public` so it is easy to reach. But this defeats the entire purpose of a class. Always make data `private` unless you have a very good reason not to.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs">public password: string;</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs">private password: string;</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Encapsulation means hiding data and protecting it from bad changes. You use the `private` keyword to hide properties. You write `public` methods to let people change the data safely.</p>
+          </div>
+
+          <QuickCheck
+            question="Why is it a bad idea to make a 'balance' property public on a BankAccount class?"
+            answer="Because anyone could set the balance to any value — like negative numbers or huge amounts — with no checks."
+          />
         </div>
 
-        <QuickCheck
-          question={`Why is it bad to make a "balance" property public on a BankAccount class?`}
-          answer={`Because anyone could set the balance to any value — negative numbers, impossibly large amounts, or zero — without any validation. By making it private and forcing access through deposit()/withdraw() methods, you guarantee that every change follows your business rules (e.g., "you can't withdraw more than you have"). You also get a single place to add logging or audit trails later.`}
-        />
+        <hr className="border-slate-100 dark:border-slate-800/50 mb-16" />
+
+        {/* CORE TOPIC 2: Getters and Setters */}
+        <div className="mb-16">
+          <div className="p-5 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 mb-6">
+            <h3 className="font-bold text-xl text-emerald-700 dark:text-emerald-400 mb-2">
+              2. Getters and Setters
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              A <strong>getter</strong> is a safe function that lets outside code read a private value. A <strong>setter</strong> is a safe function that lets outside code change a private value.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              They act as gatekeepers. Before someone can change a value, the setter can check rules, format text, or record a log entry. This keeps your data clean.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> If a user changes their password, a setter can check if the new password is at least 8 characters long before saving it.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>Write the getter:</strong> Make a function that simply returns the hidden variable.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">getPassword() {'{'} return this.password; {'}'}</div>
+              </li>
+              <li>
+                <strong>Write the setter:</strong> Make a function that takes a new value.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">setPassword(newPass) {'{'} ... {'}'}</div>
+              </li>
+              <li>
+                <strong>Add rules inside the setter:</strong> Check if the value is okay before saving it.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">if (newPass.length &gt; 5) {'{'} this.password = newPass; {'}'}</div>
+              </li>
+            </ol>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> A getter is like looking at a museum painting. A setter is the security guard who checks your hands before you are allowed to touch it.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> Setting a new username. The setter ensures the name is not empty before saving it.</p>
+              <EnhancedCodeBlock
+                code={`class Account {
+  private username: string = "Guest";
+
+  // Getter: Just look, do not touch
+  public getUsername(): string {
+    return this.username;
+  }
+
+  // Setter: The security guard
+  public setUsername(newName: string): void {
+    if (newName === "") {
+      console.log("Name cannot be empty!");
+      return; // Stop
+    }
+    this.username = newName;
+  }
+}
+
+const myAcc = new Account();
+console.log(myAcc.getUsername()); // Outputs: Guest
+myAcc.setUsername("");            // Fails rule, does nothing
+myAcc.setUsername("Alice");       // Passes rule, saves "Alice"`}
+                language="typescript"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Writing a setter with no rules:</strong> If you hide your data, but then create a function that lets anyone change it without checking any rules, you haven't fixed the problem. A setter must guard the data.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs">setAge(a) {'{'} this.age = a; {'}'}</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs">setAge(a) {'{'} if(a &gt; 0) this.age = a; {'}'}</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Getters and setters are the gatekeepers to your hidden data. Getters let people read the data. Setters check rules before allowing changes to the data.</p>
+          </div>
+
+          <QuickCheck
+            question="What is the main job of a setter function?"
+            answer="To check rules and validate a new value before allowing it to replace the old hidden value."
+          />
+        </div>
+
+        <hr className="border-slate-100 dark:border-slate-800/50 mb-16" />
+
+        {/* CORE TOPIC 3: Encapsulation in NestJS */}
+        <div className="mb-16">
+          <div className="p-5 bg-purple-500/5 rounded-2xl border border-purple-500/10 mb-6">
+            <h3 className="font-bold text-xl text-purple-700 dark:text-purple-400 mb-2">
+              3. Encapsulation in NestJS (Layers)
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              NestJS uses encapsulation on a large scale by splitting your app into <strong>Layers</strong> (Controller, Service, Repository). Each layer hides its messy details from the others.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              It keeps massive apps organized. If the way you save to the database changes, only the Repository layer needs to update. The other layers do not care because those details are hidden from them.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> The Controller takes a request from a user. It asks the Service to handle it. The Controller does not know or care if the Service uses a database, an API, or a text file. The details are encapsulated.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>Controller:</strong> The front desk. It takes the request and passes it on.
+              </li>
+              <li>
+                <strong>Service:</strong> The worker. It contains the business rules. It asks the repository to get or save data.
+              </li>
+              <li>
+                <strong>Repository:</strong> The storage room. It is the only layer allowed to touch the actual database.
+              </li>
+            </ol>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> In a restaurant, the Waiter (Controller) takes your order. The Chef (Service) cooks it. The Pantry worker (Repository) gets the ingredients. The Waiter never goes into the pantry.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> When a user signs up, the layers work together like this:</p>
+              <EnhancedCodeBlock
+                code={`// 1. Controller gets the request from the internet
+class UserController {
+  constructor(private userService: UserService) {}
+
+  signUp(email: string) {
+    // Only calls a safe public method. Hides the messy work.
+    return this.userService.registerUser(email);
+  }
+}
+
+// 2. Service checks the rules
+class UserService {
+  constructor(private repo: UserRepository) {}
+
+  registerUser(email: string) {
+    if (!email.includes("@")) throw new Error("Bad email");
+    return this.repo.saveToDatabase(email);
+  }
+}`}
+                language="typescript"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Putting database code inside the Controller:</strong> This breaks encapsulation. The controller should never touch the database directly.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs">Controller: db.query('SELECT *')</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs">Controller: this.service.getUsers()</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">NestJS separates code into layers. The Controller handles requests. The Service handles rules. The Repository handles the database. They hide details from each other.</p>
+          </div>
+
+          <QuickCheck
+            question="Which layer in NestJS is the only one that should talk directly to the database?"
+            answer="The Repository layer."
+          />
+        </div>
+
       </div>
     </section>
   );

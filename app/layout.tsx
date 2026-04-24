@@ -29,7 +29,10 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning className="scroll-smooth">
-            <body className={`${inter.variable} ${rajdhani.variable} min-h-screen`}>
+            <body
+                suppressHydrationWarning
+                className={`${inter.variable} ${rajdhani.variable} min-h-screen`}
+            >
                 <QueryProvider>
                     <ThemeProvider>
                         {children}

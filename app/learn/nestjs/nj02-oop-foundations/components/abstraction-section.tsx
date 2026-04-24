@@ -4,7 +4,7 @@ import { QuickCheck } from "./quick-check";
 export function AbstractionSection() {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-      <div className="bg-white dark:bg-slate-900/80 p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl mb-12">
+      <div className="bg-white dark:bg-slate-800/40 p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl mb-12">
         <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800/50">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 font-black">
             5
@@ -13,282 +13,402 @@ export function AbstractionSection() {
             Abstraction
           </h2>
         </div>
-        {/* What is Abstraction? */}
-        <div className="p-5 bg-sky-500/5 rounded-2xl border border-sky-200/50 dark:border-sky-500/15 mb-8">
-          <h3 className="font-bold text-base text-sky-700 dark:text-sky-400 mb-2">
-            What is Abstraction?
-          </h3>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
-            Abstraction means defining{" "}
-            <strong>what something should do</strong> without specifying{" "}
-            <strong>how it does it</strong>. An abstract class is like a
-            contract with some rules already filled in: it lists the
-            methods that must exist, but leaves some implementation
-            details to the child classes.
-          </p>
-          <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-            <strong>Key rule:</strong> You{" "}
-            <strong>cannot create an instance</strong> of an abstract class
-            directly — it&apos;s incomplete by design. You must create a
-            child class that fills in the missing pieces, then create an
-            instance of that child.
-          </p>
-        </div>
 
-        {/* Light Switch Metaphor */}
-        <div className="p-6 bg-rose-500/5 rounded-2xl border border-rose-500/10 mb-8 flex gap-5 items-start">
-          <div className="h-10 w-10 rounded-xl bg-rose-500/10 flex items-center justify-center shrink-0">
-            <svg
-              className="w-5 h-5 text-rose-600"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" />
-              <path d="M9 18h6" />
-              <path d="M10 22h4" />
-            </svg>
-          </div>
-          <div>
-            <h5 className="font-bold text-slate-900 dark:text-white text-sm mb-1 italic">
-              The &quot;Light Switch&quot; Metaphor: Usage vs. Complexity
-            </h5>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              When you want to turn on the light, you flip a switch. You
-              don&apos;t need to know about the wires, the power plant, or
-              the physics of electricity. <strong>Abstraction</strong>{" "}
-              hides that massive complexity behind a simple interface. In
-              NestJS, abstract classes define <em>what</em> something
-              should do (the switch), while child classes handle{" "}
-              <em>how</em> (the wiring).
-            </p>
-          </div>
-        </div>
-
-        {/* Abstract vs Interface */}
-        <div className="p-5 bg-amber-500/5 rounded-2xl border border-amber-500/10 mb-8">
-          <h4 className="font-bold text-sm text-amber-700 dark:text-amber-400 mb-3">
-            Abstract Class vs Interface — What&apos;s the Difference?
-          </h4>
-          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
-            Both define a &quot;contract&quot; that other classes must
-            follow, but they work differently:
-          </p>
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  <th className="py-2 px-3 text-left font-bold text-slate-500">
-                    Feature
-                  </th>
-                  <th className="py-2 px-3 text-center font-bold text-blue-600">
-                    Interface
-                  </th>
-                  <th className="py-2 px-3 text-center font-bold text-purple-600">
-                    Abstract Class
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="text-slate-600 dark:text-slate-400">
-                <tr className="border-b border-slate-100 dark:border-slate-800">
-                  <td className="py-2 px-3">Can have real working code?</td>
-                  <td className="py-2 px-3 text-center text-red-500">
-                    ❌ No — only defines shapes
-                  </td>
-                  <td className="py-2 px-3 text-center text-emerald-600">
-                    ✅ Yes — can have shared methods
-                  </td>
-                </tr>
-                <tr className="border-b border-slate-100 dark:border-slate-800">
-                  <td className="py-2 px-3">Can create instances?</td>
-                  <td className="py-2 px-3 text-center text-red-500">
-                    ❌ No
-                  </td>
-                  <td className="py-2 px-3 text-center text-red-500">
-                    ❌ No
-                  </td>
-                </tr>
-                <tr className="border-b border-slate-100 dark:border-slate-800">
-                  <td className="py-2 px-3">Can a class use multiple?</td>
-                  <td className="py-2 px-3 text-center text-emerald-600">
-                    ✅ Yes — can implement many
-                  </td>
-                  <td className="py-2 px-3 text-center text-red-500">
-                    ❌ Can extend only one
-                  </td>
-                </tr>
-                <tr>
-                  <td className="py-2 px-3">Best for</td>
-                  <td className="py-2 px-3 text-center">
-                    Pure contracts / shapes
-                  </td>
-                  <td className="py-2 px-3 text-center">
-                    Shared logic + contracts
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p className="text-[11px] text-slate-500 mt-3 italic">
-            <strong>Simple rule:</strong> If you need shared code that
-            children inherit, use an abstract class. If you only need to
-            define a shape with no code, use an interface.
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          {/* Generics explainer */}
-          <div className="p-5 bg-indigo-500/5 rounded-2xl border border-indigo-200/50 dark:border-indigo-500/20">
-            <h4 className="font-bold text-sm text-indigo-700 dark:text-indigo-400 mb-3 flex items-center gap-2">
-              <span className="text-base">📦</span>
-              Quick Note: What does &lt;T&gt; mean?
-            </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
-              In the code below, you&apos;ll see{" "}
-              <code className="text-indigo-600">&lt;T&gt;</code>. This is
-              called a <strong>generic</strong> — it&apos;s a placeholder
-              for a type that you fill in later. Think of it like a blank
-              in a form: &quot;This repository works with _____ type of
-              data.&quot;
-            </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              When you write{" "}
-              <code className="text-indigo-600">
-                BaseRepository&lt;User&gt;
-              </code>
-              , you&apos;re saying &quot;fill in the blank with User&quot;
-              — so all the methods will work with{" "}
-              <code>User</code> objects. You&apos;ll also see{" "}
-              <code className="text-indigo-600">
-                Partial&lt;T&gt;
-              </code>{" "}
-              — this is a built-in TypeScript helper that means &quot;some
-              or all of T&apos;s properties, all optional.&quot; It&apos;s
-              useful for creating new records where you don&apos;t need
-              every field.
+        {/* CORE TOPIC 1: Abstraction */}
+        <div className="mb-16">
+          <div className="p-5 bg-sky-500/5 rounded-2xl border border-sky-200/50 dark:border-sky-500/15 mb-6">
+            <h3 className="font-bold text-xl text-sky-700 dark:text-sky-400 mb-2">
+              1. What is Abstraction?
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              Abstraction means saying <strong>what should happen</strong> without saying <strong>how to do it</strong>. It hides the messy, complicated logic and only gives you simple, easy-to-use controls.
             </p>
           </div>
 
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">
-                1
-              </span>
-              Step-by-Step: Abstract Repository Pattern
-            </h4>
-            <EnhancedCodeBlock
-              code={`// Step 1: Define the abstract class — the "contract"
-// This says WHAT a repository must do, not HOW
-// <T> is a placeholder — it gets replaced with a real type later
-abstract class BaseRepository<T> {
-  // ✅ Concrete method — shared logic (children inherit this for free)
-  // This is real, working code that every child can use
-  log(action: string): void {
-    console.log(\`[\${new Date().toISOString()}] \${action}\`);
-  }
-
-  // ✅ Abstract methods — children MUST implement these
-  // These have no body — the child fills in the "how"
-  abstract findAll(): Promise<T[]>;
-  abstract findById(id: number): Promise<T | null>;
-  abstract create(data: Partial<T>): Promise<T>;
-  //                    ↑ Partial<T> means "some of T's fields, all optional"
-  abstract delete(id: number): Promise<void>;
-}
-
-// Step 2: Create a concrete implementation
-// Replace <T> with <User> — now all methods work with User objects
-class UserRepository extends BaseRepository<User> {
-  private users: User[] = [];
-
-  async findAll(): Promise<User[]> {
-    this.log("Finding all users");  // ← uses inherited log() for free!
-    return this.users;
-  }
-
-  async findById(id: number): Promise<User | null> {
-    this.log(\`Finding user \${id}\`);
-    return this.users.find(u => u.id === id) || null;
-  }
-
-  async create(data: Partial<User>): Promise<User> {
-    this.log("Creating user");
-    const user = { id: Date.now(), ...data } as User;
-    this.users.push(user);
-    return user;
-  }
-
-  async delete(id: number): Promise<void> {
-    this.log(\`Deleting user \${id}\`);
-    this.users = this.users.filter(u => u.id !== id);
-  }
-}
-
-// Step 3: Use it!
-// const repo = new BaseRepository();  // ❌ Error — can't instantiate abstract!
-const repo = new UserRepository();     // ✅ Works — concrete implementation`}
-              language="typescript"
-            />
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              If you had to understand exactly how a car engine worked to drive to the store, nobody would drive. Abstraction makes code easier to use because you do not need to understand the complex wiring inside to make it work.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> A `CoffeeMachine` class has a simple `makeCoffee()` method. You don't need to know how it boils the water or grinds the beans. You just call the method.
+            </p>
           </div>
 
-          {/* Blueprint vs Instance */}
-          <div className="p-5 bg-purple-500/5 rounded-2xl border border-purple-500/10">
-            <h4 className="font-bold text-sm text-purple-700 dark:text-purple-400 mb-3 flex items-center gap-2">
-              <span className="text-base">📚</span>
-              The Two Types of Methods in an Abstract Class
-            </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
-              An abstract class can have <strong>two types</strong> of
-              methods:
-            </p>
-            <ol className="text-xs text-slate-600 dark:text-slate-400 space-y-1 list-decimal pl-5">
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
               <li>
-                <strong>Concrete methods</strong> (like{" "}
-                <code className="text-purple-600">log()</code>) — these
-                have a body with real code. All children inherit them
-                automatically and don&apos;t need to rewrite them.
+                <strong>Write an abstract class:</strong> Put the `abstract` keyword in front of the class. This makes it a half-finished plan.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">abstract class CoffeeMaker {'{'} ... {'}'}</div>
               </li>
               <li>
-                <strong>Abstract methods</strong> (like{" "}
-                <code className="text-purple-600">findAll()</code>) — these
-                have <em>no body</em>, just a signature. Every child class{" "}
-                <strong>must</strong> provide its own implementation. If
-                you forget, TypeScript throws an error.
+                <strong>Write an abstract method:</strong> This method has no code! It just says "this must exist".
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">abstract brew(): void;</div>
+              </li>
+              <li>
+                <strong>Fill in the blanks:</strong> A child class must extend it and write the actual code for the method.
               </li>
             </ol>
           </div>
 
-          {/* Why abstract? */}
-          <div className="p-5 bg-emerald-500/5 rounded-2xl border border-emerald-500/10">
-            <h4 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 mb-2 flex items-center gap-2">
-              <span className="text-base">💡</span>
-              Why not just use a regular class?
-            </h4>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
-              An abstract class <strong>forces</strong> every child to
-              implement the required methods. If you forget{" "}
-              <code className="text-emerald-600">findAll()</code> in your{" "}
-              <code className="text-emerald-600">ProductRepository</code>,
-              TypeScript will show a compile-time error — before your code
-              even runs.
-            </p>
-            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-              A regular class can&apos;t enforce this. You&apos;d only
-              discover the missing method when your app crashes at runtime
-              — possibly in production, in front of real users. Abstract
-              classes catch these mistakes early, at development time.
-            </p>
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> To turn on a light, you flip a switch. You don't need to know about wires or electricity. The switch is the abstraction.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> We make an abstract plan for a car, and then build a real Honda.</p>
+              <EnhancedCodeBlock
+                code={`// 1. The Abstract Class (A half-finished plan)
+abstract class Car {
+  // A regular method with real code
+  startEngine() {
+    console.log("Vroom!");
+  }
+
+  // An abstract method (NO CODE! Just a rule)
+  abstract drive(): void;
+}
+
+// 2. The Child Class (Finishes the plan)
+class Honda extends Car {
+  // Must write the drive method, or TypeScript gets mad
+  drive() {
+    console.log("Driving a Honda!");
+  }
+}
+
+const myCar = new Honda();
+myCar.startEngine(); // Vroom! (Got it for free)
+myCar.drive();       // Driving a Honda!`}
+                language="typescript"
+              />
+            </div>
           </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Trying to make an object directly from an abstract class:</strong> Because an abstract class is only half-finished, you cannot create an object from it directly. You must use a finished child class.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs">const car = new Car(); // ❌ Error!</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs">const car = new Honda(); // ✅ Works</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Abstraction hides complex logic behind simple methods. An `abstract` class is a half-finished blueprint. It cannot be used directly; it must be extended by a child class.</p>
+          </div>
+
+          <QuickCheck
+            question="Can you use 'new Car()' if Car is an abstract class?"
+            answer="No. You cannot make an object directly from an abstract class because it is incomplete. You must make a child class first."
+          />
         </div>
 
-        <QuickCheck
-          question={`Can you create an instance of an abstract class? e.g., "const repo = new BaseRepository()"`}
-          answer={`No! Abstract classes cannot be instantiated directly — TypeScript will show an error: "Cannot create an instance of an abstract class." They exist only as blueprints for child classes. You must create a concrete child class (like UserRepository) that implements ALL the abstract methods, then instantiate that child class instead. The abstract class guarantees all children share the same structure.`}
-        />
+        <hr className="border-slate-100 dark:border-slate-800/50 mb-16" />
+
+        {/* CORE TOPIC 2: Abstract Class vs Interface */}
+        <div className="mb-16">
+          <div className="p-5 bg-amber-500/5 rounded-2xl border border-amber-500/10 mb-6">
+            <h3 className="font-bold text-xl text-amber-700 dark:text-amber-400 mb-2">
+              2. Abstract Class vs Interface
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              They both set rules that other classes must follow. But an <strong>Interface</strong> has zero code. An <strong>Abstract Class</strong> can have a mix of rules <em>and</em> real working code.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              If you only want to set rules, use an Interface. If you want to set rules AND share some working code (like a shared `log()` method), you must use an Abstract Class.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> NestJS Guards only need a rule (`canActivate`). So they use an Interface. Repositories need rules AND a shared database connection. So they use an Abstract Class.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>Interface:</strong> Use `implements`. You can implement multiple interfaces. No actual code allowed inside.
+              </li>
+              <li>
+                <strong>Abstract Class:</strong> Use `extends`. You can only extend ONE class. Actual code is allowed inside.
+              </li>
+            </ol>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> An Interface is a pure job description on paper. An Abstract Class is a half-built house — the walls are there (real code), but you have to paint them (the rules).</p>
+              <div className="overflow-x-auto p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-100 dark:border-slate-700">
+                <table className="w-full text-sm border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 dark:border-slate-700">
+                      <th className="py-2 px-3 text-left font-bold text-slate-500">Feature</th>
+                      <th className="py-2 px-3 text-center font-bold text-blue-600">Interface</th>
+                      <th className="py-2 px-3 text-center font-bold text-amber-600">Abstract Class</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-slate-600 dark:text-slate-400">
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-2 px-3">Can have real code inside?</td>
+                      <td className="py-2 px-3 text-center text-red-500">❌ No</td>
+                      <td className="py-2 px-3 text-center text-emerald-600">✅ Yes</td>
+                    </tr>
+                    <tr className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-2 px-3">Can you make objects from it?</td>
+                      <td className="py-2 px-3 text-center text-red-500">❌ No</td>
+                      <td className="py-2 px-3 text-center text-red-500">❌ No</td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 px-3">Can a class use more than one?</td>
+                      <td className="py-2 px-3 text-center text-emerald-600">✅ Yes</td>
+                      <td className="py-2 px-3 text-center text-red-500">❌ No (Only one)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Using the wrong keyword:</strong> Classes `implement` interfaces, but they `extend` abstract classes. Mixing these up will cause errors.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs">class Car extends MyInterface</code>
+                <code className="text-xs">class Car implements MyAbstractClass</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs">class Car implements MyInterface</code>
+                <code className="text-xs">class Car extends MyAbstractClass</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Interfaces only set rules. Abstract classes set rules AND can share working code. Use interfaces when you just need a strict contract.</p>
+          </div>
+
+          <QuickCheck
+            question="Which one allows you to write real, working code inside it: an Interface or an Abstract Class?"
+            answer="An Abstract Class."
+          />
+        </div>
+
+        <hr className="border-slate-100 dark:border-slate-800/50 mb-16" />
+
+        {/* CORE TOPIC 3: Generics */}
+        <div className="mb-16">
+          <div className="p-5 bg-indigo-500/5 rounded-2xl border border-indigo-500/10 mb-6">
+            <h3 className="font-bold text-xl text-indigo-700 dark:text-indigo-400 mb-2">
+              3. Quick Note: Generics &lt;T&gt;
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              When you see <strong>&lt;T&gt;</strong>, it is called a Generic. It is simply a blank space for a type that you will fill in later. It means "This works with <em>any</em> type of data."
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              It lets you write one piece of code that works perfectly for many different data types, while still keeping TypeScript's strict rules. If you use `any`, you turn off all safety checks. If you use `&lt;T&gt;`, TypeScript still protects you.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> A `BaseRepository&lt;T&gt;` can save anything. If you use `BaseRepository&lt;User&gt;`, TypeScript knows it will only save Users. If you use `BaseRepository&lt;Product&gt;`, it knows it will only save Products.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>Put &lt;T&gt; next to the name:</strong> This tells TypeScript "T is a blank space".
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">class Box&lt;T&gt;</div>
+              </li>
+              <li>
+                <strong>Use T inside:</strong> Wherever you would normally write `string` or `number`, write `T`.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">contents: T;</div>
+              </li>
+              <li>
+                <strong>Fill the blank:</strong> When you use the class, replace T with a real type.
+                <div className="mt-2 text-xs font-mono bg-slate-100 dark:bg-slate-900 p-2 rounded">new Box&lt;string&gt;()</div>
+              </li>
+            </ol>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> Think of a cardboard box. You can put anything inside it. A `Box&lt;Shoes&gt;` means this box specifically holds shoes.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> A function that returns whatever you give it.</p>
+              <EnhancedCodeBlock
+                code={`// The <T> tells TypeScript to watch what type is passed in
+function wrapInArray<T>(item: T): T[] {
+  return [item];
+}
+
+// Pass in a string -> T becomes 'string' -> returns string[]
+const words = wrapInArray<string>("hello");
+
+// Pass in a number -> T becomes 'number' -> returns number[]
+const numbers = wrapInArray<number>(99);`}
+                language="typescript"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Using 'any' instead of Generics:</strong> `any` completely disables TypeScript. Generics keep the strict rules, they just adapt to whatever type you provide.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs">function wrap(item: any): any[]</code>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs">function wrap&lt;T&gt;(item: T): T[]</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">Generics `&lt;T&gt;` are blank spaces for types. They allow you to write reusable code that is still safe and strictly typed by TypeScript.</p>
+          </div>
+
+          <QuickCheck
+            question="Why should you use <T> instead of 'any'?"
+            answer="Because 'any' turns off TypeScript's safety checks completely. <T> keeps the strict safety checks while allowing the code to be flexible."
+          />
+        </div>
+
+        <hr className="border-slate-100 dark:border-slate-800/50 mb-16" />
+
+        {/* CORE TOPIC 4: Abstract Repository Pattern */}
+        <div className="mb-16">
+          <div className="p-5 bg-purple-500/5 rounded-2xl border border-purple-500/10 mb-6">
+            <h3 className="font-bold text-xl text-purple-700 dark:text-purple-400 mb-2">
+              4. The Abstract Repository Pattern
+            </h3>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+              This is a very common NestJS pattern. You create one Abstract Parent Repository with shared logic, and then all your real repositories (User, Product) extend it.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Why does it matter?</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-2">
+              It forces every repository in your app to have the exact same methods (like `findAll` and `create`). It also gives them a place to share common code, like a database connection or a `log()` method, saving you hundreds of lines of typing.
+            </p>
+            <p className="text-xs text-slate-500 italic p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700">
+              <strong>Example:</strong> If a new developer joins the team and makes an `OrderRepository`, they are forced to write a `delete()` method because the Abstract parent requires it. The app won't build until they do.
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">How does it work?</h4>
+            <ol className="list-decimal pl-5 space-y-4 text-sm text-slate-600 dark:text-slate-400">
+              <li>
+                <strong>The Blueprint:</strong> Write `abstract class BaseRepository&lt;T&gt;` with abstract methods.
+              </li>
+              <li>
+                <strong>The Real Thing:</strong> Create `UserRepository extends BaseRepository&lt;User&gt;`.
+              </li>
+              <li>
+                <strong>Write the logic:</strong> Write the actual code for `findAll` and `create` inside `UserRepository`.
+              </li>
+            </ol>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-3">Example</h4>
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Simple Example:</strong> The abstract class is the architect's blueprint. The `UserRepository` is the construction crew actually building it.</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400"><strong>Real-world Example:</strong> Creating a required structure for all repositories.</p>
+              <EnhancedCodeBlock
+                code={`// 1. The Blueprint (Abstract Class + Generics)
+abstract class BaseRepository<T> {
+  // Shared code! Every child gets this for free.
+  log(action: string) { console.log(action); }
+
+  // Rules! Every child MUST write their own version of this.
+  abstract findAll(): Promise<T[]>;
+}
+
+// 2. The Implementation (Fills in the <T> with <User>)
+class UserRepository extends BaseRepository<User> {
+  
+  // We MUST write this method, or TypeScript throws an error
+  async findAll(): Promise<User[]> {
+    this.log("Finding users..."); // Free inherited method
+    return []; // Return real data here
+  }
+}`}
+                language="typescript"
+              />
+            </div>
+          </div>
+
+          <div className="mb-6 p-5 bg-red-500/5 rounded-2xl border border-red-500/10">
+            <h4 className="font-bold text-red-700 dark:text-red-400 mb-3 flex items-center gap-2">
+              <span>⚠️</span> Common mistake
+            </h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+              <strong>Forgetting to write an abstract method:</strong> If the parent has `abstract create()`, the child MUST have a `create()` method. If you forget it, the code will completely fail to compile.
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="p-3 bg-red-50 dark:bg-red-900/20 rounded border border-red-100 dark:border-red-900/50">
+                <span className="text-xs font-bold text-red-600 block mb-1">Wrong:</span>
+                <code className="text-xs">class UserRepo extends BaseRepo {}</code>
+                <span className="text-[10px] text-red-500 mt-1 block">Error: Missing findAll()</span>
+              </div>
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded border border-emerald-100 dark:border-emerald-900/50">
+                <span className="text-xs font-bold text-emerald-600 block mb-1">Right:</span>
+                <code className="text-xs">class UserRepo extends BaseRepo {'{'}</code>
+                <code className="text-xs pl-2">findAll() {'{ ... }'}</code>
+                <code className="text-xs">{'}'}</code>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h4 className="font-bold text-slate-900 dark:text-white mb-2">Quick summary</h4>
+            <p className="text-sm text-slate-600 dark:text-slate-400">The Abstract Repository Pattern uses a parent class to enforce rules across all repositories, while also providing a place to share common code like logging or database connections.</p>
+          </div>
+
+          <QuickCheck
+            question="If a parent class has 'abstract delete(): void', what MUST the child class do?"
+            answer="The child class MUST write a 'delete()' method. If it does not, TypeScript will throw an error and the app will not run."
+          />
+        </div>
+
       </div>
     </section>
   );

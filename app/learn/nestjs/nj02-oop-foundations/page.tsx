@@ -28,8 +28,7 @@ export default function NJ02OOP(): JSX.Element {
   }, [activeSection]);
 
   const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
-  const nextSection = SECTIONS[currentIndex + 1];
-  const prevSection = SECTIONS[currentIndex - 1];
+
 
   const renderContent = () => {
     switch (activeSection) {
@@ -45,28 +44,28 @@ export default function NJ02OOP(): JSX.Element {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#020617] text-slate-900 dark:text-slate-300 selection:bg-primary/30">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0f172a] text-slate-900 dark:text-slate-300 selection:bg-primary/30">
       {/* Ambient Glows - Subtler for the clean look */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px]" />
       </div>
 
       <Nav />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 py-10">
-        <div className="flex flex-col lg:flex-row gap-16 items-start">
+      <div className="relative z-10 max-w-[90rem] mx-auto px-6 lg:px-12 py-10">
+        <div className="flex flex-col lg:flex-row gap-12 lg:gap-7 items-start justify-center">
 
-          {/* Vibrant Sidebar Navigation */}
-          <aside className="lg:w-72 shrink-0 lg:sticky lg:top-32">
-            <div className="bg-white dark:bg-slate-900/80 p-5 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.04)] dark:shadow-2xl backdrop-blur-xl">
+          {/* Clean Sidebar Navigation */}
+          <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-32">
+            <div className="py-2">
               <div className="px-4 mb-8">
                 <h3 className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">
                   Modules
                 </h3>
               </div>
               <nav className="space-y-1.5">
-                {SECTIONS.map((section, idx) => {
+                {SECTIONS.map((section) => {
                   const isActive = activeSection === section.id;
                   return (
                     <button
@@ -92,7 +91,7 @@ export default function NJ02OOP(): JSX.Element {
               </nav>
 
               {/* Progress Box */}
-              <div className="mt-8 px-4 py-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-950/50 border border-slate-100 dark:border-slate-800/50">
+              <div className="mt-8 px-4 py-5 rounded-[1.5rem] bg-slate-50 dark:bg-slate-900/40 border border-slate-100 dark:border-slate-800/50">
                 <div className="flex items-center justify-between text-[9px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">
                   <span>Progress</span>
                   <span className="text-slate-900 dark:text-white">{Math.round(((currentIndex + 1) / SECTIONS.length) * 100)}%</span>
@@ -108,7 +107,7 @@ export default function NJ02OOP(): JSX.Element {
           </aside>
 
           {/* Main Content Area */}
-          <main className="flex-1 min-w-0">
+          <main className="flex-1 min-w-0 max-w-4xl">
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out">
               {renderContent()}
             </div>
