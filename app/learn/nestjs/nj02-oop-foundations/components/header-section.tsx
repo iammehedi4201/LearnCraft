@@ -1,12 +1,12 @@
 export function HeaderSection() {
   return (
     <div className="group relative bg-white dark:bg-slate-800/40 rounded-[1rem] p-10 lg:p-14 mb-12 overflow-hidden border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl">
-      {/* Top Gradient Bar */}
-      <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-transparent via-slate-100 dark:via-slate-800 to-transparent" />
+      {/* Decorative Top Line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-slate-100 dark:bg-slate-800" />
 
       <div className="relative z-10">
         <div className="flex items-center gap-6 mb-12 pb-8 border-b border-slate-100 dark:border-slate-800/50">
-          <div className="flex h-14 w-20 items-center justify-center rounded-[1.2rem] bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-orange-500/20 ring-4 ring-orange-500/10">
+          <div className="flex h-14 w-20 items-center justify-center rounded-[1.2rem] bg-amber-500 text-white shadow-lg shadow-amber-500/20 ring-4 ring-amber-500/10">
             <span className="font-black text-sm tracking-widest whitespace-nowrap">
               NJ-02
             </span>

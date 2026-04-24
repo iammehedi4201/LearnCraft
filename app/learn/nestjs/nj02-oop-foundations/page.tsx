@@ -11,13 +11,13 @@ import { AbstractionSection } from "./components/abstraction-section";
 import { ClosingSections } from "./components/closing-sections";
 
 const SECTIONS = [
-  { id: "intro", label: "Welcome", icon: "🚀", color: "from-blue-500 to-cyan-500" },
-  { id: "classes", label: "Classes & Objects", icon: "📦", color: "from-amber-500 to-orange-500" },
-  { id: "encapsulation", label: "Encapsulation", icon: "🔒", color: "from-emerald-500 to-teal-500" },
-  { id: "inheritance", label: "Inheritance", icon: "🧬", color: "from-rose-500 to-pink-500" },
-  { id: "polymorphism", label: "Polymorphism", icon: "✨", color: "from-purple-500 to-indigo-500" },
-  { id: "abstraction", label: "Abstraction", icon: "☁️", color: "from-sky-500 to-indigo-500" },
-  { id: "closing", label: "Review & Challenge", icon: "🏆", color: "from-yellow-500 to-amber-600" },
+  { id: "intro", label: "Welcome", icon: "🚀", color: "bg-indigo-600" },
+  { id: "classes", label: "Classes & Objects", icon: "📦", color: "bg-amber-600" },
+  { id: "encapsulation", label: "Encapsulation", icon: "🔒", color: "bg-emerald-600" },
+  { id: "inheritance", label: "Inheritance", icon: "🧬", color: "bg-rose-600" },
+  { id: "polymorphism", label: "Polymorphism", icon: "✨", color: "bg-purple-600" },
+  { id: "abstraction", label: "Abstraction", icon: "☁️", color: "bg-sky-600" },
+  { id: "closing", label: "Review & Challenge", icon: "🏆", color: "bg-amber-600" },
 ];
 
 export default function NJ02OOP(): JSX.Element {
@@ -47,7 +47,7 @@ export default function NJ02OOP(): JSX.Element {
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0f172a] text-slate-900 dark:text-slate-300 selection:bg-primary/30">
       {/* Ambient Glows - Subtler for the clean look */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-500/10 rounded-full blur-[120px]" />
       </div>
 
@@ -71,8 +71,8 @@ export default function NJ02OOP(): JSX.Element {
                     <button
                       key={section.id}
                       onClick={() => setActiveSection(section.id)}
-                      className={`group relative w-full flex items-center gap-3.5 px-4 py-3 rounded-2xl transition-all duration-500 ${isActive
-                        ? `bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-lg shadow-blue-500/25 scale-[1.02]`
+                      className={`group relative w-full flex items-center gap-3.5 px-4 py-3 rounded-lg transition-all duration-500 ${isActive
+                        ? `bg-indigo-600 text-white shadow-lg shadow-indigo-500/25 scale-[1.02]`
                         : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-slate-900 dark:hover:text-slate-200"
                         }`}
                     >
@@ -98,7 +98,7 @@ export default function NJ02OOP(): JSX.Element {
                 </div>
                 <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(59,130,246,0.3)]"
+                    className="h-full bg-indigo-600 transition-all duration-1000 ease-out"
                     style={{ width: `${((currentIndex + 1) / SECTIONS.length) * 100}%` }}
                   />
                 </div>
