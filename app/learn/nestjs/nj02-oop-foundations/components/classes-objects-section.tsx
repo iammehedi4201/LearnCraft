@@ -109,7 +109,7 @@ function Divider() {
 export function ClassesObjectsSection() {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-      <div className="bg-white dark:bg-slate-800/40 p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/50 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-2xl backdrop-blur-xl mb-12">
+      <div className="bg-white dark:bg-[#0f172a] p-8 lg:p-12 rounded-[1rem] border border-slate-200/60 dark:border-slate-800/40 shadow-[0_20px_50px_rgba(0,0,0,0.03)] dark:shadow-xl backdrop-blur-xl mb-12">
 
         {/* Section Header */}
         <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800/50">
