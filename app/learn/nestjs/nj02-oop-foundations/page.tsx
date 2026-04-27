@@ -77,10 +77,10 @@ export default function NJ02OOP(): JSX.Element {
 
       <Nav />
 
-      <div className="relative z-10 max-w-[90rem] mx-auto px-6 lg:px-12 py-10">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-0 py-10">
         <div className="flex flex-col lg:flex-row gap-12 lg:gap-7 items-start justify-center">
           {/* Stepper Sidebar */}
-          <aside className="lg:w-[260px] shrink-0 lg:sticky lg:top-32 border border-slate-200 dark:border-slate-800/40 rounded-2xl lg:bg-white lg:dark:bg-[#0f172a] p-6">
+          <aside className="lg:w-[270px] shrink-0 lg:sticky lg:top-32 border border-slate-200 dark:border-slate-800/40 rounded-2xl lg:bg-white lg:dark:bg-[#0f172a] p-5">
             <div className="py-2">
               {/* Header */}
               <div className="px-2 mb-6">
@@ -249,7 +249,7 @@ export default function NJ02OOP(): JSX.Element {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0 max-w-4xl">
+          <main className="flex-1 min-w-0 max-w-5xl">
             <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out">
               {renderContent()}
             </div>
