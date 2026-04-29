@@ -4,7 +4,7 @@ import { QuickCheck } from "./quick-check";
 export function EncapsulationSection() {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
-      <div className="bg-white dark:bg-slate-800/40 p-8 lg:p-12 rounded-lg border border-slate-200/40 dark:border-slate-700/40 backdrop-blur-sm mb-12">
+      <div className="bg-white dark:bg-slate-800/40 p-8 lg:p-12 rounded-lg border border-slate-200/40 dark:border-slate-700 backdrop-blur-sm mb-12">
         <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800/50">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 font-black">
             2

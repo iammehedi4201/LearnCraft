@@ -14,7 +14,7 @@ export function HeaderSection() {
       {/* Vertical Card Layout - matching left sidebar style */}
       <div className="space-y-4">
         {/* Card 1 */}
-        <div className="group relative bg-white dark:bg-slate-800/40 rounded-xl p-6 border border-slate-200/40 dark:border-slate-700/40 backdrop-blur-sm hover:border-amber-500/20 dark:hover:border-amber-500/20 transition-all duration-300">
+        <div className="group relative bg-white dark:bg-slate-800/40 rounded-xl p-6 border border-slate-200/40 dark:border-slate-700 backdrop-blur-sm hover:border-amber-500/20 dark:hover:border-amber-500/20 transition-all duration-300">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10">
@@ -40,7 +40,7 @@ export function HeaderSection() {
         </div>
 
         {/* Card 2 */}
-        <div className="group relative bg-white dark:bg-slate-800/40 rounded-xl p-6 border border-slate-200/40 dark:border-slate-700/40 backdrop-blur-sm hover:border-rose-500/20 dark:hover:border-rose-500/20 transition-all duration-300">
+        <div className="group relative bg-white dark:bg-slate-800/40 rounded-xl p-6 border border-slate-200/40 dark:border-slate-700 backdrop-blur-sm hover:border-rose-500/20 dark:hover:border-rose-500/20 transition-all duration-300">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-500/10">
@@ -61,7 +61,7 @@ export function HeaderSection() {
         </div>
 
         {/* Card 3 */}
-        <div className="group relative bg-white dark:bg-slate-800/40 rounded-xl p-6 border border-slate-200/40 dark:border-slate-700/40 backdrop-blur-sm hover:border-blue-500/20 dark:hover:border-blue-500/20 transition-all duration-300">
+        <div className="group relative bg-white dark:bg-slate-800/40 rounded-xl p-6 border border-slate-200/40 dark:border-slate-700 backdrop-blur-sm hover:border-blue-500/20 dark:hover:border-blue-500/20 transition-all duration-300">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10">
@@ -83,7 +83,7 @@ export function HeaderSection() {
         </div>
 
         {/* Card 4 */}
-        <div className="group relative bg-white dark:bg-slate-800/40 rounded-xl p-6 border border-slate-200/40 dark:border-slate-700/40 backdrop-blur-sm hover:border-emerald-500/20 dark:hover:border-emerald-500/20 transition-all duration-300">
+        <div className="group relative bg-white dark:bg-slate-800/40 rounded-xl p-6 border border-slate-200/40 dark:border-slate-700 backdrop-blur-sm hover:border-emerald-500/20 dark:hover:border-emerald-500/20 transition-all duration-300">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10">
