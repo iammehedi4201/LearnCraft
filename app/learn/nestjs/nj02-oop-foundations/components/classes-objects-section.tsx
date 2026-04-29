@@ -373,30 +373,29 @@ const user2 = new User("Bob");   // user2.name → "Bob"
               <thead>
                 <tr className="bg-slate-100 dark:bg-slate-800">
                   <th className="text-left p-3 font-bold text-slate-700 dark:text-slate-300 rounded-tl-lg">Modifier</th>
-                  <th className="text-left p-3 font-bold text-slate-700 dark:text-slate-300">Who can see it?</th>
-                  <th className="text-left p-3 font-bold text-slate-700 dark:text-slate-300 rounded-tr-lg">Real-life comparison</th>
+                  <th className="text-left p-3 font-bold text-slate-700 dark:text-slate-300">Same Class</th>
+                  <th className="text-left p-3 font-bold text-slate-700 dark:text-slate-300">Child Class</th>
+                  <th className="text-left p-3 font-bold text-slate-700 dark:text-slate-300 rounded-tr-lg">Outside</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-t border-slate-100 dark:border-slate-700/50">
-                  <td className="p-3"><code className="text-emerald-600 dark:text-emerald-400 font-bold">public</code></td>
-                  <td className="p-3 text-slate-600 dark:text-slate-400">Everyone — inside and outside the class</td>
-                  <td className="p-3 text-slate-500 dark:text-slate-500">A public park — anyone can enter</td>
+                  <td className="p-3"><code className="text-red-600 dark:text-red-400 font-bold">private</code></td>
+                  <td className="p-3 text-slate-600 dark:text-slate-400">✅</td>
+                  <td className="p-3 text-slate-600 dark:text-slate-400">❌</td>
+                  <td className="p-3 text-slate-600 dark:text-slate-400">❌</td>
                 </tr>
                 <tr className="border-t border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30">
-                  <td className="p-3"><code className="text-red-600 dark:text-red-400 font-bold">private</code></td>
-                  <td className="p-3 text-slate-600 dark:text-slate-400">Only code inside this exact class</td>
-                  <td className="p-3 text-slate-500 dark:text-slate-500">Your personal diary — only you can read it</td>
+                  <td className="p-3"><code className="text-blue-600 dark:text-blue-400 font-bold">protected</code></td>
+                  <td className="p-3 text-slate-600 dark:text-slate-400">✅</td>
+                  <td className="p-3 text-slate-600 dark:text-slate-400">✅</td>
+                  <td className="p-3 text-slate-600 dark:text-slate-400">❌</td>
                 </tr>
                 <tr className="border-t border-slate-100 dark:border-slate-700/50">
-                  <td className="p-3"><code className="text-blue-600 dark:text-blue-400 font-bold">protected</code></td>
-                  <td className="p-3 text-slate-600 dark:text-slate-400">This class and any class that extends it</td>
-                  <td className="p-3 text-slate-500 dark:text-slate-500">A family recipe — shared only within the family</td>
-                </tr>
-                <tr className="border-t border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30">
-                  <td className="p-3"><code className="text-purple-600 dark:text-purple-400 font-bold">readonly</code></td>
-                  <td className="p-3 text-slate-600 dark:text-slate-400">Anyone can read, but nobody can change it</td>
-                  <td className="p-3 text-slate-500 dark:text-slate-500">Your birthday — everyone knows it, nobody can change it</td>
+                  <td className="p-3"><code className="text-emerald-600 dark:text-emerald-400 font-bold">public</code></td>
+                  <td className="p-3 text-slate-600 dark:text-slate-400">✅</td>
+                  <td className="p-3 text-slate-600 dark:text-slate-400">✅</td>
+                  <td className="p-3 text-slate-600 dark:text-slate-400">✅</td>
                 </tr>
               </tbody>
             </table>
