@@ -29,14 +29,16 @@ export function Nav(): JSX.Element {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex justify-center ${isScrolled ? 'pt-0 px-0' : 'pt-6 px-6'
-          }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex justify-center  ${
+          isScrolled ? "pt-0 px-0" : "pt-6 px-6"
+        }`}
       >
         <nav
-          className={`transition-all duration-500 w-full border border-slate-200/50 dark:border-white/10 shadow-lg shadow-black/5 pointer-events-auto ${isScrolled
-            ? 'h-14 bg-background/80 backdrop-blur-md rounded-none border-x-0 border-t-0'
-            : 'max-w-7xl h-16 glass-card rounded-2xl hover:shadow-2xl hover:shadow-blue-500/10'
-            }`}
+          className={`transition-all duration-500 w-full border border-slate-200/50 dark:border-white/10 shadow-lg shadow-black/5 pointer-events-auto ${
+            isScrolled
+              ? "h-14 bg-background/80 backdrop-blur-md rounded-none border-x-0 border-t-0"
+              : "max-w-7xl h-16 glass-card rounded-2xl hover:shadow-2xl hover:shadow-blue-500/10"
+          }`}
         >
           <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
             <div className="flex items-center gap-8">
@@ -47,15 +49,17 @@ export function Nav(): JSX.Element {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg group-hover:scale-110 transition-all duration-300">
                   <span className="text-base font-black italic">L</span>
                 </div>
-                <span className="text-lg hidden sm:inline-block">LearnCraft</span>
+                <span className="text-lg hidden sm:inline-block">
+                  LearnCraft
+                </span>
               </Link>
 
               <div className="hidden md:flex items-center gap-6">
                 {[
-                  { name: 'Next.js', href: '/learn/nextjs' },
-                  { name: 'TanStack', href: '/learn/tanstack' },
-                  { name: 'NestJS', href: '/learn/nestjs' },
-                  { name: 'Roadmap', href: '#roadmap' },
+                  { name: "Next.js", href: "/learn/nextjs" },
+                  { name: "TanStack", href: "/learn/tanstack" },
+                  { name: "NestJS", href: "/learn/nestjs" },
+                  { name: "Roadmap", href: "#roadmap" },
                 ].map((item) => (
                   <Link
                     key={item.name}
@@ -79,8 +83,7 @@ export function Nav(): JSX.Element {
         </nav>
       </header>
       {/* Layout Spacer: Ensures content starts 50px below the navbar height (88px + 50px) */}
-      <div className="h-[138px] w-full pointer-events-none" />
+      <div className="h-[100px] w-full pointer-events-none" />
     </>
   );
 }
-
