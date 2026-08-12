@@ -8,7 +8,7 @@ interface LearningCardProps {
   textColor: string;
 }
 
-function LearningCard({ number, title, description, bgColor, textColor }: LearningCardProps) {
+function LearningCard({ number, title: _title, description, bgColor, textColor }: LearningCardProps) {
   return (
     <div className="flex items-start gap-3 p-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
       <span className={`${bgColor} ${textColor} text-xs font-bold px-2 py-1 rounded shrink-0`}>{number}</span>

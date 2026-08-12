@@ -46,8 +46,12 @@ export function Nav(): JSX.Element {
                 href="/learn"
                 className="group flex items-center gap-2.5 font-bold tracking-tighter text-foreground"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-lg group-hover:scale-110 transition-all duration-300">
-                  <span className="text-base font-black italic">L</span>
+                <div className="relative h-8 w-8 overflow-hidden rounded-lg shadow-lg group-hover:scale-110 transition-all duration-300">
+                  <img
+                    src="/logo.png"
+                    alt="LearnCraft Logo"
+                    className="h-full w-full object-cover"
+                  />
                 </div>
                 <span className="text-lg hidden sm:inline-block">
                   LearnCraft

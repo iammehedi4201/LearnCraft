@@ -12,7 +12,13 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-black text-2xl shadow-lg">L</div>
+              <div className="relative w-12 h-12 rounded-2xl overflow-hidden shadow-lg">
+                <img
+                  src="/logo.png"
+                  alt="LearnCraft Logo"
+                  className="h-full w-full object-cover"
+                />
+              </div>
               <span className="text-3xl font-black text-foreground tracking-tighter">LearnCraft</span>
             </div>
             <p className="text-slate-600 dark:text-slate-400 text-lg max-w-md leading-relaxed mb-10">
