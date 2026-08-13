@@ -7,6 +7,7 @@ import { Roadmap } from "./components/Roadmap";
 import { Community } from "./components/Community";
 import { FAQ } from "./components/FAQ";
 import { Footer } from "./components/Footer";
+import { InteractiveGrid } from "@/components/interactive-grid";
 
 /**
  * LearnHub - The primary landing page for LearnCraft.
@@ -16,7 +17,7 @@ import { Footer } from "./components/Footer";
  */
 export default function LearnHub(): JSX.Element {
   return (
-    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20 overflow-x-hidden transition-colors duration-300">
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20 overflow-x-hidden transition-colors duration-300">
       {/* Navigation */}
       <Nav />
 
@@ -35,6 +36,6 @@ export default function LearnHub(): JSX.Element {
       {/* Global Footer */}
       <Footer />
     
-    </div>
+    </InteractiveGrid>
   );
 }

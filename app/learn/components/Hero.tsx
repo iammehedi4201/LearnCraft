@@ -90,7 +90,7 @@ export function Hero() {
           {/* Right Side: Interactive Code Window */}
           <div className="relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
             <div className="absolute -inset-0.5 bg-gradient-to-r from-ds-feature-base to-ds-info-base rounded-[2rem] blur opacity-10 dark:opacity-20 transition duration-1000"></div>
-            <div className="relative rounded-[1rem] bg-ds-bg-white border border-ds-stroke-soft overflow-hidden shadow-2xl">
+            <div className="relative rounded-[1rem] bg-ds-bg-white border border-ds-stroke-soft overflow-hidden">
               {/* Window Header */}
               <div className="flex items-center justify-between px-6 py-4 border-b border-ds-stroke-soft bg-ds-bg-weak">
                 <div className="flex gap-2">

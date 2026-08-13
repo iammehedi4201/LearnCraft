@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Nav } from "@/components/nav";
 import { useTheme } from "@/components/theme-provider";
+import { InteractiveGrid } from "@/components/interactive-grid";
 
 // Color token definition structure for documentation rendering
 interface ColorToken {
@@ -246,7 +247,7 @@ export default function DesignSystemPlayground(): JSX.Element {
   };
 
   return (
-    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong font-sans selection:bg-ds-feature-light/20 pb-20">
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-ds-text-strong font-sans selection:bg-ds-feature-light/20 pb-20">
       <Nav />
 
       <main className="max-w-7xl mx-auto px-6 pt-10">
@@ -865,6 +866,6 @@ export default function DesignSystemPlayground(): JSX.Element {
           </div>
         )}
       </main>
-    </div>
+    </InteractiveGrid>
   );
 }

@@ -64,7 +64,7 @@ export function CoursePaths() {
             <Link
               key={path.title}
               href={path.href}
-              className={`group relative block p-10 rounded-[1rem] bg-ds-bg-white border border-ds-stroke-soft overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${path.themeClass.hoverShadow}`}
+              className={`group relative block p-10 rounded-[1rem] bg-ds-bg-white border border-ds-stroke-soft overflow-hidden transition-all duration-300 hover:-translate-y-2  ${path.themeClass.hoverShadow}`}
             >
               <div className={`inline-flex p-4 rounded-2xl ${path.themeClass.icon} mb-8 group-hover:scale-110 transition-transform`}>
                 {path.icon}

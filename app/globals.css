@@ -121,6 +121,10 @@
 
   /* Design System Tokens - Overlay */
   --overlay: rgba(2, 13, 23, 0.24);
+
+  /* Dotted Background token */
+  --dot-color: rgba(14, 18, 27, 0.05);
+  --dot-hover-color: rgba(125, 82, 244, 0.6);
 }
 
 .dark {
@@ -241,6 +245,10 @@
 
   /* Design System Tokens - Overlay */
   --overlay: rgba(82, 88, 102, 0.32);
+
+  /* Dotted Background token */
+  --dot-color: rgba(255, 255, 255, 0.06);
+  --dot-hover-color: rgba(140, 113, 246, 0.8);
 }
 
 .sepia {
@@ -347,6 +355,10 @@
 
   /* Design System Tokens - Overlay */
   --overlay: rgba(67, 52, 34, 0.24);
+
+  /* Dotted Background token */
+  --dot-color: rgba(67, 52, 34, 0.06);
+  --dot-hover-color: rgba(184, 134, 11, 0.7);
 }
 
 @layer base {
@@ -418,4 +430,46 @@
 
 .glass-morphism {
   @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.37)];
+}
+
+@layer utilities {
+  .bg-dot-grid {
+    position: relative;
+    background-image: radial-gradient(
+      circle,
+      var(--dot-color) 1.2px,
+      transparent 1.2px
+    );
+    background-size: 32px 32px;
+  }
+
+  .bg-dot-grid::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(
+      circle,
+      var(--dot-hover-color) 1.2px,
+      transparent 1.2px
+    );
+    background-size: 32px 32px;
+    mask-image: radial-gradient(
+      circle 120px at var(--mouse-x, 0px) var(--mouse-y, 0px),
+      black 20%,
+      transparent 100%
+    );
+    -webkit-mask-image: radial-gradient(
+      circle 120px at var(--mouse-x, 0px) var(--mouse-y, 0px),
+      black 20%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+  }
+
+  .bg-dot-grid:hover::before {
+    opacity: 1;
+  }
 }
