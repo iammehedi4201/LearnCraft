@@ -1,6 +1,8 @@
-import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
+"use client";
+
 import { QuickCheck } from "./quick-check";
-import { SectionContainer, TopicHeader, SummaryBox, Divider, ComparisonTable, InfoCallout } from "./shared-components";
+import { Playground } from "@/components/playground/Playground";
+import { SectionContainer, TopicHeader, SectionHeading, SummaryBox, Divider, ComparisonTable, InfoCallout } from "./shared-components";
 
 export function OopVsProceduralSection() {
   return (
@@ -8,22 +10,30 @@ export function OopVsProceduralSection() {
 
       <div className="mb-10 p-5 rounded-2xl bg-[#e7e9f5]/60 dark:bg-[#212a5d]/40 border border-[#b4b8d7] dark:border-[#212a5d]">
         <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-          Let us build the <strong>same application</strong> — a Bank Account System — using both approaches. Then we will compare them honestly.
+          Let us build the <strong>same application</strong> — a Bank Account System — using both approaches. Run both playgrounds to experience the difference firsthand.
         </p>
       </div>
 
       {/* ── Procedural ── */}
       <div className="mb-16">
-        <TopicHeader number={1} title="Procedural Approach" description="Everything is functions and variables. No classes, no objects — just steps." color="rose" />
+        <TopicHeader number={1} title="Procedural Approach" description="Everything is functions and global arrays. No classes, no objects — just steps." color="rose" />
 
-        <EnhancedCodeBlock code={`// ─── PROCEDURAL: Bank Account System ───
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It: Procedural Bank Account</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`// ─── PROCEDURAL: Bank Account System ───
+interface Account {
+  id: number;
+  owner: string;
+  balance: number;
+}
 
-// Data (just variables)
-let accounts = [];
+let accounts: Account[] = [];
 
-// Functions (scattered everywhere)
-function createAccount(owner, balance) {
-  const account = {
+function createAccount(owner: string, balance: number): Account {
+  const account: Account = {
     id: accounts.length + 1,
     owner: owner,
     balance: balance,
@@ -33,69 +43,64 @@ function createAccount(owner, balance) {
   return account;
 }
 
-function deposit(accountId, amount) {
+function deposit(accountId: number, amount: number) {
   const account = accounts.find(a => a.id === accountId);
   if (!account) {
-    console.log("Account not found!");
-    return;
-  }
-  if (amount <= 0) {
-    console.log("Amount must be positive!");
+    console.log("❌ Account not found!");
     return;
   }
   account.balance += amount;
   console.log("Deposited $" + amount + " to " + account.owner + "'s account");
 }
 
-function withdraw(accountId, amount) {
+function withdraw(accountId: number, amount: number) {
   const account = accounts.find(a => a.id === accountId);
-  if (!account) {
-    console.log("Account not found!");
-    return;
-  }
+  if (!account) return;
   if (amount > account.balance) {
-    console.log("Not enough money!");
+    console.log("❌ Not enough money!");
     return;
   }
   account.balance -= amount;
   console.log("Withdrew $" + amount + " from " + account.owner + "'s account");
 }
 
-function getBalance(accountId) {
-  const account = accounts.find(a => a.id === accountId);
-  if (!account) return "Account not found";
-  return account.owner + ": $" + account.balance;
-}
-
-// Using it
 const acc1 = createAccount("Mehedi", 1000);
 const acc2 = createAccount("Alice", 500);
 deposit(acc1.id, 200);
 withdraw(acc2.id, 100);
-console.log(getBalance(acc1.id)); // Mehedi: $1200
-console.log(getBalance(acc2.id)); // Alice: $400`} language="javascript" />
+
+// Notice: Anyone can accidentally corrupt global state:
+accounts[0].balance = -999999;
+console.log("Corrupted balance: $" + accounts[0].balance);`}
+            height="380px"
+          />
+        </div>
       </div>
 
       <Divider />
 
       {/* ── OOP ── */}
       <div className="mb-16">
-        <TopicHeader number={2} title="OOP Approach" description="Data and actions are grouped together in a class. Each account is an independent object." color="emerald" />
+        <TopicHeader number={2} title="OOP Approach" description="Data and actions are grouped together in a class. Each account is an independent, protected object." color="emerald" />
 
-        <EnhancedCodeBlock code={`// ─── OOP: Bank Account System ───
-
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It: OOP Bank Account with Transfer</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`// ─── OOP: Bank Account System ───
 class BankAccount {
-  #balance;
-  static nextId = 1;
+  #balance: number;
+  static nextId: number = 1;
+  public readonly id: number;
 
-  constructor(owner, balance = 0) {
+  constructor(public owner: string, balance: number = 0) {
     this.id = BankAccount.nextId++;
-    this.owner = owner;
     this.#balance = balance;
-    console.log("Account created for " + owner);
+    console.log("Account #" + this.id + " created for " + owner);
   }
 
-  deposit(amount) {
+  deposit(amount: number) {
     if (amount <= 0) {
       console.log("❌ Amount must be positive!");
       return;
@@ -104,26 +109,22 @@ class BankAccount {
     console.log("✅ Deposited $" + amount + ". Balance: $" + this.#balance);
   }
 
-  withdraw(amount) {
-    if (amount <= 0) {
-      console.log("❌ Amount must be positive!");
-      return;
-    }
-    if (amount > this.#balance) {
-      console.log("❌ Not enough money!");
+  withdraw(amount: number) {
+    if (amount <= 0 || amount > this.#balance) {
+      console.log("❌ Invalid withdrawal: $" + amount);
       return;
     }
     this.#balance -= amount;
     console.log("✅ Withdrew $" + amount + ". Balance: $" + this.#balance);
   }
 
-  getBalance() {
+  getBalance(): string {
     return this.owner + ": $" + this.#balance;
   }
 
-  transfer(toAccount, amount) {
+  transfer(toAccount: BankAccount, amount: number) {
     if (amount > this.#balance) {
-      console.log("❌ Not enough money for transfer!");
+      console.log("❌ Insufficient funds to transfer $" + amount);
       return;
     }
     this.withdraw(amount);
@@ -132,14 +133,16 @@ class BankAccount {
   }
 }
 
-// Using it
 const acc1 = new BankAccount("Mehedi", 1000);
 const acc2 = new BankAccount("Alice", 500);
 
-acc1.deposit(200);            // ✅ Deposited $200. Balance: $1200
-acc2.withdraw(100);           // ✅ Withdrew $100. Balance: $400
-console.log(acc1.getBalance()); // Mehedi: $1200
-acc1.transfer(acc2, 300);     // Transfer between objects!`} language="javascript" />
+acc1.deposit(200);
+acc2.withdraw(100);
+console.log(acc1.getBalance());
+acc1.transfer(acc2, 300);`}
+            height="400px"
+          />
+        </div>
       </div>
 
       <Divider />
@@ -168,9 +171,9 @@ acc1.transfer(acc2, 300);     // Transfer between objects!`} language="javascrip
               <li>• One-off data processing</li>
             </ul>
           </div>
-          <div className="p-5 rounded-2xl bg-[#e7e9f5]/50 dark:bg-[#212a5d]/40 border border-[#b4b8d7] dark:border-[#212a5d]">
-            <h5 className="font-bold text-[#344b8f] dark:text-[#7f6fbe] mb-3">✅ Use OOP When:</h5>
-            <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+          <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
+            <h5 className="font-bold text-ds-feature-base mb-3">✅ Use OOP When:</h5>
+            <ul className="space-y-2 text-sm text-ds-text-sub">
               <li>• Building web applications</li>
               <li>• Working in a team</li>
               <li>• Code needs to grow over time</li>

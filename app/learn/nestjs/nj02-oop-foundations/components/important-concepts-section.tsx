@@ -1,5 +1,8 @@
+"use client";
+
 import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 import { QuickCheck } from "./quick-check";
+import { Playground } from "@/components/playground/Playground";
 import { SectionContainer, TopicHeader, SectionHeading, AnalogyBox, MistakeBox, SummaryBox, Divider, PredictOutputBox, ComparisonTable, InfoCallout } from "./shared-components";
 
 export function ImportantConceptsSection() {
@@ -12,20 +15,28 @@ export function ImportantConceptsSection() {
         <AnalogyBox emoji="👆" title="Think about it like this">
           <p>When you say &quot;my name is Mehedi&quot;, the word &quot;my&quot; refers to YOU — the person speaking. In JavaScript, <code>this</code> works the same way — it refers to the object that is &quot;speaking&quot; (running the code).</p>
         </AnalogyBox>
-        <EnhancedCodeBlock code={`class User {
-  constructor(name) {
-    this.name = name;   // "this" = the object being created
-  }
+
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Understanding &quot;this&quot;</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class User {
+  constructor(public name: string) {}
+
   greet() {
-    console.log("Hi, I am " + this.name); // "this" = the object calling greet()
+    console.log("Hi, I am " + this.name);
   }
 }
 
 const user1 = new User("Mehedi");
 const user2 = new User("Alice");
 
-user1.greet(); // Hi, I am Mehedi  (this = user1)
-user2.greet(); // Hi, I am Alice   (this = user2)`} language="javascript" />
+user1.greet(); // "this" points to user1
+user2.greet(); // "this" points to user2`}
+            height="260px"
+          />
+        </div>
       </div>
 
       <Divider />
@@ -55,20 +66,23 @@ const user = new User("Mehedi"); // ✅
         <AnalogyBox emoji="🏭" title="Think about it like this">
           <p>A factory (class) has a sign on the building that says &quot;Total cars produced: 500&quot;. This information belongs to the <strong>factory itself</strong>, not to any specific car. Static members are like that sign — they belong to the class, not to any object.</p>
         </AnalogyBox>
-        <EnhancedCodeBlock code={`class User {
-  static totalUsers = 0;  // Belongs to the CLASS
 
-  constructor(name) {
-    this.name = name;     // Belongs to each OBJECT
-    User.totalUsers++;    // Increment the class counter
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Static Class Members</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class User {
+  static totalUsers: number = 0;  // Belongs to the CLASS itself
+
+  constructor(public name: string) {
+    User.totalUsers++;            // Increments class counter on each "new"
   }
 
-  // Static method — called on the class, not on an object
-  static getTotal() {
+  static getTotal(): number {
     return User.totalUsers;
   }
 
-  // Regular method — called on an object
   greet() {
     console.log("Hi, I am " + this.name);
   }
@@ -78,34 +92,37 @@ const user1 = new User("Mehedi");
 const user2 = new User("Alice");
 const user3 = new User("Bob");
 
-// Calling on the CLASS (not on an object)
-console.log(User.getTotal()); // 3
-console.log(User.totalUsers); // 3
+// Called on the CLASS, not an object:
+console.log("Total registered users: " + User.getTotal()); // 3
 
-// Calling on an OBJECT
-user1.greet(); // Hi, I am Mehedi
-
-// This would NOT work:
-// user1.getTotal(); ❌ — static methods are on the class, not objects`} language="javascript" />
+user1.greet(); // Called on object`}
+            height="340px"
+          />
+        </div>
 
         <div className="mb-8">
-          <SectionHeading>📌 More static examples</SectionHeading>
-          <EnhancedCodeBlock code={`class MathHelper {
-  static PI = 3.14159;
+          <SectionHeading>📌 MathHelper Static Utility Class</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class MathHelper {
+  static readonly PI: number = 3.14159;
 
-  static circleArea(radius) {
+  static circleArea(radius: number): number {
     return MathHelper.PI * radius * radius;
   }
 
-  static celsiusToFahrenheit(celsius) {
-    return (celsius * 9/5) + 32;
+  static celsiusToFahrenheit(celsius: number): number {
+    return (celsius * 9 / 5) + 32;
   }
 }
 
-// Use directly on the class — no "new" needed!
-console.log(MathHelper.PI);                    // 3.14159
-console.log(MathHelper.circleArea(5));         // 78.53975
-console.log(MathHelper.celsiusToFahrenheit(30)); // 86`} language="javascript" />
+// Use directly on the class — no "new MathHelper()" needed!
+console.log("PI: " + MathHelper.PI);
+console.log("Circle radius 5 area: " + MathHelper.circleArea(5).toFixed(2));
+console.log("30°C in Fahrenheit: " + MathHelper.celsiusToFahrenheit(30) + "°F");`}
+            height="300px"
+          />
         </div>
 
         <ComparisonTable headers={["", "Instance (Regular)", "Static"]} rows={[
@@ -122,53 +139,63 @@ console.log(MathHelper.celsiusToFahrenheit(30)); // 86`} language="javascript" /
       {/* ── Getters and Setters ── */}
       <div className="mb-16">
         <TopicHeader number={4} title="Getters and Setters" description="Getters let you READ a private value. Setters let you CHANGE a private value safely. They look like properties but are actually methods that run code." color="amber" />
-        <EnhancedCodeBlock code={`class User {
-  #name;
-  #age;
 
-  constructor(name, age) {
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Getters and Setters with Validation</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class UserProfile {
+  #name: string;
+  #age: number;
+
+  constructor(name: string, age: number) {
     this.#name = name;
     this.#age = age;
   }
 
-  // GETTER — read the value (looks like a property!)
-  get name() {
+  // GETTER — read the value like a property
+  get name(): string {
     return this.#name;
   }
 
-  get age() {
+  get age(): number {
     return this.#age;
   }
 
-  // SETTER — change the value safely
-  set age(newAge) {
+  // SETTER — safely validate before saving
+  set age(newAge: number) {
     if (newAge < 0 || newAge > 150) {
-      console.log("❌ Invalid age!");
+      console.log("❌ Invalid age: " + newAge);
       return;
     }
     this.#age = newAge;
+    console.log("✅ Age updated to: " + this.#age);
   }
 
-  set name(newName) {
-    if (newName.length < 2) {
-      console.log("❌ Name too short!");
+  set name(newName: string) {
+    if (newName.trim().length < 2) {
+      console.log("❌ Name is too short!");
       return;
     }
-    this.#name = newName;
+    this.#name = newName.trim();
+    console.log("✅ Name updated to: " + this.#name);
   }
 }
 
-const user = new User("Mehedi", 25);
+const user = new UserProfile("Mehedi", 25);
 
-// Using getter — looks like reading a property!
-console.log(user.name); // Mehedi   (actually calls the getter)
-console.log(user.age);  // 25
+// Access via getters:
+console.log(user.name + " is " + user.age + " years old.");
 
-// Using setter — looks like setting a property!
-user.age = 26;           // ✅ Works (calls the setter)
-user.age = -5;           // ❌ Invalid age! (setter blocks it)
-user.name = "A";         // ❌ Name too short! (setter blocks it)
-user.name = "Alice";     // ✅ Works`} language="javascript" />
+// Access via setters:
+user.age = 26;    // ✅ Valid update
+user.age = -5;    // ❌ Blocked by setter!
+user.name = "A";  // ❌ Blocked by setter!
+user.name = "Alice"; // ✅ Valid update`}
+            height="380px"
+          />
+        </div>
 
         <InfoCallout emoji="💡" title="Why getters/setters are cool">
           <p>They look like normal property access (<code>user.name</code>) but behind the scenes, they run a function that can check rules, format data, or log changes. The caller does not know they are calling a function!</p>
@@ -176,46 +203,6 @@ user.name = "Alice";     // ✅ Works`} language="javascript" />
       </div>
 
       <Divider />
-
-      {/* ── Private vs Public ── */}
-      <div className="mb-16">
-        <TopicHeader number={5} title="Private (#) vs Public Fields" description="Public fields can be accessed by anyone. Private fields (starting with #) can only be accessed inside the class." color="rose" />
-        <EnhancedCodeBlock code={`class Employee {
-  // Public fields — anyone can read/change
-  name;
-  department;
-
-  // Private fields — only this class can read/change
-  #salary;
-  #ssn;
-
-  constructor(name, department, salary, ssn) {
-    this.name = name;
-    this.department = department;
-    this.#salary = salary;
-    this.#ssn = ssn;
-  }
-
-  // Public method to safely get salary
-  getSalaryInfo() {
-    return this.name + " earns $" + this.#salary;
-  }
-
-  // Public method — hides SSN partially
-  getMaskedSSN() {
-    return "***-**-" + this.#ssn.slice(-4);
-  }
-}
-
-const emp = new Employee("Mehedi", "Engineering", 75000, "123-45-6789");
-
-console.log(emp.name);           // Mehedi ✅ (public)
-console.log(emp.department);     // Engineering ✅ (public)
-console.log(emp.getSalaryInfo()); // Mehedi earns $75000 ✅
-console.log(emp.getMaskedSSN()); // ***-**-6789 ✅
-// console.log(emp.#salary);    // ❌ ERROR! Private
-// console.log(emp.#ssn);       // ❌ ERROR! Private`} language="javascript" />
-      </div>
 
       {/* ── Summary ── */}
       <SummaryBox>

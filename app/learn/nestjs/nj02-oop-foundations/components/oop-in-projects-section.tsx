@@ -1,5 +1,7 @@
-import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
+"use client";
+
 import { QuickCheck } from "./quick-check";
+import { Playground } from "@/components/playground/Playground";
 import { SectionContainer, TopicHeader, SectionHeading, AnalogyBox, Divider, SummaryBox, InfoCallout } from "./shared-components";
 
 export function OopInProjectsSection() {
@@ -14,13 +16,13 @@ export function OopInProjectsSection() {
         </AnalogyBox>
 
         <div className="mb-8">
-          <SectionHeading>📌 The common pattern</SectionHeading>
+          <SectionHeading>📌 The 4 Key Layers</SectionHeading>
           <div className="space-y-3 mb-6">
             {[
-              { name: "Controller", desc: "Receives requests from the internet (like a receptionist)", icon: "🚪", color: "bg-[#606f9a]/10 border-[#606f9a]/20 text-[#606f9a] dark:text-[#b4b8d7]" },
-              { name: "Service", desc: "Contains the business logic and rules (like a manager)", icon: "⚙️", color: "bg-[#7f6fbe]/10 border-emerald-500/20 text-[#344b8f] dark:text-[#7f6fbe]" },
-              { name: "Repository", desc: "Talks to the database (like a filing clerk)", icon: "🗄️", color: "bg-[#7b52ac]/10 border-amber-500/20 text-[#7b52ac] dark:text-[#b4b8d7]" },
-              { name: "Model/Entity", desc: "Describes the shape of your data (like a form template)", icon: "📋", color: "bg-purple-500/10 border-purple-500/20 text-purple-700 dark:text-purple-400" },
+              { name: "Controller", desc: "Receives requests from the client (like a receptionist)", icon: "🚪", color: "bg-[#606f9a]/10 border-[#606f9a]/20 text-[#606f9a] dark:text-[#b4b8d7]" },
+              { name: "Service", desc: "Contains business rules and logic (like a manager)", icon: "⚙️", color: "bg-[#7f6fbe]/10 border-emerald-500/20 text-[#344b8f] dark:text-[#7f6fbe]" },
+              { name: "Repository", desc: "Talks to the database / memory store (like a filing clerk)", icon: "🗄️", color: "bg-[#7b52ac]/10 border-amber-500/20 text-[#7b52ac] dark:text-[#b4b8d7]" },
+              { name: "Model/Entity", desc: "Describes the shape of the data (like a form template)", icon: "📋", color: "bg-purple-500/10 border-purple-500/20 text-purple-700 dark:text-purple-400" },
             ].map((item) => (
               <div key={item.name} className={`flex items-start gap-4 p-4 rounded-xl border ${item.color}`}>
                 <span className="text-xl">{item.icon}</span>
@@ -33,106 +35,109 @@ export function OopInProjectsSection() {
           </div>
         </div>
 
-        <EnhancedCodeBlock code={`// ─── Model: Describes the data shape ───
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It: Controller → Service → Repository in Action</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`// ─── 1. Entity / Model ───
 class User {
-  constructor(id, name, email) {
-    this.id = id;
-    this.name = name;
-    this.email = email;
-  }
+  constructor(public id: number, public name: string, public email: string) {}
 }
 
-// ─── Repository: Handles database operations ───
+// ─── 2. Repository (Data Access) ───
 class UserRepository {
-  #users = [];
+  #users: User[] = [];
 
-  save(user) {
+  save(user: User): User {
     this.#users.push(user);
     return user;
   }
 
-  findById(id) {
+  findById(id: number): User | null {
     return this.#users.find(u => u.id === id) || null;
   }
 
-  findAll() {
+  findAll(): User[] {
     return [...this.#users];
   }
 }
 
-// ─── Service: Contains business logic ───
+// ─── 3. Service (Business Logic) ───
 class UserService {
+  private userRepo: UserRepository;
+
   constructor() {
     this.userRepo = new UserRepository();
   }
 
-  createUser(name, email) {
+  createUser(name: string, email: string): User {
     if (!email.includes("@")) {
-      throw new Error("Invalid email!");
+      throw new Error("Invalid email format!");
     }
     const user = new User(Date.now(), name, email);
     return this.userRepo.save(user);
   }
 
-  getUser(id) {
+  getUser(id: number): User {
     const user = this.userRepo.findById(id);
-    if (!user) throw new Error("User not found!");
+    if (!user) throw new Error("User with ID " + id + " not found!");
     return user;
   }
 
-  getAllUsers() {
+  getAllUsers(): User[] {
     return this.userRepo.findAll();
   }
 }
 
-// ─── Controller: Handles HTTP requests ───
+// ─── 4. Controller (HTTP Handler) ───
 class UserController {
+  private userService: UserService;
+
   constructor() {
     this.userService = new UserService();
   }
 
-  handleCreateUser(name, email) {
+  handleCreateUser(name: string, email: string) {
     try {
       const user = this.userService.createUser(name, email);
-      console.log("✅ Created:", user);
-    } catch (err) {
-      console.log("❌ Error:", err.message);
+      console.log("✅ 201 Created: " + user.name + " (" + user.email + ")");
+    } catch (err: any) {
+      console.log("❌ 400 Bad Request: " + err.message);
     }
   }
 
-  handleGetAllUsers() {
+  handleListUsers() {
     const users = this.userService.getAllUsers();
-    console.log("Users:", users);
+    console.log("📋 200 OK: Total " + users.length + " users");
+    users.forEach(u => console.log("   • " + u.name + " <" + u.email + ">"));
   }
 }
 
-// Using it
+// Simulate API Requests
 const controller = new UserController();
 controller.handleCreateUser("Mehedi", "mehedi@test.com");
 controller.handleCreateUser("Alice", "alice@test.com");
-controller.handleGetAllUsers();`} language="javascript" />
+controller.handleCreateUser("InvalidUser", "bad-email");
+controller.handleListUsers();`}
+            height="420px"
+          />
+        </div>
+
+        <InfoCallout emoji="💡" title="This is exactly how NestJS works!">
+          <p>When you learn NestJS, you will see this exact Controller → Service pattern in every single module. By understanding OOP today, you are already learning the architecture of NestJS!</p>
+        </InfoCallout>
       </div>
 
       <Divider />
 
-      <div className="mb-16">
-        <TopicHeader number={2} title="Why This Pattern?" description="Separating code into layers makes it easier to maintain, test, and change." color="emerald" />
-
-        <InfoCallout emoji="💡" title="Benefits of layered architecture">
-          <p><strong>1. Easy to change:</strong> If you switch from MongoDB to PostgreSQL, you only change the Repository. The Controller and Service don&apos;t care.</p>
-          <p className="mt-1"><strong>2. Easy to test:</strong> You can test each layer independently.</p>
-          <p className="mt-1"><strong>3. Easy for teams:</strong> One developer works on the Controller, another on the Service. They don&apos;t step on each other&apos;s toes.</p>
-          <p className="mt-1"><strong>4. Easy to find code:</strong> Need to change a business rule? Go to the Service. Need to fix a database query? Go to the Repository.</p>
-        </InfoCallout>
-      </div>
-
       <SummaryBox>
-        Real-world projects organize code into layers: <strong>Controller</strong> (handles requests), <strong>Service</strong> (business logic), <strong>Repository</strong> (database), <strong>Model</strong> (data shape). Each layer is a class with a clear responsibility. This makes code maintainable and testable.
+        In real projects (like NestJS), code is organized into layers: <strong>Controllers</strong> handle requests, <strong>Services</strong> handle business logic, <strong>Repositories</strong> handle data access, and <strong>Entities</strong> describe data shapes. Each layer is an OOP class with a single responsibility.
       </SummaryBox>
 
       <div className="mt-6" />
 
-      <QuickCheck question="If you need to change how data is saved to the database, which layer do you modify?" answer="The Repository layer. That's the only layer that talks directly to the database. The Controller and Service don't need to change." />
+      <QuickCheck question="Why do we separate Controllers and Services into different classes?" answer="Separation of concerns! The Controller only handles incoming HTTP requests/responses. The Service contains the actual business logic and rules. This makes code easier to test, maintain, and reuse." />
 
     </SectionContainer>
   );

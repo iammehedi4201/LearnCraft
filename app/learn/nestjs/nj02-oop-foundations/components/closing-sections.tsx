@@ -83,9 +83,9 @@ class UsersController {
             { concept: "Static", nest: "Constants, configuration values, utility helpers" },
             { concept: "Interfaces", nest: "Define contracts for services, DTOs, and entities (TypeScript)" },
           ].map(item => (
-            <div key={item.concept} className="flex items-start gap-4 p-3 rounded-xl bg-[#e7e9f5]/50 dark:bg-[#212a5d]/40 border border-[#b4b8d7] dark:border-[#212a5d]">
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-[#e7e9f5] text-[#344b8f] dark:bg-[#472f82]/30 dark:text-white border border-[#b4b8d7]/50 dark:border-[#7b52ac]/30 flex-shrink-0 mt-0.5">{item.concept}</span>
-              <p className="text-sm text-[#212a5d] dark:text-[#e7e9f5]">{item.nest}</p>
+            <div key={item.concept} className="flex items-start gap-4 p-3 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-ds-bg-white text-ds-feature-base border border-ds-stroke-soft flex-shrink-0 mt-0.5">{item.concept}</span>
+              <p className="text-sm text-ds-text-strong">{item.nest}</p>
             </div>
           ))}
         </div>
@@ -97,8 +97,8 @@ class UsersController {
 
       {/* ── Final Summary ── */}
       <div className="mb-8">
-        <div className="bg-[#472f82] dark:bg-[#212a5d] p-8 lg:p-12 rounded-2xl border border-[#7b52ac]/40 shadow-sm relative overflow-hidden">
-          <h3 className="text-2xl font-black mb-8 text-white flex items-center gap-3">
+        <div className="bg-ds-bg-weak p-8 lg:p-12 rounded-2xl border border-ds-stroke-soft shadow-sm relative overflow-hidden">
+          <h3 className="text-2xl font-black mb-8 text-ds-text-strong flex items-center gap-3">
             <span className="text-3xl">🧠</span> Module Summary
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -113,14 +113,14 @@ class UsersController {
               { id: 8, title: "Static", desc: "Belongs to the class itself. Called with ClassName.method()." },
               { id: "🎯", title: "NestJS Ready", desc: "You now understand the core ideas that power the entire NestJS framework." },
             ].map((item, i) => (
-              <div key={i} className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-300 group/item">
+              <div key={i} className="p-5 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm hover:border-ds-stroke-sub transition-all duration-300 group/item">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="h-7 w-7 rounded-lg bg-white/10 text-white/80 flex items-center justify-center font-black text-xs">
+                  <span className="h-7 w-7 rounded-lg bg-ds-feature-lighter text-ds-feature-dark flex items-center justify-center font-black text-xs">
                     {item.id}
                   </span>
-                  <h4 className="font-bold text-slate-100 group-hover/item:text-white transition-colors text-sm">{item.title}</h4>
+                  <h4 className="font-bold text-ds-text-strong text-sm">{item.title}</h4>
                 </div>
-                <p className="text-xs text-slate-300/80 leading-relaxed line-clamp-2">
+                <p className="text-xs text-ds-text-sub leading-relaxed line-clamp-2">
                   {item.desc}
                 </p>
               </div>

@@ -1,5 +1,8 @@
+"use client";
+
 import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 import { QuickCheck } from "./quick-check";
+import { Playground } from "@/components/playground/Playground";
 import {
   SectionContainer,
   TopicHeader,
@@ -9,7 +12,6 @@ import {
   MistakeBox,
   SummaryBox,
   Divider,
-  ExerciseBox,
   PredictOutputBox,
   InfoCallout,
 } from "./shared-components";
@@ -56,9 +58,17 @@ export function ConstructorSection() {
           />
         </div>
 
-        <EnhancedCodeBlock
-          code={`class User {
-  constructor(name, email, age) {
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Constructor in Action</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class User {
+  name: string;
+  email: string;
+  age: number;
+
+  constructor(name: string, email: string, age: number) {
     this.name = name;     // Save the name
     this.email = email;   // Save the email
     this.age = age;       // Save the age
@@ -75,8 +85,9 @@ const user2 = new User("Alice", "alice@test.com", 30);
 
 user1.introduce(); // I am Mehedi (25), email: mehedi@test.com
 user2.introduce(); // I am Alice (30), email: alice@test.com`}
-          language="javascript"
-        />
+            height="340px"
+          />
+        </div>
       </div>
 
       <Divider />
@@ -142,34 +153,43 @@ console.log(p1.price);`}
           color="emerald"
         />
 
-        <EnhancedCodeBlock
-          code={`class BankAccount {
-  constructor(owner, balance = 0) {
+        <div className="mb-8">
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class BankAccount {
+  owner: string;
+  balance: number;
+  isActive: boolean;
+  transactions: string[];
+
+  constructor(owner: string, balance: number = 0) {
     // "balance = 0" means: if no balance is given, start with 0
     this.owner = owner;
     this.balance = balance;
-    this.isActive = true;     // Always starts as true
-    this.transactions = [];    // Always starts as empty array
+    this.isActive = true;      // Always starts as true
+    this.transactions = [];     // Always starts as empty array
   }
 
-  deposit(amount) {
+  deposit(amount: number) {
     this.balance += amount;
     this.transactions.push("+ $" + amount);
-    console.log("Balance: $" + this.balance);
+    console.log(this.owner + " balance: $" + this.balance);
   }
 }
 
 // With default balance (0)
 const acc1 = new BankAccount("Mehedi");
-console.log(acc1.balance);  // 0
+console.log(acc1.owner + " initial balance: $" + acc1.balance);  // 0
 
 // With custom balance
 const acc2 = new BankAccount("Alice", 5000);
-console.log(acc2.balance);  // 5000
+console.log(acc2.owner + " initial balance: $" + acc2.balance);  // 5000
 
-acc1.deposit(100); // Balance: $100`}
-          language="javascript"
-        />
+acc1.deposit(100);`}
+            height="360px"
+          />
+        </div>
 
         <InfoCallout emoji="💡" title="Two types of default values">
           <p><strong>Parameter defaults:</strong> <code>constructor(name, age = 18)</code> — used when the caller does not provide a value.</p>
@@ -179,102 +199,43 @@ acc1.deposit(100); // Balance: $100`}
 
       <Divider />
 
-      {/* ── 3.4 Multiple Examples ── */}
+      {/* ── 3.4 More Examples ── */}
       <div className="mb-16">
         <TopicHeader
           number={4}
-          title="More Constructor Examples"
-          description="Let us see constructors in action with different real-world objects."
+          title="Real-World Constructor Examples"
+          description="Let us see constructors in action with cars, products, and students."
           color="amber"
         />
 
         <div className="mb-8">
-          <SectionHeading>📌 Example 1 — Car</SectionHeading>
-          <EnhancedCodeBlock
-            code={`class Car {
-  constructor(brand, model, year) {
-    this.brand = brand;
-    this.model = model;
-    this.year = year;
-    this.speed = 0;        // Default: car starts stopped
-    this.isRunning = false; // Default: engine is off
-  }
+          <SectionHeading>📌 Student with Grade Tracking</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class Student {
+  name: string;
+  studentId: string;
+  grades: { subject: string; score: number }[] = [];
 
-  start() {
-    this.isRunning = true;
-    console.log(this.brand + " " + this.model + " started! 🚗");
-  }
-
-  accelerate(amount) {
-    if (!this.isRunning) {
-      console.log("Start the car first!");
-      return;
-    }
-    this.speed += amount;
-    console.log("Speed: " + this.speed + " km/h");
-  }
-}
-
-const myCar = new Car("Toyota", "Camry", 2024);
-myCar.accelerate(10); // Start the car first!
-myCar.start();        // Toyota Camry started! 🚗
-myCar.accelerate(50); // Speed: 50 km/h`}
-            language="javascript"
-          />
-        </div>
-
-        <div className="mb-8">
-          <SectionHeading>📌 Example 2 — Product with discount</SectionHeading>
-          <EnhancedCodeBlock
-            code={`class Product {
-  constructor(name, price, category = "General") {
-    this.name = name;
-    this.price = price;
-    this.category = category;
-    this.discount = 0;
-  }
-
-  applyDiscount(percent) {
-    this.discount = percent;
-    const discountedPrice = this.price - (this.price * percent / 100);
-    console.log(this.name + ": $" + this.price + " → $" + discountedPrice.toFixed(2) + " (" + percent + "% off)");
-    return discountedPrice;
-  }
-}
-
-const phone = new Product("iPhone", 999, "Electronics");
-const book = new Product("JavaScript Guide", 29); // category defaults to "General"
-
-phone.applyDiscount(10); // iPhone: $999 → $899.10 (10% off)
-book.applyDiscount(20);  // JavaScript Guide: $29 → $23.20 (20% off)`}
-            language="javascript"
-          />
-        </div>
-
-        <div className="mb-8">
-          <SectionHeading>📌 Example 3 — Student with grade tracking</SectionHeading>
-          <EnhancedCodeBlock
-            code={`class Student {
-  constructor(name, studentId) {
+  constructor(name: string, studentId: string) {
     this.name = name;
     this.studentId = studentId;
-    this.grades = [];          // Empty array to store grades
-    this.isEnrolled = true;
   }
 
-  addGrade(subject, score) {
+  addGrade(subject: string, score: number) {
     this.grades.push({ subject, score });
     console.log(this.name + " got " + score + " in " + subject);
   }
 
-  getAverage() {
+  getAverage(): number {
     if (this.grades.length === 0) return 0;
     const total = this.grades.reduce((sum, g) => sum + g.score, 0);
-    return (total / this.grades.length).toFixed(1);
+    return Number((total / this.grades.length).toFixed(1));
   }
 
   showReport() {
-    console.log("--- Report for " + this.name + " ---");
+    console.log("--- Report for " + this.name + " (" + this.studentId + ") ---");
     console.log("Average: " + this.getAverage());
     console.log("Status: " + (this.getAverage() >= 60 ? "Passing ✅" : "Failing ❌"));
   }
@@ -284,11 +245,8 @@ const s1 = new Student("Mehedi", "STU001");
 s1.addGrade("Math", 85);
 s1.addGrade("Science", 92);
 s1.addGrade("English", 78);
-s1.showReport();
-// --- Report for Mehedi ---
-// Average: 85.0
-// Status: Passing ✅`}
-            language="javascript"
+s1.showReport();`}
+            height="360px"
           />
         </div>
       </div>
@@ -330,48 +288,91 @@ s1.showReport();
         answer="1. An empty object is created. 2. 'this' is set to the new object. 3. The constructor runs with the passed values. 4. The object is filled with data. 5. The completed object is returned and saved in the variable."
       />
 
-      <div className="mt-6" />
+      {/* ── Interactive Practice Exercise ── */}
+      <div className="mt-8">
+        <SectionHeading>💻 Practice Exercise</SectionHeading>
+        <Playground
+          runtime="typescript"
+          language="TypeScript"
+          exercise={{
+            id: "oop-constructor-movie-ex",
+            title: "Create a Movie class",
+            instructions: `Create a Movie class with:
+• Constructor: title, director, year, rating (default: "Not Rated")
+• Method: addReview(score) — adds to a reviews number array
+• Method: getAverageRating() — returns the average of all reviews
+• Method: showInfo() — prints movie details and average rating
 
-      <ExerciseBox
-        level="intermediate"
-        title="Create a Movie class"
-        description={`Create a Movie class with:\n- Constructor: title, director, year, rating (default: "Not Rated")\n- Method: addReview(score) — adds to a reviews array\n- Method: getAverageRating() — returns the average of all reviews\n- Method: showInfo() — prints movie details and average rating\n\nCreate 2 movies, add some reviews, and show their info.`}
-        solution={`class Movie {
-  constructor(title, director, year, rating = "Not Rated") {
+Create a movie, add 3 reviews, and call showInfo().`,
+            starterCode: `class Movie {
+  // Your constructor and methods here
+
+}
+
+// Create a movie and test it
+const movie = new Movie("Inception", "Christopher Nolan", 2010, "PG-13");
+`,
+            solutionCode: `class Movie {
+  title: string;
+  director: string;
+  year: number;
+  rating: string;
+  reviews: number[] = [];
+
+  constructor(title: string, director: string, year: number, rating: string = "Not Rated") {
     this.title = title;
     this.director = director;
     this.year = year;
     this.rating = rating;
-    this.reviews = [];
   }
 
-  addReview(score) {
+  addReview(score: number) {
     this.reviews.push(score);
     console.log("Review added: " + score + "/10");
   }
 
-  getAverageRating() {
+  getAverageRating(): string {
     if (this.reviews.length === 0) return "No reviews yet";
     const avg = this.reviews.reduce((sum, r) => sum + r, 0) / this.reviews.length;
     return avg.toFixed(1) + "/10";
   }
 
   showInfo() {
-    console.log(this.title + " (" + this.year + ")");
+    console.log(this.title + " (" + this.year + ") - " + this.rating);
     console.log("Director: " + this.director);
     console.log("Average Rating: " + this.getAverageRating());
   }
 }
 
-const movie1 = new Movie("Inception", "Nolan", 2010, "PG-13");
-movie1.addReview(9);
-movie1.addReview(8);
-movie1.addReview(10);
-movie1.showInfo();
-// Inception (2010)
-// Director: Nolan
-// Average Rating: 9.0/10`}
-      />
+const movie = new Movie("Inception", "Christopher Nolan", 2010, "PG-13");
+movie.addReview(9);
+movie.addReview(8);
+movie.addReview(10);
+movie.showInfo();`,
+            hints: [
+              "Set default rating with constructor(title, director, year, rating: string = 'Not Rated').",
+              "Initialize this.reviews = [] in the constructor or property declaration.",
+              "addReview(score) pushes the score to this.reviews. getAverageRating() sums and divides by length.",
+            ],
+            tests: [
+              {
+                name: "Movie class exists",
+                code: `if (typeof Movie !== 'function') throw new Error("Movie class not found");`,
+              },
+              {
+                name: "Movie constructor sets properties with default rating",
+                code: `const _m = new Movie("Test", "Director", 2024); if (_m.rating !== "Not Rated") throw new Error("Default rating should be 'Not Rated'");`,
+              },
+              {
+                name: "addReview and getAverageRating work",
+                code: `const _m2 = new Movie("M", "D", 2020); _m2.addReview(8); _m2.addReview(10); if (typeof _m2.getAverageRating !== 'function') throw new Error("getAverageRating method missing");`,
+              },
+            ],
+            difficulty: "intermediate",
+          }}
+          height="400px"
+        />
+      </div>
 
     </SectionContainer>
   );

@@ -4,8 +4,8 @@ export function ConceptTablesSection() {
   return (
     <SectionContainer number={13} title="Concept Comparison Tables">
 
-      <div className="mb-10 p-5 rounded-2xl bg-[#e7e9f5]/60 dark:bg-[#212a5d]/40 border border-[#b4b8d7] dark:border-[#212a5d]">
-        <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+      <div className="mb-10 p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
+        <p className="text-sm text-ds-text-sub leading-relaxed">
           Quick reference tables for all the major OOP concepts. Use these tables to review and compare concepts at a glance.
         </p>
       </div>

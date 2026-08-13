@@ -1,6 +1,9 @@
+"use client";
+
 import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 import { QuickCheck } from "./quick-check";
-import { SectionContainer, TopicHeader, SectionHeading, AnalogyBox, SummaryBox, Divider, ExerciseBox, ComparisonTable, InfoCallout } from "./shared-components";
+import { Playground } from "@/components/playground/Playground";
+import { SectionContainer, TopicHeader, SectionHeading, AnalogyBox, SummaryBox, Divider, ComparisonTable, InfoCallout } from "./shared-components";
 
 export function CompositionSection() {
   return (
@@ -14,16 +17,20 @@ export function CompositionSection() {
           <p className="mt-2">Similarly, in code, you can build a complex object by giving it smaller objects as properties.</p>
         </AnalogyBox>
 
-        <EnhancedCodeBlock code={`// Small, focused classes
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Car Composed of Engine, GPS & Stereo</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`// Small, focused component classes
 class Engine {
-  constructor(horsepower) {
-    this.horsepower = horsepower;
-    this.isRunning = false;
-  }
+  constructor(public horsepower: number, public isRunning: boolean = false) {}
+
   start() {
     this.isRunning = true;
     console.log("🔧 Engine started (" + this.horsepower + " HP)");
   }
+
   stop() {
     this.isRunning = false;
     console.log("🔧 Engine stopped");
@@ -31,40 +38,42 @@ class Engine {
 }
 
 class GPS {
-  navigate(destination) {
-    console.log("📍 Navigating to " + destination + "...");
+  navigate(destination: string) {
+    console.log("📍 GPS navigating to " + destination + "...");
   }
 }
 
 class Stereo {
-  playMusic(song) {
-    console.log("🎵 Playing: " + song);
+  playMusic(song: string) {
+    console.log("🎵 Stereo playing: " + song);
   }
 }
 
 // Composition: Car HAS an Engine, HAS a GPS, HAS a Stereo
 class Car {
-  constructor(brand, horsepower) {
-    this.brand = brand;
+  engine: Engine;
+  gps: GPS;
+  stereo: Stereo;
+
+  constructor(public brand: string, horsepower: number) {
     this.engine = new Engine(horsepower); // HAS an engine
     this.gps = new GPS();                 // HAS a GPS
     this.stereo = new Stereo();           // HAS a stereo
   }
 
-  startTrip(destination) {
-    console.log("🚗 " + this.brand + " is ready!");
+  startTrip(destination: string) {
+    console.log("🚗 " + this.brand + " is ready for the trip!");
     this.engine.start();
     this.gps.navigate(destination);
-    this.stereo.playMusic("Road Trip Mix");
+    this.stereo.playMusic("Highway Star");
   }
 }
 
-const myCar = new Car("Toyota", 200);
-myCar.startTrip("Beach");
-// 🚗 Toyota is ready!
-// 🔧 Engine started (200 HP)
-// 📍 Navigating to Beach...
-// 🎵 Playing: Road Trip Mix`} language="javascript" />
+const myCar = new Car("Toyota Supra", 382);
+myCar.startTrip("Mount Fuji");`}
+            height="380px"
+          />
+        </div>
       </div>
 
       <Divider />
@@ -81,43 +90,56 @@ myCar.startTrip("Beach");
               <li>Car <strong>IS A</strong> Vehicle ✅</li>
             </ul>
           </div>
-          <div className="p-5 rounded-2xl bg-[#e7e9f5]/50 dark:bg-[#212a5d]/40 border border-[#b4b8d7] dark:border-[#212a5d]">
-            <h5 className="font-bold text-[#344b8f] dark:text-[#7f6fbe] mb-3">🧩 Composition (HAS A)</h5>
-            <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+          <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
+            <h5 className="font-bold text-ds-feature-base mb-3">🧩 Composition (HAS A)</h5>
+            <ul className="space-y-2 text-sm text-ds-text-sub">
               <li>Car <strong>HAS A</strong> Engine ✅</li>
-              <li>User <strong>HAS A</strong> Address ✅</li>
+              <li>Player <strong>HAS A</strong> Inventory ✅</li>
               <li>Order <strong>HAS</strong> Products ✅</li>
             </ul>
           </div>
         </div>
 
-        <EnhancedCodeBlock code={`// ─── WRONG: Using inheritance for "HAS A" ───
-// A Player IS NOT an Inventory!
-class Inventory {
-  constructor() { this.items = []; }
-  addItem(item) { this.items.push(item); }
-}
-// ❌ BAD — Player is not an inventory
-// class Player extends Inventory { }
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Player HAS An Inventory</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class Inventory {
+  items: string[] = [];
 
-// ─── RIGHT: Using composition for "HAS A" ───
+  addItem(item: string) {
+    this.items.push(item);
+    console.log("📦 Stored: " + item);
+  }
+
+  showItems() {
+    console.log("Inventory contents: " + this.items.join(", "));
+  }
+}
+
+// Player HAS an Inventory (not extends Inventory!)
 class Player {
-  constructor(name) {
-    this.name = name;
-    this.inventory = new Inventory(); // Player HAS an inventory
-    this.health = 100;
+  inventory: Inventory;
+
+  constructor(public name: string, public health: number = 100) {
+    this.inventory = new Inventory();
   }
 
-  pickUp(item) {
+  pickUp(item: string) {
+    console.log(this.name + " found a " + item + "!");
     this.inventory.addItem(item);
-    console.log(this.name + " picked up " + item);
   }
 }
 
-const player = new Player("Mehedi");
-player.pickUp("Sword"); // Mehedi picked up Sword
-player.pickUp("Shield"); // Mehedi picked up Shield
-console.log(player.inventory.items); // ["Sword", "Shield"]`} language="javascript" />
+const player = new Player("Hero Mehedi");
+player.pickUp("Mythic Sword");
+player.pickUp("Health Potion");
+player.pickUp("Dragon Shield");
+player.inventory.showItems();`}
+            height="360px"
+          />
+        </div>
 
         <ComparisonTable headers={["", "Inheritance", "Composition"]} rows={[
           ["Relationship", '"IS A"', '"HAS A"'],
@@ -128,66 +150,11 @@ console.log(player.inventory.items); // ["Sword", "Shield"]`} language="javascri
         ]} />
 
         <InfoCallout emoji="🏆" title="Famous rule: Prefer composition over inheritance">
-          <p>Many experienced developers say: <strong>&quot;Prefer composition over inheritance.&quot;</strong> This does NOT mean &quot;never use inheritance.&quot; It means: when you&apos;re unsure, composition is usually the safer choice because it&apos;s more flexible and easier to change later.</p>
+          <p>Many experienced developers say: <strong>&quot;Prefer composition over inheritance.&quot;</strong> When you&apos;re unsure, composition is usually the safer choice because it&apos;s more flexible and easier to change later.</p>
         </InfoCallout>
       </div>
 
       <Divider />
-
-      <div className="mb-16">
-        <TopicHeader number={3} title="More Composition Examples" description="Let us see more real-world examples of composition in action." color="emerald" />
-
-        <div className="mb-8">
-          <SectionHeading>📌 Example — Order has Products and a Payment</SectionHeading>
-          <EnhancedCodeBlock code={`class Product {
-  constructor(name, price) {
-    this.name = name;
-    this.price = price;
-  }
-}
-
-class Payment {
-  constructor(method) {
-    this.method = method;
-    this.isPaid = false;
-  }
-  pay(amount) {
-    this.isPaid = true;
-    console.log("💰 Paid $" + amount + " via " + this.method);
-  }
-}
-
-// Order is COMPOSED of Products and a Payment
-class Order {
-  constructor(customerName) {
-    this.customerName = customerName;
-    this.products = [];      // HAS products
-    this.payment = null;     // HAS a payment
-  }
-
-  addProduct(product) {
-    this.products.push(product);
-  }
-
-  getTotal() {
-    return this.products.reduce((sum, p) => sum + p.price, 0);
-  }
-
-  checkout(paymentMethod) {
-    this.payment = new Payment(paymentMethod);
-    this.payment.pay(this.getTotal());
-    console.log("✅ Order placed for " + this.customerName);
-  }
-}
-
-const order = new Order("Mehedi");
-order.addProduct(new Product("Laptop", 999));
-order.addProduct(new Product("Mouse", 25));
-order.checkout("Credit Card");
-// 💰 Paid $1024 via Credit Card
-// ✅ Order placed for Mehedi`} language="javascript" />
-        </div>
-      </div>
 
       <SummaryBox>
         <strong>Composition</strong> means building objects by combining smaller objects. Use &quot;HAS A&quot; for composition and &quot;IS A&quot; for inheritance. Composition is more flexible because you can swap parts easily. When unsure, prefer composition over inheritance.
@@ -197,33 +164,65 @@ order.checkout("Credit Card");
 
       <QuickCheck question='Should a "Car" extend an "Engine" class? Why or why not?' answer='No! A Car is NOT an Engine. A Car HAS an Engine. Use composition: this.engine = new Engine(). Use inheritance only for "IS A" relationships.' />
 
-      <div className="mt-6" />
-
-      <ExerciseBox level="intermediate" title="Build a Computer with Composition"
-        description={`Create small classes: CPU (brand, cores), RAM (size in GB), Storage (type, size).\nThen create a Computer class that HAS a CPU, HAS RAM, HAS Storage.\nAdd a showSpecs() method that prints all the specs.`}
-        solution={`class CPU {
-  constructor(brand, cores) {
-    this.brand = brand;
-    this.cores = cores;
-  }
+      {/* ── Interactive Practice Exercise ── */}
+      <div className="mt-8">
+        <SectionHeading>💻 Practice Exercise: Computer Composition</SectionHeading>
+        <Playground
+          runtime="typescript"
+          language="TypeScript"
+          exercise={{
+            id: "oop-composition-computer-ex",
+            title: "Build a Computer with Composition",
+            instructions: `Create small classes:
+1. CPU: constructor(brand: string, cores: number)
+2. RAM: constructor(sizeGB: number)
+3. Storage: constructor(type: string, sizeGB: number)
+4. Computer: constructor(name, cpuBrand, cpuCores, ramGB, storageType, storageGB) that initializes this.cpu, this.ram, this.storage
+5. Method showSpecs() that logs: "--- [name] ---", "CPU: [brand] ([cores] cores)", "RAM: [sizeGB] GB", "Storage: [sizeGB] GB [type]"`,
+            starterCode: `class CPU {
+  // Your code here
 }
 
 class RAM {
-  constructor(sizeGB) {
-    this.sizeGB = sizeGB;
-  }
+  // Your code here
 }
 
 class Storage {
-  constructor(type, sizeGB) {
-    this.type = type;
-    this.sizeGB = sizeGB;
-  }
+  // Your code here
 }
 
 class Computer {
-  constructor(name, cpuBrand, cpuCores, ramGB, storageType, storageGB) {
-    this.name = name;
+  // Your composition code here
+}
+
+const myPC = new Computer("Gaming Rig", "Intel i9", 16, 32, "NVMe SSD", 2000);
+myPC.showSpecs();
+`,
+            solutionCode: `class CPU {
+  constructor(public brand: string, public cores: number) {}
+}
+
+class RAM {
+  constructor(public sizeGB: number) {}
+}
+
+class Storage {
+  constructor(public type: string, public sizeGB: number) {}
+}
+
+class Computer {
+  cpu: CPU;
+  ram: RAM;
+  storage: Storage;
+
+  constructor(
+    public name: string,
+    cpuBrand: string,
+    cpuCores: number,
+    ramGB: number,
+    storageType: string,
+    storageGB: number
+  ) {
     this.cpu = new CPU(cpuBrand, cpuCores);
     this.ram = new RAM(ramGB);
     this.storage = new Storage(storageType, storageGB);
@@ -237,8 +236,32 @@ class Computer {
   }
 }
 
-const myPC = new Computer("Gaming PC", "Intel i9", 16, 32, "SSD", 1000);
-myPC.showSpecs();`} />
+const myPC = new Computer("Gaming Rig", "Intel i9", 16, 32, "NVMe SSD", 2000);
+myPC.showSpecs();`,
+            hints: [
+              "CPU has brand and cores. RAM has sizeGB. Storage has type and sizeGB.",
+              "In Computer's constructor, instantiate each component: this.cpu = new CPU(cpuBrand, cpuCores), etc.",
+              "showSpecs() accesses the properties of this.cpu, this.ram, and this.storage.",
+            ],
+            tests: [
+              {
+                name: "CPU, RAM, Storage, and Computer classes exist",
+                code: `if (typeof CPU !== 'function' || typeof RAM !== 'function' || typeof Storage !== 'function' || typeof Computer !== 'function') throw new Error("Missing classes");`,
+              },
+              {
+                name: "Computer correctly instantiates sub-objects",
+                code: `const _pc = new Computer("PC", "AMD", 8, 16, "SSD", 512); if (!(_pc.cpu instanceof CPU)) throw new Error("Computer must have a CPU instance"); if (!(_pc.ram instanceof RAM)) throw new Error("Computer must have a RAM instance");`,
+              },
+              {
+                name: "Computer has showSpecs method",
+                code: `const _pc2 = new Computer("PC", "AMD", 8, 16, "SSD", 512); if (typeof _pc2.showSpecs !== 'function') throw new Error("showSpecs method missing");`,
+              },
+            ],
+            difficulty: "intermediate",
+          }}
+          height="420px"
+        />
+      </div>
 
     </SectionContainer>
   );

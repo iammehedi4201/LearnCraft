@@ -317,7 +317,7 @@ export function PredictOutputBox({
         <span className="text-lg">🔮</span>
         <h5 className="font-bold text-sm text-ds-feature-dark">Predict the Output</h5>
       </div>
-      <pre className="bg-ds-bg-strong text-ds-text-white p-4 rounded-xl overflow-x-auto text-xs border border-ds-stroke-soft mb-3 whitespace-pre-wrap leading-relaxed">
+      <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-4 rounded-xl overflow-x-auto text-xs font-mono border border-ds-stroke-soft mb-3 whitespace-pre-wrap leading-relaxed shadow-inner">
         {code}
       </pre>
       <button
@@ -327,9 +327,9 @@ export function PredictOutputBox({
         {showAnswer ? "Hide Answer ▲" : "Show Answer ▼"}
       </button>
       {showAnswer && (
-        <div className="mt-3 p-3 bg-ds-bg-white rounded-xl border border-ds-stroke-soft text-sm text-ds-text-strong animate-in fade-in slide-in-from-top-2 duration-200">
-          <span className="font-black text-ds-feature-dark text-xs block mb-1">Output:</span>
-          <code className="font-mono text-xs">{answer}</code>
+        <div className="mt-3 p-3.5 bg-ds-bg-white rounded-xl border border-ds-stroke-soft text-sm text-ds-text-strong animate-in fade-in slide-in-from-top-2 duration-200">
+          <span className="font-black text-ds-feature-base text-xs block mb-1">Output:</span>
+          <code className="font-mono text-xs font-semibold text-ds-text-strong whitespace-pre-wrap">{answer}</code>
         </div>
       )}
     </div>

@@ -1,17 +1,20 @@
+"use client";
+
 import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 import { Collapsible } from "./collapsible";
 import { SectionContainer, TopicHeader, SectionHeading, Divider, SummaryBox, InfoCallout } from "./shared-components";
+import { Playground } from "@/components/playground/Playground";
 
 export function FinalProjectSection() {
   return (
     <SectionContainer number={16} title="Final OOP Project">
 
-      <div className="mb-10 p-6 rounded-2xl bg-[#e7e9f5] dark:bg-[#472f82]/20 border border-[#7b52ac]/30 dark:border-[#7b52ac]/40">
+      <div className="mb-10 p-6 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
         <div className="flex items-center gap-3 mb-3">
           <span className="text-3xl">🏆</span>
-          <h3 className="text-xl font-black text-[#472f82] dark:text-white">Build a Simple E-Commerce System</h3>
+          <h3 className="text-xl font-black text-ds-text-strong">Build a Simple E-Commerce System</h3>
         </div>
-        <p className="text-sm text-[#212a5d] dark:text-[#e7e9f5] leading-relaxed">
+        <p className="text-sm text-ds-text-sub leading-relaxed">
           This final project uses <strong>ALL the OOP concepts</strong> you have learned: Classes, Objects, Constructor, Methods, Encapsulation (#private), Inheritance, Polymorphism, Composition, and Static methods. Build it step by step.
         </p>
       </div>
@@ -293,58 +296,169 @@ class CashPayment extends Payment {
 
       <Divider />
 
-      {/* ── Step 6: Putting It All Together ── */}
+      {/* ── Step 6: Putting It All Together — LIVE PLAYGROUND ── */}
       <div className="mb-16">
-        <TopicHeader number={6} title="Step 6 — Put It All Together!" description="Now let us run the entire system and see all OOP concepts working in harmony." color="primary" />
+        <TopicHeader number={6} title="Step 6 — Put It All Together!" description="Run the entire system live and see all OOP concepts working in harmony." color="primary" />
 
-        <Collapsible title="🚀 Show Complete Working Example">
-          <div className="mt-3">
-            <EnhancedCodeBlock code={`// ─── Create Products ───
+        <div className="mb-6 p-4 rounded-xl bg-ds-feature-lighter border border-ds-feature-light">
+          <p className="text-sm text-ds-text-strong leading-relaxed">
+            🚀 This playground contains the <strong>complete e-commerce system</strong>. Click <strong>Run</strong> to see every OOP concept in action — classes, inheritance, polymorphism, composition, encapsulation, and static methods all working together.
+          </p>
+        </div>
+
+        <Playground
+          runtime="javascript"
+          language="JavaScript"
+          starterCode={`// ═══════════════════════════════════════════
+// Complete E-Commerce OOP System
+// ═══════════════════════════════════════════
+
+class Product {
+  #stock;
+  constructor(name, price, stock, category) {
+    this.name = name;
+    this.price = price;
+    this.#stock = stock;
+    this.category = category;
+  }
+  get stock() { return this.#stock; }
+  isInStock() { return this.#stock > 0; }
+  sell(quantity) {
+    if (quantity > this.#stock) {
+      console.log("❌ Only " + this.#stock + " " + this.name + " left!");
+      return false;
+    }
+    this.#stock -= quantity;
+    console.log("📤 Sold " + quantity + "x " + this.name);
+    return true;
+  }
+  restock(quantity) {
+    this.#stock += quantity;
+    console.log("📦 Restocked " + this.name + ". New stock: " + this.#stock);
+  }
+  toString() {
+    return this.name + " | $" + this.price + " | Stock: " + this.#stock;
+  }
+}
+
+class CartItem {
+  constructor(product, quantity = 1) {
+    this.product = product;
+    this.quantity = quantity;
+  }
+  getSubtotal() { return this.product.price * this.quantity; }
+  toString() {
+    return this.product.name + " x" + this.quantity + " = $" + this.getSubtotal().toFixed(2);
+  }
+}
+
+class ShoppingCart {
+  #items = [];
+  addItem(product, quantity = 1) {
+    const existing = this.#items.find(i => i.product.name === product.name);
+    if (existing) {
+      existing.quantity += quantity;
+      console.log("🔄 Updated " + product.name + " qty to " + existing.quantity);
+    } else {
+      this.#items.push(new CartItem(product, quantity));
+      console.log("🛒 Added " + product.name + " x" + quantity);
+    }
+  }
+  getTotal() { return this.#items.reduce((s, i) => s + i.getSubtotal(), 0); }
+  get itemCount() { return this.#items.reduce((s, i) => s + i.quantity, 0); }
+  display() {
+    console.log("\\n🛒 ─── Shopping Cart ───");
+    this.#items.forEach(i => console.log("  " + i.toString()));
+    console.log("  Total: $" + this.getTotal().toFixed(2));
+    console.log("  Items: " + this.itemCount);
+  }
+  getItems() { return [...this.#items]; }
+}
+
+class Payment {
+  constructor(amount) { this.amount = amount; this.status = "pending"; }
+  process() { this.status = "completed"; return true; }
+  getReceipt() { return "Payment of $" + this.amount.toFixed(2) + " — " + this.status; }
+}
+
+class CreditCardPayment extends Payment {
+  constructor(amount, cardNumber) { super(amount); this.cardNumber = cardNumber; }
+  process() {
+    console.log("💳 Charging $" + this.amount.toFixed(2) + " to card ending " + this.cardNumber.slice(-4));
+    this.status = "completed";
+    return true;
+  }
+}
+
+class BkashPayment extends Payment {
+  constructor(amount, phone) { super(amount); this.phone = phone; }
+  process() {
+    console.log("📱 bKash: $" + this.amount.toFixed(2) + " from " + this.phone);
+    this.status = "completed";
+    return true;
+  }
+}
+
+class Order {
+  static #nextId = 1;
+  constructor(customerName, items, payment) {
+    this.id = Order.#nextId++;
+    this.customerName = customerName;
+    this.items = items;
+    this.payment = payment;
+    this.status = "placed";
+  }
+  getTotal() { return this.items.reduce((s, i) => s + i.getSubtotal(), 0); }
+  display() {
+    console.log("\\n📋 ─── Order #" + this.id + " ───");
+    console.log("  Customer: " + this.customerName);
+    console.log("  Status: " + this.status);
+    this.items.forEach(i => console.log("    • " + i.toString()));
+    console.log("  Total: $" + this.getTotal().toFixed(2));
+    console.log("  Payment: " + this.payment.getReceipt());
+  }
+}
+
+// ═══ Run the System ═══
 const laptop = new Product("MacBook Pro", 1999, 10, "Electronics");
 const mouse = new Product("Logitech MX", 79, 25, "Accessories");
 const keyboard = new Product("MX Keys", 119, 15, "Accessories");
 
-console.log(laptop.toString());
-console.log(mouse.toString());
+console.log("📦 Products:");
+console.log("  " + laptop.toString());
+console.log("  " + mouse.toString());
+console.log("  " + keyboard.toString());
 
-// ─── Create Shopping Cart ───
 const cart = new ShoppingCart();
 cart.addItem(laptop, 1);
 cart.addItem(mouse, 2);
 cart.addItem(keyboard, 1);
 cart.display();
 
-// ─── Checkout with Polymorphism ───
-const total = cart.getTotal();
-const payment = new CreditCardPayment(total, "4111222233334444");
+// Checkout with Credit Card (Polymorphism!)
+const payment = new CreditCardPayment(cart.getTotal(), "4111222233334444");
 payment.process();
 
-// ─── Create Order ───
 const order = new Order("Mehedi", cart.getItems(), payment);
-
-// ─── Reduce stock ───
 laptop.sell(1);
 mouse.sell(2);
 keyboard.sell(1);
-
-// ─── Show final order ───
 order.display();
 
-// ─── Show updated stock ───
+// Second order with bKash
+const cart2 = new ShoppingCart();
+cart2.addItem(mouse, 1);
+const bkash = new BkashPayment(cart2.getTotal(), "+880171234567");
+bkash.process();
+const order2 = new Order("Alice", cart2.getItems(), bkash);
+order2.display();
+
 console.log("\\n📦 Updated Stock:");
 console.log("  " + laptop.toString());
 console.log("  " + mouse.toString());
-console.log("  " + keyboard.toString());
-
-// ─── Try a different payment method ───
-const cart2 = new ShoppingCart();
-cart2.addItem(mouse, 1);
-const bkashPay = new BkashPayment(cart2.getTotal(), "+880171234567");
-bkashPay.process();
-const order2 = new Order("Alice", cart2.getItems(), bkashPay);
-order2.display();`} language="javascript" />
-          </div>
-        </Collapsible>
+console.log("  " + keyboard.toString());`}
+          height="480px"
+        />
       </div>
 
       <Divider />
@@ -364,9 +478,9 @@ order2.display();`} language="javascript" />
             { concept: "Composition", where: "Cart HAS CartItems, CartItem HAS Product" },
             { concept: "Static", where: "Order.#nextId for auto-incrementing IDs" },
           ].map(item => (
-            <div key={item.concept} className="p-3 rounded-xl bg-[#e7e9f5]/50 dark:bg-[#212a5d]/40 border border-[#b4b8d7] dark:border-[#212a5d]">
-              <span className="text-xs font-bold text-[#344b8f] dark:text-[#7f6fbe]">{item.concept}</span>
-              <p className="text-xs text-[#606f9a] dark:text-[#b4b8d7] mt-1">{item.where}</p>
+            <div key={item.concept} className="p-3 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
+              <span className="text-xs font-bold text-ds-feature-base">{item.concept}</span>
+              <p className="text-xs text-ds-text-sub mt-1">{item.where}</p>
             </div>
           ))}
         </div>

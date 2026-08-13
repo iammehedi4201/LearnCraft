@@ -1,5 +1,8 @@
+"use client";
+
 import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 import { QuickCheck } from "./quick-check";
+import { Playground } from "@/components/playground/Playground";
 import {
   SectionContainer,
   TopicHeader,
@@ -8,7 +11,6 @@ import {
   MistakeBox,
   SummaryBox,
   Divider,
-  ExerciseBox,
   PredictOutputBox,
   ComparisonTable,
   InfoCallout,
@@ -36,48 +38,24 @@ export function ClassesObjectsSection() {
         </AnalogyBox>
 
         <div className="mb-8">
-          <SectionHeading>📌 Creating an object literal</SectionHeading>
-          <EnhancedCodeBlock
-            code={`// The simplest way to create an object
+          <SectionHeading>🚀 Try It Yourself: Creating & Reading Object Literals</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`// Creating simple objects with { }
 const user = {
   name: "Mehedi",
   email: "mehedi@test.com",
-  age: 25
+  age: 25,
+  skills: ["TypeScript", "NestJS", "React"]
 };
 
 // Accessing the data
-console.log(user.name);   // Mehedi
-console.log(user.email);  // mehedi@test.com
-console.log(user.age);    // 25`}
-            language="javascript"
-          />
-        </div>
-
-        <div className="mb-8">
-          <SectionHeading>📌 More examples</SectionHeading>
-          <EnhancedCodeBlock
-            code={`// Example 1: A product
-const product = {
-  name: "iPhone 15",
-  price: 999,
-  inStock: true
-};
-
-// Example 2: A car
-const car = {
-  brand: "Toyota",
-  model: "Camry",
-  year: 2024,
-  color: "Silver"
-};
-
-// Example 3: A student
-const student = {
-  name: "Alice",
-  grade: 85,
-  subjects: ["Math", "Science", "English"]
-};`}
-            language="javascript"
+console.log("Name:", user.name);
+console.log("Email:", user.email);
+console.log("Age:", user.age);
+console.log("Top Skill:", user.skills[0]);`}
+            height="280px"
           />
         </div>
       </div>
@@ -88,31 +66,39 @@ const student = {
       <div className="mb-16">
         <TopicHeader
           number={2}
-          title="Accessing Properties"
-          description="There are two ways to access data inside an object: dot notation (most common) and bracket notation."
+          title="Accessing & Updating Properties"
+          description="There are two ways to access and change data inside an object: dot notation and bracket notation."
           color="sky"
         />
 
-        <EnhancedCodeBlock
-          code={`const user = {
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Dot vs Bracket Notation</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`const user: Record<string, any> = {
   name: "Mehedi",
   age: 25,
-  "favorite color": "Blue"  // property name with a space
+  "favorite color": "Purple" // property with a space
 };
 
-// Way 1: Dot notation (most common)
-console.log(user.name);  // Mehedi
-console.log(user.age);   // 25
+// 1. Dot notation (most common)
+console.log("Dot notation:", user.name);
 
-// Way 2: Bracket notation (for special names or variables)
-console.log(user["name"]);           // Mehedi
-console.log(user["favorite color"]); // Blue
+// 2. Bracket notation (for special names or dynamic keys)
+console.log("Bracket notation:", user["favorite color"]);
 
-// Using a variable to access
-const key = "age";
-console.log(user[key]);  // 25`}
-          language="javascript"
-        />
+// Dynamic property lookup with a variable
+const dynamicKey = "age";
+console.log("Dynamic key:", user[dynamicKey]);
+
+// Updating and adding new properties on the fly:
+user.age = 26;
+user.city = "Dhaka";
+console.log("Updated user:", user);`}
+            height="320px"
+          />
+        </div>
 
         <InfoCallout emoji="💡" title="When to use which?">
           <p>Use <strong>dot notation</strong> (user.name) most of the time — it&apos;s cleaner. Use <strong>bracket notation</strong> (user[&quot;name&quot;]) only when the property name has spaces, special characters, or is stored in a variable.</p>
@@ -121,137 +107,49 @@ console.log(user[key]);  // 25`}
 
       <Divider />
 
-      {/* ── 2.3 Updating and Adding Properties ── */}
-      <div className="mb-16">
-        <TopicHeader
-          number={3}
-          title="Updating and Adding Properties"
-          description="You can change existing properties and add new ones to an object at any time. Objects in JavaScript are flexible."
-          color="emerald"
-        />
-
-        <EnhancedCodeBlock
-          code={`const user = {
-  name: "Mehedi",
-  age: 25
-};
-
-// Updating an existing property
-user.age = 26;
-console.log(user.age); // 26
-
-// Adding a brand new property
-user.city = "Dhaka";
-console.log(user.city); // Dhaka
-
-// Adding a method to an existing object
-user.greet = function() {
-  console.log("Hi, I am " + this.name);
-};
-user.greet(); // Hi, I am Mehedi
-
-// The object now looks like:
-// { name: "Mehedi", age: 26, city: "Dhaka", greet: [Function] }`}
-          language="javascript"
-        />
-      </div>
-
-      <Divider />
-
-      {/* ── 2.4 Methods Inside Objects ── */}
+      {/* ── 2.4 Objects with Methods ── */}
       <div className="mb-16">
         <TopicHeader
           number={4}
-          title="Methods Inside Objects"
-          description='A method is just a function that lives inside an object. It can use "this" to access the object own data.'
-          color="amber"
+          title="Objects with Methods (Actions)"
+          description="Objects can hold more than just data. They can also hold functions — these are called methods. A method lets an object DO something."
+          color="emerald"
         />
 
-        <EnhancedCodeBlock
-          code={`const bankAccount = {
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Bank Account Object</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`const bankAccount = {
   owner: "Mehedi",
   balance: 1000,
 
-  // Method: deposit money
-  deposit(amount) {
+  deposit(amount: number) {
     this.balance += amount;
-    console.log("Deposited $" + amount);
-    console.log("New balance: $" + this.balance);
+    console.log("Deposited $" + amount + ". New balance: $" + this.balance);
   },
 
-  // Method: withdraw money
-  withdraw(amount) {
+  withdraw(amount: number) {
     if (amount > this.balance) {
-      console.log("Not enough money!");
+      console.log("❌ Not enough money to withdraw $" + amount);
       return;
     }
     this.balance -= amount;
-    console.log("Withdrew $" + amount);
-    console.log("New balance: $" + this.balance);
+    console.log("Withdrew $" + amount + ". Remaining balance: $" + this.balance);
   },
 
-  // Method: check balance
   checkBalance() {
-    console.log(this.owner + " has $" + this.balance);
+    console.log(this.owner + " has a total balance of $" + this.balance);
   }
 };
 
-bankAccount.deposit(500);     // Deposited $500 → New balance: $1500
-bankAccount.withdraw(200);    // Withdrew $200 → New balance: $1300
-bankAccount.checkBalance();   // Mehedi has $1300`}
-          language="javascript"
-        />
-
-        <MistakeBox
-          title='Using arrow functions for methods'
-          description='Arrow functions (=>) do NOT have their own "this". If you use an arrow function as a method, "this" will NOT point to the object. Always use regular function syntax for methods.'
-          wrong={`const user = {
-  name: "Mehedi",
-  greet: () => { console.log(this.name); }
-};
-user.greet(); // ❌ undefined`}
-          right={`const user = {
-  name: "Mehedi",
-  greet() { console.log(this.name); }
-};
-user.greet(); // ✅ Mehedi`}
-        />
-      </div>
-
-      <Divider />
-
-      {/* ── 2.5 Constructor Functions (Old Way) ── */}
-      <div className="mb-16">
-        <TopicHeader
-          number={5}
-          title="Constructor Functions (The Old Way)"
-          description='Before ES6 classes, JavaScript used "constructor functions" to create objects. You might still see this in older code. The function name starts with a capital letter.'
-          color="secondary"
-        />
-
-        <EnhancedCodeBlock
-          code={`// Constructor function (old way, before ES6)
-function User(name, email) {
-  this.name = name;
-  this.email = email;
-
-  this.greet = function() {
-    console.log("Hi, I am " + this.name);
-  };
-}
-
-// Creating objects — still uses "new"
-const user1 = new User("Mehedi", "m@test.com");
-const user2 = new User("Alice", "a@test.com");
-
-user1.greet(); // Hi, I am Mehedi
-user2.greet(); // Hi, I am Alice`}
-          language="javascript"
-        />
-
-        <InfoCallout emoji="📝" title="Good to know">
-          <p>You don&apos;t need to use constructor functions anymore. ES6 classes (which we learned in Part 1) are the modern, cleaner way. But it&apos;s good to recognize this pattern when you see it in old code.</p>
-        </InfoCallout>
+bankAccount.deposit(500);
+bankAccount.withdraw(200);
+bankAccount.checkBalance();`}
+            height="360px"
+          />
+        </div>
       </div>
 
       <Divider />
@@ -266,38 +164,35 @@ user2.greet(); // Hi, I am Alice`}
         />
 
         <div className="mb-8">
-          <SectionHeading>📌 Comparing all three approaches</SectionHeading>
-          <div className="space-y-4">
-            <EnhancedCodeBlock
-              code={`// ─── Approach 1: Object Literal ───
-// Best for: Quick, one-off objects
-const user1 = {
-  name: "Mehedi",
-  greet() { console.log("Hi, " + this.name); }
-};
-
-// ─── Approach 2: Constructor Function (Old Way) ───
-// Best for: Nothing anymore — use classes instead
-function UserOld(name) {
-  this.name = name;
-  this.greet = function() { console.log("Hi, " + this.name); };
-}
-const user2 = new UserOld("Mehedi");
-
-// ─── Approach 3: ES6 Class (Modern Way) ───
-// Best for: Creating multiple objects with the same structure
+          <SectionHeading>🚀 Try It Yourself: Class Blueprint vs Instances</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`// The Class is a reusable blueprint
 class User {
-  constructor(name) {
+  name: string;
+  role: string;
+
+  constructor(name: string, role: string = "Learner") {
     this.name = name;
+    this.role = role;
   }
+
   greet() {
-    console.log("Hi, " + this.name);
+    console.log("👋 Hi, I am " + this.name + " (" + this.role + ")");
   }
 }
-const user3 = new User("Mehedi");`}
-              language="javascript"
-            />
-          </div>
+
+// Creating multiple unique objects from the same class blueprint:
+const user1 = new User("Mehedi", "Instructor");
+const user2 = new User("Alice", "Student");
+const user3 = new User("Bob");
+
+user1.greet();
+user2.greet();
+user3.greet();`}
+            height="340px"
+          />
         </div>
 
         <ComparisonTable
@@ -312,68 +207,11 @@ const user3 = new User("Mehedi");`}
 
       <Divider />
 
-      {/* ── 2.7 When Object vs When Class ── */}
-      <div className="mb-16">
-        <TopicHeader
-          number={7}
-          title="When Should I Use an Object? When Should I Create a Class?"
-          description="This is one of the most important decisions in JavaScript. Here is a simple rule to follow."
-          color="rose"
-        />
-
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div className="p-5 rounded-2xl bg-[#e7e9f5]/50 dark:bg-[#212a5d]/40 border border-[#b4b8d7] dark:border-[#212a5d]">
-            <h5 className="font-bold text-[#344b8f] dark:text-[#7f6fbe] mb-3">Use an Object Literal when:</h5>
-            <ul className="space-y-2 text-sm text-[#212a5d] dark:text-[#e7e9f5]">
-              <li className="flex gap-2"><span>✅</span> You only need ONE of this thing</li>
-              <li className="flex gap-2"><span>✅</span> It&apos;s a configuration or settings object</li>
-              <li className="flex gap-2"><span>✅</span> It&apos;s simple data (like API response)</li>
-              <li className="flex gap-2"><span>✅</span> You need it quickly without much structure</li>
-            </ul>
-          </div>
-          <div className="p-5 rounded-2xl bg-[#e7e9f5]/60 dark:bg-[#472f82]/20 border border-[#7b52ac]/30 dark:border-[#7b52ac]/40">
-            <h5 className="font-bold text-[#472f82] dark:text-[#b4b8d7] mb-3">Use a Class when:</h5>
-            <ul className="space-y-2 text-sm text-[#212a5d] dark:text-[#e7e9f5]">
-              <li className="flex gap-2"><span>✅</span> You need MANY objects with the same structure</li>
-              <li className="flex gap-2"><span>✅</span> You need inheritance (parent/child)</li>
-              <li className="flex gap-2"><span>✅</span> You want to protect data (encapsulation)</li>
-              <li className="flex gap-2"><span>✅</span> The object has complex behavior (methods)</li>
-            </ul>
-          </div>
-        </div>
-
-        <EnhancedCodeBlock
-          code={`// ─── Use object literal: app settings (only ONE) ───
-const appConfig = {
-  theme: "dark",
-  language: "en",
-  maxRetries: 3
-};
-
-// ─── Use class: users (need MANY) ───
-class User {
-  constructor(name, email) {
-    this.name = name;
-    this.email = email;
-  }
-  login() {
-    console.log(this.name + " logged in");
-  }
-}
-
-const user1 = new User("Mehedi", "m@test.com");
-const user2 = new User("Alice", "a@test.com");
-const user3 = new User("Bob", "b@test.com");
-// Same structure, different data — perfect use for a class!`}
-          language="javascript"
-        />
-      </div>
-
       {/* ── Summary ── */}
       <div className="mb-8">
         <SectionHeading>📝 Part 2 Summary</SectionHeading>
         <SummaryBox>
-          There are three ways to create objects in JavaScript: <strong>object literals</strong> (quick and simple), <strong>constructor functions</strong> (old way), and <strong>ES6 classes</strong> (modern way). Use object literals for one-off objects and classes when you need many objects with the same structure. Always use <code>this</code> inside methods to refer to the object&apos;s own data. Never use arrow functions for methods.
+          There are three ways to create objects in JavaScript: <strong>object literals</strong> (quick and simple), <strong>constructor functions</strong> (old way), and <strong>ES6 classes</strong> (modern way). Use object literals for one-off objects and classes when you need many objects with the same structure. Always use <code>this</code> inside methods to refer to the object&apos;s own data.
         </SummaryBox>
       </div>
 
@@ -397,13 +235,31 @@ console.log(product.price);`}
         answer="When you only need ONE object and it's simple data — like a config object, settings, or a single API response. No need for a class when you won't create multiple objects with the same structure."
       />
 
-      <div className="mt-6" />
+      {/* ── Interactive Practice Exercise ── */}
+      <div className="mt-8">
+        <SectionHeading>💻 Practice Exercise</SectionHeading>
+        <Playground
+          runtime="typescript"
+          language="TypeScript"
+          exercise={{
+            id: "oop-classes-objects-ex",
+            title: "Create a Product object and a Product class",
+            instructions: `1. Create a product object literal with: name, price, inStock
+2. Create a Product class with: constructor(name, price, stock), a method showInfo() that prints "Product: [name] - $[price] (Stock: [stock])"
+3. Create 3 product objects from the class and call showInfo() on each`,
+            starterCode: `// 1. Create a product object literal
+const laptop = {
+  // your code here
+};
 
-      <ExerciseBox
-        level="beginner"
-        title="Create a Product object and a Product class"
-        description={`1. Create a product object literal with: name, price, inStock\n2. Create a Product class with: constructor(name, price, stock), a method showInfo() that prints "Product: [name] - $[price] (Stock: [stock])"\n3. Create 3 product objects from the class`}
-        solution={`// 1. Object literal
+// 2. Create a Product class
+class Product {
+  // your code here
+}
+
+// 3. Create 3 products and show their info
+`,
+            solutionCode: `// 1. Object literal
 const laptop = {
   name: "Laptop",
   price: 999,
@@ -412,11 +268,8 @@ const laptop = {
 
 // 2. Product class
 class Product {
-  constructor(name, price, stock) {
-    this.name = name;
-    this.price = price;
-    this.stock = stock;
-  }
+  constructor(public name: string, public price: number, public stock: number) {}
+
   showInfo() {
     console.log("Product: " + this.name + " - $" + this.price + " (Stock: " + this.stock + ")");
   }
@@ -427,10 +280,23 @@ const p1 = new Product("Phone", 699, 50);
 const p2 = new Product("Tablet", 499, 30);
 const p3 = new Product("Watch", 299, 100);
 
-p1.showInfo(); // Product: Phone - $699 (Stock: 50)
-p2.showInfo(); // Product: Tablet - $499 (Stock: 30)
-p3.showInfo(); // Product: Watch - $299 (Stock: 100)`}
-      />
+p1.showInfo();
+p2.showInfo();
+p3.showInfo();`,
+            hints: [
+              "An object literal uses { } with key: value pairs. Example: { name: \"Laptop\", price: 999, inStock: true }",
+              "A class constructor sets properties with constructor(public name: string, public price: number, public stock: number) {}.",
+              "showInfo() logs formatted details and can be called on p1, p2, p3.",
+            ],
+            tests: [
+              { name: "Product class exists", code: `if (typeof Product !== 'function') throw new Error("Product class not found");` },
+              { name: "Product has showInfo method", code: `const _tp = new Product("Test", 1, 1); if (typeof _tp.showInfo !== 'function') throw new Error("showInfo() method not found");` },
+            ],
+            difficulty: "beginner",
+          }}
+          height="400px"
+        />
+      </div>
 
     </SectionContainer>
   );

@@ -1,5 +1,8 @@
+"use client";
+
 import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 import { QuickCheck } from "./quick-check";
+import { Playground } from "@/components/playground/Playground";
 import {
   SectionContainer,
   TopicHeader,
@@ -8,7 +11,6 @@ import {
   MistakeBox,
   SummaryBox,
   Divider,
-  ExerciseBox,
   PredictOutputBox,
   InfoCallout,
 } from "./shared-components";
@@ -30,19 +32,26 @@ export function MethodsSection() {
           <p>Think of a game character. The character can <strong>jump()</strong>, <strong>attack()</strong>, <strong>heal()</strong>, and <strong>run()</strong>. These are all actions (methods) that belong to that character. You don&apos;t call them on their own — you always call them on a specific character.</p>
         </AnalogyBox>
 
-        <EnhancedCodeBlock
-          code={`class Character {
-  constructor(name, health) {
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Game Character Methods</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class Character {
+  name: string;
+  health: number;
+
+  constructor(name: string, health: number) {
     this.name = name;
     this.health = health;
   }
 
   // These are all methods (actions)
-  attack(target) {
+  attack(target: string) {
     console.log(this.name + " attacks " + target + "! ⚔️");
   }
 
-  heal(amount) {
+  heal(amount: number) {
     this.health += amount;
     console.log(this.name + " healed! Health: " + this.health + " ❤️");
   }
@@ -56,8 +65,9 @@ const hero = new Character("Mehedi", 100);
 hero.attack("Dragon");  // Mehedi attacks Dragon! ⚔️
 hero.heal(20);           // Mehedi healed! Health: 120 ❤️
 hero.jump();             // Mehedi jumps! 🦘`}
-          language="javascript"
-        />
+            height="340px"
+          />
+        </div>
       </div>
 
       <Divider />
@@ -71,9 +81,15 @@ hero.jump();             // Mehedi jumps! 🦘`}
           color="sky"
         />
 
-        <EnhancedCodeBlock
-          code={`class BankAccount {
-  constructor(owner, balance) {
+        <div className="mb-8">
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class BankAccount {
+  owner: string;
+  balance: number;
+
+  constructor(owner: string, balance: number) {
     this.owner = owner;
     this.balance = balance;
   }
@@ -83,20 +99,20 @@ hero.jump();             // Mehedi jumps! 🦘`}
     console.log(this.owner + "'s balance: $" + this.balance);
   }
 
-  // Method that CHANGES properties
-  deposit(amount) {
-    this.balance += amount;                    // Change the balance
+  // Method that CHANGES properties and calls another method
+  deposit(amount: number) {
+    this.balance += amount;
     console.log("Deposited $" + amount);
-    this.checkBalance();                       // Call another method!
+    this.checkBalance(); // Call another method on "this"!
   }
 
-  // Method that READS and CHANGES properties
-  withdraw(amount) {
-    if (amount > this.balance) {               // READ the balance
-      console.log("Not enough money!");
+  // Method that READS and VALIDATES before changing
+  withdraw(amount: number) {
+    if (amount > this.balance) {
+      console.log("❌ Not enough money to withdraw $" + amount);
       return;
     }
-    this.balance -= amount;                    // CHANGE the balance
+    this.balance -= amount;
     console.log("Withdrew $" + amount);
     this.checkBalance();
   }
@@ -105,9 +121,11 @@ hero.jump();             // Mehedi jumps! 🦘`}
 const acc = new BankAccount("Mehedi", 1000);
 acc.checkBalance();   // Mehedi's balance: $1000
 acc.deposit(500);     // Deposited $500 → Mehedi's balance: $1500
-acc.withdraw(200);    // Withdrew $200 → Mehedi's balance: $1300`}
-          language="javascript"
-        />
+acc.withdraw(200);    // Withdrew $200 → Mehedi's balance: $1300
+acc.withdraw(2000);   // ❌ Not enough money!`}
+            height="360px"
+          />
+        </div>
 
         <InfoCallout emoji="🔑" title="Key insight">
           <p>A method can call another method on the same object using <code>this.methodName()</code>. In the example above, <code>deposit()</code> calls <code>this.checkBalance()</code>.</p>
@@ -125,22 +143,21 @@ acc.withdraw(200);    // Withdrew $200 → Mehedi's balance: $1300`}
           color="emerald"
         />
 
-        <EnhancedCodeBlock
-          code={`class ShoppingCart {
-  constructor() {
-    this.items = [];
-    this.total = 0;
-  }
+        <div className="mb-8">
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class ShoppingCart {
+  items: { name: string; price: number; quantity: number }[] = [];
+  total: number = 0;
 
-  // Method with parameters
-  addItem(name, price, quantity = 1) {
+  addItem(name: string, price: number, quantity: number = 1) {
     this.items.push({ name, price, quantity });
     this.total += price * quantity;
     console.log("Added " + quantity + "x " + name + " ($" + price + " each)");
   }
 
-  // Method with a parameter that affects behavior
-  removeItem(name) {
+  removeItem(name: string) {
     const index = this.items.findIndex(item => item.name === name);
     if (index === -1) {
       console.log(name + " not found in cart!");
@@ -166,48 +183,51 @@ cart.addItem("Laptop", 999);
 cart.addItem("Mouse", 25, 2);
 cart.addItem("Keyboard", 75);
 cart.showCart();
-// --- Shopping Cart ---
-//   Laptop x1 = $999
-//   Mouse x2 = $50
-//   Keyboard x1 = $75
-//   Total: $1124`}
-          language="javascript"
-        />
+cart.removeItem("Mouse");
+cart.showCart();`}
+            height="380px"
+          />
+        </div>
       </div>
 
       <Divider />
 
-      {/* ── 4.4 Methods Returning Values ── */}
+      {/* ── 4.4 Methods Returning Values & Chaining ── */}
       <div className="mb-16">
         <TopicHeader
           number={4}
-          title="Methods Returning Values"
-          description="Methods can return values using the 'return' keyword. This lets you use the result of a method somewhere else in your code."
+          title="Methods Returning Values & Method Chaining"
+          description="Methods can return values using the 'return' keyword. When a method returns 'this', you can chain multiple calls in one line."
           color="amber"
         />
 
-        <EnhancedCodeBlock
-          code={`class Calculator {
-  constructor(value = 0) {
+        <div className="mb-8">
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`class Calculator {
+  value: number;
+
+  constructor(value: number = 0) {
     this.value = value;
   }
 
-  add(num) {
+  add(num: number) {
     this.value += num;
     return this;  // Return the object itself for chaining!
   }
 
-  subtract(num) {
+  subtract(num: number) {
     this.value -= num;
     return this;
   }
 
-  multiply(num) {
+  multiply(num: number) {
     this.value *= num;
     return this;
   }
 
-  getResult() {
+  getResult(): number {
     return this.value;
   }
 
@@ -221,103 +241,17 @@ const calc = new Calculator();
 
 // Method chaining — calling methods one after another!
 const result = calc.add(10).subtract(3).multiply(2).getResult();
-console.log(result); // (10 - 3) * 2 = 14
+console.log("(10 - 3) * 2 = " + result); // 14
 
-// Another example
 const result2 = calc.reset().add(100).subtract(50).getResult();
-console.log(result2); // 50`}
-          language="javascript"
-        />
+console.log("Reset and calculated: " + result2); // 50`}
+            height="360px"
+          />
+        </div>
 
         <InfoCallout emoji="⛓️" title="Method Chaining">
-          <p>When a method returns <code>this</code> (the object itself), you can chain multiple method calls together. This is a very common pattern in JavaScript libraries (like jQuery, Mongoose, etc.).</p>
+          <p>When a method returns <code>this</code> (the object itself), you can chain multiple method calls together. This is a very common pattern in JavaScript libraries (like jQuery, Mongoose, NestJS query builders, etc.).</p>
         </InfoCallout>
-      </div>
-
-      <Divider />
-
-      {/* ── 4.5 More Real Examples ── */}
-      <div className="mb-16">
-        <TopicHeader
-          number={5}
-          title="More Real-World Method Examples"
-          description="Let us see methods in action with examples you might encounter in real applications."
-          color="secondary"
-        />
-
-        <div className="mb-8">
-          <SectionHeading>📌 Example: User with login/logout</SectionHeading>
-          <EnhancedCodeBlock
-            code={`class User {
-  constructor(name, email, password) {
-    this.name = name;
-    this.email = email;
-    this.password = password;
-    this.isLoggedIn = false;
-    this.lastLogin = null;
-  }
-
-  login(inputPassword) {
-    if (inputPassword === this.password) {
-      this.isLoggedIn = true;
-      this.lastLogin = new Date().toLocaleString();
-      console.log("✅ " + this.name + " logged in at " + this.lastLogin);
-    } else {
-      console.log("❌ Wrong password!");
-    }
-  }
-
-  logout() {
-    this.isLoggedIn = false;
-    console.log(this.name + " logged out. Goodbye! 👋");
-  }
-
-  getStatus() {
-    return this.isLoggedIn ? "Online 🟢" : "Offline 🔴";
-  }
-}
-
-const user = new User("Mehedi", "m@test.com", "secret123");
-console.log(user.getStatus());     // Offline 🔴
-user.login("wrong");                // ❌ Wrong password!
-user.login("secret123");            // ✅ Mehedi logged in at ...
-console.log(user.getStatus());     // Online 🟢
-user.logout();                      // Mehedi logged out. Goodbye! 👋`}
-            language="javascript"
-          />
-        </div>
-
-        <div className="mb-8">
-          <SectionHeading>📌 Example: Product with pricing</SectionHeading>
-          <EnhancedCodeBlock
-            code={`class Product {
-  constructor(name, price) {
-    this.name = name;
-    this.price = price;
-  }
-
-  // Method that calculates and returns a value
-  calculateDiscount(percent) {
-    const discount = this.price * (percent / 100);
-    return this.price - discount;
-  }
-
-  // Method that uses another method's result
-  showPriceWithTax(taxRate = 15) {
-    const tax = this.price * (taxRate / 100);
-    const total = this.price + tax;
-    console.log(this.name + ": $" + this.price + " + tax = $" + total.toFixed(2));
-    return total;
-  }
-}
-
-const laptop = new Product("MacBook", 1299);
-console.log(laptop.calculateDiscount(10)); // 1169.1
-laptop.showPriceWithTax();                  // MacBook: $1299 + tax = $1493.85
-laptop.showPriceWithTax(5);                 // MacBook: $1299 + tax = $1363.95`}
-            language="javascript"
-          />
-        </div>
       </div>
 
       <Divider />
@@ -372,23 +306,45 @@ console.log(c.increment().increment().increment().getCount());`}
         answer="It returns the object itself. This allows method chaining — calling multiple methods one after another in a single line, like calc.add(5).subtract(2).getResult()."
       />
 
-      <div className="mt-6" />
+      {/* ── Interactive Practice Exercise ── */}
+      <div className="mt-8">
+        <SectionHeading>💻 Practice Exercise</SectionHeading>
+        <Playground
+          runtime="typescript"
+          language="TypeScript"
+          exercise={{
+            id: "oop-methods-todolist-ex",
+            title: "Build a TodoList class",
+            instructions: `Create a TodoList class with:
+• A constructor that initializes an empty tasks array: { title: string; done: boolean }[]
+• addTask(title: string) — adds a task with { title, done: false }
+• completeTask(title: string) — marks the task as done
+• getRemaining(): number — returns the count of incomplete tasks
+• showTasks() — prints all tasks with ✅ or ⬜
 
-      <ExerciseBox
-        level="intermediate"
-        title="Build a TodoList class"
-        description={`Create a TodoList class with:\n- A constructor that initializes an empty tasks array\n- addTask(title) — adds a task with { title, done: false }\n- completeTask(title) — marks the task as done\n- getRemaining() — returns the count of incomplete tasks\n- showTasks() — prints all tasks with ✅ or ⬜\n\nCreate a list, add 3 tasks, complete 1, and show all tasks.`}
-        solution={`class TodoList {
-  constructor() {
-    this.tasks = [];
-  }
+Create a list, add 3 tasks, complete 1, and show all tasks.`,
+            starterCode: `class TodoList {
+  // Your code here
 
-  addTask(title) {
+}
+
+// Test your TodoList
+const myList = new TodoList();
+myList.addTask("Learn OOP");
+myList.addTask("Build a project");
+myList.addTask("Read documentation");
+myList.completeTask("Learn OOP");
+myList.showTasks();
+`,
+            solutionCode: `class TodoList {
+  tasks: { title: string; done: boolean }[] = [];
+
+  addTask(title: string) {
     this.tasks.push({ title, done: false });
     console.log("Added: " + title);
   }
 
-  completeTask(title) {
+  completeTask(title: string) {
     const task = this.tasks.find(t => t.title === title);
     if (task) {
       task.done = true;
@@ -398,7 +354,7 @@ console.log(c.increment().increment().increment().getCount());`}
     }
   }
 
-  getRemaining() {
+  getRemaining(): number {
     return this.tasks.filter(t => !t.done).length;
   }
 
@@ -416,13 +372,31 @@ myList.addTask("Learn OOP");
 myList.addTask("Build a project");
 myList.addTask("Read documentation");
 myList.completeTask("Learn OOP");
-myList.showTasks();
-// --- Todo List ---
-// ✅ Learn OOP
-// ⬜ Build a project
-// ⬜ Read documentation
-// Remaining: 2`}
-      />
+myList.showTasks();`,
+            hints: [
+              "Initialize this.tasks = [] to store objects of shape { title: string, done: boolean }.",
+              "completeTask(title) uses this.tasks.find(t => t.title === title) to locate and update the task.",
+              "getRemaining() uses this.tasks.filter(t => !t.done).length to return the remaining count.",
+            ],
+            tests: [
+              {
+                name: "TodoList class exists",
+                code: `if (typeof TodoList !== 'function') throw new Error("TodoList class not found");`,
+              },
+              {
+                name: "addTask and getRemaining work",
+                code: `const _tl = new TodoList(); _tl.addTask("Task 1"); _tl.addTask("Task 2"); if (_tl.getRemaining() !== 2) throw new Error("getRemaining should return 2");`,
+              },
+              {
+                name: "completeTask updates remaining count",
+                code: `const _tl2 = new TodoList(); _tl2.addTask("T1"); _tl2.completeTask("T1"); if (_tl2.getRemaining() !== 0) throw new Error("Remaining should be 0 after completing task");`,
+              },
+            ],
+            difficulty: "intermediate",
+          }}
+          height="400px"
+        />
+      </div>
 
     </SectionContainer>
   );
