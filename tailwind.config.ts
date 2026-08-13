@@ -122,9 +122,10 @@ const config: Config = {
                 },
             },
             fontFamily: {
-                sans: ["var(--font-rajdhani)", "system-ui"],
-                display: ["var(--font-rajdhani)", "system-ui"],
+                sans: ["var(--font-manrope)", "system-ui"],
+                display: ["var(--font-manrope)", "system-ui"],
                 inter: ["var(--font-inter)", "sans-serif"],
+                rajdhani: ["var(--font-rajdhani)", "sans-serif"],
             },
             backgroundImage: {
                 "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

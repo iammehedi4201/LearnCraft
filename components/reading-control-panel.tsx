@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 
 // ─── Types ───────────────────────────────────────────────────────────
-type ReadingTheme = "light" | "dark" | "sepia";
+type ReadingTheme = "light" | "dark";
 type LineSpacing = "compact" | "normal" | "relaxed";
 type FontFamily = "default" | "dyslexia";
 
@@ -299,7 +299,7 @@ export function ReadingControlPanel() {
               Theme
             </label>
             <div className="rcp-theme-switcher">
-              {(["light", "dark", "sepia"] as ReadingTheme[]).map((t) => (
+              {(["light", "dark"] as ReadingTheme[]).map((t) => (
                 <button
                   key={t}
                   id={`rcp-theme-${t}`}

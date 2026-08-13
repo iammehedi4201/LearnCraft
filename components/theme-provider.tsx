@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark" | "sepia";
+type Theme = "light" | "dark";
 
 interface ThemeContextType {
     theme: Theme;
@@ -23,7 +23,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             const readingSettings = localStorage.getItem(READING_SETTINGS_KEY);
             if (readingSettings) {
                 const parsed = JSON.parse(readingSettings);
-                if (parsed.theme && ["light", "dark", "sepia"].includes(parsed.theme)) {
+                if (parsed.theme && ["light", "dark"].includes(parsed.theme)) {
                     setThemeState(parsed.theme);
                     document.documentElement.classList.remove("light", "dark", "sepia");
                     document.documentElement.classList.add(parsed.theme);
@@ -34,7 +34,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
         // Fallback: check legacy "theme" key
         const savedTheme = localStorage.getItem("theme") as Theme;
-        if (savedTheme && ["light", "dark", "sepia"].includes(savedTheme)) {
+        if (savedTheme && ["light", "dark"].includes(savedTheme)) {
             setThemeState(savedTheme);
             document.documentElement.classList.add(savedTheme);
         } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -47,8 +47,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const observer = new MutationObserver(() => {
             const root = document.documentElement;
-            if (root.classList.contains("sepia")) setThemeState("sepia");
-            else if (root.classList.contains("dark")) setThemeState("dark");
+            if (root.classList.contains("dark")) setThemeState("dark");
             else setThemeState("light");
         });
         observer.observe(document.documentElement, {
@@ -66,9 +65,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     };
 
     const toggleTheme = () => {
-        const order: Theme[] = ["light", "dark", "sepia"];
-        const next = order[(order.indexOf(theme) + 1) % order.length];
-        setTheme(next);
+        setTheme(theme === "dark" ? "light" : "dark");
     };
 
     return (

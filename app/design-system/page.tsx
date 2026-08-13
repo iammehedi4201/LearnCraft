@@ -273,7 +273,7 @@ export default function DesignSystemPlayground(): JSX.Element {
               Active Environment Theme
             </span>
             <div className="flex gap-2">
-              {(["light", "dark", "sepia"] as const).map((t) => (
+              {(["light", "dark"] as const).map((t) => (
                 <button
                   key={t}
                   onClick={() => setTheme(t)}
@@ -591,6 +591,79 @@ export default function DesignSystemPlayground(): JSX.Element {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 1.5: TYPOGRAPHY SYSTEM */}
+        <section className="mb-16">
+          <div className="border-b border-ds-stroke-soft pb-4 mb-8">
+            <h2 className="text-2xl font-black tracking-tight text-ds-text-strong font-display">
+              1.2 Typography & Font Hierarchy
+            </h2>
+            <p className="text-xs text-ds-text-soft mt-1">
+              The type system uses <span className="font-bold text-ds-feature-base">Manrope</span> as the primary font family.
+            </p>
+          </div>
+
+          <div className="p-6 bg-ds-bg-white border border-ds-stroke-soft rounded-2xl shadow-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+              {/* Left Column: Font Family Info */}
+              <div className="space-y-4">
+                <h3 className="text-xs font-black text-ds-text-soft uppercase tracking-wider">
+                  Primary Font Family
+                </h3>
+                <div className="p-4 bg-ds-bg-weak border border-ds-stroke-soft rounded-xl">
+                  <p className="text-3xl font-black tracking-tight text-ds-text-strong">
+                    Aa
+                  </p>
+                  <p className="text-lg font-bold text-ds-text-strong mt-2">
+                    Manrope
+                  </p>
+                  <p className="text-xs text-ds-text-sub mt-1 leading-relaxed">
+                    A versatile, modern sans-serif font family with a warm, geometric aesthetic and high readability on digital screens.
+                  </p>
+                </div>
+              </div>
+
+              {/* Middle & Right Columns: Hierarchy Table */}
+              <div className="md:col-span-2 space-y-4">
+                <h3 className="text-xs font-black text-ds-text-soft uppercase tracking-wider">
+                  Font Hierarchy & Weights
+                </h3>
+                <div className="overflow-x-auto border border-ds-stroke-soft rounded-xl bg-ds-bg-weak">
+                  <table className="w-full border-collapse text-left text-sm text-ds-text-strong">
+                    <thead>
+                      <tr className="border-b border-ds-stroke-soft bg-ds-bg-soft/50 font-bold text-xs uppercase tracking-wider text-ds-text-soft">
+                        <th className="p-3">Element</th>
+                        <th className="p-3">Target Weight</th>
+                        <th className="p-3">Tailwind Utility Class</th>
+                        <th className="p-3">Live Visual Sample</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-ds-stroke-soft">
+                      {[
+                        { element: "Hero heading", weight: "700", utility: "font-bold text-4xl", text: "Master Modern Web Tech" },
+                        { element: "Page heading", weight: "700", utility: "font-bold text-2xl", text: "1. Understanding OOP" },
+                        { element: "Section heading", weight: "600", utility: "font-semibold text-lg", text: "Side by side comparison" },
+                        { element: "Card title", weight: "600", utility: "font-semibold text-sm", text: "Interactive Feature Card" },
+                        { element: "Navigation", weight: "500", utility: "font-medium text-sm", text: "NestJS / Next.js / TanStack" },
+                        { element: "Button", weight: "600", utility: "font-semibold text-sm", text: "Primary Action" },
+                        { element: "Body text", weight: "400", utility: "font-normal text-sm", text: "Programming means giving instructions to a computer." },
+                        { element: "Secondary text", weight: "400", utility: "font-normal text-xs text-ds-text-sub", text: "Click on any swatch card above to copy the class." },
+                        { element: "Labels", weight: "500", utility: "font-medium text-[10px] tracking-widest uppercase text-ds-text-soft", text: "MODULES / STATUS" },
+                      ].map((row) => (
+                        <tr key={row.element} className="hover:bg-ds-bg-white/50 transition-colors">
+                          <td className="p-3 font-bold">{row.element}</td>
+                          <td className="p-3 font-mono text-xs">{row.weight}</td>
+                          <td className="p-3 font-mono text-xs text-ds-feature-base">{row.utility}</td>
+                          <td className={`p-3 ${row.utility}`}>{row.text}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
