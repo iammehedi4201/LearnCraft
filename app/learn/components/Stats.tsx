@@ -1,33 +1,71 @@
 "use client";
 
+interface StatItem {
+  value: string;
+  label: string;
+  detail: string;
+  badge: string;
+  badgeClass: string;
+}
 
-
-const stats = [
-  { label: "Active Lessons", value: "48+", color: "from-blue-500 to-indigo-500" },
-  { label: "Students", value: "12k+", color: "from-purple-500 to-pink-500" },
-  { label: "Production Guides", value: "150+", color: "from-emerald-500 to-teal-500" },
-  { label: "Daily Updates", value: "Live", color: "from-orange-500 to-red-500" },
+const stats: StatItem[] = [
+  {
+    value: "3 Tracks",
+    label: "Core Engineering Paths",
+    detail: "Next.js 15+, TanStack Query v5, NestJS Elite",
+    badge: "Full-Stack",
+    badgeClass: "bg-ds-feature-lighter text-ds-feature-dark",
+  },
+  {
+    value: "69+ Lessons",
+    label: "Comprehensive Modules",
+    detail: "Real production patterns, architectures & guides",
+    badge: "In-Depth",
+    badgeClass: "bg-ds-info-lighter text-ds-info-dark",
+  },
+  {
+    value: "100%",
+    label: "Interactive Sandboxes",
+    detail: "Client-side execution with zero setup required",
+    badge: "Live Runtime",
+    badgeClass: "bg-ds-success-lighter text-ds-success-dark",
+  },
+  {
+    value: "100% Free",
+    label: "Open Source Platform",
+    detail: "High-impact engineering education for everyone",
+    badge: "Open Source",
+    badgeClass: "bg-ds-verified-lighter text-ds-verified-dark",
+  },
 ];
 
 export function Stats() {
   return (
-    <section className="py-20">
-      <div className="container mx-auto px-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="relative group p-8 rounded-[1rem] glass-card transition-all hover:-translate-y-1"
-            >
-              <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r ${stat.color} opacity-0 group-hover:opacity-100 transition-opacity rounded-t-full`} />
-              <dt className="text-sm font-bold text-slate-600 dark:text-slate-400 uppercase tracking-widest mb-2">{stat.label}</dt>
-              <dd className="text-4xl lg:text-5xl font-black text-foreground tracking-tight">{stat.value}</dd>
-
-              {/* Subtle accent glow */}
-              <div className={`absolute -z-10 inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-5 blur-2xl transition-opacity rounded-[2.5rem]`} />
+    <section className="py-6 mb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            className="p-6 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm hover:border-ds-feature-base/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between group"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-3xl lg:text-4xl font-black text-ds-text-strong tracking-tight font-display group-hover:text-ds-feature-base transition-colors">
+                  {stat.value}
+                </span>
+                <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full ${stat.badgeClass}`}>
+                  {stat.badge}
+                </span>
+              </div>
+              <h3 className="text-sm font-bold text-ds-text-strong mb-1.5">
+                {stat.label}
+              </h3>
+              <p className="text-xs text-ds-text-sub leading-relaxed">
+                {stat.detail}
+              </p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -205,15 +205,15 @@ export default function DesignSystemPlayground(): JSX.Element {
   Danger Action
 </button>`;
       case "badge-success":
-        return `<span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-success-lighter text-ds-success-dark border border-ds-success-base">
+        return `<span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-success-lighter text-ds-success-dark">
   🟢 Stable Status
 </span>`;
       case "badge-feature":
-        return `<span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-feature-lighter text-ds-feature-dark border border-ds-feature-base">
+        return `<span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-feature-lighter text-ds-feature-dark">
   🚀 New Feature
 </span>`;
       case "badge-warning":
-        return `<span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-warning-lighter text-ds-warning-dark border border-ds-warning-base">
+        return `<span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-warning-lighter text-ds-warning-dark">
   ⚠️ Attention Needed
 </span>`;
       case "alert-info":
@@ -742,7 +742,7 @@ export default function DesignSystemPlayground(): JSX.Element {
                       selectedComponent === "badge-success" ? "bg-ds-bg-weak border-ds-feature-base" : "bg-transparent border-transparent"
                     }`}
                   >
-                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-success-lighter text-ds-success-dark border border-ds-success-base">
+                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-success-lighter text-ds-success-dark">
                       🟢 Stable Status
                     </span>
                   </div>
@@ -753,7 +753,7 @@ export default function DesignSystemPlayground(): JSX.Element {
                       selectedComponent === "badge-feature" ? "bg-ds-bg-weak border-ds-feature-base" : "bg-transparent border-transparent"
                     }`}
                   >
-                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-feature-lighter text-ds-feature-dark border border-ds-feature-base">
+                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-feature-lighter text-ds-feature-dark">
                       🚀 New Feature
                     </span>
                   </div>
@@ -764,7 +764,7 @@ export default function DesignSystemPlayground(): JSX.Element {
                       selectedComponent === "badge-warning" ? "bg-ds-bg-weak border-ds-feature-base" : "bg-transparent border-transparent"
                     }`}
                   >
-                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-warning-lighter text-ds-warning-dark border border-ds-warning-base">
+                    <span className="px-3 py-1 text-xs font-bold rounded-full bg-ds-warning-lighter text-ds-warning-dark">
                       ⚠️ Attention Needed
                     </span>
                   </div>

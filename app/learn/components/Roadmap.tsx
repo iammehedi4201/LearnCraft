@@ -1,69 +1,130 @@
 "use client";
 
-const roadmap = [
+interface RoadmapStep {
+  step: string;
+  phase: string;
+  title: string;
+  badge: string;
+  badgeColor: string;
+  desc: string;
+  keySkills: string[];
+}
+
+const roadmapSteps: RoadmapStep[] = [
   {
-    title: "Foundations",
-    desc: "Master the core concepts of React and Next.js Architecture, including rendering strategies and data fetching fundamentals.",
-    status: "completed"
+    step: "01",
+    phase: "Phase 1",
+    title: "Foundations & Architecture Mental Models",
+    badge: "Core Basics",
+    badgeColor: "bg-ds-feature-lighter text-ds-feature-dark",
+    desc: "Understand the core mental models of modern full-stack web applications: Client vs Server execution environments, strict TypeScript type safety, and component lifecycle.",
+    keySkills: ["TypeScript Strict Mode", "Server Component Boundaries", "Module Patterns"],
   },
   {
-    title: "Advanced Patterns",
-    desc: "Deep dive into Server Components, ISR, Caching, and modern React 19 features like Actions and useFormStatus.",
-    status: "current"
+    step: "02",
+    phase: "Phase 2",
+    title: "Full-Stack Rendering & Edge Caching",
+    badge: "Next.js Mastery",
+    badgeColor: "bg-ds-info-lighter text-ds-info-dark",
+    desc: "Master Server Actions, granular caching layers, streaming with Suspense, ISR revalidation, and deploying edge middleware.",
+    keySkills: ["Server Actions", "Streaming & Suspense", "Granular ISR", "Edge Middleware"],
   },
   {
-    title: "State Mastery",
-    desc: "Unlock the power of TanStack Query for complex data flows, optimistic updates, and infinite scrolling.",
-    status: "upcoming"
+    step: "03",
+    phase: "Phase 3",
+    title: "Asynchronous State & Optimistic UI",
+    badge: "TanStack Query",
+    badgeColor: "bg-ds-success-lighter text-ds-success-dark",
+    desc: "Eliminate race conditions and UI lag with deterministic query keys, mutation rollback handlers, infinite virtualization, and server state hydration.",
+    keySkills: ["Optimistic UI Rollbacks", "Deterministic Invalidation", "Infinite Pagination"],
   },
   {
-    title: "Production Deployment",
-    desc: "Deploy at scale with Vercel and Edge Runtime, implementing monitoring, analytics, and performance optimization.",
-    status: "upcoming"
+    step: "04",
+    phase: "Phase 4",
+    title: "Enterprise Backend & Microservices",
+    badge: "NestJS Elite",
+    badgeColor: "bg-ds-error-lighter text-ds-error-dark",
+    desc: "Architect scalable backend services using Dependency Injection, Guards, Interceptors, WebSockets, Message Queues, and Microservice transports.",
+    keySkills: ["Inversion of Control (DI)", "Guards & JWT", "Microservices & Message Brokers"],
   },
 ];
 
 export function Roadmap() {
   return (
-    <section className="py-20 relative overflow-hidden">
-      <div className="container mx-auto px-6">
-        <div className="max-w-2xl mx-auto text-center mb-20">
-          <h2 className="text-4xl lg:text-5xl font-bold text-ds-text-strong mb-6 tracking-tight">The Roadmap to <span className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-ds-info-base to-ds-feature-base">Mastery</span></h2>
-          <p className="text-ds-text-sub text-lg">A step-by-step curriculum designed to take you from a junior developer to a senior architect.</p>
+    <section className="py-16">
+      {/* Header */}
+      <div className="max-w-3xl mx-auto text-center mb-16">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ds-feature-lighter mb-4">
+          <span className="text-xs font-bold tracking-wider text-ds-feature-dark uppercase">
+            Architect Roadmap
+          </span>
         </div>
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-ds-text-strong font-display">
+          The Proven Path to Senior Web Engineering
+        </h2>
+        <p className="text-sm sm:text-base text-ds-text-sub mt-3 leading-relaxed max-w-xl mx-auto">
+          A structured sequence designed to take you from foundational understanding to full-stack architectural mastery.
+        </p>
+      </div>
 
-        <div className="max-w-4xl mx-auto relative">
-          {/* Vertical Line */}
-          <div className="absolute left-8 lg:left-1/2 top-0 bottom-0 w-[2px] bg-ds-stroke-soft -translate-x-1/2" />
+      {/* Timeline Grid */}
+      <div className="relative max-w-4xl mx-auto">
+        {/* Timeline connector line */}
+        <div className="absolute left-4 md:left-1/2 top-4 bottom-4 w-0.5 bg-ds-stroke-soft -translate-x-1/2 hidden sm:block" />
 
-          <div className="space-y-12">
-            {roadmap.map((item, i) => (
-              <div key={item.title} className={`relative flex items-center gap-8 lg:gap-0 ${i % 2 === 0 ? 'lg:flex-row-reverse' : ''}`}>
-                {/* Connector Dot */}
-                <div className="absolute left-8 lg:left-1/2 w-10 h-10 -translate-x-1/2 z-10 flex items-center justify-center">
-                  <div className={`w-full h-full rounded-full border-4 transition-all duration-500 ${item.status === 'completed' ? 'bg-ds-info-base border-ds-stroke-soft' :
-                    item.status === 'current' ? 'bg-ds-bg-weak border-ds-info-base animate-pulse shadow-md' :
-                      'bg-ds-bg-weak border-ds-stroke-soft'
-                    }`} />
-                  {item.status === 'completed' && (
-                    <svg className="absolute w-5 h-5 text-ds-static-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
+        <div className="space-y-8 sm:space-y-12">
+          {roadmapSteps.map((step, idx) => {
+            const isEven = idx % 2 === 0;
+            return (
+              <div
+                key={step.step}
+                className={`relative flex flex-col sm:flex-row items-start sm:items-center gap-6 ${
+                  isEven ? "sm:flex-row" : "sm:flex-row-reverse"
+                }`}
+              >
+                {/* Center Badge / Step Node */}
+                <div className="sm:absolute sm:left-1/2 sm:-translate-x-1/2 z-10 flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-xl bg-ds-feature-lighter text-ds-feature-dark font-black text-xs flex items-center justify-center shadow-sm">
+                    {step.step}
+                  </div>
                 </div>
 
                 {/* Content Card */}
-                <div className="lg:w-1/2 pl-16 lg:px-8">
-                  <div className={`p-8 rounded-[1rem] bg-ds-bg-white border border-ds-stroke-soft transition-all duration-500 group hover:-translate-y-1 ${item.status === 'current' ? 'ring-2 ring-ds-info-base/50 shadow-2xl' : ''
-                    }`}>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-ds-info-dark mb-2 block">{item.status}</span>
-                    <h3 className="text-2xl font-bold text-ds-text-strong mb-3">{item.title}</h3>
-                    <p className="text-ds-text-sub leading-relaxed group-hover:text-ds-text-strong transition-colors">{item.desc}</p>
+                <div className="w-full sm:w-[calc(50%-2rem)]">
+                  <div className="p-6 lg:p-7 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base/40 shadow-sm hover:shadow-md transition-all duration-300 group">
+                    <div className="flex items-center justify-between gap-3 mb-3">
+                      <span className="text-[10px] font-bold text-ds-text-soft uppercase tracking-widest">
+                        {step.phase}
+                      </span>
+                      <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full ${step.badgeColor}`}>
+                        {step.badge}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-ds-text-strong group-hover:text-ds-feature-base transition-colors mb-2">
+                      {step.title}
+                    </h3>
+
+                    <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-4">
+                      {step.desc}
+                    </p>
+
+                    {/* Skill chips */}
+                    <div className="flex flex-wrap gap-1.5 pt-3 border-t border-ds-stroke-soft">
+                      {step.keySkills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="px-2 py-0.5 text-[10px] font-medium rounded-md bg-ds-bg-weak text-ds-text-sub"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -29,31 +29,31 @@ export function Nav(): JSX.Element {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex justify-center  ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex justify-center ${
           isScrolled ? "pt-0 px-0" : "pt-6 px-6"
         }`}
       >
         <nav
-          className={`transition-all duration-500 w-full border border-slate-200/50 dark:border-white/10 shadow-lg shadow-black/5 pointer-events-auto ${
+          className={`transition-all duration-500 w-full border border-ds-stroke-soft shadow-sm pointer-events-auto ${
             isScrolled
-              ? "h-14 bg-background/80 backdrop-blur-md rounded-none border-x-0 border-t-0"
-              : "max-w-[95rem] h-16 glass-card rounded-2xl hover:shadow-2xl hover:shadow-blue-500/10"
+              ? "h-14 bg-ds-bg-white/80 backdrop-blur-md rounded-none border-x-0 border-t-0"
+              : "max-w-[95rem] h-16 bg-ds-bg-white/90 backdrop-blur-xl rounded-2xl hover:border-ds-feature-base/30 shadow-lg shadow-black/5"
           }`}
         >
           <div className="max-w-[95rem] mx-auto h-full px-6 flex items-center justify-between">
             <div className="flex items-center gap-8">
               <Link
                 href="/learn"
-                className="group flex items-center gap-2.5 font-bold tracking-tighter text-foreground"
+                className="group flex items-center gap-2.5 font-black tracking-tight text-ds-text-strong"
               >
-                <div className="relative h-8 w-8 overflow-hidden rounded-lg shadow-lg group-hover:scale-110 transition-all duration-300">
+                <div className="relative h-8 w-8 overflow-hidden rounded-xl border border-ds-stroke-soft shadow-sm group-hover:scale-105 transition-all duration-300">
                   <img
                     src="/logo.png"
                     alt="LearnCraft Logo"
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <span className="text-lg hidden sm:inline-block">
+                <span className="text-lg hidden sm:inline-block font-display">
                   LearnCraft
                 </span>
               </Link>
@@ -63,14 +63,15 @@ export function Nav(): JSX.Element {
                   { name: "Next.js", href: "/learn/nextjs" },
                   { name: "TanStack", href: "/learn/tanstack" },
                   { name: "NestJS", href: "/learn/nestjs" },
+                  { name: "Curriculums", href: "/learn#curriculums" },
                 ].map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="text-sm font-bold text-slate-500 hover:text-foreground transition-colors relative group"
+                    className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors relative group py-1"
                   >
                     {item.name}
-                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300" />
+                    <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-ds-feature-base group-hover:w-full transition-all duration-300 rounded-full" />
                   </Link>
                 ))}
               </div>
@@ -78,9 +79,12 @@ export function Nav(): JSX.Element {
 
             <div className="flex items-center gap-4">
               <ThemeToggle />
-              <button className="hidden sm:flex px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider rounded-lg hover:scale-105 active:scale-95 transition-all shadow-lg shadow-blue-500/20">
-                Get Started
-              </button>
+              <Link
+                href="/learn/nextjs"
+                className="hidden sm:inline-flex px-4 py-2 bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-ds-feature-base/15"
+              >
+                Start Learning
+              </Link>
             </div>
           </div>
         </nav>

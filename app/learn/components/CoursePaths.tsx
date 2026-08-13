@@ -1,95 +1,187 @@
 "use client";
 
-import Link from 'next/link';
+import Link from "next/link";
 
-const paths = [
+interface CourseTrack {
+  id: string;
+  title: string;
+  badge: string;
+  moduleCount: string;
+  description: string;
+  href: string;
+  highlights: string[];
+  colorTokens: {
+    badge: string;
+    iconBg: string;
+    iconText: string;
+    actionText: string;
+    borderHover: string;
+  };
+  icon: JSX.Element;
+}
+
+const courses: CourseTrack[] = [
   {
-    title: "TanStack Query",
-    version: "v5",
-    desc: "Master asynchronous state management. Learn caching, synchronization, and background refetching patterns for robust UIs.",
-    href: "/learn/tanstack",
-    themeClass: {
-      icon: "bg-ds-info-lighter text-ds-info-dark",
-      link: "text-ds-info-dark hover:text-ds-info-base",
-      hoverShadow: "hover:shadow-ds-info-base/5"
-    },
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7" /><path d="m16 16 2 2 4-4" /></svg>
-    )
-  },
-  {
-    title: "NestJS Elite",
-    version: "2024",
-    desc: "Architectural mastery for the backend. Build scalable, testable, and production-grade APIs using modern patterns.",
-    href: "/learn/nestjs",
-    themeClass: {
-      icon: "bg-ds-error-lighter text-ds-error-dark",
-      link: "text-ds-error-dark hover:text-ds-error-base",
-      hoverShadow: "hover:shadow-ds-error-base/5"
-    },
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
-    )
-  },
-  {
-    title: "Next.js Mastery",
-    version: "15+",
-    desc: "Build the future of full-stack. Explore App Router, Server Components, Streaming, and Edge Optimization.",
+    id: "nextjs",
+    title: "Next.js 15+ Mastery",
+    badge: "Full-Stack & Edge",
+    moduleCount: "20 Modules",
+    description:
+      "Master React 19 Server Components, Server Actions, streaming, ISR caching strategies, route handlers, and edge deployment.",
     href: "/learn/nextjs",
-    themeClass: {
-      icon: "bg-ds-feature-lighter text-ds-feature-dark",
-      link: "text-ds-feature-dark hover:text-ds-feature-base",
-      hoverShadow: "hover:shadow-ds-feature-base/5"
+    highlights: ["App Router & RSC", "Server Actions", "Streaming & Suspense", "Granular Caching"],
+    colorTokens: {
+      badge: "bg-ds-feature-lighter text-ds-feature-dark",
+      iconBg: "bg-ds-feature-lighter",
+      iconText: "text-ds-feature-dark",
+      actionText: "text-ds-feature-base group-hover:text-ds-feature-dark",
+      borderHover: "hover:border-ds-feature-base/50",
     },
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M12 21v-4" /><path d="m16 16 2 2 4-4" /></svg>
-    )
-  }
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="12 2 2 7 12 12 22 7 12 2" />
+        <polyline points="2 17 12 22 22 17" />
+        <polyline points="2 12 12 17 22 12" />
+      </svg>
+    ),
+  },
+  {
+    id: "tanstack",
+    title: "TanStack Query v5",
+    badge: "Async State Engine",
+    moduleCount: "22 Modules",
+    description:
+      "Architect bulletproof asynchronous UI state. Master query keys, mutations, optimistic updates, infinite scrolling, and background sync.",
+    href: "/learn/tanstack",
+    highlights: ["Optimistic UI", "Query Invalidation", "Infinite Pagination", "SSR Hydration"],
+    colorTokens: {
+      badge: "bg-ds-info-lighter text-ds-info-dark",
+      iconBg: "bg-ds-info-lighter",
+      iconText: "text-ds-info-dark",
+      actionText: "text-ds-info-base group-hover:text-ds-info-dark",
+      borderHover: "hover:border-ds-info-base/50",
+    },
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7" />
+        <path d="m16 16 2 2 4-4" />
+      </svg>
+    ),
+  },
+  {
+    id: "nestjs",
+    title: "NestJS Elite Backend",
+    badge: "Enterprise Architecture",
+    moduleCount: "27 Modules",
+    description:
+      "Build scalable, testable, and production-grade Node.js services with clean architecture, dependency injection, guards, and microservices.",
+    href: "/learn/nestjs",
+    highlights: ["Dependency Injection", "Guards & JWT Auth", "Microservices", "Swagger & DTOs"],
+    colorTokens: {
+      badge: "bg-ds-error-lighter text-ds-error-dark",
+      iconBg: "bg-ds-error-lighter",
+      iconText: "text-ds-error-dark",
+      actionText: "text-ds-error-base group-hover:text-ds-error-dark",
+      borderHover: "hover:border-ds-error-base/50",
+    },
+    icon: (
+      <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect width="18" height="18" x="3" y="3" rx="2" />
+        <path d="m9 8 6 4-6 4V8z" />
+      </svg>
+    ),
+  },
 ];
 
 export function CoursePaths() {
   return (
-    <section className="py-20">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div className="max-w-xl">
-            <h2 className="text-4xl lg:text-5xl font-bold text-ds-text-strong mb-4 tracking-tight">Choose Your Path</h2>
-            <p className="text-ds-text-sub text-lg">Specialized curriculums designed for modern engineering needs.</p>
+    <section id="curriculums" className="py-12 scroll-mt-24">
+      {/* Section Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="px-3 py-1 text-[10px] font-black uppercase tracking-widest rounded-full bg-ds-feature-lighter text-ds-feature-dark">
+              Curriculums
+            </span>
+            <span className="text-xs text-ds-text-soft font-semibold">
+              69+ Total Lessons
+            </span>
           </div>
-          <div className="h-px flex-1 bg-gradient-to-r from-ds-stroke-soft to-transparent hidden md:block mb-6" />
+          <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-ds-text-strong font-display">
+            Choose Your Specialization Path
+          </h2>
+          <p className="text-sm sm:text-base text-ds-text-sub mt-2">
+            Structured step-by-step tracks packed with real architecture code, interactive playgrounds, and production mental models.
+          </p>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {paths.map((path) => (
-            <Link
-              key={path.title}
-              href={path.href}
-              className={`group relative block p-10 rounded-[1rem] bg-ds-bg-white border border-ds-stroke-soft overflow-hidden transition-all duration-300 hover:-translate-y-2  ${path.themeClass.hoverShadow}`}
-            >
-              <div className={`inline-flex p-4 rounded-2xl ${path.themeClass.icon} mb-8 group-hover:scale-110 transition-transform`}>
-                {path.icon}
+      {/* Course Cards Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        {courses.map((course) => (
+          <Link
+            key={course.id}
+            href={course.href}
+            className={`group relative flex flex-col justify-between p-8 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft ${course.colorTokens.borderHover} shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300`}
+          >
+            <div>
+              {/* Header: Icon and Badges */}
+              <div className="flex items-center justify-between gap-4 mb-6">
+                <div className={`p-3.5 rounded-xl ${course.colorTokens.iconBg} ${course.colorTokens.iconText} shadow-sm group-hover:scale-110 transition-transform duration-300`}>
+                  {course.icon}
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full ${course.colorTokens.badge}`}>
+                    {course.badge}
+                  </span>
+                </div>
               </div>
 
-              <h3 className="text-2xl font-bold text-ds-text-strong mb-2 flex items-center gap-3">
-                {path.title}
-                <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md bg-ds-bg-weak border border-ds-stroke-soft text-ds-text-sub">
-                  {path.version}
-                </span>
-              </h3>
+              {/* Title & Count */}
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <h3 className="text-xl font-bold text-ds-text-strong group-hover:text-ds-feature-base transition-colors">
+                  {course.title}
+                </h3>
+              </div>
 
-              <p className="text-ds-text-sub leading-relaxed mb-10 group-hover:text-ds-text-strong transition-colors">
-                {path.desc}
+              <span className="inline-block text-[11px] font-bold text-ds-text-soft uppercase tracking-wider mb-4">
+                {course.moduleCount}
+              </span>
+
+              {/* Description */}
+              <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-6">
+                {course.description}
               </p>
 
-              <div className={`flex items-center gap-2 font-bold ${path.themeClass.link} group-hover:gap-4 transition-all`}>
-                Start Journey
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {/* Highlights Chips */}
+              <div className="space-y-2 mb-8">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-ds-text-soft">
+                  Key Focus Areas
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {course.highlights.map((h) => (
+                    <span
+                      key={h}
+                      className="px-2.5 py-1 text-[11px] font-medium rounded-lg bg-ds-bg-weak text-ds-text-sub"
+                    >
+                      {h}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Action Link */}
+            <div className={`pt-6 border-t border-ds-stroke-soft flex items-center justify-between text-xs font-bold ${course.colorTokens.actionText} transition-all`}>
+              <span>Start Track</span>
+              <div className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                 </svg>
               </div>
-            </Link>
-          ))}
-        </div>
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );
