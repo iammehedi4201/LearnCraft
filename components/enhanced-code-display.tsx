@@ -3,18 +3,19 @@ import React from 'react';
 interface CodeBlockProps {
   code: string;
   language?: string;
+  className?: string;
 }
 
 /**
  * Enhanced CodeBlock component specifically designed for pedagogy.
  * Separates code, inline comments, and provides a distinguishable layout.
  */
-export const EnhancedCodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'typescript' }) => {
+export const EnhancedCodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'typescript', className = '' }) => {
   // Split code into lines and process comments
   const lines = code.split('\n');
 
   return (
-    <div className="my-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm">
+    <div className={`my-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2">

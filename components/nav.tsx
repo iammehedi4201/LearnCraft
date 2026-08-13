@@ -37,10 +37,10 @@ export function Nav(): JSX.Element {
           className={`transition-all duration-500 w-full border border-slate-200/50 dark:border-white/10 shadow-lg shadow-black/5 pointer-events-auto ${
             isScrolled
               ? "h-14 bg-background/80 backdrop-blur-md rounded-none border-x-0 border-t-0"
-              : "max-w-7xl h-16 glass-card rounded-2xl hover:shadow-2xl hover:shadow-blue-500/10"
+              : "max-w-[95rem] h-16 glass-card rounded-2xl hover:shadow-2xl hover:shadow-blue-500/10"
           }`}
         >
-          <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
+          <div className="max-w-[95rem] mx-auto h-full px-6 flex items-center justify-between">
             <div className="flex items-center gap-8">
               <Link
                 href="/learn"

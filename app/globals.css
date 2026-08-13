@@ -4,21 +4,243 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
+  --background: #FFFFFF;
+  --foreground: #0E121B;
+  --primary: #7D52F4;
+  --primary-foreground: #FFFFFF;
   --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-border: rgba(225, 228, 234, 0.4);
+
+  /* Design System Tokens - Static */
+  --static-white: #FFFFFF;
+  --static-black: #0E121B;
+
+  /* Design System Tokens - Background (bg) */
+  --bg-white-0: #FFFFFF;
+  --bg-weak-50: #F5F7FA;
+  --bg-strong-950: #0E121B;
+  --bg-surface-800: #222530;
+  --bg-soft-200: #E1E4EA;
+  --bg-sub-300: #CACFD8;
+
+  /* Design System Tokens - State Faded */
+  --state-faded-light: #E1E4EA;
+  --state-faded-base: #717784;
+  --state-faded-dark: #222530;
+  --state-faded-lighter: #F2F5F8;
+
+  /* Design System Tokens - State Error */
+  --state-error-base: #FB3748;
+  --state-error-light: #FFC0C5;
+  --state-error-dark: #681219;
+  --state-error-lighter: #FFEBEC;
+
+  /* Design System Tokens - State Warning */
+  --state-warning-base: #FF8447;
+  --state-warning-light: #FFD5C0;
+  --state-warning-dark: #682F12;
+  --state-warning-lighter: #FFF1EB;
+
+  /* Design System Tokens - State Information */
+  --state-information-base: #335CFF;
+  --state-information-light: #C0D5FF;
+  --state-information-dark: #122368;
+  --state-information-lighter: #EBF1FF;
+
+  /* Design System Tokens - State Success */
+  --state-success-base: #1FC16B;
+  --state-success-light: #C2F5DA;
+  --state-success-dark: #0B4627;
+  --state-success-lighter: #E0FAEC;
+
+  /* Design System Tokens - State Away */
+  --state-away-base: #F6B51E;
+  --state-away-light: #FFECC0;
+  --state-away-dark: #624C18;
+  --state-away-lighter: #FFFAEB;
+
+  /* Design System Tokens - State Feature */
+  --state-feature-base: #7D52F4;
+  --state-feature-light: #CAC0FF;
+  --state-feature-dark: #351A75;
+  --state-feature-lighter: #EFEBFF;
+
+  /* Design System Tokens - State Verified */
+  --state-verified-base: #47C2FF;
+  --state-verified-light: #C0EAFF;
+  --state-verified-dark: #124B68;
+  --state-verified-lighter: #EBF8FF;
+
+  /* Design System Tokens - State Highlighted */
+  --state-highlighted-base: #FB4BA3;
+  --state-highlighted-light: #FFC0DF;
+  --state-highlighted-dark: #68123D;
+  --state-highlighted-lighter: #FFEBF4;
+
+  /* Design System Tokens - State Stable */
+  --state-stable-base: #22D3BB;
+  --state-stable-light: #C2F5EE;
+  --state-stable-dark: #0B463E;
+  --state-stable-lighter: #E4FBF8;
+
+  /* Design System Tokens - Text */
+  --text-strong-950: #0E121B;
+  --text-sub-600: #525866;
+  --text-disabled-300: #CACFD8;
+  --text-white-0: #FFFFFF;
+  --text-soft-400: #99A0AE;
+
+  /* Design System Tokens - Stroke */
+  --stroke-soft-200: #E1E4EA;
+  --stroke-strong-950: #0E121B;
+  --stroke-white-0: #FFFFFF;
+  --stroke-sub-300: #CACFD8;
+
+  /* Design System Tokens - Icon */
+  --icon-sub-600: #525866;
+  --icon-strong-950: #0E121B;
+  --icon-soft-400: #99A0AE;
+  --icon-disabled-300: #CACFD8;
+  --icon-white-0: #FFFFFF;
+
+  /* Design System Tokens - Social */
+  --social-apple: #000000;
+  --social-twitter: #010101;
+  --social-github: #24292F;
+  --social-notion: #1E2226;
+  --social-tidal: #000000;
+  --social-amazon: #353E47;
+  --social-zendesk: #16140D;
+
+  /* Design System Tokens - Illustration */
+  --illustration-strong-400: #99A0AE;
+  --illustration-sub-300: #CACFD8;
+  --illustration-soft-200: #E1E4EA;
+  --illustration-weak-100: #F2F5F8;
+  --illustration-white-0: #FFFFFF;
+
+  /* Design System Tokens - Overlay */
+  --overlay: rgba(2, 13, 23, 0.24);
 }
 
 .dark {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --primary: #3b82f6;
-  --primary-foreground: #ffffff;
-  --glass-bg: rgba(15, 23, 42, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.15);
+  --background: #0E121B;
+  --foreground: #FFFFFF;
+  --primary: #8C71F6;
+  --primary-foreground: #0E121B;
+  --glass-bg: rgba(14, 18, 27, 0.7);
+  --glass-border: rgba(43, 48, 59, 0.4);
+
+  /* Design System Tokens - Static */
+  --static-white: #FFFFFF;
+  --static-black: #0E121B;
+
+  /* Design System Tokens - Background (bg) */
+  --bg-white-0: #0E121B;
+  --bg-weak-50: #181B25;
+  --bg-strong-950: #FFFFFF;
+  --bg-surface-800: #E1E4EA;
+  --bg-soft-200: #2B303B;
+  --bg-sub-300: #525866;
+
+  /* Design System Tokens - State Faded */
+  --state-faded-light: rgba(153, 160, 174, 0.24);
+  --state-faded-base: #717784;
+  --state-faded-dark: #CACFD8;
+  --state-faded-lighter: rgba(153, 160, 174, 0.16);
+
+  /* Design System Tokens - State Error */
+  --state-error-base: #E93544;
+  --state-error-light: rgba(251, 55, 72, 0.24);
+  --state-error-dark: #FF6875;
+  --state-error-lighter: rgba(251, 55, 72, 0.16);
+
+  /* Design System Tokens - State Warning */
+  --state-warning-base: #E97135;
+  --state-warning-light: rgba(255, 145, 71, 0.24);
+  --state-warning-dark: #FF9A68;
+  --state-warning-lighter: rgba(255, 145, 71, 0.16);
+
+  /* Design System Tokens - State Information */
+  --state-information-base: #335CFF;
+  --state-information-light: rgba(71, 108, 255, 0.24);
+  --state-information-dark: #6895FF;
+  --state-information-lighter: rgba(71, 108, 255, 0.16);
+
+  /* Design System Tokens - State Success */
+  --state-success-base: #1DAF61;
+  --state-success-light: rgba(31, 193, 107, 0.16);
+  --state-success-dark: #3EE089;
+  --state-success-lighter: rgba(31, 193, 107, 0.10);
+
+  /* Design System Tokens - State Away */
+  --state-away-base: #E6A819;
+  --state-away-light: rgba(251, 198, 75, 0.24);
+  --state-away-dark: #FFD268;
+  --state-away-lighter: rgba(251, 198, 75, 0.16);
+
+  /* Design System Tokens - State Feature */
+  --state-feature-base: #7D52F4;
+  --state-feature-light: rgba(120, 77, 239, 0.24);
+  --state-feature-dark: #8C71F6;
+  --state-feature-lighter: rgba(120, 77, 239, 0.16);
+
+  /* Design System Tokens - State Verified */
+  --state-verified-base: #35ADE9;
+  --state-verified-light: rgba(71, 194, 255, 0.24);
+  --state-verified-dark: #68CDFF;
+  --state-verified-lighter: rgba(71, 194, 255, 0.16);
+
+  /* Design System Tokens - State Highlighted */
+  --state-highlighted-base: #E9358F;
+  --state-highlighted-light: rgba(251, 75, 163, 0.24);
+  --state-highlighted-dark: #FF68B3;
+  --state-highlighted-lighter: rgba(251, 75, 163, 0.16);
+
+  /* Design System Tokens - State Stable */
+  --state-stable-base: #1DAF9C;
+  --state-stable-light: rgba(34, 211, 187, 0.24);
+  --state-stable-dark: #3FDEC9;
+  --state-stable-lighter: rgba(34, 211, 187, 0.16);
+
+  /* Design System Tokens - Text */
+  --text-strong-950: #FFFFFF;
+  --text-sub-600: #99A0AE;
+  --text-disabled-300: #525866;
+  --text-white-0: #0E121B;
+  --text-soft-400: #717784;
+
+  /* Design System Tokens - Stroke */
+  --stroke-soft-200: #2B303B;
+  --stroke-strong-950: #FFFFFF;
+  --stroke-white-0: #0E121B;
+  --stroke-sub-300: #525866;
+
+  /* Design System Tokens - Icon */
+  --icon-sub-600: #99A0AE;
+  --icon-strong-950: #FFFFFF;
+  --icon-soft-400: #717784;
+  --icon-disabled-300: #525866;
+  --icon-white-0: #0E121B;
+
+  /* Design System Tokens - Social */
+  --social-apple: #FFFFFF;
+  --social-twitter: #FFFFFF;
+  --social-github: #FFFFFF;
+  --social-notion: #FFFFFF;
+  --social-tidal: #FFFFFF;
+  --social-amazon: #FFFFFF;
+  --social-zendesk: #FFFFFF;
+
+  /* Design System Tokens - Illustration */
+  --illustration-strong-400: #525866;
+  --illustration-sub-300: #2B303B;
+  --illustration-soft-200: #222530;
+  --illustration-weak-100: #181B25;
+  --illustration-white-0: #0E121B;
+
+  /* Design System Tokens - Overlay */
+  --overlay: rgba(82, 88, 102, 0.32);
 }
 
 .sepia {
@@ -28,6 +250,103 @@
   --primary-foreground: #ffffff;
   --glass-bg: rgba(244, 236, 216, 0.85);
   --glass-border: rgba(184, 134, 11, 0.2);
+
+  /* Fallback Design Tokens for Sepia mode to ensure compatibility */
+  --static-white: #FFFFFF;
+  --static-black: #433422;
+  --bg-white-0: #f5ecd8;
+  --bg-weak-50: #fdfbf7;
+  --bg-strong-950: #433422;
+  --bg-surface-800: #7b5c3e;
+  --bg-soft-200: #eaddc3;
+  --bg-sub-300: #c4b396;
+
+  --state-faded-light: #eaddc3;
+  --state-faded-base: #7b6348;
+  --state-faded-dark: #7b5c3e;
+  --state-faded-lighter: #f8f3e8;
+
+  --state-error-base: #b03a48;
+  --state-error-light: #f7d5d8;
+  --state-error-dark: #ef707a;
+  --state-error-lighter: #fbf0f1;
+
+  --state-warning-base: #b87a30;
+  --state-warning-light: #fbe6cb;
+  --state-warning-dark: #e8a658;
+  --state-warning-lighter: #fcf4e8;
+
+  --state-information-base: #2b6cb0;
+  --state-information-light: #d2e4f7;
+  --state-information-dark: #589ae8;
+  --state-information-lighter: #f0f6fc;
+
+  --state-success-base: #2f855a;
+  --state-success-light: #d4eedb;
+  --state-success-dark: #5cb887;
+  --state-success-lighter: #f0faf2;
+
+  --state-away-base: #b7791f;
+  --state-away-light: #fbe3b7;
+  --state-away-dark: #d69e2e;
+  --state-away-lighter: #fdf8e2;
+
+  --state-feature-base: #6b46c1;
+  --state-feature-light: #e9d8fd;
+  --state-feature-dark: #9f7aea;
+  --state-feature-lighter: #faf5ff;
+
+  --state-verified-base: #2b6cb0;
+  --state-verified-light: #d2e4f7;
+  --state-verified-dark: #589ae8;
+  --state-verified-lighter: #f0f6fc;
+
+  --state-highlighted-base: #b83280;
+  --state-highlighted-light: #fed7e2;
+  --state-highlighted-dark: #f687b3;
+  --state-highlighted-lighter: #fff5f7;
+
+  --state-stable-base: #2c7a7b;
+  --state-stable-light: #e6fffa;
+  --state-stable-dark: #4fd1c5;
+  --state-stable-lighter: #f0fff4;
+
+  --text-strong-950: #433422;
+  --text-sub-600: #7b6348;
+  --text-disabled-300: #c4b396;
+  --text-white-0: #f5ecd8;
+  --text-soft-400: #a28e75;
+
+  --stroke-soft-200: #eaddc3;
+  --stroke-strong-950: #433422;
+  --stroke-white-0: #f5ecd8;
+  --stroke-sub-300: #c4b396;
+
+  /* Design System Tokens - Icon */
+  --icon-sub-600: #7b6348;
+  --icon-strong-950: #433422;
+  --icon-soft-400: #a28e75;
+  --icon-disabled-300: #c4b396;
+  --icon-white-0: #f5ecd8;
+
+  /* Design System Tokens - Social */
+  --social-apple: #433422;
+  --social-twitter: #433422;
+  --social-github: #433422;
+  --social-notion: #433422;
+  --social-tidal: #433422;
+  --social-amazon: #433422;
+  --social-zendesk: #433422;
+
+  /* Design System Tokens - Illustration */
+  --illustration-strong-400: #a28e75;
+  --illustration-sub-300: #c4b396;
+  --illustration-soft-200: #eaddc3;
+  --illustration-weak-100: #fdfbf7;
+  --illustration-white-0: #f5ecd8;
+
+  /* Design System Tokens - Overlay */
+  --overlay: rgba(67, 52, 34, 0.24);
 }
 
 @layer base {

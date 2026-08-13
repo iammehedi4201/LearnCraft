@@ -14,7 +14,7 @@ export function Collapsible({ title, children }: CollapsibleProps) {
     <div className="mt-4">
       <button
         onClick={() => setOpen(!open)}
-        className="text-sm font-bold text-amber-700 dark:text-amber-400 hover:underline flex items-center gap-1"
+        className="text-sm font-bold text-[#344b8f] dark:text-[#7f6fbe] hover:text-[#7b52ac] flex items-center gap-1 transition-colors"
       >
         {open ? "▼" : "▶"} {title}
       </button>
