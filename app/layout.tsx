@@ -7,46 +7,45 @@ import { QueryProvider } from "@/components/query-provider";
 import { ReadingControlPanel } from "@/components/reading-control-panel";
 
 const inter = Inter({
-    subsets: ["latin"],
-    variable: "--font-inter",
+  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 const rajdhani = Rajdhani({
-    subsets: ["latin"],
-    weight: ["300", "400", "500", "600", "700"],
-    variable: "--font-rajdhani",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-rajdhani",
 });
 
 const manrope = Manrope({
-    subsets: ["latin"],
-    weight: ["400", "500", "600", "700"],
-    variable: "--font-manrope",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-manrope",
 });
 
 export const metadata: Metadata = {
-    title: "LearnCraft — Master Modern Web Tech",
-    description: "High-impact engineering education for modern developers.",
+  title: "LearnCraft — Master Modern Web Tech",
+  description: "High-impact engineering education for modern developers.",
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) {
-    return (
-        <html lang="en" suppressHydrationWarning className="scroll-smooth">
-            <body
-                suppressHydrationWarning
-                className={`${manrope.variable} ${inter.variable} ${rajdhani.variable} min-h-screen`}
-            >
-                <QueryProvider>
-                    <ThemeProvider>
-                        {children}
-                        <ReadingControlPanel />
-                    </ThemeProvider>
-                </QueryProvider>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en" suppressHydrationWarning className="scroll-smooth">
+      <body
+        suppressHydrationWarning
+        className={`${manrope.variable} ${inter.variable} ${rajdhani.variable} min-h-screen`}
+      >
+        <QueryProvider>
+          <ThemeProvider>
+            {children}
+            <ReadingControlPanel />
+          </ThemeProvider>
+        </QueryProvider>
+      </body>
+    </html>
+  );
 }
-

@@ -21,7 +21,7 @@ import { FinalProjectSection } from "./components/final-project-section";
 import { ClosingSections } from "./components/closing-sections";
 
 const SECTIONS = [
-  { id: "part1",  label: "Understanding OOP",       icon: "🚀" },
+  { id: "part1",  label: "Understanding OOP",        icon: "🚀" },
   { id: "part2",  label: "Creating Objects",         icon: "📦" },
   { id: "part3",  label: "Constructor",              icon: "🔧" },
   { id: "part4",  label: "Methods",                  icon: "⚡" },
