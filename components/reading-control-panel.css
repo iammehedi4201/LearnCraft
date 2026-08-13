@@ -47,11 +47,10 @@
   display: none !important;
 }
 .focus-mode main {
-  max-width: 85rem !important;
+  max-width: 80rem !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-top: 1
-  rem !important;
+  padding-top: 1rem  !important;
 }
 
 /* ── Apply reading font-size & line-height to content areas ── */
