@@ -78,7 +78,6 @@ li:not(.rcp-root *),
 td:not(.rcp-root *),
 th:not(.rcp-root *),
 blockquote:not(.rcp-root *),
-span:not(.rcp-root *),
 .reading-content {
   font-size: var(--reading-font-size);
   line-height: var(--reading-line-height);

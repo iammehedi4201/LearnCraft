@@ -16,22 +16,22 @@ export function FAQ() {
     <section className="py-20">
       <div className="container mx-auto px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-4xl lg:text-5xl font-black text-foreground mb-16 text-center tracking-tight">Common Questions</h2>
+          <h2 className="text-4xl lg:text-5xl font-bold text-ds-text-strong mb-16 text-center tracking-tight">Common Questions</h2>
 
           <div className="space-y-4">
             {faqs.map((faq, i) => (
               <div
                 key={i}
-                className={`rounded-[1rem] glass-card transition-all duration-300 overflow-hidden ${openIndex === i ? 'ring-2 ring-blue-500/30' : 'hover:border-white/20'
+                className={`rounded-[1rem] bg-ds-bg-white border border-ds-stroke-soft transition-all duration-300 overflow-hidden ${openIndex === i ? 'ring-2 ring-ds-info-base/30' : 'hover:border-ds-stroke-sub'
                   }`}
               >
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
                   className="w-full p-8 text-left flex items-center justify-between"
                 >
-                  <span className="text-lg font-bold text-foreground">{faq.q}</span>
+                  <span className="text-lg font-bold text-ds-text-strong">{faq.q}</span>
                   <svg
-                    className={`w-6 h-6 text-slate-500 dark:text-slate-400 transition-transform duration-300 ${openIndex === i ? 'rotate-180' : ''}`}
+                    className={`w-6 h-6 text-ds-text-soft transition-transform duration-300 ${openIndex === i ? 'rotate-180' : ''}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -44,7 +44,7 @@ export function FAQ() {
                   className={`transition-all duration-300 ease-in-out ${openIndex === i ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
                     }`}
                 >
-                  <div className="px-8 pb-8 text-slate-600 dark:text-slate-400 leading-relaxed">
+                  <div className="px-8 pb-8 text-ds-text-sub leading-relaxed">
                     {faq.a}
                   </div>
                 </div>

@@ -12,7 +12,7 @@ const snippets = [
   staleTime: 60 * 1000,
   retry: 3,
 });`,
-    color: 'text-blue-400'
+    color: 'text-ds-info-base'
   },
   {
     id: 'nextjs',
@@ -24,7 +24,7 @@ const snippets = [
     <Dashboard data={stats} />
   );
 }`,
-    color: 'text-indigo-400'
+    color: 'text-ds-feature-base'
   },
   {
     id: 'nestjs',
@@ -37,7 +37,7 @@ export class MetricsController {
     return this.service.get();
   }
 }`,
-    color: 'text-red-400'
+    color: 'text-ds-error-base'
   }
 ];
 
@@ -52,39 +52,33 @@ export function Hero() {
   }, []);
 
   return (
-    <section className="relative pt-20 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-      {/* Background Decorative Elements */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-indigo-600/10 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
-      </div>
-
+    <section className="relative pt-20 pb-20 lg:pt-36 lg:pb-24 overflow-hidden">
       <div className="container mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Side: Content */}
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 mb-8 animate-fade-in">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ds-info-lighter border border-ds-info-light mb-8 animate-fade-in">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ds-info-base opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-ds-info-base"></span>
               </span>
-              <span className="text-xs font-bold tracking-wider text-blue-500 dark:text-blue-400 uppercase">Studio Grade Learning</span>
+              <span className="text-xs font-bold tracking-wider text-ds-info-dark uppercase">Studio Grade Learning</span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-foreground mb-8 leading-[0.9] text-balance">
-              Master the <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 dark:from-blue-400 dark:via-indigo-400 dark:to-purple-400">Modern Web</span>
+            <h1 className="text-5xl lg:text-7xl font-bold tracking-tighter text-ds-text-strong mb-8 leading-[0.9] text-balance">
+              Master the <span className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-ds-feature-base to-ds-info-base">Modern Web</span>
             </h1>
 
-            <p className="text-lg lg:text-xl text-slate-600 dark:text-slate-400 mb-12 max-w-lg leading-relaxed text-balance">
+            <p className="text-lg lg:text-xl text-ds-text-sub mb-12 max-w-lg leading-relaxed text-balance">
               Skip the surface-level tutorials. Learn the architectural patterns and
               production-ready practices used by elite engineering teams at scale.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center gap-6">
-              <button className="w-full sm:w-auto group relative px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-xl">
+              <button className="w-full sm:w-auto px-8 py-4 bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white font-semibold rounded-2xl transition-all hover:scale-105 active:scale-95 shadow-xl shadow-ds-feature-base/10">
                 Start Learning Now
               </button>
-              <button className="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-bold hover:text-foreground transition-colors group">
+              <button className="flex items-center gap-2 text-ds-text-sub font-semibold hover:text-ds-text-strong transition-colors group">
                 View Curriculum
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -95,21 +89,21 @@ export function Hero() {
 
           {/* Right Side: Interactive Code Window */}
           <div className="relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-[2rem] blur opacity-10 dark:opacity-20 transition duration-1000"></div>
-            <div className="relative rounded-[1rem] bg-slate-950 dark:bg-[#0b1120] border border-white/10 overflow-hidden shadow-2xl">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-ds-feature-base to-ds-info-base rounded-[2rem] blur opacity-10 dark:opacity-20 transition duration-1000"></div>
+            <div className="relative rounded-[1rem] bg-ds-bg-white border border-ds-stroke-soft overflow-hidden shadow-2xl">
               {/* Window Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-white/5">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-ds-stroke-soft bg-ds-bg-weak">
                 <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/50" />
+                  <div className="w-3 h-3 rounded-full bg-ds-error-base/80" />
+                  <div className="w-3 h-3 rounded-full bg-ds-warning-base/80" />
+                  <div className="w-3 h-3 rounded-full bg-ds-success-base/80" />
                 </div>
                 <div className="flex gap-4">
                   {snippets.map((s, i) => (
                     <button
                       key={s.id}
                       onClick={() => setActiveTab(i)}
-                      className={`text-[10px] font-black uppercase tracking-widest transition-colors ${activeTab === i ? s.color : 'text-slate-500 hover:text-slate-300'}`}
+                      className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${activeTab === i ? `${s.color} font-black` : 'text-ds-text-disabled hover:text-ds-text-sub'}`}
                     >
                       {s.label}
                     </button>
@@ -118,21 +112,21 @@ export function Hero() {
               </div>
 
               {/* Code Content */}
-              <div className="p-8 font-mono text-sm leading-relaxed overflow-x-auto min-h-[240px]">
+              <div className="p-8 font-mono text-sm leading-relaxed overflow-x-auto min-h-[240px] selection:bg-ds-feature-light/20">
                 <div className="flex gap-6">
-                  <div className="text-slate-600 text-right select-none">
+                  <div className="text-ds-text-disabled text-right select-none">
                     {Array.from({ length: 8 }).map((_, i) => (
                       <div key={i}>{i + 1}</div>
                     ))}
                   </div>
-                  <pre className="text-slate-300">
+                  <pre className="text-ds-text-strong">
                     <code>
                       {snippets[activeTab].code.split('\n').map((line, i) => (
                         <div key={i} className="whitespace-pre">
                           {line.split(/([{}()@[\],.'])/).map((part, j) => {
-                            if (['{', '}', '(', ')', '[', ']', '@'].includes(part)) return <span key={j} className="text-indigo-400">{part}</span>;
-                            if (part.match(/['].*[']/)) return <span key={j} className="text-emerald-400">{part}</span>;
-                            if (part.match(/useQuery|export|async|function|class|@Controller|@Get/)) return <span key={j} className="text-blue-400 font-bold">{part}</span>;
+                            if (['{', '}', '(', ')', '[', ']', '@'].includes(part)) return <span key={j} className="text-ds-feature-base">{part}</span>;
+                            if (part.match(/['].*[']/)) return <span key={j} className="text-ds-success-dark">{part}</span>;
+                            if (part.match(/useQuery|export|async|function|class|@Controller|@Get/)) return <span key={j} className="text-ds-info-base font-semibold">{part}</span>;
                             return <span key={j}>{part}</span>;
                           })}
                         </div>
@@ -143,27 +137,16 @@ export function Hero() {
               </div>
 
               {/* Window Footer */}
-              <div className="px-6 py-3 bg-white/5 border-t border-white/5 flex items-center justify-between">
+              <div className="px-6 py-3 bg-ds-bg-weak border-t border-ds-stroke-soft flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${snippets[activeTab].color.replace('text', 'bg')} animate-pulse`} />
-                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Live Architectural Pattern</span>
+                  <span className="text-[10px] text-ds-text-soft font-bold uppercase tracking-widest">Live Architectural Pattern</span>
                 </div>
-                <div className="text-[10px] text-slate-600 font-bold">UTF-8</div>
+                <div className="text-[10px] text-ds-text-disabled font-bold">UTF-8</div>
               </div>
             </div>
-
-            {/* Floating Accents */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full" />
-            <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-indigo-500/10 blur-3xl rounded-full" />
           </div>
         </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-20">
-        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-        </svg>
       </div>
     </section>
   );

@@ -2,14 +2,11 @@
 
 import { Nav } from "@/components/nav";
 import { Hero } from "./components/Hero";
-import { Stats } from "./components/Stats";
 import { CoursePaths } from "./components/CoursePaths";
 import { Roadmap } from "./components/Roadmap";
-import { Testimonials } from "./components/Testimonials";
 import { Community } from "./components/Community";
 import { FAQ } from "./components/FAQ";
 import { Footer } from "./components/Footer";
-
 
 /**
  * LearnHub - The primary landing page for LearnCraft.
@@ -19,41 +16,25 @@ import { Footer } from "./components/Footer";
  */
 export default function LearnHub(): JSX.Element {
   return (
-    <div className="min-h-screen  bg-background text-foreground selection:bg-blue-500/30 overflow-x-hidden transition-colors duration-300">
+    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20 overflow-x-hidden transition-colors duration-300">
       {/* Navigation */}
       <Nav />
 
-      <main className="max-w-7xl mx-auto">
-
+      <main className="max-w-[95rem] mx-auto px-6 lg:px-8">
         <Hero />
-
-
-        <Stats />
-
 
         <CoursePaths />
 
-
         <Roadmap />
 
-
-        <Testimonials />
-
-
         <Community />
-
 
         <FAQ />
       </main>
 
       {/* Global Footer */}
       <Footer />
-
-      {/* Global Background Decorative Glows */}
-      <div className="fixed inset-0 -z-50 pointer-events-none">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-600/5 blur-[150px] -mr-96 -mt-96" />
-        <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-indigo-600/5 blur-[150px] -ml-96 -mb-96" />
-      </div>
+    
     </div>
   );
 }
