@@ -63,7 +63,6 @@ export function Nav(): JSX.Element {
                   { name: "Next.js", href: "/learn/nextjs" },
                   { name: "TanStack", href: "/learn/tanstack" },
                   { name: "NestJS", href: "/learn/nestjs" },
-                  { name: "Roadmap", href: "#roadmap" },
                 ].map((item) => (
                   <Link
                     key={item.name}

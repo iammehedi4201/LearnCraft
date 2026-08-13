@@ -1,6 +1,5 @@
 "use client";
 
-import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
 import { QuickCheck } from "./quick-check";
 import { Playground } from "@/components/playground/Playground";
 import {
@@ -8,7 +7,6 @@ import {
   TopicHeader,
   SectionHeading,
   AnalogyBox,
-  MistakeBox,
   SummaryBox,
   Divider,
   PredictOutputBox,

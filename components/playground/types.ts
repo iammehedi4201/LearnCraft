@@ -124,7 +124,7 @@ export interface PlaygroundRuntime {
 export interface PlaygroundProps {
   runtime: PlaygroundRuntimeType;
   language?: string;               // Display label (e.g. "TypeScript")
-  starterCode: string;
+  starterCode?: string;
   exercise?: PlaygroundExercise;   // If provided, enables exercise mode
   className?: string;
   height?: string;                 // Minimum height (default: "240px", automatically expands to fit all code without scrolling)
