@@ -17,14 +17,11 @@ import { useRevision } from "@/context/revision-context";
 import { AnnotationItem, HighlightColor } from "@/types/revision";
 
 const COLOR_CLASSES: Record<HighlightColor, string> = {
-  feature:
-    "bg-ds-feature-lighter text-ds-feature-dark border-b-2 border-ds-feature-base",
-  away: "bg-ds-away-lighter text-ds-away-dark border-b-2 border-ds-away-base",
-  highlighted:
-    "bg-ds-highlighted-lighter text-ds-highlighted-dark border-b-2 border-ds-highlighted-base",
-  success:
-    "bg-ds-success-lighter text-ds-success-dark border-b-2 border-ds-success-base",
-  info: "bg-ds-info-lighter text-ds-info-dark border-b-2 border-ds-info-base",
+  feature: "border-b-2 border-dashed border-ds-feature-base hover:border-solid",
+  away: "border-b-2 border-dashed border-ds-away-base hover:border-solid",
+  highlighted: "border-b-2 border-dashed border-ds-highlighted-base hover:border-solid",
+  success: "border-b-2 border-dashed border-ds-success-base hover:border-solid",
+  info: "border-b-2 border-dashed border-ds-info-base hover:border-solid",
 };
 
 export function LessonAnnotationLayer(): JSX.Element | null {
@@ -46,6 +43,8 @@ export function LessonAnnotationLayer(): JSX.Element | null {
     const cleanupExistingMarks = () => {
       const marks = document.querySelectorAll("mark[data-lc-highlight='true']");
       marks.forEach((mark) => {
+        const badges = mark.querySelectorAll(".lc-note-pill");
+        badges.forEach((b) => b.remove());
         const parent = mark.parentNode;
         if (parent) {
           // Replace mark with text content
@@ -118,7 +117,7 @@ export function LessonAnnotationLayer(): JSX.Element | null {
 
             const colorClass =
               COLOR_CLASSES[annotation.color] || COLOR_CLASSES.feature;
-            mark.className = `lc-annotation-mark ${colorClass} rounded px-0.5 py-0.5 cursor-pointer font-medium transition-all duration-300 hover:brightness-95 inline`;
+            mark.className = `lc-annotation-mark ${colorClass} bg-transparent text-inherit cursor-pointer transition-all duration-200 inline`;
 
             // Wrap content
             try {
