@@ -6,6 +6,11 @@ import "@/components/playground/playground.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/components/query-provider";
 import { ReadingControlPanel } from "@/components/reading-control-panel";
+import { RevisionProvider } from "@/context/revision-context";
+import { SelectionToolbar } from "@/components/revision/SelectionToolbar";
+import { NoteDialog } from "@/components/revision/NoteDialog";
+import { ExistingHighlightPopover } from "@/components/revision/ExistingHighlightPopover";
+import { LessonAnnotationLayer } from "@/components/revision/LessonAnnotationLayer";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,8 +47,14 @@ export default function RootLayout({
       >
         <QueryProvider>
           <ThemeProvider>
-            {children}
-            <ReadingControlPanel />
+            <RevisionProvider>
+              {children}
+              <ReadingControlPanel />
+              <SelectionToolbar />
+              <NoteDialog />
+              <ExistingHighlightPopover />
+              <LessonAnnotationLayer />
+            </RevisionProvider>
           </ThemeProvider>
         </QueryProvider>
       </body>

@@ -13,7 +13,7 @@ interface PlaygroundExamplePanelProps {
 
 export function PlaygroundExamplePanel({
   code,
-  language,
+  language: _language,
   exercise,
   onCopyToPractice,
 }: PlaygroundExamplePanelProps) {

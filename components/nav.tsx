@@ -14,9 +14,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
+import { useRevision } from "@/context/revision-context";
 
 export function Nav(): JSX.Element {
   const [isScrolled, setIsScrolled] = useState(false);
+  let totalRevisions = 0;
+  try {
+    const revision = useRevision();
+    totalRevisions = revision.stats.total;
+  } catch {
+    // If rendered outside provider
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,13 +72,29 @@ export function Nav(): JSX.Element {
                   { name: "TanStack", href: "/learn/tanstack" },
                   { name: "NestJS", href: "/learn/nestjs" },
                   { name: "Curriculums", href: "/learn#curriculums" },
+                  {
+                    name: "My Revision",
+                    href: "/revision",
+                    badge: totalRevisions > 0 ? totalRevisions : undefined,
+                    highlight: true,
+                  },
                 ].map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors relative group py-1"
+                    className={`text-sm font-semibold transition-colors relative group py-1 flex items-center gap-1.5 ${
+                      item.highlight
+                        ? "text-ds-feature-dark font-bold hover:text-ds-feature-base"
+                        : "text-ds-text-sub hover:text-ds-text-strong"
+                    }`}
                   >
+                    {item.highlight && <span className="text-xs">⚡</span>}
                     {item.name}
+                    {item.badge !== undefined && (
+                      <span className="px-1.5 py-0.2 text-[10px] font-black rounded-full bg-ds-feature-lighter text-ds-feature-dark border border-ds-feature-light">
+                        {item.badge}
+                      </span>
+                    )}
                     <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-ds-feature-base group-hover:w-full transition-all duration-300 rounded-full" />
                   </Link>
                 ))}
@@ -80,10 +104,10 @@ export function Nav(): JSX.Element {
             <div className="flex items-center gap-4">
               <ThemeToggle />
               <Link
-                href="/learn/nextjs"
-                className="hidden sm:inline-flex px-4 py-2 bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-ds-feature-base/15"
+                href="/revision"
+                className="hidden sm:inline-flex px-4 py-2 bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-ds-feature-base/15 items-center gap-1.5"
               >
-                Start Learning
+                <span>⚡ Quick Revision</span>
               </Link>
             </div>
           </div>
