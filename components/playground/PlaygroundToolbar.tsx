@@ -4,6 +4,7 @@ interface PlaygroundToolbarProps {
   onRun: () => void;
   onCheck?: () => void;
   onHint?: () => void;
+  onFormat?: () => void;
   onReset: () => void;
   onCopy: () => void;
   onFullscreen: () => void;
@@ -19,6 +20,7 @@ export function PlaygroundToolbar({
   onRun,
   onCheck,
   onHint,
+  onFormat,
   onReset,
   onCopy,
   onFullscreen,
@@ -43,6 +45,20 @@ export function PlaygroundToolbar({
           <span className="playground-btn-icon">{isRunning ? "⏳" : "▶"}</span>
           <span>{isRunning ? "Running" : "Run"}</span>
         </button>
+
+        {/* Format */}
+        {onFormat && (
+          <button
+            className="playground-btn playground-btn--ghost"
+            onClick={onFormat}
+            disabled={isRunning}
+            title="Format Code (Shift+Alt+F)"
+            id="playground-format-btn"
+          >
+            <span className="playground-btn-icon">✨</span>
+            <span>Format</span>
+          </button>
+        )}
 
         {/* Check Answer */}
         {hasExercise && onCheck && (

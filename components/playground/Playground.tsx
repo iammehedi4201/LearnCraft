@@ -21,6 +21,7 @@ import type {
   ValidationResult,
 } from "./types";
 import { createRuntime, getRuntimeLabel } from "./runtimes/runtime-registry";
+import { formatCode } from "./code-formatter";
 import { PlaygroundEditor } from "./PlaygroundEditor";
 import { PlaygroundOutput } from "./PlaygroundOutput";
 import { PlaygroundToolbar } from "./PlaygroundToolbar";
@@ -90,16 +91,30 @@ export function Playground({
 
   const displayLanguage = language || getRuntimeLabel(runtimeType);
 
+  // ─── Code Formatting ───
+  const handleFormat = useCallback(() => {
+    const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
+    const currentCode = is3Pane ? practiceCode : code;
+    if (!currentCode.trim()) return;
+
+    const formatted = formatCode(currentCode, displayLanguage);
+    if (is3Pane) {
+      setPracticeCode(formatted);
+    } else {
+      setCode(formatted);
+    }
+  }, [isFullscreen, expandedLayoutMode, practiceCode, code, displayLanguage]);
+
   // ─── Actions ───
 
   const handleRun = useCallback(async () => {
     if (isRunning) return;
 
     const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
-    const codeToRun = is3Pane ? practiceCode : code;
+    const rawCode = is3Pane ? practiceCode : code;
 
     // If practice workspace is empty, provide a gentle helpful notification
-    if (!codeToRun.trim()) {
+    if (!rawCode.trim()) {
       setOutput([
         {
           type: "info",
@@ -109,6 +124,16 @@ export function Playground({
       ]);
       return;
     }
+
+    // Auto-format code before running
+    const formattedCode = formatCode(rawCode, displayLanguage);
+    if (is3Pane) {
+      setPracticeCode(formattedCode);
+    } else {
+      setCode(formattedCode);
+    }
+
+    const codeToRun = formattedCode;
 
     setIsRunning(true);
     setOutput([]);
@@ -135,7 +160,7 @@ export function Playground({
     } finally {
       setIsRunning(false);
     }
-  }, [code, practiceCode, isFullscreen, expandedLayoutMode, runtimeType, isRunning, getRuntime]);
+  }, [code, practiceCode, isFullscreen, expandedLayoutMode, runtimeType, isRunning, getRuntime, displayLanguage]);
 
   const handleCheck = useCallback(async () => {
     if (isRunning || !exercise) return;
@@ -544,6 +569,8 @@ export function Playground({
                 language={displayLanguage}
                 minHeight={height}
                 isFullscreen={isFullscreen}
+                errorLine={error?.line}
+                onFormat={handleFormat}
                 placeholder={`// ⚡ Practice Workspace\n// Write your ${displayLanguage} code here from scratch...\n// (or click "⚡ Copy to Practice" on the Example panel to load starter code)`}
               />
             </div>
@@ -597,6 +624,9 @@ export function Playground({
                 isRunning={isRunning}
                 duration={duration}
                 onClear={handleClearOutput}
+                onJumpToLine={(line) => {
+                  setError((prev) => (prev ? { ...prev, line } : undefined));
+                }}
               />
             </div>
           </>
@@ -616,6 +646,8 @@ export function Playground({
                 language={displayLanguage}
                 minHeight={height}
                 isFullscreen={isFullscreen}
+                errorLine={error?.line}
+                onFormat={handleFormat}
               />
             </div>
 
@@ -646,7 +678,6 @@ export function Playground({
                   <circle cx="2" cy="8" r="1.2" />
                   <circle cx="6" cy="8" r="1.2" />
                   <circle cx="2" cy="14" r="1.2" />
-                  <circle cx="6" cy="8" r="1.2" />
                   <circle cx="6" cy="14" r="1.2" />
                 </svg>
               </div>
@@ -663,6 +694,9 @@ export function Playground({
                 isRunning={isRunning}
                 duration={duration}
                 onClear={handleClearOutput}
+                onJumpToLine={(line) => {
+                  setError((prev) => (prev ? { ...prev, line } : undefined));
+                }}
               />
             </div>
           </>
@@ -684,6 +718,7 @@ export function Playground({
       {/* Toolbar */}
       <PlaygroundToolbar
         onRun={handleRun}
+        onFormat={handleFormat}
         onCheck={hasExercise ? handleCheck : undefined}
         onHint={hasHints ? handleHint : undefined}
         onReset={handleReset}

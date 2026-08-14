@@ -181,6 +181,68 @@
   display: block;
 }
 
+.playground-line-number--error {
+  color: #F87171 !important;
+  font-weight: 800 !important;
+  background: rgba(248, 113, 113, 0.18);
+  border-left: 2px solid #F87171;
+  position: relative;
+}
+
+.playground-line-error-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.playground-line-error-dot {
+  font-size: 0.5rem;
+  color: #F87171;
+  animation: playground-pulse-red 1.5s infinite ease-in-out;
+}
+
+@keyframes playground-pulse-red {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+.playground-error-line-highlight {
+  position: absolute;
+  left: 2.75rem;
+  right: 0;
+  background: rgba(248, 113, 113, 0.12);
+  border-left: 3px solid #F87171;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 1rem;
+  animation: playground-error-glow 2s infinite ease-in-out;
+}
+
+@keyframes playground-error-glow {
+  0%, 100% { background: rgba(248, 113, 113, 0.12); }
+  50% { background: rgba(248, 113, 113, 0.22); }
+}
+
+.playground-error-line-pill {
+  font-size: 0.625rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #F87171;
+  background: rgba(248, 113, 113, 0.2);
+  border: 1px solid rgba(248, 113, 113, 0.4);
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.375rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 .playground-highlight-layer {
   position: absolute;
   top: 0;
@@ -740,6 +802,29 @@
   color: rgba(255, 255, 255, 0.45);
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
   word-break: break-all;
+}
+
+.playground-jump-to-line-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: #F87171;
+  background: rgba(248, 113, 113, 0.15);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  padding: 0.3125rem 0.625rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.playground-jump-to-line-btn:hover {
+  background: rgba(248, 113, 113, 0.3);
+  color: #FFFFFF;
+  border-color: #F87171;
+  transform: translateX(2px);
 }
 
 /* ─── Test Results ─── */

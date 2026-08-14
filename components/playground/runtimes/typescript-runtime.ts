@@ -22,12 +22,19 @@ import type {
   TestResult,
 } from "../types";
 
+import { extractLineFromStack, detectSyntaxErrorLine } from "../error-detector";
+
 // ─── Beginner-friendly error transformations ───
 const ERROR_PATTERNS: {
   pattern: RegExp;
   friendly: (match: RegExpMatchArray) => string;
   suggestion?: (match: RegExpMatchArray) => string;
 }[] = [
+  {
+    pattern: /missing \)\s*after argument list/i,
+    friendly: () => `Missing closing ')' or missing comma (,) between arguments.`,
+    suggestion: () => `Check your function or constructor call. Make sure all arguments are separated by commas: e.g. ("Alice", 85).`,
+  },
   {
     pattern: /Type '(.+)' is not assignable to type '(.+)'/,
     friendly: (m) => `Type '${m[1]}' is not assignable to type '${m[2]}'.`,
@@ -75,10 +82,25 @@ const ERROR_PATTERNS: {
   },
 ];
 
-function transformError(rawMessage: string): PlaygroundError {
-  const lineMatch = rawMessage.match(/(?:at\s+.*:|<anonymous>:|\((\d+),(\d+)\))(\d+):?(\d+)?/);
-  const line = lineMatch ? parseInt(lineMatch[3] || lineMatch[1], 10) : undefined;
-  const column = lineMatch ? parseInt(lineMatch[4] || lineMatch[2], 10) : undefined;
+function transformError(rawMessage: string, originalCode?: string): PlaygroundError {
+  // First, check static syntax errors if original code is available
+  if (originalCode) {
+    const staticErr = detectSyntaxErrorLine(originalCode);
+    if (staticErr && staticErr.line) {
+      return {
+        message: staticErr.message,
+        technicalMessage: rawMessage,
+        line: staticErr.line,
+        column: staticErr.column,
+        suggestion: staticErr.suggestion,
+      };
+    }
+  }
+
+  // Second, extract line/col from stack trace
+  const extracted = extractLineFromStack(rawMessage);
+  let line = extracted.line;
+  let column = extracted.column;
 
   for (const { pattern, friendly, suggestion } of ERROR_PATTERNS) {
     const match = rawMessage.match(pattern);
@@ -94,7 +116,7 @@ function transformError(rawMessage: string): PlaygroundError {
   }
 
   return {
-    message: rawMessage.replace(/TS\d+:\s*/, ""),
+    message: rawMessage.replace(/TS\d+:\s*/, "").replace(/^SyntaxError:\s*/i, "").replace(/^TypeError:\s*/i, ""),
     technicalMessage: rawMessage,
     line,
     column,
@@ -103,16 +125,21 @@ function transformError(rawMessage: string): PlaygroundError {
 }
 
 // ─── Local Zero-Network TypeScript Transpiler ───
+// Guaranteed to preserve exact 1-to-1 line numbers with user input!
 export function transpileTypeScriptLocally(code: string): string {
   let js = code;
 
-  // 1. Remove multi-line interface declarations
-  js = js.replace(/interface\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\s+extends\s+[^{]+)?\s*\{[\s\S]*?\}/g, "");
+  // 1. Remove multi-line interface declarations (preserve newlines so line numbers match 1-to-1)
+  js = js.replace(/interface\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\s+extends\s+[^{]+)?\s*\{[\s\S]*?\}/g, (match) => {
+    return match.replace(/[^\n]/g, " ");
+  });
 
-  // 2. Remove type alias declarations
-  js = js.replace(/type\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?\s*=[^;]+;/g, "");
+  // 2. Remove type alias declarations (preserve newlines)
+  js = js.replace(/type\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?\s*=[^;]+;/g, (match) => {
+    return match.replace(/[^\n]/g, " ");
+  });
 
-  // 3. Transform enums to plain JS objects
+  // 3. Transform enums to plain JS objects (preserve single line / structure)
   js = js.replace(/enum\s+([A-Za-z0-9_$]+)\s*\{([^}]+)\}/g, (_match, enumName, members) => {
     const entries = members
       .split(",")
@@ -129,7 +156,7 @@ export function transpileTypeScriptLocally(code: string): string {
   });
 
   // 4. Transform TypeScript constructor parameter properties: e.g. constructor(public name: string, public price: number) {}
-  // Automatically inject this.name = name; this.price = price; into the constructor body!
+  // Keep on same line without inserting extra newlines to preserve line numbering!
   js = js.replace(/constructor\s*\(([^)]*)\)\s*\{/g, (match, paramStr) => {
     const params = paramStr.split(",").map((p: string) => p.trim()).filter(Boolean);
     const assignments: string[] = [];
@@ -148,7 +175,7 @@ export function transpileTypeScriptLocally(code: string): string {
     }
 
     if (assignments.length > 0) {
-      return `constructor(${cleanedParams.join(", ")}) {\n    ${assignments.join(" ")}\n    `;
+      return `constructor(${cleanedParams.join(", ")}) { ${assignments.join(" ")} `;
     }
     return match;
   });
@@ -156,25 +183,25 @@ export function transpileTypeScriptLocally(code: string): string {
   // 5. Remove access modifiers: public, private, protected, readonly, override, abstract
   js = js.replace(/\b(public|private|protected|readonly|override|abstract)\s+/g, "");
 
-  // 5. Remove 'as Type' type assertions
+  // 6. Remove 'as Type' type assertions
   js = js.replace(/\s+as\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?/g, "");
 
-  // 6. Remove generic type arguments: e.g. Promise.resolve<string>('...')
+  // 7. Remove generic type arguments: e.g. Promise.resolve<string>('...')
   js = js.replace(/<[A-Za-z0-9_$,\s|&<>[\]]+>(?=\s*\()/g, "");
 
-  // 7. Remove function return type annotations: e.g. function foo(): string { or ): Promise<void> {
+  // 8. Remove function return type annotations: e.g. function foo(): string { or ): Promise<void> {
   js = js.replace(/\)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[{=;])/g, ")");
 
-  // 8. Remove parameter type annotations: e.g. (name: string, email: string, age: number)
+  // 9. Remove parameter type annotations: e.g. (name: string, email: string, age: number)
   js = js.replace(/:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[,)=])/g, "");
 
-  // 9. Remove variable type annotations: e.g. let userName: string = "Mehedi";
+  // 10. Remove variable type annotations: e.g. let userName: string = "Mehedi";
   js = js.replace(/((?:let|const|var)\s+[A-Za-z0-9_$]+)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[=;])/g, "$1");
 
-  // 10. Remove class field type annotations: e.g. age: number = 25;
+  // 11. Remove class field type annotations: e.g. age: number = 25;
   js = js.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[=;])/g, "$1");
 
-  // 11. Loop protection to guard against true infinite loops
+  // 12. Loop protection to guard against true infinite loops (preserves same-line structure)
   let guardCounter = 0;
   js = js.replace(/\bwhile\s*\(([^)]+)\)/g, (_m, cond) => {
     const id = `__lc_w_${guardCounter++}`;
@@ -416,7 +443,7 @@ self.onmessage = async function(e) {
   } catch (err) {
     self.postMessage({
       type: 'error',
-      message: err instanceof Error ? err.message : String(err)
+      message: err instanceof Error ? (err.stack || err.message) : String(err)
     });
     self.postMessage({ type: 'done', success: false });
   }
@@ -456,7 +483,7 @@ self.onmessage = async function(e) {
                 });
               }
             } else if (data.type === "error") {
-              error = transformError(data.message || "Execution error");
+              error = transformError(data.message || "Execution error", input.code);
               output.push({
                 type: "error",
                 content: error.message,
@@ -479,7 +506,7 @@ self.onmessage = async function(e) {
             clearTimeout(workerTimeout);
             worker.terminate();
             URL.revokeObjectURL(workerUrl);
-            const errObj = transformError(err.message || "Worker error");
+            const errObj = transformError(err.message || "Worker error", input.code);
             output.push({
               type: "error",
               content: errObj.message,
@@ -537,7 +564,7 @@ self.onmessage = async function(e) {
             });
           }
         } else if (data.type === "playground-error") {
-          error = transformError(data.message || "Execution error");
+          error = transformError(data.message || "Execution error", input.code);
           output.push({
             type: "error",
             content: error.message,

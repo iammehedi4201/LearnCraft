@@ -25,6 +25,8 @@ interface PlaygroundEditorProps {
   readOnly?: boolean;
   isFullscreen?: boolean;
   placeholder?: string;
+  errorLine?: number;
+  onFormat?: () => void;
 }
 
 export function PlaygroundEditor({
@@ -35,6 +37,8 @@ export function PlaygroundEditor({
   readOnly = false,
   isFullscreen = false,
   placeholder,
+  errorLine,
+  onFormat,
 }: PlaygroundEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
@@ -86,6 +90,16 @@ export function PlaygroundEditor({
       // Autocomplete interception (Tab, Enter, ArrowUp, ArrowDown, Escape)
       const intercepted = handleAutocompleteKeyDown(e);
       if (intercepted) return;
+
+      // Format code shortcut: Shift+Alt+F or Ctrl+Shift+F or Ctrl+Alt+F
+      if (
+        (e.shiftKey && e.altKey && (e.key === "f" || e.key === "F")) ||
+        (e.ctrlKey && e.shiftKey && (e.key === "f" || e.key === "F" || e.key === "i" || e.key === "I"))
+      ) {
+        e.preventDefault();
+        onFormat?.();
+        return;
+      }
 
       const textarea = e.currentTarget;
       const start = textarea.selectionStart;
@@ -228,6 +242,15 @@ export function PlaygroundEditor({
     [onChange]
   );
 
+  // Auto-scroll to error line when error occurs
+  useEffect(() => {
+    if (errorLine && errorLine > 0 && textareaRef.current) {
+      const lineHeight = 26;
+      const targetScroll = Math.max(0, (errorLine - 3) * lineHeight);
+      textareaRef.current.scrollTo({ top: targetScroll, behavior: "smooth" });
+    }
+  }, [errorLine]);
+
   // Keep focus and sync scroll in fullscreen
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -266,12 +289,41 @@ export function PlaygroundEditor({
         aria-hidden="true"
         style={isFullscreen ? undefined : { height: "100%" }}
       >
-        {Array.from({ length: lineCount }, (_, i) => (
-          <span key={i} className="playground-line-number">
-            {i + 1}
-          </span>
-        ))}
+        {Array.from({ length: lineCount }, (_, i) => {
+          const lineNum = i + 1;
+          const isErrorLine = errorLine === lineNum;
+          return (
+            <span
+              key={i}
+              className={`playground-line-number ${isErrorLine ? "playground-line-number--error" : ""}`}
+              title={isErrorLine ? `Error on line ${lineNum}` : undefined}
+            >
+              {isErrorLine ? (
+                <span className="playground-line-error-indicator">
+                  <span className="playground-line-error-dot">●</span>
+                  {lineNum}
+                </span>
+              ) : (
+                lineNum
+              )}
+            </span>
+          );
+        })}
       </div>
+
+      {/* Error Line Highlight Background */}
+      {errorLine && errorLine <= lineCount && (
+        <div
+          className="playground-error-line-highlight"
+          style={{
+            top: `${14 + (errorLine - 1) * 26}px`, // 0.875rem (14px) vertical padding + line offset
+            height: "26px",
+          }}
+          aria-hidden="true"
+        >
+          <span className="playground-error-line-pill">Line {errorLine} Error</span>
+        </div>
+      )}
 
       {/* Syntax Highlight Layer */}
       <pre

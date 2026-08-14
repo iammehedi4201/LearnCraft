@@ -9,6 +9,7 @@ interface PlaygroundOutputProps {
   isRunning: boolean;
   duration?: number;
   onClear: () => void;
+  onJumpToLine?: (line: number) => void;
 }
 
 export function PlaygroundOutput({
@@ -17,6 +18,7 @@ export function PlaygroundOutput({
   isRunning,
   duration,
   onClear,
+  onJumpToLine,
 }: PlaygroundOutputProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showTechnical, setShowTechnical] = useState(false);
@@ -88,13 +90,25 @@ export function PlaygroundOutput({
                 <div className="playground-error-badge">
                   <span>❌</span>
                   <span>
-                    {error.line ? `Error — Line ${error.line}` : "Error"}
+                    {error.line ? `Error on Line ${error.line}` : "Error"}
                   </span>
                 </div>
                 <div className="playground-error-message">{error.message}</div>
                 {error.suggestion && (
                   <div className="playground-error-suggestion">
                     💡 {error.suggestion}
+                  </div>
+                )}
+                {error.line && onJumpToLine && (
+                  <div>
+                    <button
+                      className="playground-jump-to-line-btn"
+                      onClick={() => onJumpToLine(error.line!)}
+                      title={`Scroll and focus Line ${error.line}`}
+                    >
+                      <span>🎯 Jump to Line {error.line}</span>
+                      <span>→</span>
+                    </button>
                   </div>
                 )}
                 {error.technicalMessage &&
