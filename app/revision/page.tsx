@@ -226,7 +226,7 @@ export default function MyRevisionPage(): JSX.Element {
       {/* Global Navigation */}
       <Nav />
 
-      <main className="max-w-[95rem] mx-auto px-6 lg:px-8 pt-8">
+      <main className="max-w-[95rem] mx-auto px-6 lg:px-8 pt-8 pb-16">
         {/* Header Hero Banner */}
         <section className="relative overflow-hidden p-8 lg:p-10 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm mb-10">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
