@@ -1088,6 +1088,31 @@ export const HTML_CSS_SUGGESTIONS: AutocompleteSuggestion[] = [
   { label: "justify-content", insertText: "justify-content: center;", kind: "property", detail: "CSS justify-content", boost: 85 },
 ];
 
+// ─── TypeScript Primitive & Built-in Types ───
+export const TS_TYPE_SUGGESTIONS: AutocompleteSuggestion[] = [
+  { label: "string", insertText: "string", kind: "type", detail: "TypeScript string type", documentation: "Represents textual data in TypeScript.", boost: 100 },
+  { label: "number", insertText: "number", kind: "type", detail: "TypeScript number type", documentation: "Represents double-precision 64-bit IEEE 754 numeric values.", boost: 100 },
+  { label: "boolean", insertText: "boolean", kind: "type", detail: "TypeScript boolean type", documentation: "Represents true or false values.", boost: 100 },
+  { label: "any", insertText: "any", kind: "type", detail: "TypeScript any type", documentation: "Opt-out of type-checking; allows any value.", boost: 95 },
+  { label: "void", insertText: "void", kind: "type", detail: "TypeScript void type", documentation: "Absence of having any type at all; commonly function return type.", boost: 95 },
+  { label: "unknown", insertText: "unknown", kind: "type", detail: "TypeScript unknown type", documentation: "Type-safe counterpart of any; must narrow before use.", boost: 90 },
+  { label: "never", insertText: "never", kind: "type", detail: "TypeScript never type", documentation: "Values that never occur (e.g. infinite loops, thrown errors).", boost: 85 },
+  { label: "object", insertText: "object", kind: "type", detail: "TypeScript object type", documentation: "Non-primitive type (anything that is not number, string, boolean, etc.).", boost: 90 },
+  { label: "Array<T>", insertText: "Array<string>", cursorOffset: 6, kind: "type", detail: "TypeScript Array<T> generic", documentation: "Generic array type.", boost: 92 },
+  { label: "Record<K, V>", insertText: "Record<string, any>", cursorOffset: 7, kind: "type", detail: "TypeScript Record<K, V> utility type", documentation: "Constructs an object type whose property keys are K and values are V.", boost: 90 },
+  { label: "Promise<T>", insertText: "Promise<void>", cursorOffset: 8, kind: "type", detail: "TypeScript Promise<T> generic", documentation: "Represents the eventual completion (or failure) of an asynchronous operation.", boost: 92 },
+  { label: "Date", insertText: "Date", kind: "type", detail: "JavaScript / TypeScript Date type", documentation: "Represents a single moment in time.", boost: 88 },
+  { label: "RegExp", insertText: "RegExp", kind: "type", detail: "Regular expression object", documentation: "Used for matching text with a pattern.", boost: 85 },
+  { label: "String", insertText: "String", kind: "type", detail: "String wrapper object type", documentation: "Wrapper object for primitive strings.", boost: 85 },
+  { label: "Number", insertText: "Number", kind: "type", detail: "Number wrapper object type", documentation: "Wrapper object for primitive numbers.", boost: 85 },
+  { label: "Boolean", insertText: "Boolean", kind: "type", detail: "Boolean wrapper object type", documentation: "Wrapper object for primitive booleans.", boost: 85 },
+  { label: "Function", insertText: "Function", kind: "type", detail: "JavaScript Function type", documentation: "Global Function constructor and type.", boost: 80 },
+  { label: "Map<K, V>", insertText: "Map<string, any>", cursorOffset: 4, kind: "type", detail: "JavaScript Map collection", documentation: "Key-value pair collection.", boost: 85 },
+  { label: "Set<T>", insertText: "Set<string>", cursorOffset: 4, kind: "type", detail: "JavaScript Set collection", documentation: "Collection of unique values.", boost: 85 },
+  { label: "Partial<T>", insertText: "Partial<Type>", cursorOffset: 8, kind: "type", detail: "TypeScript Partial<T> utility", documentation: "Makes all properties in T optional.", boost: 85 },
+  { label: "Readonly<T>", insertText: "Readonly<Type>", cursorOffset: 9, kind: "type", detail: "TypeScript Readonly<T> utility", documentation: "Makes all properties in T readonly.", boost: 85 },
+];
+
 /**
  * Returns static autocomplete suggestions for a given runtime / language.
  */
@@ -1097,8 +1122,8 @@ export function getSuggestionsForLanguage(language: string): AutocompleteSuggest
     return SQL_SUGGESTIONS;
   }
   if (lang.includes("html") || lang.includes("css")) {
-    return [...HTML_CSS_SUGGESTIONS, ...JS_TS_SUGGESTIONS];
+    return [...HTML_CSS_SUGGESTIONS, ...JS_TS_SUGGESTIONS, ...TS_TYPE_SUGGESTIONS];
   }
   // Default: JavaScript / TypeScript / React / NestJS / Node
-  return JS_TS_SUGGESTIONS;
+  return [...JS_TS_SUGGESTIONS, ...TS_TYPE_SUGGESTIONS];
 }

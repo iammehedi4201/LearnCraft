@@ -5,6 +5,18 @@ import { useAutocomplete } from "./autocomplete/use-autocomplete";
 import { AutocompletePopover } from "./autocomplete/AutocompletePopover";
 import { highlightCode } from "./syntax-highlighter";
 
+// Pair mapping for auto-closing brackets and quotes
+const PAIR_MAP: Record<string, string> = {
+  "(": ")",
+  "{": "}",
+  "[": "]",
+  '"': '"',
+  "'": "'",
+  "`": "`",
+};
+
+const CLOSING_CHARS = new Set([")", "}", "]", '"', "'", "`"]);
+
 interface PlaygroundEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -66,7 +78,7 @@ export function PlaygroundEditor({
     }
   }, []);
 
-  // Handle tab key & autocomplete keyboard interactions
+  // Handle auto-closing pairs, tab key & autocomplete keyboard interactions
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
       if (readOnly) return;
@@ -75,40 +87,135 @@ export function PlaygroundEditor({
       const intercepted = handleAutocompleteKeyDown(e);
       if (intercepted) return;
 
+      const textarea = e.currentTarget;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+
+      // ─── 1. Auto-close Bracket and Quote Pairs (first, second, third brackets & quotes) ───
+      const openChar = e.key;
+      const matchingClose = PAIR_MAP[openChar];
+
+      if (matchingClose) {
+        // If user has selected text, wrap selection with the pair: e.g. "text", (text), {text}, [text]
+        if (start !== end) {
+          e.preventDefault();
+          const selectedText = value.substring(start, end);
+          const wrapped = openChar + selectedText + matchingClose;
+          const newValue = value.substring(0, start) + wrapped + value.substring(end);
+          onChange(newValue);
+          requestAnimationFrame(() => {
+            textarea.selectionStart = start + 1;
+            textarea.selectionEnd = start + 1 + selectedText.length;
+          });
+          return;
+        }
+
+        const prevChar = start > 0 ? value[start - 1] : "";
+        const nextChar = value[start] || "";
+
+        // Skip over quote if typed directly when already in front of closing quote
+        if ((openChar === "'" || openChar === '"' || openChar === "`") && openChar === nextChar) {
+          e.preventDefault();
+          requestAnimationFrame(() => {
+            textarea.selectionStart = textarea.selectionEnd = start + 1;
+          });
+          return;
+        }
+
+        // Don't auto-close single quote for apostrophe in words (e.g. don't, user's)
+        if (openChar === "'" && /[a-zA-Z0-9]/.test(prevChar)) {
+          return;
+        }
+
+        // Insert opening + closing pair and position cursor between them
+        e.preventDefault();
+        const newValue = value.substring(0, start) + openChar + matchingClose + value.substring(end);
+        onChange(newValue);
+        requestAnimationFrame(() => {
+          textarea.selectionStart = textarea.selectionEnd = start + 1;
+        });
+        return;
+      }
+
+      // ─── 2. Skip over closing character if user types it directly ───
+      if (CLOSING_CHARS.has(e.key)) {
+        if (start === end && value[start] === e.key) {
+          e.preventDefault();
+          requestAnimationFrame(() => {
+            textarea.selectionStart = textarea.selectionEnd = start + 1;
+          });
+          return;
+        }
+      }
+
+      // ─── 3. Smart Pair Deletion on Backspace (deletes matching pair together) ───
+      if (e.key === "Backspace") {
+        if (start === end && start > 0) {
+          const prev = value[start - 1];
+          const next = value[start];
+          if (PAIR_MAP[prev] === next) {
+            e.preventDefault();
+            const newValue = value.substring(0, start - 1) + value.substring(start + 1);
+            onChange(newValue);
+            requestAnimationFrame(() => {
+              textarea.selectionStart = textarea.selectionEnd = start - 1;
+            });
+            return;
+          }
+        }
+      }
+
+      // ─── 4. Tab Indentation ───
       if (e.key === "Tab") {
         e.preventDefault();
-        const textarea = e.currentTarget;
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-
         const newValue = value.substring(0, start) + "  " + value.substring(end);
         onChange(newValue);
 
-        // Restore cursor position after React re-render
         requestAnimationFrame(() => {
           textarea.selectionStart = textarea.selectionEnd = start + 2;
         });
+        return;
       }
 
-      // Auto-indent on Enter
+      // ─── 5. Smart Enter between Braces and Auto-Indent ───
       if (e.key === "Enter") {
         e.preventDefault();
-        const textarea = e.currentTarget;
-        const start = textarea.selectionStart;
         const currentLine = value.substring(0, start).split("\n").pop() || "";
         const indent = currentLine.match(/^\s*/)?.[0] || "";
-        // Extra indent after { or (
+
+        // Check if cursor is between { and } or ( and )
+        const prevChar = start > 0 ? value[start - 1] : "";
+        const nextChar = value[end] || "";
+
+        if (prevChar === "{" && nextChar === "}") {
+          const newValue =
+            value.substring(0, start) +
+            "\n" +
+            indent +
+            "  \n" +
+            indent +
+            value.substring(end);
+          onChange(newValue);
+          requestAnimationFrame(() => {
+            const newPos = start + 1 + indent.length + 2;
+            textarea.selectionStart = textarea.selectionEnd = newPos;
+          });
+          return;
+        }
+
+        // Standard Auto-indent
         const lastChar = currentLine.trimEnd().slice(-1);
         const extraIndent = lastChar === "{" || lastChar === "(" ? "  " : "";
 
         const newValue =
-          value.substring(0, start) + "\n" + indent + extraIndent + value.substring(textarea.selectionEnd);
+          value.substring(0, start) + "\n" + indent + extraIndent + value.substring(end);
         onChange(newValue);
 
         requestAnimationFrame(() => {
           const newPos = start + 1 + indent.length + extraIndent.length;
           textarea.selectionStart = textarea.selectionEnd = newPos;
         });
+        return;
       }
     },
     [value, onChange, readOnly, handleAutocompleteKeyDown]

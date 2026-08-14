@@ -128,7 +128,32 @@ export function transpileTypeScriptLocally(code: string): string {
     return `const ${enumName} = { ${entries} };`;
   });
 
-  // 4. Remove access modifiers: public, private, protected, readonly, override, abstract
+  // 4. Transform TypeScript constructor parameter properties: e.g. constructor(public name: string, public price: number) {}
+  // Automatically inject this.name = name; this.price = price; into the constructor body!
+  js = js.replace(/constructor\s*\(([^)]*)\)\s*\{/g, (match, paramStr) => {
+    const params = paramStr.split(",").map((p: string) => p.trim()).filter(Boolean);
+    const assignments: string[] = [];
+    const cleanedParams: string[] = [];
+
+    for (const p of params) {
+      // Matches: public name: string, private price: number, readonly id: string, etc.
+      const modifierMatch = p.match(/^(?:public|private|protected|readonly)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/);
+      if (modifierMatch) {
+        const paramName = modifierMatch[1];
+        assignments.push(`this.${paramName} = ${paramName};`);
+        cleanedParams.push(p.replace(/^(?:public|private|protected|readonly)\s+/, ""));
+      } else {
+        cleanedParams.push(p);
+      }
+    }
+
+    if (assignments.length > 0) {
+      return `constructor(${cleanedParams.join(", ")}) {\n    ${assignments.join(" ")}\n    `;
+    }
+    return match;
+  });
+
+  // 5. Remove access modifiers: public, private, protected, readonly, override, abstract
   js = js.replace(/\b(public|private|protected|readonly|override|abstract)\s+/g, "");
 
   // 5. Remove 'as Type' type assertions
