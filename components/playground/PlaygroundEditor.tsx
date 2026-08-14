@@ -1,6 +1,9 @@
 "use client";
 
 import { useRef, useCallback, useEffect, type ChangeEvent, type KeyboardEvent } from "react";
+import { useAutocomplete } from "./autocomplete/use-autocomplete";
+import { AutocompletePopover } from "./autocomplete/AutocompletePopover";
+import { highlightCode } from "./syntax-highlighter";
 
 interface PlaygroundEditorProps {
   value: string;
@@ -21,6 +24,26 @@ export function PlaygroundEditor({
 }: PlaygroundEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
+  const highlightRef = useRef<HTMLPreElement>(null);
+
+  // ─── Autocomplete System ───
+  const {
+    isOpen,
+    suggestions,
+    selectedIndex,
+    setSelectedIndex,
+    caretCoords,
+    tokenRange,
+    applySuggestion,
+    handleKeyDown: handleAutocompleteKeyDown,
+    closeSuggestions,
+  } = useAutocomplete({
+    textareaRef,
+    value,
+    onChange,
+    language,
+    readOnly,
+  });
 
   const lines = value.split("\n");
   const lineCount = Math.max(1, lines.length);
@@ -28,17 +51,27 @@ export function PlaygroundEditor({
   // Calculate dynamic content height: 26px line height (1.625rem) + 28px vertical padding (0.875rem * 2)
   const dynamicHeightPx = lineCount * 26 + 28;
 
-  // Sync scroll between textarea and line numbers (mainly in fullscreen mode)
+  // Sync scroll between textarea, line numbers, and highlight layer
   const handleScroll = useCallback(() => {
-    if (textareaRef.current && lineNumbersRef.current) {
-      lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
+    if (textareaRef.current) {
+      if (lineNumbersRef.current) {
+        lineNumbersRef.current.scrollTop = textareaRef.current.scrollTop;
+      }
+      if (highlightRef.current) {
+        highlightRef.current.scrollTop = textareaRef.current.scrollTop;
+        highlightRef.current.scrollLeft = textareaRef.current.scrollLeft;
+      }
     }
   }, []);
 
-  // Handle tab key (insert 2 spaces instead of changing focus)
+  // Handle tab key & autocomplete keyboard interactions
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
       if (readOnly) return;
+
+      // Autocomplete interception (Tab, Enter, ArrowUp, ArrowDown, Escape)
+      const intercepted = handleAutocompleteKeyDown(e);
+      if (intercepted) return;
 
       if (e.key === "Tab") {
         e.preventDefault();
@@ -76,7 +109,7 @@ export function PlaygroundEditor({
         });
       }
     },
-    [value, onChange, readOnly]
+    [value, onChange, readOnly, handleAutocompleteKeyDown]
   );
 
   const handleChange = useCallback(
@@ -94,6 +127,10 @@ export function PlaygroundEditor({
     const handleWheel = () => {
       if (lineNumbersRef.current && textarea) {
         lineNumbersRef.current.scrollTop = textarea.scrollTop;
+      }
+      if (highlightRef.current && textarea) {
+        highlightRef.current.scrollTop = textarea.scrollTop;
+        highlightRef.current.scrollLeft = textarea.scrollLeft;
       }
     };
 
@@ -127,6 +164,20 @@ export function PlaygroundEditor({
         ))}
       </div>
 
+      {/* Syntax Highlight Layer */}
+      <pre
+        ref={highlightRef}
+        className="playground-highlight-layer"
+        aria-hidden="true"
+        style={
+          isFullscreen
+            ? { height: "100%", overflow: "hidden" }
+            : { height: `${dynamicHeightPx}px`, overflow: "hidden" }
+        }
+      >
+        <code>{highlightCode(value)}</code>
+      </pre>
+
       {/* Textarea */}
       <textarea
         ref={textareaRef}
@@ -135,6 +186,7 @@ export function PlaygroundEditor({
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onScroll={handleScroll}
+        onClick={closeSuggestions}
         readOnly={readOnly}
         spellCheck={false}
         autoComplete="off"
@@ -149,6 +201,18 @@ export function PlaygroundEditor({
             : { height: `${dynamicHeightPx}px`, overflowY: "hidden" }
         }
       />
+
+      {/* Autocomplete Suggestions Popover */}
+      {isOpen && suggestions.length > 0 && (
+        <AutocompletePopover
+          suggestions={suggestions}
+          selectedIndex={selectedIndex}
+          onSelectIndex={setSelectedIndex}
+          onApply={applySuggestion}
+          caretCoords={caretCoords}
+          filterText={tokenRange.prefix}
+        />
+      )}
     </div>
   );
 }

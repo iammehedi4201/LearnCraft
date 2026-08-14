@@ -32,8 +32,7 @@ export default function LearnHub(): JSX.Element {
 
         <FAQ />
       </main>
-
-      {/* Global Footer */}
+      
       <Footer />
     
     </InteractiveGrid>

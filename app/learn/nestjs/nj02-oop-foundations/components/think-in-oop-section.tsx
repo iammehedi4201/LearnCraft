@@ -56,8 +56,8 @@ export function ThinkInOopSection() {
               { name: "Payment", props: "amount, method, status" },
             ].map(item => (
               <div key={item.name} className="p-3 rounded-lg bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
-                <span className="font-bold text-xs text-ds-feature-base">{item.name}</span>
-                <p className="text-xs text-ds-text-sub mt-1">{item.props}</p>
+                <span className="font-bold text-xs text-ds-feature-dark">{item.name}</span>
+                <p className="text-xs text-ds-text-strong mt-1">{item.props}</p>
               </div>
             ))}
           </div>
@@ -73,8 +73,8 @@ export function ThinkInOopSection() {
               { name: "Payment", actions: "process(), refund(), getReceipt()" },
             ].map(item => (
               <div key={item.name} className="p-3 rounded-lg bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
-                <span className="font-bold text-xs text-ds-feature-base">{item.name}</span>
-                <p className="text-xs text-ds-text-sub mt-1 font-mono">{item.actions}</p>
+                <span className="font-bold text-xs text-ds-feature-dark">{item.name}</span>
+                <p className="text-xs text-ds-text-strong mt-1 font-mono">{item.actions}</p>
               </div>
             ))}
           </div>

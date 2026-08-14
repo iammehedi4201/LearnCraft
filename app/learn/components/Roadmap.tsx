@@ -66,7 +66,6 @@ export function Roadmap() {
 
   const [activeStep, setActiveStep] = useState<number>(0);
   const [pathData, setPathData] = useState<string>("");
-  const [isMobile, setIsMobile] = useState<boolean>(false);
   const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
   const [cardCoords, setCardCoords] = useState<CardCoord[]>([]);
   const [rocketState, setRocketState] = useState<{
@@ -95,7 +94,6 @@ export function Roadmap() {
     if (width === 0 || height === 0) return;
 
     const mobile = window.innerWidth < 640;
-    setIsMobile(mobile);
     setContainerSize({ width, height });
 
     const coords: CardCoord[] = [];

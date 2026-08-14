@@ -373,36 +373,36 @@ car.brake();`}
           <SectionHeading>📌 More examples of objects</SectionHeading>
           <div className="grid md:grid-cols-3 gap-4">
             <div className="p-4 bg-ds-bg-weak rounded-xl border border-ds-stroke-soft shadow-sm">
-              <p className="text-xs font-bold text-ds-feature-base uppercase tracking-wide mb-2">
+              <p className="text-xs font-bold text-ds-feature-dark uppercase tracking-wide mb-2">
                 👤 User Object
               </p>
-              <p className="text-xs text-ds-text-strong">
-                <strong>Data:</strong> name, email, age
+              <p className="text-xs text-ds-text-sub">
+                <strong>Data:</strong> <span className="text-ds-text-strong">name, email, age</span>
               </p>
               <p className="text-xs text-ds-text-sub mt-1">
-                <strong>Actions:</strong> login, logout, updateProfile
+                <strong>Actions:</strong> <span className="text-ds-text-strong">login, logout, updateProfile</span>
               </p>
             </div>
             <div className="p-4 bg-ds-bg-weak rounded-xl border border-ds-stroke-soft shadow-sm">
-              <p className="text-xs font-bold text-ds-feature-base uppercase tracking-wide mb-2">
+              <p className="text-xs font-bold text-ds-feature-dark uppercase tracking-wide mb-2">
                 🏦 Bank Account Object
               </p>
-              <p className="text-xs text-ds-text-strong">
-                <strong>Data:</strong> owner, balance, accountNumber
+              <p className="text-xs text-ds-text-sub">
+                <strong>Data:</strong> <span className="text-ds-text-strong">owner, balance, accountNumber</span>
               </p>
               <p className="text-xs text-ds-text-sub mt-1">
-                <strong>Actions:</strong> deposit, withdraw, checkBalance
+                <strong>Actions:</strong> <span className="text-ds-text-strong">deposit, withdraw, checkBalance</span>
               </p>
             </div>
             <div className="p-4 bg-ds-bg-weak rounded-xl border border-ds-stroke-soft shadow-sm">
-              <p className="text-xs font-bold text-ds-feature-base uppercase tracking-wide mb-2">
+              <p className="text-xs font-bold text-ds-feature-dark uppercase tracking-wide mb-2">
                 📦 Product Object
               </p>
-              <p className="text-xs text-ds-text-strong">
-                <strong>Data:</strong> name, price, stock
+              <p className="text-xs text-ds-text-sub">
+                <strong>Data:</strong> <span className="text-ds-text-strong">name, price, stock</span>
               </p>
               <p className="text-xs text-ds-text-sub mt-1">
-                <strong>Actions:</strong> addToCart, applyDiscount
+                <strong>Actions:</strong> <span className="text-ds-text-strong">addToCart, applyDiscount</span>
               </p>
             </div>
           </div>

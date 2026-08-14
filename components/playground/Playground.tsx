@@ -38,7 +38,7 @@ export function Playground({
   height = "240px",
 }: PlaygroundProps) {
   // ─── State ───
-  const [code, setCode] = useState(exercise?.starterCode ?? starterCode);
+  const [code, setCode] = useState<string>(exercise?.starterCode ?? starterCode ?? "");
   const [output, setOutput] = useState<OutputLine[]>([]);
   const [error, setError] = useState<PlaygroundError | undefined>();
   const [isRunning, setIsRunning] = useState(false);
@@ -158,7 +158,7 @@ export function Playground({
   }, [code, runtimeType, isRunning, exercise, getRuntime, handleRun]);
 
   const handleReset = useCallback(() => {
-    const original = exercise?.starterCode ?? starterCode;
+    const original = exercise?.starterCode ?? starterCode ?? "";
     setCode(original);
     setOutput([]);
     setError(undefined);
@@ -205,7 +205,7 @@ export function Playground({
   }, []);
 
   // ─── Resizer Drag Handlers ───
-  const startResizing = useCallback((clientX: number) => {
+  const startResizing = useCallback(() => {
     isDraggingRef.current = true;
     setIsDragging(true);
     document.body.style.cursor = "col-resize";
@@ -250,12 +250,12 @@ export function Playground({
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
-    startResizing(e.clientX);
+    startResizing();
   }, [startResizing]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (e.touches[0]) {
-      startResizing(e.touches[0].clientX);
+      startResizing();
     }
   }, [startResizing]);
 

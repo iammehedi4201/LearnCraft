@@ -102,18 +102,74 @@ function transformError(rawMessage: string): PlaygroundError {
   };
 }
 
+// ─── Local Zero-Network TypeScript Transpiler ───
+export function transpileTypeScriptLocally(code: string): string {
+  let js = code;
+
+  // 1. Remove multi-line interface declarations
+  js = js.replace(/interface\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\s+extends\s+[^{]+)?\s*\{[\s\S]*?\}/g, "");
+
+  // 2. Remove type alias declarations
+  js = js.replace(/type\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?\s*=[^;]+;/g, "");
+
+  // 3. Transform enums to plain JS objects
+  js = js.replace(/enum\s+([A-Za-z0-9_$]+)\s*\{([^}]+)\}/g, (_match, enumName, members) => {
+    const entries = members
+      .split(",")
+      .map((m: string, i: number) => {
+        const parts = m.trim().split("=");
+        const key = parts[0].trim();
+        if (!key) return "";
+        const val = parts[1] ? parts[1].trim() : String(i);
+        return `${key}: ${val}`;
+      })
+      .filter(Boolean)
+      .join(", ");
+    return `const ${enumName} = { ${entries} };`;
+  });
+
+  // 4. Remove access modifiers: public, private, protected, readonly, override, abstract
+  js = js.replace(/\b(public|private|protected|readonly|override|abstract)\s+/g, "");
+
+  // 5. Remove 'as Type' type assertions
+  js = js.replace(/\s+as\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?/g, "");
+
+  // 6. Remove generic type arguments: e.g. Promise.resolve<string>('...')
+  js = js.replace(/<[A-Za-z0-9_$,\s|&<>[\]]+>(?=\s*\()/g, "");
+
+  // 7. Remove function return type annotations: e.g. function foo(): string { or ): Promise<void> {
+  js = js.replace(/\)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[{=;])/g, ")");
+
+  // 8. Remove parameter type annotations: e.g. (name: string, email: string, age: number)
+  js = js.replace(/:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[,)=])/g, "");
+
+  // 9. Remove variable type annotations: e.g. let userName: string = "Mehedi";
+  js = js.replace(/((?:let|const|var)\s+[A-Za-z0-9_$]+)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[=;])/g, "$1");
+
+  // 10. Remove class field type annotations: e.g. age: number = 25;
+  js = js.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[=;])/g, "$1");
+
+  // 11. Loop protection to guard against true infinite loops
+  let guardCounter = 0;
+  js = js.replace(/\bwhile\s*\(([^)]+)\)/g, (_m, cond) => {
+    const id = `__lc_w_${guardCounter++}`;
+    return `var ${id}=0; while((${id}++ < 100000) ? (${cond}) : (function(){ throw new Error("Infinite loop detected: exceeded 100,000 iterations"); })())`;
+  });
+
+  return js;
+}
+
 // ─── Build the HTML payload to run inside sandboxed iframe ───
 function buildSandboxHtml(rawCode: string, timeLimit = 5000): string {
-  const serializedCode = JSON.stringify(rawCode);
+  const transpiledJs = transpileTypeScriptLocally(rawCode);
+  const serializedJs = JSON.stringify(transpiledJs);
 
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"></head>
 <body>
-<!-- TypeScript CDN with immediate fallback -->
-<script src="https://cdn.jsdelivr.net/npm/typescript@5.4.5/lib/typescript.min.js"></script>
 <script>
-(function() {
+(async function() {
   // Serializer for console objects
   function serialize(args) {
     return args.map(function(a) {
@@ -122,7 +178,6 @@ function buildSandboxHtml(rawCode: string, timeLimit = 5000): string {
       if (typeof a === 'function') return '[Function: ' + (a.name || 'anonymous') + ']';
       if (typeof a === 'object') {
         try {
-          // Circular reference safe JSON
           var seen = [];
           return JSON.stringify(a, function(key, val) {
             if (typeof val === 'object' && val !== null) {
@@ -186,9 +241,6 @@ function buildSandboxHtml(rawCode: string, timeLimit = 5000): string {
     } catch (err) {}
   };
 
-  // Transpilation & Execution
-  var code = ${serializedCode};
-
   // Safety Timeout
   var timeoutId = setTimeout(function() {
     try {
@@ -201,55 +253,10 @@ function buildSandboxHtml(rawCode: string, timeLimit = 5000): string {
   }, ${timeLimit});
 
   try {
-    var jsCode = code;
-
-    // 1. If TS compiler is present, transpile properly
-    if (typeof ts !== 'undefined') {
-      var transpileResult = ts.transpileModule(code, {
-        compilerOptions: {
-          target: ts.ScriptTarget.ES2020,
-          module: ts.ModuleKind.None,
-          strict: false,
-          esModuleInterop: true,
-          experimentalDecorators: true,
-          emitDecoratorMetadata: true,
-          noEmit: false
-        },
-        reportDiagnostics: true
-      });
-
-      if (transpileResult.diagnostics && transpileResult.diagnostics.length > 0) {
-        transpileResult.diagnostics.forEach(function(d) {
-          if (d.category === ts.DiagnosticCategory.Error) {
-            var msg = ts.flattenDiagnosticMessageText(d.messageText, '\\n');
-            window.parent.postMessage({
-              type: 'playground-ts-diagnostic',
-              message: msg,
-              category: 1
-            }, '*');
-          }
-        });
-      }
-
-      jsCode = transpileResult.outputText;
-    } else {
-      // Fast fallback: strip type annotations if TS CDN is slow or offline
-      jsCode = code
-        .replace(/interface\\s+[A-Za-z0-9_]+\\s*\\{[^}]*\\}/g, '')
-        .replace(/type\\s+[A-Za-z0-9_]+\\s*=[^;]+;/g, '')
-        .replace(/:\\s*[A-Za-z0-9_\\[\\]<>,|&\\s]+(?=[=),;{])/g, '')
-        .replace(/\\b(public|private|protected|readonly)\\s+/g, '');
-    }
-
-    // 2. Loop guard injection for while/for loops
-    var guardCounter = 0;
-    jsCode = jsCode.replace(/\\bwhile\\s*\\(/g, function() {
-      var id = '__lc_w_' + (guardCounter++);
-      return 'var ' + id + '=0; while((' + id + '++ < 100000) && (';
-    });
-
-    // 3. Execute
-    var result = (new Function(jsCode))();
+    var jsCode = ${serializedJs};
+    var AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+    var fn = new AsyncFunction(jsCode);
+    await fn();
     clearTimeout(timeoutId);
 
     window.parent.postMessage({ type: 'playground-done', success: true }, '*');
@@ -315,7 +322,8 @@ export class TypeScriptRuntime implements PlaygroundRuntime {
       return this.container;
     }
     this.container = document.createElement("div");
-    this.container.style.cssText = "position:absolute;width:1px;height:1px;left:-9999px;top:-9999px;overflow:hidden;visibility:hidden;";
+    // Off-screen with opacity:0 instead of display:none or visibility:hidden to ensure JS executes in all browsers
+    this.container.style.cssText = "position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none;overflow:hidden;";
     document.body.appendChild(this.container);
     return this.container;
   }
@@ -331,18 +339,147 @@ export class TypeScriptRuntime implements PlaygroundRuntime {
 
   /** Execute TypeScript/JavaScript code safely */
   async run(input: PlaygroundInput): Promise<ExecutionResult> {
-    this.destroyIframe();
-
-    const timeLimit = 5000;
+    const startTime = Date.now();
     const output: OutputLine[] = [];
     let error: PlaygroundError | undefined;
 
-    return new Promise<ExecutionResult>((resolve) => {
-      const startTime = Date.now();
+    // Transpile locally in 0ms
+    const jsCode = transpileTypeScriptLocally(input.code);
 
+    return new Promise<ExecutionResult>((resolve) => {
+      // 1. Try Web Worker first (lightning fast, completely isolated, zero iframe rendering quirks)
+      if (typeof Worker !== "undefined" && typeof Blob !== "undefined") {
+        try {
+          const workerScript = `
+function serialize(args) {
+  return args.map(function(a) {
+    if (a === undefined) return 'undefined';
+    if (a === null) return 'null';
+    if (typeof a === 'function') return '[Function: ' + (a.name || 'anonymous') + ']';
+    if (typeof a === 'object') {
+      try {
+        var seen = [];
+        return JSON.stringify(a, function(key, val) {
+          if (typeof val === 'object' && val !== null) {
+            if (seen.indexOf(val) >= 0) return '[Circular]';
+            seen.push(val);
+          }
+          return val;
+        }, 2);
+      } catch (e) {
+        return String(a);
+      }
+    }
+    return String(a);
+  }).join(' ');
+}
+
+var console = {
+  log: function() { self.postMessage({ type: 'output', level: 'log', content: serialize(Array.prototype.slice.call(arguments)), timestamp: Date.now() }); },
+  warn: function() { self.postMessage({ type: 'output', level: 'warn', content: serialize(Array.prototype.slice.call(arguments)), timestamp: Date.now() }); },
+  error: function() { self.postMessage({ type: 'output', level: 'error', content: serialize(Array.prototype.slice.call(arguments)), timestamp: Date.now() }); },
+  info: function() { self.postMessage({ type: 'output', level: 'info', content: serialize(Array.prototype.slice.call(arguments)), timestamp: Date.now() }); },
+  clear: function() { self.postMessage({ type: 'output', level: 'clear', content: '', timestamp: Date.now() }); }
+};
+
+self.onmessage = async function(e) {
+  try {
+    var AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+    var fn = new AsyncFunction("console", e.data.code);
+    await fn(console);
+    self.postMessage({ type: 'done', success: true });
+  } catch (err) {
+    self.postMessage({
+      type: 'error',
+      message: err instanceof Error ? err.message : String(err)
+    });
+    self.postMessage({ type: 'done', success: false });
+  }
+};
+`;
+          const blob = new Blob([workerScript], { type: "application/javascript" });
+          const workerUrl = URL.createObjectURL(blob);
+          const worker = new Worker(workerUrl);
+
+          const workerTimeout = setTimeout(() => {
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+            resolve({
+              success: false,
+              output,
+              error: {
+                message: "Execution timed out. Check for infinite loops.",
+                technicalMessage: "Execution exceeded timeout limit.",
+                suggestion: "Make sure your loops and recursive calls have a termination condition.",
+              },
+              duration: Date.now() - startTime,
+            });
+          }, 4000);
+
+          worker.onmessage = (e) => {
+            const data = e.data;
+            if (!data) return;
+
+            if (data.type === "output") {
+              if (data.level === "clear") {
+                output.length = 0;
+              } else {
+                output.push({
+                  type: data.level,
+                  content: data.content,
+                  timestamp: data.timestamp,
+                });
+              }
+            } else if (data.type === "error") {
+              error = transformError(data.message || "Execution error");
+              output.push({
+                type: "error",
+                content: error.message,
+                timestamp: Date.now(),
+              });
+            } else if (data.type === "done") {
+              clearTimeout(workerTimeout);
+              worker.terminate();
+              URL.revokeObjectURL(workerUrl);
+              resolve({
+                success: data.success && !error,
+                output,
+                error,
+                duration: Date.now() - startTime,
+              });
+            }
+          };
+
+          worker.onerror = (err) => {
+            clearTimeout(workerTimeout);
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+            const errObj = transformError(err.message || "Worker error");
+            output.push({
+              type: "error",
+              content: errObj.message,
+              timestamp: Date.now(),
+            });
+            resolve({
+              success: false,
+              output,
+              error: errObj,
+              duration: Date.now() - startTime,
+            });
+          };
+
+          worker.postMessage({ code: jsCode });
+          return;
+        } catch {
+          // Fall through to iframe fallback
+        }
+      }
+
+      // 2. Sandboxed iframe fallback (active in DOM with opacity:0 instead of display:none)
+      this.destroyIframe();
       const iframe = document.createElement("iframe");
       iframe.setAttribute("sandbox", "allow-scripts");
-      iframe.style.cssText = "width:1px;height:1px;border:none;display:none;";
+      iframe.style.cssText = "position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none;border:none;";
       this.iframe = iframe;
 
       const safetyTimeout = setTimeout(() => {
@@ -353,71 +490,49 @@ export class TypeScriptRuntime implements PlaygroundRuntime {
           output,
           error: {
             message: "Execution timed out. Check for infinite loops.",
-            technicalMessage: `Execution exceeded ${timeLimit}ms timeout.`,
+            technicalMessage: "Execution timed out.",
             suggestion: "Make sure your loops and recursive calls have a termination condition.",
           },
           duration: Date.now() - startTime,
         });
-      }, timeLimit + 3000);
+      }, 4000);
 
       const handleMessage = (event: MessageEvent) => {
         const data = event.data;
         if (!data || typeof data !== "object") return;
 
-        switch (data.type) {
-          case "playground-output":
-            if (data.level === "clear") {
-              output.length = 0;
-            } else {
-              output.push({
-                type: data.level as OutputLine["type"],
-                content: data.content,
-                timestamp: data.timestamp,
-              });
-            }
-            break;
-
-          case "playground-error":
-            error = transformError(data.message || "Execution error");
+        if (data.type === "playground-output") {
+          if (data.level === "clear") {
+            output.length = 0;
+          } else {
             output.push({
-              type: "error",
-              content: error.message,
-              timestamp: Date.now(),
+              type: data.level as OutputLine["type"],
+              content: data.content,
+              timestamp: data.timestamp,
             });
-            break;
-
-          case "playground-ts-diagnostic":
-            if (data.category === 1) {
-              const tsError = transformError(data.message);
-              error = tsError;
-              output.push({
-                type: "warn",
-                content: `⚠ TS: ${tsError.message}`,
-                timestamp: Date.now(),
-              });
-            }
-            break;
-
-          case "playground-done":
-            clearTimeout(safetyTimeout);
-            window.removeEventListener("message", handleMessage);
-            setTimeout(() => {
-              this.destroyIframe();
-              resolve({
-                success: data.success && !error,
-                output,
-                error,
-                duration: Date.now() - startTime,
-              });
-            }, 30);
-            break;
+          }
+        } else if (data.type === "playground-error") {
+          error = transformError(data.message || "Execution error");
+          output.push({
+            type: "error",
+            content: error.message,
+            timestamp: Date.now(),
+          });
+        } else if (data.type === "playground-done") {
+          clearTimeout(safetyTimeout);
+          window.removeEventListener("message", handleMessage);
+          this.destroyIframe();
+          resolve({
+            success: data.success && !error,
+            output,
+            error,
+            duration: Date.now() - startTime,
+          });
         }
       };
 
       window.addEventListener("message", handleMessage);
-
-      // IMPORTANT: Use srcdoc directly. DO NOT access contentDocument on sandboxed iframe!
-      iframe.srcdoc = buildSandboxHtml(input.code, timeLimit);
+      iframe.srcdoc = buildSandboxHtml(input.code, 4000);
       this.getContainer().appendChild(iframe);
     });
   }
@@ -428,16 +543,110 @@ export class TypeScriptRuntime implements PlaygroundRuntime {
     tests: TestCase[],
     hiddenTests?: TestCase[]
   ): Promise<ValidationResult> {
-    this.destroyIframe();
-
     const allTests = [...tests, ...(hiddenTests || [])];
     const results: TestResult[] = [];
     const expectedCount = allTests.length;
 
+    // Transpile input code
+    const transpiledUserCode = transpileTypeScriptLocally(input.code);
+
     return new Promise<ValidationResult>((resolve) => {
+      // 1. Try Web Worker for test runner
+      if (typeof Worker !== "undefined" && typeof Blob !== "undefined") {
+        try {
+          const testSuiteCode = allTests.map((test, i) => `
+try {
+  ${test.code}
+  self.postMessage({
+    type: 'test-result',
+    index: ${i},
+    name: ${JSON.stringify(test.hidden ? `Hidden Test ${i + 1}` : test.name)},
+    passed: true,
+    hidden: ${!!test.hidden}
+  });
+} catch (e) {
+  self.postMessage({
+    type: 'test-result',
+    index: ${i},
+    name: ${JSON.stringify(test.hidden ? `Hidden Test ${i + 1}` : test.name)},
+    passed: false,
+    hidden: ${!!test.hidden},
+    error: e instanceof Error ? e.message : String(e)
+  });
+}
+`).join('\n');
+
+          const workerScript = `
+self.onmessage = async function(e) {
+  try {
+    var AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+    var fn = new AsyncFunction(e.data.code);
+    await fn();
+  } catch (err) {}
+  ${testSuiteCode}
+  self.postMessage({ type: 'tests-done' });
+};
+`;
+          const blob = new Blob([workerScript], { type: "application/javascript" });
+          const workerUrl = URL.createObjectURL(blob);
+          const worker = new Worker(workerUrl);
+
+          const timeout = setTimeout(() => {
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+            while (results.length < expectedCount) {
+              results.push({
+                name: allTests[results.length].hidden ? `Hidden Test ${results.length + 1}` : allTests[results.length].name,
+                passed: false,
+                hidden: !!allTests[results.length].hidden,
+                error: "Test execution timed out",
+              });
+            }
+            resolve({
+              passed: false,
+              results,
+              totalPassed: results.filter((r) => r.passed).length,
+              totalTests: expectedCount,
+            });
+          }, 4000);
+
+          worker.onmessage = (e) => {
+            const data = e.data;
+            if (!data) return;
+
+            if (data.type === "test-result") {
+              results.push({
+                name: data.name,
+                passed: data.passed,
+                hidden: data.hidden,
+                error: data.error,
+              });
+            } else if (data.type === "tests-done") {
+              clearTimeout(timeout);
+              worker.terminate();
+              URL.revokeObjectURL(workerUrl);
+              const totalPassed = results.filter((r) => r.passed).length;
+              resolve({
+                passed: totalPassed === expectedCount && expectedCount > 0,
+                results,
+                totalPassed,
+                totalTests: expectedCount,
+              });
+            }
+          };
+
+          worker.postMessage({ code: transpiledUserCode });
+          return;
+        } catch {
+          // Fall through to iframe fallback
+        }
+      }
+
+      // 2. Iframe test validation fallback
+      this.destroyIframe();
       const iframe = document.createElement("iframe");
       iframe.setAttribute("sandbox", "allow-scripts");
-      iframe.style.cssText = "width:1px;height:1px;border:none;display:none;";
+      iframe.style.cssText = "position:fixed;width:1px;height:1px;left:-9999px;top:-9999px;opacity:0;pointer-events:none;border:none;";
       this.iframe = iframe;
 
       let receivedCount = 0;
@@ -447,28 +656,26 @@ export class TypeScriptRuntime implements PlaygroundRuntime {
         this.destroyIframe();
         while (results.length < expectedCount) {
           results.push({
-            name: allTests[results.length].hidden
-              ? `Hidden Test ${results.length + 1}`
-              : allTests[results.length].name,
+            name: allTests[results.length].hidden ? `Hidden Test ${results.length + 1}` : allTests[results.length].name,
             passed: false,
             hidden: !!allTests[results.length].hidden,
-            error: "Test timed out",
+            error: "Validation timed out",
           });
         }
-        const totalPassed = results.filter((r) => r.passed).length;
         resolve({
-          passed: totalPassed === expectedCount,
+          passed: false,
           results,
-          totalPassed,
+          totalPassed: results.filter((r) => r.passed).length,
           totalTests: expectedCount,
         });
-      }, 10000);
+      }, 5000);
 
       const handleMessage = (event: MessageEvent) => {
         const data = event.data;
         if (!data || typeof data !== "object") return;
 
         if (data.type === "playground-test-result") {
+          receivedCount++;
           results[data.index] = {
             name: data.name,
             passed: data.passed,
