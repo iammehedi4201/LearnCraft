@@ -27,6 +27,7 @@ import { PlaygroundToolbar } from "./PlaygroundToolbar";
 import { PlaygroundTests } from "./PlaygroundTests";
 import { PlaygroundHints } from "./PlaygroundHints";
 import { PlaygroundFullscreen } from "./PlaygroundFullscreen";
+import { PlaygroundExamplePanel } from "./PlaygroundExamplePanel";
 import "./playground.css";
 
 export function Playground({
@@ -37,8 +38,11 @@ export function Playground({
   className = "",
   height = "240px",
 }: PlaygroundProps) {
+  const exampleCode = exercise?.starterCode ?? starterCode ?? "";
+
   // ─── State ───
-  const [code, setCode] = useState<string>(exercise?.starterCode ?? starterCode ?? "");
+  const [code, setCode] = useState<string>(exampleCode);
+  const [practiceCode, setPracticeCode] = useState<string>(""); // Starts empty in 3-pane expanded practice workspace!
   const [output, setOutput] = useState<OutputLine[]>([]);
   const [error, setError] = useState<PlaygroundError | undefined>();
   const [isRunning, setIsRunning] = useState(false);
@@ -49,7 +53,13 @@ export function Playground({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
 
-  // ─── Split Resizer State (editor width percentage) ───
+  // ─── Expanded Mode Layout (3-pane: Example | Practice | Output) ───
+  const [expandedLayoutMode, setExpandedLayoutMode] = useState<"3-pane" | "2-pane">("3-pane");
+  const [ratio1, setRatio1] = useState(32); // Example panel %
+  const [ratio2, setRatio2] = useState(38); // Practice panel %
+  // Output panel % = 100 - ratio1 - ratio2 (30%)
+
+  // ─── 2-Pane Split Resizer State (normal mode) ───
   const [splitRatio, setSplitRatio] = useState(55); // 55% editor, 45% console by default
   const [isDragging, setIsDragging] = useState(false);
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -85,6 +95,21 @@ export function Playground({
   const handleRun = useCallback(async () => {
     if (isRunning) return;
 
+    const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
+    const codeToRun = is3Pane ? practiceCode : code;
+
+    // If practice workspace is empty, provide a gentle helpful notification
+    if (!codeToRun.trim()) {
+      setOutput([
+        {
+          type: "info",
+          content: "💡 Practice workspace is empty. Type your code or click '⚡ Copy to Practice' on the Example panel to get started!",
+          timestamp: Date.now(),
+        },
+      ]);
+      return;
+    }
+
     setIsRunning(true);
     setOutput([]);
     setError(undefined);
@@ -94,7 +119,7 @@ export function Playground({
     try {
       const rt = getRuntime();
       const result = await rt.run({
-        code,
+        code: codeToRun,
         language: runtimeType,
       });
 
@@ -110,16 +135,29 @@ export function Playground({
     } finally {
       setIsRunning(false);
     }
-  }, [code, runtimeType, isRunning, getRuntime]);
+  }, [code, practiceCode, isFullscreen, expandedLayoutMode, runtimeType, isRunning, getRuntime]);
 
   const handleCheck = useCallback(async () => {
     if (isRunning || !exercise) return;
+
+    const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
+    const codeToCheck = is3Pane ? practiceCode : code;
+
+    if (!codeToCheck.trim()) {
+      setOutput([
+        {
+          type: "info",
+          content: "💡 Practice workspace is empty. Type your solution to solve the exercise!",
+          timestamp: Date.now(),
+        },
+      ]);
+      return;
+    }
 
     const tests = exercise.tests || [];
     const hiddenTests = exercise.hiddenTests || [];
 
     if (tests.length === 0 && hiddenTests.length === 0) {
-      // No tests defined — just run
       handleRun();
       return;
     }
@@ -133,18 +171,16 @@ export function Playground({
       const rt = getRuntime();
       if (rt.validate) {
         const result = await rt.validate(
-          { code, language: runtimeType },
+          { code: codeToCheck, language: runtimeType },
           tests,
           hiddenTests
         );
         setTestResults(result);
 
-        // Also run code once to show console output
-        const runResult = await rt.run({ code, language: runtimeType });
+        const runResult = await rt.run({ code: codeToCheck, language: runtimeType });
         setOutput(runResult.output);
         setDuration(runResult.duration);
       } else {
-        // Fallback: regular run
         await handleRun();
       }
     } catch (e) {
@@ -155,27 +191,32 @@ export function Playground({
     } finally {
       setIsRunning(false);
     }
-  }, [code, runtimeType, isRunning, exercise, getRuntime, handleRun]);
+  }, [code, practiceCode, isFullscreen, expandedLayoutMode, runtimeType, isRunning, exercise, getRuntime, handleRun]);
 
   const handleReset = useCallback(() => {
-    const original = exercise?.starterCode ?? starterCode ?? "";
-    setCode(original);
+    if (isFullscreen && expandedLayoutMode === "3-pane") {
+      setPracticeCode("");
+    } else {
+      setCode(exampleCode);
+    }
     setOutput([]);
     setError(undefined);
     setTestResults(undefined);
     setDuration(undefined);
     getRuntime().reset();
-  }, [exercise, starterCode, getRuntime]);
+  }, [isFullscreen, expandedLayoutMode, exampleCode, getRuntime]);
 
   const handleCopy = useCallback(async () => {
+    const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
+    const textToCopy = is3Pane ? (practiceCode || exampleCode) : code;
     try {
-      await navigator.clipboard.writeText(code);
+      await navigator.clipboard.writeText(textToCopy);
       setShowCopyToast(true);
       setTimeout(() => setShowCopyToast(false), 1500);
     } catch {
       // Fallback
       const ta = document.createElement("textarea");
-      ta.value = code;
+      ta.value = textToCopy;
       document.body.appendChild(ta);
       ta.select();
       document.execCommand("copy");
@@ -183,7 +224,7 @@ export function Playground({
       setShowCopyToast(true);
       setTimeout(() => setShowCopyToast(false), 1500);
     }
-  }, [code]);
+  }, [code, practiceCode, isFullscreen, expandedLayoutMode, exampleCode]);
 
   const handleHint = useCallback(() => {
     if (!exercise?.hints?.length) return;
@@ -192,8 +233,12 @@ export function Playground({
   }, [exercise]);
 
   const handleApplySolution = useCallback((solution: string) => {
-    setCode(solution);
-  }, []);
+    if (isFullscreen && expandedLayoutMode === "3-pane") {
+      setPracticeCode(solution);
+    } else {
+      setCode(solution);
+    }
+  }, [isFullscreen, expandedLayoutMode]);
 
   const handleFullscreen = useCallback(() => {
     setIsFullscreen((prev) => !prev);
@@ -204,7 +249,7 @@ export function Playground({
     setError(undefined);
   }, []);
 
-  // ─── Resizer Drag Handlers ───
+  // ─── 2-Pane Resizer Drag Handlers (Normal Mode) ───
   const startResizing = useCallback(() => {
     isDraggingRef.current = true;
     setIsDragging(true);
@@ -248,16 +293,81 @@ export function Playground({
     document.addEventListener("touchend", stopResizing);
   }, []);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    startResizing();
-  }, [startResizing]);
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (e.touches[0]) {
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
       startResizing();
-    }
-  }, [startResizing]);
+    },
+    [startResizing]
+  );
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      if (e.touches[0]) {
+        startResizing();
+      }
+    },
+    [startResizing]
+  );
+
+  // ─── 3-Pane Resizer Drag Handlers (Expanded Mode) ───
+  const startResizing3Pane = useCallback(
+    (resizerIndex: 1 | 2) => {
+      isDraggingRef.current = true;
+      setIsDragging(true);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+
+      const handleMouseMove = (e: MouseEvent) => {
+        if (!isDraggingRef.current || !bodyRef.current) return;
+        const rect = bodyRef.current.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const percentage = (offsetX / rect.width) * 100;
+
+        if (resizerIndex === 1) {
+          // Dragging Resizer 1 (between Example and Practice)
+          const newRatio1 = Math.min(50, Math.max(15, percentage));
+          setRatio1(newRatio1);
+        } else {
+          // Dragging Resizer 2 (between Practice and Output)
+          const newRatio2 = Math.min(100 - ratio1 - 15, Math.max(20, percentage - ratio1));
+          setRatio2(newRatio2);
+        }
+      };
+
+      const handleTouchMove = (e: TouchEvent) => {
+        if (!isDraggingRef.current || !e.touches[0] || !bodyRef.current) return;
+        const rect = bodyRef.current.getBoundingClientRect();
+        const offsetX = e.touches[0].clientX - rect.left;
+        const percentage = (offsetX / rect.width) * 100;
+
+        if (resizerIndex === 1) {
+          const newRatio1 = Math.min(50, Math.max(15, percentage));
+          setRatio1(newRatio1);
+        } else {
+          const newRatio2 = Math.min(100 - ratio1 - 15, Math.max(20, percentage - ratio1));
+          setRatio2(newRatio2);
+        }
+      };
+
+      const stopResizing = () => {
+        isDraggingRef.current = false;
+        setIsDragging(false);
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", stopResizing);
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", stopResizing);
+      };
+
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", stopResizing);
+      document.addEventListener("touchmove", handleTouchMove, { passive: true });
+      document.addEventListener("touchend", stopResizing);
+    },
+    [ratio1]
+  );
 
   // ─── Keyboard shortcuts ───
   useEffect(() => {
@@ -283,10 +393,11 @@ export function Playground({
   const hasExercise = !!exercise;
   const hasHints = !!exercise?.hints?.length;
   const totalHints = exercise?.hints?.length ?? 0;
+  const is3PaneMode = isFullscreen && expandedLayoutMode === "3-pane";
 
   const playgroundContent = (
     <div
-      className={`playground ${className}`}
+      className={`playground ${className} ${isFullscreen ? "playground--fullscreen" : ""}`}
       style={isFullscreen ? undefined : { minHeight: height }}
     >
       {/* Header */}
@@ -298,8 +409,29 @@ export function Playground({
             <div className="playground-dot playground-dot--green" />
           </div>
           <span className="playground-runtime-badge">{displayLanguage}</span>
+
+          {/* Mode Switcher in Fullscreen */}
+          {isFullscreen && (
+            <div className="playground-mode-toggle">
+              <button
+                className={`playground-mode-btn ${expandedLayoutMode === "3-pane" ? "playground-mode-btn--active" : ""}`}
+                onClick={() => setExpandedLayoutMode("3-pane")}
+                title="3-Section Workspace: Example | Practice | Output"
+              >
+                3 Panes (Example + Practice)
+              </button>
+              <button
+                className={`playground-mode-btn ${expandedLayoutMode === "2-pane" ? "playground-mode-btn--active" : ""}`}
+                onClick={() => setExpandedLayoutMode("2-pane")}
+                title="2-Section Focus: Practice | Output"
+              >
+                2 Panes
+              </button>
+            </div>
+          )}
         </div>
-        {exercise?.title && (
+
+        {exercise?.title && !is3PaneMode && (
           <div className="playground-header-right">
             {exercise.difficulty && (
               <span
@@ -314,81 +446,227 @@ export function Playground({
         )}
       </div>
 
-      {/* Exercise Instructions */}
-      {exercise && (
+      {/* Exercise Instructions (in normal 2-pane mode) */}
+      {exercise && !is3PaneMode && (
         <div className="playground-exercise-instructions">
           <div className="playground-exercise-title">{exercise.title}</div>
-          <div className="playground-exercise-text">
-            {exercise.instructions}
-          </div>
+          <div className="playground-exercise-text">{exercise.instructions}</div>
         </div>
       )}
 
-      {/* Split: Editor + Resizer + Output (Dynamic Auto-Expanding Height & Resizable Widths) */}
+      {/* Split Body Container */}
       <div
         ref={bodyRef}
-        className="playground-body"
+        className={`playground-body ${is3PaneMode ? "playground-3pane-body" : ""}`}
         style={isFullscreen ? { flex: 1, minHeight: 0 } : { minHeight: height, height: "auto" }}
       >
-        {/* Editor Panel */}
-        <div
-          className="playground-editor-panel"
-          style={{ flex: `0 0 ${splitRatio}%`, width: `${splitRatio}%` }}
-        >
-          <PlaygroundEditor
-            value={code}
-            onChange={setCode}
-            language={displayLanguage}
-            minHeight={height}
-            isFullscreen={isFullscreen}
-          />
-        </div>
-
-        {/* Draggable Middle Resizer with Icon */}
-        <div
-          className={`playground-resizer ${isDragging ? "playground-resizer--dragging" : ""}`}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleTouchStart}
-          onDoubleClick={() => setSplitRatio(55)}
-          title="Drag to resize editor & console width (Double-click to reset)"
-          role="separator"
-          aria-orientation="vertical"
-          aria-valuenow={Math.round(splitRatio)}
-          aria-valuemin={20}
-          aria-valuemax={80}
-        >
-          <div className="playground-resizer-handle">
-            <svg
-              width="8"
-              height="16"
-              viewBox="0 0 8 16"
-              fill="currentColor"
-              className="playground-resizer-icon"
-              aria-hidden="true"
+        {is3PaneMode ? (
+          /* ══════════════════════════════════════════════ */
+          /* 3-Section Expanded Workspace Layout            */
+          /* 1. Example | 2. Practice Workspace | 3. Output */
+          /* ══════════════════════════════════════════════ */
+          <>
+            {/* Section 1: Example & Reference Panel */}
+            <div
+              className="playground-example-panel"
+              style={{ flex: `0 0 ${ratio1}%`, width: `${ratio1}%` }}
             >
-              <circle cx="2" cy="2" r="1.2" />
-              <circle cx="6" cy="2" r="1.2" />
-              <circle cx="2" cy="8" r="1.2" />
-              <circle cx="6" cy="8" r="1.2" />
-              <circle cx="2" cy="14" r="1.2" />
-              <circle cx="6" cy="14" r="1.2" />
-            </svg>
-          </div>
-        </div>
+              <PlaygroundExamplePanel
+                code={exampleCode}
+                language={displayLanguage}
+                exercise={exercise}
+                onCopyToPractice={() => setPracticeCode(exampleCode)}
+              />
+            </div>
 
-        {/* Console Output Panel */}
-        <div
-          className="playground-output-panel"
-          style={{ flex: `0 0 ${100 - splitRatio}%`, width: `${100 - splitRatio}%` }}
-        >
-          <PlaygroundOutput
-            lines={output}
-            error={error}
-            isRunning={isRunning}
-            duration={duration}
-            onClear={handleClearOutput}
-          />
-        </div>
+            {/* Resizer 1 (Between Example and Practice) */}
+            <div
+              className={`playground-resizer ${isDragging ? "playground-resizer--dragging" : ""}`}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                startResizing3Pane(1);
+              }}
+              onTouchStart={() => startResizing3Pane(1)}
+              onDoubleClick={() => {
+                setRatio1(32);
+                setRatio2(38);
+              }}
+              title="Drag to resize Example vs Practice width (Double-click to reset)"
+              role="separator"
+              aria-orientation="vertical"
+            >
+              <div className="playground-resizer-handle">
+                <svg
+                  width="8"
+                  height="16"
+                  viewBox="0 0 8 16"
+                  fill="currentColor"
+                  className="playground-resizer-icon"
+                  aria-hidden="true"
+                >
+                  <circle cx="2" cy="2" r="1.2" />
+                  <circle cx="6" cy="2" r="1.2" />
+                  <circle cx="2" cy="8" r="1.2" />
+                  <circle cx="6" cy="8" r="1.2" />
+                  <circle cx="2" cy="14" r="1.2" />
+                  <circle cx="6" cy="14" r="1.2" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Section 2: Practice Workspace Panel (Starts Empty!) */}
+            <div
+              className="playground-editor-panel playground-practice-panel"
+              style={{ flex: `0 0 ${ratio2}%`, width: `${ratio2}%` }}
+            >
+              <div className="playground-panel-header playground-practice-header">
+                <div className="playground-panel-header-left">
+                  <span className="playground-panel-icon">⚡</span>
+                  <span className="playground-panel-title">Practice Workspace</span>
+                  <span className="playground-panel-badge playground-panel-badge--editable">
+                    Editable
+                  </span>
+                </div>
+                <div className="playground-panel-header-right">
+                  <button
+                    className="playground-panel-action-btn"
+                    onClick={handleReset}
+                    title="Clear practice workspace"
+                  >
+                    ↻ Clear
+                  </button>
+                </div>
+              </div>
+
+              <PlaygroundEditor
+                value={practiceCode}
+                onChange={setPracticeCode}
+                language={displayLanguage}
+                minHeight={height}
+                isFullscreen={isFullscreen}
+                placeholder={`// ⚡ Practice Workspace\n// Write your ${displayLanguage} code here from scratch...\n// (or click "⚡ Copy to Practice" on the Example panel to load starter code)`}
+              />
+            </div>
+
+            {/* Resizer 2 (Between Practice and Output) */}
+            <div
+              className={`playground-resizer ${isDragging ? "playground-resizer--dragging" : ""}`}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                startResizing3Pane(2);
+              }}
+              onTouchStart={() => startResizing3Pane(2)}
+              onDoubleClick={() => {
+                setRatio1(32);
+                setRatio2(38);
+              }}
+              title="Drag to resize Practice vs Output width (Double-click to reset)"
+              role="separator"
+              aria-orientation="vertical"
+            >
+              <div className="playground-resizer-handle">
+                <svg
+                  width="8"
+                  height="16"
+                  viewBox="0 0 8 16"
+                  fill="currentColor"
+                  className="playground-resizer-icon"
+                  aria-hidden="true"
+                >
+                  <circle cx="2" cy="2" r="1.2" />
+                  <circle cx="6" cy="2" r="1.2" />
+                  <circle cx="2" cy="8" r="1.2" />
+                  <circle cx="6" cy="8" r="1.2" />
+                  <circle cx="2" cy="14" r="1.2" />
+                  <circle cx="6" cy="14" r="1.2" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Section 3: Output Show Panel */}
+            <div
+              className="playground-output-panel"
+              style={{
+                flex: `0 0 ${100 - ratio1 - ratio2}%`,
+                width: `${100 - ratio1 - ratio2}%`,
+              }}
+            >
+              <PlaygroundOutput
+                lines={output}
+                error={error}
+                isRunning={isRunning}
+                duration={duration}
+                onClear={handleClearOutput}
+              />
+            </div>
+          </>
+        ) : (
+          /* ══════════════════════════════════════════════ */
+          /* 2-Section Standard View (Editor | Output)       */
+          /* ══════════════════════════════════════════════ */
+          <>
+            {/* Editor Panel */}
+            <div
+              className="playground-editor-panel"
+              style={{ flex: `0 0 ${splitRatio}%`, width: `${splitRatio}%` }}
+            >
+              <PlaygroundEditor
+                value={code}
+                onChange={setCode}
+                language={displayLanguage}
+                minHeight={height}
+                isFullscreen={isFullscreen}
+              />
+            </div>
+
+            {/* Draggable Middle Resizer */}
+            <div
+              className={`playground-resizer ${isDragging ? "playground-resizer--dragging" : ""}`}
+              onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart}
+              onDoubleClick={() => setSplitRatio(55)}
+              title="Drag to resize editor & console width (Double-click to reset)"
+              role="separator"
+              aria-orientation="vertical"
+              aria-valuenow={Math.round(splitRatio)}
+              aria-valuemin={20}
+              aria-valuemax={80}
+            >
+              <div className="playground-resizer-handle">
+                <svg
+                  width="8"
+                  height="16"
+                  viewBox="0 0 8 16"
+                  fill="currentColor"
+                  className="playground-resizer-icon"
+                  aria-hidden="true"
+                >
+                  <circle cx="2" cy="2" r="1.2" />
+                  <circle cx="6" cy="2" r="1.2" />
+                  <circle cx="2" cy="8" r="1.2" />
+                  <circle cx="6" cy="8" r="1.2" />
+                  <circle cx="2" cy="14" r="1.2" />
+                  <circle cx="6" cy="8" r="1.2" />
+                  <circle cx="6" cy="14" r="1.2" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Console Output Panel */}
+            <div
+              className="playground-output-panel"
+              style={{ flex: `0 0 ${100 - splitRatio}%`, width: `${100 - splitRatio}%` }}
+            >
+              <PlaygroundOutput
+                lines={output}
+                error={error}
+                isRunning={isRunning}
+                duration={duration}
+                onClear={handleClearOutput}
+              />
+            </div>
+          </>
+        )}
       </div>
 
       {/* Test Results */}
@@ -433,3 +711,4 @@ export function Playground({
     </>
   );
 }
+

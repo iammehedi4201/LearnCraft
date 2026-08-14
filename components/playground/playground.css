@@ -1340,3 +1340,318 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* ═══════════════════════════════════════════════════════════ */
+/* ─── 3-Section Expanded Workspace (Example | Practice | Output) ─── */
+/* ═══════════════════════════════════════════════════════════ */
+
+.playground-3pane-body {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .playground-3pane-body {
+    flex-direction: column;
+    overflow-y: auto;
+  }
+}
+
+/* ─── Universal Sub-Headers for All 3 Panels ─── */
+.playground-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.875rem;
+  background: var(--bg-weak-50);
+  border-bottom: 1px solid var(--stroke-soft-200);
+  flex-shrink: 0;
+  user-select: none;
+  min-height: 2.25rem;
+}
+
+.dark .playground-panel-header {
+  background: #0B0E17;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.playground-panel-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.playground-panel-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+
+.playground-panel-icon {
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.playground-panel-title {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-strong-950);
+  white-space: nowrap;
+}
+
+.dark .playground-panel-title {
+  color: #F8FAFC;
+}
+
+.playground-panel-badge {
+  font-size: 0.5625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  line-height: 1;
+}
+
+.playground-panel-badge--readonly {
+  background: rgba(148, 163, 184, 0.14);
+  color: var(--text-sub-600);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.dark .playground-panel-badge--readonly {
+  background: rgba(255, 255, 255, 0.06);
+  color: #94A3B8;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.playground-panel-badge--editable {
+  background: var(--state-feature-lighter);
+  color: var(--state-feature-dark);
+  border: 1px solid var(--state-feature-light);
+}
+
+.dark .playground-panel-badge--editable {
+  background: rgba(125, 82, 244, 0.18);
+  color: #C084FC;
+  border-color: rgba(125, 82, 244, 0.35);
+}
+
+.playground-panel-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1875rem 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--text-sub-600);
+  background: var(--bg-white-0);
+  border: 1px solid var(--stroke-soft-200);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.dark .playground-panel-action-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #CBD5E1;
+}
+
+.playground-panel-action-btn:hover {
+  background: var(--bg-soft-200);
+  color: var(--text-strong-950);
+  border-color: var(--stroke-sub-300);
+}
+
+.dark .playground-panel-action-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.playground-panel-action-btn--primary {
+  background: var(--state-feature-base, #7D52F4);
+  color: #FFFFFF !important;
+  border-color: var(--state-feature-base, #7D52F4);
+  box-shadow: 0 1px 3px rgba(125, 82, 244, 0.25);
+}
+
+.playground-panel-action-btn--primary:hover {
+  background: var(--state-feature-dark, #8C71F6);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(125, 82, 244, 0.35);
+}
+
+/* ─── Example Section Panel ─── */
+.playground-example-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-weak-50);
+  overflow: hidden;
+  border-right: 1px solid var(--stroke-soft-200);
+}
+
+.dark .playground-example-panel {
+  background: #080A10;
+  border-right-color: rgba(255, 255, 255, 0.08);
+}
+
+.playground-example-exercise-box {
+  padding: 0.75rem 1rem;
+  background: rgba(125, 82, 244, 0.06);
+  border-bottom: 1px solid rgba(125, 82, 244, 0.15);
+  flex-shrink: 0;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.dark .playground-example-exercise-box {
+  background: rgba(125, 82, 244, 0.08);
+  border-bottom-color: rgba(125, 82, 244, 0.2);
+}
+
+.playground-example-exercise-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+}
+
+.playground-example-exercise-badge {
+  font-size: 0.5625rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--state-feature-base);
+}
+
+.dark .playground-example-exercise-badge {
+  color: #C084FC;
+}
+
+.playground-example-exercise-title {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--text-strong-950);
+  margin-bottom: 0.25rem;
+}
+
+.dark .playground-example-exercise-title {
+  color: #FFFFFF;
+}
+
+.playground-example-exercise-text {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--text-sub-600);
+  white-space: pre-line;
+}
+
+.dark .playground-example-exercise-text {
+  color: #94A3B8;
+}
+
+.playground-example-code-wrapper {
+  flex: 1;
+  display: flex;
+  overflow: auto;
+  position: relative;
+  background: #0E121B;
+}
+
+.playground-example-code {
+  flex: 1;
+  margin: 0;
+  padding: 0.875rem 1rem;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.625rem;
+  tab-size: 2;
+  white-space: pre;
+  color: #F8FAFC;
+  overflow-x: auto;
+  pointer-events: auto;
+  user-select: text;
+}
+
+/* ─── Practice Workspace Section Panel ─── */
+.playground-practice-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-white-0);
+  overflow: hidden;
+}
+
+.dark .playground-practice-panel {
+  background: #0E121B;
+}
+
+.playground-practice-panel .playground-editor-wrapper {
+  flex: 1;
+  height: 100% !important;
+  overflow: hidden;
+}
+
+.playground-practice-panel .playground-textarea {
+  height: 100% !important;
+  overflow-y: auto !important;
+}
+
+/* ─── Top Fullscreen Workspace Mode Toggle ─── */
+.playground-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  background: var(--bg-weak-50);
+  border: 1px solid var(--stroke-soft-200);
+  border-radius: 0.375rem;
+  margin-left: 0.5rem;
+}
+
+.dark .playground-mode-toggle {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.playground-mode-btn {
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: var(--text-sub-600);
+  background: none;
+  border: none;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dark .playground-mode-btn {
+  color: #94A3B8;
+}
+
+.playground-mode-btn:hover {
+  color: var(--text-strong-950);
+}
+
+.dark .playground-mode-btn:hover {
+  color: #FFFFFF;
+}
+
+.playground-mode-btn--active {
+  background: var(--state-feature-base, #7D52F4) !important;
+  color: #FFFFFF !important;
+}
+
+

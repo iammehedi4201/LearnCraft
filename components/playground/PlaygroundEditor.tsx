@@ -12,6 +12,7 @@ interface PlaygroundEditorProps {
   minHeight?: string;
   readOnly?: boolean;
   isFullscreen?: boolean;
+  placeholder?: string;
 }
 
 export function PlaygroundEditor({
@@ -21,6 +22,7 @@ export function PlaygroundEditor({
   minHeight,
   readOnly = false,
   isFullscreen = false,
+  placeholder,
 }: PlaygroundEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const lineNumbersRef = useRef<HTMLDivElement>(null);
@@ -193,7 +195,7 @@ export function PlaygroundEditor({
         autoCorrect="off"
         autoCapitalize="off"
         data-gramm="false"
-        placeholder={`Write your ${language} code here...`}
+        placeholder={placeholder || `Write your ${language} code here...`}
         aria-label={`${language} code editor`}
         style={
           isFullscreen
