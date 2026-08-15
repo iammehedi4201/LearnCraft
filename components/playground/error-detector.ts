@@ -216,14 +216,21 @@ export function detectSyntaxErrorLine(code: string): DetectedError | null {
   }
 
   // 2. Check for missing commas in function arguments or constructor calls
-  // e.g. new Student ("Alvi" 80) or foo("hello" 123)
+  // e.g. new Student("Alvi" 80) or foo("hello" 123)
   for (let i = 0; i < rawLines.length; i++) {
-    const line = rawLines[i];
+    const rawLine = rawLines[i];
     const lineNum = i + 1;
 
-    // Matches e.g. ("str" 80) or ('str' 80) or (varName 80) where a comma is missing
-    const missingCommaArgMatch = line.match(/\(\s*(?:"[^"]*"|'[^']*'|[a-zA-Z_$][a-zA-Z0-9_$]*)\s+(?:"[^"]*"|'[^']*'|[0-9]+|[a-zA-Z_$][a-zA-Z0-9_$]*)/);
-    if (missingCommaArgMatch) {
+    // Strip line comments
+    const line = rawLine.replace(/\/\/[^\n]*/, "").trim();
+    if (!line) continue;
+
+    // Matches genuine function calls with missing commas e.g. foo("Alvi" 80) or new Student("Alvi" 80)
+    // Avoids control flow keywords like if, while, for, switch, catch
+    const missingCommaArgMatch = line.match(/(?:\bnew\s+[a-zA-Z_$][a-zA-Z0-9_$]*|\b[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\(\s*(?:"[^"]*"|'[^']*'|[0-9]+)\s+(?:"[^"]*"|'[^']*'|[0-9]+)/);
+    const isControlKeyword = /^\s*(?:if|while|for|switch|catch)\b/.test(line);
+
+    if (missingCommaArgMatch && !isControlKeyword) {
       return {
         line: lineNum,
         message: `Missing comma (,) between arguments on line ${lineNum}.`,

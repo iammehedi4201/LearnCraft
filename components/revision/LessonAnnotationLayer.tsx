@@ -191,6 +191,15 @@ export function LessonAnnotationLayer(): JSX.Element | null {
               "animate-pulse",
             );
           }, 3500);
+
+          // Clear highlightId query parameter after consumption so page refresh preserves current position
+          try {
+            if (typeof window !== "undefined" && window.location.search.includes("highlightId")) {
+              const cleanUrl = new URL(window.location.href);
+              cleanUrl.searchParams.delete("highlightId");
+              window.history.replaceState(null, "", cleanUrl.toString());
+            }
+          } catch {}
         }, 300);
       }
     }

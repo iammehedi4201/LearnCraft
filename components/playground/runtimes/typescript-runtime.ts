@@ -202,8 +202,8 @@ export function transpileTypeScriptLocally(code: string): string {
     return `(${cleanedParams}) =>`;
   });
 
-  // 7. Remove variable type annotations: e.g. let userName: string = "Mehedi"; or const user: User = { ... };
-  js = js.replace(/((?:let|const|var)\s+[a-zA-Z_$][a-zA-Z0-9_$]*)\s*:\s*[A-Za-z0-9_$<>\[\]\s|&]+(?=\s*[=;])/g, "$1");
+  // 7. Remove variable type annotations: e.g. let userName: string = "Mehedi"; or const user: Record<string, any> = { ... };
+  js = js.replace(/((?:let|const|var)\s+[a-zA-Z_$][a-zA-Z0-9_$]*)\s*:\s*[^=;]+(?=\s*[=;])/g, "$1");
 
   // 8. Remove access modifiers: public, private, protected, readonly, override, abstract
   js = js.replace(/\b(public|private|protected|readonly|override|abstract)\s+/g, "");
@@ -215,7 +215,7 @@ export function transpileTypeScriptLocally(code: string): string {
   js = js.replace(/<[A-Za-z0-9_$,\s|&<>[\]]+>(?=\s*\()/g, "");
 
   // 11. Remove function return type annotations: e.g. function foo(): string { or ): Promise<void> {
-  js = js.replace(/\)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[{=;])/g, ")");
+  js = js.replace(/\)\s*:\s*[^=>{]+(?=\s*[{=;])/g, ")");
 
   // 12. Loop protection to guard against true infinite loops (preserves same-line structure)
   let guardCounter = 0;

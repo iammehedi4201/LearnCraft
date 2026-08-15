@@ -42,18 +42,21 @@ const SECTIONS = [
   { id: "part17", label: "Express vs NestJS",        icon: "🎯" },
 ];
 
+const PROGRESS_STORAGE_KEY = "learncraft_progress_nj02-oop-foundations";
+
 export default function NJ02OOP(): JSX.Element {
   const searchParams = useSearchParams();
   const highlightId = searchParams?.get("highlightId");
   const sectionParam = searchParams?.get("section");
 
-  const [activeSection, setActiveSection] = useState("part1");
+  const [activeSection, setActiveSection] = useState<string>("part1");
   const [completedSections, setCompletedSections] = useState<Set<string>>(
     new Set(),
   );
 
-  // Deep linking: automatically switch to target section if passed via searchParams or highlight item
+  // Initialize from URL, highlight, or localStorage on mount
   useEffect(() => {
+    // 1. URL search param has highest priority
     if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
       setActiveSection(sectionParam);
       const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
@@ -69,6 +72,7 @@ export default function NJ02OOP(): JSX.Element {
       return;
     }
 
+    // 2. Highlight deep-link lookup
     if (highlightId) {
       const all = getAllAnnotations();
       const target = all.find(
@@ -89,8 +93,30 @@ export default function NJ02OOP(): JSX.Element {
             return next;
           });
         }
+        // Clean highlightId from URL so refresh does not force-jump to this note
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("highlightId");
+          url.searchParams.set("section", target.sectionId);
+          window.history.replaceState(null, "", url.toString());
+        }
+        return;
       }
     }
+
+    // 3. Restore persisted progress from localStorage on page refresh
+    try {
+      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
+          setActiveSection(parsed.activeSection);
+        }
+        if (Array.isArray(parsed.completedSections)) {
+          setCompletedSections(new Set(parsed.completedSections));
+        }
+      }
+    } catch {}
   }, [highlightId, sectionParam]);
 
   const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
@@ -100,9 +126,28 @@ export default function NJ02OOP(): JSX.Element {
   }, [activeSection]);
 
   const handleSectionChange = (sectionId: string) => {
-    // Mark current section as completed when navigating away
-    setCompletedSections((prev) => new Set([...prev, activeSection]));
+    const nextCompleted = new Set([...completedSections, activeSection]);
+    setCompletedSections(nextCompleted);
     setActiveSection(sectionId);
+
+    // Persist to localStorage
+    try {
+      localStorage.setItem(
+        PROGRESS_STORAGE_KEY,
+        JSON.stringify({
+          activeSection: sectionId,
+          completedSections: Array.from(nextCompleted),
+        })
+      );
+    } catch {}
+
+    // Synchronize URL search param without full reload and delete highlightId
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("highlightId");
+      url.searchParams.set("section", sectionId);
+      window.history.replaceState(null, "", url.toString());
+    }
   };
 
   const getStepState = (index: number): "done" | "active" | "todo" => {
