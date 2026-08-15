@@ -135,7 +135,10 @@ export function transpileTypeScriptLocally(code: string): string {
   });
 
   // 2. Remove type alias declarations (preserve newlines)
-  js = js.replace(/type\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?\s*=[^;]+;/g, (match) => {
+  js = js.replace(/type\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?\s*=\s*\{[\s\S]*?\};/g, (match) => {
+    return match.replace(/[^\n]/g, " ");
+  });
+  js = js.replace(/type\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?\s*=[^;\n]+;/g, (match) => {
     return match.replace(/[^\n]/g, " ");
   });
 
@@ -155,9 +158,15 @@ export function transpileTypeScriptLocally(code: string): string {
     return `const ${enumName} = { ${entries} };`;
   });
 
-  // 4. Transform TypeScript constructor parameter properties: e.g. constructor(public name: string, public price: number) {}
-  // Keep on same line without inserting extra newlines to preserve line numbering!
-  js = js.replace(/constructor\s*\(([^)]*)\)\s*\{/g, (match, paramStr) => {
+  // 4. Remove implements clauses on classes (e.g. class Foo implements Bar, Baz { -> class Foo {)
+  js = js.replace(/(\bclass\s+[A-Za-z0-9_$]+(?:\s+extends\s+[^{]+)?)\s+implements\s+[^{]+/g, "$1 ");
+
+  // 5. Remove class generic declarations: e.g. class Stack<T> -> class Stack
+  js = js.replace(/(\bclass\s+[A-Za-z0-9_$]+)<[A-Za-z0-9_$,\s|&<>[\]]+>/g, "$1");
+
+  // 6. Transform TypeScript constructor parameter properties: e.g. constructor(public name: string, public price: number) {}
+  // Handles super() calls in derived classes correctly so 'this' is accessed only after super()
+  js = js.replace(/constructor\s*\(([^)]*)\)\s*\{(\s*super\s*\([^)]*\)\s*;)?/g, (match, paramStr, superCall) => {
     const params = paramStr.split(",").map((p: string) => p.trim()).filter(Boolean);
     const assignments: string[] = [];
     const cleanedParams: string[] = [];
@@ -174,18 +183,21 @@ export function transpileTypeScriptLocally(code: string): string {
     }
 
     if (assignments.length > 0) {
+      if (superCall) {
+        return `constructor(${cleanedParams.join(", ")}) {${superCall} ${assignments.join(" ")} `;
+      }
       return `constructor(${cleanedParams.join(", ")}) { ${assignments.join(" ")} `;
     }
     return match;
   });
 
-  // 5. Clean function & method parameter lists: remove type annotations from parameters e.g. (name: string, age: number = 25) -> (name, age = 25)
+  // 7. Clean function & method parameter lists: remove type annotations from parameters e.g. (name: string, age: number = 25) -> (name, age = 25)
   js = js.replace(/(\b(?:function\s*(?:[a-zA-Z_$][a-zA-Z0-9_$]*)?|constructor|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\()([^)]*)(\)\s*(?::\s*[^=>{]+)?\s*(?:=>|\{))/g, (_match, prefix, paramStr, suffix) => {
     const cleanedParams = paramStr
       .split(",")
       .map((p: string) => {
         let clean = p.replace(/\b(public|private|protected|readonly)\s+/g, "");
-        clean = clean.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:\s*[^=,]+/g, "$1");
+        clean = clean.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:[^=,]+/g, "$1");
         return clean;
       })
       .join(",");
@@ -193,31 +205,39 @@ export function transpileTypeScriptLocally(code: string): string {
     return `${prefix}${cleanedParams}${cleanedSuffix}`;
   });
 
-  // 6. Arrow function parameter lists with return types: e.g. const add = (a: number, b: number): number => ...
+  // 8. Arrow function parameter lists with return types: e.g. const add = (a: number, b: number): number => ...
   js = js.replace(/\(([^)]*)\)\s*:\s*[^=>{]+\s*=>/g, (_match, paramStr) => {
     const cleanedParams = paramStr
       .split(",")
-      .map((p: string) => p.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:\s*[^=,]+/g, "$1"))
+      .map((p: string) => p.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:[^=,]+/g, "$1"))
       .join(",");
     return `(${cleanedParams}) =>`;
   });
 
-  // 7. Remove variable type annotations: e.g. let userName: string = "Mehedi"; or const user: Record<string, any> = { ... };
-  js = js.replace(/((?:let|const|var)\s+[a-zA-Z_$][a-zA-Z0-9_$]*)\s*:\s*[^=;]+(?=\s*[=;])/g, "$1");
-
-  // 8. Remove access modifiers: public, private, protected, readonly, override, abstract
+  // 9. Remove access modifiers: public, private, protected, readonly, override, abstract
   js = js.replace(/\b(public|private|protected|readonly|override|abstract)\s+/g, "");
 
-  // 9. Remove 'as Type' type assertions
+  // 10. Remove initialized variable and class field type annotations (e.g. grades: { subject: string; score: number }[] = []; or const x: Type = val;)
+  // Using [^\n=]+ prevents matching across newlines and eating subsequent lines!
+  js = js.replace(/^(\s*(?:(?:let|const|var|static)\s+)?[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:[^\n=]+=(?!=)/gm, "$1 =");
+
+  // 11. Remove uninitialized variable and class field type annotations (e.g. name: string; or studentId: string;)
+  // Using [^\n=]+ prevents matching across newlines!
+  js = js.replace(/^(\s*(?:(?:let|const|var|static)\s+)?[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:[^\n=]+;(?=\s*(?:\n|$|\/\/|\/\*))/gm, "$1;");
+
+  // 12. Remove 'as Type' type assertions
   js = js.replace(/\s+as\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?/g, "");
 
-  // 10. Remove generic type arguments on function calls: e.g. Promise.resolve<string>('...')
-  js = js.replace(/<[A-Za-z0-9_$,\s|&<>[\]]+>(?=\s*\()/g, "");
+  // 13. Remove generic type arguments on function calls / new instances: e.g. Promise.resolve<string>('...') or new Set<string>()
+  js = js.replace(/<[A-Za-z0-9_$,\s|&<>[\]]+>(?=\s*[\(\.])/g, "");
 
-  // 11. Remove function return type annotations: e.g. function foo(): string { or ): Promise<void> {
+  // 14. Remove function return type annotations: e.g. function foo(): string { or ): Promise<void> {
   js = js.replace(/\)\s*:\s*[^=>{]+(?=\s*[{=;])/g, ")");
 
-  // 12. Loop protection to guard against true infinite loops (preserves same-line structure)
+  // 15. Remove non-null assertion operators: e.g. user!.name -> user.name
+  js = js.replace(/([a-zA-Z0-9_$\]\)])!(?=[.\[(,\s;])/g, "$1");
+
+  // 16. Loop protection to guard against true infinite loops (preserves same-line structure)
   let guardCounter = 0;
   js = js.replace(/\bwhile\s*\(([^)]+)\)/g, (_m, cond) => {
     const id = `__lc_w_${guardCounter++}`;
