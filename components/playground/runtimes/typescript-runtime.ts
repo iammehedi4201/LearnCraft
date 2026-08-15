@@ -163,7 +163,6 @@ export function transpileTypeScriptLocally(code: string): string {
     const cleanedParams: string[] = [];
 
     for (const p of params) {
-      // Matches: public name: string, private price: number, readonly id: string, etc.
       const modifierMatch = p.match(/^(?:public|private|protected|readonly)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/);
       if (modifierMatch) {
         const paramName = modifierMatch[1];
@@ -180,26 +179,43 @@ export function transpileTypeScriptLocally(code: string): string {
     return match;
   });
 
-  // 5. Remove access modifiers: public, private, protected, readonly, override, abstract
+  // 5. Clean function & method parameter lists: remove type annotations from parameters e.g. (name: string, age: number = 25) -> (name, age = 25)
+  js = js.replace(/(\b(?:function\s*(?:[a-zA-Z_$][a-zA-Z0-9_$]*)?|constructor|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\()([^)]*)(\)\s*(?::\s*[^=>{]+)?\s*(?:=>|\{))/g, (_match, prefix, paramStr, suffix) => {
+    const cleanedParams = paramStr
+      .split(",")
+      .map((p: string) => {
+        let clean = p.replace(/\b(public|private|protected|readonly)\s+/g, "");
+        clean = clean.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:\s*[^=,]+/g, "$1");
+        return clean;
+      })
+      .join(",");
+    const cleanedSuffix = suffix.replace(/\)\s*:\s*[^=>{]+(?=\s*(?:=>|\{))/, ")");
+    return `${prefix}${cleanedParams}${cleanedSuffix}`;
+  });
+
+  // 6. Arrow function parameter lists with return types: e.g. const add = (a: number, b: number): number => ...
+  js = js.replace(/\(([^)]*)\)\s*:\s*[^=>{]+\s*=>/g, (_match, paramStr) => {
+    const cleanedParams = paramStr
+      .split(",")
+      .map((p: string) => p.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:\s*[^=,]+/g, "$1"))
+      .join(",");
+    return `(${cleanedParams}) =>`;
+  });
+
+  // 7. Remove variable type annotations: e.g. let userName: string = "Mehedi"; or const user: User = { ... };
+  js = js.replace(/((?:let|const|var)\s+[a-zA-Z_$][a-zA-Z0-9_$]*)\s*:\s*[A-Za-z0-9_$<>\[\]\s|&]+(?=\s*[=;])/g, "$1");
+
+  // 8. Remove access modifiers: public, private, protected, readonly, override, abstract
   js = js.replace(/\b(public|private|protected|readonly|override|abstract)\s+/g, "");
 
-  // 6. Remove 'as Type' type assertions
+  // 9. Remove 'as Type' type assertions
   js = js.replace(/\s+as\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?/g, "");
 
-  // 7. Remove generic type arguments: e.g. Promise.resolve<string>('...')
+  // 10. Remove generic type arguments on function calls: e.g. Promise.resolve<string>('...')
   js = js.replace(/<[A-Za-z0-9_$,\s|&<>[\]]+>(?=\s*\()/g, "");
 
-  // 8. Remove function return type annotations: e.g. function foo(): string { or ): Promise<void> {
+  // 11. Remove function return type annotations: e.g. function foo(): string { or ): Promise<void> {
   js = js.replace(/\)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[{=;])/g, ")");
-
-  // 9. Remove parameter type annotations: e.g. (name: string, email: string, age: number)
-  js = js.replace(/:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[,)=])/g, "");
-
-  // 10. Remove variable type annotations: e.g. let userName: string = "Mehedi";
-  js = js.replace(/((?:let|const|var)\s+[A-Za-z0-9_$]+)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[=;])/g, "$1");
-
-  // 11. Remove class field type annotations: e.g. age: number = 25;
-  js = js.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:\s*[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\[\])?(?=\s*[=;])/g, "$1");
 
   // 12. Loop protection to guard against true infinite loops (preserves same-line structure)
   let guardCounter = 0;
@@ -330,9 +346,13 @@ function buildSandboxHtml(rawCode: string, timeLimit = 5000): string {
 function buildValidationHtml(code: string, tests: TestCase[], hiddenTests: TestCase[] = [], timeLimit = 8000): string {
   const allTests = [...tests, ...hiddenTests];
 
-  const testRunnerCode = allTests.map((test, i) => `
+  const testRunnerCode = allTests.map((test, i) => {
+    const transpiledTest = transpileTypeScriptLocally(test.code);
+    return `
 try {
-  ${test.code}
+  (function() {
+    ${transpiledTest}
+  })();
   window.parent.postMessage({
     type: 'playground-test-result',
     index: ${i},
@@ -350,7 +370,8 @@ try {
     error: e instanceof Error ? e.message : String(e)
   }, '*');
 }
-`).join('\n');
+`;
+  }).join('\n');
 
   const fullCode = `${code}\n\n// ═══ Test Assertions ═══\n${testRunnerCode}`;
   return buildSandboxHtml(fullCode, timeLimit);
@@ -606,9 +627,16 @@ self.onmessage = async function(e) {
       // 1. Try Web Worker for test runner
       if (typeof Worker !== "undefined" && typeof Blob !== "undefined") {
         try {
-          const testSuiteCode = allTests.map((test, i) => `
+          const testSuiteCode = allTests.map((test, i) => {
+            const transpiledTest = transpileTypeScriptLocally(test.code);
+            return `
 try {
-  ${test.code}
+  const _testRes = (function() {
+    ${transpiledTest}
+  })();
+  if (_testRes && typeof _testRes.then === 'function') {
+    await _testRes;
+  }
   self.postMessage({
     type: 'test-result',
     index: ${i},
@@ -626,16 +654,29 @@ try {
     error: e instanceof Error ? e.message : String(e)
   });
 }
-`).join('\n');
+`;
+          }).join('\n');
 
           const workerScript = `
 self.onmessage = async function(e) {
+  var console = {
+    log: function() {},
+    warn: function() {},
+    error: function() {},
+    info: function() {},
+    clear: function() {}
+  };
+
   try {
     var AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
-    var fn = new AsyncFunction(e.data.code);
-    await fn();
-  } catch (err) {}
-  ${testSuiteCode}
+    var fn = new AsyncFunction("console", e.data.code);
+    await fn(console);
+  } catch (err) {
+    self.postMessage({
+      type: 'test-suite-error',
+      error: err instanceof Error ? err.message : String(err)
+    });
+  }
   self.postMessage({ type: 'tests-done' });
 };
 `;
@@ -643,16 +684,20 @@ self.onmessage = async function(e) {
           const workerUrl = URL.createObjectURL(blob);
           const worker = new Worker(workerUrl);
 
+          let suiteError: string | undefined;
+
           const timeout = setTimeout(() => {
             worker.terminate();
             URL.revokeObjectURL(workerUrl);
-            while (results.length < expectedCount) {
-              results.push({
-                name: allTests[results.length].hidden ? `Hidden Test ${results.length + 1}` : allTests[results.length].name,
-                passed: false,
-                hidden: !!allTests[results.length].hidden,
-                error: "Test execution timed out",
-              });
+            for (let i = 0; i < expectedCount; i++) {
+              if (!results[i]) {
+                results[i] = {
+                  name: allTests[i].hidden ? `Hidden Test ${i + 1}` : allTests[i].name,
+                  passed: false,
+                  hidden: !!allTests[i].hidden,
+                  error: "Test execution timed out. Check for infinite loops.",
+                };
+              }
             }
             resolve({
               passed: false,
@@ -667,16 +712,34 @@ self.onmessage = async function(e) {
             if (!data) return;
 
             if (data.type === "test-result") {
-              results.push({
+              results[data.index] = {
                 name: data.name,
                 passed: data.passed,
                 hidden: data.hidden,
                 error: data.error,
-              });
+              };
+            } else if (data.type === "test-suite-error") {
+              suiteError = data.error;
             } else if (data.type === "tests-done") {
               clearTimeout(timeout);
               worker.terminate();
               URL.revokeObjectURL(workerUrl);
+
+              for (let i = 0; i < expectedCount; i++) {
+                if (!results[i]) {
+                  results[i] = {
+                    name: allTests[i].hidden
+                      ? `Hidden Test ${i + 1}`
+                      : allTests[i].name,
+                    passed: false,
+                    hidden: !!allTests[i].hidden,
+                    error: suiteError
+                      ? `Code failed before test could run: ${suiteError}`
+                      : "Test did not run.",
+                  };
+                }
+              }
+
               const totalPassed = results.filter((r) => r.passed).length;
               resolve({
                 passed: totalPassed === expectedCount && expectedCount > 0,
@@ -687,7 +750,34 @@ self.onmessage = async function(e) {
             }
           };
 
-          worker.postMessage({ code: transpiledUserCode });
+          worker.onerror = (err) => {
+            clearTimeout(timeout);
+            worker.terminate();
+            URL.revokeObjectURL(workerUrl);
+            const errMsg = err?.message || "Worker execution error";
+            for (let i = 0; i < expectedCount; i++) {
+              if (!results[i]) {
+                results[i] = {
+                  name: allTests[i].hidden
+                    ? `Hidden Test ${i + 1}`
+                    : allTests[i].name,
+                  passed: false,
+                  hidden: !!allTests[i].hidden,
+                  error: `Code error: ${errMsg}`,
+                };
+              }
+            }
+            resolve({
+              passed: false,
+              results,
+              totalPassed: 0,
+              totalTests: expectedCount,
+            });
+          };
+
+          // Combine transpiled user code and testSuiteCode so they execute in the same closure scope
+          const combinedCode = `${transpiledUserCode}\n\n// ═══ Test Suite ═══\n${testSuiteCode}`;
+          worker.postMessage({ code: combinedCode });
           return;
         } catch {
           // Fall through to iframe fallback
@@ -706,13 +796,15 @@ self.onmessage = async function(e) {
       const safetyTimeout = setTimeout(() => {
         window.removeEventListener("message", handleMessage);
         this.destroyIframe();
-        while (results.length < expectedCount) {
-          results.push({
-            name: allTests[results.length].hidden ? `Hidden Test ${results.length + 1}` : allTests[results.length].name,
-            passed: false,
-            hidden: !!allTests[results.length].hidden,
-            error: "Validation timed out",
-          });
+        for (let i = 0; i < expectedCount; i++) {
+          if (!results[i]) {
+            results[i] = {
+              name: allTests[i].hidden ? `Hidden Test ${i + 1}` : allTests[i].name,
+              passed: false,
+              hidden: !!allTests[i].hidden,
+              error: "Validation timed out",
+            };
+          }
         }
         resolve({
           passed: false,
@@ -727,7 +819,6 @@ self.onmessage = async function(e) {
         if (!data || typeof data !== "object") return;
 
         if (data.type === "playground-test-result") {
-          receivedCount++;
           results[data.index] = {
             name: data.name,
             passed: data.passed,
@@ -743,7 +834,7 @@ self.onmessage = async function(e) {
               this.destroyIframe();
               const totalPassed = results.filter((r) => r.passed).length;
               resolve({
-                passed: totalPassed === expectedCount,
+                passed: totalPassed === expectedCount && expectedCount > 0,
                 results,
                 totalPassed,
                 totalTests: expectedCount,
@@ -771,7 +862,7 @@ self.onmessage = async function(e) {
             }
             const totalPassed = results.filter((r) => r.passed).length;
             resolve({
-              passed: totalPassed === expectedCount,
+              passed: totalPassed === expectedCount && expectedCount > 0,
               results,
               totalPassed,
               totalTests: expectedCount,

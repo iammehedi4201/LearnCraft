@@ -183,7 +183,8 @@ export default function MyRevisionPage(): JSX.Element {
 
   // Navigate to lesson with deep link
   const handleGoToLesson = (item: AnnotationItem) => {
-    router.push(`${item.lessonPath}?highlightId=${item.id}`);
+    const sectionQuery = item.sectionId ? `&section=${encodeURIComponent(item.sectionId)}` : "";
+    router.push(`${item.lessonPath}?highlightId=${encodeURIComponent(item.id)}${sectionQuery}`);
   };
 
   // Flashcard controls

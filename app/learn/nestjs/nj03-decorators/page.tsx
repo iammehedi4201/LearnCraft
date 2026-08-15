@@ -27,7 +27,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
+import { getAllAnnotations } from "@/lib/revision-storage";
 import { PageSidebar } from "@/components/page-sidebar";
 import { PageHeader } from "./components/PageHeader";
 import { Section1WhatAreDecorators } from "./components/Section1WhatAreDecorators";
@@ -53,10 +55,55 @@ const SECTIONS = [
 ];
 
 export default function NJ03Decorators(): JSX.Element {
+  const searchParams = useSearchParams();
+  const highlightId = searchParams?.get("highlightId");
+  const sectionParam = searchParams?.get("section");
+
   const [activeSection, setActiveSection] = useState("intro");
   const [completedSections, setCompletedSections] = useState<Set<string>>(
     new Set(),
   );
+
+  // Deep linking: switch to section on load
+  useEffect(() => {
+    if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
+      setActiveSection(sectionParam);
+      const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
+      if (targetIdx > 0) {
+        setCompletedSections((prev) => {
+          const next = new Set(prev);
+          for (let i = 0; i < targetIdx; i++) {
+            next.add(SECTIONS[i].id);
+          }
+          return next;
+        });
+      }
+      return;
+    }
+
+    if (highlightId) {
+      const all = getAllAnnotations();
+      const target = all.find(
+        (a) =>
+          a.id === highlightId ||
+          a.id === `rev_${highlightId}` ||
+          `rev-highlight-${a.id}` === highlightId
+      );
+      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
+        setActiveSection(target.sectionId);
+        const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
+        if (targetIdx > 0) {
+          setCompletedSections((prev) => {
+            const next = new Set(prev);
+            for (let i = 0; i < targetIdx; i++) {
+              next.add(SECTIONS[i].id);
+            }
+            return next;
+          });
+        }
+      }
+    }
+  }, [highlightId, sectionParam]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });

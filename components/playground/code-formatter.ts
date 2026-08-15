@@ -10,7 +10,7 @@
 /**
  * Format TypeScript or JavaScript code cleanly with 2-space indentation.
  */
-export function formatCode(code: string, language: string = "typescript"): string {
+export function formatCode(code: string, _language: string = "typescript"): string {
   if (!code || !code.trim()) return code;
 
   // Normalize newlines

@@ -13,14 +13,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRevision } from "@/context/revision-context";
 import { HighlightColor } from "@/types/revision";
 
-const COLOR_PRESETS: { key: HighlightColor; label: string; bgClass: string; borderClass: string }[] = [
-  { key: "feature", label: "Purple", bgClass: "bg-ds-feature-base", borderClass: "border-ds-feature-base" },
-  { key: "away", label: "Amber", bgClass: "bg-ds-away-base", borderClass: "border-ds-away-base" },
-  { key: "highlighted", label: "Pink", bgClass: "bg-ds-highlighted-base", borderClass: "border-ds-highlighted-base" },
-  { key: "success", label: "Emerald", bgClass: "bg-ds-success-base", borderClass: "border-ds-success-base" },
-  { key: "info", label: "Sky", bgClass: "bg-ds-info-base", borderClass: "border-ds-info-base" },
-];
-
 export function NoteDialog(): JSX.Element | null {
   const {
     isNoteDialogOpen,

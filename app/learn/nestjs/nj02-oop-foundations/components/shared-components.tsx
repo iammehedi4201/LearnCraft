@@ -211,7 +211,7 @@ export function SectionContainer({
   children: ReactNode;
 }) {
   return (
-    <section className="animate-in fade-in slide-in-from-bottom-6 duration-700">
+    <section id={`part${number}`} data-section-id={`part${number}`} className="animate-in fade-in slide-in-from-bottom-6 duration-700">
       <div className="bg-ds-bg-white p-8 lg:p-12 rounded-3xl border border-ds-stroke-soft shadow-sm mb-12">
         {/* Section Header */}
         <div className="flex items-center gap-4 mb-10 pb-6 border-b border-ds-stroke-soft">

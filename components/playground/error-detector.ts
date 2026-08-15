@@ -185,6 +185,15 @@ export function detectSyntaxErrorLine(code: string): DetectedError | null {
     }
   }
 
+  // Check unclosed block comment
+  if (inBlockComment) {
+    return {
+      line: blockCommentLine,
+      message: `Unclosed block comment (/*) started on line ${blockCommentLine}.`,
+      suggestion: `Add '*/' to close the block comment.`,
+    };
+  }
+
   // Check unclosed backtick template literal
   if (inBacktick) {
     return {
