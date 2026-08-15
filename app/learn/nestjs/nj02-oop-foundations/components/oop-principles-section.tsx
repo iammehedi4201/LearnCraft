@@ -101,6 +101,60 @@ console.log(account.owner + "'s verified balance: $" + account.getBalance());`}
           />
         </div>
 
+        {/* ── TypeScript Access Modifiers ── */}
+        <div className="mb-8">
+          <SectionHeading>🔑 TypeScript Access Modifiers: public, protected, private</SectionHeading>
+          <p className="text-sm text-ds-text-sub mb-4 leading-relaxed">
+            In TypeScript, you can control visibility using three keywords as well as the modern JavaScript <code className="font-mono text-xs bg-ds-bg-weak px-1.5 py-0.5 rounded text-ds-feature-base">#</code> private field syntax:
+          </p>
+
+          <ComparisonTable
+            headers={["Modifier", "Accessible Inside Class?", "Accessible in Subclasses?", "Accessible Outside Class?"]}
+            rows={[
+              ["public (default)", "✅ Yes", "✅ Yes", "✅ Yes (Anywhere)"],
+              ["protected", "✅ Yes", "✅ Yes (Subclasses)", "❌ No (Hidden outside)"],
+              ["private", "✅ Yes", "❌ No (Only this class)", "❌ No (Hidden outside)"],
+              ["#private (JS standard)", "✅ Yes", "❌ No (Only this class)", "❌ No (Hard runtime private)"],
+            ]}
+          />
+
+          <div className="mt-6">
+            <Playground
+              runtime="typescript"
+              language="TypeScript"
+              starterCode={`class Employee {
+  public name: string;             // Anyone can see name
+  protected baseSalary: number;    // Subclasses can see, outside cannot
+  private secretBonus: number;     // Only Employee class can see
+
+  constructor(name: string, baseSalary: number, secretBonus: number) {
+    this.name = name;
+    this.baseSalary = baseSalary;
+    this.secretBonus = secretBonus;
+  }
+
+  getPublicSummary() {
+    console.log(this.name + " earns a base salary of $" + this.baseSalary);
+  }
+}
+
+class Manager extends Employee {
+  calculateTotalComp(): number {
+    // ✅ Can access protected 'baseSalary' in subclass!
+    return this.baseSalary + 2000;
+    // ❌ Cannot access private 'secretBonus' here
+  }
+}
+
+const emp = new Employee("Mehedi", 5000, 1000);
+console.log("Public name:", emp.name); // ✅ OK
+emp.getPublicSummary(); // ✅ OK
+// console.log(emp.baseSalary); ❌ Error: Property 'baseSalary' is protected`}
+              height="360px"
+            />
+          </div>
+        </div>
+
         <MistakeBox
           title="Making everything public out of laziness"
           description="It is tempting to skip encapsulation and make everything public. But this defeats the purpose. Always make data private unless you have a very good reason to expose it."

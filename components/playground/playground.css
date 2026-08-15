@@ -142,7 +142,7 @@
   flex-direction: column;
   min-width: 0;
   background: var(--bg-white-0);
-  height: auto;
+  height: 100%;
   overflow: hidden;
 }
 
@@ -158,12 +158,14 @@
   flex: 1;
   display: flex;
   position: relative;
-  min-height: 100%;
+  height: 100%;
+  min-height: 200px;
+  overflow: hidden;
 }
 
 .playground-line-numbers {
   flex-shrink: 0;
-  padding: 0.875rem 0;
+  padding: 0.875rem 0 5rem 0;
   width: 2.75rem;
   background: var(--bg-weak-50);
   border-right: 1px solid var(--stroke-soft-200);
@@ -174,6 +176,8 @@
   color: var(--text-disabled-300);
   text-align: right;
   box-sizing: border-box;
+  overflow: hidden;
+  height: 100%;
 }
 
 .playground-line-number {
@@ -249,7 +253,7 @@
   left: 2.75rem;
   right: 0;
   bottom: 0;
-  padding: 0.875rem 1rem;
+  padding: 0.875rem 4rem 5rem 1rem;
   margin: 0;
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
   font-size: 0.8125rem;
@@ -268,7 +272,8 @@
 
 .playground-textarea {
   flex: 1;
-  padding: 0.875rem 1rem;
+  height: 100%;
+  padding: 0.875rem 4rem 5rem 1rem;
   font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
   font-size: 0.8125rem;
   line-height: 1.625rem;
@@ -279,13 +284,40 @@
   outline: none;
   resize: none;
   white-space: pre;
+  word-wrap: normal;
   tab-size: 2;
   -moz-tab-size: 2;
-  min-height: 100%;
   caret-color: var(--state-feature-base, #7D52F4);
   box-sizing: border-box;
   z-index: 2;
   position: relative;
+  overflow-y: auto;
+  overflow-x: auto;
+  scroll-padding: 2rem 3rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--stroke-soft-200) transparent;
+}
+
+.playground-textarea::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.playground-textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.playground-textarea::-webkit-scrollbar-thumb {
+  background: var(--stroke-soft-200);
+  border-radius: 3px;
+}
+
+.dark .playground-textarea::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.playground-textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--state-feature-base, #7D52F4);
 }
 
 .playground-textarea::placeholder {

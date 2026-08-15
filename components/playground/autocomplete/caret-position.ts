@@ -48,8 +48,8 @@ function getMirrorDiv(): HTMLDivElement {
     mirrorDiv.style.top = "-99999px";
     mirrorDiv.style.left = "-99999px";
     mirrorDiv.style.visibility = "hidden";
-    mirrorDiv.style.whiteSpace = "pre-wrap";
-    mirrorDiv.style.wordWrap = "break-word";
+    mirrorDiv.style.whiteSpace = "pre";
+    mirrorDiv.style.wordWrap = "normal";
     mirrorDiv.style.pointerEvents = "none";
     document.body.appendChild(mirrorDiv);
   }
@@ -77,8 +77,8 @@ export function getCaretCoordinates(
     div.style[prop] = style[prop];
   });
 
-  div.style.whiteSpace = "pre-wrap";
-  div.style.wordBreak = "break-word";
+  div.style.whiteSpace = "pre";
+  div.style.wordBreak = "normal";
   div.style.width = `${element.clientWidth}px`;
 
   // Text up to caret

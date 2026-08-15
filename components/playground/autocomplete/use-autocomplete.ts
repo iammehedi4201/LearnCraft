@@ -564,8 +564,9 @@ export function useAutocomplete({
       const { start, end } = tokenRange;
       const textToInsert = suggestion.insertText ?? suggestion.label;
 
-      const before = value.substring(0, start);
-      const after = value.substring(end);
+      const domValue = textarea.value;
+      const before = domValue.substring(0, start);
+      const after = domValue.substring(end);
       const newValue = before + textToInsert + after;
 
       onChange(newValue);
@@ -617,6 +618,13 @@ export function useAutocomplete({
           e.preventDefault();
           setSelectedIndex((prev) => (prev - 1 + suggestions.length) % suggestions.length);
           return true;
+        }
+
+        case "ArrowLeft":
+        case "ArrowRight": {
+          // Close suggestions and allow natural cursor navigation horizontally
+          setIsOpen(false);
+          return false;
         }
 
         case "Tab":

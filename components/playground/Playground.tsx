@@ -483,7 +483,7 @@ export function Playground({
       <div
         ref={bodyRef}
         className={`playground-body ${is3PaneMode ? "playground-3pane-body" : ""}`}
-        style={isFullscreen ? { flex: 1, minHeight: 0 } : { minHeight: height, height: "auto" }}
+        style={isFullscreen ? { flex: 1, minHeight: 0 } : { height: height || "360px", minHeight: "240px" }}
       >
         {is3PaneMode ? (
           /* ══════════════════════════════════════════════ */
