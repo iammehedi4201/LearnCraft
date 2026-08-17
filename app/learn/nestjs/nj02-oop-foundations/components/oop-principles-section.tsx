@@ -56,10 +56,10 @@ export function OopPrinciplesSection() {
             runtime="typescript"
             language="TypeScript"
             starterCode={`class BankAccount {
-  #balance: number;  // 🔒 Private field! Only accessible inside this class
+  private balance: number;  // 🔒 Private field! Only accessible inside this class
 
   constructor(public owner: string, initialBalance: number) {
-    this.#balance = initialBalance;
+    this.balance = initialBalance;
   }
 
   // Safe way to add money with validation
@@ -68,8 +68,8 @@ export function OopPrinciplesSection() {
       console.log("❌ Deposit amount must be positive!");
       return;
     }
-    this.#balance += amount;
-    console.log("✅ Deposited $" + amount + ". New balance: $" + this.#balance);
+    this.balance += amount;
+    console.log("✅ Deposited $" + amount + ". New balance: $" + this.balance);
   }
 
   // Safe way to withdraw with validation
@@ -78,17 +78,17 @@ export function OopPrinciplesSection() {
       console.log("❌ Withdrawal amount must be positive!");
       return;
     }
-    if (amount > this.#balance) {
-      console.log("❌ Insufficient funds! Current balance: $" + this.#balance);
+    if (amount > this.balance) {
+      console.log("❌ Insufficient funds! Current balance: $" + this.balance);
       return;
     }
-    this.#balance -= amount;
-    console.log("✅ Withdrew $" + amount + ". Remaining balance: $" + this.#balance);
+    this.balance -= amount;
+    console.log("✅ Withdrew $" + amount + ". Remaining balance: $" + this.balance);
   }
 
   // Read-only getter
   getBalance(): number {
-    return this.#balance;
+    return this.balance;
   }
 }
 
@@ -159,7 +159,7 @@ emp.getPublicSummary(); // ✅ OK
           title="Making everything public out of laziness"
           description="It is tempting to skip encapsulation and make everything public. But this defeats the purpose. Always make data private unless you have a very good reason to expose it."
           wrong="this.password = password; // Anyone can see and change it"
-          right="this.#password = password; // Protected — only this class can touch it"
+          right="private password; // Private — only this class can touch it"
         />
 
         <QuickCheck
@@ -197,29 +197,29 @@ emp.getPublicSummary(); // ✅ OK
             language="TypeScript"
             starterCode={`class CoffeeMachine {
   // ──── HIDDEN complexity (private methods) ────
-  #boilWater() {
+  private boilWater() {
     console.log("  ⏳ Step 1: Boiling water to 96°C...");
   }
 
-  #grindBeans() {
+  private grindBeans() {
     console.log("  ⏳ Step 2: Grinding premium arabica beans...");
   }
 
-  #brew() {
+  private brew() {
     console.log("  ⏳ Step 3: Pressurized brewing...");
   }
 
-  #pourIntoCup() {
+  private pourIntoCup() {
     console.log("  ⏳ Step 4: Pouring rich espresso into cup...");
   }
 
   // ──── SIMPLE public interface (what the user calls) ────
   makeCoffee() {
     console.log("☕ Starting Coffee Machine...");
-    this.#boilWater();
-    this.#grindBeans();
-    this.#brew();
-    this.#pourIntoCup();
+    this.boilWater();
+    this.grindBeans();
+    this.brew();
+    this.pourIntoCup();
     console.log("☕ Your coffee is ready! Enjoy!");
   }
 }
@@ -238,10 +238,10 @@ machine.makeCoffee();
             headers={["", "Encapsulation", "Abstraction"]}
             rows={[
               ["Focus", "PROTECTING data from outside access", "HIDING complexity from the user"],
-              ["How?", "Using private (#) fields and methods", "Showing simple methods, hiding the complex ones"],
+              ["How?", "Using private modifier fields and methods", "Showing simple methods, hiding the complex ones"],
               ["Goal", "Prevent bad changes to data", "Make code easy to use"],
               ["Analogy", "A locked safe (protects the money)", "An ATM button (hides HOW it gets money)"],
-              ["Example", "#balance can only be changed via deposit()", "makeCoffee() hides 4 internal steps"],
+              ["Example", "private balance can only be changed via deposit()", "makeCoffee() hides 4 internal steps"],
             ]}
           />
 
