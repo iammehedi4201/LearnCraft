@@ -1,57 +1,55 @@
-/**
- * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * NJ-03 — Decorators Deep Dive
- * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- *
- * CORE CONCEPT
- * ────────────
- * Decorators are special functions that attach metadata to classes, methods,
- * properties, or parameters. They use the @ syntax and are THE defining feature
- * of NestJS. Without understanding decorators, NestJS code looks like magic.
- *
- * WHY THIS MATTERS FOR NESTJS
- * ───────────────────────────
- * Every NestJS concept uses decorators:
- * @Module, @Controller, @Injectable, @Get, @Post, @Body, @Param, @UseGuards...
- * They tell NestJS HOW to wire your classes together.
- *
- * EXPRESS.JS COMPARISON
- * ─────────────────────
- * Express has no decorators. You wire everything manually with app.get(),
- * app.use(), etc. NestJS decorators are declarative — they describe WHAT
- * your code does, not HOW to wire it.
- *
- * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- */
-
 "use client";
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
 import { getAllAnnotations } from "@/lib/revision-storage";
-import { PageSidebar } from "@/components/page-sidebar";
-import { PageHeader } from "./components/PageHeader";
-import { Section1WhatAreDecorators } from "./components/Section1WhatAreDecorators";
-import { Section2ClassDecorators } from "./components/Section2ClassDecorators";
-import { Section3MethodDecorators } from "./components/Section3MethodDecorators";
-import { Section4ParameterDecorators } from "./components/Section4ParameterDecorators";
-import { Section5PropertyDecorators } from "./components/Section5PropertyDecorators";
-import { Section6ExpressVsNestJS } from "./components/Section6ExpressVsNestJS";
-import { MiniChallenge } from "./components/MiniChallenge";
-import { CommonMistakes } from "./components/CommonMistakes";
-import { Summary } from "./components/Summary";
-import { NextStep } from "./components/NextStep";
+
+// Section components
+import { HeaderSection } from "./components/header-section";
+import { SyntaxPrerequisitesSection } from "./components/syntax-prerequisites-section";
+import { ClassDecoratorsSection } from "./components/class-decorators-section";
+import { MethodDecoratorsSection } from "./components/method-decorators-section";
+import { PropertyDecoratorsSection } from "./components/property-decorators-section";
+import { ParameterDecoratorsSection } from "./components/parameter-decorators-section";
+import { DecoratorFactoriesSection } from "./components/decorator-factories-section";
+import { LoggingPerformanceSection } from "./components/logging-performance-section";
+import { ValidationDecoratorSection } from "./components/validation-decorator-section";
+import { AuthSecuritySection } from "./components/auth-security-section";
+import { CachingErrorSection } from "./components/caching-error-section";
+import { CompositionOrderSection } from "./components/composition-order-section";
+import { MetadataReflectionSection } from "./components/metadata-reflection-section";
+import { ModernVsLegacySection } from "./components/modern-vs-legacy-section";
+import { NestjsDeepDiveSection } from "./components/nestjs-deep-dive-section";
+import { BeginnerMistakesSection } from "./components/beginner-mistakes-section";
+import { ConceptTablesSection } from "./components/concept-tables-section";
+import { LearningChecksSection } from "./components/learning-checks-section";
+import { CodingExercisesSection } from "./components/coding-exercises-section";
+import { FinalProjectSection } from "./components/final-project-section";
+import { ClosingSections } from "./components/closing-sections";
 
 const SECTIONS = [
-  { id: "intro", label: "Welcome", icon: "🚀" },
-  { id: "what-are-decorators", label: "What Are Decorators", icon: "🎁" },
-  { id: "class-decorators", label: "Class Decorators", icon: "📦" },
-  { id: "method-decorators", label: "Method Decorators", icon: "🔧" },
-  { id: "parameter-decorators", label: "Parameter Decorators", icon: "📥" },
-  { id: "property-decorators", label: "Property Decorators", icon: "🏷️" },
-  { id: "express-vs-nestjs", label: "Express vs NestJS", icon: "⚖️" },
-  { id: "challenge", label: "Challenge & Review", icon: "🏆" },
+  { id: "part1",  label: "Understanding Decorators", icon: "🚀" },
+  { id: "part2",  label: "Syntax & Prerequisites",   icon: "✏️" },
+  { id: "part3",  label: "Class Decorators",         icon: "📦" },
+  { id: "part4",  label: "Method Decorators",        icon: "🔧" },
+  { id: "part5",  label: "Property Decorators",      icon: "🏷️" },
+  { id: "part6",  label: "Parameter Decorators",     icon: "📥" },
+  { id: "part7",  label: "Decorator Factories",      icon: "🏭" },
+  { id: "part8",  label: "Logging & Performance",    icon: "📝" },
+  { id: "part9",  label: "Validation Decorators",    icon: "✅" },
+  { id: "part10", label: "Authorization & Security", icon: "🔒" },
+  { id: "part11", label: "Caching & Error Handling", icon: "⚡" },
+  { id: "part12", label: "Composition & Order",      icon: "🧩" },
+  { id: "part13", label: "Metadata & Reflection",    icon: "🔮" },
+  { id: "part14", label: "Modern vs Legacy",         icon: "⚖️" },
+  { id: "part15", label: "NestJS Deep Dive",         icon: "🦁" },
+  { id: "part16", label: "Beginner Mistakes",        icon: "⚠️" },
+  { id: "part17", label: "Concept Tables",           icon: "📊" },
+  { id: "part18", label: "Learning Checks",          icon: "🧠" },
+  { id: "part19", label: "Coding Exercises",         icon: "💻" },
+  { id: "part20", label: "Final Project",            icon: "🏆" },
+  { id: "part21", label: "Express vs NestJS",        icon: "🎯" },
 ];
 
 const PROGRESS_STORAGE_KEY = "learncraft_progress_nj03-decorators";
@@ -61,7 +59,7 @@ export default function NJ03Decorators(): JSX.Element {
   const highlightId = searchParams?.get("highlightId");
   const sectionParam = searchParams?.get("section");
 
-  const [activeSection, setActiveSection] = useState<string>("intro");
+  const [activeSection, setActiveSection] = useState<string>("part1");
   const [completedSections, setCompletedSections] = useState<Set<string>>(
     new Set(),
   );
@@ -131,6 +129,8 @@ export default function NJ03Decorators(): JSX.Element {
     } catch {}
   }, [highlightId, sectionParam]);
 
+  const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeSection]);
@@ -160,53 +160,203 @@ export default function NJ03Decorators(): JSX.Element {
     }
   };
 
+  const getStepState = (index: number): "done" | "active" | "todo" => {
+    const section = SECTIONS[index];
+    if (section.id === activeSection) return "active";
+    if (completedSections.has(section.id) || index < currentIndex)
+      return "done";
+    return "todo";
+  };
+
   const renderContent = () => {
     switch (activeSection) {
-      case "intro":
-        return <PageHeader />;
-      case "what-are-decorators":
-        return <Section1WhatAreDecorators />;
-      case "class-decorators":
-        return <Section2ClassDecorators />;
-      case "method-decorators":
-        return <Section3MethodDecorators />;
-      case "parameter-decorators":
-        return <Section4ParameterDecorators />;
-      case "property-decorators":
-        return <Section5PropertyDecorators />;
-      case "express-vs-nestjs":
-        return <Section6ExpressVsNestJS />;
-      case "challenge":
-        return (
-          <>
-            <MiniChallenge />
-            <CommonMistakes />
-            <Summary />
-            <NextStep />
-          </>
-        );
-      default:
-        return <PageHeader />;
+      case "part1":  return <HeaderSection />;
+      case "part2":  return <SyntaxPrerequisitesSection />;
+      case "part3":  return <ClassDecoratorsSection />;
+      case "part4":  return <MethodDecoratorsSection />;
+      case "part5":  return <PropertyDecoratorsSection />;
+      case "part6":  return <ParameterDecoratorsSection />;
+      case "part7":  return <DecoratorFactoriesSection />;
+      case "part8":  return <LoggingPerformanceSection />;
+      case "part9":  return <ValidationDecoratorSection />;
+      case "part10": return <AuthSecuritySection />;
+      case "part11": return <CachingErrorSection />;
+      case "part12": return <CompositionOrderSection />;
+      case "part13": return <MetadataReflectionSection />;
+      case "part14": return <ModernVsLegacySection />;
+      case "part15": return <NestjsDeepDiveSection />;
+      case "part16": return <BeginnerMistakesSection />;
+      case "part17": return <ConceptTablesSection />;
+      case "part18": return <LearningChecksSection />;
+      case "part19": return <CodingExercisesSection />;
+      case "part20": return <FinalProjectSection />;
+      case "part21": return <ClosingSections />;
+      default:       return <HeaderSection />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#0f172a] text-slate-900 dark:text-slate-300">
+    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20">
       <Nav />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-0 py-8 pb-12">
-        <div className="flex flex-col lg:flex-row gap-12 lg:gap-7 items-start justify-center">
-          {/* Sidebar */}
-          <PageSidebar
-            sections={SECTIONS}
-            activeSection={activeSection}
-            completedSections={completedSections}
-            onSectionChange={handleSectionChange}
-          />
+      <div className="relative z-10 max-w-[95rem] mx-auto px-6 lg:px-8 py-2">
+        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
+          {/* Stepper Sidebar */}
+          <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
+            {/* Header */}
+            <div className="px-2 mb-3 shrink-0">
+              <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
+                Modules
+              </p>
+            </div>
+
+            {/* Stepper (Scrollable List) */}
+            <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
+              <ol className="space-y-1.5 relative">
+                {SECTIONS.map((section, index) => {
+                  const state = getStepState(index);
+                  const isActive = state === "active";
+                  const isDone = state === "done";
+                  const isTodo = state === "todo";
+
+                  return (
+                    <li key={section.id}>
+                      <button
+                        onClick={() => handleSectionChange(section.id)}
+                        disabled={isTodo}
+                        className={`
+                          group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+                          transition-all duration-200 text-left
+                          ${
+                            isActive
+                              ? "bg-ds-feature-lighter border border-ds-feature-base"
+                              : isDone
+                                ? "hover:bg-ds-bg-weak cursor-pointer"
+                                : "opacity-50 cursor-not-allowed"
+                          }
+                        `}
+                      >
+                        {/* Step indicator circle */}
+                        <div
+                          className={`
+                            relative z-10 flex-shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center
+                            text-[11px] font-bold transition-all duration-200
+                            ${
+                              isActive
+                                ? "bg-ds-feature-base text-ds-static-white scale-105 shadow-sm shadow-ds-feature-base/10"
+                                : isDone
+                                  ? "bg-ds-success-base text-ds-static-white"
+                                  : "bg-ds-bg-weak text-ds-text-disabled border border-ds-stroke-soft"
+                            }
+                          `}
+                        >
+                          {isDone ? (
+                            <svg
+                              className="w-3.5 h-3.5"
+                              viewBox="0 0 14 14"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="2,7 5.5,10.5 12,3.5" />
+                            </svg>
+                          ) : (
+                            <span>{index + 1}</span>
+                          )}
+                        </div>
+
+                        {/* Label area */}
+                        <div className="flex flex-col items-start gap-0.5 min-w-0 flex-1">
+                          <span
+                            className={`
+                              text-[13px] font-semibold leading-tight truncate transition-colors duration-200
+                              ${
+                                isActive
+                                  ? "text-ds-feature-dark font-black"
+                                  : isDone
+                                    ? "text-ds-text-strong group-hover:text-ds-feature-base"
+                                    : "text-ds-text-disabled"
+                              }
+                            `}
+                          >
+                            {section.label}
+                          </span>
+                          {isActive && (
+                            <span className="text-[10px] font-medium text-ds-feature-base">
+                              In progress
+                            </span>
+                          )}
+                          {isDone && (
+                            <span className="text-[10px] text-ds-success-dark font-medium">
+                              Completed
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Active indicator dot */}
+                        {isActive && (
+                          <div className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0" />
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+
+            {/* Progress box */}
+            <div className="mt-4 shrink-0 px-4 py-3.5 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[9px] font-black text-ds-text-soft uppercase tracking-widest">
+                  Progress
+                </span>
+                <span className="text-[12px] font-bold text-ds-text-strong">
+                  {Math.round(((currentIndex + 1) / SECTIONS.length) * 100)}%
+                </span>
+              </div>
+              <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
+                  style={{
+                    width: `${((currentIndex + 1) / SECTIONS.length) * 100}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-[10px] text-ds-text-soft">
+                {currentIndex + 1} of {SECTIONS.length} modules
+              </p>
+            </div>
+
+            {/* Prev / Next navigation */}
+            <div className="mt-3 shrink-0 flex gap-2">
+              <button
+                onClick={() =>
+                  currentIndex > 0 &&
+                  handleSectionChange(SECTIONS[currentIndex - 1].id)
+                }
+                disabled={currentIndex === 0}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold border border-ds-stroke-soft text-ds-text-sub bg-ds-bg-white hover:bg-ds-bg-weak hover:text-ds-text-strong disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                ← Prev
+              </button>
+              <button
+                onClick={() =>
+                  currentIndex < SECTIONS.length - 1 &&
+                  handleSectionChange(SECTIONS[currentIndex + 1].id)
+                }
+                disabled={currentIndex === SECTIONS.length - 1}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10"
+              >
+                Next →
+              </button>
+            </div>
+          </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0 max-w-5xl pb-12">
-            <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 ease-out">
+          <main className="flex-1 min-w-0 max-w-6xl">
+            <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
               {renderContent()}
             </div>
           </main>
