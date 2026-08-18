@@ -51,23 +51,28 @@ const IcNoteEdit = () => <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none
 
 // ─── Extract Question / Title ────────────────────────────────────────────────
 function extractQuestion(item: AnnotationItem): string {
-  if (item.question && item.question.trim()) return item.question.trim();
-  if (item.note) {
-    const headingMatch = item.note.match(/^#{1,6}\s+(.*)/m);
+  let raw = "";
+  if (item.question && item.question.trim()) {
+    raw = item.question.trim();
+  } else if (item.note) {
+    const headingMatch = item.note.match(/^#{1,6}\s*(.*)/m);
     if (headingMatch && headingMatch[1].trim()) {
       return headingMatch[1].trim();
     }
     const firstLine = item.note.split("\n").find((l) => l.trim().length > 0);
     if (firstLine) {
-      return firstLine
-        .replace(/^#{1,6}\s+/, "")
-        .replace(/^\*\*/, "")
-        .replace(/\*\*$/, "")
-        .replace(/^>+\s*/, "")
-        .trim();
+      raw = firstLine;
     }
   }
-  return item.selectedText || "Question";
+  if (!raw) raw = item.selectedText || "Question";
+
+  return raw
+    .replace(/^#{1,6}\s*/, "")
+    .replace(/^\*\*/, "")
+    .replace(/\*\*$/, "")
+    .replace(/^>\s*/, "")
+    .replace(/^[-*+]\s*/, "")
+    .trim();
 }
 
 export default function MyRevisionPage(): JSX.Element {

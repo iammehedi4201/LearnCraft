@@ -34,7 +34,13 @@ const FORMAT_OPTIONS: OptionItem[] = [
     label: "Heading",
     title: "Heading / Question (# Heading)",
     icon: (
-      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <svg
+        className="w-3.5 h-3.5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+      >
         <path d="M6 12h12" />
         <path d="M6 4v16" />
         <path d="M18 4v16" />
@@ -46,7 +52,13 @@ const FORMAT_OPTIONS: OptionItem[] = [
     label: "Bold",
     title: "Bold text (**bold**)",
     icon: (
-      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <svg
+        className="w-3.5 h-3.5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+      >
         <path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
         <path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z" />
       </svg>
@@ -57,7 +69,13 @@ const FORMAT_OPTIONS: OptionItem[] = [
     label: "Italic",
     title: "Italic text for emphasis (*italic*)",
     icon: (
-      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <svg
+        className="w-3.5 h-3.5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+      >
         <line x1="19" y1="4" x2="10" y2="4" />
         <line x1="14" y1="20" x2="5" y2="20" />
         <line x1="15" y1="4" x2="9" y2="20" />
@@ -69,7 +87,13 @@ const FORMAT_OPTIONS: OptionItem[] = [
     label: "Example",
     title: "Text Example / Analogy Callout (> Example: ...)",
     icon: (
-      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        className="w-3.5 h-3.5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7Z" />
         <line x1="9" y1="21" x2="15" y2="21" />
       </svg>
@@ -80,7 +104,13 @@ const FORMAT_OPTIONS: OptionItem[] = [
     label: "List",
     title: "Bullet list (- item)",
     icon: (
-      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        className="w-3.5 h-3.5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <line x1="9" y1="6" x2="20" y2="6" />
         <line x1="9" y1="12" x2="20" y2="12" />
         <line x1="9" y1="18" x2="20" y2="18" />
@@ -95,7 +125,13 @@ const FORMAT_OPTIONS: OptionItem[] = [
     label: "Code",
     title: "Code example (```ts or `code`)",
     icon: (
-      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <svg
+        className="w-3.5 h-3.5"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
         <polyline points="16 18 22 12 16 6" />
         <polyline points="8 6 2 12 8 18" />
       </svg>
@@ -106,7 +142,7 @@ const FORMAT_OPTIONS: OptionItem[] = [
 // ─── Format Processor ──────────────────────────────────────────────────────
 function applyFormatting(
   textarea: HTMLTextAreaElement,
-  actionType: FormatAction
+  actionType: FormatAction,
 ): { value: string; selStart: number; selEnd: number } {
   const ss = textarea.selectionStart;
   const se = textarea.selectionEnd;
@@ -125,16 +161,26 @@ function applyFormatting(
         .split("\n")
         .map((l) => `# ${l.replace(/^#{1,6}\s+/, "").replace(/^[-*+]\s+/, "")}`)
         .join("\n");
-      const newVal = value.slice(0, lineStart) + transformed + value.slice(lineEnd);
-      return { value: newVal, selStart: lineStart, selEnd: lineStart + transformed.length };
+      const newVal =
+        value.slice(0, lineStart) + transformed + value.slice(lineEnd);
+      return {
+        value: newVal,
+        selStart: lineStart,
+        selEnd: lineStart + transformed.length,
+      };
     } else {
       const lineStart = value.lastIndexOf("\n", ss - 1) + 1;
       let lineEnd = value.indexOf("\n", ss);
       if (lineEnd === -1) lineEnd = value.length;
       const line = value.slice(lineStart, lineEnd);
       const cleaned = line.replace(/^#{1,6}\s+/, "");
-      const newVal = value.slice(0, lineStart) + `# ${cleaned}` + value.slice(lineEnd);
-      return { value: newVal, selStart: lineStart + 2, selEnd: lineStart + 2 + cleaned.length };
+      const newVal =
+        value.slice(0, lineStart) + `# ${cleaned}` + value.slice(lineEnd);
+      return {
+        value: newVal,
+        selStart: lineStart + 2,
+        selEnd: lineStart + 2 + cleaned.length,
+      };
     }
   }
 
@@ -150,8 +196,13 @@ function applyFormatting(
 
       if (core.startsWith("**") && core.endsWith("**") && core.length >= 4) {
         const unwrapped = core.slice(2, -2);
-        const newVal = value.slice(0, ss) + leading + unwrapped + trailing + value.slice(se);
-        return { value: newVal, selStart: ss, selEnd: ss + leading.length + unwrapped.length + trailing.length };
+        const newVal =
+          value.slice(0, ss) + leading + unwrapped + trailing + value.slice(se);
+        return {
+          value: newVal,
+          selStart: ss,
+          selEnd: ss + leading.length + unwrapped.length + trailing.length,
+        };
       }
 
       if (core.includes("\n\n")) {
@@ -159,13 +210,27 @@ function applyFormatting(
           .split("\n\n")
           .map((p) => (p.trim() ? `**${p.trim()}**` : p))
           .join("\n\n");
-        const newVal = value.slice(0, ss) + leading + transformed + trailing + value.slice(se);
-        return { value: newVal, selStart: ss, selEnd: ss + leading.length + transformed.length + trailing.length };
+        const newVal =
+          value.slice(0, ss) +
+          leading +
+          transformed +
+          trailing +
+          value.slice(se);
+        return {
+          value: newVal,
+          selStart: ss,
+          selEnd: ss + leading.length + transformed.length + trailing.length,
+        };
       }
 
       const wrapped = `**${core}**`;
-      const newVal = value.slice(0, ss) + leading + wrapped + trailing + value.slice(se);
-      return { value: newVal, selStart: ss, selEnd: ss + leading.length + wrapped.length + trailing.length };
+      const newVal =
+        value.slice(0, ss) + leading + wrapped + trailing + value.slice(se);
+      return {
+        value: newVal,
+        selStart: ss,
+        selEnd: ss + leading.length + wrapped.length + trailing.length,
+      };
     } else {
       const placeholder = "**bold text**";
       const newVal = value.slice(0, ss) + placeholder + value.slice(se);
@@ -190,8 +255,13 @@ function applyFormatting(
         core.length >= 2
       ) {
         const unwrapped = core.slice(1, -1);
-        const newVal = value.slice(0, ss) + leading + unwrapped + trailing + value.slice(se);
-        return { value: newVal, selStart: ss, selEnd: ss + leading.length + unwrapped.length + trailing.length };
+        const newVal =
+          value.slice(0, ss) + leading + unwrapped + trailing + value.slice(se);
+        return {
+          value: newVal,
+          selStart: ss,
+          selEnd: ss + leading.length + unwrapped.length + trailing.length,
+        };
       }
 
       if (core.includes("\n\n")) {
@@ -199,13 +269,27 @@ function applyFormatting(
           .split("\n\n")
           .map((p) => (p.trim() ? `*${p.trim()}*` : p))
           .join("\n\n");
-        const newVal = value.slice(0, ss) + leading + transformed + trailing + value.slice(se);
-        return { value: newVal, selStart: ss, selEnd: ss + leading.length + transformed.length + trailing.length };
+        const newVal =
+          value.slice(0, ss) +
+          leading +
+          transformed +
+          trailing +
+          value.slice(se);
+        return {
+          value: newVal,
+          selStart: ss,
+          selEnd: ss + leading.length + transformed.length + trailing.length,
+        };
       }
 
       const wrapped = `*${core}*`;
-      const newVal = value.slice(0, ss) + leading + wrapped + trailing + value.slice(se);
-      return { value: newVal, selStart: ss, selEnd: ss + leading.length + wrapped.length + trailing.length };
+      const newVal =
+        value.slice(0, ss) + leading + wrapped + trailing + value.slice(se);
+      return {
+        value: newVal,
+        selStart: ss,
+        selEnd: ss + leading.length + wrapped.length + trailing.length,
+      };
     } else {
       const placeholder = "*italic text*";
       const newVal = value.slice(0, ss) + placeholder + value.slice(se);
@@ -221,7 +305,9 @@ function applyFormatting(
       if (lineEnd === -1) lineEnd = value.length;
       const block = value.slice(lineStart, lineEnd);
       const lines = block.split("\n");
-      const allQuoted = lines.every((l) => l.trim() === "" || l.startsWith("> "));
+      const allQuoted = lines.every(
+        (l) => l.trim() === "" || l.startsWith("> "),
+      );
       const transformed = lines
         .map((l) => {
           if (l.trim() === "") return l;
@@ -232,10 +318,16 @@ function applyFormatting(
           }
         })
         .join("\n");
-      const newVal = value.slice(0, lineStart) + transformed + value.slice(lineEnd);
-      return { value: newVal, selStart: lineStart, selEnd: lineStart + transformed.length };
+      const newVal =
+        value.slice(0, lineStart) + transformed + value.slice(lineEnd);
+      return {
+        value: newVal,
+        selStart: lineStart,
+        selEnd: lineStart + transformed.length,
+      };
     } else {
-      const template = "> 💡 Example:\n> Write your real-world example or explanation here...";
+      const template =
+        "> 💡 Example:\n> Write your real-world example or explanation here...";
       const newVal = value.slice(0, ss) + template + value.slice(se);
       return { value: newVal, selStart: ss + 14, selEnd: ss + template.length };
     }
@@ -249,29 +341,45 @@ function applyFormatting(
       if (lineEnd === -1) lineEnd = value.length;
       const block = value.slice(lineStart, lineEnd);
       const lines = block.split("\n");
-      const allListed = lines.every((l) => l.trim() === "" || l.startsWith("- "));
+      const allListed = lines.every(
+        (l) => l.trim() === "" || l.startsWith("- "),
+      );
       const transformed = lines
         .map((l) => {
           if (l.trim() === "") return l;
           if (allListed) {
             return l.replace(/^- \s*/, "");
           } else {
-            return `- ${l.replace(/^[-*+]\s+/, "").replace(/^\d+\.\s+/, "").replace(/^#{1,6}\s+/, "")}`;
+            return `- ${l
+              .replace(/^[-*+]\s+/, "")
+              .replace(/^\d+\.\s+/, "")
+              .replace(/^#{1,6}\s+/, "")}`;
           }
         })
         .join("\n");
-      const newVal = value.slice(0, lineStart) + transformed + value.slice(lineEnd);
-      return { value: newVal, selStart: lineStart, selEnd: lineStart + transformed.length };
+      const newVal =
+        value.slice(0, lineStart) + transformed + value.slice(lineEnd);
+      return {
+        value: newVal,
+        selStart: lineStart,
+        selEnd: lineStart + transformed.length,
+      };
     } else {
       const lineStart = value.lastIndexOf("\n", ss - 1) + 1;
       let lineEnd = value.indexOf("\n", ss);
       if (lineEnd === -1) lineEnd = value.length;
       const line = value.slice(lineStart, lineEnd);
       if (line.startsWith("- ")) {
-        const newVal = value.slice(0, lineStart) + line.slice(2) + value.slice(lineEnd);
-        return { value: newVal, selStart: Math.max(lineStart, ss - 2), selEnd: Math.max(lineStart, ss - 2) };
+        const newVal =
+          value.slice(0, lineStart) + line.slice(2) + value.slice(lineEnd);
+        return {
+          value: newVal,
+          selStart: Math.max(lineStart, ss - 2),
+          selEnd: Math.max(lineStart, ss - 2),
+        };
       } else {
-        const newVal = value.slice(0, lineStart) + "- " + line + value.slice(lineEnd);
+        const newVal =
+          value.slice(0, lineStart) + "- " + line + value.slice(lineEnd);
         return { value: newVal, selStart: ss + 2, selEnd: ss + 2 };
       }
     }
@@ -281,7 +389,9 @@ function applyFormatting(
   if (actionType === "code") {
     if (hasSelection) {
       if (selectedText.includes("\n")) {
-        const cleaned = selectedText.replace(/^```[a-z]*\n?/i, "").replace(/\n?```$/i, "");
+        const cleaned = selectedText
+          .replace(/^```[a-z]*\n?/i, "")
+          .replace(/\n?```$/i, "");
         const block = `\`\`\`ts\n${cleaned.trim()}\n\`\`\``;
         const newVal = value.slice(0, ss) + block + value.slice(se);
         return { value: newVal, selStart: ss, selEnd: ss + block.length };
@@ -300,7 +410,11 @@ function applyFormatting(
         const cleaned = line.replace(/^`+|`+$/g, "");
         const block = `\`${cleaned}\``;
         const newVal = value.slice(0, lineStart) + block + value.slice(lineEnd);
-        return { value: newVal, selStart: lineStart, selEnd: lineStart + block.length };
+        return {
+          value: newVal,
+          selStart: lineStart,
+          selEnd: lineStart + block.length,
+        };
       } else {
         const template = "```ts\n// write code here\n```";
         const newVal = value.slice(0, ss) + template + value.slice(se);
@@ -314,7 +428,8 @@ function applyFormatting(
 
 // ─── Component ────────────────────────────────────────────────────────────
 export function NoteDialog(): JSX.Element | null {
-  const { isNoteDialogOpen, closeNoteDialog, editingAnnotation, saveNote } = useRevision();
+  const { isNoteDialogOpen, closeNoteDialog, editingAnnotation, saveNote } =
+    useRevision();
 
   const [noteText, setNoteText] = useState<string>("");
   const [selectedColor] = useState<HighlightColor>("feature");
@@ -324,9 +439,15 @@ export function NoteDialog(): JSX.Element | null {
   // Sync state when panel opens
   useEffect(() => {
     if (isNoteDialogOpen) {
-      setNoteText(editingAnnotation?.note || "");
-      setEditorMode("edit");
-      setTimeout(() => textareaRef.current?.focus(), 80);
+      const existing = editingAnnotation?.note || "";
+      setNoteText(existing);
+      // If viewing an existing note with text, open in Preview mode first!
+      if (existing.trim().length > 0) {
+        setEditorMode("preview");
+      } else {
+        setEditorMode("edit");
+        setTimeout(() => textareaRef.current?.focus(), 80);
+      }
     }
   }, [isNoteDialogOpen, editingAnnotation]);
 
@@ -334,7 +455,9 @@ export function NoteDialog(): JSX.Element | null {
 
   const handleSave = () => saveNote(noteText.trim(), selectedColor);
 
-  const handleTextareaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleTextareaKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       handleSave();
@@ -354,7 +477,10 @@ export function NoteDialog(): JSX.Element | null {
         setNoteText(result.value);
         requestAnimationFrame(() => {
           textareaRef.current?.focus();
-          textareaRef.current?.setSelectionRange(result.selStart, result.selEnd);
+          textareaRef.current?.setSelectionRange(
+            result.selStart,
+            result.selEnd,
+          );
         });
       }
     }
@@ -367,7 +493,10 @@ export function NoteDialog(): JSX.Element | null {
         setNoteText(result.value);
         requestAnimationFrame(() => {
           textareaRef.current?.focus();
-          textareaRef.current?.setSelectionRange(result.selStart, result.selEnd);
+          textareaRef.current?.setSelectionRange(
+            result.selStart,
+            result.selEnd,
+          );
         });
       }
     }
@@ -399,7 +528,7 @@ export function NoteDialog(): JSX.Element | null {
   return (
     <aside
       data-revision-ui="true"
-      className="fixed top-0 right-0 bottom-0 w-full sm:w-[440px] md:w-[480px] lg:w-[500px] z-[9999] bg-ds-bg-white border-l border-ds-stroke-soft shadow-2xl flex flex-col pointer-events-auto animate-in slide-in-from-right duration-200 text-ds-text-strong select-none"
+      className="fixed top-0 right-0 bottom-0 w-full sm:w-[440px] md:w-[480px] lg:w-[550px] z-[9999] bg-ds-bg-white border-l border-ds-stroke-soft shadow-2xl flex flex-col pointer-events-auto animate-in slide-in-from-right duration-200 text-ds-text-strong select-none"
       role="complementary"
       aria-label={editingAnnotation ? "Edit Note" : "Add Note"}
     >
@@ -407,7 +536,13 @@ export function NoteDialog(): JSX.Element | null {
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-ds-stroke-soft bg-ds-bg-weak/40 shrink-0 select-none">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-lg bg-ds-feature-lighter border border-ds-feature-light/50 flex items-center justify-center text-ds-feature-dark">
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className="w-4 h-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M12 20h9" />
               <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
             </svg>
@@ -421,7 +556,13 @@ export function NoteDialog(): JSX.Element | null {
           className="w-7 h-7 rounded-lg bg-ds-bg-soft hover:bg-ds-bg-sub text-ds-text-soft hover:text-ds-text-strong flex items-center justify-center transition-colors"
           aria-label="Close note panel"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <svg
+            className="w-4 h-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+          >
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
@@ -442,7 +583,13 @@ export function NoteDialog(): JSX.Element | null {
                   : "text-ds-text-sub hover:text-ds-text-strong"
               }`}
             >
-              <svg className="w-3.5 h-3.5 text-ds-feature-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                className="w-3.5 h-3.5 text-ds-feature-dark"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
               </svg>
@@ -457,7 +604,13 @@ export function NoteDialog(): JSX.Element | null {
                   : "text-ds-text-sub hover:text-ds-text-strong"
               }`}
             >
-              <svg className="w-3.5 h-3.5 text-ds-feature-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <svg
+                className="w-3.5 h-3.5 text-ds-feature-dark"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
                 <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
                 <circle cx="12" cy="12" r="3" />
               </svg>
@@ -503,7 +656,9 @@ export function NoteDialog(): JSX.Element | null {
               value={noteText}
               onChange={(e) => setNoteText(e.target.value)}
               onKeyDown={handleTextareaKeyDown}
-              placeholder={"Write your note here...\n\nSelect any text and click Heading, Bold, Italic, Example, List, or Code to format instantly."}
+              placeholder={
+                "Write your note here...\n\nSelect any text and click Heading, Bold, Italic, Example, List, or Code to format instantly."
+              }
               className="flex-1 w-full p-4 bg-transparent outline-none text-xs sm:text-[13px] text-ds-text-strong placeholder:text-ds-text-disabled font-mono resize-none leading-relaxed overflow-y-auto"
               spellCheck
             />
@@ -538,7 +693,13 @@ export function NoteDialog(): JSX.Element | null {
           onClick={handleSave}
           className="px-5 py-2 rounded-xl bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white font-bold text-xs transition-all shadow-md shadow-ds-feature-base/20 active:scale-95 flex items-center gap-1.5"
         >
-          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+          <svg
+            className="w-3.5 h-3.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+          >
             <path d="m5 13 4 4L19 7" />
           </svg>
           <span>Save Note</span>
