@@ -49,6 +49,27 @@ const IcFolder = () => <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="no
 const IcBook = () => <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 const IcNoteEdit = () => <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
 
+// ─── Extract Question / Title ────────────────────────────────────────────────
+function extractQuestion(item: AnnotationItem): string {
+  if (item.question && item.question.trim()) return item.question.trim();
+  if (item.note) {
+    const headingMatch = item.note.match(/^#{1,6}\s+(.*)/m);
+    if (headingMatch && headingMatch[1].trim()) {
+      return headingMatch[1].trim();
+    }
+    const firstLine = item.note.split("\n").find((l) => l.trim().length > 0);
+    if (firstLine) {
+      return firstLine
+        .replace(/^#{1,6}\s+/, "")
+        .replace(/^\*\*/, "")
+        .replace(/\*\*$/, "")
+        .replace(/^>+\s*/, "")
+        .trim();
+    }
+  }
+  return item.selectedText || "Question";
+}
+
 export default function MyRevisionPage(): JSX.Element {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -525,11 +546,13 @@ export default function MyRevisionPage(): JSX.Element {
                       {/* Cards grid */}
                       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                         {group.items.map((item) => {
-                          const isExpanded = expandedCardIds.has(item.id);
-                          const noteIsLong = (item.note?.length ?? 0) > 140 || (item.note?.split("\n").length ?? 0) > 3;
                           const colorKey = item.color || "feature";
+                          const questionTitle = extractQuestion(item);
                           return (
-                            <div key={item.id} className="flex flex-col rounded-2xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base/30 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden group">
+                            <div
+                              key={item.id}
+                              className="flex flex-col rounded-2xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base/40 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden group"
+                            >
                               {/* Color accent stripe */}
                               <div className={`h-1 w-full ${COLOR_BORDER[colorKey] || "bg-ds-feature-base"}`} />
 
@@ -537,7 +560,9 @@ export default function MyRevisionPage(): JSX.Element {
                                 {/* Card header */}
                                 <div className="flex items-start justify-between gap-2">
                                   <div className="min-w-0">
-                                    <p className="text-[10px] font-bold text-ds-text-soft uppercase tracking-wider truncate">{item.topicTitle}</p>
+                                    <p className="text-[10px] font-bold text-ds-text-soft uppercase tracking-wider truncate">
+                                      {item.topicTitle}
+                                    </p>
                                     <div className="flex items-center gap-1.5 text-xs font-semibold text-ds-text-strong truncate mt-0.5">
                                       <IcBook />
                                       <span className="truncate">{item.lessonTitle}</span>
@@ -546,14 +571,20 @@ export default function MyRevisionPage(): JSX.Element {
                                   <div className="flex items-center gap-1 shrink-0">
                                     <button
                                       onClick={() => toggleFavorite(item.id)}
-                                      className={`p-1.5 rounded-lg transition-all active:scale-90 ${item.isFavorite ? "text-amber-500" : "text-ds-text-disabled hover:text-amber-400"}`}
+                                      className={`p-1.5 rounded-lg transition-all active:scale-90 ${
+                                        item.isFavorite ? "text-amber-500" : "text-ds-text-disabled hover:text-amber-400"
+                                      }`}
                                       title={item.isFavorite ? "Starred" : "Star this"}
                                     >
                                       <IcStar filled={item.isFavorite ?? false} />
                                     </button>
                                     <button
                                       onClick={() => toggleMastered(item.id)}
-                                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all ${item.mastered ? "bg-ds-success-lighter text-ds-success-dark border-ds-success-base" : "bg-ds-bg-weak text-ds-text-soft border-ds-stroke-soft hover:border-ds-success-base"}`}
+                                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all ${
+                                        item.mastered
+                                          ? "bg-ds-success-lighter text-ds-success-dark border-ds-success-base"
+                                          : "bg-ds-bg-weak text-ds-text-soft border-ds-stroke-soft hover:border-ds-success-base"
+                                      }`}
                                       title={item.mastered ? "Mastered" : "Mark as mastered"}
                                     >
                                       {item.mastered ? "Mastered" : "Review"}
@@ -561,44 +592,69 @@ export default function MyRevisionPage(): JSX.Element {
                                   </div>
                                 </div>
 
-                                {/* Note Content or Text Reference Fallback */}
-                                {item.note ? (
+                                {/* Hero Clickable Question Area -> Opens Right Sidebar */}
+                                <div
+                                  onClick={() => openNoteDialog(item)}
+                                  className="cursor-pointer group/q py-3 flex-1 flex flex-col justify-between gap-3 rounded-xl hover:bg-ds-bg-weak/50 p-2.5 -mx-2.5 transition-colors"
+                                  title="Click to view full note & answer in side panel"
+                                >
                                   <div>
-                                    <div className={`overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-[800px]" : "max-h-[120px]"}`}>
-                                      <MarkdownRenderer content={item.note} compact={true} />
-                                    </div>
-                                    {noteIsLong && (
-                                      <button onClick={() => toggleExpand(item.id)} className="mt-2 text-[11px] text-ds-feature-base font-bold hover:underline flex items-center gap-1">
-                                        {isExpanded
-                                          ? <><svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m18 15-6-6-6 6"/></svg> Show less</>
-                                          : <><svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m6 9 6 6 6-6"/></svg> Show more</>
-                                        }
-                                      </button>
-                                    )}
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-ds-feature-lighter/50 text-ds-feature-dark font-bold text-[10px] uppercase tracking-wider border border-ds-feature-light/50 mb-2">
+                                      Question
+                                    </span>
+                                    <h3 className="text-base font-bold text-ds-text-strong group-hover/q:text-ds-feature-base transition-colors leading-snug font-display">
+                                      {questionTitle}
+                                    </h3>
                                   </div>
-                                ) : (
-                                  <div className={`border-l-4 ${COLOR_QUOTE_BORDER[colorKey] || "border-ds-feature-base"} bg-ds-bg-weak rounded-r-xl px-3 py-2`}>
-                                    <p className="text-xs text-ds-text-strong italic leading-relaxed line-clamp-3">&ldquo;{item.selectedText}&rdquo;</p>
-                                  </div>
-                                )}
 
-                                <p className="text-[10px] text-ds-text-disabled mt-auto">{new Date(item.createdAt).toLocaleDateString()}</p>
+                                  <div className="flex items-center gap-1 text-xs font-semibold text-ds-feature-base group-hover/q:translate-x-0.5 transition-transform pt-1">
+                                    <span>View full note</span>
+                                    <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                      <path d="M5 12h14" />
+                                      <path d="m12 5 7 7-7 7" />
+                                    </svg>
+                                  </div>
+                                </div>
+
+                                <p className="text-[10px] text-ds-text-disabled mt-auto">
+                                  {new Date(item.createdAt).toLocaleDateString()}
+                                </p>
                               </div>
 
                               {/* Card footer */}
                               <div className="px-4 py-3 border-t border-ds-stroke-soft bg-ds-bg-weak/40 flex items-center justify-between gap-2">
-                                <button onClick={() => handleGoToLesson(item)} className="px-3.5 py-1.5 rounded-xl bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold transition-all active:scale-95 shadow-sm flex items-center gap-1.5">
+                                <button
+                                  onClick={() => handleGoToLesson(item)}
+                                  className="px-3.5 py-1.5 rounded-xl bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold transition-all active:scale-95 shadow-sm flex items-center gap-1.5"
+                                >
                                   Go to Lesson
-                                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                    <path d="M5 12h14" />
+                                    <path d="m12 5 7 7-7 7" />
+                                  </svg>
                                 </button>
                                 <div className="flex items-center gap-0.5">
-                                  <button onClick={() => handleCopySnippet(item.selectedText, item.id)} className="p-2 rounded-xl text-ds-text-soft hover:text-ds-text-strong hover:bg-ds-bg-soft transition-colors" title="Copy text">
+                                  <button
+                                    onClick={() => handleCopySnippet(item.selectedText || questionTitle, item.id)}
+                                    className="p-2 rounded-xl text-ds-text-soft hover:text-ds-text-strong hover:bg-ds-bg-soft transition-colors"
+                                    title="Copy text"
+                                  >
                                     {copiedId === item.id ? <IcCheck /> : <IcCopy />}
                                   </button>
-                                  <button onClick={() => openNoteDialog(item)} className="p-2 rounded-xl text-ds-text-soft hover:text-ds-text-strong hover:bg-ds-bg-soft transition-colors" title="Edit note">
+                                  <button
+                                    onClick={() => openNoteDialog(item)}
+                                    className="p-2 rounded-xl text-ds-text-soft hover:text-ds-text-strong hover:bg-ds-bg-soft transition-colors"
+                                    title="Open note in side panel"
+                                  >
                                     <IcEdit />
                                   </button>
-                                  <button onClick={() => { if (confirm("Delete this highlight?")) deleteAnnotation(item.id); }} className="p-2 rounded-xl text-ds-text-soft hover:text-ds-error-base hover:bg-ds-error-lighter transition-colors" title="Delete">
+                                  <button
+                                    onClick={() => {
+                                      if (confirm("Delete this item?")) deleteAnnotation(item.id);
+                                    }}
+                                    className="p-2 rounded-xl text-ds-text-soft hover:text-ds-error-base hover:bg-ds-error-lighter transition-colors"
+                                    title="Delete"
+                                  >
                                     <IcTrash />
                                   </button>
                                 </div>

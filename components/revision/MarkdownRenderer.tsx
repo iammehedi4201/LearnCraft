@@ -212,8 +212,8 @@ function renderToken(token: BlockToken, idx: number, compact: boolean): React.Re
         return (
           <h1
             key={key}
-            className={`font-bold text-ds-text-strong tracking-tight border-b border-ds-stroke-soft/60 pb-1.5 mt-1 first:mt-0 ${
-              compact ? "text-[13px]" : "text-[13.5px] sm:text-[14px]"
+            className={`font-bold text-ds-text-strong tracking-tight border-b border-ds-stroke-soft/60 pb-1.5 mt-2 first:mt-0 ${
+              compact ? "text-[15px]" : "text-base sm:text-[17px]"
             }`}
           >
             {inlined}
@@ -224,8 +224,8 @@ function renderToken(token: BlockToken, idx: number, compact: boolean): React.Re
         return (
           <h2
             key={key}
-            className={`font-bold text-ds-text-strong tracking-tight mt-1 first:mt-0 ${
-              compact ? "text-[11.5px]" : "text-[12px] sm:text-[12.5px]"
+            className={`font-bold text-ds-text-strong tracking-tight mt-1.5 first:mt-0 ${
+              compact ? "text-[13px]" : "text-[13.5px] sm:text-[14.5px]"
             }`}
           >
             {inlined}
@@ -235,8 +235,8 @@ function renderToken(token: BlockToken, idx: number, compact: boolean): React.Re
       return (
         <h3
           key={key}
-          className={`font-bold text-ds-feature-base uppercase tracking-wider mt-1 first:mt-0 ${
-            compact ? "text-[9.5px]" : "text-[10px]"
+          className={`font-bold text-ds-feature-base uppercase tracking-wider mt-1.5 first:mt-0 ${
+            compact ? "text-[11px]" : "text-[11.5px] sm:text-[12px]"
           }`}
         >
           {inlined}
@@ -248,7 +248,9 @@ function renderToken(token: BlockToken, idx: number, compact: boolean): React.Re
       return (
         <div
           key={key}
-          className="border-l-[3px] border-ds-feature-base bg-ds-feature-lighter/25 dark:bg-ds-feature-lighter/10 rounded-r-xl px-3 py-1.5 text-[9.5px] sm:text-[10px] text-ds-text-strong leading-[1.55] font-sans shadow-sm"
+          className={`border-l-[3px] border-ds-feature-base bg-ds-feature-lighter/25 dark:bg-ds-feature-lighter/10 rounded-r-xl px-3.5 py-2 text-ds-text-strong font-sans shadow-sm ${
+            compact ? "text-[11px] leading-[1.6]" : "text-[12px] sm:text-[12.5px] leading-[1.65]"
+          }`}
         >
           {parseInline(token.text, `${key}-bq`)}
         </div>
@@ -264,18 +266,22 @@ function renderToken(token: BlockToken, idx: number, compact: boolean): React.Re
           className="rounded-xl overflow-hidden bg-[#0d1117] border border-slate-800 shadow-sm"
         >
           {/* Sleek Terminal Header */}
-          <div className="flex items-center justify-between px-3 py-1 bg-[#161b22] border-b border-slate-800">
+          <div className="flex items-center justify-between px-3 py-1.5 bg-[#161b22] border-b border-slate-800">
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-rose-500/80 inline-block" />
-              <span className="w-2 h-2 rounded-full bg-amber-500/80 inline-block" />
-              <span className="w-2 h-2 rounded-full bg-emerald-500/80 inline-block" />
+              <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 inline-block" />
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block" />
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block" />
             </div>
-            <span className="text-[8.5px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+            <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-wider">
               {token.lang || "code"}
             </span>
           </div>
           {/* Code Content */}
-          <pre className="p-2.5 overflow-x-auto text-[9.5px] sm:text-[10px] font-mono leading-relaxed text-emerald-300/90 whitespace-pre selection:bg-emerald-900/40">
+          <pre
+            className={`p-3 overflow-x-auto font-mono leading-relaxed text-emerald-300/90 whitespace-pre selection:bg-emerald-900/40 ${
+              compact ? "text-[10.5px]" : "text-[11.5px] sm:text-[12px]"
+            }`}
+          >
             <code>{token.code}</code>
           </pre>
         </div>
@@ -283,15 +289,15 @@ function renderToken(token: BlockToken, idx: number, compact: boolean): React.Re
 
     case "bullet_list":
       return (
-        <ul key={key} className="space-y-0.5 pl-0 list-none font-sans m-0">
+        <ul key={key} className="space-y-1 pl-0 list-none font-sans m-0">
           {token.items.map((item, i) => (
             <li
               key={i}
-              className={`flex items-start gap-1.5 text-ds-text-sub font-normal leading-[1.55] tracking-[0.01em] antialiased ${
-                compact ? "text-[9.5px]" : "text-[9.5px] sm:text-[10px]"
+              className={`flex items-start gap-2 text-ds-text-sub font-normal tracking-[0.01em] antialiased ${
+                compact ? "text-[11px] leading-[1.6]" : "text-[12px] sm:text-[12.5px] leading-[1.65]"
               }`}
             >
-              <span className="mt-1.5 w-1 h-1 rounded-full bg-ds-feature-base shrink-0" />
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-ds-feature-base shrink-0" />
               <span>{parseInline(item, `${key}-li-${i}`)}</span>
             </li>
           ))}
@@ -300,15 +306,15 @@ function renderToken(token: BlockToken, idx: number, compact: boolean): React.Re
 
     case "ordered_list":
       return (
-        <ol key={key} className="space-y-0.5 pl-0 list-none font-sans m-0">
+        <ol key={key} className="space-y-1 pl-0 list-none font-sans m-0">
           {token.items.map((item, i) => (
             <li
               key={i}
-              className={`flex items-start gap-1.5 text-ds-text-sub font-normal leading-[1.55] tracking-[0.01em] antialiased ${
-                compact ? "text-[9.5px]" : "text-[9.5px] sm:text-[10px]"
+              className={`flex items-start gap-2 text-ds-text-sub font-normal tracking-[0.01em] antialiased ${
+                compact ? "text-[11px] leading-[1.6]" : "text-[12px] sm:text-[12.5px] leading-[1.65]"
               }`}
             >
-              <span className="shrink-0 w-3 text-right font-mono text-[8.5px] font-bold text-ds-feature-dark mt-0.5">
+              <span className="shrink-0 w-3.5 text-right font-mono text-[10px] font-bold text-ds-feature-dark mt-0.5">
                 {i + 1}.
               </span>
               <span>{parseInline(item, `${key}-oli-${i}`)}</span>
@@ -321,8 +327,8 @@ function renderToken(token: BlockToken, idx: number, compact: boolean): React.Re
       return (
         <p
           key={key}
-          className={`font-sans font-normal text-ds-text-sub leading-[1.55] tracking-[0.01em] antialiased m-0 ${
-            compact ? "text-[9.5px]" : "text-[9.5px] sm:text-[10px]"
+          className={`font-sans font-normal text-ds-text-sub tracking-[0.01em] antialiased m-0 ${
+            compact ? "text-[11px] leading-[1.6]" : "text-[12px] sm:text-[12.5px] leading-[1.65]"
           }`}
         >
           {parseInline(token.text, `${key}-p`)}
