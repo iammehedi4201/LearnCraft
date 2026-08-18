@@ -1,267 +1,360 @@
 /**
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * NJ-08 — Providers & Services
+ * NJ-08 — NestJS Services & Providers
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * CORE CONCEPT
+ * ────────────
+ * Providers are a fundamental concept in Nest. Many of the basic Nest classes
+ * may be treated as a provider – services, repositories, factories, helpers,
+ * and so on. The main idea of a provider is that it can be injected as a
+ * dependency.
+ *
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
 "use client";
 
-import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
+import { getAllAnnotations } from "@/lib/revision-storage";
+
+// Section components
+import { HeaderSection } from "./components/header-section";
+import { InjectableDecoratorSection } from "./components/injectable-decorator-section";
+import { AnatomyOfServiceSection } from "./components/anatomy-of-service-section";
+import { InjectingServicesSection } from "./components/injecting-services-section";
+import { RegisteringProvidersSection } from "./components/registering-providers-section";
+import { ProviderScopesSection } from "./components/provider-scopes-section";
+import { CustomProvidersSection } from "./components/custom-providers-section";
+import { AsyncServicesSection } from "./components/async-services-section";
+import { CliGeneratorsSection } from "./components/cli-generators-section";
+import { BeginnerMistakesSection } from "./components/beginner-mistakes-section";
+import { ConceptTablesSection } from "./components/concept-tables-section";
+import { LearningChecksSection } from "./components/learning-checks-section";
+import { CodingExercisesSection } from "./components/coding-exercises-section";
+import { ClosingSections } from "./components/closing-sections";
+
+const SECTIONS = [
+  { id: "part1",  label: "The Big Picture",          icon: "🚀" },
+  { id: "part2",  label: "The @Injectable Decorator", icon: "🏷️" },
+  { id: "part3",  label: "Anatomy of a Service",     icon: "⚙️" },
+  { id: "part4",  label: "Injecting into Controllers", icon: "🔌" },
+  { id: "part5",  label: "Registering in @Module()", icon: "📦" },
+  { id: "part6",  label: "Provider Scopes",          icon: "☕" },
+  { id: "part7",  label: "Custom Providers",         icon: "🪄" },
+  { id: "part8",  label: "Async & Databases",        icon: "⏳" },
+  { id: "part9",  label: "CLI Generators ('nest g s')", icon: "⚡" },
+  { id: "part10", label: "Beginner Mistakes",        icon: "⚠️" },
+  { id: "part11", label: "Concept Tables & Cheat Sheet", icon: "📋" },
+  { id: "part12", label: "Learning Checks",          icon: "🧠" },
+  { id: "part13", label: "Coding Exercises",         icon: "💻" },
+  { id: "part14", label: "Final Review & Next Steps", icon: "🎯" },
+];
+
+const PROGRESS_STORAGE_KEY = "learncraft_progress_nj08-services";
 
 export default function NJ08Services(): JSX.Element {
+  const searchParams = useSearchParams();
+  const highlightId = searchParams?.get("highlightId");
+  const sectionParam = searchParams?.get("section");
+
+  const [activeSection, setActiveSection] = useState<string>("part1");
+  const [completedSections, setCompletedSections] = useState<Set<string>>(
+    new Set(),
+  );
+
+  // Initialize from URL, highlight, or localStorage on mount
+  useEffect(() => {
+    // 1. URL search param has highest priority
+    if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
+      setActiveSection(sectionParam);
+      const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
+      if (targetIdx > 0) {
+        setCompletedSections((prev) => {
+          const next = new Set(prev);
+          for (let i = 0; i < targetIdx; i++) {
+            next.add(SECTIONS[i].id);
+          }
+          return next;
+        });
+      }
+      return;
+    }
+
+    // 2. Highlight deep-link lookup
+    if (highlightId) {
+      const all = getAllAnnotations();
+      const target = all.find(
+        (a) =>
+          a.id === highlightId ||
+          a.id === `rev_${highlightId}` ||
+          `rev-highlight-${a.id}` === highlightId
+      );
+      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
+        setActiveSection(target.sectionId);
+        const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
+        if (targetIdx > 0) {
+          setCompletedSections((prev) => {
+            const next = new Set(prev);
+            for (let i = 0; i < targetIdx; i++) {
+              next.add(SECTIONS[i].id);
+            }
+            return next;
+          });
+        }
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("highlightId");
+          url.searchParams.set("section", target.sectionId);
+          window.history.replaceState(null, "", url.toString());
+        }
+        return;
+      }
+    }
+
+    // 3. Restore persisted progress from localStorage on page refresh
+    try {
+      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
+          setActiveSection(parsed.activeSection);
+        }
+        if (Array.isArray(parsed.completedSections)) {
+          setCompletedSections(new Set(parsed.completedSections));
+        }
+      }
+    } catch {}
+  }, [highlightId, sectionParam]);
+
+  const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeSection]);
+
+  const handleSectionChange = (sectionId: string) => {
+    const nextCompleted = new Set([...completedSections, activeSection]);
+    setCompletedSections(nextCompleted);
+    setActiveSection(sectionId);
+
+    // Persist to localStorage
+    try {
+      localStorage.setItem(
+        PROGRESS_STORAGE_KEY,
+        JSON.stringify({
+          activeSection: sectionId,
+          completedSections: Array.from(nextCompleted),
+        })
+      );
+    } catch {}
+
+    // Synchronize URL search param without full reload and delete highlightId
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("highlightId");
+      url.searchParams.set("section", sectionId);
+      window.history.replaceState(null, "", url.toString());
+    }
+  };
+
+  const getStepState = (index: number): "done" | "active" | "todo" => {
+    const section = SECTIONS[index];
+    if (section.id === activeSection) return "active";
+    if (completedSections.has(section.id) || index < currentIndex)
+      return "done";
+    return "todo";
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case "part1":  return <HeaderSection />;
+      case "part2":  return <InjectableDecoratorSection />;
+      case "part3":  return <AnatomyOfServiceSection />;
+      case "part4":  return <InjectingServicesSection />;
+      case "part5":  return <RegisteringProvidersSection />;
+      case "part6":  return <ProviderScopesSection />;
+      case "part7":  return <CustomProvidersSection />;
+      case "part8":  return <AsyncServicesSection />;
+      case "part9":  return <CliGeneratorsSection />;
+      case "part10": return <BeginnerMistakesSection />;
+      case "part11": return <ConceptTablesSection />;
+      case "part12": return <LearningChecksSection />;
+      case "part13": return <CodingExercisesSection />;
+      case "part14": return <ClosingSections />;
+      default:       return <HeaderSection />;
+    }
+  };
+
   return (
-    <>
+    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20">
       <Nav />
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="group relative glass-card rounded-3xl p-8 mb-12 overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
-              <div className="flex h-12 w-16 items-center justify-center rounded-2xl bg-red-500 text-white shadow-lg shadow-red-500/20">
-                <span className="font-display font-bold text-sm tracking-wider whitespace-nowrap">NJ-08</span>
-              </div>
-              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Providers & Services</h2>
+
+      <div className="relative z-10 max-w-[95rem] mx-auto px-6 lg:px-8 py-2">
+        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
+          {/* Stepper Sidebar */}
+          <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
+            {/* Header */}
+            <div className="px-2 mb-3 shrink-0">
+              <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
+                Modules
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-red-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-red-600" /></div><h4 className="font-display text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-widest">NestJS Concept</h4></div>
-                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Services contain business logic. Marked with @Injectable(), they can be injected into controllers and other services via the DI container.</p>
+
+            {/* Stepper (Scrollable List) */}
+            <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
+              <ol className="space-y-1.5 relative">
+                {SECTIONS.map((section, index) => {
+                  const state = getStepState(index);
+                  const isActive = state === "active";
+                  const isDone = state === "done";
+                  const isTodo = state === "todo";
+
+                  return (
+                    <li key={section.id}>
+                      <button
+                        onClick={() => handleSectionChange(section.id)}
+                        disabled={isTodo}
+                        className={`
+                          group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+                          transition-all duration-200 text-left
+                          ${
+                            isActive
+                              ? "bg-ds-feature-lighter border border-ds-feature-base"
+                              : isDone
+                                ? "hover:bg-ds-bg-weak cursor-pointer"
+                                : "opacity-50 cursor-not-allowed"
+                          }
+                        `}
+                      >
+                        {/* Step indicator circle */}
+                        <div
+                          className={`
+                            relative z-10 flex-shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center
+                            text-[11px] font-bold transition-all duration-200
+                            ${
+                              isActive
+                                ? "bg-ds-feature-base text-ds-static-white scale-105 shadow-sm shadow-ds-feature-base/10"
+                                : isDone
+                                  ? "bg-ds-success-base text-ds-static-white"
+                                  : "bg-ds-bg-weak text-ds-text-disabled border border-ds-stroke-soft"
+                            }
+                          `}
+                        >
+                          {isDone ? (
+                            <svg
+                              className="w-3.5 h-3.5"
+                              viewBox="0 0 14 14"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="2,7 5.5,10.5 12,3.5" />
+                            </svg>
+                          ) : (
+                            <span>{index + 1}</span>
+                          )}
+                        </div>
+
+                        {/* Label area */}
+                        <div className="flex flex-col items-start gap-0.5 min-w-0 flex-1">
+                          <span
+                            className={`
+                              text-[13px] font-semibold leading-tight truncate transition-colors duration-200
+                              ${
+                                isActive
+                                  ? "text-ds-feature-dark font-black"
+                                  : isDone
+                                    ? "text-ds-text-strong group-hover:text-ds-feature-base"
+                                    : "text-ds-text-disabled"
+                              }
+                            `}
+                          >
+                            {section.label}
+                          </span>
+                          {isActive && (
+                            <span className="text-[10px] font-medium text-ds-feature-base">
+                              In progress
+                            </span>
+                          )}
+                          {isDone && (
+                            <span className="text-[10px] text-ds-success-dark font-medium">
+                              Completed
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Active indicator dot */}
+                        {isActive && (
+                          <div className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0" />
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+
+            {/* Progress box */}
+            <div className="mt-4 shrink-0 px-4 py-3.5 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[9px] font-black text-ds-text-soft uppercase tracking-widest">
+                  Progress
+                </span>
+                <span className="text-[12px] font-bold text-ds-text-strong">
+                  {Math.round(((currentIndex + 1) / SECTIONS.length) * 100)}%
+                </span>
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Express.js Comparison</h4></div>
-                <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Express has no service layer concept. You import functions directly. NestJS enforces separation with injectable classes.</p>
+              <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
+                  style={{
+                    width: `${((currentIndex + 1) / SECTIONS.length) * 100}%`,
+                  }}
+                />
               </div>
+              <p className="mt-2 text-[10px] text-ds-text-soft">
+                {currentIndex + 1} of {SECTIONS.length} modules
+              </p>
             </div>
-          </div>
-          <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-red-500/5 blur-3xl group-hover:bg-red-500/10 transition-colors duration-500" />
+
+            {/* Prev / Next navigation */}
+            <div className="mt-3 shrink-0 flex gap-2">
+              <button
+                onClick={() =>
+                  currentIndex > 0 &&
+                  handleSectionChange(SECTIONS[currentIndex - 1].id)
+                }
+                disabled={currentIndex === 0}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold border border-ds-stroke-soft text-ds-text-sub bg-ds-bg-white hover:bg-ds-bg-weak hover:text-ds-text-strong disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                ← Prev
+              </button>
+              <button
+                onClick={() =>
+                  currentIndex < SECTIONS.length - 1 &&
+                  handleSectionChange(SECTIONS[currentIndex + 1].id)
+                }
+                disabled={currentIndex === SECTIONS.length - 1}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10"
+              >
+                Next →
+              </button>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 min-w-0 max-w-6xl">
+            <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
+              {renderContent()}
+            </div>
+          </main>
         </div>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. Creating a Service</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
-
-// 🔑 @Injectable() marks this class as a provider
-// NestJS can now manage its lifecycle and inject it anywhere
-@Injectable()
-export class TasksService {
-  // In-memory storage (replaced with DB later)
-  private tasks = [
-    { id: 1, title: 'Learn NestJS', status: 'in_progress' },
-    { id: 2, title: 'Build API', status: 'pending' },
-  ];
-
-  // ✅ Business logic — NO HTTP concerns here
-  findAll() {
-    return this.tasks;
-  }
-
-  findOne(id: number) {
-    const task = this.tasks.find(t => t.id === id);
-    if (!task) {
-      throw new NotFoundException(\`Task #\${id} not found\`);
-      // ☝️ NestJS auto-converts this to a 404 JSON response
-    }
-    return task;
-  }
-
-  create(dto: CreateTaskDto) {
-    const newTask = {
-      id: Date.now(),
-      ...dto,
-      status: 'pending',
-    };
-    this.tasks.push(newTask);
-    return newTask;
-  }
-
-  update(id: number, dto: UpdateTaskDto) {
-    const task = this.findOne(id);  // Throws 404 if not found
-    Object.assign(task, dto);
-    return task;
-  }
-
-  remove(id: number) {
-    const index = this.tasks.findIndex(t => t.id === id);
-    if (index === -1) {
-      throw new NotFoundException(\`Task #\${id} not found\`);
-    }
-    this.tasks.splice(index, 1);
-  }
-}`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Custom Providers — Advanced DI</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`// ✅ Standard provider (most common)
-@Module({
-  providers: [TasksService],
-  // Shorthand for: { provide: TasksService, useClass: TasksService }
-})
-
-// ✅ useClass — swap implementation
-@Module({
-  providers: [
-    {
-      provide: 'NOTIFICATION_SERVICE',
-      useClass: process.env.NODE_ENV === 'production'
-        ? SmsNotificationService
-        : ConsoleNotificationService,
-    },
-  ],
-})
-
-// ✅ useValue — inject a constant
-@Module({
-  providers: [
-    {
-      provide: 'API_KEY',
-      useValue: 'sk-12345-secret-key',
-    },
-  ],
-})
-// Inject with: constructor(@Inject('API_KEY') private apiKey: string)
-
-// ✅ useFactory — async creation with dependencies
-@Module({
-  providers: [
-    {
-      provide: 'DATABASE_CONNECTION',
-      useFactory: async (configService: ConfigService) => {
-        const dbConfig = configService.get('database');
-        return createConnection(dbConfig);
-      },
-      inject: [ConfigService],  // Dependencies for the factory
-    },
-  ],
-})`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">3. Service Scopes</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`import { Injectable, Scope } from '@nestjs/common';
-
-// DEFAULT scope — singleton (one instance for the whole app)
-@Injectable()
-export class AppService {}
-
-// REQUEST scope — new instance per request
-@Injectable({ scope: Scope.REQUEST })
-export class RequestScopedService {
-  // Good for: request-specific data, user context
-  // ⚠️ Performance cost — new instance every request
-}
-
-// TRANSIENT scope — new instance per injection
-@Injectable({ scope: Scope.TRANSIENT })
-export class TransientService {
-  // Each consumer gets its own instance
-  // Good for: stateful services that shouldn't share state
-}
-
-// 🔑 Default singleton is best for 95% of cases.
-// Only use REQUEST/TRANSIENT when you have a specific reason.`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">4. Express vs NestJS — Service Layer</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800">
-              <h3 className="font-semibold text-lg mb-4 text-red-600 dark:text-red-400">Express (no services)</h3>
-              <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-                {`// Logic mixed in route handlers
-router.get('/:id', async (req, res) => {
-  try {
-    const user = await db.query(
-      'SELECT * FROM users WHERE id = $1',
-      [req.params.id]
-    );
-    if (!user) {
-      return res.status(404).json({
-        error: 'Not found'
-      });
-    }
-    // Send notification...
-    // Log activity...
-    // Format response...
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: err });
-  }
-});`}
-              </pre>
-            </div>
-            <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800">
-              <h3 className="font-semibold text-lg mb-4 text-emerald-600 dark:text-emerald-400">NestJS (clean separation)</h3>
-              <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-                {`// Controller — thin, delegates to service
-@Get(':id')
-findOne(@Param('id') id: string) {
-  return this.usersService.findOne(+id);
-}
-
-// Service — all business logic
-@Injectable()
-export class UsersService {
-  constructor(
-    private db: DatabaseService,
-    private notifications: NotifService,
-    private logger: LoggerService,
-  ) {}
-
-  async findOne(id: number) {
-    const user = await this.db.findUser(id);
-    if (!user) throw new NotFoundException();
-    this.logger.log(\`User \${id} accessed\`);
-    return user;
-  }
-}`}
-              </pre>
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-12 p-6 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-amber-900 dark:text-amber-400">🏋️ Mini Challenge</h3>
-          <ul className="text-amber-800 dark:text-amber-300 text-sm space-y-2 list-disc pl-5">
-            <li>Create a <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">ProductsService</code> with CRUD operations using in-memory storage</li>
-            <li>Add a <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">useValue</code> provider for app configuration</li>
-            <li>Create a <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">useFactory</code> provider that reads from environment variables</li>
-            <li>Inject ProductsService into a controller and test all CRUD endpoints</li>
-          </ul>
-        </section>
-
-        <section className="mt-6 p-6 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-red-900 dark:text-red-400">⚠️ Common Mistakes</h3>
-          <ul className="text-red-800 dark:text-red-300 text-sm space-y-2 list-disc pl-5">
-            <li>Forgetting <code className="bg-red-200/50 dark:bg-red-800/30 px-1 rounded">@Injectable()</code> — without it, NestJS can't inject the service.</li>
-            <li>Not adding the service to <code className="bg-red-200/50 dark:bg-red-800/30 px-1 rounded">providers</code> array in the module — "Nest can't resolve dependencies" error.</li>
-            <li>Using <code className="bg-red-200/50 dark:bg-red-800/30 px-1 rounded">new Service()</code> instead of constructor injection — breaks DI and testability.</li>
-            <li>Overusing REQUEST scope — significant performance overhead for most use cases.</li>
-          </ul>
-        </section>
-
-        <section className="mt-6 p-6 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-emerald-900 dark:text-emerald-400">📝 Next Step</h3>
-          <p className="text-emerald-900 dark:text-emerald-300">
-            Move to <Link href="/learn/nestjs/nj09-dependency-injection" className="font-bold underline hover:text-emerald-600">NJ-09 — Dependency Injection</Link> to understand HOW NestJS resolves and injects dependencies automatically.
-          </p>
-        </section>
       </div>
-    </>
+    </div>
   );
 }
-

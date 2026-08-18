@@ -154,11 +154,11 @@ const PHASES: PhaseConfig[] = [
     ],
   },
   {
-    id: "intermediate",
+    id: "request-pipeline",
     phaseNumber: "PHASE 03",
-    title: "Request Lifecycle & Security",
+    title: "Request Pipeline & Execution Lifecycle",
     codeRange: "NJ-11 to NJ-16",
-    description: "Master execution pipeline interceptors, guards for authorization, validation pipes, exception filters, and JWT auth.",
+    description: "Master the complete request execution flow: Middleware, Guards, Interceptors, Pipes, and Exception Filters.",
     theme: {
       badge: "bg-ds-feature-lighter text-ds-feature-dark border border-ds-feature-light",
       hoverBorder: "hover:border-ds-feature-base",
@@ -172,60 +172,111 @@ const PHASES: PhaseConfig[] = [
     lessons: [
       {
         code: "NJ-11",
-        name: "Pipes & Transformation",
-        path: "/learn/nestjs/nj11-pipes",
-        desc: "Built-in and custom pipes for runtime validation, parsing primitives, and sanitizing inbound payloads.",
-        phaseId: "intermediate",
-        phaseName: "Intermediate",
+        name: "Request Lifecycle Overview",
+        path: "/learn/nestjs/nj11-request-lifecycle",
+        desc: "The complete journey of an HTTP request: Middleware → Guards → Interceptors → Pipes → Controller → Filters.",
+        phaseId: "request-pipeline",
+        phaseName: "Request Pipeline",
       },
       {
         code: "NJ-12",
-        name: "Guards & Authorization",
-        path: "/learn/nestjs/nj12-guards",
-        desc: "Protect sensitive endpoints with role-based (RBAC) and permission-based execution guards.",
-        phaseId: "intermediate",
-        phaseName: "Intermediate",
+        name: "Pipes & Transformation",
+        path: "/learn/nestjs/nj12-pipes",
+        desc: "Built-in and custom pipes for runtime validation, parsing primitives, and sanitizing inbound payloads.",
+        phaseId: "request-pipeline",
+        phaseName: "Request Pipeline",
       },
       {
         code: "NJ-13",
-        name: "Interceptors",
-        path: "/learn/nestjs/nj13-interceptors",
-        desc: "Transform responses, log execution metrics, handle response caching, and bind RxJS stream operators.",
-        phaseId: "intermediate",
-        phaseName: "Intermediate",
+        name: "Guards & Authorization",
+        path: "/learn/nestjs/nj13-guards",
+        desc: "Protect sensitive endpoints with role-based and permission-based execution guards with CanActivate.",
+        phaseId: "request-pipeline",
+        phaseName: "Request Pipeline",
       },
       {
         code: "NJ-14",
-        name: "Exception Filters",
-        path: "/learn/nestjs/nj14-exception-filters",
-        desc: "Centralized error handling with custom exception filters and predictable structured error responses.",
-        phaseId: "intermediate",
-        phaseName: "Intermediate",
+        name: "Interceptors & RxJS",
+        path: "/learn/nestjs/nj14-interceptors",
+        desc: "Transform responses, log execution metrics, handle response caching, and bind RxJS stream operators.",
+        phaseId: "request-pipeline",
+        phaseName: "Request Pipeline",
       },
       {
         code: "NJ-15",
-        name: "Middleware",
-        path: "/learn/nestjs/nj15-middleware",
-        desc: "Request/response middleware pipeline — logging, CORS headers, rate limiting, and Express compatibility.",
-        phaseId: "intermediate",
-        phaseName: "Intermediate",
+        name: "Exception Filters",
+        path: "/learn/nestjs/nj15-exception-filters",
+        desc: "Centralized error handling with custom exception filters and predictable structured error responses.",
+        phaseId: "request-pipeline",
+        phaseName: "Request Pipeline",
       },
       {
         code: "NJ-16",
-        name: "Authentication (JWT)",
-        path: "/learn/nestjs/nj16-auth-jwt",
-        desc: "Passport.js integration with JWT strategy — credential verification, token refresh, and protected routes.",
-        phaseId: "intermediate",
-        phaseName: "Intermediate",
+        name: "Middleware",
+        path: "/learn/nestjs/nj16-middleware",
+        desc: "Request/response middleware pipeline — logging, CORS headers, rate limiting, and Express compatibility.",
+        phaseId: "request-pipeline",
+        phaseName: "Request Pipeline",
       },
     ],
   },
   {
-    id: "advanced",
+    id: "auth-security",
     phaseNumber: "PHASE 04",
-    title: "Production Engineering & Architecture",
-    codeRange: "NJ-17 to NJ-22",
-    description: "Integrate relational databases, typed configuration, comprehensive test suites, microservices, and Docker CI/CD.",
+    title: "Authentication & Security Hardening",
+    codeRange: "NJ-17 to NJ-20",
+    description: "Build production-grade authentication with Passport, JWT tokens, RBAC roles, custom decorators, and rate limiting.",
+    theme: {
+      badge: "bg-ds-warning-lighter text-ds-warning-dark border border-ds-warning-light",
+      hoverBorder: "hover:border-ds-warning-base",
+      hoverText: "group-hover:text-ds-warning-base",
+      hoverShadow: "hover:shadow-ds-warning-base/5",
+      dot: "bg-ds-warning-base",
+      gradient: "from-ds-warning-base/30 to-transparent",
+      iconBg: "bg-ds-warning-lighter",
+      iconText: "text-ds-warning-dark",
+    },
+    lessons: [
+      {
+        code: "NJ-17",
+        name: "Custom Decorators",
+        path: "/learn/nestjs/nj17-custom-decorators",
+        desc: "Build custom param and method decorators like @CurrentUser(), @Public(), and @Roles() with createParamDecorator.",
+        phaseId: "auth-security",
+        phaseName: "Auth & Security",
+      },
+      {
+        code: "NJ-18",
+        name: "Authentication (JWT & Passport)",
+        path: "/learn/nestjs/nj18-auth-jwt",
+        desc: "Passport.js integration with JWT strategy — credential verification, token refresh, and protected routes.",
+        phaseId: "auth-security",
+        phaseName: "Auth & Security",
+      },
+      {
+        code: "NJ-19",
+        name: "RBAC & Role-Based Authorization",
+        path: "/learn/nestjs/nj19-rbac",
+        desc: "Enforce granular permissions with Reflector, metadata reflection, custom @Roles() decorators, and hierarchical RBAC.",
+        phaseId: "auth-security",
+        phaseName: "Auth & Security",
+      },
+      {
+        code: "NJ-20",
+        name: "Security Hardening (Helmet, CORS, Throttler)",
+        path: "/learn/nestjs/nj20-security",
+        desc: "Harden your API with Helmet security headers, fine-grained CORS, and @nestjs/throttler rate limiting.",
+        phaseId: "auth-security",
+        phaseName: "Auth & Security",
+      },
+    ],
+  },
+  {
+    id: "database-prisma",
+    phaseNumber: "PHASE 05",
+    title: "Database Layer (Prisma & PostgreSQL)",
+    codeRange: "NJ-21 to NJ-25",
+    description: "Modern database management with Prisma ORM: schema modeling, relations, migrations, pagination, and serialization.",
     theme: {
       badge: "bg-ds-success-lighter text-ds-success-dark border border-ds-success-light",
       hoverBorder: "hover:border-ds-success-base",
@@ -238,61 +289,53 @@ const PHASES: PhaseConfig[] = [
     },
     lessons: [
       {
-        code: "NJ-17",
-        name: "Database Integration",
-        path: "/learn/nestjs/nj17-database",
-        desc: "TypeORM and Prisma with PostgreSQL — database entities, repositories, relations, and migrations.",
-        phaseId: "advanced",
-        phaseName: "Advanced",
-      },
-      {
-        code: "NJ-18",
-        name: "Configuration & Environment",
-        path: "/learn/nestjs/nj18-config",
-        desc: "ConfigModule, environment variables, Joi schema validation, and strictly typed configuration objects.",
-        phaseId: "advanced",
-        phaseName: "Advanced",
-      },
-      {
-        code: "NJ-19",
-        name: "Testing Strategies",
-        path: "/learn/nestjs/nj19-testing",
-        desc: "Unit tests with Jest mocks, integration testing with Test.createTestingModule, and E2E with Supertest.",
-        phaseId: "advanced",
-        phaseName: "Advanced",
-      },
-      {
-        code: "NJ-20",
-        name: "Scalable Folder Structure",
-        path: "/learn/nestjs/nj20-folder-structure",
-        desc: "Domain-Driven Design (DDD) principles, modular boundaries, and clean separation of concerns for scale.",
-        phaseId: "advanced",
-        phaseName: "Advanced",
-      },
-      {
         code: "NJ-21",
-        name: "Microservices Basics",
-        path: "/learn/nestjs/nj21-microservices",
-        desc: "NestJS microservice transport layers, message patterns, event-based emitters, and Redis/RabbitMQ.",
-        phaseId: "advanced",
-        phaseName: "Advanced",
+        name: "Database Setup (Prisma + PostgreSQL)",
+        path: "/learn/nestjs/nj21-database-prisma",
+        desc: "Integrate Prisma ORM with NestJS services using PrismaService and PrismaClient lifecycle hooks.",
+        phaseId: "database-prisma",
+        phaseName: "Database & Prisma",
       },
       {
         code: "NJ-22",
-        name: "Production Deployment",
-        path: "/learn/nestjs/nj22-deployment",
-        desc: "Docker multi-stage builds, CI/CD pipelines, Terminus health checks, and graceful process shutdown.",
-        phaseId: "advanced",
-        phaseName: "Advanced",
+        name: "Entities, Relations & Repositories",
+        path: "/learn/nestjs/nj22-entities-relations",
+        desc: "Model 1-to-1, 1-to-many, and many-to-many relationships, cascade deletes, and clean repository patterns.",
+        phaseId: "database-prisma",
+        phaseName: "Database & Prisma",
+      },
+      {
+        code: "NJ-23",
+        name: "Migrations & Database Seeding",
+        path: "/learn/nestjs/nj23-migrations-seeding",
+        desc: "Manage production schema migrations with Prisma Migrate, seed development data, and handle rollback safety.",
+        phaseId: "database-prisma",
+        phaseName: "Database & Prisma",
+      },
+      {
+        code: "NJ-24",
+        name: "Pagination, Filtering & Sorting",
+        path: "/learn/nestjs/nj24-pagination-filtering",
+        desc: "Build scalable offset and cursor-based pagination, dynamic query filtering, and sorting helper utilities.",
+        phaseId: "database-prisma",
+        phaseName: "Database & Prisma",
+      },
+      {
+        code: "NJ-25",
+        name: "Serialization & Response Shaping",
+        path: "/learn/nestjs/nj25-serialization",
+        desc: "Exclude sensitive fields (passwords) and shape output payloads with ClassSerializerInterceptor and @Exclude().",
+        phaseId: "database-prisma",
+        phaseName: "Database & Prisma",
       },
     ],
   },
   {
-    id: "elite-addons",
-    phaseNumber: "PHASE 05",
-    title: "Elite Add-ons & Scalability",
-    codeRange: "NJ-23 to NJ-27",
-    description: "Equip your backend with interactive Swagger documentation, file handling, WebSockets, crons, and Redis caching.",
+    id: "production-engineering",
+    phaseNumber: "PHASE 06",
+    title: "Production Engineering & DevOps",
+    codeRange: "NJ-26 to NJ-32",
+    description: "Equip your API with typed configuration, structured Pino logging, automated testing, Swagger, Redis caching, and Docker.",
     theme: {
       badge: "bg-ds-info-lighter text-ds-info-dark border border-ds-info-light",
       hoverBorder: "hover:border-ds-info-base",
@@ -305,44 +348,60 @@ const PHASES: PhaseConfig[] = [
     },
     lessons: [
       {
-        code: "NJ-23",
-        name: "API Documentation (Swagger)",
-        path: "/learn/nestjs/nj23-swagger",
-        desc: "Automated OpenAPI generation with @nestjs/swagger, schema decorators, and interactive Swagger UI.",
-        phaseId: "elite-addons",
-        phaseName: "Elite Add-ons",
-      },
-      {
-        code: "NJ-24",
-        name: "File Uploads & Static Assets",
-        path: "/learn/nestjs/nj24-file-uploads",
-        desc: "Streamlined multi-part file handling using Multer interceptors and secured static asset hosting.",
-        phaseId: "elite-addons",
-        phaseName: "Elite Add-ons",
-      },
-      {
-        code: "NJ-25",
-        name: "WebSockets (Real-time)",
-        path: "/learn/nestjs/nj25-websockets",
-        desc: "Bidirectional real-time event streaming with WebSocket Gateways, rooms, and Socket.io integration.",
-        phaseId: "elite-addons",
-        phaseName: "Elite Add-ons",
-      },
-      {
         code: "NJ-26",
-        name: "Task Scheduling (Cron)",
-        path: "/learn/nestjs/nj26-scheduling",
-        desc: "Automate background jobs, intervals, and recurring cron tasks with declarative @nestjs/schedule.",
-        phaseId: "elite-addons",
-        phaseName: "Elite Add-ons",
+        name: "Configuration & Environment",
+        path: "/learn/nestjs/nj26-config",
+        desc: "ConfigModule, environment variables, Joi schema validation, and strictly typed configuration objects.",
+        phaseId: "production-engineering",
+        phaseName: "Production Engineering",
       },
       {
         code: "NJ-27",
+        name: "Structured Logging & Observability",
+        path: "/learn/nestjs/nj27-logging",
+        desc: "Production JSON logging with nestjs-pino, AsyncLocalStorage request IDs, and performance tracing.",
+        phaseId: "production-engineering",
+        phaseName: "Production Engineering",
+      },
+      {
+        code: "NJ-28",
+        name: "Testing Strategies (Unit, Integration, E2E)",
+        path: "/learn/nestjs/nj28-testing",
+        desc: "Unit tests with Jest mocks, integration testing with Test.createTestingModule, and E2E with Supertest.",
+        phaseId: "production-engineering",
+        phaseName: "Production Engineering",
+      },
+      {
+        code: "NJ-29",
+        name: "API Documentation (Swagger/OpenAPI)",
+        path: "/learn/nestjs/nj29-swagger",
+        desc: "Automated OpenAPI generation with @nestjs/swagger, schema decorators, and interactive Swagger UI.",
+        phaseId: "production-engineering",
+        phaseName: "Production Engineering",
+      },
+      {
+        code: "NJ-30",
+        name: "File Uploads & Static Assets",
+        path: "/learn/nestjs/nj30-file-uploads",
+        desc: "Streamlined multi-part file handling using Multer interceptors and secured static asset hosting.",
+        phaseId: "production-engineering",
+        phaseName: "Production Engineering",
+      },
+      {
+        code: "NJ-31",
         name: "Caching & Redis",
-        path: "/learn/nestjs/nj27-caching",
+        path: "/learn/nestjs/nj31-caching",
         desc: "High-speed caching layer with CacheModule and Redis store integration to accelerate response times.",
-        phaseId: "elite-addons",
-        phaseName: "Elite Add-ons",
+        phaseId: "production-engineering",
+        phaseName: "Production Engineering",
+      },
+      {
+        code: "NJ-32",
+        name: "Production Deployment & Docker",
+        path: "/learn/nestjs/nj32-deployment",
+        desc: "Docker multi-stage builds, Terminus health checks, graceful process shutdown, and CI/CD pipelines.",
+        phaseId: "production-engineering",
+        phaseName: "Production Engineering",
       },
     ],
   },
@@ -421,20 +480,20 @@ export default function NestJSHub(): JSX.Element {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-ds-error-base opacity-75" />
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-ds-error-base" />
                   </span>
-                  Backend Mastery Track
+                  Zero to Production Mastery
                 </span>
                 <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ds-text-soft bg-ds-bg-weak border border-ds-stroke-soft rounded-full">
-                  NestJS v10+ & Express Parallel
+                  NestJS v10+ &amp; Prisma Architecture
                 </span>
               </div>
 
               {/* Title & Tagline */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight text-ds-text-strong font-display mb-4 leading-[1.1]">
-                NestJS <span className="text-ds-error-base">Elite</span> Architecture
+                NestJS <span className="text-ds-error-base">Production</span> Roadmap
               </h1>
               <p className="text-base sm:text-lg text-ds-text-sub leading-relaxed max-w-2xl">
-                27 comprehensive lessons designed for enterprise engineers — from TypeScript & OOP fundamentals
-                to production-ready microservices. Built with side-by-side Express.js comparisons at every step.
+                32 progressive lessons designed to take you from foundational OOP concepts to deploying production-grade,
+                interview-ready enterprise backend applications with Prisma, JWT security, and Docker.
               </p>
             </div>
 
@@ -442,23 +501,23 @@ export default function NestJSHub(): JSX.Element {
             <div className="flex flex-col sm:flex-row lg:flex-col gap-3 bg-ds-bg-weak p-5 rounded-2xl border border-ds-stroke-soft shrink-0 sm:min-w-[260px]">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider text-ds-text-soft">
-                  Course Progress
+                  Curriculum Progress
                 </span>
                 <span className="px-2 py-0.5 text-[10px] font-bold rounded-md bg-ds-error-lighter text-ds-error-dark border border-ds-error-light">
-                  0 / {totalLessons} Done
+                  10 / {totalLessons} Ready
                 </span>
               </div>
 
               <div className="w-full bg-ds-bg-soft h-2 rounded-full overflow-hidden">
-                <div className="bg-ds-error-base h-full w-[4%] rounded-full" />
+                <div className="bg-ds-error-base h-full w-[31%] rounded-full" />
               </div>
 
               <div className="pt-2 border-t border-ds-stroke-soft/60 flex items-center justify-between text-xs text-ds-text-sub">
                 <span className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-ds-success-base" />
-                  27 Interactive Challenges
+                  32 Interactive Modules
                 </span>
-                <span className="font-mono font-bold text-ds-text-strong">5 Phases</span>
+                <span className="font-mono font-bold text-ds-text-strong">6 Phases</span>
               </div>
             </div>
           </div>
@@ -467,23 +526,23 @@ export default function NestJSHub(): JSX.Element {
           <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-ds-stroke-soft">
             <div className="p-3.5 bg-ds-bg-weak rounded-xl border border-ds-stroke-soft">
               <span className="block text-[10px] font-black uppercase tracking-wider text-ds-text-soft">Curriculum</span>
-              <span className="text-xl font-bold text-ds-text-strong font-display mt-0.5 block">27 Lessons</span>
-              <span className="text-[11px] text-ds-text-sub mt-0.5 block">0 to Production Ready</span>
+              <span className="text-xl font-bold text-ds-text-strong font-display mt-0.5 block">32 Lessons</span>
+              <span className="text-[11px] text-ds-text-sub mt-0.5 block">Basic to Advanced Mastery</span>
             </div>
             <div className="p-3.5 bg-ds-bg-weak rounded-xl border border-ds-stroke-soft">
               <span className="block text-[10px] font-black uppercase tracking-wider text-ds-text-soft">Phases</span>
-              <span className="text-xl font-bold text-ds-text-strong font-display mt-0.5 block">5 Milestones</span>
-              <span className="text-[11px] text-ds-text-sub mt-0.5 block">TS, Core, Lifecycle, Prod, Cloud</span>
+              <span className="text-xl font-bold text-ds-text-strong font-display mt-0.5 block">6 Phases</span>
+              <span className="text-[11px] text-ds-text-sub mt-0.5 block">TS, Core, Pipeline, Auth, DB, Prod</span>
             </div>
             <div className="p-3.5 bg-ds-bg-weak rounded-xl border border-ds-stroke-soft">
-              <span className="block text-[10px] font-black uppercase tracking-wider text-ds-text-soft">Pedagogy</span>
-              <span className="text-xl font-bold text-ds-text-strong font-display mt-0.5 block">Express vs Nest</span>
-              <span className="text-[11px] text-ds-text-sub mt-0.5 block">Direct side-by-side refactoring</span>
+              <span className="block text-[10px] font-black uppercase tracking-wider text-ds-text-soft">Database</span>
+              <span className="text-xl font-bold text-ds-text-strong font-display mt-0.5 block">Prisma ORM</span>
+              <span className="text-[11px] text-ds-text-sub mt-0.5 block">PostgreSQL schema &amp; migrations</span>
             </div>
             <div className="p-3.5 bg-ds-bg-weak rounded-xl border border-ds-stroke-soft">
-              <span className="block text-[10px] font-black uppercase tracking-wider text-ds-text-soft">Architecture</span>
-              <span className="text-xl font-bold text-ds-text-strong font-display mt-0.5 block">Enterprise DDD</span>
-              <span className="text-[11px] text-ds-text-sub mt-0.5 block">TypeORM, Redis & Docker</span>
+              <span className="block text-[10px] font-black uppercase tracking-wider text-ds-text-soft">Preparation</span>
+              <span className="text-xl font-bold text-ds-text-strong font-display mt-0.5 block">Interview Ready</span>
+              <span className="text-[11px] text-ds-text-sub mt-0.5 block">Deep conceptual breakdown</span>
             </div>
           </div>
         </section>
@@ -702,7 +761,7 @@ export default function NestJSHub(): JSX.Element {
                 <span className="px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider rounded bg-ds-error-lighter text-ds-error-dark border border-ds-error-light">
                   Ready to Start
                 </span>
-                <span className="text-xs font-mono text-ds-text-soft">Phase 01 &rarr; Phase 05</span>
+                <span className="text-xs font-mono text-ds-text-soft">Phase 01 &rarr; Phase 06</span>
               </div>
 
               <h3 className="text-2xl sm:text-3xl font-black text-ds-text-strong font-display mb-3">
@@ -718,8 +777,8 @@ export default function NestJSHub(): JSX.Element {
                 {[
                   "1. TS Prerequisites",
                   "2. Core Modules",
-                  "3. Auth & Pipeline",
-                  "4. DB & Microservices",
+                  "3. Request Pipeline",
+                  "4. Auth & Security",
                 ].map((step, idx) => (
                   <div
                     key={step}
