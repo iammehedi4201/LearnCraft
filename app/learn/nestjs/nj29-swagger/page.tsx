@@ -1,139 +1,361 @@
 /**
- * NJ-23 — API Documentation (Swagger)
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * NJ-29 — Swagger & OpenAPI Documentation
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * CORE CONCEPT
+ * ────────────
+ * Automated API documentation and contract engineering in NestJS:
+ * @nestjs/swagger, DocumentBuilder, SwaggerModule.setup at /api/docs,
+ * @ApiProperty DTO annotations, @ApiOperation, @ApiResponse,
+ * @ApiBearerAuth JWT lock, the Swagger CLI AST compiler plugin,
+ * multi-version docs, and exporting openapi.json for SDK generators.
+ *
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
+
 "use client";
-import Link from "next/link";
+
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
+import { getAllAnnotations } from "@/lib/revision-storage";
 
-export default function NJ23Swagger(): JSX.Element {
+// Section components
+import { HeaderSection } from "./components/header-section";
+import { SwaggerSetupBootstrapSection } from "./components/swagger-setup-bootstrap-section";
+import { DtoApiPropertySection } from "./components/dto-api-property-section";
+import { OperationResponseDecoratorsSection } from "./components/operation-response-decorators-section";
+import { JwtBearerAuthSwaggerSection } from "./components/jwt-bearer-auth-swagger-section";
+import { CliPluginAutoGenerationSection } from "./components/cli-plugin-auto-generation-section";
+import { TaggingGroupingRoutesSection } from "./components/tagging-grouping-routes-section";
+import { ExportingOpenapiJsonSection } from "./components/exporting-openapi-json-section";
+import { CustomizingSwaggerUiSection } from "./components/customizing-swagger-ui-section";
+import { BeginnerMistakesSection } from "./components/beginner-mistakes-section";
+import { InterviewQaSection } from "./components/interview-qa-section";
+import { ConceptTablesSection } from "./components/concept-tables-section";
+import { CodingExercisesSection } from "./components/coding-exercises-section";
+import { ClosingSections } from "./components/closing-sections";
+
+const SECTIONS = [
+  { id: "part1",  label: "The Big Picture",             icon: "🚀" },
+  { id: "part2",  label: "Installing Swagger UI",       icon: "⚙️" },
+  { id: "part3",  label: "DTOs & @ApiProperty",         icon: "📝" },
+  { id: "part4",  label: "Operation & Response Types",  icon: "📡" },
+  { id: "part5",  label: "JWT Bearer Authorization",    icon: "🔒" },
+  { id: "part6",  label: "Swagger CLI Compiler Plugin", icon: "⚡" },
+  { id: "part7",  label: "Route Tagging & Versioning",  icon: "🏷️" },
+  { id: "part8",  label: "Exporting openapi.json",      icon: "💾" },
+  { id: "part9",  label: "Customizing Swagger UI Theme", icon: "🎨" },
+  { id: "part10", label: "Top 5 Beginner Mistakes",     icon: "⚠️" },
+  { id: "part11", label: "Top 5 Interview Q&As",        icon: "💡" },
+  { id: "part12", label: "Swagger Decorators Matrix",   icon: "📊" },
+  { id: "part13", label: "Swagger Coding Practice",     icon: "💻" },
+  { id: "part14", label: "Summary & Next Steps",        icon: "🎓" },
+];
+
+const PROGRESS_STORAGE_KEY = "learncraft_progress_nj29-swagger";
+
+export default function NJ29Swagger(): JSX.Element {
+  const searchParams = useSearchParams();
+  const highlightId = searchParams?.get("highlightId");
+  const sectionParam = searchParams?.get("section");
+
+  const [activeSection, setActiveSection] = useState<string>("part1");
+  const [completedSections, setCompletedSections] = useState<Set<string>>(
+    new Set(),
+  );
+
+  // Initialize from URL, highlight, or localStorage on mount
+  useEffect(() => {
+    // 1. URL search param has highest priority
+    if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
+      setActiveSection(sectionParam);
+      const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
+      if (targetIdx > 0) {
+        setCompletedSections((prev) => {
+          const next = new Set(prev);
+          for (let i = 0; i < targetIdx; i++) {
+            next.add(SECTIONS[i].id);
+          }
+          return next;
+        });
+      }
+      return;
+    }
+
+    // 2. Highlight deep-link lookup
+    if (highlightId) {
+      const all = getAllAnnotations();
+      const target = all.find(
+        (a) =>
+          a.id === highlightId ||
+          a.id === `rev_${highlightId}` ||
+          `rev-highlight-${a.id}` === highlightId
+      );
+      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
+        setActiveSection(target.sectionId);
+        const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
+        if (targetIdx > 0) {
+          setCompletedSections((prev) => {
+            const next = new Set(prev);
+            for (let i = 0; i < targetIdx; i++) {
+              next.add(SECTIONS[i].id);
+            }
+            return next;
+          });
+        }
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("highlightId");
+          url.searchParams.set("section", target.sectionId);
+          window.history.replaceState(null, "", url.toString());
+        }
+        return;
+      }
+    }
+
+    // 3. Restore persisted progress from localStorage on page refresh
+    try {
+      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
+          setActiveSection(parsed.activeSection);
+        }
+        if (Array.isArray(parsed.completedSections)) {
+          setCompletedSections(new Set(parsed.completedSections));
+        }
+      }
+    } catch {}
+  }, [highlightId, sectionParam]);
+
+  const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeSection]);
+
+  const handleSectionChange = (sectionId: string) => {
+    const nextCompleted = new Set([...completedSections, activeSection]);
+    setCompletedSections(nextCompleted);
+    setActiveSection(sectionId);
+
+    // Persist to localStorage
+    try {
+      localStorage.setItem(
+        PROGRESS_STORAGE_KEY,
+        JSON.stringify({
+          activeSection: sectionId,
+          completedSections: Array.from(nextCompleted),
+        })
+      );
+    } catch {}
+
+    // Synchronize URL search param without full reload
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("highlightId");
+      url.searchParams.set("section", sectionId);
+      window.history.replaceState(null, "", url.toString());
+    }
+  };
+
+  const getStepState = (index: number): "done" | "active" | "todo" => {
+    const section = SECTIONS[index];
+    if (section.id === activeSection) return "active";
+    if (completedSections.has(section.id) || index < currentIndex)
+      return "done";
+    return "todo";
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case "part1":  return <HeaderSection />;
+      case "part2":  return <SwaggerSetupBootstrapSection />;
+      case "part3":  return <DtoApiPropertySection />;
+      case "part4":  return <OperationResponseDecoratorsSection />;
+      case "part5":  return <JwtBearerAuthSwaggerSection />;
+      case "part6":  return <CliPluginAutoGenerationSection />;
+      case "part7":  return <TaggingGroupingRoutesSection />;
+      case "part8":  return <ExportingOpenapiJsonSection />;
+      case "part9":  return <CustomizingSwaggerUiSection />;
+      case "part10": return <BeginnerMistakesSection />;
+      case "part11": return <InterviewQaSection />;
+      case "part12": return <ConceptTablesSection />;
+      case "part13": return <CodingExercisesSection />;
+      case "part14": return <ClosingSections />;
+      default:       return <HeaderSection />;
+    }
+  };
+
   return (
-    <>
+    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20">
       <Nav />
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="group relative glass-card rounded-3xl p-8 mb-12 overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
-              <div className="flex h-12 w-16 items-center justify-center rounded-2xl bg-blue-500 text-white shadow-lg shadow-blue-500/20"><span className="font-display font-bold text-sm tracking-wider whitespace-nowrap">NJ-23</span></div>
-              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">API Documentation (Swagger)</h2>
+
+      <div className="relative z-10 max-w-[95rem] mx-auto px-6 lg:px-8 py-2">
+        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
+          {/* Stepper Sidebar */}
+          <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
+            {/* Header */}
+            <div className="px-2 mb-3 shrink-0">
+              <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
+                Modules
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">NestJS Concept</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">@nestjs/swagger automates API documentation by reading your decorators and DTOs. It provides a web-based Swagger UI for testing endpoints.</p></div>
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Express.js Comparison</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Express requires manual YAML/JSON files or swagger-jsdoc comments. NestJS automatically syncs docs with your code.</p></div>
+
+            {/* Stepper (Scrollable List) */}
+            <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
+              <ol className="space-y-1.5 relative">
+                {SECTIONS.map((section, index) => {
+                  const state = getStepState(index);
+                  const isActive = state === "active";
+                  const isDone = state === "done";
+                  const isTodo = state === "todo";
+
+                  return (
+                    <li key={section.id}>
+                      <button
+                        onClick={() => handleSectionChange(section.id)}
+                        disabled={isTodo}
+                        className={`
+                          group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+                          transition-all duration-200 text-left
+                          ${
+                            isActive
+                              ? "bg-ds-feature-lighter border border-ds-feature-base"
+                              : isDone
+                                ? "hover:bg-ds-bg-weak cursor-pointer"
+                                : "opacity-50 cursor-not-allowed"
+                          }
+                        `}
+                      >
+                        {/* Step indicator circle */}
+                        <div
+                          className={`
+                            relative z-10 flex-shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center
+                            text-[11px] font-bold transition-all duration-200
+                            ${
+                              isActive
+                                ? "bg-ds-feature-base text-ds-static-white scale-105 shadow-sm shadow-ds-feature-base/10"
+                                : isDone
+                                  ? "bg-ds-success-base text-ds-static-white"
+                                  : "bg-ds-bg-weak text-ds-text-disabled border border-ds-stroke-soft"
+                            }
+                          `}
+                        >
+                          {isDone ? (
+                            <svg
+                              className="w-3.5 h-3.5"
+                              viewBox="0 0 14 14"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="2,7 5.5,10.5 12,3.5" />
+                            </svg>
+                          ) : (
+                            <span>{index + 1}</span>
+                          )}
+                        </div>
+
+                        {/* Label area */}
+                        <div className="flex flex-col items-start gap-0.5 min-w-0 flex-1">
+                          <span
+                            className={`
+                              text-[13px] font-semibold leading-tight truncate transition-colors duration-200
+                              ${
+                                isActive
+                                  ? "text-ds-feature-dark font-black"
+                                  : isDone
+                                    ? "text-ds-text-strong group-hover:text-ds-feature-base"
+                                    : "text-ds-text-disabled"
+                              }
+                            `}
+                          >
+                            {section.label}
+                          </span>
+                          {isActive && (
+                            <span className="text-[10px] font-medium text-ds-feature-base">
+                              In progress
+                            </span>
+                          )}
+                          {isDone && (
+                            <span className="text-[10px] text-ds-success-dark font-medium">
+                              Completed
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Active indicator dot */}
+                        {isActive && (
+                          <div className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0" />
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+
+            {/* Progress box */}
+            <div className="mt-4 shrink-0 px-4 py-3.5 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[9px] font-black text-ds-text-soft uppercase tracking-widest">
+                  Progress
+                </span>
+                <span className="text-[12px] font-bold text-ds-text-strong">
+                  {Math.round(((currentIndex + 1) / SECTIONS.length) * 100)}%
+                </span>
+              </div>
+              <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
+                  style={{
+                    width: `${((currentIndex + 1) / SECTIONS.length) * 100}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-[10px] text-ds-text-soft">
+                {currentIndex + 1} of {SECTIONS.length} modules
+              </p>
             </div>
-          </div>
-          <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-blue-500/5 blur-3xl group-hover:bg-blue-500/10 transition-colors duration-500" />
+
+            {/* Prev / Next navigation */}
+            <div className="mt-3 shrink-0 flex gap-2">
+              <button
+                onClick={() =>
+                  currentIndex > 0 &&
+                  handleSectionChange(SECTIONS[currentIndex - 1].id)
+                }
+                disabled={currentIndex === 0}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold border border-ds-stroke-soft text-ds-text-sub bg-ds-bg-white hover:bg-ds-bg-weak hover:text-ds-text-strong disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                ← Prev
+              </button>
+              <button
+                onClick={() =>
+                  currentIndex < SECTIONS.length - 1 &&
+                  handleSectionChange(SECTIONS[currentIndex + 1].id)
+                }
+                disabled={currentIndex === SECTIONS.length - 1}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10"
+              >
+                Next →
+              </button>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 min-w-0 max-w-6xl">
+            <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
+              {renderContent()}
+            </div>
+          </main>
         </div>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. Setup</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`npm install @nestjs/swagger swagger-ui-express
-
-// main.ts
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  const config = new DocumentBuilder()
-    .setTitle('LearnCraft API')
-    .setDescription('The core API for the LearnCraft platform')
-    .setVersion('1.0')
-    .addTag('users')
-    .addTag('tasks')
-    .addBearerAuth() // Enable JWT auth in Swagger UI
-    .build();
-
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document); // Docs available at /api/docs
-
-  await app.listen(3000);
-}`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Documenting DTOs</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-
-export class CreateUserDto {
-  @ApiProperty({
-    example: 'Mehedi Hasan',
-    description: 'The full name of the user',
-  })
-  name: string;
-
-  @ApiProperty({
-    example: 'mehedi@example.com',
-    description: 'The email address used for login',
-  })
-  email: string;
-
-  @ApiPropertyOptional({
-    example: 25,
-    description: 'Years since birth',
-    minimum: 13,
-  })
-  age?: number;
-}
-
-// 🔑 Tip: You can automate this further with the Swagger CLI Plugin
-// which automatically reads class-validator decorators!`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">3. Controller Integration</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-
-@ApiTags('users')
-@ApiBearerAuth() // Require JWT for all endpoints in this controller
-@Controller('users')
-export class UsersController {
-  
-  @Post()
-  @ApiOperation({ summary: 'Register a new user' })
-  @ApiResponse({ status: 201, description: 'User successfully created' })
-  @ApiResponse({ status: 400, description: 'Invalid input data' })
-  @ApiResponse({ status: 409, description: 'Email already exists' })
-  create(@Body() dto: CreateUserDto) {
-    return this.usersService.create(dto);
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID' })
-  @ApiResponse({ status: 200, type: UserEntity })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
-  }
-}`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12 p-6 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-amber-900 dark:text-amber-400">🏋️ Mini Challenge</h3>
-          <ul className="text-amber-800 dark:text-amber-300 text-sm space-y-2 list-disc pl-5">
-            <li>Install Swagger and set up the interactive UI at <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">/api/docs</code></li>
-            <li>Add <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">@ApiProperty</code> to your Task DTOs</li>
-            <li>Group your endpoints using <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">@ApiTags</code></li>
-            <li>Enable Bearer Authentication and test a protected route from the Swagger UI</li>
-          </ul>
-        </section>
-
-        <section className="mt-6 p-6 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-emerald-900 dark:text-emerald-400">📝 Next Step</h3>
-          <p className="text-emerald-900 dark:text-emerald-300">Move to <Link href="/learn/nestjs/nj24-file-uploads" className="font-bold underline hover:text-emerald-600">NJ-24 — File Uploads & Static Assets</Link> to handle media in your API.</p>
-        </section>
       </div>
-    </>
+    </div>
   );
 }
-

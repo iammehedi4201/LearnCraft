@@ -1,284 +1,362 @@
 /**
- * NJ-22 — Production Deployment
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * NJ-32 — Production Deployment, Docker & DevOps (Grand Finale)
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * CORE CONCEPT
+ * ────────────
+ * Production engineering, containerization, and DevOps in NestJS:
+ * 3-stage multi-stage Dockerfiles (90MB Alpine, non-root user node),
+ * docker-compose orchestration with PostgreSQL and Redis health checks,
+ * @nestjs/terminus Liveness and Readiness probes, graceful shutdown hooks,
+ * PM2 cluster mode, automated GitHub Actions CI/CD pipeline, and the
+ * 20-Point Production Readiness Pre-Launch Checklist.
+ *
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
+
 "use client";
-import Link from "next/link";
+
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
+import { getAllAnnotations } from "@/lib/revision-storage";
 
-export default function NJ22Deployment(): JSX.Element {
+// Section components
+import { HeaderSection } from "./components/header-section";
+import { MultiStageDockerfileSection } from "./components/multi-stage-dockerfile-section";
+import { DockerComposeProductionSection } from "./components/docker-compose-production-section";
+import { TerminusHealthChecksSection } from "./components/terminus-health-checks-section";
+import { GracefulShutdownSignalsSection } from "./components/graceful-shutdown-signals-section";
+import { ProcessManagerPm2Section } from "./components/process-manager-pm2-section";
+import { CiCdGithubActionsSection } from "./components/ci-cd-github-actions-section";
+import { EnvironmentSecretsHardeningSection } from "./components/environment-secrets-hardening-section";
+import { ProductionChecklistSection } from "./components/production-checklist-section";
+import { BeginnerMistakesSection } from "./components/beginner-mistakes-section";
+import { InterviewQaSection } from "./components/interview-qa-section";
+import { ConceptTablesSection } from "./components/concept-tables-section";
+import { CodingExercisesSection } from "./components/coding-exercises-section";
+import { ClosingSections } from "./components/closing-sections";
+
+const SECTIONS = [
+  { id: "part1",  label: "The Big Picture",             icon: "🚀" },
+  { id: "part2",  label: "Multi-Stage Dockerfile",      icon: "🐳" },
+  { id: "part3",  label: "Production Docker Compose",   icon: "📦" },
+  { id: "part4",  label: "Terminus Health Checks",      icon: "🩺" },
+  { id: "part5",  label: "Graceful Shutdown Hooks",     icon: "🛑" },
+  { id: "part6",  label: "PM2 Process Manager",         icon: "⚙️" },
+  { id: "part7",  label: "GitHub Actions CI/CD",        icon: "🔄" },
+  { id: "part8",  label: "Production Security",         icon: "🛡️" },
+  { id: "part9",  label: "20-Point Flight Checklist",   icon: "📋" },
+  { id: "part10", label: "Top 5 Beginner Mistakes",     icon: "⚠️" },
+  { id: "part11", label: "Top 5 Interview Q&As",        icon: "💡" },
+  { id: "part12", label: "Kubernetes Probes Matrix",    icon: "📊" },
+  { id: "part13", label: "DevOps Coding Practice",      icon: "💻" },
+  { id: "part14", label: "Grand Master Graduation",     icon: "🎓" },
+];
+
+const PROGRESS_STORAGE_KEY = "learncraft_progress_nj32-deployment";
+
+export default function NJ32Deployment(): JSX.Element {
+  const searchParams = useSearchParams();
+  const highlightId = searchParams?.get("highlightId");
+  const sectionParam = searchParams?.get("section");
+
+  const [activeSection, setActiveSection] = useState<string>("part1");
+  const [completedSections, setCompletedSections] = useState<Set<string>>(
+    new Set(),
+  );
+
+  // Initialize from URL, highlight, or localStorage on mount
+  useEffect(() => {
+    // 1. URL search param has highest priority
+    if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
+      setActiveSection(sectionParam);
+      const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
+      if (targetIdx > 0) {
+        setCompletedSections((prev) => {
+          const next = new Set(prev);
+          for (let i = 0; i < targetIdx; i++) {
+            next.add(SECTIONS[i].id);
+          }
+          return next;
+        });
+      }
+      return;
+    }
+
+    // 2. Highlight deep-link lookup
+    if (highlightId) {
+      const all = getAllAnnotations();
+      const target = all.find(
+        (a) =>
+          a.id === highlightId ||
+          a.id === `rev_${highlightId}` ||
+          `rev-highlight-${a.id}` === highlightId
+      );
+      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
+        setActiveSection(target.sectionId);
+        const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
+        if (targetIdx > 0) {
+          setCompletedSections((prev) => {
+            const next = new Set(prev);
+            for (let i = 0; i < targetIdx; i++) {
+              next.add(SECTIONS[i].id);
+            }
+            return next;
+          });
+        }
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("highlightId");
+          url.searchParams.set("section", target.sectionId);
+          window.history.replaceState(null, "", url.toString());
+        }
+        return;
+      }
+    }
+
+    // 3. Restore persisted progress from localStorage on page refresh
+    try {
+      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
+          setActiveSection(parsed.activeSection);
+        }
+        if (Array.isArray(parsed.completedSections)) {
+          setCompletedSections(new Set(parsed.completedSections));
+        }
+      }
+    } catch {}
+  }, [highlightId, sectionParam]);
+
+  const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeSection]);
+
+  const handleSectionChange = (sectionId: string) => {
+    const nextCompleted = new Set([...completedSections, activeSection]);
+    setCompletedSections(nextCompleted);
+    setActiveSection(sectionId);
+
+    // Persist to localStorage
+    try {
+      localStorage.setItem(
+        PROGRESS_STORAGE_KEY,
+        JSON.stringify({
+          activeSection: sectionId,
+          completedSections: Array.from(nextCompleted),
+        })
+      );
+    } catch {}
+
+    // Synchronize URL search param without full reload
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("highlightId");
+      url.searchParams.set("section", sectionId);
+      window.history.replaceState(null, "", url.toString());
+    }
+  };
+
+  const getStepState = (index: number): "done" | "active" | "todo" => {
+    const section = SECTIONS[index];
+    if (section.id === activeSection) return "active";
+    if (completedSections.has(section.id) || index < currentIndex)
+      return "done";
+    return "todo";
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case "part1":  return <HeaderSection />;
+      case "part2":  return <MultiStageDockerfileSection />;
+      case "part3":  return <DockerComposeProductionSection />;
+      case "part4":  return <TerminusHealthChecksSection />;
+      case "part5":  return <GracefulShutdownSignalsSection />;
+      case "part6":  return <ProcessManagerPm2Section />;
+      case "part7":  return <CiCdGithubActionsSection />;
+      case "part8":  return <EnvironmentSecretsHardeningSection />;
+      case "part9":  return <ProductionChecklistSection />;
+      case "part10": return <BeginnerMistakesSection />;
+      case "part11": return <InterviewQaSection />;
+      case "part12": return <ConceptTablesSection />;
+      case "part13": return <CodingExercisesSection />;
+      case "part14": return <ClosingSections />;
+      default:       return <HeaderSection />;
+    }
+  };
+
   return (
-    <>
+    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20">
       <Nav />
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="group relative glass-card rounded-3xl p-8 mb-12 overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
-              <div className="flex h-12 w-16 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"><span className="font-display font-bold text-sm tracking-wider whitespace-nowrap">NJ-22</span></div>
-              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Production Deployment</h2>
+
+      <div className="relative z-10 max-w-[95rem] mx-auto px-6 lg:px-8 py-2">
+        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
+          {/* Stepper Sidebar */}
+          <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
+            {/* Header */}
+            <div className="px-2 mb-3 shrink-0">
+              <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
+                Modules
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-emerald-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-emerald-600" /></div><h4 className="font-display text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">NestJS Concept</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Deploying NestJS involves building, environment config, Docker, health checks, logging, security hardening, and choosing a hosting platform.</p></div>
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">The Final Step</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">This is where everything you've learned comes together into a production-ready, deployable application.</p></div>
+
+            {/* Stepper (Scrollable List) */}
+            <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
+              <ol className="space-y-1.5 relative">
+                {SECTIONS.map((section, index) => {
+                  const state = getStepState(index);
+                  const isActive = state === "active";
+                  const isDone = state === "done";
+                  const isTodo = state === "todo";
+
+                  return (
+                    <li key={section.id}>
+                      <button
+                        onClick={() => handleSectionChange(section.id)}
+                        disabled={isTodo}
+                        className={`
+                          group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+                          transition-all duration-200 text-left
+                          ${
+                            isActive
+                              ? "bg-ds-feature-lighter border border-ds-feature-base"
+                              : isDone
+                                ? "hover:bg-ds-bg-weak cursor-pointer"
+                                : "opacity-50 cursor-not-allowed"
+                          }
+                        `}
+                      >
+                        {/* Step indicator circle */}
+                        <div
+                          className={`
+                            relative z-10 flex-shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center
+                            text-[11px] font-bold transition-all duration-200
+                            ${
+                              isActive
+                                ? "bg-ds-feature-base text-ds-static-white scale-105 shadow-sm shadow-ds-feature-base/10"
+                                : isDone
+                                  ? "bg-ds-success-base text-ds-static-white"
+                                  : "bg-ds-bg-weak text-ds-text-disabled border border-ds-stroke-soft"
+                            }
+                          `}
+                        >
+                          {isDone ? (
+                            <svg
+                              className="w-3.5 h-3.5"
+                              viewBox="0 0 14 14"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="2,7 5.5,10.5 12,3.5" />
+                            </svg>
+                          ) : (
+                            <span>{index + 1}</span>
+                          )}
+                        </div>
+
+                        {/* Label area */}
+                        <div className="flex flex-col items-start gap-0.5 min-w-0 flex-1">
+                          <span
+                            className={`
+                              text-[13px] font-semibold leading-tight truncate transition-colors duration-200
+                              ${
+                                isActive
+                                  ? "text-ds-feature-dark font-black"
+                                  : isDone
+                                    ? "text-ds-text-strong group-hover:text-ds-feature-base"
+                                    : "text-ds-text-disabled"
+                              }
+                            `}
+                          >
+                            {section.label}
+                          </span>
+                          {isActive && (
+                            <span className="text-[10px] font-medium text-ds-feature-base">
+                              In progress
+                            </span>
+                          )}
+                          {isDone && (
+                            <span className="text-[10px] text-ds-success-dark font-medium">
+                              Completed
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Active indicator dot */}
+                        {isActive && (
+                          <div className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0" />
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+
+            {/* Progress box */}
+            <div className="mt-4 shrink-0 px-4 py-3.5 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[9px] font-black text-ds-text-soft uppercase tracking-widest">
+                  Progress
+                </span>
+                <span className="text-[12px] font-bold text-ds-text-strong">
+                  {Math.round(((currentIndex + 1) / SECTIONS.length) * 100)}%
+                </span>
+              </div>
+              <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
+                  style={{
+                    width: `${((currentIndex + 1) / SECTIONS.length) * 100}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-[10px] text-ds-text-soft">
+                {currentIndex + 1} of {SECTIONS.length} modules
+              </p>
             </div>
-          </div>
-          <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-emerald-500/5 blur-3xl group-hover:bg-emerald-500/10 transition-colors duration-500" />
+
+            {/* Prev / Next navigation */}
+            <div className="mt-3 shrink-0 flex gap-2">
+              <button
+                onClick={() =>
+                  currentIndex > 0 &&
+                  handleSectionChange(SECTIONS[currentIndex - 1].id)
+                }
+                disabled={currentIndex === 0}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold border border-ds-stroke-soft text-ds-text-sub bg-ds-bg-white hover:bg-ds-bg-weak hover:text-ds-text-strong disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                ← Prev
+              </button>
+              <button
+                onClick={() =>
+                  currentIndex < SECTIONS.length - 1 &&
+                  handleSectionChange(SECTIONS[currentIndex + 1].id)
+                }
+                disabled={currentIndex === SECTIONS.length - 1}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10"
+              >
+                Next →
+              </button>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 min-w-0 max-w-6xl">
+            <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
+              {renderContent()}
+            </div>
+          </main>
         </div>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. Production Build</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`# Build the production bundle
-npm run build
-
-# This compiles TypeScript → JavaScript in /dist folder
-# Run with:
-node dist/main.js
-
-# ✅ Production main.ts setup:
-import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
-import * as helmet from 'helmet';
-import * as compression from 'compression';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log'],  // Reduce logging in prod
-  });
-
-  // Security
-  app.use(helmet());
-  app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-    credentials: true,
-  });
-
-  // Performance
-  app.use(compression());
-
-  // Validation
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
-
-  // Global prefix
-  app.setGlobalPrefix('api/v1');
-
-  const port = process.env.PORT || 3000;
-  await app.listen(port);
-  Logger.log(\`🚀 Application running on port \${port}\`, 'Bootstrap');
-}
-bootstrap();`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Docker</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`# Dockerfile
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-
-# Production stage
-FROM node:20-alpine AS production
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-
-# Security: run as non-root user
-RUN addgroup -g 1001 -S nodejs && adduser -S nestjs -u 1001
-USER nestjs
-
-EXPOSE 3000
-CMD ["node", "dist/main.js"]
-
-# .dockerignore
-node_modules
-dist
-.git
-.env
-
-# docker-compose.yml
-version: '3.8'
-services:
-  api:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-    depends_on:
-      - postgres
-      - redis
-
-  postgres:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_DB: nestjs_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7-alpine
-
-volumes:
-  pgdata:`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">3. Health Checks</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`npm install @nestjs/terminus
-
-import { Controller, Get } from '@nestjs/common';
-import { HealthCheck, HealthCheckService, TypeOrmHealthIndicator } from '@nestjs/terminus';
-
-@Controller('health')
-export class HealthController {
-  constructor(
-    private health: HealthCheckService,
-    private db: TypeOrmHealthIndicator,
-  ) {}
-
-  @Get()
-  @HealthCheck()
-  check() {
-    return this.health.check([
-      () => this.db.pingCheck('database'),
-    ]);
-  }
-}
-
-// GET /health → { status: 'ok', info: { database: { status: 'up' } } }
-// Load balancers and Kubernetes use this to check if the app is alive`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">4. Security Checklist</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="bg-slate-100 dark:bg-slate-800">
-                <tr>
-                  <th className="px-4 py-3 font-bold text-slate-900 dark:text-white">Item</th>
-                  <th className="px-4 py-3 font-bold text-slate-900 dark:text-white">How</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                <tr className="bg-white dark:bg-slate-900/50"><td className="px-4 py-3 font-medium">HTTP Headers</td><td className="px-4 py-3 text-slate-600 dark:text-slate-400">helmet() — sets security headers</td></tr>
-                <tr className="bg-white dark:bg-slate-900/50"><td className="px-4 py-3 font-medium">CORS</td><td className="px-4 py-3 text-slate-600 dark:text-slate-400">enableCors() with specific origins</td></tr>
-                <tr className="bg-white dark:bg-slate-900/50"><td className="px-4 py-3 font-medium">Rate Limiting</td><td className="px-4 py-3 text-slate-600 dark:text-slate-400">@nestjs/throttler — prevent abuse</td></tr>
-                <tr className="bg-white dark:bg-slate-900/50"><td className="px-4 py-3 font-medium">Input Validation</td><td className="px-4 py-3 text-slate-600 dark:text-slate-400">ValidationPipe + class-validator</td></tr>
-                <tr className="bg-white dark:bg-slate-900/50"><td className="px-4 py-3 font-medium">Auth</td><td className="px-4 py-3 text-slate-600 dark:text-slate-400">JWT + Guards + bcrypt password hashing</td></tr>
-                <tr className="bg-white dark:bg-slate-900/50"><td className="px-4 py-3 font-medium">Env Variables</td><td className="px-4 py-3 text-slate-600 dark:text-slate-400">ConfigModule + Joi validation. Never commit .env</td></tr>
-                <tr className="bg-white dark:bg-slate-900/50"><td className="px-4 py-3 font-medium">SQL Injection</td><td className="px-4 py-3 text-slate-600 dark:text-slate-400">ORMs (TypeORM/Prisma) use parameterized queries</td></tr>
-                <tr className="bg-white dark:bg-slate-900/50"><td className="px-4 py-3 font-medium">Error Handling</td><td className="px-4 py-3 text-slate-600 dark:text-slate-400">Global exception filter — never expose stack traces in prod</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">5. Deployment Platforms</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`// 🚀 Popular deployment targets for NestJS:
-
-// 1️⃣ Railway (easiest)
-//    - Connect GitHub repo → auto-deploy
-//    - Built-in PostgreSQL, Redis
-//    - Free tier available
-
-// 2️⃣ DigitalOcean App Platform
-//    - Dockerfile-based deployment
-//    - Managed databases
-//    - $5/month
-
-// 3️⃣ AWS (most scalable)
-//    - ECS/Fargate for Docker containers
-//    - Lambda with @nestjs/serverless
-//    - RDS for PostgreSQL, ElastiCache for Redis
-
-// 4️⃣ Vercel (serverless)
-//    npm install @nestjs/platform-express @vercel/node
-//    // Requires adapter configuration
-
-// 5️⃣ VPS (full control)
-//    - Ubuntu + Docker + Nginx reverse proxy
-//    - PM2 for process management
-//    - Let's Encrypt for SSL
-
-// Production environment variables:
-NODE_ENV=production
-PORT=3000
-DATABASE_URL=postgresql://user:pass@host:5432/db
-JWT_SECRET=<long-random-string>
-ALLOWED_ORIGINS=https://yourdomain.com`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12 p-6 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-amber-900 dark:text-amber-400">🏋️ Final Challenge</h3>
-          <ul className="text-amber-800 dark:text-amber-300 text-sm space-y-2 list-disc pl-5">
-            <li>Create a Dockerfile and docker-compose.yml for your NestJS project</li>
-            <li>Add health checks with @nestjs/terminus</li>
-            <li>Set up rate limiting with @nestjs/throttler</li>
-            <li>Deploy to Railway or DigitalOcean and verify all endpoints work</li>
-            <li>Run your e2e tests against the production URL</li>
-          </ul>
-        </section>
-
-        <section className="mt-6 p-6 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/50 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-red-900 dark:text-red-400">⚠️ Common Mistakes</h3>
-          <ul className="text-red-800 dark:text-red-300 text-sm space-y-2 list-disc pl-5">
-            <li>Using <code className="bg-red-200/50 dark:bg-red-800/30 px-1 rounded">synchronize: true</code> in TypeORM in production — data loss risk. Use migrations.</li>
-            <li>Committing .env files to git — use .env.example instead.</li>
-            <li>Not setting up health checks — load balancers can't detect unhealthy instances.</li>
-            <li>Running as root in Docker — always create a non-root user.</li>
-            <li>Exposing stack traces in error responses — use a global exception filter.</li>
-          </ul>
-        </section>
-
-        {/* Graduation */}
-        <section className="mt-12 p-8 bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-emerald-950/30 dark:to-blue-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl text-center">
-          <div className="text-5xl mb-4">🎓</div>
-          <h3 className="font-display text-2xl font-bold mb-4 text-slate-900 dark:text-white">
-            NestJS Elite Mastery — Complete!
-          </h3>
-          <p className="text-slate-600 dark:text-slate-400 text-sm max-w-lg mx-auto mb-6">
-            You've completed all 22 lessons covering TypeScript, OOP, Decorators, SOLID, Modules, Controllers, Services, DI, Validation, Pipes, Guards, Interceptors, Filters, Middleware, Authentication, Database, Config, Testing, Architecture, Microservices, and Deployment.
-          </p>
-          <p className="text-slate-800 dark:text-slate-200 font-bold text-lg mb-6">
-            You now have the knowledge to build production-grade NestJS APIs.
-          </p>
-          <Link
-            href="/learn/nestjs"
-            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-full transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-            Back to Curriculum Hub
-          </Link>
-        </section>
       </div>
-    </>
+    </div>
   );
 }
-

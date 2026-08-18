@@ -1,212 +1,361 @@
 /**
- * NJ-19 — Testing Strategies
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * NJ-28 — Unit, Integration & E2E Testing
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *
+ * CORE CONCEPT
+ * ────────────
+ * Automated testing architecture in NestJS:
+ * The Testing Pyramid, unit testing services with Test.createTestingModule,
+ * deep mocking Prisma with jest-mock-extended, testing guards and
+ * controllers, end-to-end (E2E) testing with Supertest, isolated test
+ * databases with TRUNCATE cleanup, Testcontainers, and coverage gates.
+ *
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
+
 "use client";
-import Link from "next/link";
+
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
+import { getAllAnnotations } from "@/lib/revision-storage";
 
-export default function NJ19Testing(): JSX.Element {
+// Section components
+import { HeaderSection } from "./components/header-section";
+import { TestingPyramidSection } from "./components/testing-pyramid-section";
+import { UnitTestingServicesSection } from "./components/unit-testing-services-section";
+import { MockingPrismaSection } from "./components/mocking-prisma-section";
+import { TestingControllersGuardsSection } from "./components/testing-controllers-guards-section";
+import { E2eTestingSupertestSection } from "./components/e2e-testing-supertest-section";
+import { TestDatabaseLifecycleSection } from "./components/test-database-lifecycle-section";
+import { TestcontainersDockerSection } from "./components/testcontainers-docker-section";
+import { CoverageReportsCiSection } from "./components/coverage-reports-ci-section";
+import { BeginnerMistakesSection } from "./components/beginner-mistakes-section";
+import { InterviewQaSection } from "./components/interview-qa-section";
+import { ConceptTablesSection } from "./components/concept-tables-section";
+import { CodingExercisesSection } from "./components/coding-exercises-section";
+import { ClosingSections } from "./components/closing-sections";
+
+const SECTIONS = [
+  { id: "part1",  label: "The Big Picture",             icon: "🚀" },
+  { id: "part2",  label: "The Testing Pyramid",         icon: "📐" },
+  { id: "part3",  label: "Unit Testing Services",       icon: "🧪" },
+  { id: "part4",  label: "Deep Mocking Prisma",         icon: "🎭" },
+  { id: "part5",  label: "Testing Controllers & Guards", icon: "🛡️" },
+  { id: "part6",  label: "Supertest E2E Testing",       icon: "🌐" },
+  { id: "part7",  label: "Test Database Cleanup",       icon: "🧹" },
+  { id: "part8",  label: "Testcontainers & Docker",     icon: "🐳" },
+  { id: "part9",  label: "Code Coverage & CI Gates",    icon: "📊" },
+  { id: "part10", label: "Top 5 Beginner Mistakes",     icon: "⚠️" },
+  { id: "part11", label: "Top 5 Interview Q&As",        icon: "💡" },
+  { id: "part12", label: "Jest Matchers Reference",     icon: "📑" },
+  { id: "part13", label: "Testing Coding Practice",     icon: "💻" },
+  { id: "part14", label: "Summary & Next Steps",        icon: "🎓" },
+];
+
+const PROGRESS_STORAGE_KEY = "learncraft_progress_nj28-testing";
+
+export default function NJ28Testing(): JSX.Element {
+  const searchParams = useSearchParams();
+  const highlightId = searchParams?.get("highlightId");
+  const sectionParam = searchParams?.get("section");
+
+  const [activeSection, setActiveSection] = useState<string>("part1");
+  const [completedSections, setCompletedSections] = useState<Set<string>>(
+    new Set(),
+  );
+
+  // Initialize from URL, highlight, or localStorage on mount
+  useEffect(() => {
+    // 1. URL search param has highest priority
+    if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
+      setActiveSection(sectionParam);
+      const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
+      if (targetIdx > 0) {
+        setCompletedSections((prev) => {
+          const next = new Set(prev);
+          for (let i = 0; i < targetIdx; i++) {
+            next.add(SECTIONS[i].id);
+          }
+          return next;
+        });
+      }
+      return;
+    }
+
+    // 2. Highlight deep-link lookup
+    if (highlightId) {
+      const all = getAllAnnotations();
+      const target = all.find(
+        (a) =>
+          a.id === highlightId ||
+          a.id === `rev_${highlightId}` ||
+          `rev-highlight-${a.id}` === highlightId
+      );
+      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
+        setActiveSection(target.sectionId);
+        const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
+        if (targetIdx > 0) {
+          setCompletedSections((prev) => {
+            const next = new Set(prev);
+            for (let i = 0; i < targetIdx; i++) {
+              next.add(SECTIONS[i].id);
+            }
+            return next;
+          });
+        }
+        if (typeof window !== "undefined") {
+          const url = new URL(window.location.href);
+          url.searchParams.delete("highlightId");
+          url.searchParams.set("section", target.sectionId);
+          window.history.replaceState(null, "", url.toString());
+        }
+        return;
+      }
+    }
+
+    // 3. Restore persisted progress from localStorage on page refresh
+    try {
+      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
+          setActiveSection(parsed.activeSection);
+        }
+        if (Array.isArray(parsed.completedSections)) {
+          setCompletedSections(new Set(parsed.completedSections));
+        }
+      }
+    } catch {}
+  }, [highlightId, sectionParam]);
+
+  const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [activeSection]);
+
+  const handleSectionChange = (sectionId: string) => {
+    const nextCompleted = new Set([...completedSections, activeSection]);
+    setCompletedSections(nextCompleted);
+    setActiveSection(sectionId);
+
+    // Persist to localStorage
+    try {
+      localStorage.setItem(
+        PROGRESS_STORAGE_KEY,
+        JSON.stringify({
+          activeSection: sectionId,
+          completedSections: Array.from(nextCompleted),
+        })
+      );
+    } catch {}
+
+    // Synchronize URL search param without full reload
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("highlightId");
+      url.searchParams.set("section", sectionId);
+      window.history.replaceState(null, "", url.toString());
+    }
+  };
+
+  const getStepState = (index: number): "done" | "active" | "todo" => {
+    const section = SECTIONS[index];
+    if (section.id === activeSection) return "active";
+    if (completedSections.has(section.id) || index < currentIndex)
+      return "done";
+    return "todo";
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case "part1":  return <HeaderSection />;
+      case "part2":  return <TestingPyramidSection />;
+      case "part3":  return <UnitTestingServicesSection />;
+      case "part4":  return <MockingPrismaSection />;
+      case "part5":  return <TestingControllersGuardsSection />;
+      case "part6":  return <E2eTestingSupertestSection />;
+      case "part7":  return <TestDatabaseLifecycleSection />;
+      case "part8":  return <TestcontainersDockerSection />;
+      case "part9":  return <CoverageReportsCiSection />;
+      case "part10": return <BeginnerMistakesSection />;
+      case "part11": return <InterviewQaSection />;
+      case "part12": return <ConceptTablesSection />;
+      case "part13": return <CodingExercisesSection />;
+      case "part14": return <ClosingSections />;
+      default:       return <HeaderSection />;
+    }
+  };
+
   return (
-    <>
+    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20">
       <Nav />
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        <div className="group relative glass-card rounded-3xl p-8 mb-12 overflow-hidden hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500">
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-10 pb-6 border-b border-slate-200 dark:border-slate-800">
-              <div className="flex h-12 w-16 items-center justify-center rounded-2xl bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"><span className="font-display font-bold text-sm tracking-wider whitespace-nowrap">NJ-19</span></div>
-              <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white">Testing Strategies</h2>
+
+      <div className="relative z-10 max-w-[95rem] mx-auto px-6 lg:px-8 py-2">
+        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
+          {/* Stepper Sidebar */}
+          <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
+            {/* Header */}
+            <div className="px-2 mb-3 shrink-0">
+              <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
+                Modules
+              </p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-emerald-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-emerald-600" /></div><h4 className="font-display text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">NestJS Concept</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">NestJS has built-in testing support with @nestjs/testing. It provides Test.createTestingModule() to create isolated modules with mock providers for unit and integration tests.</p></div>
-              <div className="space-y-3"><div className="flex items-center gap-2 mb-2"><div className="h-5 w-5 rounded-full bg-blue-500/10 flex items-center justify-center"><div className="h-1.5 w-1.5 rounded-full bg-blue-600" /></div><h4 className="font-display text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest">Express.js Comparison</h4></div><p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">Express testing requires manual setup of mocks and test servers. NestJS provides a testing module that mirrors the DI container for easy mocking.</p></div>
+
+            {/* Stepper (Scrollable List) */}
+            <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
+              <ol className="space-y-1.5 relative">
+                {SECTIONS.map((section, index) => {
+                  const state = getStepState(index);
+                  const isActive = state === "active";
+                  const isDone = state === "done";
+                  const isTodo = state === "todo";
+
+                  return (
+                    <li key={section.id}>
+                      <button
+                        onClick={() => handleSectionChange(section.id)}
+                        disabled={isTodo}
+                        className={`
+                          group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+                          transition-all duration-200 text-left
+                          ${
+                            isActive
+                              ? "bg-ds-feature-lighter border border-ds-feature-base"
+                              : isDone
+                                ? "hover:bg-ds-bg-weak cursor-pointer"
+                                : "opacity-50 cursor-not-allowed"
+                          }
+                        `}
+                      >
+                        {/* Step indicator circle */}
+                        <div
+                          className={`
+                            relative z-10 flex-shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center
+                            text-[11px] font-bold transition-all duration-200
+                            ${
+                              isActive
+                                ? "bg-ds-feature-base text-ds-static-white scale-105 shadow-sm shadow-ds-feature-base/10"
+                                : isDone
+                                  ? "bg-ds-success-base text-ds-static-white"
+                                  : "bg-ds-bg-weak text-ds-text-disabled border border-ds-stroke-soft"
+                            }
+                          `}
+                        >
+                          {isDone ? (
+                            <svg
+                              className="w-3.5 h-3.5"
+                              viewBox="0 0 14 14"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="2,7 5.5,10.5 12,3.5" />
+                            </svg>
+                          ) : (
+                            <span>{index + 1}</span>
+                          )}
+                        </div>
+
+                        {/* Label area */}
+                        <div className="flex flex-col items-start gap-0.5 min-w-0 flex-1">
+                          <span
+                            className={`
+                              text-[13px] font-semibold leading-tight truncate transition-colors duration-200
+                              ${
+                                isActive
+                                  ? "text-ds-feature-dark font-black"
+                                  : isDone
+                                    ? "text-ds-text-strong group-hover:text-ds-feature-base"
+                                    : "text-ds-text-disabled"
+                              }
+                            `}
+                          >
+                            {section.label}
+                          </span>
+                          {isActive && (
+                            <span className="text-[10px] font-medium text-ds-feature-base">
+                              In progress
+                            </span>
+                          )}
+                          {isDone && (
+                            <span className="text-[10px] text-ds-success-dark font-medium">
+                              Completed
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Active indicator dot */}
+                        {isActive && (
+                          <div className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0" />
+                        )}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ol>
+            </nav>
+
+            {/* Progress box */}
+            <div className="mt-4 shrink-0 px-4 py-3.5 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[9px] font-black text-ds-text-soft uppercase tracking-widest">
+                  Progress
+                </span>
+                <span className="text-[12px] font-bold text-ds-text-strong">
+                  {Math.round(((currentIndex + 1) / SECTIONS.length) * 100)}%
+                </span>
+              </div>
+              <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
+                  style={{
+                    width: `${((currentIndex + 1) / SECTIONS.length) * 100}%`,
+                  }}
+                />
+              </div>
+              <p className="mt-2 text-[10px] text-ds-text-soft">
+                {currentIndex + 1} of {SECTIONS.length} modules
+              </p>
             </div>
-          </div>
-          <div className="absolute -right-32 -top-32 h-64 w-64 rounded-full bg-emerald-500/5 blur-3xl group-hover:bg-emerald-500/10 transition-colors duration-500" />
+
+            {/* Prev / Next navigation */}
+            <div className="mt-3 shrink-0 flex gap-2">
+              <button
+                onClick={() =>
+                  currentIndex > 0 &&
+                  handleSectionChange(SECTIONS[currentIndex - 1].id)
+                }
+                disabled={currentIndex === 0}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold border border-ds-stroke-soft text-ds-text-sub bg-ds-bg-white hover:bg-ds-bg-weak hover:text-ds-text-strong disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                ← Prev
+              </button>
+              <button
+                onClick={() =>
+                  currentIndex < SECTIONS.length - 1 &&
+                  handleSectionChange(SECTIONS[currentIndex + 1].id)
+                }
+                disabled={currentIndex === SECTIONS.length - 1}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10"
+              >
+                Next →
+              </button>
+            </div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="flex-1 min-w-0 max-w-6xl">
+            <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
+              {renderContent()}
+            </div>
+          </main>
         </div>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">1. Unit Testing Services</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from './users.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-
-describe('UsersService', () => {
-  let service: UsersService;
-
-  // ✅ Mock repository
-  const mockRepository = {
-    find: jest.fn(),
-    findOne: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
-    update: jest.fn(),
-    delete: jest.fn(),
-  };
-
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        UsersService,
-        {
-          provide: getRepositoryToken(User),
-          useValue: mockRepository,   // Inject mock instead of real DB
-        },
-      ],
-    }).compile();
-
-    service = module.get<UsersService>(UsersService);
-  });
-
-  it('should return all users', async () => {
-    const users = [{ id: 1, name: 'Mehedi' }];
-    mockRepository.find.mockResolvedValue(users);
-
-    const result = await service.findAll();
-    expect(result).toEqual(users);
-    expect(mockRepository.find).toHaveBeenCalled();
-  });
-
-  it('should create a user', async () => {
-    const dto = { name: 'Mehedi', email: 'm@e.com', password: 'hashed' };
-    const user = { id: 1, ...dto };
-
-    mockRepository.create.mockReturnValue(user);
-    mockRepository.save.mockResolvedValue(user);
-
-    const result = await service.create(dto);
-    expect(result).toEqual(user);
-    expect(mockRepository.save).toHaveBeenCalledWith(user);
-  });
-
-  it('should throw NotFoundException for unknown user', async () => {
-    mockRepository.findOne.mockResolvedValue(null);
-    await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
-  });
-});`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Unit Testing Controllers</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`describe('UsersController', () => {
-  let controller: UsersController;
-
-  const mockUsersService = {
-    findAll: jest.fn().mockResolvedValue([{ id: 1, name: 'Test' }]),
-    findOne: jest.fn().mockResolvedValue({ id: 1, name: 'Test' }),
-    create: jest.fn().mockImplementation(dto => ({ id: 1, ...dto })),
-    update: jest.fn().mockImplementation((id, dto) => ({ id, ...dto })),
-    remove: jest.fn().mockResolvedValue(undefined),
-  };
-
-  beforeEach(async () => {
-    const module = await Test.createTestingModule({
-      controllers: [UsersController],
-      providers: [
-        { provide: UsersService, useValue: mockUsersService },
-      ],
-    }).compile();
-
-    controller = module.get<UsersController>(UsersController);
-  });
-
-  it('should return all users', async () => {
-    expect(await controller.findAll()).toHaveLength(1);
-    expect(mockUsersService.findAll).toHaveBeenCalled();
-  });
-
-  it('should create a user', async () => {
-    const dto = { name: 'New User', email: 'new@test.com', password: '12345678' };
-    const result = await controller.create(dto);
-    expect(result.name).toBe('New User');
-  });
-});`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">3. E2E Testing</h2>
-          <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-            <pre className="bg-gray-900 text-white p-4 rounded overflow-x-auto text-sm">
-              {`// test/app.e2e-spec.ts
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
-import * as request from 'supertest';
-import { AppModule } from '../src/app.module';
-
-describe('Users (e2e)', () => {
-  let app: INestApplication;
-
-  beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-    await app.init();
-  });
-
-  afterAll(async () => {
-    await app.close();
-  });
-
-  it('GET /users → 200', () => {
-    return request(app.getHttpServer())
-      .get('/users')
-      .expect(200)
-      .expect(res => {
-        expect(Array.isArray(res.body)).toBe(true);
-      });
-  });
-
-  it('POST /users → 201', () => {
-    return request(app.getHttpServer())
-      .post('/users')
-      .send({ name: 'Test', email: 'test@e2e.com', password: '12345678' })
-      .expect(201)
-      .expect(res => {
-        expect(res.body.name).toBe('Test');
-        expect(res.body.email).toBe('test@e2e.com');
-      });
-  });
-
-  it('POST /users with invalid data → 400', () => {
-    return request(app.getHttpServer())
-      .post('/users')
-      .send({ name: '' })    // Missing email and password
-      .expect(400);
-  });
-});
-
-// Run: npm run test:e2e`}
-            </pre>
-          </div>
-        </section>
-
-        <section className="mt-12 p-6 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-amber-900 dark:text-amber-400">🏋️ Mini Challenge</h3>
-          <ul className="text-amber-800 dark:text-amber-300 text-sm space-y-2 list-disc pl-5">
-            <li>Write unit tests for your TasksService with mock repository</li>
-            <li>Write controller tests that mock the service layer</li>
-            <li>Write an e2e test for the full auth flow: register → login → access protected route</li>
-            <li>Aim for 80%+ code coverage: <code className="bg-amber-200/50 dark:bg-amber-800/30 px-1 rounded">npm run test -- --coverage</code></li>
-          </ul>
-        </section>
-
-        <section className="mt-6 p-6 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 rounded-lg">
-          <h3 className="font-semibold text-lg mb-3 text-emerald-900 dark:text-emerald-400">📝 Next Step</h3>
-          <p className="text-emerald-900 dark:text-emerald-300">Move to <Link href="/learn/nestjs/nj20-folder-structure" className="font-bold underline hover:text-emerald-600">NJ-20 — Scalable Folder Structure</Link> to organize your project for production.</p>
-        </section>
       </div>
-    </>
+    </div>
   );
 }
-
