@@ -436,6 +436,22 @@ export class TypeScriptRuntime implements PlaygroundRuntime {
     const output: OutputLine[] = [];
     let error: PlaygroundError | undefined;
 
+    // 0. Static pre-execution validation (Access modifier rules, syntax errors, unmatched brackets)
+    const staticErr = detectSyntaxErrorLine(input.code);
+    if (staticErr) {
+      return {
+        output: [],
+        error: {
+          message: staticErr.message,
+          technicalMessage: staticErr.technicalMessage || staticErr.message,
+          line: staticErr.line,
+          column: staticErr.column,
+          suggestion: staticErr.suggestion,
+        },
+        duration: Date.now() - startTime,
+      };
+    }
+
     // Transpile locally in 0ms
     const jsCode = transpileTypeScriptLocally(input.code);
 
@@ -639,6 +655,22 @@ self.onmessage = async function(e) {
     const allTests = [...tests, ...(hiddenTests || [])];
     const results: TestResult[] = [];
     const expectedCount = allTests.length;
+
+    // 0. Static pre-validation check (Access modifier rules, syntax errors)
+    const staticErr = detectSyntaxErrorLine(input.code);
+    if (staticErr) {
+      return {
+        passed: false,
+        results: allTests.map((t, i) => ({
+          name: t.hidden ? `Hidden Test ${i + 1}` : t.name,
+          passed: false,
+          hidden: !!t.hidden,
+          error: `Syntax Error: ${staticErr.message}`,
+        })),
+        totalPassed: 0,
+        totalTests: expectedCount,
+      };
+    }
 
     // Transpile input code
     const transpiledUserCode = transpileTypeScriptLocally(input.code);

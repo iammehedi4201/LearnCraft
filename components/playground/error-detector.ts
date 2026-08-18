@@ -215,8 +215,209 @@ export function detectSyntaxErrorLine(code: string): DetectedError | null {
     };
   }
 
-  // 2. Check for missing commas in function arguments or constructor calls
-  // e.g. new Student("Alvi" 80) or foo("hello" 123)
+  // ─── 2. Access Modifier Validation ───
+  let insideClass = false;
+  let insideInterface = false;
+  let classBraceDepth = 0;
+  let currentClassName = "";
+  const privateMembersByClass: { className: string; members: Set<string> }[] = [];
+  let currentClassPrivateMembers = new Set<string>();
+
+  for (let i = 0; i < rawLines.length; i++) {
+    const rawLine = rawLines[i];
+    const lineNum = i + 1;
+
+    // Strip comments and strings for structural inspection
+    const cleanLine = rawLine
+      .replace(/\/\/[^\n]*/, "")
+      .replace(/'(?:\\.|[^'\\])*'/g, "''")
+      .replace(/"(?:\\.|[^"\\])*"/g, '""')
+      .replace(/`(?:\\.|[^`\\])*`/g, "``")
+      .trim();
+
+    if (!cleanLine) continue;
+
+    // Track interface start
+    if (/^\s*(?:export\s+)?interface\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/.test(cleanLine)) {
+      insideInterface = true;
+    }
+
+    // Track class start
+    const classMatch = cleanLine.match(
+      /^\s*(?:export\s+|abstract\s+)*class\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/
+    );
+    if (classMatch) {
+      insideClass = true;
+      currentClassName = classMatch[1];
+      currentClassPrivateMembers = new Set<string>();
+      privateMembersByClass.push({
+        className: currentClassName,
+        members: currentClassPrivateMembers,
+      });
+    }
+
+    // Track brace changes for class/interface scope
+    const openBraces = (cleanLine.match(/\{/g) || []).length;
+    const closeBraces = (cleanLine.match(/\}/g) || []).length;
+    if (insideClass || insideInterface) {
+      classBraceDepth += openBraces - closeBraces;
+      if (classBraceDepth <= 0) {
+        insideClass = false;
+        insideInterface = false;
+        classBraceDepth = 0;
+      }
+    }
+
+    // 2A. Check typos in access modifiers (e.g. pablic, privat, proctected, protect, pubic, privite)
+    const typoMatch = cleanLine.match(
+      /\b(pablic|pubic|publc|pubilc|privat|privite|prive|privete|proctected|protect|procted|proteced|proctect)\b/i
+    );
+    if (typoMatch) {
+      const typo = typoMatch[1];
+      let suggestion = "public";
+      if (/^priv/i.test(typo)) suggestion = "private";
+      else if (/^pro/i.test(typo)) suggestion = "protected";
+
+      return {
+        line: lineNum,
+        message: `Invalid access modifier '${typo}'. Did you mean '${suggestion}'?`,
+        suggestion: `TypeScript access modifiers can only be 'public', 'private', or 'protected'.`,
+      };
+    }
+
+    // 2B. Check multiple / duplicate access modifiers on the same member (e.g. public private name)
+    const multiModMatch = cleanLine.match(
+      /\b(public|private|protected)\s+(public|private|protected)\b/
+    );
+    if (multiModMatch) {
+      return {
+        line: lineNum,
+        message: `Multiple access modifiers ('${multiModMatch[1]}' and '${multiModMatch[2]}') cannot be used on the same member.`,
+        suggestion: `A class member can have only one accessibility level: choose either 'public', 'private', or 'protected'.`,
+      };
+    }
+
+    // 2C. Check access modifiers inside an interface
+    if (insideInterface) {
+      const ifaceModMatch = cleanLine.match(
+        /\b(public|private|protected)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/
+      );
+      if (ifaceModMatch) {
+        return {
+          line: lineNum,
+          message: `Access modifier '${ifaceModMatch[1]}' cannot be used inside an interface.`,
+          suggestion: `All interface members are automatically public. Remove '${ifaceModMatch[1]}' from '${ifaceModMatch[2]}'.`,
+        };
+      }
+    }
+
+    // 2D. Check access modifiers inside an object literal
+    if (!insideClass && !insideInterface) {
+      const objLitMatch = cleanLine.match(
+        /[{,]\s*(public|private|protected)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/
+      );
+      if (objLitMatch) {
+        return {
+          line: lineNum,
+          message: `Access modifier '${objLitMatch[1]}' cannot be used inside an object literal.`,
+          suggestion: `Object literal properties do not support access modifiers. Remove '${objLitMatch[1]}'.`,
+        };
+      }
+    }
+
+    // 2E. Check access modifiers outside a class (standalone variables or standalone functions)
+    if (!insideClass) {
+      const standaloneMatch = cleanLine.match(
+        /^(?:export\s+)?(public|private|protected)\s+(?:(const|let|var)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)|(function\s+[a-zA-Z_$][a-zA-Z0-9_$]*)|([a-zA-Z_$][a-zA-Z0-9_$]*)\s*[:=])/
+      );
+      if (standaloneMatch) {
+        const mod = standaloneMatch[1];
+        const isFunc = !!standaloneMatch[4];
+        if (isFunc) {
+          return {
+            line: lineNum,
+            message: `Access modifier '${mod}' cannot be used on standalone functions.`,
+            suggestion: `Access modifiers only apply to class methods. Remove '${mod}' or move the function inside a class.`,
+          };
+        }
+        return {
+          line: lineNum,
+          message: `Access modifier '${mod}' cannot be used on local or top-level variables.`,
+          suggestion: `Access modifiers ('public', 'private', 'protected') only apply to class members. Remove '${mod}'.`,
+        };
+      }
+    }
+
+    // 2F. Check access modifiers on non-constructor function/method parameters
+    // e.g. function foo(public a: number) or myMethod(private b: string)
+    const isConstructorLine = /constructor\s*\(/.test(cleanLine);
+    if (!isConstructorLine) {
+      const paramModMatch = cleanLine.match(
+        /(?:\bfunction\s+[a-zA-Z_$][a-zA-Z0-9_$]*|\b[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\([^)]*\b(public|private|protected)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/
+      );
+      if (paramModMatch) {
+        const mod = paramModMatch[1];
+        const paramName = paramModMatch[2];
+        return {
+          line: lineNum,
+          message: `Access modifier '${mod}' cannot be used on regular method/function parameter '${paramName}'.`,
+          suggestion: `Parameter properties ('${mod}') are only allowed inside class 'constructor(...)' parameter lists. Remove '${mod}' from '${paramName}'.`,
+        };
+      }
+    }
+
+    // Record private members declared inside a class for external access violation checking
+    if (insideClass) {
+      const privateFieldMatch = cleanLine.match(
+        /\bprivate\s+(?:readonly\s+)?(?:static\s+)?([a-zA-Z_$][a-zA-Z0-9_$]*)/
+      );
+      if (privateFieldMatch) {
+        currentClassPrivateMembers.add(privateFieldMatch[1]);
+      }
+    }
+  }
+
+  // ─── 3. Check for Private Property Access Violations from Outside the Class ───
+  let classScope = false;
+  let currentScopeDepth = 0;
+  for (let i = 0; i < rawLines.length; i++) {
+    const rawLine = rawLines[i];
+    const lineNum = i + 1;
+    const cleanLine = rawLine.replace(/\/\/[^\n]*/, "").trim();
+
+    if (/^\s*(?:export\s+|abstract\s+)*class\s+/.test(cleanLine)) {
+      classScope = true;
+    }
+    const openBraces = (cleanLine.match(/\{/g) || []).length;
+    const closeBraces = (cleanLine.match(/\}/g) || []).length;
+    if (classScope) {
+      currentScopeDepth += openBraces - closeBraces;
+      if (currentScopeDepth <= 0) {
+        classScope = false;
+        currentScopeDepth = 0;
+      }
+    }
+
+    // If outside all classes, check if calling/accessing any private property on an object (not 'this')
+    if (!classScope) {
+      for (const { className, members } of privateMembersByClass) {
+        for (const member of members) {
+          const regex = new RegExp(`\\b(?!this\\b)([a-zA-Z_$][a-zA-Z0-9_$]*)\\.${member}\\b`);
+          const accessMatch = cleanLine.match(regex);
+          if (accessMatch) {
+            const objName = accessMatch[1];
+            return {
+              line: lineNum,
+              message: `Property '${member}' is private and only accessible within class '${className}'.`,
+              suggestion: `You cannot access '${objName}.${member}' directly outside the class. Provide a public method (e.g. 'get${member.charAt(0).toUpperCase() + member.slice(1)}()') or change '${member}' to public.`,
+            };
+          }
+        }
+      }
+    }
+  }
+
+  // ─── 4. Missing Argument Commas & Function Keyword Checks ───
   for (let i = 0; i < rawLines.length; i++) {
     const rawLine = rawLines[i];
     const lineNum = i + 1;
@@ -226,8 +427,9 @@ export function detectSyntaxErrorLine(code: string): DetectedError | null {
     if (!line) continue;
 
     // Matches genuine function calls with missing commas e.g. foo("Alvi" 80) or new Student("Alvi" 80)
-    // Avoids control flow keywords like if, while, for, switch, catch
-    const missingCommaArgMatch = line.match(/(?:\bnew\s+[a-zA-Z_$][a-zA-Z0-9_$]*|\b[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\(\s*(?:"[^"]*"|'[^']*'|[0-9]+)\s+(?:"[^"]*"|'[^']*'|[0-9]+)/);
+    const missingCommaArgMatch = line.match(
+      /(?:\bnew\s+[a-zA-Z_$][a-zA-Z0-9_$]*|\b[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\(\s*(?:"[^"]*"|'[^']*'|[0-9]+)\s+(?:"[^"]*"|'[^']*'|[0-9]+)/
+    );
     const isControlKeyword = /^\s*(?:if|while|for|switch|catch)\b/.test(line);
 
     if (missingCommaArgMatch && !isControlKeyword) {
@@ -240,7 +442,6 @@ export function detectSyntaxErrorLine(code: string): DetectedError | null {
 
     // Check invalid class method keyword: class A { function foo() {} }
     if (/^\s*function\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(/.test(line)) {
-      // Check if inside a class by looking backwards
       const preceding = rawLines.slice(0, i).join("\n");
       if (preceding.includes("class ")) {
         return {

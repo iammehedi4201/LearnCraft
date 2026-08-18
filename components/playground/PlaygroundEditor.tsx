@@ -719,11 +719,7 @@ export function PlaygroundEditor({
           ref={highlightRef}
           className="playground-highlight-layer"
           aria-hidden="true"
-        >
-          <code className="playground-code-content">
-            {highlightCode(value, cursorOffset)}
-          </code>
-        </pre>
+        ><code className="playground-code-content">{highlightCode(value, cursorOffset)}{value.endsWith("\n") ? "\n" : ""}</code></pre>
 
         {/* Interactive Textarea (z-index: 2, transparent text, caret & selection visible) */}
         <textarea

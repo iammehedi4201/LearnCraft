@@ -314,6 +314,15 @@
   will-change: transform;
 }
 
+.playground-code-content {
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  font: inherit !important;
+}
+
 .playground-textarea {
   color: transparent !important;
   -webkit-text-fill-color: transparent !important;
