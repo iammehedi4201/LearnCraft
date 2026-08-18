@@ -325,13 +325,13 @@ export default function MyRevisionPage(): JSX.Element {
           {/* Action buttons */}
           <div className="flex items-center gap-2 shrink-0 flex-wrap">
             <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileImport} className="hidden" />
-            <button onClick={() => fileInputRef.current?.click()} className="px-3.5 py-2 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong border border-ds-stroke-soft font-bold text-xs transition-all active:scale-95 flex items-center gap-1.5" title="Import JSON backup">
+            <button onClick={() => fileInputRef.current?.click()} className="px-3.5 py-2 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong font-bold text-xs transition-all active:scale-95 shadow-sm flex items-center gap-1.5" title="Import JSON backup">
               <IcImport /> Import
             </button>
-            <button onClick={handleExportMarkdown} className="px-3.5 py-2 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong border border-ds-stroke-soft font-bold text-xs transition-all active:scale-95 flex items-center gap-1.5" title="Export as Markdown">
+            <button onClick={handleExportMarkdown} className="px-3.5 py-2 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong font-bold text-xs transition-all active:scale-95 shadow-sm flex items-center gap-1.5" title="Export as Markdown">
               <IcDocument /> Markdown
             </button>
-            <button onClick={handleExportJson} className="px-3.5 py-2 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong border border-ds-stroke-soft font-bold text-xs transition-all active:scale-95 flex items-center gap-1.5" title="JSON backup">
+            <button onClick={handleExportJson} className="px-3.5 py-2 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong font-bold text-xs transition-all active:scale-95 shadow-sm flex items-center gap-1.5" title="JSON backup">
               <IcSave /> JSON
             </button>
             <button onClick={() => { if (confirm("Reset and load sample revision notes?")) clearAllAnnotations(true); }} className="px-3 py-2 rounded-xl text-ds-text-soft hover:text-ds-text-strong text-xs font-bold transition-all hover:bg-ds-bg-weak">
@@ -341,7 +341,7 @@ export default function MyRevisionPage(): JSX.Element {
         </div>
 
         {/* NAVIGATION BAR */}
-        <div className="flex items-center gap-2 p-1.5 bg-ds-bg-white border border-ds-stroke-soft rounded-2xl shadow-sm mb-6 flex-wrap">
+        <div className="flex items-center gap-2 p-1.5 bg-ds-bg-white rounded-2xl shadow-sm mb-6 flex-wrap">
           <div className="flex items-center gap-1">
             {[
               { key: "all", icon: <IcGrid />, label: "All", count: stats.total },
@@ -374,7 +374,7 @@ export default function MyRevisionPage(): JSX.Element {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search notes, highlights, lessons..."
-              className="w-full pl-9 pr-8 py-2 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft text-xs text-ds-text-strong placeholder:text-ds-text-disabled focus:border-ds-feature-base focus:ring-1 focus:ring-ds-feature-base/20 outline-none transition-all"
+              className="w-full pl-9 pr-8 py-2 rounded-xl bg-ds-bg-weak text-xs text-ds-text-strong placeholder:text-ds-text-disabled focus:ring-2 focus:ring-ds-feature-base/20 outline-none transition-all"
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ds-text-soft hover:text-ds-text-strong font-bold text-sm leading-none">
@@ -383,7 +383,7 @@ export default function MyRevisionPage(): JSX.Element {
             )}
           </div>
 
-          <select value={sortBy} onChange={(e) => setSortBy(e.target.value as RevisionSortOption)} className="px-3 py-2 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft text-xs font-bold text-ds-text-sub outline-none cursor-pointer">
+          <select value={sortBy} onChange={(e) => setSortBy(e.target.value as RevisionSortOption)} className="px-3 py-2 rounded-xl bg-ds-bg-weak text-xs font-bold text-ds-text-sub outline-none cursor-pointer">
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
             <option value="topic">By Topic</option>
@@ -540,10 +540,10 @@ export default function MyRevisionPage(): JSX.Element {
                   {groupedByTopic.map((group) => (
                     <div key={group.topicId}>
                       {/* Topic heading */}
-                      <div className="flex items-center gap-3 pb-3 mb-4 border-b border-ds-stroke-soft">
-                        <div className="w-8 h-8 rounded-xl bg-ds-feature-lighter border border-ds-feature-light/50 flex items-center justify-center text-ds-feature-dark shrink-0"><IcFolder /></div>
+                      <div className="flex items-center gap-3 pb-3 mb-4">
+                        <div className="w-8 h-8 rounded-xl bg-ds-feature-lighter/80 flex items-center justify-center text-ds-feature-dark shrink-0"><IcFolder /></div>
                         <h2 className="text-lg font-black text-ds-text-strong font-display tracking-tight">{group.topicTitle}</h2>
-                        <span className="text-[11px] font-bold text-ds-text-soft font-mono px-2 py-0.5 rounded-full bg-ds-bg-white border border-ds-stroke-soft">
+                        <span className="text-[11px] font-bold text-ds-text-soft font-mono px-2.5 py-0.5 rounded-full bg-ds-bg-weak">
                           {group.items.length} {group.items.length === 1 ? "item" : "items"}
                         </span>
                       </div>
@@ -556,7 +556,7 @@ export default function MyRevisionPage(): JSX.Element {
                           return (
                             <div
                               key={item.id}
-                              className="flex flex-col rounded-2xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base/40 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden group"
+                              className="flex flex-col rounded-2xl bg-ds-bg-white shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden group"
                             >
                               {/* Color accent stripe */}
                               <div className={`h-1 w-full ${COLOR_BORDER[colorKey] || "bg-ds-feature-base"}`} />
@@ -585,10 +585,10 @@ export default function MyRevisionPage(): JSX.Element {
                                     </button>
                                     <button
                                       onClick={() => toggleMastered(item.id)}
-                                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all ${
+                                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full transition-all ${
                                         item.mastered
-                                          ? "bg-ds-success-lighter text-ds-success-dark border-ds-success-base"
-                                          : "bg-ds-bg-weak text-ds-text-soft border-ds-stroke-soft hover:border-ds-success-base"
+                                          ? "bg-ds-success-lighter text-ds-success-dark"
+                                          : "bg-ds-bg-weak text-ds-text-soft hover:text-ds-text-strong"
                                       }`}
                                       title={item.mastered ? "Mastered" : "Mark as mastered"}
                                     >
@@ -600,11 +600,11 @@ export default function MyRevisionPage(): JSX.Element {
                                 {/* Hero Clickable Question Area -> Opens Right Sidebar */}
                                 <div
                                   onClick={() => openNoteDialog(item)}
-                                  className="cursor-pointer group/q py-3 flex-1 flex flex-col justify-between gap-3 rounded-xl hover:bg-ds-bg-weak/50 p-2.5 -mx-2.5 transition-colors"
+                                  className="cursor-pointer group/q py-3 flex-1 flex flex-col justify-between gap-3 rounded-xl hover:bg-ds-bg-weak/40 p-2.5 -mx-2.5 transition-colors"
                                   title="Click to view full note & answer in side panel"
                                 >
                                   <div>
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-ds-feature-lighter/50 text-ds-feature-dark font-bold text-[10px] uppercase tracking-wider border border-ds-feature-light/50 mb-2">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-ds-feature-lighter/70 text-ds-feature-dark font-bold text-[10px] uppercase tracking-wider mb-2">
                                       Question
                                     </span>
                                     <h3 className="text-base font-bold text-ds-text-strong group-hover/q:text-ds-feature-base transition-colors leading-snug font-display">
@@ -627,7 +627,7 @@ export default function MyRevisionPage(): JSX.Element {
                               </div>
 
                               {/* Card footer */}
-                              <div className="px-4 py-3 border-t border-ds-stroke-soft bg-ds-bg-weak/40 flex items-center justify-between gap-2">
+                              <div className="px-4 py-3 bg-ds-bg-weak/30 flex items-center justify-between gap-2">
                                 <button
                                   onClick={() => handleGoToLesson(item)}
                                   className="px-3.5 py-1.5 rounded-xl bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold transition-all active:scale-95 shadow-sm flex items-center gap-1.5"

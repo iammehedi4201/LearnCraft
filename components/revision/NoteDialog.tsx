@@ -528,14 +528,14 @@ export function NoteDialog(): JSX.Element | null {
   return (
     <aside
       data-revision-ui="true"
-      className="fixed top-0 right-0 bottom-0 w-full sm:w-[440px] md:w-[480px] lg:w-[550px] z-[9999] bg-ds-bg-white border-l border-ds-stroke-soft shadow-2xl flex flex-col pointer-events-auto animate-in slide-in-from-right duration-200 text-ds-text-strong select-none"
+      className="fixed top-0 right-0 bottom-0 w-full sm:w-[440px] md:w-[480px] lg:w-[550px] z-[9999] bg-ds-bg-white shadow-2xl flex flex-col pointer-events-auto animate-in slide-in-from-right duration-200 text-ds-text-strong select-none"
       role="complementary"
       aria-label={editingAnnotation ? "Edit Note" : "Add Note"}
     >
       {/* ── Top Header ── */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-ds-stroke-soft bg-ds-bg-weak/40 shrink-0 select-none">
+      <div className="flex items-center justify-between px-5 py-3.5 bg-ds-bg-weak/40 shrink-0 select-none">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-ds-feature-lighter border border-ds-feature-light/50 flex items-center justify-center text-ds-feature-dark">
+          <div className="w-7 h-7 rounded-lg bg-ds-feature-lighter flex items-center justify-center text-ds-feature-dark">
             <svg
               className="w-4 h-4"
               viewBox="0 0 24 24"
@@ -573,13 +573,13 @@ export function NoteDialog(): JSX.Element | null {
       <div className="flex-1 overflow-hidden p-4 flex flex-col gap-3 min-h-0">
         {/* Edit / Preview Tabs */}
         <div className="flex items-center justify-between shrink-0">
-          <div className="flex items-center bg-ds-bg-soft border border-ds-stroke-soft rounded-xl p-0.5 gap-0.5">
+          <div className="flex items-center bg-ds-bg-soft rounded-xl p-0.5 gap-0.5">
             <button
               type="button"
               onClick={() => setEditorMode("edit")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 editorMode === "edit"
-                  ? "bg-ds-bg-white text-ds-text-strong shadow-sm border border-ds-stroke-soft"
+                  ? "bg-ds-bg-white text-ds-text-strong shadow-sm"
                   : "text-ds-text-sub hover:text-ds-text-strong"
               }`}
             >
@@ -600,7 +600,7 @@ export function NoteDialog(): JSX.Element | null {
               onClick={() => setEditorMode("preview")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 editorMode === "preview"
-                  ? "bg-ds-bg-white text-ds-text-strong shadow-sm border border-ds-stroke-soft"
+                  ? "bg-ds-bg-white text-ds-text-strong shadow-sm"
                   : "text-ds-text-sub hover:text-ds-text-strong"
               }`}
             >
@@ -625,10 +625,10 @@ export function NoteDialog(): JSX.Element | null {
         </div>
 
         {/* Editor Container */}
-        <div className="flex-1 flex flex-col rounded-xl border border-ds-stroke-soft overflow-hidden focus-within:border-ds-feature-base focus-within:ring-2 focus-within:ring-ds-feature-base/10 transition-all bg-ds-bg-white min-h-0">
+        <div className="flex-1 flex flex-col rounded-2xl overflow-hidden bg-ds-bg-weak/30 min-h-0">
           {/* Formatting Buttons (Edit mode only) */}
           {editorMode === "edit" && (
-            <div className="flex items-center gap-1.5 px-3 py-2 bg-ds-bg-weak border-b border-ds-stroke-soft flex-wrap shrink-0">
+            <div className="flex items-center gap-1.5 px-3 py-2 bg-ds-bg-weak flex-wrap shrink-0">
               {FORMAT_OPTIONS.map((item) => (
                 <button
                   key={item.id}
@@ -639,7 +639,7 @@ export function NoteDialog(): JSX.Element | null {
                     e.preventDefault();
                   }}
                   onClick={() => handleFormatClick(item.id)}
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong border border-ds-stroke-soft text-xs font-semibold active:scale-95 transition-all shadow-sm"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong text-xs font-semibold active:scale-95 transition-all shadow-sm"
                 >
                   <span className="text-ds-feature-dark">{item.icon}</span>
                   <span>{item.label}</span>
@@ -680,11 +680,11 @@ export function NoteDialog(): JSX.Element | null {
       </div>
 
       {/* ── Footer Actions ── */}
-      <div className="p-4 border-t border-ds-stroke-soft bg-ds-bg-weak/30 flex items-center justify-end gap-2 shrink-0">
+      <div className="p-4 bg-ds-bg-weak/30 flex items-center justify-end gap-2 shrink-0">
         <button
           type="button"
           onClick={closeNoteDialog}
-          className="px-4 py-2 rounded-xl bg-ds-bg-soft hover:bg-ds-bg-sub text-ds-text-strong font-bold text-xs transition-all border border-ds-stroke-soft active:scale-95"
+          className="px-4 py-2 rounded-xl bg-ds-bg-soft hover:bg-ds-bg-sub text-ds-text-strong font-bold text-xs transition-all active:scale-95"
         >
           Cancel
         </button>

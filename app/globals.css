@@ -215,10 +215,10 @@
   --text-soft-400: #717784;
 
   /* Design System Tokens - Stroke */
-  --stroke-soft-200: #2B303B;
-  --stroke-strong-950: #FFFFFF;
-  --stroke-white-0: #0E121B;
-  --stroke-sub-300: #525866;
+  --stroke-soft-200: rgba(255, 255, 255, 0.07);
+  --stroke-strong-950: rgba(255, 255, 255, 0.16);
+  --stroke-white-0: rgba(255, 255, 255, 0.04);
+  --stroke-sub-300: rgba(255, 255, 255, 0.11);
 
   /* Design System Tokens - Icon */
   --icon-sub-600: #99A0AE;
