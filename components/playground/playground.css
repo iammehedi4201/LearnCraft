@@ -165,24 +165,34 @@
 
 .playground-line-numbers {
   flex-shrink: 0;
-  padding: 0.875rem 0 5rem 0;
+  padding: 14px 0 80px 0 !important;
   width: 2.75rem;
   background: var(--bg-weak-50);
   border-right: 1px solid var(--stroke-soft-200);
   user-select: none;
-  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
-  font-size: 0.8125rem;
-  line-height: 1.625rem;
+  font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', 'Courier New', monospace !important;
+  font-size: 13px !important;
+  line-height: 24px !important;
   color: var(--text-disabled-300);
   text-align: right;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   height: 100%;
+  scrollbar-width: none; /* Firefox */
+  will-change: transform;
+}
+
+.playground-line-numbers::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .playground-line-number {
   padding-right: 0.625rem;
   display: block;
+  height: 24px !important;
+  line-height: 24px !important;
+  box-sizing: border-box;
 }
 
 .playground-line-number--error {
@@ -212,9 +222,17 @@
   50% { opacity: 0.4; transform: scale(0.7); }
 }
 
+.playground-editor-stage {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
 .playground-error-line-highlight {
   position: absolute;
-  left: 2.75rem;
+  left: 0;
   right: 0;
   background: rgba(248, 113, 113, 0.12);
   border-left: 3px solid #F87171;
@@ -247,55 +265,74 @@
   gap: 0.25rem;
 }
 
-.playground-highlight-layer {
+/* Shared exact font and text metrics across highlight layer, code, tokens, and textarea */
+.playground-highlight-layer,
+.playground-highlight-layer code,
+.playground-highlight-layer span,
+.playground-textarea {
+  font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', 'Courier New', monospace !important;
+  font-size: 13px !important;
+  line-height: 24px !important;
+  letter-spacing: 0px !important;
+  word-spacing: 0px !important;
+  tab-size: 2 !important;
+  -moz-tab-size: 2 !important;
+  font-variant-ligatures: none !important;
+  -webkit-font-variant-ligatures: none !important;
+  font-feature-settings: "liga" 0, "calt" 0 !important;
+  white-space: pre !important;
+  word-wrap: normal !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  box-sizing: border-box !important;
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+.playground-highlight-layer,
+.playground-textarea {
   position: absolute;
   top: 0;
-  left: 2.75rem;
+  left: 0;
   right: 0;
   bottom: 0;
-  padding: 0.875rem 4rem 5rem 1rem;
-  margin: 0;
-  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
-  font-size: 0.8125rem;
-  line-height: 1.625rem;
-  tab-size: 2;
-  -moz-tab-size: 2;
-  white-space: pre;
-  word-wrap: normal;
+  width: 100%;
+  height: 100%;
+  padding: 14px 48px 80px 16px !important;
+  margin: 0 !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.playground-highlight-layer {
   overflow: hidden;
   pointer-events: none;
   user-select: none;
   color: var(--text-strong-950);
-  box-sizing: border-box;
   z-index: 1;
+  will-change: transform;
 }
 
 .playground-textarea {
-  flex: 1;
-  height: 100%;
-  padding: 0.875rem 4rem 5rem 1rem;
-  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
-  font-size: 0.8125rem;
-  line-height: 1.625rem;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  background: transparent;
-  border: none;
-  outline: none;
-  resize: none;
-  white-space: pre;
-  word-wrap: normal;
-  tab-size: 2;
-  -moz-tab-size: 2;
-  caret-color: var(--state-feature-base, #7D52F4);
-  box-sizing: border-box;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  background: transparent !important;
+  resize: none !important;
+  caret-color: var(--text-strong-950, #FFFFFF) !important;
   z-index: 2;
-  position: relative;
   overflow-y: auto;
   overflow-x: auto;
-  scroll-padding: 2rem 3rem;
   scrollbar-width: thin;
   scrollbar-color: var(--stroke-soft-200) transparent;
+}
+
+.dark .playground-textarea {
+  caret-color: #FFFFFF !important;
+}
+
+.sepia .playground-textarea {
+  caret-color: #433422 !important;
 }
 
 .playground-textarea::-webkit-scrollbar {
@@ -326,9 +363,27 @@
 }
 
 .playground-textarea::selection {
-  background: rgba(125, 82, 244, 0.25);
+  background: rgba(125, 82, 244, 0.28);
   color: transparent;
   -webkit-text-fill-color: transparent;
+}
+
+/* ─── Word Wrap Mode (Toggled with Alt+Z) ─── */
+.playground-editor-wrapper--word-wrap .playground-highlight-layer,
+.playground-editor-wrapper--word-wrap .playground-highlight-layer code,
+.playground-editor-wrapper--word-wrap .playground-textarea {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  word-wrap: break-word !important;
+}
+
+.playground-editor-wrapper--word-wrap .playground-textarea {
+  overflow-x: hidden !important;
+}
+
+.playground-editor-wrapper--word-wrap .playground-highlight-layer {
+  overflow-x: hidden !important;
 }
 
 /* ─── Syntax Token Colors (Vibrant, High-Contrast, Design System Harmonious) ─── */
@@ -401,8 +456,61 @@
 }
 
 .pl-token-punctuation {
-  /* Punctuation: ;, (), {}, [] - Clean Slate */
-  color: #CBD5E1;
+  /* Punctuation separators: ;, , - Clean Slate */
+  color: #94A3B8;
+}
+
+/* ─── 🌈 Rainbow Bracket Pair Colorizer (VS Code Style) ─── */
+.pl-bracket {
+  display: inline !important;
+  position: static !important;
+  font-weight: 600;
+  transition: color 0.12s ease-out;
+}
+
+/* Level 1 (Depth 0: Outer class / root block) - Radiant Gold Amber */
+.pl-bracket-depth-0 {
+  color: #FCD34D !important; /* Gold 🟡 */
+}
+
+/* Level 2 (Depth 1: Functions / Methods / Handlers) - Radiant Lavender Violet */
+.pl-bracket-depth-1 {
+  color: #C084FC !important; /* Lavender 🟣 */
+}
+
+/* Level 3 (Depth 2: If / Else / Loops) - Vibrant Sky Cyan */
+.pl-bracket-depth-2 {
+  color: #38BDF8 !important; /* Sky Cyan 🔵 */
+}
+
+/* Level 4 (Depth 3: Nested callbacks / inner logic) - Mint Emerald Green */
+.pl-bracket-depth-3 {
+  color: #34D399 !important; /* Emerald 🟢 */
+}
+
+/* Level 5 (Depth 4: Deeply nested logic) - Hot Coral Pink */
+.pl-bracket-depth-4 {
+  color: #FB7185 !important; /* Hot Pink 💗 */
+}
+
+/* ─── 🔍 Active Bracket Pair Highlight (When cursor is on/near a bracket) ─── */
+.pl-bracket--matched {
+  display: inline !important;
+  background: rgba(168, 85, 247, 0.22) !important;
+  border-radius: 2px !important;
+  outline: 1.5px solid #A855F7 !important;
+  outline-offset: -1px !important;
+  color: #FFFFFF !important;
+  text-shadow: 0 0 4px rgba(168, 85, 247, 0.6);
+}
+
+@keyframes pl-bracket-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.8), inset 0 0 3px rgba(255, 255, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 14px rgba(168, 85, 247, 1), inset 0 0 6px rgba(255, 255, 255, 0.7);
+  }
 }
 
 /* ─── Middle Draggable Resizer ─── */
@@ -1119,7 +1227,8 @@
 
 .playground-fullscreen-overlay .playground-line-numbers {
   height: 100% !important;
-  overflow-y: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .playground-fullscreen-close {

@@ -105,6 +105,12 @@ export function Playground({
     }
   }, [isFullscreen, expandedLayoutMode, practiceCode, code, displayLanguage]);
 
+  // ─── Word Wrap State (Alt+Z) ───
+  const [isWordWrap, setIsWordWrap] = useState<boolean>(false);
+  const handleToggleWordWrap = useCallback(() => {
+    setIsWordWrap((prev) => !prev);
+  }, []);
+
   // ─── Actions ───
 
   const handleRun = useCallback(async () => {
@@ -125,15 +131,7 @@ export function Playground({
       return;
     }
 
-    // Auto-format code before running
-    const formattedCode = formatCode(rawCode, displayLanguage);
-    if (is3Pane) {
-      setPracticeCode(formattedCode);
-    } else {
-      setCode(formattedCode);
-    }
-
-    const codeToRun = formattedCode;
+    const codeToRun = rawCode;
 
     setIsRunning(true);
     setOutput([]);
@@ -571,6 +569,8 @@ export function Playground({
                 isFullscreen={isFullscreen}
                 errorLine={error?.line}
                 onFormat={handleFormat}
+                isWordWrap={isWordWrap}
+                onToggleWordWrap={handleToggleWordWrap}
                 placeholder={`// ⚡ Practice Workspace\n// Write your ${displayLanguage} code here from scratch...\n// (or click "⚡ Copy to Practice" on the Example panel to load starter code)`}
               />
             </div>
@@ -648,6 +648,8 @@ export function Playground({
                 isFullscreen={isFullscreen}
                 errorLine={error?.line}
                 onFormat={handleFormat}
+                isWordWrap={isWordWrap}
+                onToggleWordWrap={handleToggleWordWrap}
               />
             </div>
 
@@ -719,6 +721,8 @@ export function Playground({
       <PlaygroundToolbar
         onRun={handleRun}
         onFormat={handleFormat}
+        isWordWrap={isWordWrap}
+        onToggleWordWrap={handleToggleWordWrap}
         onCheck={hasExercise ? handleCheck : undefined}
         onHint={hasHints ? handleHint : undefined}
         onReset={handleReset}

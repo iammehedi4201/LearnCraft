@@ -5,6 +5,8 @@ interface PlaygroundToolbarProps {
   onCheck?: () => void;
   onHint?: () => void;
   onFormat?: () => void;
+  isWordWrap?: boolean;
+  onToggleWordWrap?: () => void;
   onReset: () => void;
   onCopy: () => void;
   onFullscreen: () => void;
@@ -21,6 +23,8 @@ export function PlaygroundToolbar({
   onCheck,
   onHint,
   onFormat,
+  isWordWrap,
+  onToggleWordWrap,
   onReset,
   onCopy,
   onFullscreen,
@@ -57,6 +61,20 @@ export function PlaygroundToolbar({
           >
             <span className="playground-btn-icon">✨</span>
             <span>Format</span>
+          </button>
+        )}
+
+        {/* Word Wrap Toggle */}
+        {onToggleWordWrap && (
+          <button
+            className={`playground-btn ${isWordWrap ? "playground-btn--active" : "playground-btn--ghost"}`}
+            onClick={onToggleWordWrap}
+            disabled={isRunning}
+            title="Toggle Word Wrap (Alt+Z)"
+            id="playground-wrap-btn"
+          >
+            <span className="playground-btn-icon">↩</span>
+            <span>Wrap</span>
           </button>
         )}
 
