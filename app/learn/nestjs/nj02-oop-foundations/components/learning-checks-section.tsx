@@ -39,7 +39,7 @@ export function LearningChecksSection() {
         <div className="mt-4" />
         <QuickCheck question="12. What is a static method?" answer="A static method belongs to the class itself, not to any object. It's called with ClassName.method() and cannot use 'this' to refer to an object." />
         <div className="mt-4" />
-        <QuickCheck question="13. What does # before a property name do?" answer="The # symbol makes a property truly private in JavaScript. No code outside the class can read or change it. Example: this.#password" />
+        <QuickCheck question="13. What does the private access modifier do in TypeScript?" answer="The private modifier restricts access to class members so they can only be accessed within the defining class. TypeScript will flag any attempts to access or modify private members from outside or from subclasses with a compile-time error. Example: private password: string;" />
         <div className="mt-4" />
         <QuickCheck question="14. Is OOP always better than procedural programming?" answer="No! Procedural is better for small scripts and simple tasks. OOP is better for large, complex applications. Use the right tool for the job." />
       </div>
@@ -66,9 +66,9 @@ a.speak();
 d.speak();`} answer={"Cat makes a sound\nRex barks"} />
 
         <PredictOutputBox code={`class Counter {
-  #count = 0;
-  increment() { this.#count++; }
-  get value() { return this.#count; }
+  private count = 0;
+  increment() { this.count++; }
+  get value() { return this.count; }
 }
 
 const c = new Counter();

@@ -146,21 +146,21 @@ console.log("30°C in Fahrenheit: " + MathHelper.celsiusToFahrenheit(30) + "°F"
             runtime="typescript"
             language="TypeScript"
             starterCode={`class UserProfile {
-  #name: string;
-  #age: number;
+  private _name: string;
+  private _age: number;
 
   constructor(name: string, age: number) {
-    this.#name = name;
-    this.#age = age;
+    this._name = name;
+    this._age = age;
   }
 
   // GETTER — read the value like a property
   get name(): string {
-    return this.#name;
+    return this._name;
   }
 
   get age(): number {
-    return this.#age;
+    return this._age;
   }
 
   // SETTER — safely validate before saving
@@ -169,8 +169,8 @@ console.log("30°C in Fahrenheit: " + MathHelper.celsiusToFahrenheit(30) + "°F"
       console.log("❌ Invalid age: " + newAge);
       return;
     }
-    this.#age = newAge;
-    console.log("✅ Age updated to: " + this.#age);
+    this._age = newAge;
+    console.log("✅ Age updated to: " + this._age);
   }
 
   set name(newName: string) {
@@ -178,8 +178,8 @@ console.log("30°C in Fahrenheit: " + MathHelper.celsiusToFahrenheit(30) + "°F"
       console.log("❌ Name is too short!");
       return;
     }
-    this.#name = newName.trim();
-    console.log("✅ Name updated to: " + this.#name);
+    this._name = newName.trim();
+    console.log("✅ Name updated to: " + this._name);
   }
 }
 
@@ -206,7 +206,7 @@ user.name = "Alice"; // ✅ Valid update`}
 
       {/* ── Summary ── */}
       <SummaryBox>
-        <strong>this</strong> refers to the current object. <strong>new</strong> creates an object from a class. <strong>Static</strong> members belong to the class itself. <strong>Getters/Setters</strong> let you safely read/write private data. <strong>#private</strong> fields are truly hidden from outside code.
+        <strong>this</strong> refers to the current object. <strong>new</strong> creates an object from a class. <strong>Static</strong> members belong to the class itself. <strong>Getters/Setters</strong> let you safely read/write private data. <strong>private</strong> access modifiers ensure encapsulation and protect internal state.
       </SummaryBox>
 
       <div className="mt-6" />

@@ -15,7 +15,7 @@ export function FinalProjectSection() {
           <h3 className="text-xl font-black text-ds-text-strong">Build a Simple E-Commerce System</h3>
         </div>
         <p className="text-sm text-ds-text-sub leading-relaxed">
-          This final project uses <strong>ALL the OOP concepts</strong> you have learned: Classes, Objects, Constructor, Methods, Encapsulation (#private), Inheritance, Polymorphism, Composition, and Static methods. Build it step by step.
+          This final project uses <strong>ALL the OOP concepts</strong> you have learned: Classes, Objects, Constructor, Methods, Encapsulation (private access modifiers), Inheritance, Polymorphism, Composition, and Static methods. Build it step by step in TypeScript.
         </p>
       </div>
 
@@ -24,14 +24,14 @@ export function FinalProjectSection() {
         <TopicHeader number={1} title="Step 1 — Create the Product Class" description="Every e-commerce system needs products. This class represents items for sale." color="primary" />
 
         <InfoCallout emoji="🎯" title="Concepts used">
-          <p>Class, Constructor, Methods, Encapsulation (#stock), Getter</p>
+          <p>Class, Constructor, Methods, Encapsulation (private _stock), Getter</p>
         </InfoCallout>
 
         <Collapsible title="📝 Requirements">
           <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-2 mt-3 list-disc pl-5">
-            <li>Properties: name, price, #stock (private), category</li>
-            <li>Methods: sell(quantity), restock(quantity), isInStock()</li>
-            <li>Getter: stock (to read the private #stock value)</li>
+            <li>Properties: name, price, _stock (private), category</li>
+            <li>Methods: sell(quantity: number): boolean, restock(quantity: number): void, isInStock(): boolean</li>
+            <li>Getter: stock (to read the private _stock value)</li>
           </ul>
         </Collapsible>
 
@@ -40,42 +40,44 @@ export function FinalProjectSection() {
         <Collapsible title="💡 Show Code (try it yourself first!)">
           <div className="mt-3">
             <EnhancedCodeBlock code={`class Product {
-  #stock;
+  private _stock: number;
 
-  constructor(name, price, stock, category) {
-    this.name = name;
-    this.price = price;
-    this.#stock = stock;
-    this.category = category;
+  constructor(
+    public name: string,
+    public price: number,
+    stock: number,
+    public category: string
+  ) {
+    this._stock = stock;
   }
 
-  get stock() {
-    return this.#stock;
+  get stock(): number {
+    return this._stock;
   }
 
-  isInStock() {
-    return this.#stock > 0;
+  isInStock(): boolean {
+    return this._stock > 0;
   }
 
-  sell(quantity) {
-    if (quantity > this.#stock) {
-      console.log("❌ Only " + this.#stock + " " + this.name + " left!");
+  sell(quantity: number): boolean {
+    if (quantity > this._stock) {
+      console.log("❌ Only " + this._stock + " " + this.name + " left!");
       return false;
     }
-    this.#stock -= quantity;
+    this._stock -= quantity;
     console.log("📤 Sold " + quantity + "x " + this.name);
     return true;
   }
 
-  restock(quantity) {
-    this.#stock += quantity;
-    console.log("📦 Restocked " + this.name + ". New stock: " + this.#stock);
+  restock(quantity: number): void {
+    this._stock += quantity;
+    console.log("📦 Restocked " + this.name + ". New stock: " + this._stock);
   }
 
-  toString() {
-    return this.name + " | $" + this.price + " | Stock: " + this.#stock;
+  toString(): string {
+    return this.name + " | $" + this.price + " | Stock: " + this._stock;
   }
-}`} language="javascript" />
+}`} language="typescript" />
           </div>
         </Collapsible>
       </div>
@@ -93,19 +95,19 @@ export function FinalProjectSection() {
         <Collapsible title="💡 Show Code">
           <div className="mt-3">
             <EnhancedCodeBlock code={`class CartItem {
-  constructor(product, quantity = 1) {
-    this.product = product;   // HAS-A Product (composition!)
-    this.quantity = quantity;
-  }
+  constructor(
+    public product: Product,
+    public quantity: number = 1
+  ) {}
 
-  getSubtotal() {
+  getSubtotal(): number {
     return this.product.price * this.quantity;
   }
 
-  toString() {
+  toString(): string {
     return this.product.name + " x" + this.quantity + " = $" + this.getSubtotal().toFixed(2);
   }
-}`} language="javascript" />
+}`} language="typescript" />
           </div>
         </Collapsible>
       </div>
@@ -117,56 +119,56 @@ export function FinalProjectSection() {
         <TopicHeader number={3} title="Step 3 — Create the ShoppingCart Class" description="The cart holds CartItems. It can add, remove, and calculate totals." color="emerald" />
 
         <InfoCallout emoji="🎯" title="Concepts used">
-          <p>Encapsulation (#items), Composition (HAS CartItems), Methods</p>
+          <p>Encapsulation (private items), Composition (HAS CartItems), Methods</p>
         </InfoCallout>
 
         <Collapsible title="💡 Show Code">
           <div className="mt-3">
             <EnhancedCodeBlock code={`class ShoppingCart {
-  #items = [];
+  private items: CartItem[] = [];
 
-  addItem(product, quantity = 1) {
+  addItem(product: Product, quantity: number = 1): void {
     // Check if product already in cart
-    const existing = this.#items.find(item => item.product.name === product.name);
+    const existing = this.items.find(item => item.product.name === product.name);
     if (existing) {
       existing.quantity += quantity;
       console.log("🔄 Updated " + product.name + " quantity to " + existing.quantity);
     } else {
-      this.#items.push(new CartItem(product, quantity));
+      this.items.push(new CartItem(product, quantity));
       console.log("🛒 Added " + product.name + " x" + quantity);
     }
   }
 
-  removeItem(productName) {
-    const idx = this.#items.findIndex(item => item.product.name === productName);
+  removeItem(productName: string): void {
+    const idx = this.items.findIndex(item => item.product.name === productName);
     if (idx === -1) {
       console.log("❌ " + productName + " not in cart!");
       return;
     }
-    this.#items.splice(idx, 1);
+    this.items.splice(idx, 1);
     console.log("🗑️ Removed " + productName + " from cart");
   }
 
-  getTotal() {
-    return this.#items.reduce((sum, item) => sum + item.getSubtotal(), 0);
+  getTotal(): number {
+    return this.items.reduce((sum, item) => sum + item.getSubtotal(), 0);
   }
 
-  get itemCount() {
-    return this.#items.reduce((sum, item) => sum + item.quantity, 0);
+  get itemCount(): number {
+    return this.items.reduce((sum, item) => sum + item.quantity, 0);
   }
 
-  clear() {
-    this.#items = [];
+  clear(): void {
+    this.items = [];
     console.log("🧹 Cart cleared");
   }
 
-  display() {
+  display(): void {
     console.log("\\n🛒 ─── Shopping Cart ───");
-    if (this.#items.length === 0) {
+    if (this.items.length === 0) {
       console.log("  (empty)");
       return;
     }
-    this.#items.forEach(item => {
+    this.items.forEach(item => {
       console.log("  " + item.toString());
     });
     console.log("  ─────────────────────");
@@ -175,10 +177,10 @@ export function FinalProjectSection() {
   }
 
   // Returns a copy of items for checkout
-  getItems() {
-    return [...this.#items];
+  getItems(): CartItem[] {
+    return [...this.items];
   }
-}`} language="javascript" />
+}`} language="typescript" />
           </div>
         </Collapsible>
       </div>
@@ -196,28 +198,26 @@ export function FinalProjectSection() {
         <Collapsible title="💡 Show Code">
           <div className="mt-3">
             <EnhancedCodeBlock code={`class Payment {
-  constructor(amount) {
-    this.amount = amount;
-    this.status = "pending";
-  }
+  public status: string = "pending";
 
-  process() {
+  constructor(public amount: number) {}
+
+  process(): boolean {
     this.status = "completed";
     return true;
   }
 
-  getReceipt() {
+  getReceipt(): string {
     return "Payment of $" + this.amount.toFixed(2) + " — " + this.status;
   }
 }
 
 class CreditCardPayment extends Payment {
-  constructor(amount, cardNumber) {
+  constructor(amount: number, private cardNumber: string) {
     super(amount);
-    this.cardNumber = cardNumber;
   }
 
-  process() {
+  override process(): boolean {
     const last4 = this.cardNumber.slice(-4);
     console.log("💳 Charging $" + this.amount.toFixed(2) + " to card ending " + last4);
     this.status = "completed";
@@ -226,12 +226,11 @@ class CreditCardPayment extends Payment {
 }
 
 class BkashPayment extends Payment {
-  constructor(amount, phone) {
+  constructor(amount: number, private phone: string) {
     super(amount);
-    this.phone = phone;
   }
 
-  process() {
+  override process(): boolean {
     console.log("📱 bKash: $" + this.amount.toFixed(2) + " from " + this.phone);
     this.status = "completed";
     return true;
@@ -239,12 +238,12 @@ class BkashPayment extends Payment {
 }
 
 class CashPayment extends Payment {
-  process() {
+  override process(): boolean {
     console.log("💵 Cash: $" + this.amount.toFixed(2) + " received");
     this.status = "completed";
     return true;
   }
-}`} language="javascript" />
+}`} language="typescript" />
           </div>
         </Collapsible>
       </div>
@@ -262,22 +261,25 @@ class CashPayment extends Payment {
         <Collapsible title="💡 Show Code">
           <div className="mt-3">
             <EnhancedCodeBlock code={`class Order {
-  static #nextId = 1;
+  private static nextId: number = 1;
+  public readonly id: number;
+  public status: string = "placed";
+  public readonly createdAt: string;
 
-  constructor(customerName, items, payment) {
-    this.id = Order.#nextId++;
-    this.customerName = customerName;
-    this.items = items;
-    this.payment = payment;
-    this.status = "placed";
+  constructor(
+    public customerName: string,
+    public items: CartItem[],
+    public payment: Payment
+  ) {
+    this.id = Order.nextId++;
     this.createdAt = new Date().toLocaleString();
   }
 
-  getTotal() {
+  getTotal(): number {
     return this.items.reduce((sum, item) => sum + item.getSubtotal(), 0);
   }
 
-  display() {
+  display(): void {
     console.log("\\n📋 ─── Order #" + this.id + " ───");
     console.log("  Customer: " + this.customerName);
     console.log("  Date: " + this.createdAt);
@@ -289,7 +291,7 @@ class CashPayment extends Payment {
     console.log("  Total: $" + this.getTotal().toFixed(2));
     console.log("  Payment: " + this.payment.getReceipt());
   }
-}`} language="javascript" />
+}`} language="typescript" />
           </div>
         </Collapsible>
       </div>
@@ -302,88 +304,97 @@ class CashPayment extends Payment {
 
         <div className="mb-6 p-4 rounded-xl bg-ds-feature-lighter border border-ds-feature-light">
           <p className="text-sm text-ds-text-strong leading-relaxed">
-            🚀 This playground contains the <strong>complete e-commerce system</strong>. Click <strong>Run</strong> to see every OOP concept in action — classes, inheritance, polymorphism, composition, encapsulation, and static methods all working together.
+            🚀 This playground contains the <strong>complete TypeScript e-commerce system</strong>. Click <strong>Run</strong> to see every OOP concept in action — classes, inheritance, polymorphism, composition, encapsulation with private access modifiers, and static methods all working together.
           </p>
         </div>
 
         <Playground
-          runtime="javascript"
-          language="JavaScript"
+          runtime="typescript"
+          language="TypeScript"
           starterCode={`// ═══════════════════════════════════════════
-// Complete E-Commerce OOP System
+// Complete TypeScript E-Commerce OOP System
 // ═══════════════════════════════════════════
 
 class Product {
-  #stock;
-  constructor(name, price, stock, category) {
-    this.name = name;
-    this.price = price;
-    this.#stock = stock;
-    this.category = category;
+  private _stock: number;
+
+  constructor(
+    public name: string,
+    public price: number,
+    stock: number,
+    public category: string
+  ) {
+    this._stock = stock;
   }
-  get stock() { return this.#stock; }
-  isInStock() { return this.#stock > 0; }
-  sell(quantity) {
-    if (quantity > this.#stock) {
-      console.log("❌ Only " + this.#stock + " " + this.name + " left!");
+
+  get stock(): number { return this._stock; }
+  isInStock(): boolean { return this._stock > 0; }
+
+  sell(quantity: number): boolean {
+    if (quantity > this._stock) {
+      console.log("❌ Only " + this._stock + " " + this.name + " left!");
       return false;
     }
-    this.#stock -= quantity;
+    this._stock -= quantity;
     console.log("📤 Sold " + quantity + "x " + this.name);
     return true;
   }
-  restock(quantity) {
-    this.#stock += quantity;
-    console.log("📦 Restocked " + this.name + ". New stock: " + this.#stock);
+
+  restock(quantity: number): void {
+    this._stock += quantity;
+    console.log("📦 Restocked " + this.name + ". New stock: " + this._stock);
   }
-  toString() {
-    return this.name + " | $" + this.price + " | Stock: " + this.#stock;
+
+  toString(): string {
+    return this.name + " | $" + this.price + " | Stock: " + this._stock;
   }
 }
 
 class CartItem {
-  constructor(product, quantity = 1) {
-    this.product = product;
-    this.quantity = quantity;
-  }
-  getSubtotal() { return this.product.price * this.quantity; }
-  toString() {
+  constructor(public product: Product, public quantity: number = 1) {}
+  getSubtotal(): number { return this.product.price * this.quantity; }
+  toString(): string {
     return this.product.name + " x" + this.quantity + " = $" + this.getSubtotal().toFixed(2);
   }
 }
 
 class ShoppingCart {
-  #items = [];
-  addItem(product, quantity = 1) {
-    const existing = this.#items.find(i => i.product.name === product.name);
+  private items: CartItem[] = [];
+
+  addItem(product: Product, quantity: number = 1): void {
+    const existing = this.items.find(i => i.product.name === product.name);
     if (existing) {
       existing.quantity += quantity;
       console.log("🔄 Updated " + product.name + " qty to " + existing.quantity);
     } else {
-      this.#items.push(new CartItem(product, quantity));
+      this.items.push(new CartItem(product, quantity));
       console.log("🛒 Added " + product.name + " x" + quantity);
     }
   }
-  getTotal() { return this.#items.reduce((s, i) => s + i.getSubtotal(), 0); }
-  get itemCount() { return this.#items.reduce((s, i) => s + i.quantity, 0); }
-  display() {
+
+  getTotal(): number { return this.items.reduce((s, i) => s + i.getSubtotal(), 0); }
+  get itemCount(): number { return this.items.reduce((s, i) => s + i.quantity, 0); }
+
+  display(): void {
     console.log("\\n🛒 ─── Shopping Cart ───");
-    this.#items.forEach(i => console.log("  " + i.toString()));
+    this.items.forEach(i => console.log("  " + i.toString()));
     console.log("  Total: $" + this.getTotal().toFixed(2));
     console.log("  Items: " + this.itemCount);
   }
-  getItems() { return [...this.#items]; }
+
+  getItems(): CartItem[] { return [...this.items]; }
 }
 
 class Payment {
-  constructor(amount) { this.amount = amount; this.status = "pending"; }
-  process() { this.status = "completed"; return true; }
-  getReceipt() { return "Payment of $" + this.amount.toFixed(2) + " — " + this.status; }
+  public status: string = "pending";
+  constructor(public amount: number) {}
+  process(): boolean { this.status = "completed"; return true; }
+  getReceipt(): string { return "Payment of $" + this.amount.toFixed(2) + " — " + this.status; }
 }
 
 class CreditCardPayment extends Payment {
-  constructor(amount, cardNumber) { super(amount); this.cardNumber = cardNumber; }
-  process() {
+  constructor(amount: number, private cardNumber: string) { super(amount); }
+  override process(): boolean {
     console.log("💳 Charging $" + this.amount.toFixed(2) + " to card ending " + this.cardNumber.slice(-4));
     this.status = "completed";
     return true;
@@ -391,8 +402,8 @@ class CreditCardPayment extends Payment {
 }
 
 class BkashPayment extends Payment {
-  constructor(amount, phone) { super(amount); this.phone = phone; }
-  process() {
+  constructor(amount: number, private phone: string) { super(amount); }
+  override process(): boolean {
     console.log("📱 bKash: $" + this.amount.toFixed(2) + " from " + this.phone);
     this.status = "completed";
     return true;
@@ -400,16 +411,21 @@ class BkashPayment extends Payment {
 }
 
 class Order {
-  static #nextId = 1;
-  constructor(customerName, items, payment) {
-    this.id = Order.#nextId++;
-    this.customerName = customerName;
-    this.items = items;
-    this.payment = payment;
-    this.status = "placed";
+  private static nextId: number = 1;
+  public readonly id: number;
+  public status: string = "placed";
+
+  constructor(
+    public customerName: string,
+    public items: CartItem[],
+    public payment: Payment
+  ) {
+    this.id = Order.nextId++;
   }
-  getTotal() { return this.items.reduce((s, i) => s + i.getSubtotal(), 0); }
-  display() {
+
+  getTotal(): number { return this.items.reduce((s, i) => s + i.getSubtotal(), 0); }
+
+  display(): void {
     console.log("\\n📋 ─── Order #" + this.id + " ───");
     console.log("  Customer: " + this.customerName);
     console.log("  Status: " + this.status);
@@ -468,15 +484,15 @@ console.log("  " + keyboard.toString());`}
         <SectionHeading>🎓 OOP Concepts Used in This Project</SectionHeading>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {[
-            { concept: "Classes & Objects", where: "Product, CartItem, Cart, Payment, Order" },
-            { concept: "Constructor", where: "Every class uses constructor to set up data" },
+            { concept: "Classes & Objects", where: "Product, CartItem, ShoppingCart, Payment, Order" },
+            { concept: "Constructor", where: "Every class uses typed constructors to set up data" },
             { concept: "Methods", where: "sell(), addItem(), process(), display()" },
-            { concept: "Encapsulation (#)", where: "#stock, #items, #nextId" },
+            { concept: "Encapsulation (private)", where: "private _stock, private items, private static nextId" },
             { concept: "Getters", where: "get stock(), get itemCount()" },
-            { concept: "Inheritance", where: "CreditCard/Bkash/Cash extends Payment" },
+            { concept: "Inheritance", where: "CreditCard/Bkash extends Payment" },
             { concept: "Polymorphism", where: "payment.process() behaves differently" },
             { concept: "Composition", where: "Cart HAS CartItems, CartItem HAS Product" },
-            { concept: "Static", where: "Order.#nextId for auto-incrementing IDs" },
+            { concept: "Static", where: "Order.nextId for auto-incrementing IDs" },
           ].map(item => (
             <div key={item.concept} className="p-3 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
               <span className="text-xs font-bold text-ds-feature-base">{item.concept}</span>
@@ -487,7 +503,7 @@ console.log("  " + keyboard.toString());`}
       </div>
 
       <SummaryBox>
-        🎉 <strong>Congratulations!</strong> If you built this project, you have used every major OOP concept. You now have a solid foundation to understand frameworks like NestJS, which use these same patterns everywhere.
+        🎉 <strong>Congratulations!</strong> If you built this project, you have used every major TypeScript OOP concept. You now have a solid foundation to understand frameworks like NestJS, which use these exact same patterns everywhere.
       </SummaryBox>
 
     </SectionContainer>

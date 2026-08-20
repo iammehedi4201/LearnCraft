@@ -105,7 +105,7 @@ class UsersController {
             {[
               { id: 1, title: "Classes & Objects", desc: "Classes are blueprints. Objects are real things built from them." },
               { id: 2, title: "Constructor & this", desc: '"new" creates objects. Constructor sets them up. "this" = current object.' },
-              { id: 3, title: "Encapsulation", desc: "Protect data with # private fields. Control access with methods." },
+              { id: 3, title: "Encapsulation", desc: "Protect data with private access modifiers. Control access with methods." },
               { id: 4, title: "Abstraction", desc: "Hide complexity behind simple methods. Show what, hide how." },
               { id: 5, title: "Inheritance", desc: 'Use "extends" for IS-A. Call super() in child constructors.' },
               { id: 6, title: "Polymorphism", desc: "Same method name, different behavior. Replaces if/else chains." },

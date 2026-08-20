@@ -90,13 +90,13 @@ console.log("Corrupted balance: $" + accounts[0].balance);`}
             language="TypeScript"
             starterCode={`// ─── OOP: Bank Account System ───
 class BankAccount {
-  #balance: number;
+  private balance: number;
   static nextId: number = 1;
   public readonly id: number;
 
   constructor(public owner: string, balance: number = 0) {
     this.id = BankAccount.nextId++;
-    this.#balance = balance;
+    this.balance = balance;
     console.log("Account #" + this.id + " created for " + owner);
   }
 
@@ -105,25 +105,25 @@ class BankAccount {
       console.log("❌ Amount must be positive!");
       return;
     }
-    this.#balance += amount;
-    console.log("✅ Deposited $" + amount + ". Balance: $" + this.#balance);
+    this.balance += amount;
+    console.log("✅ Deposited $" + amount + ". Balance: $" + this.balance);
   }
 
   withdraw(amount: number) {
-    if (amount <= 0 || amount > this.#balance) {
+    if (amount <= 0 || amount > this.balance) {
       console.log("❌ Invalid withdrawal: $" + amount);
       return;
     }
-    this.#balance -= amount;
-    console.log("✅ Withdrew $" + amount + ". Balance: $" + this.#balance);
+    this.balance -= amount;
+    console.log("✅ Withdrew $" + amount + ". Balance: $" + this.balance);
   }
 
   getBalance(): string {
-    return this.owner + ": $" + this.#balance;
+    return this.owner + ": $" + this.balance;
   }
 
   transfer(toAccount: BankAccount, amount: number) {
-    if (amount > this.#balance) {
+    if (amount > this.balance) {
       console.log("❌ Insufficient funds to transfer $" + amount);
       return;
     }
@@ -153,7 +153,7 @@ acc1.transfer(acc2, 300);`}
 
         <ComparisonTable headers={["Aspect", "Procedural", "OOP"]} rows={[
           ["Code Organization", "Functions and data scattered", "Data + actions grouped in classes"],
-          ["Data Protection", "Anyone can change any variable", "Private (#) fields protect data"],
+          ["Data Protection", "Anyone can change any variable", "Private access modifiers protect data"],
           ["Reusability", "Copy-paste functions", "Create objects from classes"],
           ["Scalability", "Gets messy with 1000+ lines", "Stays organized even with large code"],
           ["Learning Curve", "Easier to start", "Harder to learn, but pays off"],

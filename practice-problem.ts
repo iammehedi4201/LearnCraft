@@ -36,21 +36,6 @@ class Stereo {
   }
 }
 
-// class Car {
-//   constructor(
-//     private engine: Engine,
-//     private gps: Gps,
-//     private stereo: Stereo,
-//   ) {}
-
-//   startCar() {
-//     this.engine.start();
-//     this.gps.navigation("Dhaka");
-//     this.stereo.playRadio();
-//     console.log("Car started");
-//   }
-// }
-
 class Car {
   private engine: Engine;
   private gps: Gps;

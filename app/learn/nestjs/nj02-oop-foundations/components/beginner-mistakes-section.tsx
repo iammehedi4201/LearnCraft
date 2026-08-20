@@ -58,9 +58,9 @@ class Car {
   }
 }`} />
 
-      <MistakeBox title="4. Making everything public" description="If you leave all data public, any part of your app can change it without checks. Always make sensitive data private (#)."
-        wrong="this.password = password;  // Anyone can read/change"
-        right="this.#password = password; // Only this class can access" />
+      <MistakeBox title="4. Making everything public" description="If you leave all data public, any part of your app can change it without checks. Always make sensitive data private using TypeScript's private access modifier."
+        wrong="public password: string;  // Anyone can read/change from outside"
+        right="private password: string; // Only this class can access" />
 
       <MistakeBox title="5. Creating huge classes (God classes)" description="A class should have ONE clear responsibility. If your class has 500 lines and does 10 different things, split it into smaller classes."
         wrong={`class App {
@@ -81,17 +81,19 @@ class PaymentService { process() {} }
       <MistakeBox title="6. Confusing class and object" description={"A class is the blueprint. An object is the real thing. You don't \"use\" a class — you create objects from it."}
         wrong={`class User { ... }
 User.name = "Mehedi"; // ❌ Setting on the class, not an object`}
-        right={`class User { constructor(name) { this.name = name; } }
+        right={`class User { constructor(public name: string) {} }
 const user = new User("Mehedi"); // ✅ Create object first!`} />
 
       <MistakeBox title="7. Using getters/setters without a reason" description={"Don't add getters and setters just because you can. Only add them when you need validation, formatting, or computed values."}
-        wrong={`// Pointless — does nothing useful
-get name() { return this.#name; }
-set name(v) { this.#name = v; }`}
+        wrong={`// Pointless — does nothing useful over a public property
+private _name: string;
+get name(): string { return this._name; }
+set name(v: string) { this._name = v; }`}
         right={`// Useful — validates the input
-set age(v) {
+private _age: number;
+set age(v: number) {
   if (v < 0 || v > 150) throw new Error("Invalid age");
-  this.#age = v;
+  this._age = v;
 }`} />
 
       <MistakeBox title="8. Overengineering simple code" description={"Not every problem needs classes, inheritance, and patterns. Sometimes a simple function is the best solution."}

@@ -20,35 +20,35 @@ export function RealWorldExamplesSection() {
           runtime="typescript"
           language="TypeScript"
           starterCode={`class BankAccount {
-  #balance: number;
-  #transactions: string[] = [];
+  private _balance: number;
+  private _transactions: string[] = [];
 
   constructor(public owner: string, initialBalance: number = 0) {
-    this.#balance = initialBalance;
-    this.#transactions.push("Account opened with $" + initialBalance);
+    this._balance = initialBalance;
+    this._transactions.push("Account opened with $" + initialBalance);
   }
 
   deposit(amount: number) {
     if (amount <= 0) { console.log("❌ Invalid amount"); return; }
-    this.#balance += amount;
-    this.#transactions.push("+ $" + amount);
-    console.log("✅ Deposited $" + amount + " → Balance: $" + this.#balance);
+    this._balance += amount;
+    this._transactions.push("+ $" + amount);
+    console.log("✅ Deposited $" + amount + " → Balance: $" + this._balance);
   }
 
   withdraw(amount: number) {
     if (amount <= 0) { console.log("❌ Invalid amount"); return; }
-    if (amount > this.#balance) { console.log("❌ Insufficient funds"); return; }
-    this.#balance -= amount;
-    this.#transactions.push("- $" + amount);
-    console.log("✅ Withdrew $" + amount + " → Balance: $" + this.#balance);
+    if (amount > this._balance) { console.log("❌ Insufficient funds"); return; }
+    this._balance -= amount;
+    this._transactions.push("- $" + amount);
+    console.log("✅ Withdrew $" + amount + " → Balance: $" + this._balance);
   }
 
-  get balance(): number { return this.#balance; }
+  get balance(): number { return this._balance; }
 
   showStatement() {
     console.log("\\n--- Statement for " + this.owner + " ---");
-    this.#transactions.forEach(t => console.log("  " + t));
-    console.log("  Current Balance: $" + this.#balance);
+    this._transactions.forEach(t => console.log("  " + t));
+    console.log("  Current Balance: $" + this._balance);
   }
 }
 
@@ -70,26 +70,26 @@ acc.showStatement();`}
           runtime="typescript"
           language="TypeScript"
           starterCode={`class Product {
-  #stock: number;
+  private _stock: number;
 
   constructor(public name: string, public price: number, stock: number = 0) {
-    this.#stock = stock;
+    this._stock = stock;
   }
 
-  get stock(): number { return this.#stock; }
+  get stock(): number { return this._stock; }
 
   increaseStock(amount: number) {
-    this.#stock += amount;
-    console.log("📦 " + this.name + " restocked. Stock: " + this.#stock);
+    this._stock += amount;
+    console.log("📦 " + this.name + " restocked. Stock: " + this._stock);
   }
 
   decreaseStock(amount: number): boolean {
-    if (amount > this.#stock) {
-      console.log("❌ Only " + this.#stock + " " + this.name + " left!");
+    if (amount > this._stock) {
+      console.log("❌ Only " + this._stock + " " + this.name + " left!");
       return false;
     }
-    this.#stock -= amount;
-    console.log("📤 Sold " + amount + "x " + this.name + ". Stock: " + this.#stock);
+    this._stock -= amount;
+    console.log("📤 Sold " + amount + "x " + this.name + ". Stock: " + this._stock);
     return true;
   }
 
@@ -100,7 +100,7 @@ acc.showStatement();`}
   }
 
   showInfo() {
-    console.log(this.name + " | $" + this.price + " | Stock: " + this.#stock);
+    console.log(this.name + " | $" + this.price + " | Stock: " + this._stock);
   }
 }
 

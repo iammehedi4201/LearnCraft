@@ -23,7 +23,7 @@ export function ConceptTablesSection() {
           ["Static", "Belongs to the class, not objects", "User.totalUsers"],
           ["Getter", "Safe way to READ private data", "get balance() { }"],
           ["Setter", "Safe way to CHANGE private data", "set name(v) { }"],
-          ["# (Private)", "Hidden from outside code", "this.#password"],
+          ["private", "Restricts access to defining class", "private password: string"],
         ]} />
       </div>
 
@@ -45,7 +45,7 @@ export function ConceptTablesSection() {
       <div className="mb-10">
         <SectionHeading>📊 The Four OOP Pillars</SectionHeading>
         <ComparisonTable headers={["Pillar", "Simple Meaning", "Key Mechanism", "Example"]} rows={[
-          ["Encapsulation", "Protect data from outside", "# private fields", "#balance"],
+          ["Encapsulation", "Protect data from outside", "private access modifier", "private balance: number"],
           ["Abstraction", "Hide complexity, show simplicity", "Private methods", "makeCoffee() hides 4 steps"],
           ["Inheritance", "Child gets parent's code free", "extends + super()", "Dog extends Animal"],
           ["Polymorphism", "Same method, different behavior", "Method overriding", "animal.makeSound()"],
@@ -111,7 +111,7 @@ export function ConceptTablesSection() {
           ["Syntax", "const obj = { }", "class Name { }"],
           ["Create multiple?", "Tedious — copy-paste", "Easy — use new"],
           ["Inheritance?", "No", "Yes — extends"],
-          ["Encapsulation?", "No built-in privacy", "Yes — # private fields"],
+          ["Encapsulation?", "No built-in privacy", "Yes — private access modifier"],
           ["Best for", "One-off config/data objects", "Multiple objects with same structure"],
         ]} />
       </div>

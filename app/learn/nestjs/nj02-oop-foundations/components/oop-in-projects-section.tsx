@@ -47,19 +47,19 @@ class User {
 
 // ─── 2. Repository (Data Access) ───
 class UserRepository {
-  #users: User[] = [];
+  private users: User[] = [];
 
   save(user: User): User {
-    this.#users.push(user);
+    this.users.push(user);
     return user;
   }
 
   findById(id: number): User | null {
-    return this.#users.find(u => u.id === id) || null;
+    return this.users.find(u => u.id === id) || null;
   }
 
   findAll(): User[] {
-    return [...this.#users];
+    return [...this.users];
   }
 }
 

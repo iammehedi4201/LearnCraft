@@ -105,7 +105,7 @@ console.log(account.owner + "'s verified balance: $" + account.getBalance());`}
         <div className="mb-8">
           <SectionHeading>🔑 TypeScript Access Modifiers: public, protected, private</SectionHeading>
           <p className="text-sm text-ds-text-sub mb-4 leading-relaxed">
-            In TypeScript, you can control visibility using three keywords as well as the modern JavaScript <code className="font-mono text-xs bg-ds-bg-weak px-1.5 py-0.5 rounded text-ds-feature-base">#</code> private field syntax:
+            In TypeScript, you can control visibility using access modifiers on class properties and methods:
           </p>
 
           <ComparisonTable
@@ -114,7 +114,6 @@ console.log(account.owner + "'s verified balance: $" + account.getBalance());`}
               ["public (default)", "✅ Yes", "✅ Yes", "✅ Yes (Anywhere)"],
               ["protected", "✅ Yes", "✅ Yes (Subclasses)", "❌ No (Hidden outside)"],
               ["private", "✅ Yes", "❌ No (Only this class)", "❌ No (Hidden outside)"],
-              ["#private (JS standard)", "✅ Yes", "❌ No (Only this class)", "❌ No (Hard runtime private)"],
             ]}
           />
 
@@ -158,8 +157,8 @@ emp.getPublicSummary(); // ✅ OK
         <MistakeBox
           title="Making everything public out of laziness"
           description="It is tempting to skip encapsulation and make everything public. But this defeats the purpose. Always make data private unless you have a very good reason to expose it."
-          wrong="this.password = password; // Anyone can see and change it"
-          right="private password; // Private — only this class can touch it"
+          wrong="public password: string; // Anyone can see and change it"
+          right="private password: string; // Private — only this class can touch it"
         />
 
         <QuickCheck
@@ -423,7 +422,7 @@ else if (type === "push") sendPush(msg);`}
         <ComparisonTable
           headers={["Pillar", "Simple Meaning", "Key Idea"]}
           rows={[
-            ["🔒 Encapsulation", "Protect data, control access", "Use # private fields + public methods"],
+            ["🔒 Encapsulation", "Protect data, control access", "Use private access modifier + public methods"],
             ["☁️ Abstraction", "Hide complexity, show simplicity", "Simple public methods hide complex internals"],
             ["🧬 Inheritance", "Child gets parent's code for free", 'Use "extends" and "super()"'],
             ["✨ Polymorphism", "Same method, different behavior", "Override methods in child classes"],
