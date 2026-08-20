@@ -4,7 +4,7 @@
 // Learning Craft — Autocomplete Popover Component
 // ═══════════════════════════════════════════════════════════
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useState, useRef, type ReactNode } from "react";
 import type { AutocompleteSuggestion, CaretCoordinates } from "./types";
 
 interface AutocompletePopoverProps {
@@ -34,7 +34,7 @@ function getKindBadge(kind: string): { label: string; className: string } {
     case "class":
       return { label: "cls", className: "playground-ac-badge--class" };
     case "interface":
-    case "type":
+      case "type":
       return { label: "typ", className: "playground-ac-badge--type" };
     case "property":
       return { label: "prop", className: "playground-ac-badge--property" };
@@ -85,7 +85,9 @@ export function AutocompletePopover({
   caretCoords,
   filterText,
 }: AutocompletePopoverProps) {
+  const popoverRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+  const [adjustedTop, setAdjustedTop] = useState<number | null>(null);
   const activeItem = suggestions[selectedIndex];
 
   // Auto-scroll selected item into view
@@ -98,6 +100,26 @@ export function AutocompletePopover({
     }
   }, [selectedIndex]);
 
+  // Adjust vertical placement to fit within parent
+  useLayoutEffect(() => {
+    if (popoverRef.current) {
+      const popoverEl = popoverRef.current;
+      const parentEl = popoverEl.parentElement;
+      if (parentEl) {
+        const parentHeight = parentEl.clientHeight;
+        const popoverHeight = popoverEl.offsetHeight;
+
+        if (caretCoords.top + popoverHeight > parentHeight) {
+          // Position above the cursor line
+          const aboveTop = caretCoords.top - caretCoords.lineHeight - 8 - popoverHeight;
+          setAdjustedTop(Math.max(4, aboveTop));
+        } else {
+          setAdjustedTop(caretCoords.top);
+        }
+      }
+    }
+  }, [caretCoords.top, caretCoords.lineHeight, suggestions, activeItem]);
+
   if (!suggestions.length || !caretCoords.visible) {
     return null;
   }
@@ -105,14 +127,16 @@ export function AutocompletePopover({
   // Adjust left/top to avoid clipping inside the editor
   // Offset by line number column padding (approx 44px)
   const leftPos = Math.max(50, Math.min(caretCoords.left + 44, 450));
-  const topPos = caretCoords.top;
+  const topPos = adjustedTop !== null ? adjustedTop : caretCoords.top;
 
   return (
     <div
+      ref={popoverRef}
       className="playground-ac-popover"
       style={{
         top: `${topPos}px`,
         left: `${leftPos}px`,
+        visibility: adjustedTop === null ? "hidden" : "visible",
       }}
       role="listbox"
       aria-label="Code suggestions"

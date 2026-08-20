@@ -237,6 +237,15 @@ export function detectSyntaxErrorLine(code: string): DetectedError | null {
 
     if (!cleanLine) continue;
 
+    // Check invalid class method keyword: class A { function foo() {} }
+    if (insideClass && /^\s*function\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(/.test(cleanLine)) {
+      return {
+        line: lineNum,
+        message: `In TypeScript/JavaScript classes, methods should not use the 'function' keyword.`,
+        suggestion: `Remove 'function' on line ${lineNum}: write '${cleanLine.replace(/^function\s+/, "")}' instead.`,
+      };
+    }
+
     // Track interface start
     if (/^\s*(?:export\s+)?interface\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/.test(cleanLine)) {
       insideInterface = true;
@@ -440,17 +449,6 @@ export function detectSyntaxErrorLine(code: string): DetectedError | null {
       };
     }
 
-    // Check invalid class method keyword: class A { function foo() {} }
-    if (/^\s*function\s+[a-zA-Z_$][a-zA-Z0-9_$]*\s*\(/.test(line)) {
-      const preceding = rawLines.slice(0, i).join("\n");
-      if (preceding.includes("class ")) {
-        return {
-          line: lineNum,
-          message: `In TypeScript/JavaScript classes, methods should not use the 'function' keyword.`,
-          suggestion: `Remove 'function' on line ${lineNum}: write '${line.trim().replace(/^function\s+/, "")}' instead.`,
-        };
-      }
-    }
   }
 
   return null;

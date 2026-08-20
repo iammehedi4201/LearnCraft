@@ -440,6 +440,7 @@ export class TypeScriptRuntime implements PlaygroundRuntime {
     const staticErr = detectSyntaxErrorLine(input.code);
     if (staticErr) {
       return {
+        success: false,
         output: [],
         error: {
           message: staticErr.message,

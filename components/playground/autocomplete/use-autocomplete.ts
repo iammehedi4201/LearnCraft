@@ -452,6 +452,69 @@ export function useAutocomplete({
       }
     }
 
+    // ─── Trigger Context: class inheritance after 'extends' (e.g. class Dog extends ) ───
+    const extendsMatch = textBefore.match(/\bextends\s+([a-zA-Z_$][a-zA-Z0-9_$]*)?$/);
+
+    if (extendsMatch) {
+      const extendsPrefix = extendsMatch[1] || "";
+      const tokenStart = cursorPos - extendsPrefix.length;
+      const tokenEnd = cursorPos;
+
+      const classCandidates = new Map<string, AutocompleteSuggestion>();
+
+      // 1. In-file declared classes
+      classModels.forEach((cls) => {
+        classCandidates.set(cls.name, {
+          label: cls.name,
+          insertText: cls.name,
+          kind: "class",
+          detail: `class ${cls.name}`,
+          documentation: `Class defined in current file.`,
+          boost: 98,
+        });
+      });
+
+      // 2. Built-in classes/types from static suggestions
+      const staticList = getSuggestionsForLanguage(language);
+      staticList.forEach((s) => {
+        if (s.kind === "class" || ["Error", "Array", "Map", "Set", "Promise", "Object", "Date", "RegExp"].includes(s.label)) {
+          classCandidates.set(s.label, s);
+        }
+      });
+
+      // Also custom symbols that are classes
+      generalSymbols.forEach((s) => {
+        if (s.kind === "class") {
+          classCandidates.set(s.label, s);
+        }
+      });
+
+      // Avoid self-inheritance suggestion
+      const currentClassMatch = textBefore.match(/class\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s+extends/);
+      if (currentClassMatch) {
+        classCandidates.delete(currentClassMatch[1]);
+      }
+
+      const scored: { item: AutocompleteSuggestion; score: number }[] = [];
+      classCandidates.forEach((item) => {
+        const score = calculateScore(item, extendsPrefix);
+        if (score > 0) scored.push({ item, score });
+      });
+
+      scored.sort((a, b) => b.score - a.score);
+      const top = scored.slice(0, 8).map((s) => s.item);
+
+      if (top.length > 0) {
+        const coords = getCaretCoordinates(textarea, cursorPos);
+        setSuggestions(top);
+        setSelectedIndex(0);
+        setTokenRange({ start: tokenStart, end: tokenEnd, prefix: extendsPrefix });
+        setCaretCoords(coords);
+        setIsOpen(true);
+        return;
+      }
+    }
+
     // ─── Trigger Context 2: Type Annotation after ':' (e.g. name: string, price: Number) ───
     const typeMatch = textBefore.match(/:\s*([a-zA-Z_$][a-zA-Z0-9_$]*)?$/);
 
