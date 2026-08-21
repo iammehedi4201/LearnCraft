@@ -6,6 +6,7 @@ import {
   SectionContainer,
   TopicHeader,
   SectionHeading,
+  AnalogyBox,
   Divider,
   InfoCallout,
   ComparisonTable,
@@ -22,17 +23,29 @@ export function AuthSecuritySection() {
       <div className="mb-16">
         <TopicHeader
           number={1}
-          title="Method-Level Authorization Decorators"
-          description="Protecting sensitive API endpoints by checking roles before the method executes is a core pattern in web frameworks."
+          title="Protecting Methods with Role Checks"
+          description="In web backends, you often need to block regular users from calling dangerous actions (like deleting users or refunding payments). Decorators let you put a security check right above the method."
           color="primary"
         />
 
-        <div className="mb-8">
+        <AnalogyBox emoji="🛡️" title="The VIP Club Bouncer Analogy">
+          <p>
+            Think of <code>@Authorize(&apos;admin&apos;)</code> like placing a security guard at a VIP lounge door.
+          </p>
+          <p className="mt-2">
+            Before anyone is allowed through to the lounge (the method), the guard checks their badge. If they don&apos;t have the right role, the guard stops them immediately with <em>&quot;403 Forbidden&quot;</em>!
+          </p>
+        </AnalogyBox>
+
+        <div className="mb-8 mt-6">
           <SectionHeading>🚀 Try It Yourself: Live Role Check Decorator</SectionHeading>
+          <p className="text-xs text-ds-text-sub mb-3">
+            Notice how regular users are blocked from <code>deleteUser</code>, but allowed once elevated to admin:
+          </p>
           <Playground
             runtime="typescript"
             language="TypeScript"
-            starterCode={`// Simulated logged-in user context
+            starterCode={`// Simulated logged-in user:
 let currentSession = {
   user: "Alice",
   role: "user", // Change to "admin" to grant access!
@@ -43,30 +56,31 @@ function Authorize(...allowedRoles: string[]) {
     const original = descriptor.value;
 
     descriptor.value = function (...args: any[]) {
-      console.log("🔒 [AUTH CHECK] Checking permissions for " + propertyKey + "...");
+      console.log("🔒 [AUTH CHECK] Verifying role for " + propertyKey + "...");
       
       if (!currentSession || !currentSession.user) {
-        throw new Error("401 Unauthorized: Please log in.");
+        throw new Error("401 Unauthorized: Please log in first.");
       }
 
       if (!allowedRoles.includes(currentSession.role)) {
         throw new Error(
           "403 Forbidden: User '" + currentSession.user +
-          "' with role '" + currentSession.role +
-          "' does not have permission. Required: " + allowedRoles.join(" or ")
+          "' (role: " + currentSession.role +
+          ") is NOT allowed to call " + propertyKey +
+          ". Allowed roles: " + allowedRoles.join(", ")
         );
       }
 
-      console.log("🔓 [AUTH GRANTED] User is authorized!");
+      console.log("🔓 [AUTH GRANTED] Access approved for " + currentSession.user);
       return original.apply(this, args);
     };
   };
 }
 
-class AdminPanel {
+class AdminDashboard {
   @Authorize("admin")
   deleteUser(userId: number) {
-    console.log("🗑️ User #" + userId + " successfully deleted!");
+    console.log("🗑️ Successfully deleted User #" + userId);
     return { deleted: true };
   }
 
@@ -76,22 +90,22 @@ class AdminPanel {
   }
 }
 
-const panel = new AdminPanel();
+const dashboard = new AdminDashboard();
 
-// 1. Regular user viewing profile (allowed):
-console.log("Profile:", panel.viewProfile());
+// 1. Regular user viewing profile (Allowed):
+console.log("Profile:", dashboard.viewProfile());
 
-// 2. Regular user trying to delete (blocked):
+// 2. Regular user trying to delete (Blocked):
 try {
-  panel.deleteUser(99);
-} catch (e: any) {
-  console.log("Blocked:", e.message);
+  dashboard.deleteUser(99);
+} catch (error: any) {
+  console.log("Blocked by Guard:", error.message);
 }
 
-// 3. Promote user to admin and retry:
-console.log("\\n--- Elevating session to 'admin' ---");
+// 3. Promote to admin and retry:
+console.log("\\n--- Promoting user to admin ---");
 currentSession.role = "admin";
-panel.deleteUser(99); // Now succeeds!`}
+dashboard.deleteUser(99); // Now succeeds!`}
             height="500px"
           />
         </div>
@@ -104,28 +118,28 @@ panel.deleteUser(99); // Now succeeds!`}
         <TopicHeader
           number={2}
           title="The NestJS Architecture: Metadata vs Guards"
-          description="In NestJS, decorators don't execute the auth logic directly. Instead, the decorator only attaches metadata, and a Guard checks it at runtime."
+          description="In NestJS, decorators don't run the security check directly. Instead, the decorator only attaches a tag, and a Guard checks the live HTTP request."
           color="sky"
         />
 
         <ComparisonTable
-          headers={["Component", "Role", "Example"]}
+          headers={["Component", "What it does", "Example"]}
           rows={[
-            ["@Roles('admin')", "Declares what roles are required (Stores metadata)", "SetMetadata('roles', ['admin'])"],
-            ["RolesGuard (CanActivate)", "Reads metadata and checks incoming request user", "Reflector.get('roles', context.getHandler())"],
-            ["@UseGuards(RolesGuard)", "Attaches the guard to the controller or method", "@UseGuards(AuthGuard, RolesGuard)"],
+            ["@Roles('admin')", "Declares required roles (Attaches metadata note)", "SetMetadata('roles', ['admin'])"],
+            ["RolesGuard (CanActivate)", "Reads the metadata note and checks incoming HTTP request", "Reflector.get('roles', context.getHandler())"],
+            ["@UseGuards(RolesGuard)", "Attaches the guard to the controller or route", "@UseGuards(AuthGuard, RolesGuard)"],
           ]}
         />
 
         <InfoCallout emoji="🏛️" title="Why Separate Metadata from Guards?">
           <p>
-            Separating the metadata declaration (<code>@Roles</code>) from the execution logic (<code>RolesGuard</code>) makes both components completely reusable, testable in isolation, and allows guards to be replaced without touching controller code.
+            Separating the metadata sticker (<code>@Roles</code>) from the actual security logic (<code>RolesGuard</code>) keeps your controller code clean, makes testing easy, and allows you to swap your auth system without editing 50 controllers!
           </p>
         </InfoCallout>
 
         <QuickCheck
           question="Why does NestJS prefer using Guards over putting auth logic directly inside a method decorator?"
-          answer="Guards have full access to the NestJS ExecutionContext (the current HTTP request, response, WebSocket client, RPC message, DI container). Decorators run too early (at compile/definition time) to access individual HTTP request instances."
+          answer="Guards have full access to the NestJS ExecutionContext (the current HTTP request, headers, cookies, user sessions, and Dependency Injection services). Decorators run too early (when the file loads) to see live HTTP requests."
         />
       </div>
     </SectionContainer>

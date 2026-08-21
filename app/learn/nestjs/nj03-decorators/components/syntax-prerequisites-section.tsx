@@ -25,24 +25,24 @@ export function SyntaxPrerequisitesSection() {
       <div className="mb-16">
         <TopicHeader
           number={1}
-          title="The @ Syntax & TypeScript Configuration"
-          description="In TypeScript, decorators use the special @ prefix syntax. To use them in NestJS projects, you must enable specific compiler options in tsconfig.json."
+          title="The @ Syntax & tsconfig.json Setup"
+          description="In TypeScript, decorators use the @ prefix. To allow TypeScript to understand decorators, you need to turn on two simple switches in your tsconfig.json file."
           color="primary"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>⚙️</span> Required tsconfig.json Settings
+            <span>⚙️</span> The 2 Required tsconfig.json Settings
           </h4>
           <p className="text-sm text-ds-text-sub leading-relaxed mb-3">
-            Because decorators in NestJS use the legacy experimental specification, TypeScript requires two flags in <code>tsconfig.json</code>:
+            NestJS uses the standard TypeScript decorator format. Open your <code>tsconfig.json</code> file and ensure these two lines are inside <code>compilerOptions</code>:
           </p>
           <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-4 rounded-xl text-xs font-mono border border-ds-stroke-soft">
 {`{
   "compilerOptions": {
     "target": "ES2021",
-    "experimentalDecorators": true,     // Enables the @ decorator syntax
-    "emitDecoratorMetadata": true       // Emits TypeScript type information for DI
+    "experimentalDecorators": true,     // 1. Allows you to write @Decorator syntax
+    "emitDecoratorMetadata": true       // 2. Lets NestJS read parameter types for Dependency Injection
   }
 }`}
           </pre>
@@ -51,25 +51,51 @@ export function SyntaxPrerequisitesSection() {
         <StepList
           steps={[
             {
-              label: "Write a normal JavaScript function",
-              note: "Decorators are just functions with standard parameters.",
-              code: "function Logger(target: any) { console.log('Decorating:', target.name); }",
+              label: "1. Write a normal JavaScript function",
+              note: "Decorators are just ordinary functions that receive information about the target.",
+              code: "function Logger(target: any) {\n  console.log('Decorating:', target.name);\n}",
             },
             {
-              label: "Prefix with @ directly above target",
-              note: "Place @Logger right above the class, method, or property.",
+              label: "2. Place @FunctionName right above your target",
+              note: "Put @Logger directly on the line above your class or method.",
               code: "@Logger\nclass UsersService {}",
             },
             {
-              label: "TypeScript transforms the syntax into a function call",
-              note: "Under the hood, TypeScript compiles @Logger class UsersService to: Logger(UsersService).",
+              label: "3. TypeScript transforms it into a function call",
+              note: "Under the hood, TypeScript transforms '@Logger class UsersService' into 'Logger(UsersService)'.",
             },
           ]}
         />
 
+        <div className="mb-8 mt-6">
+          <SectionHeading>🚀 Try It Yourself: How TypeScript Runs a Decorator Under the Hood</SectionHeading>
+          <p className="text-xs text-ds-text-sub mb-3">
+            This live playground demonstrates that <code>@Tag</code> is literally just calling <code>Tag(target)</code>:
+          </p>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`// Step 1: Define our decorator function
+function SimpleBadge(target: Function) {
+  console.log("🏷️ Stamped badge on class:", target.name);
+}
+
+// Step 2: Use the @ syntax
+@SimpleBadge
+class MemberAccount {
+  constructor(public username: string) {}
+}
+
+// When TypeScript compiles this, it executes: SimpleBadge(MemberAccount)
+const member = new MemberAccount("Alice");
+console.log("Created member:", member.username);`}
+            height="320px"
+          />
+        </div>
+
         <MistakeBox
-          title="Putting a semicolon after the decorator"
-          description="Never put a semicolon after the @Decorator line. It must attach directly to the declaration beneath it."
+          title="Accidentally putting a semicolon after @Decorator"
+          description="Never put a semicolon ';' right after the @Decorator line. It must attach directly to the class or method beneath it."
           wrong={`@Controller() ;\nclass UsersController {}`}
           right={`@Controller()\nclass UsersController {}`}
         />
@@ -77,39 +103,46 @@ export function SyntaxPrerequisitesSection() {
 
       <Divider />
 
-      {/* ── 2.2 Functions as First-Class Citizens & Higher-Order Functions ── */}
+      {/* ── 2.2 Functions as First-Class Citizens & Wrappers ── */}
       <div className="mb-16">
         <TopicHeader
           number={2}
-          title="Higher-Order Functions & Closures"
-          description="In JavaScript, functions can be passed as arguments, stored in variables, and returned from other functions. This concept is essential for understanding decorator factories."
+          title="Function Wrappers & Closures"
+          description="In JavaScript, functions can take other functions as inputs and return brand new wrapped functions. This is the secret behind how decorators intercept method calls."
           color="sky"
         />
 
         <AnalogyBox emoji="🎁" title="Functions as Gift Wrappers">
           <p>
-            Think of a <strong>Higher-Order Function</strong> as a gift wrapper. It takes a plain object (the original function), wraps it in fancy paper and ribbon (adds extra logging/security), and hands back the wrapped gift.
+            Think of a <strong>Function Wrapper</strong> like wrapping a gift box. You take an ordinary item (the original function), wrap it with colorful paper and a bow (extra logging or timing code), and return the wrapped gift!
+          </p>
+          <p className="mt-2">
+            When someone opens the gift (calls the function), the wrapper runs first, then the original item does its job.
           </p>
         </AnalogyBox>
 
         <div className="mb-8">
           <SectionHeading>🚀 Try It Yourself: Wrapping a Function Live</SectionHeading>
+          <p className="text-xs text-ds-text-sub mb-3">
+            See how <code>withTiming</code> wraps an ordinary <code>sendEmail</code> function to automatically measure how long it takes:
+          </p>
           <Playground
             runtime="typescript"
             language="TypeScript"
-            starterCode={`// Step 1: Original function
+            starterCode={`// 1. The original simple function:
 function sendEmail(recipient: string, message: string) {
   console.log("📨 Sending email to " + recipient + ": " + message);
   return { success: true };
 }
 
-// Step 2: Higher-Order Function that wraps sendEmail with timing
+// 2. A wrapper function that adds a timer around ANY function:
 function withTiming(originalFn: Function) {
+  // Returns a new function that wraps the original one:
   return function (...args: any[]) {
     console.log("⏱️ Timer started...");
     const start = performance.now();
     
-    // Call the original function
+    // Call the original function with its arguments
     const result = originalFn(...args);
     
     const duration = (performance.now() - start).toFixed(2);
@@ -118,16 +151,16 @@ function withTiming(originalFn: Function) {
   };
 }
 
-// Step 3: Wrap it
+// 3. Create our timed version and test it:
 const timedSendEmail = withTiming(sendEmail);
 timedSendEmail("alice@test.com", "Welcome to LearnCraft!");`}
-            height="360px"
+            height="380px"
           />
         </div>
 
-        <InfoCallout emoji="💡" title="Why Closures Matter for Decorators">
+        <InfoCallout emoji="💡" title="What is a 'Closure' in Plain English?">
           <p>
-            A <strong>closure</strong> is created when an inner function remembers variables from its outer function even after the outer function has finished executing. Decorator factories (like <code>@Roles(&apos;admin&apos;)</code>) rely entirely on closures to remember your configuration options!
+            A <strong>closure</strong> is just an inner function that remembers the variables from the outer function, even after the outer function has finished running. Decorators use closures so they can remember your settings (like <code>@Roles(&apos;admin&apos;)</code>) whenever someone calls the method later.
           </p>
         </InfoCallout>
       </div>
@@ -138,13 +171,16 @@ timedSendEmail("alice@test.com", "Welcome to LearnCraft!");`}
       <div className="mb-16">
         <TopicHeader
           number={3}
-          title="Method Interception & Preserving 'this'"
-          description="When decorators intercept and wrap class methods, they must use .apply(this, args) or .call(this, ...args) to avoid losing the object's instance context."
+          title="Preserving 'this' (The Object Context)"
+          description="When a decorator wraps a class method, it must ensure the method can still access its own instance variables (like this.balance or this.name). We do this using .apply(this, args)."
           color="emerald"
         />
 
         <div className="mb-8">
-          <SectionHeading>🚀 Try It Yourself: The 'this' Context Problem</SectionHeading>
+          <SectionHeading>🚀 Try It Yourself: Keeping the 'this' Context Intact</SectionHeading>
+          <p className="text-xs text-ds-text-sub mb-3">
+            In this example, <code>this.balance</code> needs to belong to the specific bank account instance. Calling <code>original.apply(this, args)</code> guarantees <code>this</code> points to the right account:
+          </p>
           <Playground
             runtime="typescript"
             language="TypeScript"
@@ -153,7 +189,7 @@ timedSendEmail("alice@test.com", "Welcome to LearnCraft!");`}
 
   deposit(amount: number) {
     this.balance += amount;
-    console.log("New balance: $" + this.balance);
+    console.log("💰 Deposited $" + amount + ". New balance: $" + this.balance);
     return this.balance;
   }
 }
@@ -163,22 +199,22 @@ function wrapMethod(targetObj: any, methodName: string) {
   const original = targetObj[methodName];
   
   targetObj[methodName] = function (...args: any[]) {
-    console.log("Intercepted " + methodName + " with args:", args);
+    console.log("🔍 Intercepted " + methodName + " with args:", args);
     // 'this' inside this function is the BankAccount instance!
-    return original.apply(this, args); // Preserves this.balance!
+    return original.apply(this, args); // Correctly updates this.balance!
   };
 }
 
 const account = new BankAccount();
 wrapMethod(account, "deposit");
-account.deposit(250); // Works correctly: balance = 750`}
-            height="360px"
+account.deposit(250); // Balance becomes $750`}
+            height="380px"
           />
         </div>
 
         <QuickCheck
-          question="Why do we use originalMethod.apply(this, args) when replacing a method in a decorator?"
-          answer="Because JavaScript methods rely on the 'this' keyword to access instance properties (like this.balance or this.usersService). If you called originalMethod(...args) without .apply(this, args), 'this' would be undefined or point to the global scope, causing runtime errors."
+          question="Why do we use originalMethod.apply(this, args) instead of just originalMethod(...args)?"
+          answer="Because class methods need to access instance data like this.balance or this.userService. If we call originalMethod() without .apply(this, args), JavaScript loses track of 'this', causing runtime errors when trying to read this.properties."
         />
       </div>
     </SectionContainer>

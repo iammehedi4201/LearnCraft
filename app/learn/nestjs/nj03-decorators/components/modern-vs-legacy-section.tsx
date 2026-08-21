@@ -22,20 +22,20 @@ export function ModernVsLegacySection() {
       <div className="mb-16">
         <TopicHeader
           number={1}
-          title="The Evolution: Stage 1 (Legacy) vs Stage 3 (Standard)"
-          description="TypeScript historically implemented decorators based on an early 2015 TC39 proposal. In 2023, TypeScript 5.0 added support for the official ECMAScript TC39 Stage 3 standard."
+          title="The Story: Experimental (Legacy) vs Standard (Modern)"
+          description="TypeScript has two versions of decorators: the classic experimental version that NestJS uses, and the newer ECMAScript TC39 Stage 3 standard."
           color="primary"
         />
 
         <ComparisonTable
-          headers={["Feature", "Legacy (TypeScript Experimental)", "Modern (TC39 Stage 3 Standard)"]}
+          headers={["Feature", "Classic / Experimental (NestJS uses this)", "Modern Standard (TS 5.0+)"]}
           rows={[
-            ["tsconfig Flag", '"experimentalDecorators": true', "No flag required (TS 5.0+)"],
-            ["Class Decorator", "(constructor: Function) => void", "(target: Function, context: ClassDecoratorContext) => void"],
+            ["tsconfig Flag", '"experimentalDecorators": true', "No compiler flag needed"],
+            ["Class Decorator", "(constructor: Function) => void", "(target, context: ClassDecoratorContext) => void"],
             ["Method Decorator", "(target, key, descriptor) => void", "(value: Function, context: ClassMethodDecoratorContext) => Function"],
-            ["Parameter Decorators", "Supported (@Body, @Param)", "Not supported in the standard"],
-            ["reflect-metadata DI", "Full support (emitDecoratorMetadata)", "Not supported yet in standard"],
-            ["Primary Ecosystem", "NestJS, Angular, TypeORM", "Vanilla TS, Web Components, modern libraries"],
+            ["Parameter Decorators", "Supported (@Body, @Param)", "Not supported in the new standard"],
+            ["Type Reflection (DI)", "Full support (emitDecoratorMetadata)", "Not yet supported in the standard"],
+            ["Primary Ecosystem", "NestJS, Angular, TypeORM", "Vanilla TypeScript 5, Web Components"],
           ]}
         />
       </div>
@@ -46,13 +46,16 @@ export function ModernVsLegacySection() {
       <div className="mb-16">
         <TopicHeader
           number={2}
-          title="The Modern Decorator Context Object"
-          description="Modern decorators pass a structured context object containing metadata about the member (kind, name, static, private, addInitializer)."
+          title="How Modern Standard Decorators Look"
+          description="In the new TC39 Stage 3 standard, decorators receive a structured context helper object (kind, name, static, private)."
           color="sky"
         />
 
         <div className="mb-8">
           <SectionHeading>🚀 Try It Yourself: Modern Standard Method Decorator</SectionHeading>
+          <p className="text-xs text-ds-text-sub mb-3">
+            Here is how a modern TC39 Stage 3 method decorator receives its function and context object:
+          </p>
           <Playground
             runtime="typescript"
             language="TypeScript"
@@ -67,21 +70,20 @@ function ModernLog(originalMethod: Function, context: any) {
 }
 
 class InvoiceService {
-  // Simulating modern decorator usage:
   generateInvoice(invoiceId: number) {
     return { id: invoiceId, status: "PAID" };
   }
 }
 
-// Manually applying the decorator to demonstrate the modern signature:
-const descriptor = ModernLog(InvoiceService.prototype.generateInvoice, {
+// Demonstrating how the modern decorator function receives (method, context):
+const modernDescriptor = ModernLog(InvoiceService.prototype.generateInvoice, {
   kind: "method",
   name: "generateInvoice",
   static: false,
   private: false,
 });
 
-InvoiceService.prototype.generateInvoice = descriptor as any;
+InvoiceService.prototype.generateInvoice = modernDescriptor as any;
 
 const service = new InvoiceService();
 console.log("Result:", service.generateInvoice(501));`}
@@ -89,15 +91,15 @@ console.log("Result:", service.generateInvoice(501));`}
           />
         </div>
 
-        <InfoCallout emoji="⚠️" title="Why NestJS Sticks with Legacy Decorators">
+        <InfoCallout emoji="⚠️" title="Why NestJS Sticks with Classic Experimental Decorators">
           <p>
-            NestJS architecture depends fundamentally on <strong>Parameter Decorators</strong> (<code>@Param()</code>, <code>@Body()</code>) and <strong>automatic constructor type emission</strong> (<code>emitDecoratorMetadata</code>). Because the TC39 Stage 3 standard intentionally omitted parameter decorators and type reflection, NestJS will continue using <code>experimentalDecorators: true</code> for the foreseeable future.
+            NestJS architecture depends heavily on <strong>Parameter Decorators</strong> (<code>@Param()</code>, <code>@Body()</code>) and <strong>automatic constructor type inspection</strong> (<code>emitDecoratorMetadata</code>). Because the new TC39 standard intentionally omitted parameter decorators and type reflection, NestJS continues using <code>experimentalDecorators: true</code>.
           </p>
         </InfoCallout>
 
         <QuickCheck
-          question="Which decorator system should you configure in tsconfig.json for NestJS projects?"
-          answer="Always enable 'experimentalDecorators: true' and 'emitDecoratorMetadata: true'. NestJS relies on the experimental decorator specification for parameter decorators and dependency injection metadata."
+          question="Which decorator settings must you configure in tsconfig.json for NestJS projects?"
+          answer="Always enable 'experimentalDecorators: true' and 'emitDecoratorMetadata: true' in your tsconfig.json. NestJS depends on these flags for parameter decorators and dependency injection."
         />
       </div>
     </SectionContainer>

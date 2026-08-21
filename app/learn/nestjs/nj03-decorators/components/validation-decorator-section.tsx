@@ -6,6 +6,7 @@ import {
   SectionContainer,
   TopicHeader,
   SectionHeading,
+  AnalogyBox,
   WhyBox,
 } from "./shared-components";
 
@@ -20,25 +21,40 @@ export function ValidationDecoratorSection() {
       <div className="mb-16">
         <TopicHeader
           number={1}
-          title="Declarative Property Validation"
-          description="In NestJS applications, incoming request data (DTOs) is validated using property decorators from class-validator. Here is how that system works from scratch."
+          title="Automatic Data Validation with Decorators"
+          description="In NestJS applications, incoming request data (DTOs) is validated using property decorators like @IsEmail and @MinLength from class-validator."
           color="primary"
         />
+
+        <AnalogyBox emoji="📋" title="The Passport Application Checklist">
+          <p>
+            Think of validation decorators like the required checkboxes on a visa application form:
+          </p>
+          <p className="mt-2">
+            The form template says: <em>&quot;Email is required&quot;</em> and <em>&quot;Password must be at least 6 characters&quot;</em>.
+          </p>
+          <p className="mt-2">
+            When a user hands in their filled form, the inspector (NestJS <code>ValidationPipe</code>) checks each rule against the submitted answers and rejects incomplete forms!
+          </p>
+        </AnalogyBox>
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2">
             The Two Parts of a Validation System:
           </h4>
           <p className="text-sm text-ds-text-sub leading-relaxed mb-2">
-            1. <strong>Property Decorators (@IsEmail, @MinLength)</strong>: Store validation rule functions into a metadata registry for each property.
+            1. <strong>Property Decorators (@IsEmail, @MinLength)</strong>: Attach validation rule functions to a metadata list for each property.
           </p>
           <p className="text-sm text-ds-text-sub leading-relaxed">
-            2. <strong>The validate(object) function</strong>: Inspects the object, looks up the registered rules, and returns an array of error messages.
+            2. <strong>The validate(object) function</strong>: Inspects the object, runs the registered rules, and returns any error messages.
           </p>
         </WhyBox>
 
-        <div className="mb-8">
+        <div className="mb-8 mt-6">
           <SectionHeading>🚀 Try It Yourself: Complete Validation System from Scratch</SectionHeading>
+          <p className="text-xs text-ds-text-sub mb-3">
+            Click Run to test how invalid data is caught and rejected by our custom validation engine:
+          </p>
           <Playground
             runtime="typescript"
             language="TypeScript"
@@ -64,7 +80,7 @@ function IsNotEmpty(message?: string) {
     addRule(target, {
       property: propertyKey,
       validator: val => val !== undefined && val !== null && String(val).trim().length > 0,
-      message: message || propertyKey + " should not be empty",
+      message: message || propertyKey + " cannot be empty",
     });
   };
 }
@@ -104,7 +120,7 @@ function validate(dto: any): string[] {
   return errors;
 }
 
-// Step 4: Use it on a DTO!
+// Step 4: Use it on a DTO class!
 class RegisterUserDto {
   @IsNotEmpty()
   @MinLength(3)
@@ -115,26 +131,26 @@ class RegisterUserDto {
   email: string = "";
 }
 
-// Test with invalid data:
+// Test 1: Invalid data
 const badDto = new RegisterUserDto();
-badDto.username = "al";
-badDto.email = "not-an-email";
+badDto.username = "al";           // Too short!
+badDto.email = "not-an-email";     // Invalid email format!
 
 console.log("❌ Errors for badDto:", validate(badDto));
 
-// Test with valid data:
+// Test 2: Valid data
 const goodDto = new RegisterUserDto();
 goodDto.username = "mehedi";
 goodDto.email = "mehedi@learncraft.dev";
 
-console.log("✅ Errors for goodDto:", validate(goodDto));`}
+console.log("✅ Errors for goodDto (Empty = Valid!):", validate(goodDto));`}
             height="520px"
           />
         </div>
 
         <QuickCheck
           question="Why don't validation decorators throw an error immediately when applied to a property?"
-          answer="Because decorators run when the class is defined, before any user data has been created or submitted. The decorators only attach the validation rules to metadata. Later, when an HTTP request arrives, the framework's ValidationPipe calls validate(requestData) against those pre-stored rules."
+          answer="Because decorators run when the class is defined, before any real user data has been submitted. The decorators simply attach the validation rules to metadata. Later, when an HTTP request arrives, NestJS runs validate(submittedData) against those pre-stored rules."
         />
       </div>
     </SectionContainer>

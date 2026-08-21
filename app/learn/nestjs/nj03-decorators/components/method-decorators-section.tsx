@@ -22,8 +22,8 @@ export function MethodDecoratorsSection() {
       <div className="mb-16">
         <TopicHeader
           number={1}
-          title="Method Decorator Signature & The 3 Parameters"
-          description="Method decorators are attached directly above a method. They receive 3 specific parameters from TypeScript."
+          title="Method Decorators & The 3 Parameters"
+          description="Method decorators are placed directly above a method. TypeScript automatically passes 3 clear arguments to your decorator function."
           color="primary"
         />
 
@@ -32,24 +32,62 @@ export function MethodDecoratorsSection() {
             The 3 Parameters of a Method Decorator:
           </h4>
           <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-3.5 rounded-xl text-xs font-mono border border-ds-stroke-soft">
-{`function MethodDecorator(
-  target: any,                       // 1. Prototype of class (or constructor for static)
-  propertyKey: string,               // 2. Name of the method being decorated
-  descriptor: PropertyDescriptor     // 3. Property descriptor containing .value
+{`function MyMethodDecorator(
+  target: any,                       // 1. The class prototype (holding the method)
+  propertyKey: string,               // 2. The method name as text (e.g. "greet")
+  descriptor: PropertyDescriptor     // 3. The settings box (descriptor.value is the function!)
 ) {
-  // descriptor.value IS the original function!
+  // You can modify descriptor.value to wrap or intercept calls!
 }`}
           </pre>
         </WhyBox>
 
         <ComparisonTable
-          headers={["Parameter", "For Instance Method", "For Static Method", "Purpose"]}
+          headers={["Parameter", "What it receives", "Plain English Explanation"]}
           rows={[
-            ["target", "Class.prototype", "Class constructor function", "The object holding the method"],
-            ["propertyKey", '"getUsers"', '"createInstance"', "The method's string name"],
-            ["descriptor", "PropertyDescriptor object", "PropertyDescriptor object", "Contains .value, .writable, etc."],
+            ["target", "Class.prototype", "The object where this method lives"],
+            ["propertyKey", '"calculateTotal"', "The name of the method as a string"],
+            ["descriptor", "{ value: fn, writable: true, ... }", "The property descriptor holding the actual function inside .value"],
           ]}
         />
+
+        <div className="mb-8 mt-6">
+          <SectionHeading>🚀 Step 1: Your First Simple Method Decorator</SectionHeading>
+          <p className="text-xs text-ds-text-sub mb-3">
+            Here is the simplest possible method decorator. It intercepts a greeting method and prints a message before and after:
+          </p>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`function SimpleAnnounce(target: any, key: string, descriptor: PropertyDescriptor) {
+  // 1. Grab the original method:
+  const original = descriptor.value;
+
+  // 2. Replace it with a friendly wrapper function:
+  descriptor.value = function (...args: any[]) {
+    console.log("📣 Calling method: " + key + " with input:", ...args);
+    
+    // 3. Run the original method:
+    const result = original.apply(this, args);
+    
+    console.log("🎉 " + key + " finished successfully!");
+    return result;
+  };
+}
+
+class Greeter {
+  @SimpleAnnounce
+  sayHello(name: string) {
+    return "Hello, " + name + "!";
+  }
+}
+
+const g = new Greeter();
+const message = g.sayHello("Mehedi");
+console.log("Returned output:", message);`}
+            height="380px"
+          />
+        </div>
       </div>
 
       <Divider />
@@ -59,56 +97,59 @@ export function MethodDecoratorsSection() {
         <TopicHeader
           number={2}
           title="Understanding PropertyDescriptor"
-          description="In JavaScript, every object property has a descriptor that controls its behavior. For a method, descriptor.value holds the actual function."
+          description="In JavaScript, every property and method on an object has a descriptor object that controls its behavior and permissions."
           color="sky"
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div className="p-4 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
             <code className="text-xs font-bold text-ds-feature-dark block mb-1">descriptor.value</code>
-            <p className="text-xs text-ds-text-sub">The function itself. Replace this to intercept method calls.</p>
+            <p className="text-xs text-ds-text-sub">The function itself. Replace this to intercept or wrap method calls.</p>
           </div>
           <div className="p-4 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
             <code className="text-xs font-bold text-ds-info-dark block mb-1">descriptor.writable</code>
-            <p className="text-xs text-ds-text-sub">Whether the method can be reassigned with <code>=</code>.</p>
+            <p className="text-xs text-ds-text-sub">Set to <code>false</code> to make the method read-only so nobody can overwrite it.</p>
           </div>
           <div className="p-4 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
             <code className="text-xs font-bold text-ds-success-dark block mb-1">descriptor.enumerable</code>
-            <p className="text-xs text-ds-text-sub">Whether the method shows up in <code>for...in</code> or <code>Object.keys</code>.</p>
+            <p className="text-xs text-ds-text-sub">Whether the method shows up when looping over the object keys.</p>
           </div>
           <div className="p-4 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
             <code className="text-xs font-bold text-ds-warning-dark block mb-1">descriptor.configurable</code>
-            <p className="text-xs text-ds-text-sub">Whether the property can be deleted or descriptor modified.</p>
+            <p className="text-xs text-ds-text-sub">Whether the method can be deleted or its settings changed later.</p>
           </div>
         </div>
 
         <div className="mb-8">
-          <SectionHeading>🚀 Try It Yourself: Readonly Method Decorator</SectionHeading>
+          <SectionHeading>🚀 Try It Yourself: Making a Method Read-Only</SectionHeading>
+          <p className="text-xs text-ds-text-sub mb-3">
+            By setting <code>descriptor.writable = false</code>, you lock down the method so other code cannot accidentally replace it:
+          </p>
           <Playground
             runtime="typescript"
             language="TypeScript"
             starterCode={`function ReadonlyMethod(target: any, key: string, descriptor: PropertyDescriptor) {
-  // Lock down the method so nobody can overwrite it:
+  // Lock the method so it cannot be replaced:
   descriptor.writable = false;
   console.log("🔒 Method " + key + " is now read-only!");
 }
 
 class SecurityService {
   @ReadonlyMethod
-  verifyToken(token: string) {
-    return token === "secret-token-123";
+  verifyPin(pin: string) {
+    return pin === "1234";
   }
 }
 
 const sec = new SecurityService();
-console.log("Verify valid:", sec.verifyToken("secret-token-123"));
+console.log("Check PIN 1234:", sec.verifyPin("1234"));
 
-// Attempting to overwrite the method will fail:
+// Trying to overwrite the method will fail:
 try {
-  sec.verifyToken = function () { return true; } as any;
+  sec.verifyPin = function () { return true; } as any;
   console.log("Overwritten!");
-} catch (e: any) {
-  console.log("Blocked by ReadonlyMethod:", e.message);
+} catch (error: any) {
+  console.log("Blocked by @ReadonlyMethod:", error.message);
 }`}
             height="360px"
           />
@@ -117,65 +158,62 @@ try {
 
       <Divider />
 
-      {/* ── 4.3 Method Interception & Wrapping ── */}
+      {/* ── 4.3 Timing & Performance ── */}
       <div className="mb-16">
         <TopicHeader
           number={3}
-          title="Method Interception & Wrapping Pattern"
-          description="The most powerful feature of method decorators is replacing descriptor.value with a wrapper function."
+          title="Practical Pattern: Timing Method Speed"
+          description="One of the most popular uses for method decorators is measuring performance to find slow database queries or calculations."
           color="emerald"
         />
 
         <div className="mb-8">
-          <SectionHeading>🚀 Try It Yourself: Live Performance Benchmark Decorator</SectionHeading>
+          <SectionHeading>🚀 Try It Yourself: Live Speed Benchmarking</SectionHeading>
+          <p className="text-xs text-ds-text-sub mb-3">
+            <code>@MeasureTime</code> calculates how many milliseconds any function takes to complete:
+          </p>
           <Playground
             runtime="typescript"
             language="TypeScript"
             starterCode={`function MeasureTime(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-  // Step 1: Save the original function reference
   const originalMethod = descriptor.value;
 
-  // Step 2: Replace descriptor.value with our wrapper function
   descriptor.value = function (...args: any[]) {
-    console.log("⚡ Executing " + propertyKey + " with args:", args);
+    console.log("⚡ Running " + propertyKey + "...");
     const start = performance.now();
 
-    // Step 3: Run the original method preserving 'this' context
+    // Call the original method
     const result = originalMethod.apply(this, args);
 
-    const duration = (performance.now() - start).toFixed(2);
-    console.log("🏁 " + propertyKey + " completed in " + duration + "ms");
+    const time = (performance.now() - start).toFixed(2);
+    console.log("⏱️ " + propertyKey + " completed in " + time + "ms");
     return result;
   };
 
   return descriptor;
 }
 
-class MathOperations {
+class DataProcessor {
   @MeasureTime
-  calculatePrimes(limit: number) {
-    const primes = [];
-    for (let i = 2; i <= limit; i++) {
-      let isPrime = true;
-      for (let j = 2; j * j <= i; j++) {
-        if (i % j === 0) { isPrime = false; break; }
-      }
-      if (isPrime) primes.push(i);
+  sumNumbers(limit: number) {
+    let total = 0;
+    for (let i = 1; i <= limit; i++) {
+      total += i;
     }
-    return primes.length;
+    return total;
   }
 }
 
-const ops = new MathOperations();
-const count = ops.calculatePrimes(50000);
-console.log("Found primes count:", count);`}
-            height="420px"
+const processor = new DataProcessor();
+const sum = processor.sumNumbers(1000000);
+console.log("Sum result:", sum);`}
+            height="400px"
           />
         </div>
 
         <QuickCheck
           question="What is stored inside descriptor.value for a method decorator?"
-          answer="descriptor.value holds the reference to the actual method function. To intercept or wrap the method, save originalMethod = descriptor.value, assign a new function to descriptor.value, and call originalMethod.apply(this, args) inside your new function."
+          answer="descriptor.value holds the reference to the actual method function. To intercept or wrap the method, save originalMethod = descriptor.value, assign a new wrapper function to descriptor.value, and call originalMethod.apply(this, args) inside your new function."
         />
       </div>
     </SectionContainer>
