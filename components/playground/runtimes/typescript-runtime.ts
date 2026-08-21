@@ -22,6 +22,7 @@ import type {
   TestResult,
 } from "../types";
 
+import * as ts from "typescript";
 import { extractLineFromStack, detectSyntaxErrorLine } from "../error-detector";
 
 // ─── Beginner-friendly error transformations ───
@@ -127,18 +128,32 @@ function transformError(rawMessage: string, originalCode?: string): PlaygroundEr
 // ─── Local Zero-Network TypeScript Transpiler ───
 // Guaranteed to preserve exact 1-to-1 line numbers with user input!
 export function transpileTypeScriptLocally(code: string): string {
+  try {
+    if (typeof ts !== "undefined" && ts.transpileModule) {
+      const result = ts.transpileModule(code, {
+        compilerOptions: {
+          target: ts.ScriptTarget.ES2022,
+          module: ts.ModuleKind.ESNext,
+          removeComments: false,
+        },
+      });
+      if (result && typeof result.outputText === "string") {
+        return result.outputText;
+      }
+    }
+  } catch {
+    // Fallback to local regex transforms below
+  }
+
   let js = code;
 
-  // 1. Remove multi-line interface declarations (preserve newlines so line numbers match 1-to-1)
+  // 1. Remove multi-line and single-line interface declarations (preserve newlines so line numbers match 1-to-1)
   js = js.replace(/interface\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?(?:\s+extends\s+[^{]+)?\s*\{[\s\S]*?\}/g, (match) => {
     return match.replace(/[^\n]/g, " ");
   });
 
-  // 2. Remove type alias declarations (preserve newlines)
-  js = js.replace(/type\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?\s*=\s*\{[\s\S]*?\};/g, (match) => {
-    return match.replace(/[^\n]/g, " ");
-  });
-  js = js.replace(/type\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?\s*=[^;\n]+;/g, (match) => {
+  // 2. Remove type alias declarations (both single-line and multi-line, preserving exact newlines)
+  js = js.replace(/type\s+[A-Za-z0-9_$]+(?:\s*<[^>]*>)?\s*=[\s\S]*?;/g, (match) => {
     return match.replace(/[^\n]/g, " ");
   });
 
@@ -164,25 +179,31 @@ export function transpileTypeScriptLocally(code: string): string {
   // 5. Remove class generic declarations: e.g. class Stack<T> -> class Stack
   js = js.replace(/(\bclass\s+[A-Za-z0-9_$]+)<[A-Za-z0-9_$,\s|&<>[\]]+>/g, "$1");
 
-  // 6. Transform TypeScript constructor parameter properties: e.g. constructor(public name: string, public price: number) {}
-  // Handles super() calls in derived classes correctly so 'this' is accessed only after super()
-  js = js.replace(/constructor\s*\(([^)]*)\)\s*\{(\s*super\s*\([^)]*\)\s*;)?/g, (match, paramStr, superCall) => {
-    const params = paramStr.split(",").map((p: string) => p.trim()).filter(Boolean);
+  // 6. Transform TypeScript constructor parameter properties (e.g. constructor(public readonly name: string, protected email: string) {})
+  // Correctly handles multiple modifiers (public readonly) and positions assignments after super() if present
+  js = js.replace(/constructor\s*\(([\s\S]*?)\)\s*\{(\s*super\s*\([^)]*\)\s*;?)?/g, (match, paramStr, superCall) => {
+    const rawParams = paramStr.split(",");
     const assignments: string[] = [];
     const cleanedParams: string[] = [];
+    let hasParamProperties = false;
 
-    for (const p of params) {
-      const modifierMatch = p.match(/^(?:public|private|protected|readonly)\s+([a-zA-Z_$][a-zA-Z0-9_$]*)/);
+    for (const raw of rawParams) {
+      const p = raw.trim();
+      if (!p) continue;
+      // Match one or more modifiers: public, private, protected, readonly
+      const modifierMatch = p.match(/^(?:(?:public|private|protected|readonly)\s+)+([a-zA-Z_$][a-zA-Z0-9_$]*)/);
       if (modifierMatch) {
+        hasParamProperties = true;
         const paramName = modifierMatch[1];
         assignments.push(`this.${paramName} = ${paramName};`);
-        cleanedParams.push(p.replace(/^(?:public|private|protected|readonly)\s+/, ""));
+        const withoutModifiers = p.replace(/^(?:(?:public|private|protected|readonly)\s+)+/, "");
+        cleanedParams.push(withoutModifiers);
       } else {
         cleanedParams.push(p);
       }
     }
 
-    if (assignments.length > 0) {
+    if (hasParamProperties) {
       if (superCall) {
         return `constructor(${cleanedParams.join(", ")}) {${superCall} ${assignments.join(" ")} `;
       }
@@ -191,22 +212,25 @@ export function transpileTypeScriptLocally(code: string): string {
     return match;
   });
 
-  // 7. Clean function & method parameter lists: remove type annotations from parameters e.g. (name: string, age: number = 25) -> (name, age = 25)
-  js = js.replace(/(\b(?:function\s*(?:[a-zA-Z_$][a-zA-Z0-9_$]*)?|constructor|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\()([^)]*)(\)\s*(?::\s*[^=>{]+)?\s*(?:=>|\{))/g, (_match, prefix, paramStr, suffix) => {
+  // 7. Clean function & method parameter lists and return types: (name: string, age: number = 25): boolean { -> (name, age = 25) {
+  js = js.replace(/(\b(?:function\s*(?:[a-zA-Z_$][a-zA-Z0-9_$]*)?|constructor|[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\()([\s\S]*?)(\)\s*(?::\s*[\s\S]*?)?\s*(?:=>|\{))/g, (_match, prefix, paramStr, suffix) => {
     const cleanedParams = paramStr
       .split(",")
       .map((p: string) => {
-        let clean = p.replace(/\b(public|private|protected|readonly)\s+/g, "");
+        let clean = p.replace(/\b(?:public|private|protected|readonly)\s+/g, "");
         clean = clean.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:[^=,]+/g, "$1");
         return clean;
       })
+      .filter((p: string, idx: number, arr: string[]) => {
+        return idx < arr.length - 1 || p.trim().length > 0;
+      })
       .join(",");
-    const cleanedSuffix = suffix.replace(/\)\s*:\s*[^=>{]+(?=\s*(?:=>|\{))/, ")");
+    const cleanedSuffix = suffix.replace(/\)\s*:\s*[\s\S]*?(?=\s*(?:=>|\{))/, ")");
     return `${prefix}${cleanedParams}${cleanedSuffix}`;
   });
 
-  // 8. Arrow function parameter lists with return types: e.g. const add = (a: number, b: number): number => ...
-  js = js.replace(/\(([^)]*)\)\s*:\s*[^=>{]+\s*=>/g, (_match, paramStr) => {
+  // 8. Arrow function parameter lists with return types: e.g. (a: number, b: number): number => ...
+  js = js.replace(/\(([^)]*)\)\s*(?::\s*[\s\S]*?)?\s*=>/g, (_match, paramStr) => {
     const cleanedParams = paramStr
       .split(",")
       .map((p: string) => p.replace(/([a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:[^=,]+/g, "$1"))
@@ -217,12 +241,10 @@ export function transpileTypeScriptLocally(code: string): string {
   // 9. Remove access modifiers: public, private, protected, readonly, override, abstract
   js = js.replace(/\b(public|private|protected|readonly|override|abstract)\s+/g, "");
 
-  // 10. Remove initialized variable and class field type annotations (e.g. grades: { subject: string; score: number }[] = []; or const x: Type = val;)
-  // Using [^\n=]+ prevents matching across newlines and eating subsequent lines!
+  // 10. Remove initialized variable and class field type annotations (e.g. grades: { ... }[] = []; or const user: User[] = val;)
   js = js.replace(/^(\s*(?:(?:let|const|var|static)\s+)?[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:[^\n=]+=(?!=)/gm, "$1 =");
 
   // 11. Remove uninitialized variable and class field type annotations (e.g. name: string; or studentId: string;)
-  // Using [^\n=]+ prevents matching across newlines!
   js = js.replace(/^(\s*(?:(?:let|const|var|static)\s+)?[a-zA-Z_$][a-zA-Z0-9_$]*)\s*\??\s*:[^\n=]+;(?=\s*(?:\n|$|\/\/|\/\*))/gm, "$1;");
 
   // 12. Remove 'as Type' type assertions
@@ -231,8 +253,8 @@ export function transpileTypeScriptLocally(code: string): string {
   // 13. Remove generic type arguments on function calls / new instances: e.g. Promise.resolve<string>('...') or new Set<string>()
   js = js.replace(/<[A-Za-z0-9_$,\s|&<>[\]]+>(?=\s*[\(\.])/g, "");
 
-  // 14. Remove function return type annotations: e.g. function foo(): string { or ): Promise<void> {
-  js = js.replace(/\)\s*:\s*[^=>{]+(?=\s*[{=;])/g, ")");
+  // 14. Remove standalone function/method return type annotations in declarations
+  js = js.replace(/\)\s*:\s*[^{=>;]+(?=\s*;)/g, ")");
 
   // 15. Remove non-null assertion operators: e.g. user!.name -> user.name
   js = js.replace(/([a-zA-Z0-9_$\]\)])!(?=[.\[(,\s;])/g, "$1");
