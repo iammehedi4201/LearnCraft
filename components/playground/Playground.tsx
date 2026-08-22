@@ -48,14 +48,18 @@ export function Playground({
   const [error, setError] = useState<PlaygroundError | undefined>();
   const [isRunning, setIsRunning] = useState(false);
   const [duration, setDuration] = useState<number | undefined>();
-  const [testResults, setTestResults] = useState<ValidationResult | undefined>();
+  const [testResults, setTestResults] = useState<
+    ValidationResult | undefined
+  >();
   const [showHints, setShowHints] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
 
   // ─── Expanded Mode Layout (3-pane: Example | Practice | Output) ───
-  const [expandedLayoutMode, setExpandedLayoutMode] = useState<"3-pane" | "2-pane">("3-pane");
+  const [expandedLayoutMode, setExpandedLayoutMode] = useState<
+    "3-pane" | "2-pane"
+  >("3-pane");
   const [ratio1, setRatio1] = useState(32); // Example panel %
   const [ratio2, setRatio2] = useState(38); // Practice panel %
   // Output panel % = 100 - ratio1 - ratio2 (30%)
@@ -124,7 +128,8 @@ export function Playground({
       setOutput([
         {
           type: "info",
-          content: "💡 Practice workspace is empty. Type your code or click '⚡ Copy to Practice' on the Example panel to get started!",
+          content:
+            "💡 Practice workspace is empty. Type your code or click '⚡ Copy to Practice' on the Example panel to get started!",
           timestamp: Date.now(),
         },
       ]);
@@ -151,14 +156,24 @@ export function Playground({
       setDuration(result.duration);
     } catch (e) {
       setError({
-        message: e instanceof Error ? e.message : "An unexpected error occurred.",
+        message:
+          e instanceof Error ? e.message : "An unexpected error occurred.",
         technicalMessage: String(e),
         suggestion: "Try refreshing the page if this persists.",
       });
     } finally {
       setIsRunning(false);
     }
-  }, [code, practiceCode, isFullscreen, expandedLayoutMode, runtimeType, isRunning, getRuntime, displayLanguage]);
+  }, [
+    code,
+    practiceCode,
+    isFullscreen,
+    expandedLayoutMode,
+    runtimeType,
+    isRunning,
+    getRuntime,
+    displayLanguage,
+  ]);
 
   const handleCheck = useCallback(async () => {
     if (isRunning || !exercise) return;
@@ -170,7 +185,8 @@ export function Playground({
       setOutput([
         {
           type: "info",
-          content: "💡 Practice workspace is empty. Type your solution to solve the exercise!",
+          content:
+            "💡 Practice workspace is empty. Type your solution to solve the exercise!",
           timestamp: Date.now(),
         },
       ]);
@@ -196,11 +212,14 @@ export function Playground({
         const result = await rt.validate(
           { code: codeToCheck, language: runtimeType },
           tests,
-          hiddenTests
+          hiddenTests,
         );
         setTestResults(result);
 
-        const runResult = await rt.run({ code: codeToCheck, language: runtimeType });
+        const runResult = await rt.run({
+          code: codeToCheck,
+          language: runtimeType,
+        });
         setOutput(runResult.output);
         setDuration(runResult.duration);
       } else {
@@ -214,7 +233,17 @@ export function Playground({
     } finally {
       setIsRunning(false);
     }
-  }, [code, practiceCode, isFullscreen, expandedLayoutMode, runtimeType, isRunning, exercise, getRuntime, handleRun]);
+  }, [
+    code,
+    practiceCode,
+    isFullscreen,
+    expandedLayoutMode,
+    runtimeType,
+    isRunning,
+    exercise,
+    getRuntime,
+    handleRun,
+  ]);
 
   const handleReset = useCallback(() => {
     if (isFullscreen && expandedLayoutMode === "3-pane") {
@@ -231,7 +260,7 @@ export function Playground({
 
   const handleCopy = useCallback(async () => {
     const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
-    const textToCopy = is3Pane ? (practiceCode || exampleCode) : code;
+    const textToCopy = is3Pane ? practiceCode || exampleCode : code;
     try {
       await navigator.clipboard.writeText(textToCopy);
       setShowCopyToast(true);
@@ -255,13 +284,16 @@ export function Playground({
     setHintsUsed((prev) => Math.min(prev + 1, exercise.hints!.length));
   }, [exercise]);
 
-  const handleApplySolution = useCallback((solution: string) => {
-    if (isFullscreen && expandedLayoutMode === "3-pane") {
-      setPracticeCode(solution);
-    } else {
-      setCode(solution);
-    }
-  }, [isFullscreen, expandedLayoutMode]);
+  const handleApplySolution = useCallback(
+    (solution: string) => {
+      if (isFullscreen && expandedLayoutMode === "3-pane") {
+        setPracticeCode(solution);
+      } else {
+        setCode(solution);
+      }
+    },
+    [isFullscreen, expandedLayoutMode],
+  );
 
   const handleFullscreen = useCallback(() => {
     setIsFullscreen((prev) => !prev);
@@ -321,7 +353,7 @@ export function Playground({
       e.preventDefault();
       startResizing();
     },
-    [startResizing]
+    [startResizing],
   );
 
   const handleTouchStart = useCallback(
@@ -330,7 +362,7 @@ export function Playground({
         startResizing();
       }
     },
-    [startResizing]
+    [startResizing],
   );
 
   // ─── 3-Pane Resizer Drag Handlers (Expanded Mode) ───
@@ -353,7 +385,10 @@ export function Playground({
           setRatio1(newRatio1);
         } else {
           // Dragging Resizer 2 (between Practice and Output)
-          const newRatio2 = Math.min(100 - ratio1 - 15, Math.max(20, percentage - ratio1));
+          const newRatio2 = Math.min(
+            100 - ratio1 - 15,
+            Math.max(20, percentage - ratio1),
+          );
           setRatio2(newRatio2);
         }
       };
@@ -368,7 +403,10 @@ export function Playground({
           const newRatio1 = Math.min(50, Math.max(15, percentage));
           setRatio1(newRatio1);
         } else {
-          const newRatio2 = Math.min(100 - ratio1 - 15, Math.max(20, percentage - ratio1));
+          const newRatio2 = Math.min(
+            100 - ratio1 - 15,
+            Math.max(20, percentage - ratio1),
+          );
           setRatio2(newRatio2);
         }
       };
@@ -386,10 +424,12 @@ export function Playground({
 
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", stopResizing);
-      document.addEventListener("touchmove", handleTouchMove, { passive: true });
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: true,
+      });
       document.addEventListener("touchend", stopResizing);
     },
-    [ratio1]
+    [ratio1],
   );
 
   // ─── Keyboard shortcuts ───
@@ -418,10 +458,20 @@ export function Playground({
   const totalHints = exercise?.hints?.length ?? 0;
   const is3PaneMode = isFullscreen && expandedLayoutMode === "3-pane";
 
+  // ─── Dynamic Auto-Expanding Height based on code line count ───
+  const activeCode = is3PaneMode ? practiceCode : code;
+  const lineCount = Math.max(
+    (activeCode || "").split("\n").length,
+    (starterCode || exercise?.starterCode || "").split("\n").length,
+    6,
+  );
+  const parsedBaseHeight = parseInt(height || "200", 10) || 200;
+  const dynamicBodyHeight = `${Math.max(lineCount * 24 + 44, parsedBaseHeight)}px`;
+
   const playgroundContent = (
     <div
       className={`playground ${className} ${isFullscreen ? "playground--fullscreen" : ""}`}
-      style={isFullscreen ? undefined : { minHeight: height }}
+      style={isFullscreen ? undefined : { minHeight: dynamicBodyHeight }}
     >
       {/* Header */}
       <div className="playground-header">
@@ -473,7 +523,9 @@ export function Playground({
       {exercise && !is3PaneMode && (
         <div className="playground-exercise-instructions">
           <div className="playground-exercise-title">{exercise.title}</div>
-          <div className="playground-exercise-text">{exercise.instructions}</div>
+          <div className="playground-exercise-text">
+            {exercise.instructions}
+          </div>
         </div>
       )}
 
@@ -481,7 +533,11 @@ export function Playground({
       <div
         ref={bodyRef}
         className={`playground-body ${is3PaneMode ? "playground-3pane-body" : ""}`}
-        style={isFullscreen ? { flex: 1, minHeight: 0 } : { height: height || "360px", minHeight: "240px" }}
+        style={
+          isFullscreen
+            ? { flex: 1, minHeight: 0 }
+            : { height: dynamicBodyHeight, minHeight: "200px" }
+        }
       >
         {is3PaneMode ? (
           /* ══════════════════════════════════════════════ */
@@ -545,7 +601,9 @@ export function Playground({
               <div className="playground-panel-header playground-practice-header">
                 <div className="playground-panel-header-left">
                   <span className="playground-panel-icon">⚡</span>
-                  <span className="playground-panel-title">Practice Workspace</span>
+                  <span className="playground-panel-title">
+                    Practice Workspace
+                  </span>
                   <span className="playground-panel-badge playground-panel-badge--editable">
                     Editable
                   </span>
@@ -565,7 +623,7 @@ export function Playground({
                 value={practiceCode}
                 onChange={setPracticeCode}
                 language={displayLanguage}
-                minHeight={height}
+                minHeight={dynamicBodyHeight}
                 isFullscreen={isFullscreen}
                 errorLine={error?.line}
                 onFormat={handleFormat}
@@ -644,7 +702,7 @@ export function Playground({
                 value={code}
                 onChange={setCode}
                 language={displayLanguage}
-                minHeight={height}
+                minHeight={dynamicBodyHeight}
                 isFullscreen={isFullscreen}
                 errorLine={error?.line}
                 onFormat={handleFormat}
@@ -688,7 +746,10 @@ export function Playground({
             {/* Console Output Panel */}
             <div
               className="playground-output-panel"
-              style={{ flex: `0 0 ${100 - splitRatio}%`, width: `${100 - splitRatio}%` }}
+              style={{
+                flex: `0 0 ${100 - splitRatio}%`,
+                width: `${100 - splitRatio}%`,
+              }}
             >
               <PlaygroundOutput
                 lines={output}
@@ -744,10 +805,12 @@ export function Playground({
       {!isFullscreen && playgroundContent}
 
       {/* Fullscreen overlay */}
-      <PlaygroundFullscreen isOpen={isFullscreen} onClose={() => setIsFullscreen(false)}>
+      <PlaygroundFullscreen
+        isOpen={isFullscreen}
+        onClose={() => setIsFullscreen(false)}
+      >
         {playgroundContent}
       </PlaygroundFullscreen>
     </>
   );
 }
-

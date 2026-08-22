@@ -134,6 +134,8 @@ export function transpileTypeScriptLocally(code: string): string {
         compilerOptions: {
           target: ts.ScriptTarget.ES2022,
           module: ts.ModuleKind.ESNext,
+          experimentalDecorators: true,
+          emitDecoratorMetadata: true,
           removeComments: false,
         },
       });

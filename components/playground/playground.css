@@ -168,7 +168,7 @@
 
 .playground-line-numbers {
   flex-shrink: 0;
-  padding: 14px 0 80px 0 !important;
+  padding: 14px 0 20px 0 !important;
   width: 2.75rem;
   background: var(--bg-weak-50);
   border-right: 1px solid var(--stroke-soft-200);
@@ -302,7 +302,7 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  padding: 14px 48px 80px 16px !important;
+  padding: 14px 48px 20px 16px !important;
   margin: 0 !important;
   border: none !important;
   outline: none !important;

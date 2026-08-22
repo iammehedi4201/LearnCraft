@@ -10,13 +10,11 @@ import {
 } from "./icons";
 import {
   NESTJS_STAGES,
-  StageMeta,
-  LessonMeta,
 } from "../data/nestjs-curriculum";
 import {
   isLessonComplete,
   getCompletionByStage,
-  getNextRecommendedLesson,
+  getActiveLesson,
 } from "../data/progress-store";
 import { ContentTagBadge } from "./content-tag-badge";
 
@@ -71,10 +69,10 @@ const STAGE_THEMES: Record<
   },
 };
 
-export function FullRoadmap({ initialExpandedStageId }: FullRoadmapProps) {
+export function FullRoadmap({ initialExpandedStageId: _initialExpandedStageId }: FullRoadmapProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string>("ALL");
-  const nextRecommended = getNextRecommendedLesson();
+  const activeLesson = getActiveLesson();
 
   const filteredStages = useMemo(() => {
     return NESTJS_STAGES.map((stage) => {
@@ -212,8 +210,9 @@ export function FullRoadmap({ initialExpandedStageId }: FullRoadmapProps) {
                       isLessonComplete(lesson.slug) ||
                       isLessonComplete(lesson.code);
                     const isCurrent =
-                      nextRecommended.slug === lesson.slug ||
-                      nextRecommended.code === lesson.code;
+                      Boolean(activeLesson &&
+                      (activeLesson.slug === lesson.slug ||
+                       activeLesson.code === lesson.code));
 
                     return (
                       <Link

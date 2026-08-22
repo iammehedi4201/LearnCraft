@@ -4,20 +4,27 @@ interface CodeBlockProps {
   code: string;
   language?: string;
   className?: string;
+  minLines?: number;
 }
 
 /**
  * Enhanced CodeBlock component specifically designed for pedagogy.
  * Separates code, inline comments, and provides a distinguishable layout.
  */
-export const EnhancedCodeBlock: React.FC<CodeBlockProps> = ({ code, language = 'typescript', className = '' }) => {
+export const EnhancedCodeBlock: React.FC<CodeBlockProps> = ({ 
+  code, 
+  language = 'typescript', 
+  className = '',
+  minLines
+}) => {
   // Split code into lines and process comments
   const lines = code.split('\n');
+  const totalDisplayLines = minLines ? Math.max(lines.length, minLines) : lines.length;
 
   return (
-    <div className={`my-6 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm ${className}`}>
+    <div className={`my-3 overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-sm flex flex-col ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex items-center justify-between px-4 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
         <div className="flex items-center gap-2">
           <div className="flex gap-1.5">
             <div className="w-3 h-3 rounded-full bg-red-400/80" />
@@ -31,10 +38,11 @@ export const EnhancedCodeBlock: React.FC<CodeBlockProps> = ({ code, language = '
       </div>
 
       {/* Code Content */}
-      <div className="p-0 overflow-x-auto selection:bg-blue-100 dark:selection:bg-blue-900/40">
-        <table className="w-full border-collapse table-fixed min-w-full">
+      <div className="p-0 overflow-hidden flex-1 selection:bg-blue-100 dark:selection:bg-blue-900/40">
+        <table className="w-full border-collapse table-auto min-w-full h-full">
           <tbody>
-            {lines.map((line, idx) => {
+            {Array.from({ length: totalDisplayLines }, (_, idx) => {
+              const line = idx < lines.length ? lines[idx] : "";
               const trimmedLine = line.trim();
               const isComment = trimmedLine.startsWith('//');
               const hasInlineComment = line.includes('//') && !isComment;
@@ -56,14 +64,14 @@ export const EnhancedCodeBlock: React.FC<CodeBlockProps> = ({ code, language = '
               return (
                 <tr key={idx} className="group hover:bg-slate-50/80 dark:hover:bg-slate-900/40 transition-colors">
                   {/* Line Number */}
-                  <td className="w-12 px-2 py-0.5 text-right text-[10px] text-slate-300 dark:text-slate-700 select-none border-r border-slate-100 dark:border-slate-800/50 font-mono align-top pt-1.5">
+                  <td className="w-10 min-w-[2.5rem] max-w-[2.5rem] px-2 py-0.5 text-right text-[10px] text-slate-300 dark:text-slate-700 select-none border-r border-slate-100 dark:border-slate-800/50 font-mono align-top pt-1.5 shrink-0">
                     {idx + 1}
                   </td>
                   {/* Code Line */}
-                  <td className="px-4 py-1 font-mono text-[13px] leading-6 whitespace-pre">
-                    <div className="flex flex-wrap items-baseline">
+                  <td className="px-3.5 py-1 font-mono text-[13px] leading-6 whitespace-pre-wrap break-words [word-break:break-word] align-top">
+                    <div className="flex flex-wrap items-baseline break-words">
                       {isComment ? (
-                        <span className="text-slate-400 dark:text-slate-500 italic font-sans decoration-slate-300 dark:decoration-slate-700 underline-offset-4 decoration-dotted">
+                        <span className="text-slate-400 dark:text-slate-500 italic font-sans decoration-slate-300 dark:decoration-slate-700 underline-offset-4 decoration-dotted break-words">
                           {line}
                         </span>
                       ) : (
@@ -76,7 +84,7 @@ export const EnhancedCodeBlock: React.FC<CodeBlockProps> = ({ code, language = '
                             {codePart}
                           </span>
                           {commentPart && (
-                            <span className="text-emerald-600/70 dark:text-emerald-500/60 italic ml-4 font-sans text-xs tracking-tight bg-emerald-50/50 dark:bg-emerald-500/5 px-1.5 py-0.5 rounded border border-emerald-100/50 dark:border-emerald-500/10 opacity-70 group-hover:opacity-100 transition-all duration-300">
+                            <span className="text-emerald-600/70 dark:text-emerald-500/60 italic ml-2 sm:ml-4 font-sans text-xs tracking-tight bg-emerald-50/50 dark:bg-emerald-500/5 px-1.5 py-0.5 rounded border border-emerald-100/50 dark:border-emerald-500/10 opacity-70 group-hover:opacity-100 transition-all duration-300 break-words">
                               {commentPart}
                             </span>
                           )}

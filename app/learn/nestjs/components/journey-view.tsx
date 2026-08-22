@@ -14,9 +14,8 @@ import {
 } from "../data/nestjs-curriculum";
 import {
   isLessonComplete,
-  getNextRecommendedLesson,
+  getActiveLesson,
 } from "../data/progress-store";
-import { ContentTagBadge } from "./content-tag-badge";
 
 interface JourneyViewProps {
   phaseId: string;
@@ -59,7 +58,7 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
     PROGRESSION_PHASES.find((p) => p.id === phaseId) || PROGRESSION_PHASES[0];
 
   const lessons = getLessonsByPhaseId(phase.id);
-  const nextRecommended = getNextRecommendedLesson();
+  const activeLesson = getActiveLesson();
 
   const completedCount = lessons.filter(
     (l) => isLessonComplete(l.slug) || isLessonComplete(l.code),
@@ -109,8 +108,9 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
             const isDone =
               isLessonComplete(lesson.slug) || isLessonComplete(lesson.code);
             const isTarget =
-              nextRecommended.slug === lesson.slug ||
-              nextRecommended.code === lesson.code;
+              Boolean(activeLesson &&
+              (activeLesson.slug === lesson.slug ||
+               activeLesson.code === lesson.code));
 
             return (
               <Link

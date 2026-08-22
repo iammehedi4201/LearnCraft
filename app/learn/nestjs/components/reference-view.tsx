@@ -12,7 +12,6 @@ import {
 } from "./icons";
 import {
   getAllLessons,
-  LessonMeta,
 } from "../data/nestjs-curriculum";
 
 const CLI_CHEATSHEET = [

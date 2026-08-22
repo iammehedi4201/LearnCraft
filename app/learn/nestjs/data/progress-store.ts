@@ -156,13 +156,25 @@ export function getOverallProgress(): {
   return { completedCount, totalCount, percent };
 }
 
-export function getNextRecommendedLesson(): LessonMeta {
+export function getActiveLesson(): LessonMeta | null {
   const all = getAllLessons();
   const { currentLessonSlug } = getProgress();
 
-  if (currentLessonSlug) {
+  if (!currentLessonSlug) return null;
+
+  const found = all.find(
+    (l) => l.slug === currentLessonSlug || l.code === currentLessonSlug
+  );
+  return found || null;
+}
+
+export function getNextRecommendedLesson(): LessonMeta {
+  const all = getAllLessons();
+  const active = getActiveLesson();
+
+  if (active) {
     const currentIndex = all.findIndex(
-      (l) => l.slug === currentLessonSlug || l.code === currentLessonSlug
+      (l) => l.slug === active.slug || l.code === active.code
     );
     if (currentIndex >= 0) {
       for (let i = currentIndex; i < all.length; i++) {

@@ -1,179 +1,190 @@
-import { QuickCheck } from "@/components/quick-check";
-import { EnhancedCodeBlock, ExplainerSection } from "@/components/enhanced-code-display";
+"use client";
+
+import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
+import { QuickCheck } from "./quick-check";
+import { Playground } from "@/components/playground/Playground";
+import {
+  SectionContainer,
+  TopicHeader,
+  SectionHeading,
+  AnalogyBox,
+  Divider,
+} from "./shared-components";
+
+// ═══════════════════════════════════════════════════════════
+// PART 10 — GENERICS FUNDAMENTALS
+// ═══════════════════════════════════════════════════════════
 
 export function SectionGenerics() {
   return (
-    <section className="mt-12">
-      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">3. Generics — Reusable Type Patterns</h2>
+    <SectionContainer number={10} title="Generics Fundamentals">
+      {/* ── 10.1 The Power of Generics ── */}
+      <div className="mb-16">
+        <TopicHeader
+          number={1}
+          title="Type Parameters (<T>): Fill-in-the-Blank Types"
+          description="Generics allow you to write reusable functions, interfaces, and classes that work with any data type while preserving 100% type safety and autocomplete."
+          color="primary"
+        />
 
-      <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-        <ExplainerSection 
-          title="The Power of Generics"
-          icon={<svg className="w-5 h-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>}
-        >
-          Sometimes you want to build a tool that works with <em>any</em> type of data, but without turning off the rules using <code className="text-red-500">any</code>. Generics are like a <span className="font-bold text-blue-600">fill-in-the-blank</span> label. You don&apos;t say what type it is right away; you let the person using the tool fill in the blank!
-        </ExplainerSection>
+        <AnalogyBox emoji="📦" title="Think about it like this">
+          Think of a standard Shipping Container. The container itself has a standard shape, locking mechanism, and transport tracking (<code className="text-ds-info-dark">ApiResponse&lt;T&gt;</code>).
+          <p className="mt-2">
+            You can load the container with laptops, coffee beans, or cars. But the shipping manifest strictly specifies <code className="text-ds-info-dark">Container&lt;Laptops&gt;</code>, so when the destination port opens it, they know with 100% certainty that laptops are inside — not random unknown goods!
+          </p>
+        </AnalogyBox>
 
-        <div>
-          <h4 className="font-bold text-sm text-red-700 dark:text-red-400 mb-2 flex items-center gap-2">
-            <span className="text-base">😫</span>
-            Life WITHOUT Generics (the pain)
-          </h4>
-
-          <ExplainerSection title="The Problem: Repetition" variant="danger">
-            Without generics, you'd copy-paste the same structure for EVERY type. Only the <code>data</code> field changes! This creates hundreds of lines of duplicated code that&apos;s unmaintainable and error-prone.
-          </ExplainerSection>
-
-          <EnhancedCodeBlock 
-            code={`interface StringResponse {
-  success: boolean;
-  data: string;
-}
-interface NumberResponse {
-  success: boolean;
-  data: number;
-}
-interface UserResponse {
+        <div className="grid md:grid-cols-2 gap-6 mb-8 items-stretch">
+          <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-error-light/30 flex flex-col justify-between h-full">
+            <div>
+              <h5 className="font-bold text-sm text-ds-error-dark mb-2 flex items-center gap-2">
+                <span>😫</span> Without Generics (Pain &amp; Repetition)
+              </h5>
+              <p className="text-xs text-ds-text-sub leading-relaxed mb-3">
+                You must duplicate the response structure for every single database entity:
+              </p>
+            </div>
+            <div className="mt-auto">
+              <EnhancedCodeBlock
+                code={`interface UserResponse {
   success: boolean;
   data: User;
+}
+
+interface ProductResponse {
+  success: boolean;
+  data: Product;
+}
+
+interface OrderResponse {
+  success: boolean;
+  data: Order;
 }`}
-          />
-        </div>
+                language="typescript"
+              />
+            </div>
+          </div>
 
-        <div className="mt-8">
-          <h4 className="font-bold text-sm text-emerald-700 dark:text-emerald-400 mb-2 flex items-center gap-2">
-            <span className="text-base">✨</span>
-            Life WITH Generics (the solution)
-          </h4>
-
-          <ExplainerSection title="Reusable Generic Interface" variant="success">
-            With generics, ONE definition works for ALL types. The placeholder <code className="text-emerald-600 font-bold">&lt;T&gt;</code> means "any type you want". Now you just fill in the blank!
-          </ExplainerSection>
-
-          <EnhancedCodeBlock 
-            code={`interface ApiResponse<T> {
+          <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-success-light/30 flex flex-col justify-between h-full">
+            <div>
+              <h5 className="font-bold text-sm text-ds-success-dark mb-2 flex items-center gap-2">
+                <span>✨</span> With Generics (One Definition for All)
+              </h5>
+              <p className="text-xs text-ds-text-sub leading-relaxed mb-3">
+                Define ONE wrapper, and pass the specific payload type inside the angle brackets:
+              </p>
+            </div>
+            <div className="mt-auto">
+              <EnhancedCodeBlock
+                code={`interface ApiResponse<T> {
   success: boolean;
   data: T;
+  timestamp: string;
 }
 
-const userRes: ApiResponse<User> = { success: true, data: someUser };
-const numRes: ApiResponse<number> = { success: true, data: 42 };
-const strRes: ApiResponse<string> = { success: true, data: "hello" };`}
-          />
-        </div>
-
-        <ExplainerSection 
-          title="How <T> Works — Step by Step" 
-          variant="warning"
-        >
-          <ol className="text-xs space-y-2 list-decimal pl-5">
-            <li><code className="text-amber-600 font-bold">&lt;T&gt;</code> is just a placeholder name. You could call it <code className="text-amber-600">&lt;Type&gt;</code>, <code className="text-amber-600">&lt;Item&gt;</code>, <code className="text-amber-600">&lt;Data&gt;</code> — anything. <code>T</code> is just the convention.</li>
-            <li>When you <strong>use</strong> the generic (e.g., <code className="text-amber-600">ApiResponse&lt;User&gt;</code>), TypeScript replaces every <code>T</code> inside with <code>User</code>.</li>
-            <li>From that point on, TypeScript <strong>strictly enforces</strong> the substituted type — you can&apos;t put a <code>string</code> where a <code>User</code> belongs.</li>
-          </ol>
-        </ExplainerSection>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <div className="p-4 rounded-xl border border-blue-100 dark:border-blue-900/30 bg-blue-500/5">
-            <h5 className="text-xs font-bold text-blue-600 uppercase mb-1">Write Once, Use Anywhere</h5>
-            <p className="text-[11px] text-slate-500">Instead of building a &quot;Cat List&quot; and a &quot;Dog List,&quot; just build an &quot;Animal List&quot; and fill in the blank later.</p>
-          </div>
-          <div className="p-4 rounded-xl border border-emerald-100 dark:border-emerald-900/30 bg-emerald-500/5">
-            <h5 className="text-xs font-bold text-emerald-600 uppercase mb-1">Perfect Memory</h5>
-            <p className="text-[11px] text-slate-500">If you fill the blank with &quot;Dog&quot;, TypeScript will strictly remember it is a Dog, unlike <code className="text-slate-700 font-bold">any</code>.</p>
+// Reused effortlessly for any entity:
+type UserResponse    = ApiResponse<User>;
+type ProductResponse = ApiResponse<Product>;
+type OrderResponse   = ApiResponse<Order>;`}
+                language="typescript"
+              />
+            </div>
           </div>
         </div>
+      </div>
 
-        <ExplainerSection 
-          title="Easy View: The Flexible Box" 
-          variant="success"
-          icon={<svg className="w-5 h-5 text-emerald-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>}
-        >
-          A <strong>Generic</strong> is like a box that can hold anything, but it still remembers what&apos;s inside. Imagine a box labeled &quot;Item Box.&quot; You can put a toy in it, or a book. But once you put a toy in, the box <em>becomes</em> a <strong>Toy Box</strong>. Generics lets you build things that work for many different items without losing track of what they are.
-        </ExplainerSection>
+      <Divider />
 
-        <div className="space-y-6">
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span>
-              Plain TypeScript Example
-            </h4>
-            <ExplainerSection title="Write once, use anywhere" variant="info">
-              A generic &quot;fill-in-the-blank&quot; function.
-            </ExplainerSection>
-            <EnhancedCodeBlock 
-              code={`// 1. A generic Class (Matches the "Item Box" analogy)
-class ItemBox<T> {
-  item: T;
-  
-  constructor(item: T) {
-    this.item = item;
+      {/* ── 10.2 Generic Functions & Classes ── */}
+      <div className="mb-16">
+        <TopicHeader
+          number={2}
+          title="Generic Functions & Data Stores"
+          description="Write utility functions and in-memory stores that adapt to whatever type they are given."
+          color="sky"
+        />
+
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Generic Memory Cache</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`// Universal Generic Memory Cache
+class MemoryCache<T> {
+  private store = new Map<string, T>();
+
+  set(key: string, value: T): void {
+    this.store.set(key, value);
+    console.log(\`📦 Cached key: "\${key}"\`);
   }
-  
-  getItem(): T {
-    return this.item;
+
+  get(key: string): T | undefined {
+    return this.store.get(key);
   }
 }
 
-const stringBox = new ItemBox<string>("A shiny new toy");
-const myToy = stringBox.getItem();  // TS remembers this is a string
-
-// 2. A generic Interface (Matches the "Animal List" analogy)
-interface AnimalList<T> {
-  animals: T[];
-  add(animal: T): void;
+interface UserProfile {
+  id: number;
+  name: string;
 }
 
-type Dog = { name: string, barks: boolean };
-type Cat = { name: string, purrs: boolean };
+// 1. Create a cache strictly for UserProfiles
+const userCache = new MemoryCache<UserProfile>();
+userCache.set("user:101", { id: 101, name: "Mehedi" });
 
-// Create a list completely strictly tailored to Dogs!
-const dogList: AnimalList<Dog> = {
-  animals: [],
-  add: (dog) => console.log("Added dog: " + dog.name)
-};`}
-            />
-          </div>
+const cachedUser = userCache.get("user:101");
+if (cachedUser) {
+  console.log(\`✅ Autocomplete works! User: \${cachedUser.name}\`);
+}
 
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">2</span>
-              How it is used in NestJS
-            </h4>
-            <ExplainerSection title="NestJS Context" variant="success">
-              In NestJS, Generics are used heavily to create reusable API wrappers and reusable Database services.
-            </ExplainerSection>
-            <EnhancedCodeBlock 
-              code={`// Universal API Response Wrapper
-interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  timestamp: Date;
+// 2. Create a cache strictly for numeric counters
+const counterCache = new MemoryCache<number>();
+counterCache.set("pageViews", 45200);
+console.log(\`✅ Counter: \${counterCache.get("pageViews")}\`);`}
+            height="320px"
+          />
+        </div>
+
+        <div className="mb-8">
+          <SectionHeading>🦁 How Generics are Used in NestJS Repositories</SectionHeading>
+          <EnhancedCodeBlock
+            code={`import { Injectable } from '@nestjs/common';
+
+// Standard NestJS Paginated Response Wrapper
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 @Injectable()
-export class UserService {
-  
-  // This service returns an ApiResponse, filled in with a 'User' object
-  getUser(id: number): ApiResponse<User> {
-    const user: User = { id, name: 'Alice', email: 'alice@test.com' };
-    
+export class BaseDataService<T> {
+  protected items: T[] = [];
+
+  findAll(): PaginatedResult<T> {
     return {
-      success: true,
-      data: user, // Must match the <User> type!
-      timestamp: new Date()
+      items: this.items,
+      total: this.items.length,
+      page: 1,
+      pageSize: 10,
     };
   }
+
+  create(item: T): T {
+    this.items.push(item);
+    return item;
+  }
 }`}
-            />
-          </div>
+            language="typescript"
+          />
         </div>
 
         <QuickCheck
-          question={`What is the difference between using "any" and using a Generic <T>?`}
-          answer={`With "any", TypeScript forgets the type completely — you lose all safety. With a Generic <T>, TypeScript remembers the specific type you filled in. For example, ApiResponse<User> will guarantee that "data" is always a User object. "any" would let you put anything there and TypeScript wouldn't warn you.`}
+          question="What is the difference between using a Generic `<T>` and using `any`?"
+          answer="With `any`, TypeScript disables type checking and forgets what data is inside. With a Generic `<T>`, TypeScript remembers the exact type you passed (e.g. `ApiResponse<User>`) and provides full autocomplete, refactoring safety, and compile-time validation on `response.data`."
         />
       </div>
-    </section>
+    </SectionContainer>
   );
 }

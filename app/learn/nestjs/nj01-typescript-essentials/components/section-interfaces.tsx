@@ -1,181 +1,177 @@
-﻿import { QuickCheck } from "@/components/quick-check";
-import { EnhancedCodeBlock, ExplainerSection } from "@/components/enhanced-code-display";
+"use client";
+
+import { EnhancedCodeBlock } from "@/components/enhanced-code-display";
+import { QuickCheck } from "./quick-check";
+import { Playground } from "@/components/playground/Playground";
+import {
+  SectionContainer,
+  TopicHeader,
+  SectionHeading,
+  AnalogyBox,
+  MistakeBox,
+  Divider,
+  ComparisonTable,
+} from "./shared-components";
+
+// ═══════════════════════════════════════════════════════════
+// PART 7 — INTERFACES VS TYPE ALIASES
+// ═══════════════════════════════════════════════════════════
 
 export function SectionInterfaces() {
   return (
-    <section className="mt-12">
-      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">2. Interfaces vs Type Aliases</h2>
+    <SectionContainer number={7} title="Interfaces vs Type Aliases">
+      {/* ── 7.1 Choosing the Right Tool ── */}
+      <div className="mb-16">
+        <TopicHeader
+          number={1}
+          title="Blueprints vs Nicknames"
+          description="TypeScript gives you two main ways to name custom shapes: 'interface' and 'type'. Understanding when to use which is essential for clean architecture."
+          color="primary"
+        />
 
-      <div className="bg-white dark:bg-slate-900/50 p-6 rounded-lg border border-gray-200 dark:border-slate-800 mb-6">
-        <h3 className="font-semibold text-lg mb-4 text-gray-800 dark:text-slate-200">Choosing the Right Tool</h3>
-        <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700 mb-8">
-          <ul className="space-y-4">
-            <li className="flex gap-4">
-              <div className="h-6 w-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
-                <span className="text-blue-600 text-xs font-bold">1</span>
-              </div>
-              <div>
-                <h5 className="font-bold text-slate-900 dark:text-white text-sm">Interfaces = Blueprints</h5>
-                <p className="text-slate-500 text-xs mt-1">An Interface is just a blueprint for an object. It says: &quot;A User object must have a name, an email, and an age.&quot; You can easily add more rules to a blueprint later if you need to.</p>
-              </div>
+        <AnalogyBox emoji="🏗️" title="Think about it like this">
+          <ul className="list-disc pl-5 space-y-1.5">
+            <li>
+              <strong>Interface = Architectural Blueprint:</strong> Describes the exact shape of a physical building (how many rooms, doors, and electrical outlets it has). Other blueprints can extend it.
             </li>
-            <li className="flex gap-4">
-              <div className="h-6 w-6 rounded-full bg-indigo-500/10 flex items-center justify-center shrink-0">
-                <span className="text-indigo-600 text-xs font-bold">2</span>
-              </div>
-              <div>
-                <h5 className="font-bold text-slate-900 dark:text-white text-sm">Types = Nicknames</h5>
-                <p className="text-slate-500 text-xs mt-1">A Type is like giving a nickname to something. If an ID can be a number OR a string, you can just call it <code className="text-indigo-600">IDType</code>. Once you make a nickname, you can&apos;t change it.</p>
-              </div>
+            <li>
+              <strong>Type Alias = Custom Nickname:</strong> Can give a convenient name to <em>anything</em> — a union (<code className="text-ds-info-dark">ID = string | number</code>), a tuple, or a raw primitive.
             </li>
           </ul>
-        </div>
+        </AnalogyBox>
 
-        <div className="overflow-x-auto mb-8">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="border-b border-slate-200 dark:border-slate-700">
-                <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider text-slate-500">Feature</th>
-                <th className="py-3 px-4 text-center text-xs font-bold uppercase tracking-wider text-blue-600"><code>interface</code></th>
-                <th className="py-3 px-4 text-center text-xs font-bold uppercase tracking-wider text-indigo-600"><code>type</code></th>
-              </tr>
-            </thead>
-            <tbody className="text-xs text-slate-600 dark:text-slate-400">
-              <tr className="border-b border-slate-100 dark:border-slate-800">
-                <td className="py-2 px-4">Object shapes</td>
-                <td className="py-2 px-4 text-center text-emerald-600 font-bold">✅ Best choice</td>
-                <td className="py-2 px-4 text-center">✅ Works</td>
-              </tr>
-              <tr className="border-b border-slate-100 dark:border-slate-800">
-                <td className="py-2 px-4">Unions (<code>A | B</code>)</td>
-                <td className="py-2 px-4 text-center text-red-500">❌ Cannot do</td>
-                <td className="py-2 px-4 text-center text-emerald-600 font-bold">✅ Best choice</td>
-              </tr>
-              <tr className="border-b border-slate-100 dark:border-slate-800">
-                <td className="py-2 px-4">Extending later</td>
-                <td className="py-2 px-4 text-center text-emerald-600 font-bold">✅ Can extend</td>
-                <td className="py-2 px-4 text-center text-red-500">❌ Cannot reopen</td>
-              </tr>
-              <tr>
-                <td className="py-2 px-4">NestJS convention</td>
-                <td className="py-2 px-4 text-center text-emerald-600 font-bold">✅ Preferred</td>
-                <td className="py-2 px-4 text-center">Use for unions</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <ExplainerSection 
-          title="Simple Concept: A List of Rules"
-          icon={<svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" /><polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" /></svg>}
-        >
-          An <strong>Interface</strong> is just a simple &quot;List of Rules&quot; for an object. For example, if you say a <strong>User</strong> object <em>must</em> have a name and an email, TypeScript will make sure you don&apos;t forget them. It&apos;s like a contract—as long as you follow the rules, your code is safe.
-        </ExplainerSection>
-
-        <div className="space-y-6">
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span className="bg-amber-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">1</span>
-              Plain TypeScript Example
-            </h4>
-
-            <ExplainerSection title="Interfaces as Blueprints" variant="info">
-              An interface is a blueprint for an object. Define what properties must exist and what types they should be.
-            </ExplainerSection>
-
-            <EnhancedCodeBlock 
-              code={`interface User {
-  name: string;
-  email: string;
-  age: number;
-}
-
-const newUser: User = {
-  name: "Alice",
-  email: "alice@example.com",
-  age: 28
-};`}
-            />
-
-            <ExplainerSection title="Types as Nicknames" variant="info">
-              A type can be a "nickname" for a union (multiple possible types). An <code>IDType</code> can be either a number OR a string.
-            </ExplainerSection>
-
-            <EnhancedCodeBlock 
-              code={`type IDType = number | string;
-
-let myId: IDType = 101; 
-let yourId: IDType = "USER-101";`}
-            />
-          </div>
-
-          <div>
-            <h4 className="font-bold text-sm text-red-700 dark:text-red-400 mb-2 flex items-center gap-2">
-              <span className="text-base">💥</span>
-              What happens when you break the rules?
-            </h4>
-
-            <ExplainerSection title="Contract Enforcement" variant="danger">
-              An interface is a <strong>binding contract</strong>. If your object is missing a required property or includes something extra not defined in the blueprint, TypeScript will highlight it as an error immediately.
-            </ExplainerSection>
-
-            <EnhancedCodeBlock 
-              code={`interface User {
-  name: string;
-  email: string;
-}
-
-// ❌ TypeScript ERROR — missing 'email' property!
-const badUser: User = { name: "Alice" };
-
-// ❌ TypeScript ERROR — extra property not in the blueprint!
-const anotherBad: User = { name: "Bob", email: "bob@test.com", phone: "123" };
-
-// ✅ Correct — follows the blueprint exactly
-const goodUser: User = { name: "Alice", email: "alice@test.com" };`}
-            />
-          </div>
-
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-              <span className="bg-blue-500 text-white w-6 h-6 rounded flex items-center justify-center text-xs">2</span>
-              How it is used in NestJS
-            </h4>
-            <ExplainerSection title="NestJS Context" variant="success">
-              In NestJS, Interfaces (and Classes) act as DTOs (Data Transfer Objects). They serve as the exact blueprint for incoming request bodies. NestJS automatically validates the incoming request against the DTO blueprint before your code even runs!
-            </ExplainerSection>
-            <EnhancedCodeBlock 
-              code={`interface CreateUserDto {
-  name: string;
-  email: string;
-}
-
-@Controller('users')
-export class UsersController {
-  
-  @Post()
-  create(@Body() body: CreateUserDto) {
-    return \`Creating user \${body.name} with email \${body.email}\`;
-  }
-}`}
-            />
-          </div>
-        </div>
-
-        <QuickCheck
-          question="If you need a type that is either a string OR a number, which should you use — interface or type?"
-          answer='Use "type"! Interfaces cannot represent unions (A | B). The correct answer is: type StringOrNumber = string | number;'
+        <ComparisonTable
+          headers={["Feature", "interface User { ... }", "type User = { ... }"]}
+          rows={[
+            ["Best For", "Defining Object & Class contracts", "Unions, primitives, tuples, utility types"],
+            ["Extending / Inheritance", "extends (Clean & fast)", "& (Intersection operator)"],
+            ["Declaration Merging", "✅ Yes (Auto-merges duplicate names)", "❌ No (Throws duplicate identifier error)"],
+            ["Union Types (A | B)", "❌ Cannot create unions directly", "✅ Native support (type ID = string | number)"],
+            ["NestJS Recommendation", "✅ Preferred for DTO contracts & Service shapes", "✅ Preferred for unions, responses, & utilities"],
+          ]}
         />
       </div>
 
-      <div className="bg-blue-50 dark:bg-blue-950/20 border-l-4 border-blue-500 p-6 rounded">
-        <h3 className="font-semibold text-lg mb-3 text-blue-900 dark:text-blue-400">
-          🏗️ NestJS Convention
-        </h3>
-        <p className="text-blue-800 dark:text-blue-300 text-sm">
-          <strong>Use interfaces</strong> for DTOs, entity shapes, and service contracts. NestJS uses interfaces extensively for defining the shape of data flowing through controllers, services, and repositories.
-        </p>
+      <Divider />
+
+      {/* ── 7.2 Interface Inheritance & Declaration Merging ── */}
+      <div className="mb-16">
+        <TopicHeader
+          number={2}
+          title="Extending Interfaces & Merging"
+          description="Interfaces can inherit properties from other interfaces using 'extends', allowing you to build modular, clean object hierarchies."
+          color="sky"
+        />
+
+        <div className="mb-8">
+          <SectionHeading>🚀 Try It Yourself: Interface Inheritance & Composition</SectionHeading>
+          <Playground
+            runtime="typescript"
+            language="TypeScript"
+            starterCode={`// 1. Base Entity Interface
+interface BaseEntity {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// 2. Extending the Base Entity for a User
+interface User extends BaseEntity {
+  name: string;
+  email: string;
+  role: "ADMIN" | "USER";
+}
+
+const activeAdmin: User = {
+  id: 101,
+  name: "Mehedi",
+  email: "admin@learncraft.io",
+  role: "ADMIN",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
+console.log(\`✅ Loaded User #\${activeAdmin.id}: \${activeAdmin.name} (\${activeAdmin.role})\`);`}
+            height="290px"
+          />
+        </div>
+
+        <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft mb-8">
+          <h5 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
+            <span>🧩</span> Declaration Merging (Interfaces only)
+          </h5>
+          <p className="text-xs text-ds-text-sub leading-relaxed mb-3">
+            If you declare an interface with the same name multiple times, TypeScript automatically merges all fields into a single combined interface. This is how NestJS plugins extend Express request objects!
+          </p>
+          <EnhancedCodeBlock
+            code={`// First declaration (e.g. from NestJS core)
+interface RequestContext {
+  userId: string;
+}
+
+// Second declaration (e.g. from an Auth Plugin)
+interface RequestContext {
+  token: string;
+}
+
+// Result: RequestContext now requires BOTH userId AND token!
+const ctx: RequestContext = {
+  userId: "usr_99",
+  token: "jwt_ey...",
+};`}
+            language="typescript"
+          />
+        </div>
+
+        <MistakeBox
+          title="Trying to create a union using an interface"
+          description="An interface can only define the shape of an object. If you need a union (e.g. string OR number), you must use a 'type' alias."
+          wrong={`// ❌ WRONG: Syntax Error! Interfaces cannot be unions
+interface ID = string | number;`}
+          right={`// ✅ RIGHT: Use a type alias for union definitions
+type ID = string | number;`}
+        />
       </div>
-    </section>
+
+      <Divider />
+
+      {/* ── 7.3 Interfaces in NestJS Architecture ── */}
+      <div className="mb-16">
+        <TopicHeader
+          number={3}
+          title="Interfaces in NestJS DTOs & Service Contracts"
+          description="NestJS uses interfaces to decouple controllers from service implementations and ensure strict contract adherence."
+          color="emerald"
+        />
+
+        <EnhancedCodeBlock
+          code={`import { Injectable } from '@nestjs/common';
+
+// Service Contract Interface
+export interface IAuthService {
+  validateUser(email: string, pass: string): Promise<boolean>;
+  generateToken(userId: number): string;
+}
+
+// Concrete Service implementing the interface
+@Injectable()
+export class AuthService implements IAuthService {
+  async validateUser(email: string, pass: string): Promise<boolean> {
+    return email === 'admin@nest.com' && pass === 'secret';
+  }
+
+  generateToken(userId: number): string {
+    return \`jwt_token_for_\${userId}\`;
+  }
+}`}
+          language="typescript"
+        />
+
+        <QuickCheck
+          question="If you need a custom type that represents either a 'SuccessResponse' OR an 'ErrorResponse', should you use an interface or a type alias?"
+          answer="You must use a 'type' alias (e.g. type ApiResponse = SuccessResponse | ErrorResponse). Interfaces only define object structures and cannot represent union types."
+        />
+      </div>
+    </SectionContainer>
   );
 }
