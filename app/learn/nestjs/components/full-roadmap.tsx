@@ -143,20 +143,20 @@ export function FullRoadmap({ initialExpandedStageId }: FullRoadmapProps) {
             return (
               <div
                 key={stage.id}
-                className="rounded-3xl border border-ds-stroke-soft bg-ds-bg-white overflow-hidden transition-all shadow-sm"
+                className="rounded-3xl border border-ds-stroke-soft hover:border-ds-feature-base/30 bg-ds-bg-white overflow-hidden transition-all duration-300 shadow-sm"
               >
                 {/* Stage Header Accordion Toggle */}
                 <button
                   onClick={() => toggleStage(stage.id)}
-                  className="w-full px-6 sm:px-8 py-5 flex items-center justify-between gap-4 text-left transition-colors hover:bg-ds-bg-weak cursor-pointer"
+                  className="group w-full px-6 sm:px-8 py-5 flex items-center justify-between gap-4 text-left transition-all hover:bg-ds-bg-weak/50 cursor-pointer"
                 >
                   <div className="flex items-center gap-4 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-ds-bg-weak flex items-center justify-center font-mono text-xs font-black text-ds-text-strong border border-ds-stroke-soft shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-ds-bg-weak flex items-center justify-center font-mono text-xs font-black text-ds-text-strong border border-ds-stroke-soft group-hover:border-ds-feature-base/40 group-hover:text-ds-feature-base group-hover:bg-ds-feature-lighter/5 shrink-0 transition-all duration-300">
                       0{stage.stageNumber}
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2.5 flex-wrap">
-                        <span className="text-base sm:text-lg font-black text-ds-text-strong">
+                        <span className="text-base sm:text-lg font-black text-ds-text-strong group-hover:text-ds-feature-base transition-colors duration-300">
                           {stage.name}
                         </span>
                         <span className="text-xs sm:text-sm text-ds-text-sub hidden sm:inline">
@@ -176,7 +176,7 @@ export function FullRoadmap({ initialExpandedStageId }: FullRoadmapProps) {
                       </span>
                     </div>
 
-                    <div className="p-1.5 rounded-lg text-ds-icon-sub hover:text-ds-icon-strong">
+                    <div className="p-1.5 rounded-lg text-ds-icon-sub group-hover:text-ds-feature-base group-hover:bg-ds-bg-soft/50 transition-all duration-300">
                       {isExpanded ? (
                         <ChevronUp className="w-5 h-5" />
                       ) : (

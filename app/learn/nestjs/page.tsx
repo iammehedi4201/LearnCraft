@@ -13,11 +13,7 @@ import {
   Target,
   BookOpen,
 } from "./components/icons";
-import {
-  NESTJS_STAGES,
-  StageMeta,
-  LessonMeta,
-} from "./data/nestjs-curriculum";
+import { NESTJS_STAGES, StageMeta, LessonMeta } from "./data/nestjs-curriculum";
 import {
   setGoal,
   getGoal,
@@ -29,17 +25,39 @@ import { JourneyView } from "./components/journey-view";
 import { FullRoadmap } from "./components/full-roadmap";
 
 const GOAL_OPTIONS = [
-  { id: "basics", label: "Understand the basics", tag: "Fast track", desc: "Core patterns & basics" },
-  { id: "build-api", label: "Build my first API", tag: "Recommended", desc: "Hands-on CRUD & Architecture" },
-  { id: "job-ready", label: "Become job-ready", tag: "Comprehensive", desc: "Auth, Databases, Pro practices" },
-  { id: "browse", label: "Browse full curriculum", tag: "All modules", desc: "All 32 specialized lessons" },
+  {
+    id: "basics",
+    label: "Understand the basics",
+    tag: "Fast track",
+    desc: "Core patterns & basics",
+  },
+  {
+    id: "build-api",
+    label: "Build my first API",
+    tag: "Recommended",
+    desc: "Hands-on CRUD & Architecture",
+  },
+  {
+    id: "job-ready",
+    label: "Become job-ready",
+    tag: "Comprehensive",
+    desc: "Auth, Databases, Pro practices",
+  },
+  {
+    id: "browse",
+    label: "Browse full curriculum",
+    tag: "All modules",
+    desc: "All 32 specialized lessons",
+  },
 ];
 
 export default function NestJSPage() {
   const [activeTab, setActiveTab] = useState<"journey" | "roadmap">("journey");
   const [selectedGoal, setSelectedGoalState] = useState<string>("build-api");
   const [currentStage, setCurrentStage] = useState<StageMeta>(NESTJS_STAGES[0]);
-  const [nextLesson, setNextLesson] = useState<LessonMeta>(NESTJS_STAGES[0].lessons[0]);
+  const [nextLesson, setNextLesson] = useState<LessonMeta>(
+    NESTJS_STAGES[0].lessons[0],
+  );
   const [hasStarted, setHasStarted] = useState<boolean>(false);
   const [progressSummary, setProgressSummary] = useState({
     completedCount: 0,
@@ -70,9 +88,15 @@ export default function NestJSPage() {
       updateLocalState();
     };
 
-    window.addEventListener("learncraft-progress-updated", handleProgressUpdated);
+    window.addEventListener(
+      "learncraft-progress-updated",
+      handleProgressUpdated,
+    );
     return () => {
-      window.removeEventListener("learncraft-progress-updated", handleProgressUpdated);
+      window.removeEventListener(
+        "learncraft-progress-updated",
+        handleProgressUpdated,
+      );
     };
   }, []);
 
@@ -97,7 +121,7 @@ export default function NestJSPage() {
       <Nav />
 
       {/* Expansive Parent Section Width */}
-      <main className="flex-1 max-w-[92rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full">
+      <main className="flex-1 max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full">
         {/* Destination-First Hero */}
         <section className="py-8 md:py-12 border-b border-ds-stroke-soft">
           <div className="max-w-4xl">
@@ -117,19 +141,27 @@ export default function NestJSPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-7 text-sm">
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-ds-success-base shrink-0" />
-                <span className="text-ds-text-strong font-medium">Build modular REST APIs with NestJS</span>
+                <span className="text-ds-text-strong font-medium">
+                  Build modular REST APIs with NestJS
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-ds-success-base shrink-0" />
-                <span className="text-ds-text-strong font-medium">Connect to databases with Prisma & PostgreSQL</span>
+                <span className="text-ds-text-strong font-medium">
+                  Connect to databases with Prisma & PostgreSQL
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-ds-success-base shrink-0" />
-                <span className="text-ds-text-strong font-medium">Implement JWT authentication & RBAC guards</span>
+                <span className="text-ds-text-strong font-medium">
+                  Implement JWT authentication & RBAC guards
+                </span>
               </div>
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-ds-success-base shrink-0" />
-                <span className="text-ds-text-strong font-medium">Test, document, dockerize, and deploy</span>
+                <span className="text-ds-text-strong font-medium">
+                  Test, document, dockerize, and deploy
+                </span>
               </div>
             </div>
 
@@ -146,12 +178,16 @@ export default function NestJSPage() {
               </Link>
 
               <button
-                onClick={() => setActiveTab(activeTab === "roadmap" ? "journey" : "roadmap")}
+                onClick={() =>
+                  setActiveTab(activeTab === "roadmap" ? "journey" : "roadmap")
+                }
                 className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong border border-ds-stroke-soft hover:border-ds-feature-base font-bold text-sm transition-all shadow-sm active:scale-95"
               >
                 <BookOpen className="w-4 h-4 text-ds-icon-sub" />
                 <span>
-                  {activeTab === "roadmap" ? "Switch to Focused Journey" : "Browse Full Curriculum"}
+                  {activeTab === "roadmap"
+                    ? "Switch to Focused Journey"
+                    : "Browse Full Curriculum"}
                 </span>
               </button>
             </div>
@@ -159,11 +195,16 @@ export default function NestJSPage() {
             {hasStarted && (
               <div className="mt-5 flex items-center gap-2 text-xs text-ds-text-sub">
                 <span className="text-ds-success-dark font-bold bg-ds-success-lighter px-2.5 py-0.5 rounded-full">
-                  {progressSummary.completedCount} of {progressSummary.totalCount} completed
+                  {progressSummary.completedCount} of{" "}
+                  {progressSummary.totalCount} completed
                 </span>
                 <span>·</span>
                 <span>
-                  Next: <strong className="text-ds-text-strong">{nextLesson.name}</strong> ({nextLesson.code})
+                  Next:{" "}
+                  <strong className="text-ds-text-strong">
+                    {nextLesson.name}
+                  </strong>{" "}
+                  ({nextLesson.code})
                 </span>
               </div>
             )}
@@ -195,8 +236,12 @@ export default function NestJSPage() {
                       : "bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-sub hover:text-ds-text-strong border border-ds-stroke-soft hover:border-ds-feature-base"
                   }`}
                 >
-                  <div className="text-sm font-bold text-ds-text-strong">{goal.label}</div>
-                  <div className="text-xs text-ds-text-soft mt-1 line-clamp-1">{goal.desc}</div>
+                  <div className="text-sm font-bold text-ds-text-strong">
+                    {goal.label}
+                  </div>
+                  <div className="text-xs text-ds-text-soft mt-1 line-clamp-1">
+                    {goal.desc}
+                  </div>
                   <div className="text-[10px] text-ds-feature-dark font-mono font-bold mt-2.5 inline-block px-2 py-0.5 rounded bg-ds-feature-lighter">
                     {goal.tag}
                   </div>
