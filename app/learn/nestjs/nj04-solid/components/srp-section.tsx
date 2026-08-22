@@ -11,6 +11,7 @@ import {
   ComparisonTable,
   MistakeBox,
   EasyRuleCard,
+  InfoCallout,
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
@@ -25,7 +26,7 @@ export function SrpSection() {
         <TopicHeader
           number={1}
           title="What Does It Mean?"
-          description="A class should have only one main job. It should have only one reason to change."
+          description="A class or module should own one cohesive responsibility—one main reason to change."
           color="primary"
         />
 
@@ -34,11 +35,17 @@ export function SrpSection() {
             <span>📖</span> In Simple Words
           </h4>
           <p className="text-sm text-ds-text-sub leading-relaxed">
-            Do not make one class do everything. If a class is managing user information, it should not also be saving to the database and sending emails. Give each job to its own class.
+            Do not make one class own unrelated work. If registration rules, database storage, and email delivery change for different reasons, give those responsibilities clear boundaries.
           </p>
         </WhyBox>
 
-        <EasyRuleCard rule="One class = one main job." />
+        <EasyRuleCard rule="Keep things that change for the same reason together; separate things that change for different reasons." />
+
+        <InfoCallout emoji="💡" title="One Responsibility Does Not Mean One Method">
+          <p>
+            A focused class may have several methods. For example, <code>UserRepository</code> can have <code>save()</code>, <code>findById()</code>, and <code>delete()</code> because all three belong to user persistence.
+          </p>
+        </InfoCallout>
       </div>
 
       <Divider />
@@ -54,36 +61,46 @@ export function SrpSection() {
 
         <MistakeBox
           title="One Class Doing 3 Different Jobs"
-          description="This User class has 3 different jobs: creating user data, database saving, and sending emails. If any of those 3 things change, you have to edit this same class!"
-          wrong={`class User {
-  createUser() {
-    // 1. Creates user in memory
-    console.log("User created");
-  }
+          description="This registration service owns business rules, persistence details, and email delivery. A change to any one of those concerns forces us to edit the same class."
+          wrong={`type NewUser = { name: string; email: string };
 
-  saveToDatabase() {
-    // 2. Database query
-    console.log("Saving to database...");
-  }
+class UserRegistrationService {
+  register(user: NewUser): void {
+    // Business rule
+    if (!user.email.includes("@")) throw new Error("Invalid email");
 
-  sendEmail() {
-    // 3. Email sending
-    console.log("Sending email...");
+    // Database detail
+    console.log("INSERT user:", user.name);
+
+    // Email delivery detail
+    console.log("SMTP welcome email to:", user.email);
   }
 }`}
-          right={`// 1. Job 1: Handles user business logic
-class UserService {
-  createUser() { console.log("User created"); }
-}
+          right={`type NewUser = { name: string; email: string };
 
-// 2. Job 2: Handles only database operations
 class UserRepository {
-  saveToDatabase() { console.log("Saving to database..."); }
+  save(user: NewUser): void {
+    console.log("INSERT user:", user.name);
+  }
 }
 
-// 3. Job 3: Handles only sending emails
-class EmailService {
-  sendEmail() { console.log("Sending email..."); }
+class WelcomeEmailSender {
+  sendTo(email: string): void {
+    console.log("SMTP welcome email to:", email);
+  }
+}
+
+class UserRegistrationService {
+  constructor(
+    private users: UserRepository,
+    private welcomeEmail: WelcomeEmailSender
+  ) {}
+
+  register(user: NewUser): void {
+    if (!user.email.includes("@")) throw new Error("Invalid email");
+    this.users.save(user);
+    this.welcomeEmail.sendTo(user.email);
+  }
 }`}
         />
 
@@ -92,41 +109,56 @@ class EmailService {
           <Playground
             runtime="typescript"
             language="TypeScript"
-            starterCode={`// Job 1: Only handles database storage
+            starterCode={`type NewUser = {
+  name: string;
+  email: string;
+};
+
+type SavedUser = NewUser & {
+  id: number;
+};
+
+// Responsibility 1: user persistence
 class UserRepository {
-  save(name: string, email: string) {
-    console.log("💾 Saved " + name + " to the database.");
+  save(user: NewUser): SavedUser {
+    const saved = { ...user, id: 1 };
+    console.log("💾 Saved " + saved.name + " to the database.");
+    return saved;
   }
 }
 
-// Job 2: Only handles sending emails
-class EmailService {
-  sendWelcome(email: string) {
+// Responsibility 2: welcome-email delivery
+class WelcomeEmailSender {
+  sendTo(email: string): void {
     console.log("📨 Sent welcome email to " + email);
   }
 }
 
-// Job 3: Only coordinates the user signup flow
-class UserService {
+// Responsibility 3: the registration use case
+class UserRegistrationService {
   constructor(
     private userRepo: UserRepository,
-    private emailService: EmailService
+    private welcomeEmail: WelcomeEmailSender
   ) {}
 
-  register(name: string, email: string) {
-    console.log("👤 Registering user: " + name);
-    this.userRepo.save(name, email);
-    this.emailService.sendWelcome(email);
-    console.log("✅ Registration complete!");
+  register(user: NewUser): SavedUser {
+    console.log("👤 Registering user: " + user.name);
+    const savedUser = this.userRepo.save(user);
+    this.welcomeEmail.sendTo(savedUser.email);
+    return savedUser;
   }
 }
 
-// Run the clean code:
 const repo = new UserRepository();
-const mailer = new EmailService();
-const userService = new UserService(repo, mailer);
+const mailer = new WelcomeEmailSender();
+const registration = new UserRegistrationService(repo, mailer);
 
-userService.register("Mehedi", "mehedi@learncraft.dev");`}
+const user = registration.register({
+  name: "Mehedi",
+  email: "mehedi@learncraft.dev"
+});
+
+console.log("✅ Registration complete for user #" + user.id);`}
             height="460px"
           />
         </div>
@@ -136,9 +168,9 @@ userService.register("Mehedi", "mehedi@learncraft.dev");`}
             <span>✨</span> Why Is This Better?
           </h4>
           <ul className="list-disc pl-5 space-y-1 text-xs text-ds-text-sub">
-            <li>If you change your database from MySQL to MongoDB, you only change <code>UserRepository</code>.</li>
-            <li>If you change your email design, you only change <code>EmailService</code>.</li>
-            <li><code>UserService</code> stays safe and never breaks!</li>
+            <li>Persistence changes are kept inside <code>UserRepository</code>.</li>
+            <li>Email-provider or template changes are kept inside <code>WelcomeEmailSender</code>.</li>
+            <li><code>UserRegistrationService</code> stays focused on the order of the registration steps.</li>
           </ul>
         </WhyBox>
       </div>
@@ -161,15 +193,21 @@ userService.register("Mehedi", "mehedi@learncraft.dev");`}
         <ComparisonTable
           headers={["NestJS File", "Its Only Job"]}
           rows={[
-            ["Controller (@Controller)", "Receives HTTP requests and sends back answers. It does NOT talk to the database."],
-            ["Service (@Injectable)", "Does the business logic and calculations. It does NOT handle HTTP request headers."],
-            ["Repository / Entity", "Reads and writes data in the database."],
+            ["Controller (@Controller)", "Translates HTTP input/output and normally delegates the use case instead of containing persistence details."],
+            ["Service (@Injectable)", "Coordinates business rules and use cases without depending on HTTP-specific objects."],
+            ["Repository / gateway", "Hides database or external-service details behind a focused API."],
           ]}
         />
 
+        <InfoCallout emoji="🏷️" title="What Those Decorators Mean Here">
+          <p>
+            <code>@Controller()</code> tells NestJS that a class handles routes. <code>@Injectable()</code> adds metadata that lets NestJS manage a provider. The decorators describe framework roles; SRP still comes from what you choose to put inside each class.
+          </p>
+        </InfoCallout>
+
         <QuickCheck
           question="What is the simple rule for the Single Responsibility Principle (S)?"
-          answer="One class = one main job."
+          answer="Keep one cohesive responsibility in a class or module. Several related methods are fine; unrelated reasons to change should usually be separated."
         />
       </div>
     </SectionContainer>

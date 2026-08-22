@@ -29,27 +29,27 @@ import { FinalProjectSection } from "./components/final-project-section";
 import { ClosingSections } from "./components/closing-sections";
 
 const SECTIONS = [
-  { id: "part1",  label: "Understanding Decorators", icon: "🚀" },
-  { id: "part2",  label: "Syntax & Prerequisites",   icon: "✏️" },
-  { id: "part3",  label: "Class Decorators",         icon: "📦" },
-  { id: "part4",  label: "Method Decorators",        icon: "🔧" },
-  { id: "part5",  label: "Property Decorators",      icon: "🏷️" },
-  { id: "part6",  label: "Parameter Decorators",     icon: "📥" },
-  { id: "part7",  label: "Decorator Factories",      icon: "🏭" },
-  { id: "part8",  label: "Logging & Performance",    icon: "📝" },
-  { id: "part9",  label: "Validation Decorators",    icon: "✅" },
+  { id: "part1", label: "Understanding Decorators", icon: "🚀" },
+  { id: "part2", label: "Syntax & Prerequisites", icon: "✏️" },
+  { id: "part3", label: "Class Decorators", icon: "📦" },
+  { id: "part4", label: "Method Decorators", icon: "🔧" },
+  { id: "part5", label: "Property Decorators", icon: "🏷️" },
+  { id: "part6", label: "Parameter Decorators", icon: "📥" },
+  { id: "part7", label: "Decorator Factories", icon: "🏭" },
+  { id: "part8", label: "Logging & Performance", icon: "📝" },
+  { id: "part9", label: "Validation Decorators", icon: "✅" },
   { id: "part10", label: "Authorization & Security", icon: "🔒" },
   { id: "part11", label: "Caching & Error Handling", icon: "⚡" },
-  { id: "part12", label: "Composition & Order",      icon: "🧩" },
-  { id: "part13", label: "Metadata & Reflection",    icon: "🔮" },
-  { id: "part14", label: "Modern vs Legacy",         icon: "⚖️" },
-  { id: "part15", label: "NestJS Deep Dive",         icon: "🦁" },
-  { id: "part16", label: "Beginner Mistakes",        icon: "⚠️" },
-  { id: "part17", label: "Concept Tables",           icon: "📊" },
-  { id: "part18", label: "Learning Checks",          icon: "🧠" },
-  { id: "part19", label: "Coding Exercises",         icon: "💻" },
-  { id: "part20", label: "Final Project",            icon: "🏆" },
-  { id: "part21", label: "Express vs NestJS",        icon: "🎯" },
+  { id: "part12", label: "Composition & Order", icon: "🧩" },
+  { id: "part13", label: "Metadata & Reflection", icon: "🔮" },
+  { id: "part14", label: "Modern vs Legacy", icon: "⚖️" },
+  { id: "part15", label: "NestJS Deep Dive", icon: "🦁" },
+  { id: "part16", label: "Beginner Mistakes", icon: "⚠️" },
+  { id: "part17", label: "Concept Tables", icon: "📊" },
+  { id: "part18", label: "Learning Checks", icon: "🧠" },
+  { id: "part19", label: "Coding Exercises", icon: "💻" },
+  { id: "part20", label: "Final Project", icon: "🏆" },
+  { id: "part21", label: "Express vs NestJS", icon: "🎯" },
 ];
 
 const PROGRESS_STORAGE_KEY = "learncraft_progress_nj03-decorators";
@@ -89,9 +89,12 @@ export default function NJ03Decorators(): JSX.Element {
         (a) =>
           a.id === highlightId ||
           a.id === `rev_${highlightId}` ||
-          `rev-highlight-${a.id}` === highlightId
+          `rev-highlight-${a.id}` === highlightId,
       );
-      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
+      if (
+        target?.sectionId &&
+        SECTIONS.some((s) => s.id === target.sectionId)
+      ) {
         setActiveSection(target.sectionId);
         const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
         if (targetIdx > 0) {
@@ -119,7 +122,10 @@ export default function NJ03Decorators(): JSX.Element {
       const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
+        if (
+          parsed.activeSection &&
+          SECTIONS.some((s) => s.id === parsed.activeSection)
+        ) {
           setActiveSection(parsed.activeSection);
         }
         if (Array.isArray(parsed.completedSections)) {
@@ -147,7 +153,7 @@ export default function NJ03Decorators(): JSX.Element {
         JSON.stringify({
           activeSection: sectionId,
           completedSections: Array.from(nextCompleted),
-        })
+        }),
       );
     } catch {}
 
@@ -170,28 +176,50 @@ export default function NJ03Decorators(): JSX.Element {
 
   const renderContent = () => {
     switch (activeSection) {
-      case "part1":  return <HeaderSection />;
-      case "part2":  return <SyntaxPrerequisitesSection />;
-      case "part3":  return <ClassDecoratorsSection />;
-      case "part4":  return <MethodDecoratorsSection />;
-      case "part5":  return <PropertyDecoratorsSection />;
-      case "part6":  return <ParameterDecoratorsSection />;
-      case "part7":  return <DecoratorFactoriesSection />;
-      case "part8":  return <LoggingPerformanceSection />;
-      case "part9":  return <ValidationDecoratorSection />;
-      case "part10": return <AuthSecuritySection />;
-      case "part11": return <CachingErrorSection />;
-      case "part12": return <CompositionOrderSection />;
-      case "part13": return <MetadataReflectionSection />;
-      case "part14": return <ModernVsLegacySection />;
-      case "part15": return <NestjsDeepDiveSection />;
-      case "part16": return <BeginnerMistakesSection />;
-      case "part17": return <ConceptTablesSection />;
-      case "part18": return <LearningChecksSection />;
-      case "part19": return <CodingExercisesSection />;
-      case "part20": return <FinalProjectSection />;
-      case "part21": return <ClosingSections />;
-      default:       return <HeaderSection />;
+      case "part1":
+        return <HeaderSection />;
+      case "part2":
+        return <SyntaxPrerequisitesSection />;
+      case "part3":
+        return <ClassDecoratorsSection />;
+      case "part4":
+        return <MethodDecoratorsSection />;
+      case "part5":
+        return <PropertyDecoratorsSection />;
+      case "part6":
+        return <ParameterDecoratorsSection />;
+      case "part7":
+        return <DecoratorFactoriesSection />;
+      case "part8":
+        return <LoggingPerformanceSection />;
+      case "part9":
+        return <ValidationDecoratorSection />;
+      case "part10":
+        return <AuthSecuritySection />;
+      case "part11":
+        return <CachingErrorSection />;
+      case "part12":
+        return <CompositionOrderSection />;
+      case "part13":
+        return <MetadataReflectionSection />;
+      case "part14":
+        return <ModernVsLegacySection />;
+      case "part15":
+        return <NestjsDeepDiveSection />;
+      case "part16":
+        return <BeginnerMistakesSection />;
+      case "part17":
+        return <ConceptTablesSection />;
+      case "part18":
+        return <LearningChecksSection />;
+      case "part19":
+        return <CodingExercisesSection />;
+      case "part20":
+        return <FinalProjectSection />;
+      case "part21":
+        return <ClosingSections />;
+      default:
+        return <HeaderSection />;
     }
   };
 

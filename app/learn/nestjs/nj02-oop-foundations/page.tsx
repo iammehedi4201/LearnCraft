@@ -23,23 +23,23 @@ import { FinalProjectSection } from "./components/final-project-section";
 import { ClosingSections } from "./components/closing-sections";
 
 const SECTIONS = [
-  { id: "part1",  label: "Understanding OOP",        icon: "🚀" },
-  { id: "part2",  label: "Creating Objects",         icon: "📦" },
-  { id: "part3",  label: "Constructor",              icon: "🔧" },
-  { id: "part4",  label: "Methods",                  icon: "⚡" },
-  { id: "part5",  label: "Four OOP Principles",      icon: "🏛️" },
-  { id: "part6",  label: "Important Concepts",       icon: "🔑" },
-  { id: "part7",  label: "Composition",              icon: "🧩" },
-  { id: "part8",  label: "OOP vs Procedural",        icon: "⚖️" },
-  { id: "part9",  label: "Real-World Examples",      icon: "🌍" },
-  { id: "part10", label: "OOP in Real Projects",     icon: "💼" },
-  { id: "part11", label: "Beginner Mistakes",        icon: "⚠️" },
-  { id: "part12", label: "Think in OOP",             icon: "🧠" },
-  { id: "part13", label: "Concept Tables",           icon: "📊" },
-  { id: "part14", label: "Learning Checks",          icon: "✅" },
-  { id: "part15", label: "Coding Exercises",         icon: "💻" },
-  { id: "part16", label: "Final Project",            icon: "🏆" },
-  { id: "part17", label: "Express vs NestJS",        icon: "🎯" },
+  { id: "part1", label: "Understanding OOP", icon: "🚀" },
+  { id: "part2", label: "Creating Objects", icon: "📦" },
+  { id: "part3", label: "Constructor", icon: "🔧" },
+  { id: "part4", label: "Methods", icon: "⚡" },
+  { id: "part5", label: "Four OOP Principles", icon: "🏛️" },
+  { id: "part6", label: "Important Concepts", icon: "🔑" },
+  { id: "part7", label: "Composition", icon: "🧩" },
+  { id: "part8", label: "OOP vs Procedural", icon: "⚖️" },
+  { id: "part9", label: "Real-World Examples", icon: "🌍" },
+  { id: "part10", label: "OOP in Real Projects", icon: "💼" },
+  { id: "part11", label: "Beginner Mistakes", icon: "⚠️" },
+  { id: "part12", label: "Think in OOP", icon: "🧠" },
+  { id: "part13", label: "Concept Tables", icon: "📊" },
+  { id: "part14", label: "Learning Checks", icon: "✅" },
+  { id: "part15", label: "Coding Exercises", icon: "💻" },
+  { id: "part16", label: "Final Project", icon: "🏆" },
+  { id: "part17", label: "Express vs NestJS", icon: "🎯" },
 ];
 
 const PROGRESS_STORAGE_KEY = "learncraft_progress_nj02-oop-foundations";
@@ -79,9 +79,12 @@ export default function NJ02OOP(): JSX.Element {
         (a) =>
           a.id === highlightId ||
           a.id === `rev_${highlightId}` ||
-          `rev-highlight-${a.id}` === highlightId
+          `rev-highlight-${a.id}` === highlightId,
       );
-      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
+      if (
+        target?.sectionId &&
+        SECTIONS.some((s) => s.id === target.sectionId)
+      ) {
         setActiveSection(target.sectionId);
         const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
         if (targetIdx > 0) {
@@ -109,7 +112,10 @@ export default function NJ02OOP(): JSX.Element {
       const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
+        if (
+          parsed.activeSection &&
+          SECTIONS.some((s) => s.id === parsed.activeSection)
+        ) {
           setActiveSection(parsed.activeSection);
         }
         if (Array.isArray(parsed.completedSections)) {
@@ -137,7 +143,7 @@ export default function NJ02OOP(): JSX.Element {
         JSON.stringify({
           activeSection: sectionId,
           completedSections: Array.from(nextCompleted),
-        })
+        }),
       );
     } catch {}
 
@@ -160,24 +166,42 @@ export default function NJ02OOP(): JSX.Element {
 
   const renderContent = () => {
     switch (activeSection) {
-      case "part1":  return <HeaderSection />;
-      case "part2":  return <ClassesObjectsSection />;
-      case "part3":  return <ConstructorSection />;
-      case "part4":  return <MethodsSection />;
-      case "part5":  return <OopPrinciplesSection />;
-      case "part6":  return <ImportantConceptsSection />;
-      case "part7":  return <CompositionSection />;
-      case "part8":  return <OopVsProceduralSection />;
-      case "part9":  return <RealWorldExamplesSection />;
-      case "part10": return <OopInProjectsSection />;
-      case "part11": return <BeginnerMistakesSection />;
-      case "part12": return <ThinkInOopSection />;
-      case "part13": return <ConceptTablesSection />;
-      case "part14": return <LearningChecksSection />;
-      case "part15": return <CodingExercisesSection />;
-      case "part16": return <FinalProjectSection />;
-      case "part17": return <ClosingSections />;
-      default:       return <HeaderSection />;
+      case "part1":
+        return <HeaderSection />;
+      case "part2":
+        return <ClassesObjectsSection />;
+      case "part3":
+        return <ConstructorSection />;
+      case "part4":
+        return <MethodsSection />;
+      case "part5":
+        return <OopPrinciplesSection />;
+      case "part6":
+        return <ImportantConceptsSection />;
+      case "part7":
+        return <CompositionSection />;
+      case "part8":
+        return <OopVsProceduralSection />;
+      case "part9":
+        return <RealWorldExamplesSection />;
+      case "part10":
+        return <OopInProjectsSection />;
+      case "part11":
+        return <BeginnerMistakesSection />;
+      case "part12":
+        return <ThinkInOopSection />;
+      case "part13":
+        return <ConceptTablesSection />;
+      case "part14":
+        return <LearningChecksSection />;
+      case "part15":
+        return <CodingExercisesSection />;
+      case "part16":
+        return <FinalProjectSection />;
+      case "part17":
+        return <ClosingSections />;
+      default:
+        return <HeaderSection />;
     }
   };
 

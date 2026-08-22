@@ -34,17 +34,17 @@ import { CodingExercisesSection } from "./components/coding-exercises-section";
 import { ClosingSections } from "./components/closing-sections";
 
 const SECTIONS = [
-  { id: "part1",  label: "The Big Picture",          icon: "🚀" },
-  { id: "part2",  label: "Installing the CLI",       icon: "📦" },
-  { id: "part3",  label: "Project File Tour",        icon: "📁" },
-  { id: "part4",  label: "Deep Dive into main.ts",   icon: "🚪" },
-  { id: "part5",  label: "Running & NPM Scripts",    icon: "⚡" },
-  { id: "part6",  label: "Express vs Fastify",       icon: "🚗" },
-  { id: "part7",  label: "CLI Generators ('nest g')", icon: "🪄" },
-  { id: "part8",  label: "Beginner Mistakes",        icon: "⚠️" },
-  { id: "part9",  label: "Concept Tables & Maps",    icon: "📊" },
-  { id: "part10", label: "Learning Checks",          icon: "🧠" },
-  { id: "part11", label: "Coding Exercises",         icon: "💻" },
+  { id: "part1", label: "The Big Picture", icon: "🚀" },
+  { id: "part2", label: "Installing the CLI", icon: "📦" },
+  { id: "part3", label: "Project File Tour", icon: "📁" },
+  { id: "part4", label: "Deep Dive into main.ts", icon: "🚪" },
+  { id: "part5", label: "Running & NPM Scripts", icon: "⚡" },
+  { id: "part6", label: "Express vs Fastify", icon: "🚗" },
+  { id: "part7", label: "CLI Generators ('nest g')", icon: "🪄" },
+  { id: "part8", label: "Beginner Mistakes", icon: "⚠️" },
+  { id: "part9", label: "Concept Tables & Maps", icon: "📊" },
+  { id: "part10", label: "Learning Checks", icon: "🧠" },
+  { id: "part11", label: "Coding Exercises", icon: "💻" },
   { id: "part12", label: "Final Review & Next Steps", icon: "🎯" },
 ];
 
@@ -85,9 +85,12 @@ export default function NJ05Setup(): JSX.Element {
         (a) =>
           a.id === highlightId ||
           a.id === `rev_${highlightId}` ||
-          `rev-highlight-${a.id}` === highlightId
+          `rev-highlight-${a.id}` === highlightId,
       );
-      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
+      if (
+        target?.sectionId &&
+        SECTIONS.some((s) => s.id === target.sectionId)
+      ) {
         setActiveSection(target.sectionId);
         const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
         if (targetIdx > 0) {
@@ -114,7 +117,10 @@ export default function NJ05Setup(): JSX.Element {
       const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
+        if (
+          parsed.activeSection &&
+          SECTIONS.some((s) => s.id === parsed.activeSection)
+        ) {
           setActiveSection(parsed.activeSection);
         }
         if (Array.isArray(parsed.completedSections)) {
@@ -142,7 +148,7 @@ export default function NJ05Setup(): JSX.Element {
         JSON.stringify({
           activeSection: sectionId,
           completedSections: Array.from(nextCompleted),
-        })
+        }),
       );
     } catch {}
 
@@ -165,19 +171,32 @@ export default function NJ05Setup(): JSX.Element {
 
   const renderContent = () => {
     switch (activeSection) {
-      case "part1":  return <HeaderSection />;
-      case "part2":  return <CliInstallationSection />;
-      case "part3":  return <ProjectTourSection />;
-      case "part4":  return <MainTsDeepDiveSection />;
-      case "part5":  return <NpmScriptsSection />;
-      case "part6":  return <ExpressFastifySection />;
-      case "part7":  return <CliGeneratorsSection />;
-      case "part8":  return <BeginnerMistakesSection />;
-      case "part9":  return <ConceptTablesSection />;
-      case "part10": return <LearningChecksSection />;
-      case "part11": return <CodingExercisesSection />;
-      case "part12": return <ClosingSections />;
-      default:       return <HeaderSection />;
+      case "part1":
+        return <HeaderSection />;
+      case "part2":
+        return <CliInstallationSection />;
+      case "part3":
+        return <ProjectTourSection />;
+      case "part4":
+        return <MainTsDeepDiveSection />;
+      case "part5":
+        return <NpmScriptsSection />;
+      case "part6":
+        return <ExpressFastifySection />;
+      case "part7":
+        return <CliGeneratorsSection />;
+      case "part8":
+        return <BeginnerMistakesSection />;
+      case "part9":
+        return <ConceptTablesSection />;
+      case "part10":
+        return <LearningChecksSection />;
+      case "part11":
+        return <CodingExercisesSection />;
+      case "part12":
+        return <ClosingSections />;
+      default:
+        return <HeaderSection />;
     }
   };
 

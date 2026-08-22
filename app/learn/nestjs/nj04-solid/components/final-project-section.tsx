@@ -19,7 +19,7 @@ export function FinalProjectSection() {
     <SectionContainer number={14} title="Final Project: Order Fulfillment System">
       <div className="mb-10 p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
         <p className="text-sm text-ds-text-sub leading-relaxed">
-          In this capstone project, you will examine and run a complete <strong>E-Commerce Order Fulfillment System</strong> that implements all 5 SOLID principles working together in a production-style architecture.
+          In this capstone project, you will examine and run a teaching-sized <strong>e-commerce order fulfillment system</strong> that combines all five SOLID principles. Real production systems would also need validation, transactions, retries, logging, and security.
         </p>
       </div>
 
@@ -36,23 +36,23 @@ export function FinalProjectSection() {
           steps={[
             {
               label: "[S] Single Responsibility",
-              note: "Inventory checking, payment charging, database saving, and customer messaging are all handled by separate classes.",
+              note: "Inventory access, payment charging, customer messaging, and order orchestration have focused boundaries.",
             },
             {
               label: "[O] Open / Closed",
-              note: "Payment gateways and notification channels can be added endlessly without touching the order processing engine.",
+              note: "New gateway or notifier implementations can be added without rewriting OrderFulfillmentService; the application wiring still selects them.",
             },
             {
               label: "[L] Liskov Substitution",
-              note: "All payment gateways and notifiers fulfill their contract consistently without unexpected exceptions.",
+              note: "The implementations shown here keep the same return and behavior contracts when substituted.",
             },
             {
               label: "[I] Interface Segregation",
-              note: "Small, targeted interfaces (IInventoryChecker, IPaymentGateway, INotificationService).",
+              note: "Small, targeted interfaces (IInventory, IPayment, and INotifier) expose only the capabilities their clients use.",
             },
             {
               label: "[D] Dependency Inversion",
-              note: "OrderFulfillmentService receives all services via constructor dependency injection.",
+              note: "OrderFulfillmentService depends on abstractions. Inventory and notifier arrive through its constructor; the per-order payment strategy arrives as a method argument.",
             },
           ]}
         />
@@ -82,6 +82,13 @@ interface INotifier {
   send(recipient: string, message: string): void;
 }
 
+type OrderResult =
+  | { success: true; orderId: number }
+  | {
+      success: false;
+      reason: "INVALID_ORDER" | "OUT_OF_STOCK" | "PAYMENT_FAILED";
+    };
+
 // ═══════════════════════════════════════════════════════
 // 2. [S] & [O] CONCRETE IMPLEMENTATIONS (Open for extension)
 // ═══════════════════════════════════════════════════════
@@ -89,11 +96,12 @@ class WarehouseInventory implements IInventory {
   private stock: Record<string, number> = { "LAPTOP-M3": 10, "PHONE-16": 5 };
 
   checkStock(sku: string, qty: number): boolean {
-    return (this.stock[sku] || 0) >= qty;
+    return (this.stock[sku] ?? 0) >= qty;
   }
 
   reserveStock(sku: string, qty: number): void {
-    this.stock[sku] -= qty;
+    const available = this.stock[sku] ?? 0;
+    this.stock[sku] = available - qty;
     console.log("📦 [INVENTORY] Reserved " + qty + "x " + sku + " (Remaining: " + this.stock[sku] + ")");
   }
 }
@@ -123,8 +131,8 @@ class EmailCustomerNotifier implements INotifier {
 // ═══════════════════════════════════════════════════════
 class OrderFulfillmentService {
   constructor(
-    private inventory: IInventory,
-    private notifier: INotifier
+    private readonly inventory: IInventory,
+    private readonly notifier: INotifier
   ) {}
 
   processOrder(
@@ -134,9 +142,15 @@ class OrderFulfillmentService {
     amount: number,
     customerEmail: string,
     paymentMethod: IPayment // Polymorphic payment [L] & [O]
-  ) {
+  ): OrderResult {
     console.log("=========================================");
     console.log("🛒 Processing Order #" + orderId + " (" + qty + "x " + sku + ")");
+
+    // 0. Validate the basic command before calling collaborators
+    if (qty <= 0 || amount <= 0) {
+      console.log("❌ Quantity and amount must be positive.");
+      return { success: false, reason: "INVALID_ORDER" };
+    }
 
     // 1. Check stock
     if (!this.inventory.checkStock(sku, qty)) {
@@ -157,7 +171,7 @@ class OrderFulfillmentService {
     // 4. Notify customer
     this.notifier.send(
       customerEmail,
-      "Your order #" + orderId + " for " + sku + " has been confirmed and shipped!"
+      "Your order #" + orderId + " for " + sku + " has been confirmed!"
     );
 
     console.log("✅ Order #" + orderId + " fulfilled successfully!\\n");
@@ -195,8 +209,26 @@ fulfillmentService.processOrder(
         />
 
         <SummaryBox>
-          You have mastered SOLID Principles! Every component in this application is loosely coupled, easily testable with mock providers, and simple to extend with new payment gateways or notification channels.
+          This example combines focused responsibilities, small contracts, substitutable implementations, extension points, and injected abstractions. It is easier to test and extend, but it still needs normal error handling and production safeguards.
         </SummaryBox>
+
+        <SectionHeading>🧪 Capstone Challenges</SectionHeading>
+        <StepList
+          steps={[
+            {
+              label: "Add an SMS notifier",
+              note: "Create SmsCustomerNotifier implements INotifier, then supply it when the application is assembled.",
+            },
+            {
+              label: "Model a rejected payment",
+              note: "Create DeclinedPayment implements IPayment that returns false and confirm that stock is not reserved.",
+            },
+            {
+              label: "Test without sending messages",
+              note: "Create RecordingNotifier that stores messages in an array, then assert what OrderFulfillmentService sends.",
+            },
+          ]}
+        />
       </div>
     </SectionContainer>
   );

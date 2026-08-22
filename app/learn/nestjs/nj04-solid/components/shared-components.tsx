@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, ReactNode } from "react";
+import { useId, useState, ReactNode } from "react";
 
 // ─── Section Container (main card wrapper) ───
 export function SectionContainer({
@@ -12,9 +12,16 @@ export function SectionContainer({
   title: string;
   children: ReactNode;
 }) {
+  const sectionId = `part${number}`;
+  const titleId = `${sectionId}-title`;
+
   return (
-    <section className="animate-in fade-in slide-in-from-bottom-6 duration-700">
-      <div className="bg-ds-bg-white p-8 lg:p-12 rounded-3xl border border-ds-stroke-soft shadow-sm mb-12">
+    <section
+      id={sectionId}
+      data-section-id={sectionId}
+      aria-labelledby={titleId}
+    >
+      <div className="bg-ds-bg-white p-5 sm:p-8 lg:p-12 rounded-3xl border border-ds-stroke-soft shadow-sm mb-12">
         {/* Section Header */}
         <div className="flex items-center gap-4 mb-10 pb-6 border-b border-ds-stroke-soft">
           <div
@@ -23,7 +30,7 @@ export function SectionContainer({
             {number}
           </div>
           <div>
-            <h2 className="text-3xl font-black text-ds-text-strong tracking-tight font-display">
+            <h2 id={titleId} className="text-2xl sm:text-3xl font-black text-ds-text-strong tracking-tight font-display">
               {title}
             </h2>
           </div>
@@ -182,7 +189,7 @@ export function StepList({ steps }: { steps: { label: string; note?: string; cod
   return (
     <ol className="space-y-5 mb-8">
       {steps.map((step, i) => (
-        <li key={i} className="flex gap-4 animate-in fade-in slide-in-from-left-2 duration-300">
+        <li key={i} className="flex gap-4">
           <span
             className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-ds-static-white mt-0.5 bg-ds-feature-base shadow-sm"
           >
@@ -273,6 +280,7 @@ export function ComparisonTable({
               {headers.map((h, i) => (
                 <th
                   key={i}
+                  scope="col"
                   className="text-left p-3.5 font-bold text-ds-text-strong"
                 >
                   {h}
@@ -282,7 +290,7 @@ export function ComparisonTable({
           </thead>
           <tbody>
             {rows.map((row, ri) => (
-              <tr key={ri} className="border-b border-ds-stroke-soft last:border-0 hover:bg-ds-bg-weak/30 transition-colors">
+              <tr key={ri} className="border-b border-ds-stroke-soft last:border-0 hover:bg-ds-bg-weak transition-colors">
                 {row.map((cell, ci) => (
                   <td key={ci} className="p-3.5 text-ds-text-sub font-normal">
                     {cell}
@@ -306,6 +314,7 @@ export function PredictOutputBox({
   answer: string;
 }) {
   const [showAnswer, setShowAnswer] = useState(false);
+  const answerId = useId();
 
   return (
     <div className="mb-6 p-5 rounded-2xl border border-ds-stroke-soft bg-ds-bg-weak shadow-sm">
@@ -317,13 +326,16 @@ export function PredictOutputBox({
         {code}
       </pre>
       <button
+        type="button"
         onClick={() => setShowAnswer(!showAnswer)}
-        className="text-xs font-bold text-ds-feature-base hover:text-ds-feature-dark flex items-center gap-1 transition-colors"
+        aria-expanded={showAnswer}
+        aria-controls={answerId}
+        className="min-h-10 px-2 -ml-2 text-xs font-bold text-ds-feature-base hover:text-ds-feature-dark flex items-center gap-1 transition-colors"
       >
         {showAnswer ? "Hide Answer ▲" : "Show Answer ▼"}
       </button>
       {showAnswer && (
-        <div className="mt-3 p-3.5 bg-ds-bg-white rounded-xl border border-ds-stroke-soft text-sm text-ds-text-strong animate-in fade-in slide-in-from-top-2 duration-200">
+        <div id={answerId} className="mt-3 p-3.5 bg-ds-bg-white rounded-xl border border-ds-stroke-soft text-sm text-ds-text-strong">
           <span className="font-black text-ds-feature-base text-xs block mb-1">Answer:</span>
           <p className="text-xs font-medium leading-relaxed whitespace-pre-wrap text-ds-text-strong">{answer}</p>
         </div>
@@ -353,7 +365,7 @@ export function MistakeBox({
         {description}
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-4 bg-ds-bg-white rounded-xl border border-ds-error-base bg-ds-error-lighter/5">
+        <div className="p-4 rounded-xl border border-ds-error-base bg-ds-error-lighter">
           <span className="text-xs font-black text-ds-error-base block mb-2">
             ❌ Wrong (Breaks Principle)
           </span>
@@ -361,7 +373,7 @@ export function MistakeBox({
             {wrong}
           </code>
         </div>
-        <div className="p-4 bg-ds-bg-white rounded-xl border border-ds-success-base bg-ds-success-lighter/5">
+        <div className="p-4 rounded-xl border border-ds-success-base bg-ds-success-lighter">
           <span className="text-xs font-black text-ds-success-base block mb-2">
             ✅ Right (Follows Principle)
           </span>

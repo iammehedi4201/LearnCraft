@@ -133,6 +133,9 @@
 @media (max-width: 768px) {
   .playground-body {
     flex-direction: column;
+    /* The editor and console stack on small screens, so a desktop inline
+       height must not clip the second panel. Let their content set the height. */
+    height: auto !important;
   }
 }
 
@@ -1888,5 +1891,4 @@
   background: var(--state-feature-base, #7D52F4) !important;
   color: #FFFFFF !important;
 }
-
 

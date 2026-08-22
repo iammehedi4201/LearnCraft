@@ -31,11 +31,11 @@ export function RealWorldExampleSection() {
           steps={[
             {
               label: "[I] Interface Segregation",
-              note: "PaymentMethod is a small interface with only one method: pay(amount).",
+              note: "OrderService depends only on pay(amount); it is not forced to know about refunds, gateway reports, or other unrelated capabilities.",
             },
             {
               label: "[O] Open / Closed",
-              note: "To add a new payment type (like Nagad), just write a new class without editing existing code.",
+              note: "A new payment class can be added without rewriting OrderService; the application wiring still selects the implementation.",
             },
             {
               label: "[L] Liskov Substitution",
@@ -47,7 +47,7 @@ export function RealWorldExampleSection() {
             },
             {
               label: "[D] Dependency Inversion",
-              note: "OrderService receives PaymentMethod from outside via constructor injection.",
+              note: "The high-level OrderService depends on the PaymentMethod contract and receives an implementation through constructor injection.",
             },
           ]}
         />
@@ -68,22 +68,22 @@ interface PaymentMethod {
 
 // 2. Separate payment methods (Open for extension)
 class CreditCardPayment implements PaymentMethod {
-  pay(amount: number) {
+  pay(amount: number): void {
     console.log("💳 Paid $" + amount + " using Credit Card");
   }
 }
 
 class BkashPayment implements PaymentMethod {
-  pay(amount: number) {
+  pay(amount: number): void {
     console.log("📱 Paid $" + amount + " using bKash");
   }
 }
 
 // 3. Service receives the payment method via Dependency Injection
 class OrderService {
-  constructor(private paymentMethod: PaymentMethod) {}
+  constructor(private readonly paymentMethod: PaymentMethod) {}
 
-  completeOrder(amount: number) {
+  completeOrder(amount: number): void {
     this.paymentMethod.pay(amount);
     console.log("✅ Order finished!");
   }
@@ -105,7 +105,7 @@ bkashOrder.completeOrder(50);`}
 
         <QuickCheck
           question="If you want to add PayPal payment to this system, what code do you need to change?"
-          answer="You don't need to change any existing code! You simply create a new class: 'class PaypalPayment implements PaymentMethod { pay(amount) { ... } }'."
+          answer="Create 'class PaypalPayment implements PaymentMethod' with 'pay(amount: number): void'. OrderService does not change. The composition root or NestJS provider configuration must still be updated so the application can select PayPal."
         />
       </div>
     </SectionContainer>

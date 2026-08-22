@@ -34,7 +34,7 @@ export function NestjsSolidSection() {
             ["O", "Providers and modules make it easier to add new behavior."],
             ["L", "Proper class inheritance and substitutable providers."],
             ["I", "TypeScript interfaces and focused contracts."],
-            ["D", "NestJS Dependency Injection."],
+            ["D", "Provider tokens let high-level code depend on contracts while modules choose concrete implementations."],
           ]}
         />
       </div>
@@ -61,41 +61,64 @@ export function NestjsSolidSection() {
           <Playground
             runtime="typescript"
             language="TypeScript"
-            starterCode={`// 1. [S] Database Helper
-class BookDatabase {
-  getBook(id: number) {
-    return { id, title: "Clean Code", author: "Uncle Bob" };
+            starterCode={`type Book = {
+  id: number;
+  title: string;
+  author: string;
+};
+
+// 1. [D] Stable contract owned by the use case
+interface BookReader {
+  findById(id: number): Book | undefined;
+}
+
+// 2. [S] One concrete persistence implementation
+class InMemoryBookRepository implements BookReader {
+  private readonly books: Book[] = [
+    { id: 1, title: "Clean Code", author: "Robert C. Martin" }
+  ];
+
+  findById(id: number): Book | undefined {
+    return this.books.find((book) => book.id === id);
   }
 }
 
-// 2. [D] Service receives database via constructor
+// 3. [D] Business logic knows BookReader, not the concrete class
 class BooksService {
-  constructor(private db: BookDatabase) {}
+  constructor(private readonly books: BookReader) {}
 
-  findBook(id: number) {
-    return this.db.getBook(id);
+  findBook(id: number): Book | undefined {
+    return this.books.findById(id);
   }
 }
 
-// 3. [S] Controller handles requests
+// 4. [S] Controller translates the request into a use-case call
 class BooksController {
-  constructor(private booksService: BooksService) {}
+  constructor(private readonly booksService: BooksService) {}
 
-  getBookRoute(id: number) {
+  getBookRoute(id: number): { status: number; data?: Book } {
     const book = this.booksService.findBook(id);
+    if (!book) return { status: 404 };
     return { status: 200, data: book };
   }
 }
 
-// NestJS connects everything together:
-const db = new BookDatabase();
-const service = new BooksService(db);
+// Plain TypeScript composition root.
+// A NestJS module performs the equivalent provider wiring.
+const repository: BookReader = new InMemoryBookRepository();
+const service = new BooksService(repository);
 const controller = new BooksController(service);
 
 console.log("Response:", controller.getBookRoute(1));`}
             height="440px"
           />
         </div>
+
+        <InfoCallout emoji="🔌" title="Manual Wiring vs NestJS Wiring">
+          <p className="text-xs text-ds-text-strong leading-relaxed">
+            Calling <code>new</code> in this small composition root is valid TypeScript. In a NestJS app, a module and provider token usually perform that wiring. The SOLID benefit comes from <code>BooksService</code> depending on <code>BookReader</code>, not from avoiding the <code>new</code> keyword everywhere.
+          </p>
+        </InfoCallout>
 
         <QuickCheck
           question="Does using NestJS automatically make all your code 100% SOLID?"

@@ -1,20 +1,6 @@
-/**
- * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * NJ-06 — NestJS Modules
- * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- *
- * CORE CONCEPT
- * ────────────
- * Modules are the foundational building blocks of NestJS applications.
- * A module is a class annotated with a @Module() decorator that provides
- * metadata that Nest uses to organize the application structure.
- *
- * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- */
-
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
 import { getAllAnnotations } from "@/lib/revision-storage";
@@ -34,6 +20,8 @@ import { ConceptTablesSection } from "./components/concept-tables-section";
 import { LearningChecksSection } from "./components/learning-checks-section";
 import { CodingExercisesSection } from "./components/coding-exercises-section";
 import { ClosingSections } from "./components/closing-sections";
+import { QuickRevision } from "../components/quick-revision";
+import { LessonNavFooter } from "../components/lesson-nav-footer";
 
 const SECTIONS = [
   { id: "part1",  label: "The Big Picture",          icon: "🚀" },
@@ -52,9 +40,18 @@ const SECTIONS = [
   { id: "part14", label: "Final Review & Next Steps", icon: "🎯" },
 ];
 
+const NJ06_REVISION_POINTS = [
+  "A Module is a class with the @Module() decorator defining providers, controllers, imports, and exports.",
+  "Imports declare dependencies on other modules; Exports make providers available to importing modules.",
+  "Providers listed in a module are private to that module by default unless explicitly exported.",
+  "@Global() makes a module's exports available everywhere without requiring explicit imports in every feature.",
+  "Dynamic Modules (register/forRoot/forFeature) allow passing configuration objects at import time.",
+  "Circular dependencies between modules should be solved with forwardRef() or refactoring to a shared module.",
+];
+
 const PROGRESS_STORAGE_KEY = "learncraft_progress_nj06-modules";
 
-export default function NJ06Modules(): JSX.Element {
+function NJ06ModulesContent(): JSX.Element {
   const searchParams = useSearchParams();
   const highlightId = searchParams?.get("highlightId");
   const sectionParam = searchParams?.get("section");
@@ -64,9 +61,7 @@ export default function NJ06Modules(): JSX.Element {
     new Set(),
   );
 
-  // Initialize from URL, highlight, or localStorage on mount
   useEffect(() => {
-    // 1. URL search param has highest priority
     if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
       setActiveSection(sectionParam);
       const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
@@ -82,7 +77,6 @@ export default function NJ06Modules(): JSX.Element {
       return;
     }
 
-    // 2. Highlight deep-link lookup
     if (highlightId) {
       const all = getAllAnnotations();
       const target = all.find(
@@ -113,7 +107,6 @@ export default function NJ06Modules(): JSX.Element {
       }
     }
 
-    // 3. Restore persisted progress from localStorage on page refresh
     try {
       const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
       if (saved) {
@@ -139,7 +132,6 @@ export default function NJ06Modules(): JSX.Element {
     setCompletedSections(nextCompleted);
     setActiveSection(sectionId);
 
-    // Persist to localStorage
     try {
       localStorage.setItem(
         PROGRESS_STORAGE_KEY,
@@ -150,7 +142,6 @@ export default function NJ06Modules(): JSX.Element {
       );
     } catch {}
 
-    // Synchronize URL search param without full reload and delete highlightId
     if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
       url.searchParams.delete("highlightId");
@@ -191,40 +182,38 @@ export default function NJ06Modules(): JSX.Element {
     <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20">
       <Nav />
 
-      <div className="relative z-10 max-w-[95rem] mx-auto px-6 lg:px-8 py-2">
+      <div className="relative z-10 max-w-[95rem] mx-auto px-6 lg:px-8 py-4">
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
           {/* Stepper Sidebar */}
           <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
             {/* Header */}
             <div className="px-2 mb-3 shrink-0">
               <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
-                Modules
+                Steps
               </p>
             </div>
 
-            {/* Stepper (Scrollable List) */}
+            {/* Stepper (Unlocked Navigation) */}
             <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
               <ol className="space-y-1.5 relative">
                 {SECTIONS.map((section, index) => {
                   const state = getStepState(index);
                   const isActive = state === "active";
                   const isDone = state === "done";
-                  const isTodo = state === "todo";
 
                   return (
                     <li key={section.id}>
                       <button
                         onClick={() => handleSectionChange(section.id)}
-                        disabled={isTodo}
                         className={`
                           group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
-                          transition-all duration-200 text-left
+                          transition-all duration-200 text-left cursor-pointer
                           ${
                             isActive
                               ? "bg-ds-feature-lighter border border-ds-feature-base"
                               : isDone
-                                ? "hover:bg-ds-bg-weak cursor-pointer"
-                                : "opacity-50 cursor-not-allowed"
+                                ? "hover:bg-ds-bg-weak"
+                                : "hover:bg-ds-bg-weak opacity-80"
                           }
                         `}
                       >
@@ -269,7 +258,7 @@ export default function NJ06Modules(): JSX.Element {
                                   ? "text-ds-feature-dark font-black"
                                   : isDone
                                     ? "text-ds-text-strong group-hover:text-ds-feature-base"
-                                    : "text-ds-text-disabled"
+                                    : "text-ds-text-sub group-hover:text-ds-text-strong"
                               }
                             `}
                           >
@@ -277,12 +266,12 @@ export default function NJ06Modules(): JSX.Element {
                           </span>
                           {isActive && (
                             <span className="text-[10px] font-medium text-ds-feature-base">
-                              In progress
+                              Active
                             </span>
                           )}
                           {isDone && (
                             <span className="text-[10px] text-ds-success-dark font-medium">
-                              Completed
+                              Done
                             </span>
                           )}
                         </div>
@@ -317,7 +306,7 @@ export default function NJ06Modules(): JSX.Element {
                 />
               </div>
               <p className="mt-2 text-[10px] text-ds-text-soft">
-                {currentIndex + 1} of {SECTIONS.length} modules
+                {currentIndex + 1} of {SECTIONS.length} steps
               </p>
             </div>
 
@@ -347,13 +336,37 @@ export default function NJ06Modules(): JSX.Element {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0 max-w-6xl">
-            <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
+          <main className="flex-1 min-w-0 max-w-5xl">
+            <div className="animate-in fade-in slide-in-from-bottom-6 duration-500 ease-out">
               {renderContent()}
+
+              {/* Quick Revision Section */}
+              <QuickRevision
+                title="Quick Revision: NestJS Modules"
+                points={NJ06_REVISION_POINTS}
+                takeaway="Modules encapsulate related features into self-contained units with explicit boundaries using imports and exports."
+              />
+
+              {/* Lesson Nav Footer */}
+              <LessonNavFooter currentSlug="nj06-modules" />
             </div>
           </main>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function NJ06Modules(): JSX.Element {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-neutral-950 flex items-center justify-center text-neutral-400">
+          Loading lesson...
+        </div>
+      }
+    >
+      <NJ06ModulesContent />
+    </Suspense>
   );
 }
