@@ -97,8 +97,10 @@ export default function NestJSPage() {
     <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-ds-text-strong flex flex-col font-sans selection:bg-ds-feature-light/20 selection:text-ds-feature-dark overflow-x-hidden transition-colors duration-300">
       <Nav />
 
-      <main className="flex-1 max-w-[95rem]
-       mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full space-y-10">
+      <main
+        className="flex-1 max-w-[95rem]
+       mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full space-y-10"
+      >
         {/* =========================================================================
             1. HERO SECTION
            ========================================================================= */}
@@ -201,16 +203,16 @@ export default function NestJSPage() {
                 <button
                   key={phase.id}
                   onClick={() => handlePhaseSelect(phase.id)}
-                  className={`p-5 rounded-2xl text-left transition-all duration-300 relative cursor-pointer border flex flex-col justify-between ${
+                  className={`group p-5 rounded-2xl text-left transition-all duration-300 ease-out relative cursor-pointer border flex flex-col justify-between overflow-hidden ${
                     isSelected
                       ? "bg-ds-feature-lighter/20 border-ds-feature-base ring-2 ring-ds-feature-base/20 shadow-md shadow-ds-feature-base/5"
-                      : "bg-ds-bg-white hover:bg-ds-bg-weak border-ds-stroke-soft hover:border-ds-feature-base/50 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+                      : "bg-ds-bg-white hover:bg-ds-bg-weak/70 border-ds-stroke-soft hover:border-ds-feature-base/50 shadow-sm hover:shadow-md hover:-translate-y-1"
                   }`}
                 >
-                  <div>
+                  <div className="relative z-10">
                     {/* Top row: Icon + Scope / Status */}
                     <div className="flex items-center justify-between gap-2 mb-3">
-                      <div className="w-8 h-8 rounded-xl bg-ds-bg-weak flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-xl bg-ds-bg-weak group-hover:bg-ds-bg-soft flex items-center justify-center border border-ds-stroke-soft group-hover:border-ds-feature-base/30 transition-colors duration-200">
                         {getPhaseIcon(phase.icon)}
                       </div>
 
@@ -220,22 +222,22 @@ export default function NestJSPage() {
                           Active Phase
                         </span>
                       ) : (
-                        <span className="text-[10px] font-bold text-ds-text-soft uppercase tracking-wider">
+                        <span className="text-[10px] font-bold text-ds-text-soft group-hover:text-ds-text-sub uppercase tracking-wider transition-colors duration-200">
                           {phase.tag}
                         </span>
                       )}
                     </div>
 
-                    <div className="text-sm font-bold text-ds-text-strong group-hover:text-ds-feature-base transition-colors leading-snug">
+                    <div className="text-sm font-bold text-ds-text-strong group-hover:text-ds-feature-base transition-colors duration-200 leading-snug">
                       {phase.label}
                     </div>
 
-                    <div className="text-xs text-ds-text-sub mt-1 leading-relaxed line-clamp-2">
+                    <div className="text-xs text-ds-text-sub group-hover:text-ds-text-strong/90 transition-colors duration-200 mt-1 leading-relaxed line-clamp-2">
                       {phase.desc}
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-ds-stroke-soft text-[11px] font-mono text-ds-text-soft">
+                  <div className="relative z-10 mt-4 pt-3 border-t border-ds-stroke-soft group-hover:border-ds-stroke-soft/80 text-[11px] font-mono text-ds-text-soft group-hover:text-ds-text-sub transition-colors duration-200">
                     {phase.scope}
                   </div>
                 </button>

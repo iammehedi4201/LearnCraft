@@ -11,33 +11,78 @@ import {
   Code,
   Layers,
 } from "./icons";
-import {
-  getAllLessons,
-  LessonMeta,
-} from "../data/nestjs-curriculum";
+import { getAllLessons, LessonMeta } from "../data/nestjs-curriculum";
 import { ContentTagBadge } from "./content-tag-badge";
 
 const CLI_CHEATSHEET = [
   { cmd: "nest new project-name", desc: "Scaffold a new NestJS application" },
-  { cmd: "nest g module <name>", desc: "Generate a feature module (e.g. users)" },
-  { cmd: "nest g controller <name>", desc: "Generate a REST controller with routing" },
-  { cmd: "nest g service <name>", desc: "Generate an injectable provider service" },
-  { cmd: "nest g resource <name>", desc: "Generate a full CRUD resource (Module, Controller, Service, DTOs)" },
-  { cmd: "nest g guard <name>", desc: "Generate a CanActivate authentication/authorization guard" },
-  { cmd: "nest g interceptor <name>", desc: "Generate an execution interceptor with RxJS" },
-  { cmd: "nest g pipe <name>", desc: "Generate a transformation & validation pipe" },
-  { cmd: "nest g filter <name>", desc: "Generate an exception filter for structured errors" },
+  {
+    cmd: "nest g module <name>",
+    desc: "Generate a feature module (e.g. users)",
+  },
+  {
+    cmd: "nest g controller <name>",
+    desc: "Generate a REST controller with routing",
+  },
+  {
+    cmd: "nest g service <name>",
+    desc: "Generate an injectable provider service",
+  },
+  {
+    cmd: "nest g resource <name>",
+    desc: "Generate a full CRUD resource (Module, Controller, Service, DTOs)",
+  },
+  {
+    cmd: "nest g guard <name>",
+    desc: "Generate a CanActivate authentication/authorization guard",
+  },
+  {
+    cmd: "nest g interceptor <name>",
+    desc: "Generate an execution interceptor with RxJS",
+  },
+  {
+    cmd: "nest g pipe <name>",
+    desc: "Generate a transformation & validation pipe",
+  },
+  {
+    cmd: "nest g filter <name>",
+    desc: "Generate an exception filter for structured errors",
+  },
 ];
 
 const DECORATOR_CHEATSHEET = [
-  { name: "@Module({ ... })", desc: "Declares a cohesive application unit (imports, controllers, providers, exports)" },
-  { name: "@Controller('path')", desc: "Defines an HTTP endpoint route handler prefix" },
-  { name: "@Injectable()", desc: "Marks a class as a dependency injection provider" },
-  { name: "@Get(), @Post(), @Put(), @Delete()", desc: "Defines HTTP verb method handlers" },
-  { name: "@Param('id'), @Body(), @Query('q')", desc: "Extracts path params, request payload, or query string" },
-  { name: "@UseGuards(JwtAuthGuard)", desc: "Protects routes with authentication or permission guards" },
-  { name: "@UseInterceptors(ClassSerializer)", desc: "Binds response transformation & metric interceptors" },
-  { name: "@UsePipes(new ValidationPipe())", desc: "Applies input validation & schema parsing" },
+  {
+    name: "@Module({ ... })",
+    desc: "Declares a cohesive application unit (imports, controllers, providers, exports)",
+  },
+  {
+    name: "@Controller('path')",
+    desc: "Defines an HTTP endpoint route handler prefix",
+  },
+  {
+    name: "@Injectable()",
+    desc: "Marks a class as a dependency injection provider",
+  },
+  {
+    name: "@Get(), @Post(), @Put(), @Delete()",
+    desc: "Defines HTTP verb method handlers",
+  },
+  {
+    name: "@Param('id'), @Body(), @Query('q')",
+    desc: "Extracts path params, request payload, or query string",
+  },
+  {
+    name: "@UseGuards(JwtAuthGuard)",
+    desc: "Protects routes with authentication or permission guards",
+  },
+  {
+    name: "@UseInterceptors(ClassSerializer)",
+    desc: "Binds response transformation & metric interceptors",
+  },
+  {
+    name: "@UsePipes(new ValidationPipe())",
+    desc: "Applies input validation & schema parsing",
+  },
 ];
 
 export function ReferenceView() {
@@ -88,7 +133,9 @@ export function ReferenceView() {
           </div>
 
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none shrink-0">
-            {(["ALL", "CORE", "BUILD", "PROFESSIONAL", "REFERENCE"] as const).map((tag) => (
+            {(
+              ["ALL", "CORE", "BUILD", "PROFESSIONAL", "REFERENCE"] as const
+            ).map((tag) => (
               <button
                 key={tag}
                 onClick={() => setSelectedTag(tag)}
@@ -101,10 +148,10 @@ export function ReferenceView() {
                 {tag === "ALL"
                   ? "All"
                   : tag === "PROFESSIONAL"
-                  ? "Pro"
-                  : tag === "REFERENCE"
-                  ? "Ref"
-                  : tag.charAt(0) + tag.slice(1).toLowerCase()}
+                    ? "Pro"
+                    : tag === "REFERENCE"
+                      ? "Ref"
+                      : tag.charAt(0) + tag.slice(1).toLowerCase()}
               </button>
             ))}
           </div>
@@ -131,7 +178,9 @@ export function ReferenceView() {
       {/* Matching Search Results Grid */}
       <div className="space-y-4">
         <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-ds-text-soft">
-          {query ? `Search Results (${filteredLessons.length})` : "All 32 Curriculum Modules"}
+          {query
+            ? `Search Results (${filteredLessons.length})`
+            : "All 32 Curriculum Modules"}
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -191,7 +240,9 @@ export function ReferenceView() {
                 <code className="font-mono font-bold text-ds-feature-dark">
                   {item.cmd}
                 </code>
-                <span className="text-ds-text-sub text-[11px]">{item.desc}</span>
+                <span className="text-ds-text-sub text-[11px]">
+                  {item.desc}
+                </span>
               </div>
             ))}
           </div>
@@ -213,7 +264,9 @@ export function ReferenceView() {
                 <code className="font-mono font-bold text-ds-text-strong">
                   {item.name}
                 </code>
-                <span className="text-ds-text-sub text-[11px]">{item.desc}</span>
+                <span className="text-ds-text-sub text-[11px]">
+                  {item.desc}
+                </span>
               </div>
             ))}
           </div>
