@@ -9,45 +9,22 @@ import {
   Sparkles,
   BookOpen,
   Code,
-  Layers,
 } from "./icons";
-import { getAllLessons, LessonMeta } from "../data/nestjs-curriculum";
-import { ContentTagBadge } from "./content-tag-badge";
+import {
+  getAllLessons,
+  LessonMeta,
+} from "../data/nestjs-curriculum";
 
 const CLI_CHEATSHEET = [
   { cmd: "nest new project-name", desc: "Scaffold a new NestJS application" },
-  {
-    cmd: "nest g module <name>",
-    desc: "Generate a feature module (e.g. users)",
-  },
-  {
-    cmd: "nest g controller <name>",
-    desc: "Generate a REST controller with routing",
-  },
-  {
-    cmd: "nest g service <name>",
-    desc: "Generate an injectable provider service",
-  },
-  {
-    cmd: "nest g resource <name>",
-    desc: "Generate a full CRUD resource (Module, Controller, Service, DTOs)",
-  },
-  {
-    cmd: "nest g guard <name>",
-    desc: "Generate a CanActivate authentication/authorization guard",
-  },
-  {
-    cmd: "nest g interceptor <name>",
-    desc: "Generate an execution interceptor with RxJS",
-  },
-  {
-    cmd: "nest g pipe <name>",
-    desc: "Generate a transformation & validation pipe",
-  },
-  {
-    cmd: "nest g filter <name>",
-    desc: "Generate an exception filter for structured errors",
-  },
+  { cmd: "nest g module <name>", desc: "Generate a feature module (e.g. users)" },
+  { cmd: "nest g controller <name>", desc: "Generate a REST controller with routing" },
+  { cmd: "nest g service <name>", desc: "Generate an injectable provider service" },
+  { cmd: "nest g resource <name>", desc: "Generate a full CRUD resource (Module, Controller, Service, DTOs)" },
+  { cmd: "nest g guard <name>", desc: "Generate a CanActivate authentication/authorization guard" },
+  { cmd: "nest g interceptor <name>", desc: "Generate an execution interceptor with RxJS" },
+  { cmd: "nest g pipe <name>", desc: "Generate a transformation & validation pipe" },
+  { cmd: "nest g filter <name>", desc: "Generate an exception filter for structured errors" },
 ];
 
 const DECORATOR_CHEATSHEET = [
@@ -87,74 +64,46 @@ const DECORATOR_CHEATSHEET = [
 
 export function ReferenceView() {
   const [query, setQuery] = useState("");
-  const [selectedTag, setSelectedTag] = useState<string>("ALL");
   const allLessons = getAllLessons();
 
   const filteredLessons = useMemo(() => {
     const q = query.trim().toLowerCase();
+    if (!q) return allLessons;
     return allLessons.filter((l) => {
-      const matchText =
-        !q ||
+      return (
         l.name.toLowerCase().includes(q) ||
         l.code.toLowerCase().includes(q) ||
-        l.desc.toLowerCase().includes(q);
-      const matchTag = selectedTag === "ALL" || l.tag === selectedTag;
-      return matchText && matchTag;
+        l.desc.toLowerCase().includes(q)
+      );
     });
-  }, [query, selectedTag, allLessons]);
+  }, [query, allLessons]);
 
   return (
     <div className="space-y-8">
-      {/* Search & Tag Filter Banner */}
+      {/* Search Bar Banner */}
       <div className="p-5 sm:p-6 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
         <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-ds-text-strong">
           <BookOpen className="w-4 h-4 text-ds-feature-base" />
           <span>Search All 32 Modules & Cheatsheets</span>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-ds-icon-sub absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search by topic, code, or keyword (e.g. JWT, DTO, Prisma, Pino, Docker)..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full bg-ds-bg-weak border border-ds-stroke-soft rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-ds-text-strong placeholder-ds-text-soft focus:outline-none focus:border-ds-feature-base transition-colors"
-            />
-            {query && (
-              <button
-                onClick={() => setQuery("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ds-text-soft hover:text-ds-text-strong font-medium"
-              >
-                Clear
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none shrink-0">
-            {(
-              ["ALL", "CORE", "BUILD", "PROFESSIONAL", "REFERENCE"] as const
-            ).map((tag) => (
-              <button
-                key={tag}
-                onClick={() => setSelectedTag(tag)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all shrink-0 ${
-                  selectedTag === tag
-                    ? "bg-ds-bg-strong text-ds-text-white shadow-sm"
-                    : "bg-ds-bg-weak text-ds-text-sub hover:text-ds-text-strong hover:bg-ds-bg-soft"
-                }`}
-              >
-                {tag === "ALL"
-                  ? "All"
-                  : tag === "PROFESSIONAL"
-                    ? "Pro"
-                    : tag === "REFERENCE"
-                      ? "Ref"
-                      : tag.charAt(0) + tag.slice(1).toLowerCase()}
-              </button>
-            ))}
-          </div>
+        <div className="relative">
+          <Search className="w-4 h-4 text-ds-icon-sub absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            placeholder="Search by topic, code, or keyword (e.g. JWT, DTO, Prisma, Pino, Docker)..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full bg-ds-bg-weak border border-ds-stroke-soft rounded-xl pl-10 pr-10 py-2.5 text-xs sm:text-sm text-ds-text-strong placeholder-ds-text-soft focus:outline-none focus:border-ds-feature-base transition-colors"
+          />
+          {query && (
+            <button
+              onClick={() => setQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ds-text-soft hover:text-ds-text-strong font-medium"
+            >
+              Clear
+            </button>
+          )}
         </div>
 
         {query && (
@@ -163,10 +112,7 @@ export function ReferenceView() {
               Found <strong>{filteredLessons.length}</strong> matching lessons
             </span>
             <button
-              onClick={() => {
-                setQuery("");
-                setSelectedTag("ALL");
-              }}
+              onClick={() => setQuery("")}
               className="text-xs text-ds-feature-base hover:text-ds-feature-dark font-semibold"
             >
               Reset
@@ -188,14 +134,13 @@ export function ReferenceView() {
             <Link
               key={lesson.slug}
               href={lesson.path}
-              className="p-5 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 flex flex-col justify-between group"
+              className="p-5 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base/40 transition-all duration-300 ease-out shadow-sm hover:shadow-md hover:-translate-y-0.5 flex flex-col justify-between group relative overflow-hidden"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2.5">
                   <span className="font-mono text-xs font-black text-ds-text-strong bg-ds-bg-weak px-2 py-0.5 rounded group-hover:text-ds-feature-base transition-colors">
                     {lesson.code}
                   </span>
-                  <ContentTagBadge tag={lesson.tag} size="sm" />
                 </div>
 
                 <h4 className="text-sm font-bold text-ds-text-strong group-hover:text-ds-feature-base transition-colors">
@@ -212,7 +157,7 @@ export function ReferenceView() {
                   <Clock className="w-3.5 h-3.5" />
                   <span>{lesson.estimatedMinutes}m</span>
                 </span>
-                <span className="font-bold text-ds-feature-base group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                <span className="font-bold text-ds-feature-base group-hover:translate-x-1 transition-transform duration-200 ease-out flex items-center gap-1">
                   <span>Open</span>
                   <ArrowRight className="w-3 h-3" />
                 </span>

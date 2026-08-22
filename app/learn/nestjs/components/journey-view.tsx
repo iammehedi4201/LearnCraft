@@ -132,20 +132,19 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
                       <span className="font-mono text-xs font-black tracking-wider text-ds-text-strong bg-ds-bg-weak px-2.5 py-1 rounded-lg border border-ds-stroke-soft group-hover:border-ds-feature-base/40 group-hover:text-ds-feature-base transition-colors duration-200">
                         {lesson.code}
                       </span>
-                      {isDone ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-ds-success-dark bg-ds-success-lighter px-2.5 py-0.5 rounded-full">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-ds-success-base" />
-                          Done
-                        </span>
-                      ) : isTarget ? (
-                        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-ds-feature-dark bg-ds-feature-lighter px-2.5 py-0.5 rounded-full border border-ds-feature-base/30">
-                          <span className="w-1.5 h-1.5 rounded-full bg-ds-feature-base animate-pulse" />
-                          Current
-                        </span>
-                      ) : null}
                     </div>
 
-                    <ContentTagBadge tag={lesson.tag} size="sm" />
+                    {isDone ? (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-ds-success-dark bg-ds-success-lighter px-2.5 py-0.5 rounded-full">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-ds-success-base" />
+                        Done
+                      </span>
+                    ) : isTarget ? (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-ds-feature-dark bg-ds-feature-lighter px-2.5 py-0.5 rounded-full">
+                        <span className="w-1.5 h-1.5 rounded-full bg-ds-feature-base animate-pulse" />
+                        Current
+                      </span>
+                    ) : null}
                   </div>
 
                   {/* Title */}

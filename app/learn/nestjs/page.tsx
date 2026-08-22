@@ -205,7 +205,7 @@ export default function NestJSPage() {
                   onClick={() => handlePhaseSelect(phase.id)}
                   className={`group p-5 rounded-2xl text-left transition-all duration-300 ease-out relative cursor-pointer border flex flex-col justify-between overflow-hidden ${
                     isSelected
-                      ? "bg-ds-feature-lighter/20 border-ds-feature-base ring-2 ring-ds-feature-base/20 shadow-md shadow-ds-feature-base/5"
+                      ? "bg-ds-bg-white border-ds-feature-base ring-2 ring-ds-feature-base/20 shadow-md shadow-ds-feature-base/5"
                       : "bg-ds-bg-white hover:bg-ds-bg-weak/70 border-ds-stroke-soft hover:border-ds-feature-base/50 shadow-sm hover:shadow-md hover:-translate-y-1"
                   }`}
                 >
@@ -217,8 +217,8 @@ export default function NestJSPage() {
                       </div>
 
                       {isSelected ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-ds-feature-dark bg-ds-feature-lighter px-2 py-0.5 rounded-full border border-ds-feature-base">
-                          <Check className="w-3 h-3 text-ds-feature-base" />
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-ds-feature-dark bg-ds-feature-lighter px-2.5 py-0.5 rounded-full">
+                          <Check className="w-3.5 h-3.5 text-ds-feature-base" />
                           Active Phase
                         </span>
                       ) : (
