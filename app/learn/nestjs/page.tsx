@@ -121,7 +121,7 @@ export default function NestJSPage() {
       <Nav />
 
       {/* Expansive Parent Section Width */}
-      <main className="flex-1 max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full">
+      <main className="flex-1 max-w-[80rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full">
         {/* Destination-First Hero */}
         <section className="py-8 md:py-12 border-b border-ds-stroke-soft">
           <div className="max-w-4xl">
