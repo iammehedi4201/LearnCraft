@@ -13,7 +13,7 @@ import {
 
 export function ConceptTablesSection() {
   return (
-    <SectionContainer number={17} title="Concept Tables & Cheatsheet">
+    <SectionContainer number={9} title="Concept Tables & Cheatsheet">
       {/* ── 17.1 Decorator Types Cheatsheet ── */}
       <div className="mb-16">
         <TopicHeader

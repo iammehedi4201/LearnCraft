@@ -15,7 +15,7 @@ import {
 
 export function BeginnerMistakesSection() {
   return (
-    <SectionContainer number={16} title="Beginner Mistakes & Gotchas">
+    <SectionContainer number={8} title="Beginner Mistakes & Gotchas">
       {/* ── Mistakes List ── */}
       <div className="mb-16">
         <TopicHeader

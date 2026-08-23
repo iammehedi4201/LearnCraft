@@ -13,7 +13,7 @@ import {
 
 export function CodingExercisesSection() {
   return (
-    <SectionContainer number={19} title="Coding Exercises">
+    <SectionContainer number={15} title="Coding Exercises">
       <div className="mb-10 p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
         <p className="text-sm text-ds-text-sub leading-relaxed">
           Now it&apos;s time to <strong>write and test your own decorators live</strong>! Each interactive exercise includes automated tests. Click <strong>Run</strong> to see your console output and <strong>Check</strong> to verify your solution.

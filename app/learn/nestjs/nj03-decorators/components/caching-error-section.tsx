@@ -16,7 +16,7 @@ import {
 
 export function CachingErrorSection() {
   return (
-    <SectionContainer number={11} title="Real-World Pattern: Caching & Error Handling">
+    <SectionContainer number={13} title="Real-World Pattern: Caching & Error Handling">
       {/* ── 11.1 Method Caching (Saving Results) ── */}
       <div className="mb-16">
         <TopicHeader

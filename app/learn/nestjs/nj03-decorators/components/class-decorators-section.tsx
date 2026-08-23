@@ -15,11 +15,20 @@ import {
 // PART 3 — CLASS DECORATORS
 // ═══════════════════════════════════════════════════════════
 
-export function ClassDecoratorsSection() {
+export function ClassDecoratorsSection({
+  advancedOnly = false,
+}: {
+  advancedOnly?: boolean;
+} = {}) {
   return (
-    <SectionContainer number={3} title="Class Decorators">
-      {/* ── 3.1 Class Decorator Signature ── */}
-      <div className="mb-16">
+    <SectionContainer
+      number={advancedOnly ? 16 : 3}
+      title={advancedOnly ? "Advanced Class Decorators" : "Class Decorators"}
+    >
+      {!advancedOnly && (
+        <>
+          {/* ── 3.1 Class Decorator Signature ── */}
+          <div className="mb-16">
         <TopicHeader
           number={1}
           title="What is a Class Decorator?"
@@ -70,12 +79,12 @@ console.log("Instance created successfully!");`}
             height="340px"
           />
         </div>
-      </div>
+          </div>
 
-      <Divider />
+          <Divider />
 
       {/* ── 3.2 Adding Properties & Methods via Prototype ── */}
-      <div className="mb-16">
+          <div className="mb-16">
         <TopicHeader
           number={2}
           title="Adding Shared Properties to All Instances"
@@ -120,15 +129,18 @@ console.log((order as any).getTimestamp());`}
             TypeScript checks your code at <strong>compile-time</strong> based on what you wrote in <code>class OrderModel</code>. Because our decorator adds <code>createdAt</code> dynamically when the program runs, TypeScript doesn&apos;t see it in the class definition by default. Using <code>(order as any)</code> tells TypeScript: <em>&quot;Trust me, this property exists at runtime!&quot;</em>
           </p>
         </InfoCallout>
-      </div>
-
-      <Divider />
+          </div>
 
       {/* ── 3.3 Returning a Subclass (Class Wrapper Pattern) ── */}
-      <div className="mb-16">
+        </>
+      )}
+
+      {advancedOnly && (
+        <>
+          <div className="mb-16">
         <TopicHeader
-          number={3}
-          title="Replacing a Class with a Subclass (Advanced)"
+          number={1}
+          title="Replacing a Class with a Subclass"
           description="If a class decorator returns a new class, that new class completely replaces the original one. This is how you can inject extra logic whenever new instances are created."
           color="emerald"
         />
@@ -182,7 +194,13 @@ console.log("DB 2 ID:", (db2 as any).instanceId);`}
           question="What parameters does a Class Decorator receive in TypeScript?"
           answer="A Class Decorator receives exactly 1 parameter: the class constructor function itself. If the decorator returns a new class constructor, that returned class will replace the original class."
         />
-      </div>
+          </div>
+        </>
+      )}
     </SectionContainer>
   );
+}
+
+export function AdvancedClassDecoratorsSection() {
+  return <ClassDecoratorsSection advancedOnly />;
 }

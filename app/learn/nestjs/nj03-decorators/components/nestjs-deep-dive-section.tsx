@@ -15,7 +15,7 @@ import {
 
 export function NestjsDeepDiveSection() {
   return (
-    <SectionContainer number={15} title="NestJS Decorators Deep Dive">
+    <SectionContainer number={20} title="NestJS Decorators Deep Dive">
       {/* ── 15.1 Core NestJS Decorators Demystified ── */}
       <div className="mb-16">
         <TopicHeader

@@ -16,7 +16,7 @@ import {
 
 export function ValidationDecoratorSection() {
   return (
-    <SectionContainer number={9} title="Real-World Pattern: Validation">
+    <SectionContainer number={11} title="Real-World Pattern: Validation">
       {/* ── 9.1 Declarative Validation ── */}
       <div className="mb-16">
         <TopicHeader

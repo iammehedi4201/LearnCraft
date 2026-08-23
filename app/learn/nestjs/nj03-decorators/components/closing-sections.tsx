@@ -16,7 +16,7 @@ import {
 
 export function ClosingSections() {
   return (
-    <SectionContainer number={21} title="Express vs NestJS & Final Review">
+    <SectionContainer number={22} title="Express vs NestJS & Final Review">
       {/* ── Express vs NestJS ── */}
       <div className="mb-16">
         <TopicHeader

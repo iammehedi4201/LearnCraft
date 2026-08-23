@@ -18,7 +18,7 @@ import {
 
 export function AuthSecuritySection() {
   return (
-    <SectionContainer number={10} title="Real-World Pattern: Authorization & Security">
+    <SectionContainer number={12} title="Real-World Pattern: Authorization & Security">
       {/* ── 10.1 Role-Based Access Control Decorator ── */}
       <div className="mb-16">
         <TopicHeader
