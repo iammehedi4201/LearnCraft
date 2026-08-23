@@ -221,6 +221,9 @@ export function SectionContainer({
             {number}
           </div>
           <div>
+            <p className="mb-1 text-[10px] font-black uppercase tracking-widest text-ds-text-soft">
+              Lesson {number}
+            </p>
             <h2 className="text-3xl font-black text-ds-text-strong tracking-tight font-display">
               {title}
             </h2>
