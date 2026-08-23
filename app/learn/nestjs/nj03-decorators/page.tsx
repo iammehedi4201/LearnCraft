@@ -143,18 +143,18 @@ function ModuleGuide({
   moduleNumber: number;
 }) {
   return (
-    <section className="mb-8 overflow-hidden rounded-3xl bg-ds-feature-lighter shadow-sm">
+    <section className="mb-8 overflow-hidden rounded-3xl bg-ds-bg-white shadow-sm">
       <div className="p-6 lg:p-8">
         <div className="mb-7 max-w-3xl">
           <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-ds-feature-base px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-ds-static-white shadow-sm">
+            <span className="rounded-full bg-ds-feature-lighter px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-ds-feature-dark">
               Module {moduleNumber}
             </span>
-            <span className="text-[10px] font-black uppercase tracking-[0.18em] text-ds-feature-dark">
+            <span className="text-[10px] font-black uppercase tracking-[0.18em] text-ds-text-soft">
               {module.stage}
             </span>
             {module.optional && (
-              <span className="rounded-full bg-ds-bg-white px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-ds-text-sub shadow-sm">
+              <span className="rounded-full bg-ds-bg-weak px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-ds-text-sub">
                 Optional
               </span>
             )}
@@ -168,17 +168,17 @@ function ModuleGuide({
           </p>
         </div>
 
-        <div className="rounded-2xl bg-ds-bg-white/70 p-5 shadow-sm lg:p-6">
-          <p className="mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-ds-text-soft">
+        <div className="mt-8">
+          <p className="mb-4 text-[9px] font-black uppercase tracking-[0.2em] text-ds-text-soft">
             Learn in this order
           </p>
           <ol className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
             {module.lessons.map((lesson, index) => (
               <li
                 key={lesson}
-                className="flex min-h-12 items-center gap-3 rounded-xl bg-ds-bg-weak px-3.5 py-3 text-xs font-semibold leading-relaxed text-ds-text-sub"
+                className="flex min-h-12 items-center gap-3 rounded-xl bg-ds-bg-weak px-3.5 py-3 text-[11px] font-semibold leading-5 text-ds-text-strong"
               >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-ds-feature-lighter text-[10px] font-black text-ds-feature-dark">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ds-bg-white text-[10px] font-black text-ds-feature-dark shadow-sm">
                   {index + 1}
                 </span>
                 {lesson}
@@ -370,7 +370,7 @@ export default function NJ03Decorators(): JSX.Element {
               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-ds-text-soft">
                 Learning Path
               </p>
-              <p className="mt-1 text-xs leading-relaxed text-ds-text-sub">
+              <p className="mt-1 text-[11px] leading-5 text-ds-text-sub">
                 Complete the first three modules. Advanced work is optional.
               </p>
             </div>
