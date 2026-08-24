@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
 import { getAllAnnotations } from "@/lib/revision-storage";
+import { ModuleGuide } from "@/components/module-guide";
 
 import { BeginnerMistakesSection } from "./components/beginner-mistakes-section";
 import { ClassesObjectsSection } from "./components/classes-objects-section";
@@ -119,62 +120,6 @@ function resolveModuleId(sectionId?: string | null): string | null {
   if (!sectionId) return null;
   if (SECTIONS.some((section) => section.id === sectionId)) return sectionId;
   return LEGACY_SECTION_TO_MODULE[sectionId] ?? null;
-}
-
-function ModuleGuide({
-  module,
-  moduleNumber,
-}: {
-  module: LearningModule;
-  moduleNumber: number;
-}) {
-  return (
-    <section className="mb-8 overflow-hidden rounded-3xl bg-ds-bg-white shadow-sm">
-      <div className="p-6 lg:p-8">
-        <div className="mb-7 max-w-3xl">
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-ds-feature-lighter px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-ds-feature-dark">
-              Module {moduleNumber}
-            </span>
-            <span className="text-[10px] font-black uppercase tracking-[0.18em] text-ds-text-soft">
-              {module.stage}
-            </span>
-            {module.optional && (
-              <span className="rounded-full bg-ds-bg-weak px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-ds-text-sub">
-                Optional
-              </span>
-            )}
-          </div>
-
-          <h1 className="mb-3 font-display text-3xl font-black tracking-tight text-ds-text-strong lg:text-4xl">
-            {module.label}
-          </h1>
-          <p className="max-w-2xl text-sm leading-7 text-ds-text-sub lg:text-base">
-            {module.description}
-          </p>
-        </div>
-
-        <div className="mt-8">
-          <p className="mb-4 text-[9px] font-black uppercase tracking-[0.2em] text-ds-text-soft">
-            Learn in this order
-          </p>
-          <ol className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-            {module.lessons.map((lesson, index) => (
-              <li
-                key={lesson}
-                className="flex min-h-12 items-center gap-3 rounded-xl bg-ds-bg-weak px-3.5 py-3 text-[10px] font-semibold leading-4 text-ds-text-strong"
-              >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ds-bg-white text-[10px] font-black text-ds-feature-dark shadow-sm">
-                  {index + 1}
-                </span>
-                {lesson}
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    </section>
-  );
 }
 
 export default function NJ02OOP(): JSX.Element {
