@@ -88,7 +88,7 @@ export function Nav(): JSX.Element {
                         : "text-ds-text-sub hover:text-ds-text-strong"
                     }`}
                   >
-                    {item.highlight && <span className="text-xs">⚡</span>}
+                    
                     {item.name}
                     {item.badge !== undefined && (
                       <span className="px-1.5 py-0.2 text-[10px] font-black rounded-full bg-ds-feature-lighter text-ds-feature-dark border border-ds-feature-light">
@@ -107,7 +107,7 @@ export function Nav(): JSX.Element {
                 href="/revision"
                 className="hidden sm:inline-flex px-4 py-2 bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-ds-feature-base/15 items-center gap-1.5"
               >
-                <span>⚡ Quick Revision</span>
+                <span>Quick Revision</span>
               </Link>
             </div>
           </div>

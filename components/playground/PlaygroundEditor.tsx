@@ -139,15 +139,22 @@ export function PlaygroundEditor({
     const textarea = textareaRef.current;
     if (!textarea) return;
 
+    // Read actual metrics from computed style for resilience across contexts
+    const computedStyle = getComputedStyle(textarea);
+    const lineHeight =
+      parseFloat(computedStyle.lineHeight) || LINE_HEIGHT_PX;
+    const paddingTop =
+      parseFloat(computedStyle.paddingTop) || PADDING_TOP_PX;
+
     const cursorPos = textarea.selectionStart;
     const textBefore = textarea.value.substring(0, cursorPos);
     const lineNumber = textBefore.split("\n").length; // 1-based line number
 
-    const verticalBuffer = LINE_HEIGHT_PX * 3; // 72px (3 lines breathing room)
+    const verticalBuffer = lineHeight * 3; // 3 lines breathing room
 
     // Vertical auto-scroll
-    const cursorTop = PADDING_TOP_PX + (lineNumber - 1) * LINE_HEIGHT_PX;
-    const cursorBottom = cursorTop + LINE_HEIGHT_PX;
+    const cursorTop = paddingTop + (lineNumber - 1) * lineHeight;
+    const cursorBottom = cursorTop + lineHeight;
 
     const clientHeight = textarea.clientHeight;
     if (clientHeight > 0) {
@@ -188,9 +195,11 @@ export function PlaygroundEditor({
   const [cursorOffset, setCursorOffset] = useState<number | null>(null);
 
   const syncCursorPos = useCallback(() => {
-    if (textareaRef.current) {
-      setCursorOffset(textareaRef.current.selectionStart);
-    }
+    requestAnimationFrame(() => {
+      if (textareaRef.current) {
+        setCursorOffset(textareaRef.current.selectionStart);
+      }
+    });
   }, []);
 
   // ─── Helper for Deterministic Text Mutations with Undo Support ───
@@ -386,8 +395,8 @@ export function PlaygroundEditor({
         e.key === "PageDown"
       ) {
         closeSuggestions();
+        syncCursorPos();
         requestAnimationFrame(() => {
-          syncCursorPos();
           scrollCursorIntoView();
         });
         return;
@@ -541,8 +550,8 @@ export function PlaygroundEditor({
             return;
           }
         }
+        syncCursorPos();
         requestAnimationFrame(() => {
-          syncCursorPos();
           scrollCursorIntoView();
         });
       }
@@ -666,8 +675,8 @@ export function PlaygroundEditor({
       lastRecordedValueRef.current = newVal;
       onChange(newVal);
 
+      syncCursorPos();
       requestAnimationFrame(() => {
-        syncCursorPos();
         scrollCursorIntoView();
         syncScrollLayers();
       });

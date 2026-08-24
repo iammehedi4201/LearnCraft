@@ -1,5 +1,5 @@
 function Log(
-  target: any,
+  _target: any,
   propertyKey: string,
   descriptor: PropertyDescriptor
 ): PropertyDescriptor {
@@ -29,3 +29,6 @@ class UserService {
 // --- Usage Test ---
 const service = new UserService();
 service.createUser("Mehedi");
+
+
+

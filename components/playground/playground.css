@@ -309,12 +309,17 @@
 }
 
 .playground-highlight-layer {
-  overflow: hidden;
+  overflow: auto;
+  scrollbar-width: none; /* Firefox — hide scrollbar */
   pointer-events: none;
   user-select: none;
   color: var(--text-strong-950);
   z-index: 1;
   will-change: transform;
+}
+
+.playground-highlight-layer::-webkit-scrollbar {
+  display: none; /* Chrome/Safari — hide scrollbar */
 }
 
 .playground-code-content {
