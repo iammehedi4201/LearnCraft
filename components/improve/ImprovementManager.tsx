@@ -20,7 +20,7 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import type { ImprovementRecord } from "@/lib/improvement-history";
 import {
   loadHistory,
@@ -31,6 +31,7 @@ import {
 import { DiffViewer } from "./DiffViewer";
 import { LessonStructurePicker } from "./ManualPicker";
 import type { MultiBlockSelection } from "@/lib/improve-types";
+import { extractContentFields, applyFieldPatch, ContentField } from "@/lib/content-field-extractor";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -117,6 +118,196 @@ const IcRedo = () => (
     <path d="M4 20v-7a4 4 0 0 1 4-4h12" />
   </svg>
 );
+
+// ─── Smart Block Editor ───────────────────────────────────────────────────────
+
+function SmartBlockEditor({
+  block,
+  editedContent,
+  onChange
+}: {
+  block: any;
+  editedContent: string;
+  onChange: (newContent: string) => void;
+}) {
+  const [activeFieldKey, setActiveFieldKey] = useState<string | null>(null);
+  const [fieldValue, setFieldValue] = useState("");
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  
+  const fields = useMemo(() => extractContentFields(editedContent), [editedContent]);
+  const activeField = fields.find(f => f.key === activeFieldKey) || null;
+
+  const handleFieldClick = (field: ContentField) => {
+    setActiveFieldKey(field.key);
+    setFieldValue(field.currentValue);
+  };
+
+  const applyFieldEdit = () => {
+    if (!activeField) return;
+    const newBlockSource = applyFieldPatch(editedContent, activeField, fieldValue);
+    onChange(newBlockSource);
+    setActiveFieldKey(null);
+  };
+
+  const contentFields = fields.filter(f => f.category === "content");
+  const configFields = fields.filter(f => f.category === "config");
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* 1. Source Editor (Always visible) */}
+      <div className="flex flex-col gap-2">
+        <span className="text-xs text-slate-400">Source Editor</span>
+        <textarea
+          value={editedContent}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-full min-h-[180px] bg-[#0d1117] border border-slate-700/60 rounded-xl p-4 font-mono text-xs text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 resize-y transition-all leading-5 whitespace-pre-wrap break-words overflow-x-hidden"
+          wrap="soft"
+          spellCheck={false}
+        />
+
+        {/* Diff preview */}
+        {editedContent !== block.currentBlockContent && (
+          <div className="mt-2 border border-slate-700/30 rounded-xl overflow-hidden">
+            <div className="bg-slate-800/40 px-3 py-1.5 border-b border-slate-700/30 text-[10px] font-black uppercase tracking-wider text-slate-500">Diff Preview</div>
+            <DiffViewer
+              oldContent={block.currentBlockContent}
+              newContent={editedContent}
+              oldLabel="Original"
+              newLabel="Edited"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Pending changes indicator */}
+      {editedContent !== block.currentBlockContent && (
+        <div className="p-3 bg-emerald-950/20 border border-emerald-500/20 rounded-xl flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm text-emerald-400">
+            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            Block has pending changes
+          </div>
+          <button 
+            onClick={() => onChange(block.currentBlockContent)}
+            className="text-xs text-slate-400 hover:text-slate-200 underline underline-offset-2"
+          >
+            Revert all
+          </button>
+        </div>
+      )}
+
+      {/* 2. Active Field Editor or Pills */}
+      {activeField ? (
+        <div className="flex flex-col gap-3 p-4 bg-slate-900/50 rounded-xl border border-indigo-500/30">
+          <button 
+            onClick={() => setActiveFieldKey(null)}
+            className="self-start flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            Back to Fields
+          </button>
+          
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Editing Field</span>
+            <span className="text-sm font-bold text-indigo-300">{activeField.label}</span>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Current Value</span>
+            <div className="p-3 bg-slate-800/40 rounded-lg border border-slate-700/50 text-sm text-slate-300 font-mono whitespace-pre-wrap">
+              {activeField.currentValue || <span className="opacity-50 italic">Empty</span>}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Improved Value</span>
+            <textarea
+              value={fieldValue}
+              onChange={(e) => setFieldValue(e.target.value)}
+              className="w-full min-h-[120px] bg-[#0d1117] border border-slate-700/60 rounded-xl p-3 font-mono text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 resize-y transition-all leading-relaxed whitespace-pre-wrap break-words"
+              wrap="soft"
+              spellCheck={false}
+            />
+          </div>
+
+          {fieldValue !== activeField.currentValue && (
+            <div className="mt-2 border border-slate-700/30 rounded-xl overflow-hidden">
+              <div className="bg-slate-800/40 px-3 py-1.5 border-b border-slate-700/30 text-[10px] font-black uppercase tracking-wider text-slate-500">Value Diff Preview</div>
+              <DiffViewer
+                oldContent={activeField.currentValue}
+                newContent={fieldValue}
+                oldLabel="Original"
+                newLabel="Improved"
+              />
+            </div>
+          )}
+
+          <div className="flex justify-end gap-3 mt-2">
+            <button
+              onClick={() => setActiveFieldKey(null)}
+              className="px-4 py-2 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={applyFieldEdit}
+              disabled={fieldValue === activeField.currentValue}
+              className="px-5 py-2 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-700 disabled:text-slate-500 text-white transition-all shadow-lg shadow-indigo-900/20"
+            >
+              Apply to Block
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          {contentFields.length > 0 ? (
+            <div className="flex flex-col gap-2">
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Editable Content</span>
+              <div className="flex flex-wrap gap-2">
+                {contentFields.map(f => (
+                  <button
+                    key={f.key}
+                    onClick={() => handleFieldClick(f)}
+                    className="px-3 py-1.5 bg-indigo-950/30 border border-indigo-500/30 hover:border-indigo-400 hover:bg-indigo-900/50 rounded-lg text-sm text-indigo-300 transition-all font-medium flex items-center gap-2"
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="text-sm text-slate-400 italic">No editable content fields detected in this block.</div>
+          )}
+
+          {configFields.length > 0 && (
+            <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-slate-700/30">
+              <button 
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="self-start text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-slate-300 flex items-center gap-1 transition-colors"
+              >
+                <svg className={`w-3 h-3 transition-transform ${showAdvanced ? 'rotate-90' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                Advanced Configuration
+              </button>
+              
+              {showAdvanced && (
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {configFields.map(f => (
+                    <button
+                      key={f.key}
+                      onClick={() => handleFieldClick(f)}
+                      className="px-3 py-1.5 bg-slate-800/50 border border-slate-700/50 hover:border-slate-500 hover:bg-slate-700/50 rounded-lg text-sm text-slate-300 transition-all font-medium"
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
 
 // ─── Apply Tab ────────────────────────────────────────────────────────────────
 
@@ -404,25 +595,11 @@ function ApplyTab({
                       </span>
                     )}
                   </div>
-                  
-                  <textarea
-                    value={blockEdits[block.id] || ""}
-                    onChange={(e) => setBlockEdits(prev => ({ ...prev, [block.id]: e.target.value }))}
-                    className="w-full min-h-[180px] bg-[#0d1117] border border-slate-700/60 rounded-xl p-4 font-mono text-xs text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 resize-y transition-all leading-5 whitespace-pre"
-                    spellCheck={false}
+                  <SmartBlockEditor
+                    block={block}
+                    editedContent={blockEdits[block.id] || ""}
+                    onChange={(newContent) => setBlockEdits(prev => ({ ...prev, [block.id]: newContent }))}
                   />
-
-                  {blockEdits[block.id] !== block.currentBlockContent && (
-                    <div className="mt-2 border border-slate-700/30 rounded-xl overflow-hidden">
-                      <div className="bg-slate-800/40 px-3 py-1.5 border-b border-slate-700/30 text-[10px] font-black uppercase tracking-wider text-slate-500">Diff Preview</div>
-                      <DiffViewer
-                        oldContent={block.currentBlockContent}
-                        newContent={blockEdits[block.id] || ""}
-                        oldLabel="Original"
-                        newLabel="Edited"
-                      />
-                    </div>
-                  )}
                 </div>
               ))}
 

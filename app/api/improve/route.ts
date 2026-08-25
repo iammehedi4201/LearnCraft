@@ -490,27 +490,45 @@ export async function GET(req: NextRequest) {
     if (!tagNameMatch) return NextResponse.json({ error: "Could not determine tag name" }, { status: 500 });
     const tagName = tagNameMatch[1];
 
-    const tokenRegex = new RegExp(`<(/?)${tagName}(\\s[^>]*?)?(/?)>`, 'g');
-    tokenRegex.lastIndex = startTagPos;
-
-    let depth = 0;
     let endTagPos = -1;
-
-    while (true) {
-      const match = tokenRegex.exec(content);
-      if (!match) break;
+    let inString: string | null = null;
+    let braceDepth = 0;
+    
+    for (let i = startTagPos; i < content.length; i++) {
+      const char = content[i];
+      const nextChar = content[i+1];
       
-      const isClosingNode = match[1] === '/';
-      const isSelfClosing = match[3] === '/';
-
-      if (isClosingNode) {
-        depth--;
-      } else if (!isSelfClosing) {
-        depth++;
+      if (!inString && (char === '"' || char === "'" || char === "`")) {
+        inString = char;
+        continue;
       }
+      if (inString && char === '\\') {
+        i++; // skip escaped char
+        continue;
+      }
+      if (inString && char === inString) {
+        inString = null;
+        continue;
+      }
+      if (inString) continue;
 
-      if (depth === 0) {
-        endTagPos = match.index + match[0].length;
+      if (char === '{') braceDepth++;
+      if (char === '}') braceDepth--;
+
+      if (char === '/' && nextChar === '>' && braceDepth === 0) {
+        endTagPos = i + 2;
+        break;
+      }
+      
+      if (char === '>' && braceDepth === 0) {
+        const closingTag = `</${tagName}>`;
+        const closingIdx = content.indexOf(closingTag, i);
+        if (closingIdx !== -1) {
+          endTagPos = closingIdx + closingTag.length;
+        } else {
+          // If there's no closing tag, we assume it's just a malformed self-closing tag or we reached the end of something unexpected.
+          endTagPos = i + 1;
+        }
         break;
       }
     }
@@ -519,13 +537,43 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Could not find closing tag" }, { status: 500 });
     }
 
-    const blockSource = content.substring(startTagPos, endTagPos);
-    const prefix = content.substring(0, startTagPos);
-    const startLine = prefix.split('\n').length;
-    const blockLines = blockSource.split('\n').length;
-    const endLine = startLine + blockLines - 1;
+    let blockSource = content.substring(startTagPos, endTagPos);
+    let startLine = content.substring(0, startTagPos).split('\n').length;
+    let blockLines = blockSource.split('\n').length;
+    let endLine = startLine + blockLines - 1;
 
-    return NextResponse.json({ blockSource, startLine, endLine });
+    let resolvedStarterCode: string | undefined;
+    let starterCodeVarName: string | undefined;
+
+    if (blockType === "playground") {
+      // Find starterCode={VAR_NAME}
+      const starterMatch = blockSource.match(/starterCode\s*=\s*\{([A-Za-z0-9_]+)\}/);
+      if (starterMatch) {
+        starterCodeVarName = starterMatch[1];
+        // Look for the variable definition in the same file
+        const varPattern = new RegExp(`const\\s+${starterCodeVarName}\\s*=\\s*(?:(?:\\\`([\\s\\S]*?)\\\`)|(?:\\"([^"]*)\\")|(?:\\'([^']*)\\'))`);
+        const varMatch = content.match(varPattern);
+        
+        if (varMatch) {
+          resolvedStarterCode = varMatch[1] ?? varMatch[2] ?? varMatch[3] ?? "";
+          // To patch the variable instead of the playground tag, we swap the blockSource and line range
+          const varStartPos = varMatch.index!;
+          const varFullMatch = varMatch[0];
+          
+          blockSource = varFullMatch;
+          startLine = content.substring(0, varStartPos).split('\n').length;
+          endLine = startLine + varFullMatch.split('\n').length - 1;
+        }
+      }
+    }
+
+    return NextResponse.json({ 
+      blockSource, 
+      startLine, 
+      endLine,
+      resolvedStarterCode,
+      starterCodeVarName
+    });
   }
 
   // ── NEW: Extract the entire SectionContainer from a file ──
