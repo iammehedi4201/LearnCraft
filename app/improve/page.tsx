@@ -40,12 +40,9 @@ export default function ImprovePage() {
           {/* Workflow steps */}
           <div className="mt-5 flex items-center gap-1 flex-wrap text-[11px] font-medium text-slate-600">
             {[
-              "Paste Section",
-              "Auto-Detect Location",
-              "Preview Diff",
+              "Paste Content",
+              "Click Section",
               "Confirm",
-              "File Updated",
-              "History Saved",
             ].map((step, i, arr) => (
               <span key={step} className="flex items-center gap-1">
                 <span className="text-slate-500">{step}</span>

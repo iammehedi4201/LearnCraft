@@ -11,6 +11,7 @@ import { SelectionToolbar } from "@/components/revision/SelectionToolbar";
 import { NoteDialog } from "@/components/revision/NoteDialog";
 import { ExistingHighlightPopover } from "@/components/revision/ExistingHighlightPopover";
 import { LessonAnnotationLayer } from "@/components/revision/LessonAnnotationLayer";
+import { Suspense } from "react";
 import { LessonImprovementOverlay } from "@/components/improve/LessonImprovementOverlay";
 
 const inter = Inter({
@@ -49,7 +50,9 @@ export default function RootLayout({
         <QueryProvider>
           <ThemeProvider>
             <RevisionProvider>
-              {children}
+              <Suspense fallback={<div className="min-h-screen bg-ds-bg-weak" />}>
+                {children}
+              </Suspense>
               <ReadingControlPanel />
               <SelectionToolbar />
               <NoteDialog />

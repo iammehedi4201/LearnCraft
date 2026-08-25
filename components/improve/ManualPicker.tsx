@@ -11,7 +11,6 @@ export interface PickerSelection {
   module: LessonModule;
   section: SectionFileInfo;
   currentContent: string;
-  subSectionText?: string;
 }
 
 interface LessonStructurePickerProps {
@@ -52,6 +51,20 @@ export function LessonStructurePicker({
 
   const [structure, setStructure] = useState<LessonStructure | null>(null);
   const [structureLoading, setStructureLoading] = useState(false);
+
+  // Restore previous selection from localStorage
+  useEffect(() => {
+    const savedTopic = localStorage.getItem("lc_improve_topic");
+    const savedLesson = localStorage.getItem("lc_improve_lesson");
+    if (savedTopic) setSelectedTopic(savedTopic);
+    if (savedLesson) setSelectedLesson(savedLesson);
+  }, []);
+
+  // Save selection to localStorage
+  useEffect(() => {
+    if (selectedTopic) localStorage.setItem("lc_improve_topic", selectedTopic);
+    if (selectedLesson) localStorage.setItem("lc_improve_lesson", selectedLesson);
+  }, [selectedTopic, selectedLesson]);
 
   // 1. Fetch available lessons for the selected topic
   useEffect(() => {
@@ -134,8 +147,7 @@ export function LessonStructurePicker({
             lessonSlug: selectedLesson,
             module: parentModule,
             section,
-            currentContent,
-            subSectionText: e.data.subSectionText
+            currentContent
           });
         } catch (err) {
           console.error("Failed to load current content", err);

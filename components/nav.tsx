@@ -11,13 +11,25 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { ThemeToggle } from "./theme-toggle";
 import { useRevision } from "@/context/revision-context";
 
-export function Nav(): JSX.Element {
+export function Nav() {
+  return (
+    <Suspense fallback={<div className="h-16 w-full" />}>
+      <NavContent />
+    </Suspense>
+  );
+}
+
+function NavContent(): JSX.Element {
   const [isScrolled, setIsScrolled] = useState(false);
+  const searchParams = useSearchParams();
+  const isImproveMode = searchParams.get("improveMode") === "true";
+
   let totalRevisions = 0;
   try {
     const revision = useRevision();
@@ -26,24 +38,16 @@ export function Nav(): JSX.Element {
     // If rendered outside provider
   }
 
-  const [isImproveMode, setIsImproveMode] = useState(false);
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     
-    // Check if we are inside the improvement manager preview iframe
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get("improveMode") === "true") {
-      setIsImproveMode(true);
-    }
-    
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  if (isImproveMode) return null;
+  if (isImproveMode) return <></>;
 
   return (
     <>

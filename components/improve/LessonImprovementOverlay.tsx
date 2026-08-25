@@ -70,28 +70,6 @@ export function LessonImprovementOverlay() {
           rect: sectionEl.getBoundingClientRect(),
           isSubSection: false
         });
-
-        // 2. Find finer-grained sub-elements inside this section
-        // .p-5 = TopicHeader, WhyBox, etc
-        // .p-4 = Callouts
-        // h4 = SectionHeading
-        const subEls = sectionEl.querySelectorAll("div.p-5, div.p-4, h4");
-        subEls.forEach(subEl => {
-          // Avoid tiny or hidden elements
-          const rect = subEl.getBoundingClientRect();
-          if (rect.width === 0 || rect.height === 0) return;
-          
-          // Use the first line of text or h3/h4 content as the identifier
-          const header = subEl.querySelector("h3, h4, h5");
-          const textId = (header?.textContent || subEl.textContent || "").trim().slice(0, 100);
-
-          newRects.push({
-            info: matchedSection,
-            rect: rect,
-            subSectionText: textId,
-            isSubSection: true
-          });
-        });
       }
     });
 
@@ -134,8 +112,7 @@ export function LessonImprovementOverlay() {
       </div>
 
       {sectionsDom.map((item, i) => {
-        // Use a composite key in case there are multiple identical subsections
-        const id = `${item.info.fileName}-${item.subSectionText || "main"}-${i}`;
+        const id = `${item.info.fileName}-${i}`;
         const isHovered = hoveredSection === id;
         
         return (
@@ -155,11 +132,10 @@ export function LessonImprovementOverlay() {
             onMouseEnter={() => setHoveredSection(id)}
             onMouseLeave={() => setHoveredSection(null)}
             onClick={(e) => {
-              e.stopPropagation(); // Don't trigger the parent section if clicking a subsection
+              e.stopPropagation();
               window.parent.postMessage({ 
                 type: "SECTION_SELECTED", 
-                section: item.info,
-                subSectionText: item.subSectionText
+                section: item.info
               }, "*");
             }}
           >
@@ -168,7 +144,7 @@ export function LessonImprovementOverlay() {
                 <svg className="w-3.5 h-3.5 text-indigo-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
-                {item.isSubSection ? "Edit Portion" : `Select: ${item.info.title}`}
+                Select: {item.info.title}
               </div>
             )}
           </div>

@@ -20,7 +20,7 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { ImprovementRecord } from "@/lib/improvement-history";
 import {
   loadHistory,
@@ -76,130 +76,35 @@ const IcRedo = () => (
 
 // ─── Apply Tab ────────────────────────────────────────────────────────────────
 
-type ApplyStep = "paste" | "detecting" | "reviewing" | "confirming" | "done" | "error";
-
+type ApplyStep = "idle" | "section-selected" | "confirming" | "done" | "error";
 
 function ApplyTab({ onImprovementApplied }: { onImprovementApplied: () => void }) {
   const [pastedContent, setPastedContent]     = useState("");
-  const [step, setStep]                       = useState<ApplyStep>("paste");
+  const [step, setStep]                       = useState<ApplyStep>("idle");
   const [pickerSelection, setPickerSelection] = useState<PickerSelection | null>(null);
-  const [mergedContent, setMergedContent]    = useState("");
-  const editorRef = useRef<HTMLTextAreaElement>(null);
   const [description, setDescription]        = useState("");
   const [errorMessage, setErrorMessage]      = useState("");
   const [successRecord, setSuccessRecord]    = useState<ImprovementRecord | null>(null);
-  const [diffReviewed, setDiffReviewed]      = useState(false);
+  
+  // Advanced manual editor state
+  const [manualEditContent, setManualEditContent] = useState("");
+  const [isManualEditOpen, setIsManualEditOpen] = useState(false);
 
-  // When selection changes, reset merged content and auto-scroll/select
+  // When selection changes or paste changes, reset step appropriately
   useEffect(() => {
     if (pickerSelection) {
-      setMergedContent(pickerSelection.currentContent);
-      
-      if (pickerSelection.subSectionText && editorRef.current) {
-        const lines = pickerSelection.currentContent.split("\n");
-        const query = pickerSelection.subSectionText.split(" ")[0]; // simple heuristic
-        const targetIndex = lines.findIndex(line => line.includes(pickerSelection.subSectionText!) || line.includes(query));
-        
-        if (targetIndex !== -1) {
-          // Find block bounds
-          let startIdx = targetIndex;
-          while (startIdx > 0 && !lines[startIdx].match(/<[A-Z]/)) {
-            startIdx--;
-          }
-          
-          let endIdx = targetIndex;
-          let openTags = 0;
-          let foundStart = false;
-          
-          for (let i = startIdx; i < lines.length; i++) {
-            const line = lines[i];
-            const opens = (line.match(/<[A-Z][a-zA-Z0-9]*/g) || []).length;
-            const selfCloses = (line.match(/\/>/g) || []).length;
-            const closes = (line.match(/<\/[A-Z][a-zA-Z0-9]*/g) || []).length;
-            
-            openTags += opens - selfCloses - closes;
-            if (opens > 0) foundStart = true;
-            if (foundStart && openTags <= 0) {
-              endIdx = i;
-              break;
-            }
-          }
-          
-          // Calculate character indices
-          const startChar = lines.slice(0, startIdx).join("\n").length + (startIdx > 0 ? 1 : 0);
-          const endChar = lines.slice(0, endIdx + 1).join("\n").length;
-
-          setTimeout(() => {
-            if (editorRef.current) {
-              editorRef.current.scrollTop = Math.max(0, (startIdx * 20) - 100);
-              editorRef.current.focus();
-              editorRef.current.setSelectionRange(startChar, endChar);
-            }
-          }, 100);
-        }
-      }
+      setStep("section-selected");
+      // Initialize manual editor with paste if opened
+      setManualEditContent(pastedContent);
+    } else {
+      setStep("idle");
     }
-  }, [pickerSelection]);
-
-  const handleAutoReplace = () => {
-    if (!pickerSelection?.subSectionText || !pastedContent) return;
-    
-    // We try to find a block (e.g. <TopicHeader ... /> or <WhyBox>...</WhyBox>)
-    // Since regex for nested JSX is impossible, we'll try a naive approach:
-    // Find the line with the target text. Scan up to find the nearest '<[A-Z]'.
-    // Then scan down to find the closing tag.
-    const lines = mergedContent.split("\n");
-    const targetIdx = lines.findIndex(l => l.includes(pickerSelection.subSectionText!));
-    if (targetIdx === -1) {
-      setErrorMessage("Could not find the target text in the source code to auto-replace.");
-      return;
-    }
-
-    let startIdx = targetIdx;
-    while (startIdx > 0 && !lines[startIdx].match(/<[A-Z]/)) {
-      startIdx--;
-    }
-
-    let endIdx = targetIdx;
-    let openTags = 0;
-    let foundStart = false;
-    
-    // A very simple tag counter
-    for (let i = startIdx; i < lines.length; i++) {
-      const line = lines[i];
-      const opens = (line.match(/<[A-Z][a-zA-Z0-9]*/g) || []).length;
-      const selfCloses = (line.match(/\/>/g) || []).length;
-      const closes = (line.match(/<\/[A-Z][a-zA-Z0-9]*/g) || []).length;
-      
-      openTags += opens - selfCloses - closes;
-      
-      if (opens > 0) foundStart = true;
-      
-      if (foundStart && openTags <= 0) {
-        endIdx = i;
-        break;
-      }
-    }
-
-    // Replace the block
-    const newLines = [
-      ...lines.slice(0, startIdx),
-      pastedContent,
-      ...lines.slice(endIdx + 1)
-    ];
-    setMergedContent(newLines.join("\n"));
-  };
+  }, [pickerSelection, pastedContent]);
 
   // Can the user proceed to apply?
-  const canApply = pickerSelection !== null && diffReviewed && mergedContent.trim().length > 10;
-
-  const handleStartManualSelection = () => {
-    if (!pastedContent.trim()) return;
-    setStep("reviewing");
-    setPickerSelection(null);
-    setDiffReviewed(false);
-    setErrorMessage("");
-  };
+  const canApply = pickerSelection !== null && (isManualEditOpen ? manualEditContent.trim().length > 10 : pastedContent.trim().length > 10);
+  
+  const finalContent = isManualEditOpen ? manualEditContent : pastedContent;
 
   const handleApply = useCallback(async () => {
     if (!canApply || !pickerSelection) return;
@@ -208,7 +113,7 @@ function ApplyTab({ onImprovementApplied }: { onImprovementApplied: () => void }
     try {
       const record = await applyImprovement({
         filePath: pickerSelection.section.filePath,
-        newContent: mergedContent,
+        newContent: finalContent,
         topic: { id: pickerSelection.topicId, title: pickerSelection.topicId },
         lesson: { slug: pickerSelection.lessonSlug, name: pickerSelection.lessonSlug },
         section: {
@@ -226,17 +131,16 @@ function ApplyTab({ onImprovementApplied }: { onImprovementApplied: () => void }
       setErrorMessage(err instanceof Error ? err.message : "Failed to apply improvement");
       setStep("error");
     }
-  }, [canApply, pickerSelection, mergedContent, description, onImprovementApplied]);
+  }, [canApply, pickerSelection, finalContent, description, onImprovementApplied]);
 
   const handleReset = () => {
     setPastedContent("");
-    setStep("paste");
+    setStep("idle");
     setPickerSelection(null);
-    setMergedContent("");
     setDescription("");
     setErrorMessage("");
     setSuccessRecord(null);
-    setDiffReviewed(false);
+    setIsManualEditOpen(false);
   };
 
   // ── Done ──
@@ -267,50 +171,39 @@ function ApplyTab({ onImprovementApplied }: { onImprovementApplied: () => void }
       </div>
     );
   }
+  
+  // Determine progress state
+  const isPasteDone = pastedContent.trim().length > 20;
+  const isSectionDone = pickerSelection !== null;
+  const progressStep = isSectionDone ? 3 : (isPasteDone ? 2 : 1);
 
   return (
     <div className="flex flex-col gap-6">
-
-      {/* ── Step 1: Paste ── */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <label className="text-[10px] font-black uppercase tracking-widest text-slate-600">
-            1 · Paste Improved Section Content
-          </label>
-          {pastedContent && (
-            <button
-              onClick={() => { setPastedContent(""); if (step !== "paste") setStep("paste"); }}
-              className="text-[10px] text-slate-600 hover:text-slate-400 flex items-center gap-1 transition-colors"
-            >
-              <IcX />
-              Clear
-            </button>
-          )}
+    
+      {/* ── Progress Bar ── */}
+      <div className="flex items-center justify-between p-1 bg-slate-900/80 rounded-2xl border border-slate-800/80">
+        <div className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl transition-all ${progressStep === 1 ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-500'}`}>
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${progressStep > 1 ? 'bg-emerald-500/20 text-emerald-400' : (progressStep === 1 ? 'bg-indigo-500 text-white' : 'bg-slate-800')}`}>
+            {progressStep > 1 ? <IcCheck /> : "1"}
+          </div>
+          Paste content
         </div>
-        <textarea
-          value={pastedContent}
-          onChange={(e) => {
-            setPastedContent(e.target.value);
-            if (step !== "paste") { setStep("paste"); setPickerSelection(null); setDiffReviewed(false); }
-          }}
-          placeholder={`Paste the full updated section .tsx file here...\n\nexport function MethodsSection() {\n  return (\n    <SectionContainer number={4} title="Methods">\n      ...\n    </SectionContainer>\n  );\n}`}
-          className="w-full h-44 bg-[#0d1117] border border-slate-700/60 rounded-xl p-4 font-mono text-xs text-slate-300 placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 resize-none transition-all leading-5"
-          spellCheck={false}
-        />
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-mono text-slate-700">
-            {pastedContent.length.toLocaleString()} chars · {pastedContent.split("\n").length} lines
-          </span>
-          <button
-            onClick={handleStartManualSelection}
-            disabled={pastedContent.trim().length < 20}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-600 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-900/20"
-          >
-            <IcBolt /> Select Target Section
-          </button>
+        <svg className="w-4 h-4 text-slate-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
+        <div className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl transition-all ${progressStep === 2 ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-500'}`}>
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${progressStep > 2 ? 'bg-emerald-500/20 text-emerald-400' : (progressStep === 2 ? 'bg-indigo-500 text-white' : 'bg-slate-800')}`}>
+            {progressStep > 2 ? <IcCheck /> : "2"}
+          </div>
+          Click a section
+        </div>
+        <svg className="w-4 h-4 text-slate-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6" /></svg>
+        <div className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl transition-all ${progressStep === 3 ? 'bg-indigo-600/20 text-indigo-300 font-bold' : 'text-slate-500'}`}>
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] ${progressStep === 3 ? 'bg-indigo-500 text-white' : 'bg-slate-800'}`}>
+            3
+          </div>
+          Apply
         </div>
       </div>
-
+      
       {/* ── Error ── */}
       {step === "error" && (
         <div className="flex items-start gap-3 p-4 rounded-xl bg-red-950/40 border border-red-500/30 text-sm text-red-300">
@@ -321,176 +214,151 @@ function ApplyTab({ onImprovementApplied }: { onImprovementApplied: () => void }
         </div>
       )}
 
-      {/* ── Step 2 + 3: Lesson structure picker ── */}
-      {(step === "reviewing" || step === "confirming") && (
-        <div className="flex flex-col gap-4">
-
-          {/* ── Step 2: Lesson structure picker ── */}
-          <div className="rounded-2xl border border-slate-700/40 bg-slate-800/20 overflow-hidden">
-            <div className="px-4 py-3 border-b border-slate-700/30 bg-slate-800/40 flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                2 · Select Target Section
-              </span>
-              {pickerSelection && (
-                <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-                  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Section confirmed
-                </span>
-              )}
-            </div>
-            <div className="p-4">
-              <LessonStructurePicker
-                onSelectionChange={(sel) => {
-                  setPickerSelection(sel);
-                  setDiffReviewed(false);
-                }}
-              />
+      {/* ── Two-Column Layout ── */}
+      <div className="flex flex-col lg:flex-row gap-6">
+      
+        {/* Left Column: Lesson Preview */}
+        <div className="flex-1 lg:max-w-[55%] flex flex-col gap-4">
+          <div className="rounded-2xl border border-slate-700/40 bg-slate-800/20 overflow-hidden flex flex-col h-full">
+            <div className="p-4 bg-slate-800/40 border-b border-slate-700/30">
+               <LessonStructurePicker
+                 onSelectionChange={(sel) => setPickerSelection(sel)}
+               />
             </div>
           </div>
+        </div>
 
-          {/* ── Step 3: Merge Editor ── */}
-          {pickerSelection && (
-            <div className="rounded-2xl border border-slate-700/40 bg-slate-800/20 overflow-hidden">
-              <div className="px-4 py-3 border-b border-slate-700/30 bg-slate-800/40 flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                  3 · Merge Improvement
-                </span>
-                {pickerSelection.subSectionText && (
-                  <span className="text-[10px] text-indigo-400 font-bold bg-indigo-950/40 px-2 py-0.5 rounded border border-indigo-500/20">
-                    Target: {pickerSelection.subSectionText}
-                  </span>
-                )}
-              </div>
-              <div className="p-4 flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-slate-400">
-                    You are editing the full file <code className="text-slate-300 font-bold">{pickerSelection.section.fileName}</code>. 
-                    Paste your improvements in the correct spot below.
-                  </p>
-                  {pickerSelection.subSectionText && (
-                    <button
-                      onClick={handleAutoReplace}
-                      className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-[11px] transition-all flex items-center gap-1.5"
-                    >
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                      </svg>
-                      Auto-Replace Block
-                    </button>
-                  )}
-                </div>
-                <textarea
-                  ref={editorRef}
-                  value={mergedContent}
-                  onChange={(e) => {
-                    setMergedContent(e.target.value);
-                    setDiffReviewed(false);
-                  }}
-                  className="w-full h-[500px] bg-[#0d1117] border border-slate-700/60 rounded-xl p-4 font-mono text-xs text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-y leading-5 whitespace-pre"
-                  spellCheck={false}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* ── Step 3: Diff Preview ── */}
-          {pickerSelection && (
-            <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">
-                  3 · Review Changes
-                </span>
-                <div className="flex items-center gap-2">
-                  {diffReviewed ? (
-                    <span className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
-                      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                      Reviewed
-                    </span>
-                  ) : (
-                    <span className="text-[10px] text-amber-500 font-bold">Review the diff below before applying</span>
-                  )}
-                </div>
-              </div>
-
-              <DiffViewer
-                oldContent={pickerSelection.currentContent}
-                newContent={mergedContent}
-                oldLabel={`Current: ${pickerSelection.section.fileName}`}
-                newLabel="Your Improvement"
-              />
-
-              {/* Mark as reviewed checkbox */}
-              {!diffReviewed && (
-                <label className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/40 border border-slate-700/30 cursor-pointer hover:border-slate-600/40 transition-all">
-                  <input
-                    type="checkbox"
-                    onChange={(e) => setDiffReviewed(e.target.checked)}
-                    className="w-4 h-4 rounded accent-indigo-500"
-                  />
-                  <span className="text-xs text-slate-300">
-                    I have reviewed the diff and the changes look correct
-                  </span>
-                </label>
+        {/* Right Column: Paste & Apply */}
+        <div className="flex-1 lg:max-w-[45%] flex flex-col gap-4">
+        
+          {/* Step 1: Paste */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                1 · Improvement Content
+              </label>
+              {pastedContent && (
+                <button
+                  onClick={() => { setPastedContent(""); setPickerSelection(null); }}
+                  className="text-[10px] text-slate-600 hover:text-slate-400 flex items-center gap-1 transition-colors"
+                >
+                  <IcX />
+                  Clear
+                </button>
               )}
             </div>
+            
+            <textarea
+              value={pastedContent}
+              onChange={(e) => {
+                setPastedContent(e.target.value);
+                if (isManualEditOpen) setManualEditContent(e.target.value);
+              }}
+              placeholder={`Paste the full updated section .tsx file here...\n\nexport function MethodsSection() {\n  return (\n    <SectionContainer number={4} title="Methods">\n      ...\n    </SectionContainer>\n  );\n}`}
+              className="w-full h-44 bg-[#0d1117] border border-slate-700/60 rounded-xl p-4 font-mono text-xs text-slate-300 placeholder-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 resize-y transition-all leading-5"
+              spellCheck={false}
+            />
+            
+            <div className="text-[10px] font-mono text-slate-600 px-1">
+              {pastedContent.length.toLocaleString()} chars · {pastedContent.split("\n").length} lines
+            </div>
+          </div>
+          
+          {/* Awaiting Selection State */}
+          {!pickerSelection && isPasteDone && (
+             <div className="flex items-center justify-center py-10 mt-4 rounded-xl border border-indigo-500/20 bg-indigo-950/10 text-indigo-400 text-sm gap-2 animate-pulse">
+               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                 <path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle>
+               </svg>
+               Now click a section in the left preview panel
+             </div>
           )}
 
-          {/* ── Step 4: Confirm & Apply ── */}
-          {canApply && (
-            <div className="flex flex-col gap-3 border-t border-slate-700/30 pt-4">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">
-                4 · Apply
-              </span>
-
-              <input
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Optional description (e.g. 'Rewrote method chaining examples with better analogies')"
-                className="w-full bg-slate-800/60 border border-slate-700/60 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-              />
-
-              <div className="flex items-center gap-2 text-xs text-slate-600 px-1">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                </svg>
-                Writing to:{" "}
-                <span className="font-mono text-slate-400">{pickerSelection!.section.filePath}</span>
+          {/* Step 3: Confirm & Apply */}
+          {pickerSelection && (
+            <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
+              
+              <div className="rounded-xl border border-indigo-500/30 bg-indigo-950/20 px-4 py-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                    <IcCheck />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase text-indigo-500/70">Target Section</span>
+                    <span className="text-sm font-bold text-indigo-300">{pickerSelection.section.fileName}</span>
+                  </div>
+                </div>
               </div>
+              
+              {/* Diff Preview */}
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  Diff Preview
+                </span>
+                <DiffViewer
+                  oldContent={pickerSelection.currentContent}
+                  newContent={finalContent}
+                  oldLabel="Current"
+                  newLabel="Improvement"
+                />
+              </div>
+              
+              {/* Advanced: Manual Edit Toggle */}
+              <details className="group border border-slate-700/30 rounded-xl bg-slate-800/20 overflow-hidden" onToggle={(e) => setIsManualEditOpen(e.currentTarget.open)}>
+                <summary className="px-4 py-2.5 text-xs font-bold text-slate-500 hover:text-slate-300 cursor-pointer list-none flex items-center justify-between select-none">
+                  <span>Advanced: Edit manually before applying</span>
+                  <svg className="w-4 h-4 transition-transform group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="6 9 12 15 18 9" /></svg>
+                </summary>
+                <div className="p-4 border-t border-slate-700/30 bg-[#0d1117]">
+                  <textarea
+                    value={manualEditContent}
+                    onChange={(e) => setManualEditContent(e.target.value)}
+                    className="w-full h-[400px] bg-transparent font-mono text-xs text-slate-300 focus:outline-none resize-y leading-5 whitespace-pre"
+                    spellCheck={false}
+                  />
+                </div>
+              </details>
 
-              <div className="flex items-center justify-end gap-3">
-                <button
-                  onClick={handleReset}
-                  className="px-4 py-2 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleApply}
-                  disabled={step === "confirming"}
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-900/20"
-                >
-                  {step === "confirming" ? (
-                    <>
-                      <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-                      </svg>
-                      Applying...
-                    </>
-                  ) : (
-                    <><IcCheck /> Apply Improvement</>
-                  )}
-                </button>
+              {/* Apply Bar */}
+              <div className="flex flex-col gap-3 pt-4 border-t border-slate-700/30">
+                <input
+                  type="text"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Optional description (e.g. 'Rewrote method chaining examples')"
+                  className="w-full bg-slate-800/60 border border-slate-700/60 rounded-xl px-4 py-2.5 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                />
+                
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={() => setPickerSelection(null)}
+                    className="px-4 py-2 rounded-xl text-sm font-bold text-slate-500 hover:text-slate-300 hover:bg-slate-700/40 transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleApply}
+                    disabled={step === "confirming" || !canApply}
+                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-900/20"
+                  >
+                    {step === "confirming" ? (
+                      <>
+                        <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                        </svg>
+                        Applying...
+                      </>
+                    ) : (
+                      <><IcCheck /> Apply Improvement</>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           )}
+          
         </div>
-      )}
+      </div>
     </div>
   );
 }
