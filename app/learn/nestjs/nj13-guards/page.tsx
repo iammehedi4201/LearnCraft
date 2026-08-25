@@ -56,6 +56,7 @@ const PROGRESS_STORAGE_KEY = "learncraft_progress_nj13-guards";
 
 export default function NJ13Guards(): JSX.Element {
   const searchParams = useSearchParams();
+  const isImproveMode = searchParams?.get("improveMode") === "true";
   const highlightId = searchParams?.get("highlightId");
   const sectionParam = searchParams?.get("section");
 
@@ -159,6 +160,20 @@ export default function NJ13Guards(): JSX.Element {
     }
   };
 
+  
+  useEffect(() => {
+    const handleNavigate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.direction === "prev" && currentIndex > 0) {
+        handleSectionChange(SECTIONS[currentIndex - 1].id);
+      } else if (customEvent.detail?.direction === "next" && currentIndex < SECTIONS.length - 1) {
+        handleSectionChange(SECTIONS[currentIndex + 1].id);
+      }
+    };
+    window.addEventListener("lc-navigate-module", handleNavigate);
+    return () => window.removeEventListener("lc-navigate-module", handleNavigate);
+  }, [currentIndex, completedSections, activeSection]);
+
   const getStepState = (index: number): "done" | "active" | "todo" => {
     const section = SECTIONS[index];
     if (section.id === activeSection) return "active";
@@ -188,13 +203,14 @@ export default function NJ13Guards(): JSX.Element {
   };
 
   return (
-    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20">
-      <Nav />
+    <div className={`min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20 ${isImproveMode ? "pt-14" : ""}`}>
+      {!isImproveMode && <Nav />}
 
       <div className="relative z-10 max-w-[95rem] mx-auto px-6 lg:px-8 py-2">
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
           {/* Stepper Sidebar */}
-          <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
+          {!isImproveMode && (
+<aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
             {/* Header */}
             <div className="px-2 mb-3 shrink-0">
               <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
@@ -345,9 +361,10 @@ export default function NJ13Guards(): JSX.Element {
               </button>
             </div>
           </aside>
+)}
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0 max-w-6xl">
+          <main className={`${isImproveMode ? "w-full min-w-0" : "flex-1 min-w-0 max-w-6xl"}`}>
             <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
               {renderContent()}
             </div>

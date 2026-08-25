@@ -295,6 +295,31 @@ export async function applyImprovement(payload: {
 }
 
 /**
+ * Apply a localized block improvement: patch a specific line range and record history.
+ */
+export async function applyImprovementPatch(payload: {
+  filePath: string;
+  startLine: number;
+  endLine: number;
+  newBlockSource: string;
+  topic: ImprovementRecord["topic"];
+  lesson: ImprovementRecord["lesson"];
+  section: ImprovementRecord["section"];
+  description: string;
+}): Promise<ImprovementRecord> {
+  const res = await fetch("/api/improve?action=apply-patch", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(err.error ?? "Failed to apply improvement patch");
+  }
+  return res.json();
+}
+
+/**
  * Undo an improvement: restore the previous file content.
  */
 export async function undoImprovement(recordId: string): Promise<{ ok: boolean }> {

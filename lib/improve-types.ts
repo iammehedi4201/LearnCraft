@@ -32,3 +32,35 @@ export interface LessonStructure {
   structureType: "module-grouped" | "flat-parts";
   modules: LessonModule[];
 }
+
+export interface BlockSelection {
+  type: string;    // e.g. "topic-header", "why-box", "paragraph", "code-block"
+  label: string;   // Human readable label for the UI
+  index: number;   // 0-based position among blocks in the same section
+}
+
+export interface PickerSelection {
+  section: SectionFileInfo;
+  block: BlockSelection | null;
+}
+
+export interface BlockSourceRange {
+  blockSource: string;   // The extracted JSX block text
+  startLine: number;     // 1-based start line in the file
+  endLine: number;       // 1-based end line in the file
+}
+
+export interface BlockSelectionWithSource extends BlockSelection {
+  id: string; // Unique ID for selection tracking
+  filePath: string;
+  sourceRange: BlockSourceRange | null;  // null = not yet extracted
+  currentBlockContent: string;           // pre-filled in editor
+  improvedBlockContent: string;          // user-edited content
+}
+
+export interface MultiBlockSelection {
+  topicId: string;
+  lessonSlug: string;
+  section: SectionFileInfo;
+  blocks: BlockSelectionWithSource[];    // ordered, non-overlapping
+}

@@ -5,7 +5,7 @@ import { useState, ReactNode } from "react";
 // ─── Section Heading ───
 export function SectionHeading({ children }: { children: ReactNode }) {
   return (
-    <h4 className="font-black text-base text-ds-text-strong mb-3 flex items-center gap-2 tracking-tight">
+    <h4 className="font-black text-base text-ds-text-strong mb-3 flex items-center gap-2 tracking-tight" data-improve-block="section-heading">
       {children}
     </h4>
   );
@@ -14,7 +14,7 @@ export function SectionHeading({ children }: { children: ReactNode }) {
 // ─── Why Box ───
 export function WhyBox({ children }: { children: ReactNode }) {
   return (
-    <div className="mb-8 p-5 rounded-2xl border border-ds-stroke-soft bg-ds-bg-weak text-ds-text-strong shadow-sm">
+    <div className="mb-8 p-5 rounded-2xl border border-ds-stroke-soft bg-ds-bg-weak text-ds-text-strong shadow-sm" data-improve-block="why-box">
       {children}
     </div>
   );
@@ -31,7 +31,7 @@ export function AnalogyBox({
   children: ReactNode;
 }) {
   return (
-    <div className="mb-6 p-5 rounded-2xl border border-ds-info-light bg-ds-info-lighter shadow-sm">
+    <div className="mb-6 p-5 rounded-2xl border border-ds-info-light bg-ds-info-lighter shadow-sm" data-improve-block="analogy-box">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-lg">{emoji}</span>
         <h5 className="font-bold text-sm text-ds-info-dark">{title}</h5>
@@ -50,7 +50,7 @@ export function StepList({
   steps: { label: string; note?: string; code?: string }[];
 }) {
   return (
-    <ol className="space-y-5 mb-8">
+    <ol className="space-y-5 mb-8" data-improve-block="step-list">
       {steps.map((step, i) => (
         <li
           key={i}
@@ -94,7 +94,7 @@ export function MistakeBox({
   right: string;
 }) {
   return (
-    <div className="mb-8 p-5 bg-ds-bg-weak rounded-2xl border border-ds-stroke-soft">
+    <div className="mb-8 p-5 bg-ds-bg-weak rounded-2xl border border-ds-stroke-soft" data-improve-block="mistake-box">
       <h4 className="font-bold text-ds-warning-dark mb-2 flex items-center gap-2 text-sm">
         <span>⚠️</span> Common mistake: {title}
       </h4>
@@ -126,7 +126,7 @@ export function MistakeBox({
 // ─── Summary Box ───
 export function SummaryBox({ children }: { children: ReactNode }) {
   return (
-    <div className="mb-8 p-4 rounded-xl border-l-4 border-l-ds-feature-base border border-ds-stroke-soft bg-ds-bg-weak">
+    <div className="mb-8 p-4 rounded-xl border-l-4 border-l-ds-feature-base border border-ds-stroke-soft bg-ds-bg-weak" data-improve-block="summary-box">
       <div className="text-sm text-ds-text-strong leading-relaxed">
         {children}
       </div>
@@ -224,7 +224,7 @@ export function TopicHeader({
   return (
     <div
       className={`p-5 ${c.bg} rounded-2xl border ${c.border} mb-8 flex items-start gap-4 shadow-sm`}
-    >
+     data-improve-block="topic-header">
       <span
         className={`inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-black flex-shrink-0 mt-0.5 ${c.numBg} ${c.numText}`}
       >
@@ -253,7 +253,7 @@ export function SectionContainer({
   children: ReactNode;
 }) {
   return (
-    <section
+    <section data-section-title={title}
       id={`part${number}`}
       data-section-id={`part${number}`}
       className="animate-in fade-in slide-in-from-bottom-6 duration-700"
@@ -317,7 +317,7 @@ export function ExerciseBox({
   const lc = levelColors[level] || levelColors.beginner;
 
   return (
-    <div className="mb-6 p-5 rounded-2xl border border-ds-stroke-soft bg-ds-bg-weak shadow-sm">
+    <div className="mb-6 p-5 rounded-2xl border border-ds-stroke-soft bg-ds-bg-weak shadow-sm" data-improve-block="exercise-box">
       <div className="flex items-center gap-2 mb-3">
         <span
           className={`text-xs font-bold px-3 py-1 rounded-full border ${lc.bg} ${lc.text} ${lc.border}`}
@@ -363,7 +363,7 @@ export function PredictOutputBox({
   const [showAnswer, setShowAnswer] = useState(false);
 
   return (
-    <div className="mb-6 p-5 rounded-2xl border border-ds-stroke-soft bg-ds-bg-weak shadow-sm">
+    <div className="mb-6 p-5 rounded-2xl border border-ds-stroke-soft bg-ds-bg-weak shadow-sm" data-improve-block="predict-output">
       <div className="flex items-center gap-2 mb-3">
         <span className="text-lg">🔮</span>
         <h5 className="font-bold text-sm text-ds-feature-dark">
@@ -407,7 +407,7 @@ export function ComparisonTable({
   rows: string[][];
 }) {
   return (
-    <div className="mb-8 overflow-hidden rounded-xl border border-ds-stroke-soft bg-ds-bg-white shadow-sm">
+    <div className="mb-8 overflow-hidden rounded-xl border border-ds-stroke-soft bg-ds-bg-white shadow-sm" data-improve-block="comparison-table">
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-collapse">
           <thead>
@@ -453,7 +453,7 @@ export function InfoCallout({
   children: ReactNode;
 }) {
   return (
-    <div className="mb-6 p-4 rounded-xl bg-ds-info-lighter border border-ds-info-base">
+    <div className="mb-6 p-4 rounded-xl bg-ds-info-lighter border border-ds-info-base" data-improve-block="info-callout">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-base">{emoji}</span>
         <span className="font-black text-xs text-ds-info-dark uppercase tracking-wider">

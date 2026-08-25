@@ -1,20 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { LessonStructure, SectionFileInfo, LessonModule } from "@/lib/improve-types";
+import type { LessonStructure, SectionFileInfo, BlockSelection, MultiBlockSelection } from "@/lib/improve-types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export interface PickerSelection {
-  topicId: string;
-  lessonSlug: string;
-  module: LessonModule;
-  section: SectionFileInfo;
-  currentContent: string;
-}
-
-interface LessonStructurePickerProps {
-  onSelectionChange: (selection: PickerSelection | null) => void;
+export interface LessonStructurePickerProps {
+  onSelectionChange: (selection: MultiBlockSelection | null) => void;
   className?: string;
 }
 
@@ -48,6 +40,7 @@ export function LessonStructurePicker({
 
   const [lessonsLoading, setLessonsLoading] = useState(false);
   const [lessons, setLessons] = useState<{ id: string; title: string }[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const [structure, setStructure] = useState<LessonStructure | null>(null);
   const [structureLoading, setStructureLoading] = useState(false);
@@ -123,8 +116,9 @@ export function LessonStructurePicker({
   // 3. Listen for section selection from the iframe overlay
   useEffect(() => {
     const handleMessage = async (e: MessageEvent) => {
-      if (e.data?.type === "SECTION_SELECTED" && e.data.section && structure) {
+      if ((e.data?.type === "SECTION_SELECTED" || e.data?.type === "BLOCKS_UPDATED") && e.data.section && structure) {
         const section: SectionFileInfo = e.data.section;
+        const blocks: BlockSelection[] = e.data.blocks || [];
         
         // Find the module this section belongs to
         const parentModule = structure.modules.find((m) =>
@@ -137,20 +131,72 @@ export function LessonStructurePicker({
           return;
         }
 
-        // Fetch the current content of the section file
         try {
-          const res = await fetch(`/api/improve?action=file&path=${encodeURIComponent(section.filePath)}`);
-          const currentContent = res.ok ? (await res.json()).content ?? "" : "";
+          if (e.data.type === "SECTION_SELECTED") {
+            const res = await fetch(`/api/improve?action=extract-section&path=${encodeURIComponent(section.filePath)}`);
+            if (!res.ok) {
+              console.error("Failed to extract section");
+              onSelectionChange(null);
+              return;
+            }
+            const data = await res.json();
+            
+            onSelectionChange({
+              topicId: selectedTopic,
+              lessonSlug: selectedLesson,
+              section,
+              blocks: [
+                {
+                  id: "section:all",
+                  type: "section",
+                  label: `Entire Section: ${section.title}`,
+                  index: 0,
+                  filePath: section.filePath,
+                  sourceRange: {
+                    startLine: data.startLine,
+                    endLine: data.endLine,
+                    blockSource: data.blockSource
+                  },
+                  currentBlockContent: data.blockSource,
+                  improvedBlockContent: data.blockSource
+                }
+              ]
+            });
+          } else {
+            // Fetch the extracted block boundaries for each selected block
+            const blocksWithSource = await Promise.all(blocks.map(async (block) => {
+              const res = await fetch(`/api/improve?action=extract-block&path=${encodeURIComponent(section.filePath)}&blockType=${block.type}&blockIndex=${block.index}`);
+              let sourceRange = null;
+              if (res.ok) {
+                const data = await res.json();
+                sourceRange = {
+                  blockSource: data.blockSource,
+                  startLine: data.startLine,
+                  endLine: data.endLine
+                };
+              } else {
+                console.warn(`Failed to extract block ${block.type}:${block.index}`, await res.text());
+              }
+              
+              return {
+                ...block,
+                id: `${block.type}:${block.index}`,
+                filePath: section.filePath,
+                sourceRange,
+                currentBlockContent: sourceRange?.blockSource || "",
+                improvedBlockContent: sourceRange?.blockSource || "",
+              };
+            }));
 
-          onSelectionChange({
-            topicId: selectedTopic,
-            lessonSlug: selectedLesson,
-            module: parentModule,
-            section,
-            currentContent
-          });
+            onSelectionChange({
+              topicId: selectedTopic,
+              lessonSlug: selectedLesson,
+              section,
+              blocks: blocksWithSource
+            });
+          }
         } catch (err) {
-          console.error("Failed to load current content", err);
+          console.error("Failed to fetch selection content", err);
           onSelectionChange(null);
         }
       } else if (e.data?.type === "IMPROVE_MODE_READY" && structure) {
@@ -195,7 +241,7 @@ export function LessonStructurePicker({
                 key={t.id}
                 onClick={() => setSelectedTopic(t.id)}
                 className={`
-                  flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all duration-150
+                  flex items-center justify-center gap-1.5 px-2.5 h-[58px] rounded-xl text-xs font-bold border transition-all duration-150 flex-1 sm:flex-none
                   ${selectedTopic === t.id
                     ? "bg-indigo-600/20 border-indigo-500/50 text-indigo-200"
                     : "bg-slate-800/40 border-slate-700/40 text-slate-500 hover:text-slate-300 hover:border-slate-600/60"
@@ -215,26 +261,59 @@ export function LessonStructurePicker({
             <span>Lesson</span>
             {lessonsLoading && <Spinner size="xs" />}
           </label>
-          
-          <select
-            value={selectedLesson}
-            onChange={(e) => setSelectedLesson(e.target.value)}
-            disabled={!selectedTopic || lessonsLoading || lessons.length === 0}
-            className="w-full bg-slate-800/40 border border-slate-700/40 rounded-xl px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed appearance-none"
-          >
-            <option value="">
-              {!selectedTopic 
-                ? "Select a topic first" 
-                : lessonsLoading 
-                ? "Loading lessons..." 
-                : "Select a lesson..."}
-            </option>
-            {lessons.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.id} — {l.title}
-              </option>
-            ))}
-          </select>
+          <div className="relative w-full">
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              disabled={!selectedTopic || lessonsLoading || lessons.length === 0}
+              className="w-full flex items-center justify-between bg-slate-800/40 hover:bg-slate-800/60 border border-slate-700/40 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed text-left transition-colors"
+            >
+              <div className="flex flex-col truncate pr-4">
+                {!selectedTopic ? (
+                  <span className="text-slate-500 py-1">Select a topic first...</span>
+                ) : lessonsLoading ? (
+                  <span className="text-slate-400 py-1">Loading lessons...</span>
+                ) : !selectedLesson ? (
+                  <span className="text-slate-400 py-1">Select a lesson...</span>
+                ) : (
+                  <>
+                    <span className="text-slate-200 font-bold truncate tracking-tight">{lessons.find(l => l.id === selectedLesson)?.title || selectedLesson}</span>
+                    <span className="text-[10px] text-slate-500 font-mono truncate mt-0.5">{selectedLesson}</span>
+                  </>
+                )}
+              </div>
+              <svg className={`w-4 h-4 shrink-0 text-slate-400 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            {isDropdownOpen && (
+              <>
+                <div 
+                  className="fixed inset-0 z-[90]" 
+                  onClick={() => setIsDropdownOpen(false)} 
+                />
+                <div className="absolute top-full left-0 right-0 mt-2 z-[100] max-h-[350px] overflow-y-auto bg-slate-800 border border-slate-700/80 rounded-xl shadow-2xl shadow-black/80 py-1.5 custom-scrollbar">
+                  {lessons.map((l) => (
+                    <button
+                      key={l.id}
+                      onClick={() => {
+                        setSelectedLesson(l.id);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2.5 hover:bg-slate-700/50 flex flex-col transition-colors border-l-2 ${selectedLesson === l.id ? 'bg-indigo-500/10 border-indigo-400' : 'border-transparent'}`}
+                    >
+                      <span className={`text-sm font-bold truncate tracking-tight ${selectedLesson === l.id ? 'text-indigo-300' : 'text-slate-200'}`}>
+                        {l.title}
+                      </span>
+                      <span className={`text-[10px] font-mono truncate mt-0.5 ${selectedLesson === l.id ? 'text-indigo-400/60' : 'text-slate-500'}`}>
+                        {l.id}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 

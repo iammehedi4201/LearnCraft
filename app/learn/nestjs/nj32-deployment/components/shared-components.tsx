@@ -14,7 +14,7 @@ export function SectionContainer({
   children: React.ReactNode;
 }) {
   return (
-    <section className="p-6 sm:p-10 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm mb-8 transition-all">
+    <section data-section-title={title} className="p-6 sm:p-10 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm mb-8 transition-all">
       <div className="flex items-center gap-3 mb-6 pb-4 border-b border-ds-stroke-soft">
         <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-ds-feature-lighter text-ds-feature-dark font-black text-xs border border-ds-feature-light">
           {number < 10 ? `0${number}` : number}
@@ -50,7 +50,7 @@ export function TopicHeader({
   };
 
   return (
-    <div className="mb-6">
+    <div className="mb-6" data-improve-block="topic-header">
       <div className="flex items-center gap-2 mb-1.5">
         <span className={`px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${colorMap[color]}`}>
           Topic {number}
@@ -69,7 +69,7 @@ export function TopicHeader({
 // ── Section Heading ──
 export function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h3 className="text-base sm:text-lg font-bold text-ds-text-strong tracking-tight mb-3">
+    <h3 className="text-base sm:text-lg font-bold text-ds-text-strong tracking-tight mb-3" data-improve-block="section-heading">
       {children}
     </h3>
   );
@@ -78,7 +78,7 @@ export function SectionHeading({ children }: { children: React.ReactNode }) {
 // ── Why Box ──
 export function WhyBox({ children }: { children: React.ReactNode }) {
   return (
-    <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm mb-6">
+    <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm mb-6" data-improve-block="why-box">
       {children}
     </div>
   );
@@ -93,7 +93,7 @@ export function AnalogyBox({
   children: React.ReactNode;
 }) {
   return (
-    <div className="p-5 rounded-2xl bg-ds-warning-lighter/40 border border-ds-warning-light shadow-sm mb-6">
+    <div className="p-5 rounded-2xl bg-ds-warning-lighter/40 border border-ds-warning-light shadow-sm mb-6" data-improve-block="analogy-box">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-base">💡</span>
         <h4 className="font-bold text-xs uppercase tracking-wider text-ds-warning-dark">
@@ -130,7 +130,7 @@ export function InfoCallout({
   };
 
   return (
-    <div className={`p-4 rounded-xl border ${styles[type]} mb-4 text-xs sm:text-sm leading-relaxed`}>
+    <div className={`p-4 rounded-xl border ${styles[type]} mb-4 text-xs sm:text-sm leading-relaxed`} data-improve-block="info-callout">
       {title && (
         <p className="font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
           <span>{icons[type]}</span> {title}
@@ -148,7 +148,7 @@ export function StepList({
   steps: { step: string; title: string; desc: string }[];
 }) {
   return (
-    <div className="space-y-3 mb-6">
+    <div className="space-y-3 mb-6" data-improve-block="step-list">
       {steps.map((s, idx) => (
         <div
           key={idx}
@@ -182,7 +182,7 @@ export function MistakeBox({
   right: string;
 }) {
   return (
-    <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm mb-6">
+    <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm mb-6" data-improve-block="mistake-box">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-base">⚠️</span>
         <h4 className="font-bold text-xs sm:text-sm text-ds-text-strong">
@@ -221,7 +221,7 @@ export function PredictOutputBox({
   const [show, setShow] = useState(false);
 
   return (
-    <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm mb-6">
+    <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm mb-6" data-improve-block="predict-output">
       <h4 className="font-bold text-xs uppercase tracking-wider text-ds-feature-dark mb-2 flex items-center gap-2">
         <span>🧩</span> Predict Production Docker Image Size
       </h4>
@@ -253,7 +253,7 @@ export function ComparisonTable({
   rows: string[][];
 }) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-ds-stroke-soft mb-6">
+    <div className="overflow-x-auto rounded-2xl border border-ds-stroke-soft mb-6" data-improve-block="comparison-table">
       <table className="w-full text-left text-xs border-collapse">
         <thead className="bg-ds-bg-weak border-b border-ds-stroke-soft">
           <tr>
@@ -296,7 +296,7 @@ export function Divider() {
 // ── Easy Rule Card ──
 export function EasyRuleCard({ rule }: { rule: string }) {
   return (
-    <div className="p-4 rounded-2xl bg-gradient-to-r from-ds-feature-lighter/60 to-ds-info-lighter/60 border border-ds-feature-light mb-6 flex items-center gap-3">
+    <div className="p-4 rounded-2xl bg-gradient-to-r from-ds-feature-lighter/60 to-ds-info-lighter/60 border border-ds-feature-light mb-6 flex items-center gap-3" data-improve-block="easy-rule-card">
       <span className="text-xl shrink-0">🧠</span>
       <p className="text-xs sm:text-sm font-bold text-ds-feature-dark leading-relaxed">
         {rule}

@@ -55,6 +55,18 @@ export function Playground({
   const [hintsUsed, setHintsUsed] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
+  
+  // ─── Improve Mode State ───
+  const [isImproveMode, setIsImproveMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("improveMode") === "true") {
+        setIsImproveMode(true);
+      }
+    }
+  }, []);
 
   // ─── Expanded Mode Layout (3-pane: Example | Practice | Output) ───
   const [expandedLayoutMode, setExpandedLayoutMode] = useState<
@@ -799,7 +811,7 @@ export function Playground({
     </div>
   );
 
-  return (
+  const finalRender = (
     <>
       {/* Normal view */}
       {!isFullscreen && playgroundContent}
@@ -813,4 +825,34 @@ export function Playground({
       </PlaygroundFullscreen>
     </>
   );
+
+  if (isImproveMode && !isFullscreen) {
+    return (
+      <div 
+        data-improve-block="playground" 
+        className="relative group/playground rounded-xl border-2 border-transparent hover:border-indigo-500/50 transition-colors p-1 -m-1"
+      >
+        <div className="absolute -top-7 right-2 opacity-0 group-hover/playground:opacity-100 transition-opacity z-50">
+           <button 
+             data-improve-select-btn="true"
+             className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold rounded-t-md shadow-lg flex items-center gap-1.5 cursor-pointer"
+           >
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+             </svg>
+             Select for Improvement
+           </button>
+        </div>
+        <div className="absolute -top-6 left-2 opacity-0 group-hover/playground:opacity-100 transition-opacity z-50">
+           <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400 bg-slate-900/90 px-2 py-0.5 rounded-t-md">
+             Code Example
+           </span>
+        </div>
+        {finalRender}
+      </div>
+    );
+  }
+
+  return finalRender;
 }

@@ -418,6 +418,138 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ lessons });
   }
 
+  // ── NEW: Extract a specific block from a file ──
+  if (action === "extract-block") {
+    const filePath = searchParams.get("path");
+    const blockType = searchParams.get("blockType");
+    const blockIndexParam = searchParams.get("blockIndex");
+
+    if (!filePath || !blockType || !blockIndexParam) {
+      return NextResponse.json({ error: "path, blockType, and blockIndex are required" }, { status: 400 });
+    }
+
+    const blockIndex = parseInt(blockIndexParam, 10);
+    if (isNaN(blockIndex)) return NextResponse.json({ error: "invalid blockIndex" }, { status: 400 });
+
+    if (!isPathSafe(filePath)) return NextResponse.json({ error: "Access denied" }, { status: 403 });
+
+    const abs = path.resolve(PROJECT_ROOT, filePath);
+    if (!fs.existsSync(abs)) return NextResponse.json({ error: "File not found" }, { status: 404 });
+
+    const content = fs.readFileSync(abs, "utf-8");
+    const targetPattern = `data-improve-block="${blockType}"`;
+    
+    let pos = -1;
+    for (let i = 0; i <= blockIndex; i++) {
+      pos = content.indexOf(targetPattern, pos + 1);
+      if (pos === -1) return NextResponse.json({ error: `Block not found (index ${blockIndex})` }, { status: 404 });
+    }
+
+    const startTagPos = content.lastIndexOf("<", pos);
+    if (startTagPos === -1) return NextResponse.json({ error: "Invalid JSX structure" }, { status: 500 });
+
+    const tagNameMatch = content.slice(startTagPos).match(/^<([a-zA-Z0-9_\.]+)/);
+    if (!tagNameMatch) return NextResponse.json({ error: "Could not determine tag name" }, { status: 500 });
+    const tagName = tagNameMatch[1];
+
+    const tokenRegex = new RegExp(`<(/?)${tagName}(\\s[^>]*?)?(/?)>`, 'g');
+    tokenRegex.lastIndex = startTagPos;
+
+    let depth = 0;
+    let endTagPos = -1;
+
+    while (true) {
+      const match = tokenRegex.exec(content);
+      if (!match) break;
+      
+      const isClosingNode = match[1] === '/';
+      const isSelfClosing = match[3] === '/';
+
+      if (isClosingNode) {
+        depth--;
+      } else if (!isSelfClosing) {
+        depth++;
+      }
+
+      if (depth === 0) {
+        endTagPos = match.index + match[0].length;
+        break;
+      }
+    }
+
+    if (endTagPos === -1) {
+      return NextResponse.json({ error: "Could not find closing tag" }, { status: 500 });
+    }
+
+    const blockSource = content.substring(startTagPos, endTagPos);
+    const prefix = content.substring(0, startTagPos);
+    const startLine = prefix.split('\n').length;
+    const blockLines = blockSource.split('\n').length;
+    const endLine = startLine + blockLines - 1;
+
+    return NextResponse.json({ blockSource, startLine, endLine });
+  }
+
+  // ── NEW: Extract the entire SectionContainer from a file ──
+  if (action === "extract-section") {
+    const filePath = searchParams.get("path");
+
+    if (!filePath) {
+      return NextResponse.json({ error: "path is required" }, { status: 400 });
+    }
+    if (!isPathSafe(filePath)) return NextResponse.json({ error: "Access denied" }, { status: 403 });
+
+    const abs = path.resolve(PROJECT_ROOT, filePath);
+    if (!fs.existsSync(abs)) return NextResponse.json({ error: "File not found" }, { status: 404 });
+
+    const content = fs.readFileSync(abs, "utf-8");
+    const targetPattern = `<SectionContainer`;
+    
+    const pos = content.indexOf(targetPattern);
+    if (pos === -1) {
+      return NextResponse.json({ error: `SectionContainer not found in ${filePath}` }, { status: 404 });
+    }
+
+    const startTagPos = pos;
+    const tagName = "SectionContainer";
+    const tokenRegex = new RegExp(`<(/?)${tagName}(\\s[^>]*?)?(/?)>`, 'g');
+    tokenRegex.lastIndex = startTagPos;
+
+    let depth = 0;
+    let endTagPos = -1;
+
+    while (true) {
+      const match = tokenRegex.exec(content);
+      if (!match) break;
+      
+      const isClosingNode = match[1] === '/';
+      const isSelfClosing = match[3] === '/';
+
+      if (isClosingNode) {
+        depth--;
+      } else if (!isSelfClosing) {
+        depth++;
+      }
+
+      if (depth === 0) {
+        endTagPos = match.index + match[0].length;
+        break;
+      }
+    }
+
+    if (endTagPos === -1) {
+      return NextResponse.json({ error: "Could not find closing tag for SectionContainer" }, { status: 500 });
+    }
+
+    const blockSource = content.substring(startTagPos, endTagPos);
+    const prefix = content.substring(0, startTagPos);
+    const startLine = prefix.split('\n').length;
+    const blockLines = blockSource.split('\n').length;
+    const endLine = startLine + blockLines - 1;
+
+    return NextResponse.json({ blockSource, startLine, endLine });
+  }
+
   // ── NEW: Section preview — return first N lines of a section file ──
   if (action === "section-preview") {
     const filePath = searchParams.get("path");
@@ -552,32 +684,49 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ...result, currentContent, lessonStructure });
   }
 
-  // ── Apply: write improved content to disk + save history ──
-  if (action === "apply") {
+  // ── NEW: Apply localized patch ──
+  if (action === "apply-patch") {
     const body = await req.json() as {
       filePath: string;
-      newContent: string;
+      startLine: number;
+      endLine: number;
+      newBlockSource: string;
       topic: ImprovementRecord["topic"];
       lesson: ImprovementRecord["lesson"];
       section: ImprovementRecord["section"];
       description: string;
     };
 
-    const { filePath, newContent, topic, lesson, section, description } = body;
+    const { filePath, startLine, endLine, newBlockSource, topic, lesson, section, description } = body;
 
-    if (!filePath || !newContent) {
-      return NextResponse.json({ error: "filePath and newContent are required" }, { status: 400 });
+    if (!filePath || startLine == null || endLine == null || !newBlockSource) {
+      return NextResponse.json({ error: "Missing required patch arguments" }, { status: 400 });
     }
     if (!isPathSafe(filePath)) {
-      return NextResponse.json({ error: "Access denied: path is outside app/learn/" }, { status: 403 });
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     const abs = path.resolve(PROJECT_ROOT, filePath);
-    if (!fs.existsSync(abs)) {
-      return NextResponse.json({ error: `File not found: ${filePath}` }, { status: 404 });
-    }
+    if (!fs.existsSync(abs)) return NextResponse.json({ error: "File not found" }, { status: 404 });
 
     const previousContent = fs.readFileSync(abs, "utf-8");
+    const lines = previousContent.split('\n');
+
+    if (startLine < 1 || endLine > lines.length || startLine > endLine) {
+      return NextResponse.json({ error: "Invalid line range" }, { status: 400 });
+    }
+
+    // Splice the new lines in
+    const prefixLines = lines.slice(0, startLine - 1);
+    const suffixLines = lines.slice(endLine);
+    
+    let cleanBlockSource = newBlockSource;
+    if (cleanBlockSource.endsWith('\n')) {
+      cleanBlockSource = cleanBlockSource.slice(0, -1);
+    }
+
+    const newContent = [...prefixLines, cleanBlockSource, ...suffixLines].join('\n');
+
     fs.writeFileSync(abs, newContent, "utf-8");
 
     const stats = computeDiffStats(previousContent, newContent);
@@ -590,7 +739,7 @@ export async function POST(req: NextRequest) {
       filePath,
       previousContent,
       newContent,
-      description: description || "No description provided",
+      description: description || "Localized block update",
       undone: false,
       stats,
     };
@@ -600,6 +749,11 @@ export async function POST(req: NextRequest) {
     writeHistory(history);
 
     return NextResponse.json(record);
+  }
+
+  // ── Apply: write improved content to disk + save history ──
+  if (action === "apply") {
+    return NextResponse.json({ error: "Legacy 'apply' method is disabled to protect file integrity. Please HARD REFRESH your browser page (Ctrl+F5) to load the latest Improvement Manager." }, { status: 400 });
   }
 
   // ── Undo: restore previous content ──

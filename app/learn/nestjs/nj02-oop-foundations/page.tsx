@@ -124,6 +124,7 @@ function resolveModuleId(sectionId?: string | null): string | null {
 
 export default function NJ02OOP(): JSX.Element {
   const searchParams = useSearchParams();
+  const isImproveMode = searchParams?.get("improveMode") === "true";
   const highlightId = searchParams?.get("highlightId");
   const sectionParam = searchParams?.get("section");
 
@@ -233,6 +234,20 @@ export default function NJ02OOP(): JSX.Element {
     window.history.replaceState(null, "", url.toString());
   };
 
+  
+  useEffect(() => {
+    const handleNavigate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.direction === "prev" && currentIndex > 0) {
+        handleSectionChange(SECTIONS[currentIndex - 1].id);
+      } else if (customEvent.detail?.direction === "next" && currentIndex < SECTIONS.length - 1) {
+        handleSectionChange(SECTIONS[currentIndex + 1].id);
+      }
+    };
+    window.addEventListener("lc-navigate-module", handleNavigate);
+    return () => window.removeEventListener("lc-navigate-module", handleNavigate);
+  }, [currentIndex, completedSections, activeSection]);
+
   const getStepState = (index: number): "done" | "active" | "todo" => {
     const section = SECTIONS[index];
     if (section.id === activeSection) return "active";
@@ -286,12 +301,13 @@ export default function NJ02OOP(): JSX.Element {
   };
 
   return (
-    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20">
-      <Nav />
+    <div className={`min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20 ${isImproveMode ? "pt-14" : ""}`}>
+      {!isImproveMode && <Nav />}
 
-      <div className="relative z-10 mx-auto max-w-[95rem] px-6 py-2 lg:px-8">
-        <div className="flex flex-col items-start justify-center gap-8 lg:flex-row">
-          <aside className="flex max-h-[calc(100vh-7rem)] shrink-0 flex-col rounded-2xl border border-ds-stroke-soft bg-ds-bg-white p-4 shadow-sm lg:sticky lg:top-20 lg:w-[300px]">
+      <div className={`relative z-10 mx-auto ${isImproveMode ? "w-full px-4 py-4" : "max-w-[95rem] px-6 py-2 lg:px-8"}`}>
+        <div className={`flex flex-col items-start justify-center ${isImproveMode ? "" : "gap-8 lg:flex-row"}`}>
+          {!isImproveMode && (
+<aside className="flex max-h-[calc(100vh-7rem)] shrink-0 flex-col rounded-2xl border border-ds-stroke-soft bg-ds-bg-white p-4 shadow-sm lg:sticky lg:top-20 lg:w-[300px]">
             <div className="mb-3 shrink-0 px-2">
               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-ds-text-soft">
                 Learning Path
@@ -409,8 +425,9 @@ export default function NJ02OOP(): JSX.Element {
               </button>
             </div>
           </aside>
+)}
 
-          <main className="min-w-0 max-w-6xl flex-1">
+          <main className={`${isImproveMode ? "w-full min-w-0" : "min-w-0 max-w-6xl flex-1"}`}>
             <ModuleGuide module={currentModule} moduleNumber={currentIndex + 1} />
 
             <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
