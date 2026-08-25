@@ -24,7 +24,6 @@ import { useState, useCallback, useEffect } from "react";
 import type { ImprovementRecord } from "@/lib/improvement-history";
 import {
   loadHistory,
-  applyImprovement,
   applyImprovementPatch,
   undoImprovement,
   redoImprovement,
@@ -175,28 +174,41 @@ function ApplyTab({
 
       for (const block of blocksToApply) {
         const editedContent = blockEdits[block.id];
-        if (block.sourceRange) {
-          lastRecord = await applyImprovementPatch({
-            filePath: pickerSelection.section.filePath,
-            startLine: block.sourceRange.startLine,
-            endLine: block.sourceRange.endLine,
-            newBlockSource: editedContent,
-            topic: { id: pickerSelection.topicId, title: pickerSelection.topicId },
-            lesson: { slug: pickerSelection.lessonSlug, name: pickerSelection.lessonSlug },
-            section: pickerSelection.section,
-            description: description || `Updated ${pickerSelection.section.fileName} (${block.label})`,
-          });
-        } else {
-           // Fallback for full section replacement
-           lastRecord = await applyImprovement({
-             filePath: pickerSelection.section.filePath,
-             newContent: editedContent,
-             topic: { id: pickerSelection.topicId, title: pickerSelection.topicId },
-             lesson: { slug: pickerSelection.lessonSlug, name: pickerSelection.lessonSlug },
-             section: pickerSelection.section,
-             description: description || `Updated ${pickerSelection.section.fileName}`,
-           });
+
+        // Resolve sourceRange — fetch from API if missing
+        let resolvedRange = block.sourceRange;
+        if (!resolvedRange) {
+          // Try extract-section first (for whole-section blocks)
+          if (block.type === "section") {
+            const res = await fetch(`/api/improve?action=extract-section&path=${encodeURIComponent(pickerSelection.section.filePath)}`);
+            if (res.ok) {
+              const data = await res.json();
+              resolvedRange = { blockSource: data.blockSource, startLine: data.startLine, endLine: data.endLine };
+            }
+          } else {
+            // Try extract-block for individual blocks
+            const res = await fetch(`/api/improve?action=extract-block&path=${encodeURIComponent(pickerSelection.section.filePath)}&blockType=${block.type}&blockIndex=${block.index}`);
+            if (res.ok) {
+              const data = await res.json();
+              resolvedRange = { blockSource: data.blockSource, startLine: data.startLine, endLine: data.endLine };
+            }
+          }
         }
+
+        if (!resolvedRange) {
+          throw new Error(`Could not locate block "${block.label}" in the source file. Please re-select the block and try again.`);
+        }
+
+        lastRecord = await applyImprovementPatch({
+          filePath: pickerSelection.section.filePath,
+          startLine: resolvedRange.startLine,
+          endLine: resolvedRange.endLine,
+          newBlockSource: editedContent,
+          topic: { id: pickerSelection.topicId, title: pickerSelection.topicId },
+          lesson: { slug: pickerSelection.lessonSlug, name: pickerSelection.lessonSlug },
+          section: pickerSelection.section,
+          description: description || `Updated ${pickerSelection.section.fileName} (${block.label})`,
+        });
       }
 
       setSuccessRecord(lastRecord);

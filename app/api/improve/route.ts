@@ -437,17 +437,55 @@ export async function GET(req: NextRequest) {
     if (!fs.existsSync(abs)) return NextResponse.json({ error: "File not found" }, { status: 404 });
 
     const content = fs.readFileSync(abs, "utf-8");
-    const targetPattern = `data-improve-block="${blockType}"`;
-    
+
+    // Map data-improve-block attribute values → JSX component tag names
+    // The data-improve-block attr is defined inside shared-components.tsx,
+    // but the section files use the PascalCase component names like <TopicHeader />.
+    const blockTypeToComponentTag: Record<string, string> = {
+      "topic-header": "TopicHeader",
+      "section-heading": "SectionHeading",
+      "why-box": "WhyBox",
+      "analogy-box": "AnalogyBox",
+      "step-list": "StepList",
+      "mistake-box": "MistakeBox",
+      "summary-box": "SummaryBox",
+      "exercise-box": "ExerciseBox",
+      "predict-output": "PredictOutputBox",
+      "comparison-table": "ComparisonTable",
+      "info-callout": "InfoCallout",
+      "playground": "Playground",
+    };
+
+    const componentTag = blockTypeToComponentTag[blockType];
+
+    // Strategy 1: Search for the component tag in source (e.g. <TopicHeader)
     let pos = -1;
-    for (let i = 0; i <= blockIndex; i++) {
-      pos = content.indexOf(targetPattern, pos + 1);
-      if (pos === -1) return NextResponse.json({ error: `Block not found (index ${blockIndex})` }, { status: 404 });
+    if (componentTag) {
+      const tagPattern = `<${componentTag}`;
+      for (let i = 0; i <= blockIndex; i++) {
+        pos = content.indexOf(tagPattern, pos + 1);
+        if (pos === -1) break;
+      }
+    }
+    
+    // Strategy 2: Fall back to searching for data-improve-block attribute directly
+    if (pos === -1) {
+      const attrPattern = `data-improve-block="${blockType}"`;
+      for (let i = 0; i <= blockIndex; i++) {
+        pos = content.indexOf(attrPattern, pos + 1);
+        if (pos === -1) break;
+      }
+      // If found via attribute, find the opening < before it
+      if (pos !== -1) {
+        pos = content.lastIndexOf("<", pos);
+      }
     }
 
-    const startTagPos = content.lastIndexOf("<", pos);
-    if (startTagPos === -1) return NextResponse.json({ error: "Invalid JSX structure" }, { status: 500 });
+    if (pos === -1) {
+      return NextResponse.json({ error: `Block not found (index ${blockIndex})` }, { status: 404 });
+    }
 
+    const startTagPos = pos;
     const tagNameMatch = content.slice(startTagPos).match(/^<([a-zA-Z0-9_\.]+)/);
     if (!tagNameMatch) return NextResponse.json({ error: "Could not determine tag name" }, { status: 500 });
     const tagName = tagNameMatch[1];
