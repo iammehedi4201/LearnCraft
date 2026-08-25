@@ -26,13 +26,24 @@ export function Nav(): JSX.Element {
     // If rendered outside provider
   }
 
+  const [isImproveMode, setIsImproveMode] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
+    
+    // Check if we are inside the improvement manager preview iframe
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("improveMode") === "true") {
+      setIsImproveMode(true);
+    }
+    
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  if (isImproveMode) return null;
 
   return (
     <>
@@ -78,17 +89,22 @@ export function Nav(): JSX.Element {
                     badge: totalRevisions > 0 ? totalRevisions : undefined,
                     highlight: true,
                   },
+                  // Dev-only: Lesson Content Improvement Manager
+                  ...(process.env.NODE_ENV === "development"
+                    ? [{ name: "🛠 Improve", href: "/improve", devOnly: true }]
+                    : []),
                 ].map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
                     className={`text-sm font-semibold transition-colors relative group py-1 flex items-center gap-1.5 ${
-                      item.highlight
+                      (item as { devOnly?: boolean }).devOnly
+                        ? "text-amber-600 dark:text-amber-500 hover:text-amber-500 dark:hover:text-amber-400 font-bold"
+                        : item.highlight
                         ? "text-ds-feature-dark font-bold hover:text-ds-feature-base"
                         : "text-ds-text-sub hover:text-ds-text-strong"
                     }`}
                   >
-                    
                     {item.name}
                     {item.badge !== undefined && (
                       <span className="px-1.5 py-0.2 text-[10px] font-black rounded-full bg-ds-feature-lighter text-ds-feature-dark border border-ds-feature-light">

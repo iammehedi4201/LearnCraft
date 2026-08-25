@@ -11,6 +11,7 @@ import { SelectionToolbar } from "@/components/revision/SelectionToolbar";
 import { NoteDialog } from "@/components/revision/NoteDialog";
 import { ExistingHighlightPopover } from "@/components/revision/ExistingHighlightPopover";
 import { LessonAnnotationLayer } from "@/components/revision/LessonAnnotationLayer";
+import { LessonImprovementOverlay } from "@/components/improve/LessonImprovementOverlay";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -54,6 +55,7 @@ export default function RootLayout({
               <NoteDialog />
               <ExistingHighlightPopover />
               <LessonAnnotationLayer />
+              <LessonImprovementOverlay />
             </RevisionProvider>
           </ThemeProvider>
         </QueryProvider>

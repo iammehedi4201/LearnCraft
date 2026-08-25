@@ -29,12 +29,17 @@ export function ClassDecoratorsSection({
         <>
           {/* ── 3.1 Class Decorator Signature ── */}
           <div className="mb-16">
-        <TopicHeader
-          number={1}
-          title="What is a Class Decorator?"
-          description="A class decorator is placed directly above a class. TypeScript gives it exactly 1 argument: the class constructor function itself."
-          color="primary"
-        />
+What is a Class Decorator?
+
+A class decorator is a function that runs when a class is created.
+
+You place it directly above the class using the @ symbol.
+
+TypeScript passes one argument to the decorator:
+
+the class constructor itself
+
+Think of it like this: the decorator receives access to the entire class, so it can inspect it, modify it, or even replace it.
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2">
