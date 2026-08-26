@@ -31,7 +31,16 @@ import {
 import { DiffViewer } from "./DiffViewer";
 import { LessonStructurePicker } from "./ManualPicker";
 import type { MultiBlockSelection } from "@/lib/improve-types";
-import { extractContentFields, applyFieldPatch, ContentField } from "@/lib/content-field-extractor";
+import {
+  extractContentFields,
+  applyFieldPatch,
+  ContentField,
+} from "@/lib/content-field-extractor";
+import {
+  parseSectionFileIntoSubSections,
+  patchBlockField,
+  SubSectionBlock,
+} from "@/lib/section-parser";
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
 
@@ -119,23 +128,372 @@ const IcRedo = () => (
   </svg>
 );
 
-// ─── Smart Block Editor ───────────────────────────────────────────────────────
+// ─── Section-Wise Component Editor ──────────────────────────────────────────
 
-function SmartBlockEditor({
+function SectionWiseEditor({
   block,
   editedContent,
-  onChange
+  onChange,
 }: {
   block: any;
   editedContent: string;
   onChange: (newContent: string) => void;
 }) {
+  const [viewMode, setViewMode] = useState<"sections" | "code">("sections");
+  const [activeSubSectionId, setActiveSubSectionId] = useState<string | null>(null);
+  const [editingBlock, setEditingBlock] = useState<{
+    subSectionIndex: number;
+    block: SubSectionBlock;
+    values: Record<string, string>;
+  } | null>(null);
+
+  const subSections = useMemo(
+    () => parseSectionFileIntoSubSections(editedContent),
+    [editedContent],
+  );
+
+  // Auto-expand first sub-section by default
+  useEffect(() => {
+    if (!activeSubSectionId && subSections.length > 0) {
+      setActiveSubSectionId(subSections[0].id);
+    }
+  }, [subSections, activeSubSectionId]);
+
+  const handleStartEditBlock = (
+    subSectionIndex: number,
+    subBlock: SubSectionBlock,
+  ) => {
+    const initialValues: Record<string, string> = {};
+    subBlock.fields.forEach((f) => {
+      initialValues[f.key] = f.value;
+    });
+    setEditingBlock({
+      subSectionIndex,
+      block: subBlock,
+      values: initialValues,
+    });
+  };
+
+  const handleSaveBlockEdit = () => {
+    if (!editingBlock) return;
+
+    let patchedSource = editingBlock.block.rawSource;
+    for (const [key, val] of Object.entries(editingBlock.values)) {
+      patchedSource = patchBlockField(patchedSource, key, val);
+    }
+
+    if (editedContent.includes(editingBlock.block.rawSource)) {
+      const newFileContent = editedContent.replace(
+        editingBlock.block.rawSource,
+        patchedSource,
+      );
+      onChange(newFileContent);
+    }
+    setEditingBlock(null);
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* View Switcher Tabs */}
+      <div className="flex items-center justify-between p-1 bg-slate-900/90 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => {
+              setViewMode("sections");
+              setEditingBlock(null);
+            }}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              viewMode === "sections"
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-900/20"
+                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+            }`}
+          >
+            <span>🗂️</span>
+            Section-Wise Blocks
+            <span className="px-1.5 py-0.2 rounded-full bg-indigo-950/80 border border-indigo-500/30 text-[10px] text-indigo-300">
+              {subSections.length}
+            </span>
+          </button>
+
+          <button
+            onClick={() => {
+              setViewMode("code");
+              setEditingBlock(null);
+            }}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              viewMode === "code"
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-900/20"
+                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+            }`}
+          >
+            <span>💻</span>
+            Raw Source Code
+          </button>
+        </div>
+
+        {editedContent !== block.currentBlockContent && (
+          <button
+            onClick={() => onChange(block.currentBlockContent)}
+            className="text-[11px] text-emerald-400 hover:text-emerald-300 px-2.5 py-1 rounded-lg bg-emerald-950/30 border border-emerald-500/30 transition-colors flex items-center gap-1.5"
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Revert all changes
+          </button>
+        )}
+      </div>
+
+      {/* ── MODE 1: Section-Wise Structured Editor ── */}
+      {viewMode === "sections" && (
+        <div className="flex flex-col gap-3">
+          {/* Active Modal / Inline Block Editor */}
+          {editingBlock ? (
+            <div className="flex flex-col gap-4 p-5 bg-slate-900/90 rounded-2xl border border-indigo-500/40 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">{editingBlock.block.icon}</span>
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-indigo-400">
+                      Editing {editingBlock.block.type}
+                    </span>
+                    <h4 className="text-sm font-bold text-slate-200">
+                      {editingBlock.block.label}
+                    </h4>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setEditingBlock(null)}
+                  className="text-xs text-slate-400 hover:text-slate-200 p-1.5 rounded-lg hover:bg-slate-800 transition-colors"
+                >
+                  <IcX />
+                </button>
+              </div>
+
+              {/* Form Fields for this specific block */}
+              <div className="flex flex-col gap-3.5">
+                {editingBlock.block.fields.map((field) => (
+                  <div key={field.key} className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                      {field.label}
+                    </label>
+                    {field.multiline || field.isCode ? (
+                      <textarea
+                        value={editingBlock.values[field.key] ?? field.value}
+                        onChange={(e) =>
+                          setEditingBlock({
+                            ...editingBlock,
+                            values: {
+                              ...editingBlock.values,
+                              [field.key]: e.target.value,
+                            },
+                          })
+                        }
+                        className={`w-full min-h-[100px] bg-[#0d1117] border border-slate-700/70 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-y leading-relaxed ${
+                          field.isCode ? "font-mono" : ""
+                        }`}
+                        wrap="soft"
+                        spellCheck={false}
+                      />
+                    ) : (
+                      <input
+                        type="text"
+                        value={editingBlock.values[field.key] ?? field.value}
+                        onChange={(e) =>
+                          setEditingBlock({
+                            ...editingBlock,
+                            values: {
+                              ...editingBlock.values,
+                              [field.key]: e.target.value,
+                            },
+                          })
+                        }
+                        className="w-full bg-[#0d1117] border border-slate-700/70 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex justify-end gap-2.5 pt-3 border-t border-slate-800">
+                <button
+                  onClick={() => setEditingBlock(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveBlockEdit}
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition-all shadow-lg shadow-indigo-900/20"
+                >
+                  Save to Section
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* Sub-Sections Accordion List */
+            <div className="flex flex-col gap-3">
+              {subSections.map((sub, idx) => {
+                const isOpen = activeSubSectionId === sub.id;
+                return (
+                  <div
+                    key={sub.id}
+                    className={`rounded-2xl border transition-all overflow-hidden ${
+                      isOpen
+                        ? "border-indigo-500/40 bg-slate-900/70 shadow-lg"
+                        : "border-slate-800/80 bg-slate-900/30 hover:border-slate-700/80 hover:bg-slate-900/50"
+                    }`}
+                  >
+                    {/* Header */}
+                    <button
+                      onClick={() =>
+                        setActiveSubSectionId(isOpen ? null : sub.id)
+                      }
+                      className="w-full px-4 py-3.5 flex items-center justify-between text-left transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-lg bg-indigo-600/20 border border-indigo-500/30 text-indigo-300 font-bold text-xs flex items-center justify-center">
+                          {sub.number || idx + 1}
+                        </span>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-slate-200 tracking-tight">
+                            {sub.title}
+                          </span>
+                          {sub.description && (
+                            <span className="text-xs text-slate-400 line-clamp-1 mt-0.5">
+                              {sub.description}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono text-slate-500">
+                          {sub.blocks.length} block{sub.blocks.length === 1 ? "" : "s"}
+                        </span>
+                        <svg
+                          className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                            isOpen ? "rotate-180" : ""
+                          }`}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </div>
+                    </button>
+
+                    {/* Content (Expanded) */}
+                    {isOpen && (
+                      <div className="px-4 pb-4 pt-1 flex flex-col gap-2.5 border-t border-slate-800/60">
+                        {sub.blocks.length > 0 ? (
+                          sub.blocks.map((subBlock) => (
+                            <div
+                              key={subBlock.id}
+                              className="p-3 bg-slate-950/60 hover:bg-slate-950/90 border border-slate-800/80 hover:border-indigo-500/30 rounded-xl flex items-center justify-between transition-all group"
+                            >
+                              <div className="flex items-center gap-3 min-w-0 pr-3">
+                                <span className="text-base flex-shrink-0">
+                                  {subBlock.icon}
+                                </span>
+                                <div className="flex flex-col min-w-0">
+                                  <span className="text-xs font-bold text-slate-200 truncate">
+                                    {subBlock.label}
+                                  </span>
+                                  <span className="text-[10px] text-slate-500 font-mono">
+                                    {subBlock.fields
+                                      .map((f) => f.label)
+                                      .join(" • ")}
+                                  </span>
+                                </div>
+                              </div>
+
+                              <button
+                                onClick={() => handleStartEditBlock(idx, subBlock)}
+                                className="px-3 py-1.5 rounded-lg bg-indigo-600/10 hover:bg-indigo-600/30 border border-indigo-500/30 text-indigo-300 text-xs font-semibold flex items-center gap-1.5 transition-colors flex-shrink-0 group-hover:border-indigo-400"
+                              >
+                                Edit Block ✏️
+                              </button>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="py-4 text-center text-xs text-slate-500 italic">
+                            No structured components detected in this sub-section.
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── MODE 2: Raw Full Code Editor ── */}
+      {viewMode === "code" && (
+        <div className="flex flex-col gap-2">
+          <textarea
+            value={editedContent}
+            onChange={(e) => onChange(e.target.value)}
+            className="w-full min-h-[350px] bg-[#0d1117] border border-slate-700/60 rounded-xl p-4 font-mono text-xs text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-y leading-5 whitespace-pre-wrap break-words overflow-x-hidden"
+            wrap="soft"
+            spellCheck={false}
+          />
+        </div>
+      )}
+
+      {/* Global Diff Preview */}
+      {editedContent !== block.currentBlockContent && (
+        <div className="mt-2 border border-slate-700/30 rounded-xl overflow-hidden">
+          <div className="bg-slate-800/40 px-3 py-1.5 border-b border-slate-700/30 text-[10px] font-black uppercase tracking-wider text-slate-500 flex items-center justify-between">
+            <span>Diff Preview (Entire Section)</span>
+            <span className="text-emerald-400 font-normal lowercase">modified</span>
+          </div>
+          <DiffViewer
+            oldContent={block.currentBlockContent}
+            newContent={editedContent}
+            oldLabel="Original"
+            newLabel="Improved"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Single Block Editor (For individual component selection) ────────────────
+
+function SmartBlockEditor({
+  block,
+  editedContent,
+  onChange,
+}: {
+  block: any;
+  editedContent: string;
+  onChange: (newContent: string) => void;
+}) {
+  // If whole section or entire file is selected, use the SectionWiseEditor
+  if (block.type === "section" || block.id === "section:all") {
+    return (
+      <SectionWiseEditor
+        block={block}
+        editedContent={editedContent}
+        onChange={onChange}
+      />
+    );
+  }
+
   const [activeFieldKey, setActiveFieldKey] = useState<string | null>(null);
   const [fieldValue, setFieldValue] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
-  
-  const fields = useMemo(() => extractContentFields(editedContent), [editedContent]);
-  const activeField = fields.find(f => f.key === activeFieldKey) || null;
+
+  const fields = useMemo(
+    () => extractContentFields(editedContent),
+    [editedContent],
+  );
+  const activeField = fields.find((f) => f.key === activeFieldKey) || null;
 
   const handleFieldClick = (field: ContentField) => {
     setActiveFieldKey(field.key);
@@ -144,23 +502,27 @@ function SmartBlockEditor({
 
   const applyFieldEdit = () => {
     if (!activeField) return;
-    const newBlockSource = applyFieldPatch(editedContent, activeField, fieldValue);
+    const newBlockSource = applyFieldPatch(
+      editedContent,
+      activeField,
+      fieldValue,
+    );
     onChange(newBlockSource);
     setActiveFieldKey(null);
   };
 
-  const contentFields = fields.filter(f => f.category === "content");
-  const configFields = fields.filter(f => f.category === "config");
+  const contentFields = fields.filter((f) => f.category === "content");
+  const configFields = fields.filter((f) => f.category === "config");
 
   return (
     <div className="flex flex-col gap-4">
-      {/* 1. Source Editor (Always visible) */}
+      {/* 1. Source Editor */}
       <div className="flex flex-col gap-2">
-        <span className="text-xs text-slate-400">Source Editor</span>
+        <span className="text-xs text-slate-400">Block Source</span>
         <textarea
           value={editedContent}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full min-h-[180px] bg-[#0d1117] border border-slate-700/60 rounded-xl p-4 font-mono text-xs text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 resize-y transition-all leading-5 whitespace-pre-wrap break-words overflow-x-hidden"
+          className="w-full min-h-[180px] bg-[#0d1117] border border-slate-700/60 rounded-xl p-4 font-mono text-xs text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-y transition-all leading-5 whitespace-pre-wrap break-words overflow-x-hidden"
           wrap="soft"
           spellCheck={false}
         />
@@ -168,7 +530,9 @@ function SmartBlockEditor({
         {/* Diff preview */}
         {editedContent !== block.currentBlockContent && (
           <div className="mt-2 border border-slate-700/30 rounded-xl overflow-hidden">
-            <div className="bg-slate-800/40 px-3 py-1.5 border-b border-slate-700/30 text-[10px] font-black uppercase tracking-wider text-slate-500">Diff Preview</div>
+            <div className="bg-slate-800/40 px-3 py-1.5 border-b border-slate-700/30 text-[10px] font-black uppercase tracking-wider text-slate-500">
+              Diff Preview
+            </div>
             <DiffViewer
               oldContent={block.currentBlockContent}
               newContent={editedContent}
@@ -179,67 +543,48 @@ function SmartBlockEditor({
         )}
       </div>
 
-      {/* Pending changes indicator */}
-      {editedContent !== block.currentBlockContent && (
-        <div className="p-3 bg-emerald-950/20 border border-emerald-500/20 rounded-xl flex items-center justify-between">
-          <div className="flex items-center gap-2 text-sm text-emerald-400">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            Block has pending changes
-          </div>
-          <button 
-            onClick={() => onChange(block.currentBlockContent)}
-            className="text-xs text-slate-400 hover:text-slate-200 underline underline-offset-2"
-          >
-            Revert all
-          </button>
-        </div>
-      )}
-
-      {/* 2. Active Field Editor or Pills */}
+      {/* 2. Focused Field Editor */}
       {activeField ? (
         <div className="flex flex-col gap-3 p-4 bg-slate-900/50 rounded-xl border border-indigo-500/30">
-          <button 
+          <button
             onClick={() => setActiveFieldKey(null)}
             className="self-start flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
           >
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Back to Fields
+            ← Back to Fields
           </button>
-          
+
           <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Editing Field</span>
-            <span className="text-sm font-bold text-indigo-300">{activeField.label}</span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+              Editing Field
+            </span>
+            <span className="text-sm font-bold text-indigo-300">
+              {activeField.label}
+            </span>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Current Value</span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+              Current Value
+            </span>
             <div className="p-3 bg-slate-800/40 rounded-lg border border-slate-700/50 text-sm text-slate-300 font-mono whitespace-pre-wrap">
-              {activeField.currentValue || <span className="opacity-50 italic">Empty</span>}
+              {activeField.currentValue || (
+                <span className="opacity-50 italic">Empty</span>
+              )}
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Improved Value</span>
+            <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+              Improved Value
+            </span>
             <textarea
               value={fieldValue}
               onChange={(e) => setFieldValue(e.target.value)}
-              className="w-full min-h-[120px] bg-[#0d1117] border border-slate-700/60 rounded-xl p-3 font-mono text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 resize-y transition-all leading-relaxed whitespace-pre-wrap break-words"
+              className="w-full min-h-[120px] bg-[#0d1117] border border-slate-700/60 rounded-xl p-3 font-mono text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 resize-y transition-all leading-relaxed whitespace-pre-wrap break-words"
               wrap="soft"
               spellCheck={false}
             />
           </div>
-
-          {fieldValue !== activeField.currentValue && (
-            <div className="mt-2 border border-slate-700/30 rounded-xl overflow-hidden">
-              <div className="bg-slate-800/40 px-3 py-1.5 border-b border-slate-700/30 text-[10px] font-black uppercase tracking-wider text-slate-500">Value Diff Preview</div>
-              <DiffViewer
-                oldContent={activeField.currentValue}
-                newContent={fieldValue}
-                oldLabel="Original"
-                newLabel="Improved"
-              />
-            </div>
-          )}
 
           <div className="flex justify-end gap-3 mt-2">
             <button
@@ -259,11 +604,13 @@ function SmartBlockEditor({
         </div>
       ) : (
         <>
-          {contentFields.length > 0 ? (
+          {contentFields.length > 0 && (
             <div className="flex flex-col gap-2">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">Editable Content</span>
+              <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                Editable Content Fields
+              </span>
               <div className="flex flex-wrap gap-2">
-                {contentFields.map(f => (
+                {contentFields.map((f) => (
                   <button
                     key={f.key}
                     onClick={() => handleFieldClick(f)}
@@ -274,23 +621,29 @@ function SmartBlockEditor({
                 ))}
               </div>
             </div>
-          ) : (
-            <div className="text-sm text-slate-400 italic">No editable content fields detected in this block.</div>
           )}
 
           {configFields.length > 0 && (
             <div className="flex flex-col gap-2 mt-2 pt-4 border-t border-slate-700/30">
-              <button 
+              <button
                 onClick={() => setShowAdvanced(!showAdvanced)}
                 className="self-start text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-slate-300 flex items-center gap-1 transition-colors"
               >
-                <svg className={`w-3 h-3 transition-transform ${showAdvanced ? 'rotate-90' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                <svg
+                  className={`w-3 h-3 transition-transform ${showAdvanced ? "rotate-90" : ""}`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
                 Advanced Configuration
               </button>
-              
+
               {showAdvanced && (
                 <div className="flex flex-wrap gap-2 mt-1">
-                  {configFields.map(f => (
+                  {configFields.map((f) => (
                     <button
                       key={f.key}
                       onClick={() => handleFieldClick(f)}
@@ -319,29 +672,39 @@ function ApplyTab({
   onImprovementApplied: () => void;
 }) {
   const [step, setStep] = useState<ApplyStep>("idle");
-  const [pickerSelection, setPickerSelection] = useState<MultiBlockSelection | null>(null);
+  const [pickerSelection, setPickerSelection] =
+    useState<MultiBlockSelection | null>(null);
   const [blockEdits, setBlockEdits] = useState<Record<string, string>>({});
   const [description, setDescription] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [successRecord, setSuccessRecord] = useState<ImprovementRecord | null>(null);
+  const [successRecord, setSuccessRecord] = useState<ImprovementRecord | null>(
+    null,
+  );
 
   // When selection changes, reset step and block edits
-  const handleSelectionChange = useCallback((sel: MultiBlockSelection | null) => {
-    setPickerSelection(sel);
-    if (sel && sel.blocks.length > 0) {
+  const handleSelectionChange = useCallback(
+    (sel: MultiBlockSelection | null) => {
+      if (!sel || sel.blocks.length === 0) {
+        setPickerSelection(null);
+        setStep("idle");
+        setBlockEdits({});
+        return;
+      }
+      setPickerSelection(sel);
       setStep("section-selected");
       const initialEdits: Record<string, string> = {};
-      sel.blocks.forEach(b => {
+      sel.blocks.forEach((b) => {
         initialEdits[b.id] = b.currentBlockContent;
       });
       setBlockEdits(initialEdits);
-    } else {
-      setStep("idle");
-      setBlockEdits({});
-    }
-  }, []);
+    },
+    [],
+  );
 
-  const hasChanges = pickerSelection?.blocks.some(b => blockEdits[b.id] !== b.currentBlockContent) || false;
+  const hasChanges =
+    pickerSelection?.blocks.some(
+      (b) => blockEdits[b.id] !== b.currentBlockContent,
+    ) || false;
   const canApply = pickerSelection !== null && hasChanges;
 
   const handleApply = useCallback(async () => {
@@ -350,17 +713,19 @@ function ApplyTab({
 
     try {
       let lastRecord: ImprovementRecord | null = null;
-      
+
       const blocksToApply = [...pickerSelection.blocks]
-        .filter(b => blockEdits[b.id] && blockEdits[b.id] !== b.currentBlockContent)
+        .filter(
+          (b) => blockEdits[b.id] && blockEdits[b.id] !== b.currentBlockContent,
+        )
         .sort((a, b) => {
           const aStart = a.sourceRange?.startLine || 0;
           const bStart = b.sourceRange?.startLine || 0;
           return bStart - aStart; // descending line number sort
         });
-        
+
       if (blocksToApply.length === 0) {
-         throw new Error("No changes made to any blocks.");
+        throw new Error("No changes made to any blocks.");
       }
 
       for (const block of blocksToApply) {
@@ -369,25 +734,39 @@ function ApplyTab({
         // Resolve sourceRange — fetch from API if missing
         let resolvedRange = block.sourceRange;
         if (!resolvedRange) {
-          // Try extract-section first (for whole-section blocks)
+          // Try file fetch first (for whole-section blocks)
           if (block.type === "section") {
-            const res = await fetch(`/api/improve?action=extract-section&path=${encodeURIComponent(pickerSelection.section.filePath)}`);
+            const res = await fetch(
+              `/api/improve?action=file&path=${encodeURIComponent(pickerSelection.section.filePath)}`,
+            );
             if (res.ok) {
               const data = await res.json();
-              resolvedRange = { blockSource: data.blockSource, startLine: data.startLine, endLine: data.endLine };
+              resolvedRange = {
+                blockSource: data.content,
+                startLine: 1,
+                endLine: data.lines || data.content.split("\n").length,
+              };
             }
           } else {
             // Try extract-block for individual blocks
-            const res = await fetch(`/api/improve?action=extract-block&path=${encodeURIComponent(pickerSelection.section.filePath)}&blockType=${block.type}&blockIndex=${block.index}`);
+            const res = await fetch(
+              `/api/improve?action=extract-block&path=${encodeURIComponent(pickerSelection.section.filePath)}&blockType=${block.type}&blockIndex=${block.index}`,
+            );
             if (res.ok) {
               const data = await res.json();
-              resolvedRange = { blockSource: data.blockSource, startLine: data.startLine, endLine: data.endLine };
+              resolvedRange = {
+                blockSource: data.blockSource,
+                startLine: data.startLine,
+                endLine: data.endLine,
+              };
             }
           }
         }
 
         if (!resolvedRange) {
-          throw new Error(`Could not locate block "${block.label}" in the source file. Please re-select the block and try again.`);
+          throw new Error(
+            `Could not locate block "${block.label}" in the source file. Please re-select the block and try again.`,
+          );
         }
 
         lastRecord = await applyImprovementPatch({
@@ -395,10 +774,18 @@ function ApplyTab({
           startLine: resolvedRange.startLine,
           endLine: resolvedRange.endLine,
           newBlockSource: editedContent,
-          topic: { id: pickerSelection.topicId, title: pickerSelection.topicId },
-          lesson: { slug: pickerSelection.lessonSlug, name: pickerSelection.lessonSlug },
+          topic: {
+            id: pickerSelection.topicId,
+            title: pickerSelection.topicId,
+          },
+          lesson: {
+            slug: pickerSelection.lessonSlug,
+            name: pickerSelection.lessonSlug,
+          },
           section: pickerSelection.section,
-          description: description || `Updated ${pickerSelection.section.fileName} (${block.label})`,
+          description:
+            description ||
+            `Updated ${pickerSelection.section.fileName} (${block.label})`,
         });
       }
 
@@ -522,7 +909,6 @@ function ApplyTab({
 
       {/* ── Two-Column Layout ── */}
       <div className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-6">
-
         {/* Left Column */}
         <div className="min-w-0 flex flex-col">
           <div className="rounded-2xl border border-slate-700/40 bg-slate-800/20">
@@ -536,9 +922,8 @@ function ApplyTab({
 
         {/* Right Column */}
         <div className="min-w-0 flex flex-col gap-4">
-
           {/* Awaiting Selection State */}
-          {!pickerSelection && (
+          {(!pickerSelection || pickerSelection.blocks.length === 0) && (
             <div className="flex items-center justify-center py-10 rounded-xl border border-indigo-500/20 bg-indigo-950/10 text-indigo-400 text-sm gap-2 animate-pulse">
               <svg
                 className="w-5 h-5"
@@ -557,7 +942,7 @@ function ApplyTab({
           )}
 
           {/* Inline Editors & Apply */}
-          {pickerSelection && (
+          {pickerSelection && pickerSelection.blocks.length > 0 && (
             <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-300">
               <div className="rounded-xl border border-indigo-500/30 bg-indigo-950/20 px-4 py-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -566,10 +951,16 @@ function ApplyTab({
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[10px] font-black uppercase text-indigo-500/70">
-                      Target Section
+                      {pickerSelection.blocks.length === 1 &&
+                      pickerSelection.blocks[0].id === "section:all"
+                        ? "Whole Section Target"
+                        : "Target Section"}
                     </span>
                     <span className="text-sm font-bold text-indigo-300">
-                      {pickerSelection.section.fileName}
+                      {pickerSelection.section.title}{" "}
+                      <span className="text-xs font-mono text-indigo-400/60 font-normal">
+                        ({pickerSelection.section.fileName})
+                      </span>
                     </span>
                   </div>
                 </div>
@@ -582,7 +973,7 @@ function ApplyTab({
                 </button>
               </div>
 
-              {pickerSelection.blocks.map(block => (
+              {pickerSelection.blocks.map((block) => (
                 <div key={block.id} className="flex flex-col gap-2">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
@@ -591,14 +982,20 @@ function ApplyTab({
                     </span>
                     {block.sourceRange && (
                       <span className="text-[9px] font-mono text-slate-600">
-                        Lines {block.sourceRange.startLine}-{block.sourceRange.endLine}
+                        Lines {block.sourceRange.startLine}-
+                        {block.sourceRange.endLine}
                       </span>
                     )}
                   </div>
                   <SmartBlockEditor
                     block={block}
                     editedContent={blockEdits[block.id] || ""}
-                    onChange={(newContent) => setBlockEdits(prev => ({ ...prev, [block.id]: newContent }))}
+                    onChange={(newContent) =>
+                      setBlockEdits((prev) => ({
+                        ...prev,
+                        [block.id]: newContent,
+                      }))
+                    }
                   />
                 </div>
               ))}

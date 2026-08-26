@@ -27,12 +27,13 @@ export function HeaderSection() {
     <SectionContainer number={1} title="Understanding OOP">
       {/* ── 1.1 What is Programming? ── */}
       <div className="mb-16">
-What is Programming?
 
-Programming means writing instructions that tell a computer what to do.
-
-A computer cannot decide what you want by itself. You need to give it clear, step-by-step instructions using a programming language.
-
+<TopicHeader
+          number={1}
+          title="What is Programming?"
+          description="Programming means writing instructions that tell a computer what to do.A computer cannot decide what you want by itself. You need to give it clear, step-by-step instructions using a programming language."
+          color="sky"
+        />
         <AnalogyBox emoji="🍳" title="Think about it like this">
           Imagine you are writing a recipe for cooking rice. You write:
           <ol className="list-decimal pl-5 mt-2 space-y-1">
