@@ -681,6 +681,10 @@ function ApplyTab({
     null,
   );
 
+  const [expandedBlockIds, setExpandedBlockIds] = useState<Set<string>>(
+    new Set(),
+  );
+
   // When selection changes, reset step and block edits
   const handleSelectionChange = useCallback(
     (sel: MultiBlockSelection | null) => {
@@ -688,6 +692,7 @@ function ApplyTab({
         setPickerSelection(null);
         setStep("idle");
         setBlockEdits({});
+        setExpandedBlockIds(new Set());
         return;
       }
       setPickerSelection(sel);
@@ -697,9 +702,33 @@ function ApplyTab({
         initialEdits[b.id] = b.currentBlockContent;
       });
       setBlockEdits(initialEdits);
+      // Expand first block by default
+      setExpandedBlockIds(new Set([sel.blocks[0].id]));
     },
     [],
   );
+
+  const toggleBlockExpanded = (blockId: string) => {
+    setExpandedBlockIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(blockId)) {
+        next.delete(blockId);
+      } else {
+        next.add(blockId);
+      }
+      return next;
+    });
+  };
+
+  const expandAllBlocks = () => {
+    if (pickerSelection) {
+      setExpandedBlockIds(new Set(pickerSelection.blocks.map((b) => b.id)));
+    }
+  };
+
+  const collapseAllBlocks = () => {
+    setExpandedBlockIds(new Set());
+  };
 
   const hasChanges =
     pickerSelection?.blocks.some(
@@ -908,10 +937,10 @@ function ApplyTab({
       )}
 
       {/* ── Two-Column Layout ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-6">
-        {/* Left Column */}
-        <div className="min-w-0 flex flex-col">
-          <div className="rounded-2xl border border-slate-700/40 bg-slate-800/20">
+      <div className="grid grid-cols-1 lg:grid-cols-[55%_45%] gap-6 items-start">
+        {/* Left Column (Sticky so it follows the right column) */}
+        <div className="min-w-0 flex flex-col lg:sticky lg:top-6 self-start">
+          <div className="rounded-2xl border border-slate-700/40 bg-slate-800/20 shadow-xl shadow-black/20">
             <div className="p-4 bg-slate-800/40 rounded-2xl">
               <LessonStructurePicker
                 onSelectionChange={handleSelectionChange}
@@ -973,32 +1002,109 @@ function ApplyTab({
                 </button>
               </div>
 
-              {pickerSelection.blocks.map((block) => (
-                <div key={block.id} className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                      {block.label}
-                    </span>
-                    {block.sourceRange && (
-                      <span className="text-[9px] font-mono text-slate-600">
-                        Lines {block.sourceRange.startLine}-
-                        {block.sourceRange.endLine}
-                      </span>
-                    )}
+              {/* Section Portions Header */}
+              <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                  Section Portions ({pickerSelection.blocks.length})
+                </span>
+                {pickerSelection.blocks.length > 1 && (
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={expandAllBlocks}
+                      className="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold transition-colors"
+                    >
+                      Expand All
+                    </button>
+                    <span className="text-slate-700 text-xs">•</span>
+                    <button
+                      onClick={collapseAllBlocks}
+                      className="text-[10px] text-slate-500 hover:text-slate-400 font-semibold transition-colors"
+                    >
+                      Collapse All
+                    </button>
                   </div>
-                  <SmartBlockEditor
-                    block={block}
-                    editedContent={blockEdits[block.id] || ""}
-                    onChange={(newContent) =>
-                      setBlockEdits((prev) => ({
-                        ...prev,
-                        [block.id]: newContent,
-                      }))
-                    }
-                  />
-                </div>
-              ))}
+                )}
+              </div>
+
+              {/* Accordion Blocks */}
+              <div className="flex flex-col gap-3">
+                {pickerSelection.blocks.map((block) => {
+                  const isExpanded = expandedBlockIds.has(block.id);
+                  const isModified =
+                    blockEdits[block.id] !== block.currentBlockContent;
+
+                  return (
+                    <div
+                      key={block.id}
+                      className={`rounded-2xl border transition-all overflow-hidden ${
+                        isExpanded
+                          ? "border-indigo-500/40 bg-slate-900/60 shadow-lg shadow-black/30"
+                          : "border-slate-800/80 bg-slate-900/30 hover:border-slate-700 hover:bg-slate-900/50"
+                      }`}
+                    >
+                      {/* Accordion Header */}
+                      <button
+                        onClick={() => toggleBlockExpanded(block.id)}
+                        className="w-full px-4 py-3 flex items-center justify-between text-left transition-colors select-none"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0 pr-3">
+                          <div
+                            className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                              isModified
+                                ? "bg-amber-400 animate-pulse"
+                                : "bg-emerald-500"
+                            }`}
+                          />
+                          <span className="text-xs font-bold text-slate-200 uppercase tracking-tight truncate">
+                            {block.label}
+                          </span>
+                          {isModified && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-amber-400/10 border border-amber-400/30 text-amber-300">
+                              Modified
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center gap-3 flex-shrink-0">
+                          {block.sourceRange && (
+                            <span className="text-[10px] font-mono text-slate-500">
+                              Lines {block.sourceRange.startLine}-
+                              {block.sourceRange.endLine}
+                            </span>
+                          )}
+                          <svg
+                            className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                              isExpanded ? "rotate-180 text-indigo-400" : ""
+                            }`}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        </div>
+                      </button>
+
+                      {/* Accordion Body */}
+                      {isExpanded && (
+                        <div className="px-4 pb-4 pt-1 border-t border-slate-800/60 animate-in fade-in slide-in-from-top-1 duration-150">
+                          <SmartBlockEditor
+                            block={block}
+                            editedContent={blockEdits[block.id] || ""}
+                            onChange={(newContent) =>
+                              setBlockEdits((prev) => ({
+                                ...prev,
+                                [block.id]: newContent,
+                              }))
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
 
               {/* Apply Bar */}
               <div className="flex flex-col gap-3 pt-4 border-t border-slate-700/30 mt-4">

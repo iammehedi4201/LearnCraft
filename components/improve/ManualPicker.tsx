@@ -169,16 +169,33 @@ export function LessonStructurePicker({
 
         try {
           if (e.data.type === "SECTION_SELECTED") {
-            // Fetch the ENTIRE file content instead of just the SectionContainer
+            // Fetch all individual component blocks in the section in sequential order
             const res = await fetch(
+              `/api/improve?action=extract-all-blocks&path=${encodeURIComponent(section.filePath)}`,
+            );
+            if (res.ok) {
+              const data = await res.json();
+              if (data.blocks && data.blocks.length > 0) {
+                onSelectionChange({
+                  topicId: selectedTopic,
+                  lessonSlug: selectedLesson,
+                  section,
+                  blocks: data.blocks,
+                });
+                return;
+              }
+            }
+
+            // Fallback: If no sub-blocks found, load the full file as a single section block
+            const fallbackRes = await fetch(
               `/api/improve?action=file&path=${encodeURIComponent(section.filePath)}`,
             );
-            if (!res.ok) {
-              console.error("Failed to fetch full section file");
+            if (!fallbackRes.ok) {
+              console.error("Failed to fetch section content");
               onSelectionChange(null);
               return;
             }
-            const data = await res.json();
+            const fallbackData = await fallbackRes.json();
 
             onSelectionChange({
               topicId: selectedTopic,
@@ -188,16 +205,16 @@ export function LessonStructurePicker({
                 {
                   id: "section:all",
                   type: "section",
-                  label: `Entire File: ${section.fileName}`,
+                  label: `Entire Section: ${section.title}`,
                   index: 0,
                   filePath: section.filePath,
                   sourceRange: {
                     startLine: 1,
-                    endLine: data.lines || 1,
-                    blockSource: data.content,
+                    endLine: fallbackData.lines || 1,
+                    blockSource: fallbackData.content,
                   },
-                  currentBlockContent: data.content,
-                  improvedBlockContent: data.content,
+                  currentBlockContent: fallbackData.content,
+                  improvedBlockContent: fallbackData.content,
                 },
               ],
             });
@@ -421,7 +438,7 @@ export function LessonStructurePicker({
             </span>
           </div>
 
-          <div className="w-full h-[800px] border border-slate-700/50 rounded-2xl overflow-hidden bg-white/5 relative">
+          <div className="w-full h-[calc(100vh-250px)] min-h-[650px] border border-slate-700/50 rounded-2xl overflow-hidden bg-white/5 relative">
             <iframe
               src={`/learn/${selectedTopic}/${selectedLesson}?improveMode=true`}
               className="w-full h-full border-none"

@@ -656,6 +656,194 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  // ── NEW: Extract all blocks from a section file in sequential order ──
+  if (action === "extract-all-blocks") {
+    const filePath = searchParams.get("path");
+    if (!filePath) {
+      return NextResponse.json({ error: "path is required" }, { status: 400 });
+    }
+    if (!isPathSafe(filePath)) {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
+    }
+
+    const abs = path.resolve(PROJECT_ROOT, filePath);
+    if (!fs.existsSync(abs)) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
+    }
+
+    const content = fs.readFileSync(abs, "utf-8");
+
+    const componentTagToType: Record<string, string> = {
+      TopicHeader: "topic-header",
+      SectionHeading: "section-heading",
+      WhyBox: "why-box",
+      AnalogyBox: "analogy-box",
+      StepList: "step-list",
+      MistakeBox: "mistake-box",
+      SummaryBox: "summary-box",
+      ExerciseBox: "exercise-box",
+      PredictOutputBox: "predict-output",
+      ComparisonTable: "comparison-table",
+      InfoCallout: "info-callout",
+      Playground: "playground",
+      QuickCheck: "quick-check",
+    };
+
+    const tagNames = Object.keys(componentTagToType);
+    const foundBlocks: {
+      startPos: number;
+      endPos: number;
+      tagName: string;
+      blockType: string;
+      blockSource: string;
+      startLine: number;
+      endLine: number;
+      label: string;
+      id: string;
+      index: number;
+      filePath: string;
+    }[] = [];
+
+    // Search for all tags
+    for (const tagName of tagNames) {
+      const blockType = componentTagToType[tagName];
+      const tagPattern = `<${tagName}`;
+      let pos = -1;
+      let typeIndex = 0;
+
+      while ((pos = content.indexOf(tagPattern, pos + 1)) !== -1) {
+        // Ensure it's an exact tag match
+        const nextChar = content[pos + tagPattern.length];
+        if (nextChar && !/[\s>\/]/.test(nextChar)) {
+          continue;
+        }
+
+        const startTagPos = pos;
+        let endTagPos = -1;
+        let inString: string | null = null;
+        let braceDepth = 0;
+
+        for (let i = startTagPos; i < content.length; i++) {
+          const char = content[i];
+          const nextC = content[i + 1];
+
+          if (!inString && (char === '"' || char === "'" || char === "`")) {
+            inString = char;
+            continue;
+          }
+          if (inString && char === "\\") {
+            i++;
+            continue;
+          }
+          if (inString && char === inString) {
+            inString = null;
+            continue;
+          }
+          if (inString) continue;
+
+          if (char === "{") braceDepth++;
+          if (char === "}") braceDepth--;
+
+          if (char === "/" && nextC === ">" && braceDepth === 0) {
+            endTagPos = i + 2;
+            break;
+          }
+
+          if (char === ">" && braceDepth === 0) {
+            const closingTag = `</${tagName}>`;
+            const closingIdx = content.indexOf(closingTag, i);
+            if (closingIdx !== -1) {
+              endTagPos = closingIdx + closingTag.length;
+            } else {
+              endTagPos = i + 1;
+            }
+            break;
+          }
+        }
+
+        if (endTagPos === -1) continue;
+
+        let blockSource = content.substring(startTagPos, endTagPos);
+        let startLine = content.substring(0, startTagPos).split("\n").length;
+        let blockLines = blockSource.split("\n").length;
+        let endLine = startLine + blockLines - 1;
+
+        // Extract a clean human-readable label
+        let label = `${tagName.toUpperCase()}`;
+        const titleMatch = blockSource.match(
+          /\btitle=(?:(?:"([^"]*)")|(?:'([^']*)')|(?:\{\s*(?:"([^"]*)"|'([^']*)'|`([\s\S]*?)`)\s*\}))/,
+        );
+        const headingMatch = blockSource.match(
+          /<SectionHeading[^>]*>([\s\S]*?)<\/SectionHeading>/,
+        );
+        const questionMatch = blockSource.match(
+          /\bquestion=(?:(?:"([^"]*)")|(?:'([^']*)')|(?:\{\s*(?:"([^"]*)"|'([^']*)'|`([\s\S]*?)`)\s*\}))/,
+        );
+
+        if (titleMatch) {
+          const titleVal =
+            titleMatch[1] ??
+            titleMatch[2] ??
+            titleMatch[3] ??
+            titleMatch[4] ??
+            titleMatch[5] ??
+            "";
+          label = `${tagName.toUpperCase()}: ${titleVal.toUpperCase()}`;
+        } else if (headingMatch) {
+          const hText = headingMatch[1].replace(/<[^>]*>/g, "").trim();
+          label = `HEADING: ${hText.toUpperCase().substring(0, 45)}`;
+        } else if (questionMatch) {
+          const qVal =
+            questionMatch[1] ??
+            questionMatch[2] ??
+            questionMatch[3] ??
+            questionMatch[4] ??
+            questionMatch[5] ??
+            "";
+          label = `QUICK-CHECK: ${qVal.toUpperCase().substring(0, 45)}`;
+        } else if (tagName === "Playground") {
+          label = "PLAYGROUND: CODE EXAMPLE";
+        }
+
+        foundBlocks.push({
+          id: `${blockType}:${typeIndex}`,
+          index: typeIndex,
+          startPos: startTagPos,
+          endPos: endTagPos,
+          tagName,
+          blockType,
+          blockSource,
+          startLine,
+          endLine,
+          label,
+          filePath,
+        });
+
+        typeIndex++;
+      }
+    }
+
+    // Sort blocks in exact document order (from top to bottom)
+    foundBlocks.sort((a, b) => a.startPos - b.startPos);
+
+    const blocks = foundBlocks.map((b) => ({
+      id: b.id,
+      type: b.blockType,
+      label: b.label,
+      index: b.index,
+      filePath: b.filePath,
+      sourceRange: {
+        blockSource: b.blockSource,
+        startLine: b.startLine,
+        endLine: b.endLine,
+      },
+      currentBlockContent: b.blockSource,
+      improvedBlockContent: b.blockSource,
+    }));
+
+    return NextResponse.json({ blocks });
+  }
+
   // ── NEW: Extract the entire SectionContainer from a file ──
   if (action === "extract-section") {
     const filePath = searchParams.get("path");
