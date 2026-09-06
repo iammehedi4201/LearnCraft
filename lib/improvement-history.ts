@@ -25,7 +25,7 @@ export interface ImprovementRecord {
   /** ISO 8601 timestamp of when this improvement was applied */
   timestamp: string;
   topic: {
-    id: string;
+  id: string;
     title: string;
   };
   lesson: {

@@ -4,6 +4,7 @@ interface CodeBlockProps {
   code: string;
   language?: string;
   className?: string;
+  textSizeClass?: string;
   minLines?: number;
 }
 
@@ -15,6 +16,7 @@ export const EnhancedCodeBlock: React.FC<CodeBlockProps> = ({
   code, 
   language = 'typescript', 
   className = '',
+  textSizeClass = 'text-[13px] leading-6',
   minLines
 }) => {
   // Split code into lines and process comments
@@ -68,7 +70,7 @@ export const EnhancedCodeBlock: React.FC<CodeBlockProps> = ({
                     {idx + 1}
                   </td>
                   {/* Code Line */}
-                  <td className="px-3.5 py-1 font-mono text-[13px] leading-6 whitespace-pre-wrap break-words [word-break:break-word] align-top">
+                  <td className={`px-3.5 py-1 font-mono ${textSizeClass} whitespace-pre-wrap break-words [word-break:break-word] align-top`}>
                     <div className="flex flex-wrap items-baseline break-words">
                       {isComment ? (
                         <span className="text-slate-400 dark:text-slate-500 italic font-sans decoration-slate-300 dark:decoration-slate-700 underline-offset-4 decoration-dotted break-words">

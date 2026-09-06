@@ -30,10 +30,9 @@ export function HeaderSection() {
         <TopicHeader
           number={1}
           title="What is Programming?"
-          description="Programming means giving instructions to a computer. You tell the computer exactly what to do, step by step. The computer follows your instructions and gives you a result."
-          color="primary"
+          description="Programming means writing instructions that tell a computer what to do. A computer cannot decide what you want by itself. You need to give it clear, step-by-step instructions using a programming language."
+          color="sky"
         />
-
         <AnalogyBox emoji="🍳" title="Think about it like this">
           Imagine you are writing a recipe for cooking rice. You write:
           <ol className="list-decimal pl-5 mt-2 space-y-1">
