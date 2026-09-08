@@ -182,41 +182,149 @@ function SplitView({
   oldLabel: string;
   newLabel: string;
 }) {
-  const oldLines = diffLines.filter((l) => l.type !== "added");
-  const newLines = diffLines.filter((l) => l.type !== "removed");
+  const rows: { oldLine?: DiffLine; newLine?: DiffLine }[] = [];
+  let i = 0;
+  
+  while (i < diffLines.length) {
+    const line = diffLines[i];
+    if (line.type === "unchanged") {
+      rows.push({ oldLine: line, newLine: line });
+      i++;
+    } else {
+      const removed: DiffLine[] = [];
+      const added: DiffLine[] = [];
+      
+      while (i < diffLines.length && diffLines[i].type !== "unchanged") {
+        if (diffLines[i].type === "removed") removed.push(diffLines[i]);
+        if (diffLines[i].type === "added") added.push(diffLines[i]);
+        i++;
+      }
+      
+      const len = Math.max(removed.length, added.length);
+      for (let j = 0; j < len; j++) {
+        rows.push({
+          oldLine: removed[j],
+          newLine: added[j],
+        });
+      }
+    }
+  }
+
+  const renderCell = (line: DiffLine | undefined, isOld: boolean) => {
+    if (!line) {
+      return (
+        <>
+          <td className="w-10 align-top bg-slate-800/10 border-l-2 border-transparent"></td>
+          <td className="w-4 align-top bg-slate-800/10"></td>
+          <td className="align-top bg-slate-800/10"></td>
+        </>
+      );
+    }
+
+    if (line.type === "unchanged" && line.content === "...") {
+      return (
+        <>
+          <td className="w-10 bg-slate-800/40 py-0.5 text-center text-slate-600 text-[10px] select-none font-mono align-top border-l-2 border-transparent">···</td>
+          <td colSpan={2} className="px-3 bg-slate-800/40 py-0.5 text-slate-600 text-[10px] font-mono italic select-none align-top border-r border-slate-700/50">
+            ━━━ unchanged lines hidden ━━━
+          </td>
+        </>
+      );
+    }
+
+    const bg =
+      line.type === "added"
+        ? "bg-emerald-950/50"
+        : line.type === "removed"
+        ? "bg-red-950/50"
+        : "bg-transparent";
+
+    const border =
+      line.type === "added"
+        ? "border-l-2 border-emerald-500"
+        : line.type === "removed"
+        ? "border-l-2 border-red-500"
+        : "border-l-2 border-transparent";
+
+    const textColor =
+      line.type === "added"
+        ? "text-emerald-200"
+        : line.type === "removed"
+        ? "text-red-200"
+        : "text-slate-300";
+
+    const prefix =
+      line.type === "added" ? "+" : line.type === "removed" ? "−" : " ";
+
+    const prefixColor =
+      line.type === "added"
+        ? "text-emerald-500 font-bold"
+        : line.type === "removed"
+        ? "text-red-500 font-bold"
+        : "text-slate-700";
+
+    const lineNum = isOld ? line.lineNumberOld : line.lineNumberNew;
+    // Don't show line numbers for removed lines in the 'new' pane or added lines in the 'old' pane
+    const displayNum = line.type === (isOld ? "added" : "removed") ? "" : lineNum ?? "";
+    const borderRight = isOld ? "border-r border-slate-700/50" : "";
+
+    return (
+      <>
+        <td className={`w-10 text-right pr-2 text-slate-600 text-[10px] select-none font-mono py-0.5 align-top ${bg} ${border}`}>
+          {displayNum}
+        </td>
+        <td className={`w-4 text-center text-[11px] font-mono py-0.5 align-top select-none ${bg} ${prefixColor}`}>
+          {prefix}
+        </td>
+        <td className={`align-top py-0.5 px-2 ${bg} ${borderRight}`}>
+          <pre className={`font-mono text-[12px] leading-5 whitespace-pre-wrap break-all ${textColor}`}>
+            {line.content}
+          </pre>
+        </td>
+      </>
+    );
+  };
 
   return (
-    <div className="grid grid-cols-2 gap-0 border border-slate-700/50 rounded-xl overflow-hidden">
-      {/* Old panel */}
-      <div className="flex flex-col min-w-0 border-r border-slate-700/50">
-        <div className="flex items-center justify-between px-3 py-2 bg-red-950/30 border-b border-slate-700/50">
+    <div className="border border-slate-700/50 rounded-xl overflow-hidden flex flex-col">
+      {/* Header row - synced width using grid */}
+      <div className="grid grid-cols-2 gap-0 border-b border-slate-700/50">
+        <div className="flex items-center justify-between px-3 py-2 bg-red-950/30 border-r border-slate-700/50">
           <span className="text-xs font-bold text-red-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
             {oldLabel}
           </span>
           <CopyButton content={oldContent} />
         </div>
-        <div className="overflow-x-auto bg-[#0d1117]">
-          {oldLines.map((line, i) => (
-            <DiffLineRow key={i} line={line} showOld={true} showNew={false} />
-          ))}
-        </div>
-      </div>
-
-      {/* New panel */}
-      <div className="flex flex-col min-w-0">
-        <div className="flex items-center justify-between px-3 py-2 bg-emerald-950/30 border-b border-slate-700/50">
+        <div className="flex items-center justify-between px-3 py-2 bg-emerald-950/30">
           <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
             {newLabel}
           </span>
           <CopyButton content={newContent} />
         </div>
-        <div className="overflow-x-auto bg-[#0d1117]">
-          {newLines.map((line, i) => (
-            <DiffLineRow key={i} line={line} showOld={false} showNew={true} />
-          ))}
-        </div>
+      </div>
+
+      {/* Synchronized diff content */}
+      <div className="overflow-x-auto bg-[#0d1117]">
+        <table className="w-full border-collapse table-fixed text-left min-w-[800px]">
+          <colgroup>
+            <col className="w-10" />
+            <col className="w-4" />
+            <col />
+            <col className="w-10" />
+            <col className="w-4" />
+            <col />
+          </colgroup>
+          <tbody>
+            {rows.map((row, i) => (
+              <tr key={i} className="hover:bg-white/5 transition-all">
+                {renderCell(row.oldLine, true)}
+                {renderCell(row.newLine, false)}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

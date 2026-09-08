@@ -1,94 +1,118 @@
 "use client";
 
-import Link from 'next/link';
+/**
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * SECTION 1: Explore Learning Roadmaps (Role-Based Paths)
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * Clean, focused career path selection for Frontend, Backend, and Full-Stack.
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ */
 
-const paths = [
-  {
-    title: "TanStack Query",
-    version: "v5",
-    desc: "Master asynchronous state management. Learn caching, synchronization, and background refetching patterns for robust UIs.",
-    href: "/learn/tanstack",
-    themeClass: {
-      icon: "bg-ds-info-lighter text-ds-info-dark",
-      link: "text-ds-info-dark hover:text-ds-info-base",
-      hoverShadow: "hover:shadow-ds-info-base/5"
-    },
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h7" /><path d="m16 16 2 2 4-4" /></svg>
-    )
-  },
-  {
-    title: "NestJS Elite",
-    version: "2024",
-    desc: "Architectural mastery for the backend. Build scalable, testable, and production-grade APIs using modern patterns.",
-    href: "/learn/nestjs",
-    themeClass: {
-      icon: "bg-ds-error-lighter text-ds-error-dark",
-      link: "text-ds-error-dark hover:text-ds-error-base",
-      hoverShadow: "hover:shadow-ds-error-base/5"
-    },
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
-    )
-  },
-  {
-    title: "Next.js Mastery",
-    version: "15+",
-    desc: "Build the future of full-stack. Explore App Router, Server Components, Streaming, and Edge Optimization.",
-    href: "/learn/nextjs",
-    themeClass: {
-      icon: "bg-ds-feature-lighter text-ds-feature-dark",
-      link: "text-ds-feature-dark hover:text-ds-feature-base",
-      hoverShadow: "hover:shadow-ds-feature-base/5"
-    },
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="3" rx="2" /><path d="M12 21v-4" /><path d="m16 16 2 2 4-4" /></svg>
-    )
-  }
-];
+import Link from "next/link";
+import { ROLE_ROADMAPS } from "@/lib/roadmap-data";
+import { RoleIcon } from "@/components/roadmap/TechIcon";
 
 export function CoursePaths() {
   return (
-    <section className="py-20">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
-          <div className="max-w-xl">
-            <h2 className="text-4xl lg:text-5xl font-bold text-ds-text-strong mb-4 tracking-tight">Choose Your Path</h2>
-            <p className="text-ds-text-sub text-lg">Specialized curriculums designed for modern engineering needs.</p>
+    <section id="explore-roadmaps" className="pt-12 pb-4 lg:pt-16 lg:pb-6 relative">
+      <div className="container mx-auto px-4 sm:px-6">
+        {/* Section Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-xs font-bold uppercase tracking-wider mb-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+              Role-Based Roadmaps
+            </div>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+              Explore Learning Roadmaps
+            </h2>
+            <p className="text-base sm:text-lg text-gray-400 mt-2 leading-relaxed">
+              Choose an engineering career path to master modern software development through production-tested milestones.
+            </p>
           </div>
-          <div className="h-px flex-1 bg-gradient-to-r from-ds-stroke-soft to-transparent hidden md:block mb-6" />
+
+          <Link
+            href="/roadmaps"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-bold transition-all self-start md:self-auto hover:border-purple-500/40"
+          >
+            <span>Browse All Roadmaps</span>
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {paths.map((path) => (
-            <Link
-              key={path.title}
-              href={path.href}
-              className={`group relative block p-10 rounded-[1rem] bg-ds-bg-white border border-ds-stroke-soft overflow-hidden transition-all duration-300 hover:-translate-y-2  ${path.themeClass.hoverShadow}`}
-            >
-              <div className={`inline-flex p-4 rounded-2xl ${path.themeClass.icon} mb-8 group-hover:scale-110 transition-transform`}>
-                {path.icon}
+        {/* 3 Role-Based Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {ROLE_ROADMAPS.map((role) => {
+            const availableStepCount = role.steps.filter(
+              (st) =>
+                st.skillSlug === "nestjs" ||
+                st.skillSlug === "nextjs" ||
+                st.skillSlug === "tanstack"
+            ).length;
+
+            return (
+              <div
+                key={role.id}
+                className="group relative flex flex-col justify-between p-7 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 hover:border-purple-500/40 transition-all duration-300 hover:-translate-y-1 shadow-sm"
+              >
+                <div>
+                  {/* Top Header Badge */}
+                  <div className="flex items-center justify-between gap-3 mb-5">
+                    <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[11px] font-bold">
+                      <RoleIcon role={role.slug} className="w-4 h-4 text-purple-400" />
+                      <span>Career Path</span>
+                    </span>
+
+                    <span className="text-[11px] font-semibold text-gray-400">
+                      {role.steps.length} Skills Sequence
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h4 className="text-2xl font-black text-white tracking-tight mb-2 group-hover:text-purple-300 transition-colors">
+                    {role.title}
+                  </h4>
+
+                  {/* Description */}
+                  <p className="text-xs sm:text-sm text-gray-400 leading-relaxed mb-6">
+                    {role.description}
+                  </p>
+                </div>
+
+                {/* Footer Actions */}
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-4">
+                  <div className="text-[11px] text-gray-400">
+                    <strong className="text-purple-400 font-bold">
+                      {availableStepCount}
+                    </strong>{" "}
+                    of {role.steps.length} skills live now
+                  </div>
+
+                  <Link
+                    href={`/roadmaps/role/${role.slug}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-400 hover:text-purple-300 group-hover:gap-2 transition-all"
+                  >
+                    <span>View Roadmap</span>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
+                    </svg>
+                  </Link>
+                </div>
               </div>
-
-              <h3 className="text-2xl font-bold text-ds-text-strong mb-2 flex items-center gap-3">
-                {path.title}
-                <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md bg-ds-bg-weak border border-ds-stroke-soft text-ds-text-sub">
-                  {path.version}
-                </span>
-              </h3>
-
-              <p className="text-ds-text-sub leading-relaxed mb-10 group-hover:text-ds-text-strong transition-colors">
-                {path.desc}
-              </p>
-
-              <div className={`flex items-center gap-2 font-bold ${path.themeClass.link} group-hover:gap-4 transition-all`}>
-                Start Journey
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </div>
-            </Link>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

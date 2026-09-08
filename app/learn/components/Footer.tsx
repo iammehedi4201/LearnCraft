@@ -33,11 +33,16 @@ export function Footer() {
           </div>
 
           <div>
-            <h4 className="text-ds-text-strong font-bold mb-8 uppercase tracking-[0.2em] text-xs">Curriculums</h4>
+            <h4 className="text-ds-text-strong font-bold mb-8 uppercase tracking-[0.2em] text-xs">Roadmaps</h4>
             <ul className="space-y-4">
-              {['Next.js Mastery', 'TanStack Query', 'NestJS Elite', 'Typescript Pro'].map(item => (
-                <li key={item}>
-                  <Link href="#" className="text-ds-text-sub hover:text-ds-info-dark font-medium transition-colors">{item}</Link>
+              {[
+                { name: 'Next.js Mastery', href: '/roadmaps/nextjs' },
+                { name: 'TanStack Query', href: '/roadmaps/tanstack' },
+                { name: 'NestJS Elite', href: '/roadmaps/nestjs' },
+                { name: 'All Roadmaps', href: '/roadmaps' },
+              ].map(item => (
+                <li key={item.name}>
+                  <Link href={item.href} className="text-ds-text-sub hover:text-ds-info-dark font-medium transition-colors">{item.name}</Link>
                 </li>
               ))}
             </ul>

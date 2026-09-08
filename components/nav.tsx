@@ -14,7 +14,6 @@
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ThemeToggle } from "./theme-toggle";
 import { useRevision } from "@/context/revision-context";
 
 export function Nav() {
@@ -86,7 +85,7 @@ function NavContent(): JSX.Element {
                   { name: "Next.js", href: "/learn/nextjs" },
                   { name: "TanStack", href: "/learn/tanstack" },
                   { name: "NestJS", href: "/learn/nestjs" },
-                  { name: "Curriculums", href: "/learn#curriculums" },
+                  { name: "Roadmaps", href: "/roadmaps" },
                   {
                     name: "My Revision",
                     href: "/revision",
@@ -122,7 +121,6 @@ function NavContent(): JSX.Element {
             </div>
 
             <div className="flex items-center gap-4">
-              <ThemeToggle />
               <Link
                 href="/revision"
                 className="hidden sm:inline-flex px-4 py-2 bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-ds-feature-base/15 items-center gap-1.5"

@@ -1,570 +1,708 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+/**
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * SECTION 2: Role-Based Roadmap Visual Preview
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * A visual roadmap showcasing real learning relationships between technologies:
+ * - Numbered stages with topic chips
+ * - Branching between frameworks (Express vs NestJS) and databases (Postgres, Mongo, Redis)
+ * - Subtle connector lines and directional flow
+ * - Highlighted active/available stages (NestJS, Next.js, TanStack Query)
+ * - Responsive layout: wide branching on desktop, clean vertical timeline on mobile
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ */
 
-interface RoadmapStep {
-  step: string;
-  phase: string;
+import { useState } from "react";
+import Link from "next/link";
+import { TechIcon, RoleIcon } from "@/components/roadmap/TechIcon";
+
+type RoleType = "backend" | "frontend" | "fullstack";
+
+interface StageData {
+  number: string;
   title: string;
-  badge: string;
-  badgeColor: string;
+  subtitle: string;
+  category: string;
   desc: string;
-  keySkills: string[];
+  isBranching?: boolean;
+  branches?: {
+    name: string;
+    tag: string;
+    desc: string;
+    isAvailable: boolean;
+    lessons?: number;
+    slug?: string;
+    topics: string[];
+  }[];
+  singleNode?: {
+    name: string;
+    tag: string;
+    isAvailable: boolean;
+    lessons?: number;
+    slug?: string;
+    topics: string[];
+    isFeatured?: boolean;
+  };
+  topics?: string[];
+  coveredIn?: string;
 }
 
-const roadmapSteps: RoadmapStep[] = [
+const backendStages: StageData[] = [
   {
-    step: "01",
-    phase: "Phase 1",
-    title: "Foundations & Architecture Mental Models",
-    badge: "Core Basics",
-    badgeColor: "bg-ds-feature-lighter text-ds-feature-dark",
-    desc: "Understand the core mental models of modern full-stack web applications: Client vs Server execution environments, strict TypeScript type safety, and component lifecycle.",
-    keySkills: ["TypeScript Strict Mode", "Server Component Boundaries", "Module Patterns"],
+    number: "01",
+    title: "Web & Programming Fundamentals",
+    subtitle: "Core Foundations",
+    category: "Prerequisite",
+    desc: "Understand execution contexts, networking protocols, asynchronous runtime primitives, and version control.",
+    singleNode: {
+      name: "Language & Protocol Primitives",
+      tag: "Foundation",
+      isAvailable: false,
+      topics: ["JavaScript (ES2022+)", "TypeScript Strict Mode", "HTTP/1.1 & HTTP/2", "Git Workflows"],
+    },
   },
   {
-    step: "02",
-    phase: "Phase 2",
-    title: "Full-Stack Rendering & Edge Caching",
-    badge: "Next.js Mastery",
-    badgeColor: "bg-ds-info-lighter text-ds-info-dark",
-    desc: "Master Server Actions, granular caching layers, streaming with Suspense, ISR revalidation, and deploying edge middleware.",
-    keySkills: ["Server Actions", "Streaming & Suspense", "Granular ISR", "Edge Middleware"],
+    number: "02",
+    title: "Backend Runtime Internals",
+    subtitle: "Server Execution Engine",
+    category: "Runtime",
+    desc: "Master asynchronous non-blocking I/O, the Libuv event loop, streams, and low-level Node.js memory buffers.",
+    singleNode: {
+      name: "Node.js Core Runtime",
+      tag: "Coming Soon",
+      isAvailable: false,
+      topics: ["Event Loop & Microtasks", "Readable/Writable Streams", "Worker Threads", "Buffer & Crypto"],
+    },
   },
   {
-    step: "03",
-    phase: "Phase 3",
-    title: "Asynchronous State & Optimistic UI",
-    badge: "TanStack Query",
-    badgeColor: "bg-ds-success-lighter text-ds-success-dark",
-    desc: "Eliminate race conditions and UI lag with deterministic query keys, mutation rollback handlers, infinite virtualization, and server state hydration.",
-    keySkills: ["Optimistic UI Rollbacks", "Deterministic Invalidation", "Infinite Pagination"],
+    number: "03",
+    title: "Backend Frameworks",
+    subtitle: "Framework Selection & Architecture",
+    category: "Framework Architecture",
+    desc: "Choose between minimalist unopinionated middleware pipelines or enterprise Inversion-of-Control architecture.",
+    isBranching: true,
+    branches: [
+      {
+        name: "Express.js",
+        tag: "Minimalist Pipeline",
+        desc: "Lightweight routing, custom middleware stacks, and bare-metal HTTP handling.",
+        isAvailable: false,
+        topics: ["Middleware Chains", "Router Segments", "Error Handlers"],
+      },
+      {
+        name: "NestJS Elite",
+        tag: "Enterprise Architecture",
+        desc: "Modular architecture, Dependency Injection, Guards, Interceptors, and microservices.",
+        isAvailable: true,
+        lessons: 32,
+        slug: "nestjs",
+        topics: ["Inversion of Control (DI)", "Guards & JWT", "Microservice Transports", "TypeORM & Repositories"],
+      },
+    ],
   },
   {
-    step: "04",
-    phase: "Phase 4",
-    title: "Enterprise Backend & Microservices",
-    badge: "NestJS Elite",
-    badgeColor: "bg-ds-error-lighter text-ds-error-dark",
-    desc: "Architect scalable backend services using Dependency Injection, Guards, Interceptors, WebSockets, Message Queues, and Microservice transports.",
-    keySkills: ["Inversion of Control (DI)", "Guards & JWT", "Microservices & Message Brokers"],
+    number: "04",
+    title: "Databases & Data Persistence",
+    subtitle: "Storage Engines & Modeling",
+    category: "Persistence",
+    desc: "Data modeling, schema design, ACID transactions, relational indexing, and in-memory key-value caching.",
+    isBranching: true,
+    branches: [
+      {
+        name: "PostgreSQL",
+        tag: "Relational SQL",
+        desc: "ACID transactions, complex JOINs, foreign keys, and B-Tree indexing.",
+        isAvailable: false,
+        topics: ["Relational Schema", "EXPLAIN ANALYZE", "Transactions"],
+      },
+      {
+        name: "MongoDB",
+        tag: "Document Store",
+        desc: "Flexible schema design, aggregation pipelines, and document embedding.",
+        isAvailable: false,
+        topics: ["Aggregation", "Document Modeling", "Replica Sets"],
+      },
+      {
+        name: "Redis",
+        tag: "In-Memory Cache",
+        desc: "High-speed key-value cache, TTL expiration, Pub/Sub channels, and rate limiting.",
+        isAvailable: false,
+        topics: ["TTL & Eviction", "Pub/Sub Messaging", "Distributed Locks"],
+      },
+    ],
+  },
+  {
+    number: "05",
+    title: "Authentication & API Security",
+    subtitle: "Defense & Authorization",
+    category: "Security",
+    desc: "Stateless JWT verification, refresh token rotation, password hashing, and role-based permissions.",
+    singleNode: {
+      name: "Auth, Token Systems & RBAC",
+      tag: "Covered in NestJS Stage 3",
+      isAvailable: true,
+      lessons: 32,
+      slug: "nestjs",
+      topics: ["JWT & Refresh Tokens", "Argon2 / bcrypt Hashing", "Role-Based Guards", "CORS & Helmet Defense"],
+      isFeatured: true,
+    },
+    coveredIn: "NestJS Stage 3 • Security & Auth",
+  },
+  {
+    number: "06",
+    title: "Backend Systems Engineering",
+    subtitle: "High-Throughput Services",
+    category: "Systems",
+    desc: "Asynchronous task queues, background workers, bidirectional WebSockets, and distributed caching.",
+    singleNode: {
+      name: "Queues, Real-Time & Caching",
+      tag: "Advanced Engineering",
+      isAvailable: false,
+      topics: ["BullMQ & Redis Queues", "WebSocket Gateways", "Cache Invalidation", "Jest Unit & E2E Testing"],
+    },
+  },
+  {
+    number: "07",
+    title: "Distributed Microservices & Scale",
+    subtitle: "Enterprise Microservice Patterns",
+    category: "Microservices",
+    desc: "Decoupled microservice architectures with TCP, Redis, and message broker message transports.",
+    singleNode: {
+      name: "NestJS Microservice Transports",
+      tag: "Covered in NestJS Stage 4",
+      isAvailable: true,
+      lessons: 32,
+      slug: "nestjs",
+      topics: ["TCP & Redis Transports", "Event-Driven Messaging", "API Gateway Routing", "Circuit Breakers"],
+      isFeatured: true,
+    },
+    coveredIn: "NestJS Stage 4 • Microservices",
+  },
+  {
+    number: "08",
+    title: "Production Deployment & DevOps",
+    subtitle: "Containers & CI/CD",
+    category: "Production",
+    desc: "Multi-stage Docker builds, container networking, health checks, structured logging, and cloud hosting.",
+    singleNode: {
+      name: "Docker, Compose & Observability",
+      tag: "Coming Soon",
+      isAvailable: false,
+      topics: ["Multi-Stage Dockerfiles", "Docker Compose", "Health Check Endpoints", "Structured JSON Logging"],
+    },
+  },
+  {
+    number: "09",
+    title: "System Design & Interview Prep",
+    subtitle: "Senior Engineering Scenarios",
+    category: "Career Capstone",
+    desc: "Architectural trade-offs, capacity estimation, concurrency bugs, and senior backend interview problems.",
+    singleNode: {
+      name: "System Design & Architecture Interviews",
+      tag: "Career Capstone",
+      isAvailable: false,
+      topics: ["Horizontal vs Vertical Scale", "Database Sharding", "Eventual Consistency", "Rate Limiter Design"],
+    },
   },
 ];
 
-interface CardCoord {
-  cardX: number;
-  cardY: number;
-  isEven: boolean;
-}
+const frontendStages: StageData[] = [
+  {
+    number: "01",
+    title: "Web & Protocol Fundamentals",
+    subtitle: "Core Foundations",
+    category: "Prerequisite",
+    desc: "HTML5 semantics, modern CSS layout engines, JavaScript execution, DOM tree, and browser networking.",
+    singleNode: {
+      name: "Browser & Language Primitives",
+      tag: "Foundation",
+      isAvailable: false,
+      topics: ["HTML5 & Semantics", "CSS Grid & Flexbox", "ES Modules & Async", "DOM Reconciliation"],
+    },
+  },
+  {
+    number: "02",
+    title: "Strict Static Typing",
+    subtitle: "TypeScript for UI",
+    category: "Language",
+    desc: "TypeScript typing for component props, polymorphic hooks, generics, union discriminating types, and strict mode.",
+    singleNode: {
+      name: "TypeScript for Modern Frontends",
+      tag: "Coming Soon",
+      isAvailable: false,
+      topics: ["Generics & Constraints", "Discriminated Unions", "React Component Types", "Utility Types"],
+    },
+  },
+  {
+    number: "03",
+    title: "Component Engine Internals",
+    subtitle: "React Fundamentals",
+    category: "Core Library",
+    desc: "Virtual DOM diffing, component lifecycle, custom hooks, state colocation, and avoiding unnecessary re-renders.",
+    singleNode: {
+      name: "React Architecture",
+      tag: "Coming Soon",
+      isAvailable: false,
+      topics: ["Custom Hooks", "State Colocation", "useMemo & useCallback", "Context Boundaries"],
+    },
+  },
+  {
+    number: "04",
+    title: "Full-Stack Web Framework",
+    subtitle: "Server Components & Streaming",
+    category: "Production Framework",
+    desc: "App Router, React Server Components (RSC), granular caching, streaming with Suspense, and edge middleware.",
+    singleNode: {
+      name: "Next.js 15+ Mastery",
+      tag: "Available Now • 20 Lessons",
+      isAvailable: true,
+      lessons: 20,
+      slug: "nextjs",
+      topics: ["App Router Segments", "Server Components vs Client", "Streaming & Suspense", "Granular ISR & Revalidation"],
+      isFeatured: true,
+    },
+  },
+  {
+    number: "05",
+    title: "Asynchronous Server State",
+    subtitle: "Data Fetching & Caching Engine",
+    category: "State Management",
+    desc: "Eliminate race conditions with deterministic query keys, mutation rollback handlers, and server state hydration.",
+    singleNode: {
+      name: "TanStack Query v5",
+      tag: "Available Now • 22 Lessons",
+      isAvailable: true,
+      lessons: 22,
+      slug: "tanstack",
+      topics: ["Query Keys & Caching", "Optimistic Mutations", "Infinite Pagination", "SSR Hydration"],
+      isFeatured: true,
+    },
+  },
+  {
+    number: "06",
+    title: "Performance, Web Vitals & Edge",
+    subtitle: "Production Optimization",
+    category: "Production",
+    desc: "Core Web Vitals (LCP, CLS, INP), dynamic font & image optimization, bundle analysis, and edge deployment.",
+    singleNode: {
+      name: "Performance & Edge Optimization",
+      tag: "Coming Soon",
+      isAvailable: false,
+      topics: ["Core Web Vitals", "Dynamic Image Optimization", "Bundle Splitting", "Edge Middleware"],
+    },
+  },
+];
+
+const fullstackStages: StageData[] = [
+  {
+    number: "01",
+    title: "Full-Stack Web Foundations",
+    subtitle: "Client & Server Models",
+    category: "Prerequisite",
+    desc: "Client vs Server execution boundaries, strict TypeScript shared types, HTTP protocols, and Git workflows.",
+    singleNode: {
+      name: "Universal Web Architecture",
+      tag: "Foundation",
+      isAvailable: false,
+      topics: ["Client vs Server Runtime", "Shared TypeScript Schemas", "HTTP & REST Standards", "Git & CI"],
+    },
+  },
+  {
+    number: "02",
+    title: "Frontend Layer & Server Components",
+    subtitle: "Full-Stack Next.js 15+",
+    category: "Frontend & Full-Stack",
+    desc: "App Router, React Server Components, Server Actions, granular caching, and streaming interfaces.",
+    singleNode: {
+      name: "Next.js 15+ App Router",
+      tag: "Available Now • 20 Lessons",
+      isAvailable: true,
+      lessons: 20,
+      slug: "nextjs",
+      topics: ["Server Actions", "Server Component Boundaries", "Streaming UI", "Edge Middleware"],
+      isFeatured: true,
+    },
+  },
+  {
+    number: "03",
+    title: "Client-Server State Synchronization",
+    subtitle: "Asynchronous State Engine",
+    category: "State Sync",
+    desc: "Deterministic query caching, optimistic UI updates, mutation rollbacks, and server state hydration.",
+    singleNode: {
+      name: "TanStack Query v5",
+      tag: "Available Now • 22 Lessons",
+      isAvailable: true,
+      lessons: 22,
+      slug: "tanstack",
+      topics: ["Optimistic UI Updates", "Query Invalidation", "SSR Dehydration", "Infinite Lists"],
+      isFeatured: true,
+    },
+  },
+  {
+    number: "04",
+    title: "Enterprise Backend Architecture",
+    subtitle: "Modular Services & APIs",
+    category: "Backend Engine",
+    desc: "Modular NestJS backend with Dependency Injection, Guards, JWT security, and TypeORM persistence.",
+    singleNode: {
+      name: "NestJS Elite Architecture",
+      tag: "Available Now • 32 Lessons",
+      isAvailable: true,
+      lessons: 32,
+      slug: "nestjs",
+      topics: ["Inversion of Control (DI)", "TypeORM & PostgreSQL", "Auth Guards & JWT", "Microservices"],
+      isFeatured: true,
+    },
+  },
+  {
+    number: "05",
+    title: "Databases, Caching & Containerization",
+    subtitle: "Production Infrastructure",
+    category: "DevOps & Persistence",
+    desc: "Relational PostgreSQL database modeling, in-memory Redis caching, and Docker Compose orchestration.",
+    singleNode: {
+      name: "PostgreSQL, Redis & Docker",
+      tag: "Coming Soon",
+      isAvailable: false,
+      topics: ["Relational Migrations", "Redis Pub/Sub & Cache", "Docker Compose", "Production Health Checks"],
+    },
+  },
+];
 
 export function Roadmap() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const pathRef = useRef<SVGPathElement | null>(null);
-  const trailPathRef = useRef<SVGPathElement | null>(null);
+  const [selectedRole, setSelectedRole] = useState<RoleType>("backend");
 
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const [pathData, setPathData] = useState<string>("");
-  const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
-  const [cardCoords, setCardCoords] = useState<CardCoord[]>([]);
-  const [rocketState, setRocketState] = useState<{
-    x: number;
-    y: number;
-    angle: number;
-    visible: boolean;
-  }>({
-    x: 0,
-    y: 0,
-    angle: 90,
-    visible: false,
-  });
+  const stages =
+    selectedRole === "backend"
+      ? backendStages
+      : selectedRole === "frontend"
+      ? frontendStages
+      : fullstackStages;
 
-  const currentProgressRef = useRef<number>(0);
-  const targetProgressRef = useRef<number>(0);
-  const currentAngleRef = useRef<number>(90);
-  const rafIdRef = useRef<number | null>(null);
-
-  // Recalculate dynamic SVG path starting under Card 1 and ending under Card 4
-  const recalculatePath = useCallback(() => {
-    if (!containerRef.current) return;
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const width = containerRect.width;
-    const height = containerRect.height;
-    if (width === 0 || height === 0) return;
-
-    const mobile = window.innerWidth < 640;
-    setContainerSize({ width, height });
-
-    const coords: CardCoord[] = [];
-
-    stepRefs.current.forEach((stepEl, idx) => {
-      if (!stepEl) return;
-      const cardEl = cardRefs.current[idx];
-
-      let cardX = idx % 2 === 0 ? width * 0.25 : width * 0.75;
-      let cardY = (height / roadmapSteps.length) * (idx + 0.5);
-
-      if (cardEl) {
-        const cr = cardEl.getBoundingClientRect();
-        cardX = cr.left - containerRect.left + cr.width / 2;
-        cardY = cr.top - containerRect.top + cr.height / 2;
-      }
-
-      coords.push({
-        cardX,
-        cardY,
-        isEven: idx % 2 === 0,
-      });
-    });
-
-    setCardCoords(coords);
-
-    if (coords.length < 2) return;
-
-    if (mobile) {
-      // Mobile: Straight vertical path along the cards
-      const startX = coords[0].cardX;
-      const startY = coords[0].cardY;
-      const endY = coords[coords.length - 1].cardY;
-      setPathData(`M ${startX} ${startY} L ${startX} ${endY}`);
-      return;
-    }
-
-    // Desktop: Path starts under First Card (Card 0) and finishes under Last Card (Card 3)
-    const R = 24; // Corner curve radius
-    const centerX = width / 2;
-
-    const x0 = coords[0].cardX;
-    const y0 = coords[0].cardY;
-
-    const x1 = coords[1].cardX;
-    const y1 = coords[1].cardY;
-
-    const x2 = coords[2].cardX;
-    const y2 = coords[2].cardY;
-
-    const x3 = coords[3].cardX;
-    const y3 = coords[3].cardY;
-
-    const yMid01 = (y0 + y1) / 2;
-    const yMid12 = (y1 + y2) / 2;
-    const yMid23 = (y2 + y3) / 2;
-
-    // Start under Card 0 -> exit to center -> go down along center spine -> cross to Card 1
-    // -> through Card 1 -> cross to Card 2 -> through Card 2 -> cross to Card 3 -> finish under Card 3
-    let d = `M ${x0} ${y0}`;
-
-    // Segment 1: From under Card 0, head Right towards center, turn Down at center spine
-    d += ` L ${centerX - R} ${y0}`;
-    d += ` Q ${centerX} ${y0} ${centerX} ${y0 + R}`;
-    d += ` L ${centerX} ${yMid01 - R}`;
-
-    // Segment 2: Turn Right at yMid01 towards Card 1, turn Down into Card 1
-    d += ` Q ${centerX} ${yMid01} ${centerX + R} ${yMid01}`;
-    d += ` L ${x1 - R} ${yMid01}`;
-    d += ` Q ${x1} ${yMid01} ${x1} ${yMid01 + R}`;
-
-    // Segment 3: Travel through Card 1, turn Left at yMid12 towards Card 2
-    d += ` L ${x1} ${yMid12 - R}`;
-    d += ` Q ${x1} ${yMid12} ${x1 - R} ${yMid12}`;
-    d += ` L ${x2 + R} ${yMid12}`;
-    d += ` Q ${x2} ${yMid12} ${x2} ${yMid12 + R}`;
-
-    // Segment 4: Travel through Card 2, turn Right at yMid23 towards Card 3
-    d += ` L ${x2} ${yMid23 - R}`;
-    d += ` Q ${x2} ${yMid23} ${x2 + R} ${yMid23}`;
-    d += ` L ${x3 - R} ${yMid23}`;
-    d += ` Q ${x3} ${yMid23} ${x3} ${yMid23 + R}`;
-
-    // Segment 5: Finish directly under Card 3
-    d += ` L ${x3} ${y3}`;
-
-    setPathData(d);
-  }, []);
-
-  // Set up resize observer and window resize listener
-  useEffect(() => {
-    recalculatePath();
-
-    const resizeObserver = new ResizeObserver(() => {
-      recalculatePath();
-    });
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
-    }
-
-    window.addEventListener("resize", recalculatePath);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", recalculatePath);
-    };
-  }, [recalculatePath]);
-
-  // Scroll tracking and animation loop
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-
-      // Calculate progress across timeline section
-      const enterOffset = windowHeight * 0.7;
-      const exitOffset = windowHeight * 0.3;
-      const totalScrollDistance = rect.height + enterOffset - exitOffset;
-      const currentScroll = enterOffset - rect.top;
-
-      let progress = currentScroll / totalScrollDistance;
-      progress = Math.max(0, Math.min(1, progress));
-      targetProgressRef.current = progress;
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    // Smooth animation tick loop
-    const animate = () => {
-      const pathEl = pathRef.current;
-      if (!pathEl || pathEl.getTotalLength() === 0) {
-        rafIdRef.current = requestAnimationFrame(animate);
-        return;
-      }
-
-      const totalLength = pathEl.getTotalLength();
-
-      // Exponential decay smoothing (lerp)
-      const lerpFactor = 0.12;
-      const diff = targetProgressRef.current - currentProgressRef.current;
-      currentProgressRef.current += diff * lerpFactor;
-
-      const currentDist = currentProgressRef.current * totalLength;
-      const pt = pathEl.getPointAtLength(currentDist);
-
-      // Tangent angle calculation for smooth turns
-      const delta = 2;
-      const ptBefore = pathEl.getPointAtLength(Math.max(0, currentDist - delta));
-      const ptAfter = pathEl.getPointAtLength(Math.min(totalLength, currentDist + delta));
-      const dx = ptAfter.x - ptBefore.x;
-      const dy = ptAfter.y - ptBefore.y;
-
-      let targetAngle = 90;
-      if (Math.hypot(dx, dy) > 0.001) {
-        // Rocket icon naturally points UP in 0 deg; calculate angle relative to travel vector
-        targetAngle = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
-      }
-
-      // Smooth angle interpolation without 360-degree flip
-      const angleDiff = ((((targetAngle - currentAngleRef.current) % 360) + 540) % 360) - 180;
-      currentAngleRef.current += angleDiff * 0.22;
-
-      setRocketState({
-        x: pt.x,
-        y: pt.y,
-        angle: currentAngleRef.current,
-        visible: true,
-      });
-
-      // Update trail stroke-dashoffset to highlight traversed path
-      if (trailPathRef.current) {
-        trailPathRef.current.style.strokeDasharray = `${currentDist} ${totalLength}`;
-      }
-
-      // Synchronize active card based on rocket Y position relative to step cards
-      if (cardCoords.length > 0) {
-        let currentStepIndex = 0;
-        for (let i = 0; i < cardCoords.length; i++) {
-          const prevMid = i === 0 ? 0 : (cardCoords[i - 1].cardY + cardCoords[i].cardY) / 2;
-          const nextMid =
-            i === cardCoords.length - 1 ? Infinity : (cardCoords[i].cardY + cardCoords[i + 1].cardY) / 2;
-
-          if (pt.y >= prevMid && pt.y < nextMid) {
-            currentStepIndex = i;
-            break;
-          }
-        }
-        setActiveStep(currentStepIndex);
-      }
-
-      rafIdRef.current = requestAnimationFrame(animate);
-    };
-
-    rafIdRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
-    };
-  }, [cardCoords]);
+  const roleMeta = {
+    backend: {
+      title: "Backend Engineering Roadmap",
+      subtitle: "Structured roadmap from fundamentals to enterprise microservices.",
+      roleSlug: "backend",
+      icon: "⚙️",
+    },
+    frontend: {
+      title: "Frontend Engineering Roadmap",
+      subtitle: "Modern roadmap from JavaScript to Next.js App Router and TanStack Query.",
+      roleSlug: "frontend",
+      icon: "🎨",
+    },
+    fullstack: {
+      title: "Full-Stack Engineering Roadmap",
+      subtitle: "End-to-end architecture uniting React Server Components, state sync, and backend microservices.",
+      roleSlug: "fullstack",
+      icon: "🚀",
+    },
+  }[selectedRole];
 
   return (
-    <section className="py-16 relative">
-      {/* Section Header */}
-      <div className="max-w-3xl mx-auto text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ds-feature-lighter mb-4">
-          <span className="text-xs font-bold tracking-wider text-ds-feature-dark uppercase">
-            Architect Roadmap
-          </span>
-        </div>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-ds-text-strong font-display">
-          The Proven Path to Senior Web Engineering
-        </h2>
-        <p className="text-sm sm:text-base text-ds-text-sub mt-3 leading-relaxed max-w-xl mx-auto">
-          A structured sequence designed to take you from foundational understanding to full-stack architectural mastery.
-        </p>
-      </div>
-
-      {/* Timeline Grid Container */}
-      <div ref={containerRef} className="relative max-w-4xl mx-auto px-4 sm:px-0">
-        {/* Dynamic SVG Motion Path & Dashed Timeline (z-0 behind cards) */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
-          width={containerSize.width || "100%"}
-          height={containerSize.height || "100%"}
-        >
-          <defs>
-            {/* Traversed glow gradient */}
-            <linearGradient id="rocketTrailGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="var(--state-feature-base)" stopOpacity="0.3" />
-              <stop offset="70%" stopColor="var(--state-feature-base)" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="var(--state-verified-base)" stopOpacity="1" />
-            </linearGradient>
-
-            {/* Subtle glow filter */}
-            <filter id="rocketGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          {pathData && (
-            <>
-              {/* Base Dashed Timeline Path */}
-              <path
-                ref={pathRef}
-                d={pathData}
-                fill="none"
-                stroke="var(--stroke-soft-200)"
-                strokeWidth={2.5}
-                strokeDasharray="6 6"
-                strokeLinecap="round"
-                className="transition-colors duration-300"
-              />
-
-              {/* Traversed Active Path Highlight */}
-              <path
-                ref={trailPathRef}
-                d={pathData}
-                fill="none"
-                stroke="url(#rocketTrailGradient)"
-                strokeWidth={2.5}
-                strokeDasharray="0 10000"
-                strokeLinecap="round"
-                filter="url(#rocketGlow)"
-              />
-            </>
-          )}
-        </svg>
-
-        {/* Scroll-Driven Flying Vector Rocket (z-0 under cards, emerges in open track between cards) */}
-        {rocketState.visible && pathData && (
-          <div
-            className="absolute top-0 left-0 pointer-events-none z-0 transition-opacity duration-300 will-change-transform"
-            style={{
-              transform: `translate3d(${rocketState.x}px, ${rocketState.y}px, 0) translate(-50%, -50%) rotate(${rocketState.angle}deg)`,
-            }}
-          >
-            {/* Booster Aura Glow */}
-            <div className="absolute -inset-2 rounded-full bg-ds-feature-base/25 blur-md -z-10 animate-pulse" />
-
-            {/* Vector Rocket Graphic */}
-            <div className="relative w-8 h-8 flex items-center justify-center filter drop-shadow-md">
-              <svg
-                viewBox="0 0 32 32"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full overflow-visible"
-              >
-                {/* Engine Thruster Flame (Trailing at bottom) */}
-                <g className="animate-pulse origin-top">
-                  <path
-                    d="M13 24 L16 31 L19 24 Z"
-                    fill="var(--state-warning-base)"
-                    opacity="0.9"
-                  />
-                  <path
-                    d="M14 24 L16 29 L18 24 Z"
-                    fill="var(--state-feature-lighter)"
-                  />
-                </g>
-
-                {/* Left Fin */}
-                <path
-                  d="M10 18 L5 23 C5 23 6 25 9 24 L11 20 Z"
-                  fill="var(--state-feature-dark)"
-                  stroke="var(--state-feature-base)"
-                  strokeWidth="1"
-                  strokeLinejoin="round"
-                />
-
-                {/* Right Fin */}
-                <path
-                  d="M22 18 L27 23 C27 23 26 25 23 24 L21 20 Z"
-                  fill="var(--state-feature-dark)"
-                  stroke="var(--state-feature-base)"
-                  strokeWidth="1"
-                  strokeLinejoin="round"
-                />
-
-                {/* Rocket Fuselage */}
-                <path
-                  d="M16 2 C12 7 11 16 11 23 C11 24 12 24.5 13 24.5 L19 24.5 C20 24.5 21 24 21 23 C21 16 20 7 16 2 Z"
-                  fill="var(--bg-white-0)"
-                  stroke="var(--state-feature-base)"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
-
-                {/* Rocket Nose Cone Cap */}
-                <path
-                  d="M16 2 C14.5 5 13.8 8.5 13.5 11 L18.5 11 C18.2 8.5 17.5 5 16 2 Z"
-                  fill="var(--state-feature-base)"
-                />
-
-                {/* Cockpit Glass Porthole */}
-                <circle
-                  cx="16"
-                  cy="15"
-                  r="2.8"
-                  fill="var(--state-verified-base)"
-                  stroke="var(--state-feature-base)"
-                  strokeWidth="1"
-                />
-                <circle
-                  cx="15.2"
-                  cy="14.2"
-                  r="0.9"
-                  fill="var(--static-white)"
-                  opacity="0.9"
-                />
-
-                {/* Exhaust Nozzle */}
-                <rect
-                  x="13.5"
-                  y="24"
-                  width="5"
-                  height="1.5"
-                  rx="0.5"
-                  fill="var(--stroke-strong-950)"
-                />
-              </svg>
-            </div>
+    <section id="roadmap-preview" className="pt-2 pb-16 lg:pt-4 lg:pb-20 relative">
+      <div className="container mx-auto px-4 sm:px-6">
+        {/* Section Header */}
+        <div className="max-w-3xl mx-auto text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-xs font-bold uppercase tracking-wider mb-3">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+            Visual Roadmap Preview
           </div>
-        )}
 
-        {/* Timeline Steps & Cards (z-10 above dashed path & rocket) */}
-        <div className="space-y-8 sm:space-y-14 relative z-10">
-          {roadmapSteps.map((step, idx) => {
-            const isEven = idx % 2 === 0;
-            const isActive = activeStep === idx;
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+            {roleMeta.title}
+          </h2>
 
-            return (
-              <div
-                key={step.step}
-                ref={(el) => {
-                  stepRefs.current[idx] = el;
-                }}
-                className={`relative flex flex-col sm:flex-row items-start sm:items-center ${
-                  isEven ? "sm:justify-start" : "sm:justify-end"
-                }`}
-              >
-                {/* Content Card with Smooth Active Transition (z-10 opaque card body covers rocket when inside) */}
-                <div
-                  ref={(el) => {
-                    cardRefs.current[idx] = el;
-                  }}
-                  className="w-full sm:w-[calc(50%-1.5rem)] relative z-10"
-                >
-                  <div
-                    className={`p-6 lg:p-7 rounded-2xl bg-ds-bg-white border transition-all duration-500 group relative ${
-                      isActive
-                        ? "border-ds-feature-base shadow-xl shadow-ds-feature-base/15 ring-1 ring-ds-feature-base/30 scale-[1.02] -translate-y-1"
-                        : "border-ds-stroke-soft shadow-sm opacity-90 hover:opacity-100 hover:border-ds-feature-base/40"
-                    }`}
-                  >
-                    {/* Header: Phase & Badges */}
-                    <div className="flex items-center justify-between gap-3 mb-3">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-[10px] font-bold uppercase tracking-widest transition-colors duration-300 ${
-                            isActive
-                              ? "text-ds-feature-base font-extrabold"
-                              : "text-ds-text-soft"
-                          }`}
-                        >
-                          {step.phase}
-                        </span>
+          <p className="text-base sm:text-lg text-gray-400 mt-2 leading-relaxed max-w-2xl mx-auto">
+            {roleMeta.subtitle} Inspect learning relationships, framework branches, and available content.
+          </p>
 
-                        {/* Active Phase Live Indicator */}
-                        {isActive && (
-                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-ds-feature-lighter text-ds-feature-dark text-[10px] font-bold animate-fadeIn">
-                            <span className="w-1.5 h-1.5 rounded-full bg-ds-feature-base animate-ping" />
-                            Active Focus
-                          </span>
-                        )}
-                      </div>
+          {/* Role Switcher Tabs */}
+          <div className="inline-flex flex-wrap items-center justify-center p-1.5 rounded-xl bg-white/[0.03] border border-white/10 mt-6 gap-1">
+            <button
+              onClick={() => setSelectedRole("backend")}
+              className={`flex items-center gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all ${
+                selectedRole === "backend"
+                  ? "bg-purple-600 text-white shadow-sm"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <RoleIcon role="backend" className="w-4 h-4 text-purple-300" />
+              <span>Backend Roadmap</span>
+            </button>
 
-                      <span
-                        className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full ${step.badgeColor}`}
-                      >
-                        {step.badge}
+            <button
+              onClick={() => setSelectedRole("frontend")}
+              className={`flex items-center gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all ${
+                selectedRole === "frontend"
+                  ? "bg-purple-600 text-white shadow-sm"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <RoleIcon role="frontend" className="w-4 h-4 text-purple-300" />
+              <span>Frontend Roadmap</span>
+            </button>
+
+            <button
+              onClick={() => setSelectedRole("fullstack")}
+              className={`flex items-center gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all ${
+                selectedRole === "fullstack"
+                  ? "bg-purple-600 text-white shadow-sm"
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <RoleIcon role="fullstack" className="w-4 h-4 text-purple-300" />
+              <span>Full-Stack Roadmap</span>
+            </button>
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            VISUAL ROADMAP FLOWCHART (Nodes, Connectors & Branches)
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="max-w-4xl mx-auto">
+          <div className="space-y-6">
+            {stages.map((stage, idx) => {
+              const isLast = idx === stages.length - 1;
+
+              return (
+                <div key={stage.number} className="relative">
+                  {/* Stage Card Header */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/[0.05] flex items-center justify-center text-xs font-black text-purple-400">
+                      {stage.number}
+                    </span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h4 className="text-base sm:text-lg font-black text-white tracking-tight">
+                        {stage.title}
+                      </h4>
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/[0.05] text-gray-400">
+                        {stage.category}
                       </span>
                     </div>
+                  </div>
 
-                    {/* Step Title */}
-                    <h3
-                      className={`text-lg font-bold transition-colors duration-300 mb-2 ${
-                        isActive
-                          ? "text-ds-feature-base"
-                          : "text-ds-text-strong group-hover:text-ds-feature-base"
+                  {/* Stage Node Container */}
+                  {stage.isBranching && stage.branches ? (
+                    /* Branching Nodes (Side-by-side on desktop, stacked on mobile) */
+                    <div>
+                      <div className="text-xs text-gray-400 mb-3 leading-relaxed">
+                        {stage.desc}
+                      </div>
+
+                      <div className={`grid grid-cols-1 ${stage.branches.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3"} gap-4`}>
+                        {stage.branches.map((branch) => (
+                          <div
+                            key={branch.name}
+                            className={`p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
+                              branch.isAvailable
+                                ? "bg-purple-500/[0.03] border-purple-500/40 shadow-md shadow-purple-500/5 hover:border-purple-500/60"
+                                : "bg-white/[0.02] border-white/10"
+                            }`}
+                          >
+                            <div>
+                              <div className="flex items-center justify-between gap-2 mb-2">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                                  {branch.tag}
+                                </span>
+
+                                {branch.isAvailable ? (
+                                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                    <span>Available • {branch.lessons} Lessons</span>
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] font-semibold text-gray-400 px-2 py-0.5 rounded bg-white/[0.05]">
+                                    Coming Soon
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center gap-2.5 mb-2">
+                                <div className="w-7 h-7 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center p-1 shrink-0">
+                                  <TechIcon slug={branch.slug || branch.name} className="w-4 h-4" />
+                                </div>
+                                <h5 className="text-lg font-bold text-white">
+                                  {branch.name}
+                                </h5>
+                              </div>
+
+                              <p className="text-xs text-gray-400 leading-relaxed mb-4">
+                                {branch.desc}
+                              </p>
+
+                              {/* Topics - borderless clean chips */}
+                              <div className="flex flex-wrap gap-1 mb-4">
+                                {branch.topics.map((t) => (
+                                  <span
+                                    key={t}
+                                    className={`px-2 py-0.5 rounded text-[10px] font-medium ${
+                                      branch.isAvailable
+                                        ? "bg-purple-500/15 text-purple-200 font-semibold"
+                                        : "bg-white/[0.05] text-gray-300"
+                                    }`}
+                                  >
+                                    {t}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Link for available branch */}
+                            {branch.isAvailable && branch.slug && (
+                              <Link
+                                href={`/roadmaps/${branch.slug}`}
+                                className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-sm"
+                              >
+                                <span>Explore {branch.name} Roadmap</span>
+                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                              </Link>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : stage.singleNode ? (
+                    /* Single Node (Full width) */
+                    <div
+                      className={`p-6 rounded-2xl border transition-all duration-300 ${
+                        stage.singleNode.isAvailable
+                          ? "bg-purple-500/[0.03] border-purple-500/40 shadow-md shadow-purple-500/5 hover:border-purple-500/60"
+                          : "bg-white/[0.02] border-white/10"
                       }`}
                     >
-                      {step.title}
-                    </h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+                        <div>
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center p-1.5 shrink-0">
+                              <TechIcon slug={stage.singleNode.slug || stage.singleNode.name} className="w-5 h-5" />
+                            </div>
+                            <h5 className="text-base sm:text-lg font-bold text-white">
+                              {stage.singleNode.name}
+                            </h5>
+                          </div>
+                          <p className="text-xs text-gray-400 mt-1">
+                            {stage.desc}
+                          </p>
+                        </div>
 
-                    {/* Step Description */}
-                    <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-4">
-                      {step.desc}
-                    </p>
+                        {/* Availability Tag */}
+                        <div className="self-start sm:self-auto flex items-center gap-2">
+                          {stage.singleNode.isAvailable ? (
+                            <>
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <span>Available • {stage.singleNode.lessons} Lessons</span>
+                              </span>
 
-                    {/* Skill Chips */}
-                    <div className="flex flex-wrap gap-1.5 pt-3 border-t border-ds-stroke-soft">
-                      {step.keySkills.map((skill) => (
-                        <span
-                          key={skill}
-                          className={`px-2 py-0.5 text-[10px] font-medium rounded-md transition-colors duration-300 ${
-                            isActive
-                              ? "bg-ds-feature-lighter text-ds-feature-dark font-semibold"
-                              : "bg-ds-bg-weak text-ds-text-sub"
-                          }`}
-                        >
-                          {skill}
+                              {stage.singleNode.slug && (
+                                <Link
+                                  href={`/roadmaps/${stage.singleNode.slug}`}
+                                  className="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-600 text-purple-300 hover:text-white text-xs font-bold transition-colors"
+                                >
+                                  <span>View Roadmap</span>
+                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                                  </svg>
+                                </Link>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-[11px] font-semibold text-gray-400 px-2.5 py-1 rounded-full bg-white/[0.05]">
+                              {stage.singleNode.tag}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Topic Chips - borderless clean chips */}
+                      <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-white/10">
+                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mr-1">
+                          Topics:
                         </span>
-                      ))}
+                        {stage.singleNode.topics.map((topic) => (
+                          <span
+                            key={topic}
+                            className={`px-2.5 py-0.5 rounded text-[11px] font-medium ${
+                              stage.singleNode?.isAvailable
+                                ? "bg-purple-500/15 text-purple-200 font-semibold"
+                                : "bg-white/[0.05] text-gray-300"
+                            }`}
+                          >
+                            {topic}
+                          </span>
+                        ))}
+
+                        {stage.singleNode.isAvailable && stage.singleNode.slug && (
+                          <Link
+                            href={`/roadmaps/${stage.singleNode.slug}`}
+                            className="sm:hidden text-xs font-bold text-purple-400 ml-auto"
+                          >
+                            View Roadmap →
+                          </Link>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
+
+                  {/* Connecting Arrow between Stages */}
+                  {!isLast && (
+                    <div className="flex justify-center py-2 relative z-0">
+                      <div className="flex flex-col items-center">
+                        <div className="w-0.5 h-4 bg-white/10" />
+                        <svg
+                          className="w-4 h-4 text-purple-400/60 -mt-1"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
+          {/* Bottom Roadmap Action Box */}
+          <div className="mt-14 p-8 rounded-2xl bg-white/[0.02] border border-white/10 text-center">
+            <h4 className="text-xl font-black text-white mb-2">
+              Ready to follow the {roleMeta.title}?
+            </h4>
+            <p className="text-sm text-gray-400 max-w-lg mx-auto mb-6">
+              Track your progress, run code exercises, and follow structured stage milestones on LearnCraft.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Link
+                href={`/roadmaps/role/${roleMeta.roleSlug}`}
+                className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs sm:text-sm transition-all hover:scale-105 shadow-md shadow-purple-600/20 flex items-center gap-2"
+              >
+                <span>Open Full {selectedRole === "backend" ? "Backend" : selectedRole === "frontend" ? "Frontend" : "Full-Stack"} Flowchart</span>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </Link>
+
+              <Link
+                href="/roadmaps"
+                className="px-6 py-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-gray-300 font-bold text-xs sm:text-sm transition-colors border border-white/10"
+              >
+                Browse All 12+ Roadmaps
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   );
 }
+
+

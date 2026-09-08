@@ -598,7 +598,7 @@ self.onmessage = async function(e) {
               success: false,
               output,
               error: errObj,
-              duration: Date.now() - startTime,
+              duration: Date.now() - startTime,    
             });
           };
 
