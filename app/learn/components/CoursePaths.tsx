@@ -14,7 +14,7 @@ import { RoleIcon } from "@/components/roadmap/TechIcon";
 
 export function CoursePaths() {
   return (
-    <section id="explore-roadmaps" className="pt-12 pb-4 lg:pt-16 lg:pb-6 relative">
+    <section id="explore-roadmaps" className="pt-12 pb-16 lg:pt-16 lg:pb-24 relative">
       <div className="container mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">

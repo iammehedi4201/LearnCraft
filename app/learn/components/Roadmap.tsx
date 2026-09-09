@@ -2,661 +2,355 @@
 
 /**
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * SECTION 2: Role-Based Roadmap Visual Preview
+ * GUIDED ROADMAP JOURNEY — REDESIGNED FOR BEGINNER CLARITY
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * A visual roadmap showcasing real learning relationships between technologies:
- * - Numbered stages with topic chips
- * - Branching between frameworks (Express vs NestJS) and databases (Postgres, Mongo, Redis)
- * - Subtle connector lines and directional flow
- * - Highlighted active/available stages (NestJS, Next.js, TanStack Query)
- * - Responsive layout: wide branching on desktop, clean vertical timeline on mobile
+ * Replaces information overload with a calm, progressive disclosure journey:
+ * 1. Compact Header with role switcher, friendly metadata (time, level, steps).
+ * 2. Visual Progress Bar showing learner's current milestone status.
+ * 3. Collapsed Steps showing ONLY 6 essential items (number, title, outcome,
+ *    time estimate, status badge, expand trigger). Zero clutter.
+ * 4. Progressive Disclosure: Expanding reveals "What you'll learn",
+ *    decision points ("Choose ONE — You only need one"), and course links.
+ * 5. Distinct Advanced Topics section with visually lower priority.
+ * 6. Motivational Bottom CTA ("Ready to start building? Start with Step 1").
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { TechIcon, RoleIcon } from "@/components/roadmap/TechIcon";
+import {
+  JOURNEY_ROADMAPS,
+  type JourneyRole,
+} from "@/lib/roadmap-journey-data";
 
-type RoleType = "backend" | "frontend" | "fullstack";
-
-interface StageData {
-  number: string;
-  title: string;
-  subtitle: string;
-  category: string;
-  desc: string;
-  isBranching?: boolean;
-  branches?: {
-    name: string;
-    tag: string;
-    desc: string;
-    isAvailable: boolean;
-    lessons?: number;
-    slug?: string;
-    topics: string[];
-  }[];
-  singleNode?: {
-    name: string;
-    tag: string;
-    isAvailable: boolean;
-    lessons?: number;
-    slug?: string;
-    topics: string[];
-    isFeatured?: boolean;
-  };
-  topics?: string[];
-  coveredIn?: string;
+interface RoadmapProps {
+  initialRole?: JourneyRole;
+  showSwitcher?: boolean;
 }
 
-const backendStages: StageData[] = [
-  {
-    number: "01",
-    title: "Web & Programming Fundamentals",
-    subtitle: "Core Foundations",
-    category: "Prerequisite",
-    desc: "Understand execution contexts, networking protocols, asynchronous runtime primitives, and version control.",
-    singleNode: {
-      name: "Language & Protocol Primitives",
-      tag: "Foundation",
-      isAvailable: false,
-      topics: ["JavaScript (ES2022+)", "TypeScript Strict Mode", "HTTP/1.1 & HTTP/2", "Git Workflows"],
-    },
-  },
-  {
-    number: "02",
-    title: "Backend Runtime Internals",
-    subtitle: "Server Execution Engine",
-    category: "Runtime",
-    desc: "Master asynchronous non-blocking I/O, the Libuv event loop, streams, and low-level Node.js memory buffers.",
-    singleNode: {
-      name: "Node.js Core Runtime",
-      tag: "Coming Soon",
-      isAvailable: false,
-      topics: ["Event Loop & Microtasks", "Readable/Writable Streams", "Worker Threads", "Buffer & Crypto"],
-    },
-  },
-  {
-    number: "03",
-    title: "Backend Frameworks",
-    subtitle: "Framework Selection & Architecture",
-    category: "Framework Architecture",
-    desc: "Choose between minimalist unopinionated middleware pipelines or enterprise Inversion-of-Control architecture.",
-    isBranching: true,
-    branches: [
-      {
-        name: "Express.js",
-        tag: "Minimalist Pipeline",
-        desc: "Lightweight routing, custom middleware stacks, and bare-metal HTTP handling.",
-        isAvailable: false,
-        topics: ["Middleware Chains", "Router Segments", "Error Handlers"],
-      },
-      {
-        name: "NestJS Elite",
-        tag: "Enterprise Architecture",
-        desc: "Modular architecture, Dependency Injection, Guards, Interceptors, and microservices.",
-        isAvailable: true,
-        lessons: 32,
-        slug: "nestjs",
-        topics: ["Inversion of Control (DI)", "Guards & JWT", "Microservice Transports", "TypeORM & Repositories"],
-      },
-    ],
-  },
-  {
-    number: "04",
-    title: "Databases & Data Persistence",
-    subtitle: "Storage Engines & Modeling",
-    category: "Persistence",
-    desc: "Data modeling, schema design, ACID transactions, relational indexing, and in-memory key-value caching.",
-    isBranching: true,
-    branches: [
-      {
-        name: "PostgreSQL",
-        tag: "Relational SQL",
-        desc: "ACID transactions, complex JOINs, foreign keys, and B-Tree indexing.",
-        isAvailable: false,
-        topics: ["Relational Schema", "EXPLAIN ANALYZE", "Transactions"],
-      },
-      {
-        name: "MongoDB",
-        tag: "Document Store",
-        desc: "Flexible schema design, aggregation pipelines, and document embedding.",
-        isAvailable: false,
-        topics: ["Aggregation", "Document Modeling", "Replica Sets"],
-      },
-      {
-        name: "Redis",
-        tag: "In-Memory Cache",
-        desc: "High-speed key-value cache, TTL expiration, Pub/Sub channels, and rate limiting.",
-        isAvailable: false,
-        topics: ["TTL & Eviction", "Pub/Sub Messaging", "Distributed Locks"],
-      },
-    ],
-  },
-  {
-    number: "05",
-    title: "Authentication & API Security",
-    subtitle: "Defense & Authorization",
-    category: "Security",
-    desc: "Stateless JWT verification, refresh token rotation, password hashing, and role-based permissions.",
-    singleNode: {
-      name: "Auth, Token Systems & RBAC",
-      tag: "Covered in NestJS Stage 3",
-      isAvailable: true,
-      lessons: 32,
-      slug: "nestjs",
-      topics: ["JWT & Refresh Tokens", "Argon2 / bcrypt Hashing", "Role-Based Guards", "CORS & Helmet Defense"],
-      isFeatured: true,
-    },
-    coveredIn: "NestJS Stage 3 • Security & Auth",
-  },
-  {
-    number: "06",
-    title: "Backend Systems Engineering",
-    subtitle: "High-Throughput Services",
-    category: "Systems",
-    desc: "Asynchronous task queues, background workers, bidirectional WebSockets, and distributed caching.",
-    singleNode: {
-      name: "Queues, Real-Time & Caching",
-      tag: "Advanced Engineering",
-      isAvailable: false,
-      topics: ["BullMQ & Redis Queues", "WebSocket Gateways", "Cache Invalidation", "Jest Unit & E2E Testing"],
-    },
-  },
-  {
-    number: "07",
-    title: "Distributed Microservices & Scale",
-    subtitle: "Enterprise Microservice Patterns",
-    category: "Microservices",
-    desc: "Decoupled microservice architectures with TCP, Redis, and message broker message transports.",
-    singleNode: {
-      name: "NestJS Microservice Transports",
-      tag: "Covered in NestJS Stage 4",
-      isAvailable: true,
-      lessons: 32,
-      slug: "nestjs",
-      topics: ["TCP & Redis Transports", "Event-Driven Messaging", "API Gateway Routing", "Circuit Breakers"],
-      isFeatured: true,
-    },
-    coveredIn: "NestJS Stage 4 • Microservices",
-  },
-  {
-    number: "08",
-    title: "Production Deployment & DevOps",
-    subtitle: "Containers & CI/CD",
-    category: "Production",
-    desc: "Multi-stage Docker builds, container networking, health checks, structured logging, and cloud hosting.",
-    singleNode: {
-      name: "Docker, Compose & Observability",
-      tag: "Coming Soon",
-      isAvailable: false,
-      topics: ["Multi-Stage Dockerfiles", "Docker Compose", "Health Check Endpoints", "Structured JSON Logging"],
-    },
-  },
-  {
-    number: "09",
-    title: "System Design & Interview Prep",
-    subtitle: "Senior Engineering Scenarios",
-    category: "Career Capstone",
-    desc: "Architectural trade-offs, capacity estimation, concurrency bugs, and senior backend interview problems.",
-    singleNode: {
-      name: "System Design & Architecture Interviews",
-      tag: "Career Capstone",
-      isAvailable: false,
-      topics: ["Horizontal vs Vertical Scale", "Database Sharding", "Eventual Consistency", "Rate Limiter Design"],
-    },
-  },
-];
+export function Roadmap({
+  initialRole = "backend",
+  showSwitcher = true,
+}: RoadmapProps) {
+  const [selectedRole, setSelectedRole] = useState<JourneyRole>(initialRole);
+  const [expandedStepId, setExpandedStepId] = useState<string | null>("be-step-1");
+  const [completedSteps, setCompletedSteps] = useState<Record<string, boolean>>({
+    "be-step-1": true,
+    "fe-step-1": true,
+    "fs-step-1": true,
+  });
 
-const frontendStages: StageData[] = [
-  {
-    number: "01",
-    title: "Web & Protocol Fundamentals",
-    subtitle: "Core Foundations",
-    category: "Prerequisite",
-    desc: "HTML5 semantics, modern CSS layout engines, JavaScript execution, DOM tree, and browser networking.",
-    singleNode: {
-      name: "Browser & Language Primitives",
-      tag: "Foundation",
-      isAvailable: false,
-      topics: ["HTML5 & Semantics", "CSS Grid & Flexbox", "ES Modules & Async", "DOM Reconciliation"],
-    },
-  },
-  {
-    number: "02",
-    title: "Strict Static Typing",
-    subtitle: "TypeScript for UI",
-    category: "Language",
-    desc: "TypeScript typing for component props, polymorphic hooks, generics, union discriminating types, and strict mode.",
-    singleNode: {
-      name: "TypeScript for Modern Frontends",
-      tag: "Coming Soon",
-      isAvailable: false,
-      topics: ["Generics & Constraints", "Discriminated Unions", "React Component Types", "Utility Types"],
-    },
-  },
-  {
-    number: "03",
-    title: "Component Engine Internals",
-    subtitle: "React Fundamentals",
-    category: "Core Library",
-    desc: "Virtual DOM diffing, component lifecycle, custom hooks, state colocation, and avoiding unnecessary re-renders.",
-    singleNode: {
-      name: "React Architecture",
-      tag: "Coming Soon",
-      isAvailable: false,
-      topics: ["Custom Hooks", "State Colocation", "useMemo & useCallback", "Context Boundaries"],
-    },
-  },
-  {
-    number: "04",
-    title: "Full-Stack Web Framework",
-    subtitle: "Server Components & Streaming",
-    category: "Production Framework",
-    desc: "App Router, React Server Components (RSC), granular caching, streaming with Suspense, and edge middleware.",
-    singleNode: {
-      name: "Next.js 15+ Mastery",
-      tag: "Available Now • 20 Lessons",
-      isAvailable: true,
-      lessons: 20,
-      slug: "nextjs",
-      topics: ["App Router Segments", "Server Components vs Client", "Streaming & Suspense", "Granular ISR & Revalidation"],
-      isFeatured: true,
-    },
-  },
-  {
-    number: "05",
-    title: "Asynchronous Server State",
-    subtitle: "Data Fetching & Caching Engine",
-    category: "State Management",
-    desc: "Eliminate race conditions with deterministic query keys, mutation rollback handlers, and server state hydration.",
-    singleNode: {
-      name: "TanStack Query v5",
-      tag: "Available Now • 22 Lessons",
-      isAvailable: true,
-      lessons: 22,
-      slug: "tanstack",
-      topics: ["Query Keys & Caching", "Optimistic Mutations", "Infinite Pagination", "SSR Hydration"],
-      isFeatured: true,
-    },
-  },
-  {
-    number: "06",
-    title: "Performance, Web Vitals & Edge",
-    subtitle: "Production Optimization",
-    category: "Production",
-    desc: "Core Web Vitals (LCP, CLS, INP), dynamic font & image optimization, bundle analysis, and edge deployment.",
-    singleNode: {
-      name: "Performance & Edge Optimization",
-      tag: "Coming Soon",
-      isAvailable: false,
-      topics: ["Core Web Vitals", "Dynamic Image Optimization", "Bundle Splitting", "Edge Middleware"],
-    },
-  },
-];
+  const stepRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-const fullstackStages: StageData[] = [
-  {
-    number: "01",
-    title: "Full-Stack Web Foundations",
-    subtitle: "Client & Server Models",
-    category: "Prerequisite",
-    desc: "Client vs Server execution boundaries, strict TypeScript shared types, HTTP protocols, and Git workflows.",
-    singleNode: {
-      name: "Universal Web Architecture",
-      tag: "Foundation",
-      isAvailable: false,
-      topics: ["Client vs Server Runtime", "Shared TypeScript Schemas", "HTTP & REST Standards", "Git & CI"],
-    },
-  },
-  {
-    number: "02",
-    title: "Frontend Layer & Server Components",
-    subtitle: "Full-Stack Next.js 15+",
-    category: "Frontend & Full-Stack",
-    desc: "App Router, React Server Components, Server Actions, granular caching, and streaming interfaces.",
-    singleNode: {
-      name: "Next.js 15+ App Router",
-      tag: "Available Now • 20 Lessons",
-      isAvailable: true,
-      lessons: 20,
-      slug: "nextjs",
-      topics: ["Server Actions", "Server Component Boundaries", "Streaming UI", "Edge Middleware"],
-      isFeatured: true,
-    },
-  },
-  {
-    number: "03",
-    title: "Client-Server State Synchronization",
-    subtitle: "Asynchronous State Engine",
-    category: "State Sync",
-    desc: "Deterministic query caching, optimistic UI updates, mutation rollbacks, and server state hydration.",
-    singleNode: {
-      name: "TanStack Query v5",
-      tag: "Available Now • 22 Lessons",
-      isAvailable: true,
-      lessons: 22,
-      slug: "tanstack",
-      topics: ["Optimistic UI Updates", "Query Invalidation", "SSR Dehydration", "Infinite Lists"],
-      isFeatured: true,
-    },
-  },
-  {
-    number: "04",
-    title: "Enterprise Backend Architecture",
-    subtitle: "Modular Services & APIs",
-    category: "Backend Engine",
-    desc: "Modular NestJS backend with Dependency Injection, Guards, JWT security, and TypeORM persistence.",
-    singleNode: {
-      name: "NestJS Elite Architecture",
-      tag: "Available Now • 32 Lessons",
-      isAvailable: true,
-      lessons: 32,
-      slug: "nestjs",
-      topics: ["Inversion of Control (DI)", "TypeORM & PostgreSQL", "Auth Guards & JWT", "Microservices"],
-      isFeatured: true,
-    },
-  },
-  {
-    number: "05",
-    title: "Databases, Caching & Containerization",
-    subtitle: "Production Infrastructure",
-    category: "DevOps & Persistence",
-    desc: "Relational PostgreSQL database modeling, in-memory Redis caching, and Docker Compose orchestration.",
-    singleNode: {
-      name: "PostgreSQL, Redis & Docker",
-      tag: "Coming Soon",
-      isAvailable: false,
-      topics: ["Relational Migrations", "Redis Pub/Sub & Cache", "Docker Compose", "Production Health Checks"],
-    },
-  },
-];
+  // Sync role if prop changes
+  useEffect(() => {
+    setSelectedRole(initialRole);
+  }, [initialRole]);
 
-export function Roadmap() {
-  const [selectedRole, setSelectedRole] = useState<RoleType>("backend");
+  // Load completed steps from localStorage for persistent learner experience
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("learncraft_roadmap_progress");
+      if (saved) {
+        setCompletedSteps(JSON.parse(saved));
+      }
+    } catch {
+      // Ignore local storage read errors
+    }
+  }, []);
 
-  const stages =
-    selectedRole === "backend"
-      ? backendStages
-      : selectedRole === "frontend"
-      ? frontendStages
-      : fullstackStages;
+  const saveCompletedSteps = (updated: Record<string, boolean>) => {
+    setCompletedSteps(updated);
+    try {
+      localStorage.setItem("learncraft_roadmap_progress", JSON.stringify(updated));
+    } catch {
+      // Ignore local storage write errors
+    }
+  };
 
-  const roleMeta = {
-    backend: {
-      title: "Backend Engineering Roadmap",
-      subtitle: "Structured roadmap from fundamentals to enterprise microservices.",
-      roleSlug: "backend",
-      icon: "⚙️",
-    },
-    frontend: {
-      title: "Frontend Engineering Roadmap",
-      subtitle: "Modern roadmap from JavaScript to Next.js App Router and TanStack Query.",
-      roleSlug: "frontend",
-      icon: "🎨",
-    },
-    fullstack: {
-      title: "Full-Stack Engineering Roadmap",
-      subtitle: "End-to-end architecture uniting React Server Components, state sync, and backend microservices.",
-      roleSlug: "fullstack",
-      icon: "🚀",
-    },
-  }[selectedRole];
+  const toggleStepCompleted = (stepId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated = {
+      ...completedSteps,
+      [stepId]: !completedSteps[stepId],
+    };
+    saveCompletedSteps(updated);
+  };
+
+  const currentRoadmap = JOURNEY_ROADMAPS[selectedRole];
+  const steps = currentRoadmap.steps;
+
+  // When role changes, expand the first step of that roadmap if not set
+  const handleRoleChange = (role: JourneyRole) => {
+    setSelectedRole(role);
+    const firstStep = JOURNEY_ROADMAPS[role].steps[0];
+    if (firstStep) {
+      setExpandedStepId(firstStep.id);
+    }
+  };
+
+  // Calculate progress
+  const completedCount = steps.filter((s) => completedSteps[s.id]).length;
+  const progressPercent = Math.round((completedCount / steps.length) * 100);
+
+  // Determine current active step (first uncompleted step, or step 1)
+  const currentStepId = steps.find((s) => !completedSteps[s.id])?.id || steps[0]?.id;
+
+  const handleToggleExpand = (stepId: string) => {
+    setExpandedStepId((prev) => (prev === stepId ? null : stepId));
+  };
+
+  const handleStartStepOne = () => {
+    const firstStep = steps[0];
+    if (firstStep) {
+      setExpandedStepId(firstStep.id);
+      const element = stepRefs.current[firstStep.id];
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  };
 
   return (
-    <section id="roadmap-preview" className="pt-2 pb-16 lg:pt-4 lg:pb-20 relative">
-      <div className="container mx-auto px-4 sm:px-6">
-        {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-xs font-bold uppercase tracking-wider mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-            Visual Roadmap Preview
+    <section id="roadmap-preview" className="pt-16 pb-20 lg:pt-24 lg:pb-28 relative">
+      <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
+        {/* ═══════════════════════════════════════════════════════════════
+            PAGE HEADER & ROLE SWITCHER
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="max-w-3xl mx-auto text-center mb-12">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-xs font-bold uppercase tracking-wider mb-4">
+            <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+            Guided Learning Journey
           </div>
 
+          {/* Title */}
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
-            {roleMeta.title}
+            {currentRoadmap.title}
           </h2>
 
-          <p className="text-base sm:text-lg text-gray-400 mt-2 leading-relaxed max-w-2xl mx-auto">
-            {roleMeta.subtitle} Inspect learning relationships, framework branches, and available content.
+          {/* Single clean outcome subtitle */}
+          <p className="text-base sm:text-lg text-gray-300 mt-3 leading-relaxed max-w-2xl mx-auto font-normal">
+            {currentRoadmap.subtitle}
           </p>
 
-          {/* Role Switcher Tabs */}
-          <div className="inline-flex flex-wrap items-center justify-center p-1.5 rounded-xl bg-white/[0.03] border border-white/10 mt-6 gap-1">
-            <button
-              onClick={() => setSelectedRole("backend")}
-              className={`flex items-center gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all ${
-                selectedRole === "backend"
-                  ? "bg-purple-600 text-white shadow-sm"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <RoleIcon role="backend" className="w-4 h-4 text-purple-300" />
-              <span>Backend Roadmap</span>
-            </button>
+          {/* Compact Metadata Chips */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-5">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 text-xs font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              {currentRoadmap.experienceLevel}
+            </span>
 
-            <button
-              onClick={() => setSelectedRole("frontend")}
-              className={`flex items-center gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all ${
-                selectedRole === "frontend"
-                  ? "bg-purple-600 text-white shadow-sm"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <RoleIcon role="frontend" className="w-4 h-4 text-purple-300" />
-              <span>Frontend Roadmap</span>
-            </button>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] text-gray-300 border border-white/10 text-xs font-medium">
+              <svg className="w-3.5 h-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {currentRoadmap.durationEstimate}
+            </span>
 
-            <button
-              onClick={() => setSelectedRole("fullstack")}
-              className={`flex items-center gap-2 px-4 sm:px-5 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all ${
-                selectedRole === "fullstack"
-                  ? "bg-purple-600 text-white shadow-sm"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <RoleIcon role="fullstack" className="w-4 h-4 text-purple-300" />
-              <span>Full-Stack Roadmap</span>
-            </button>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] text-gray-300 border border-white/10 text-xs font-medium">
+              <svg className="w-3.5 h-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              {currentRoadmap.totalCoreSteps} core steps
+            </span>
+          </div>
+
+          {/* Roadmap Switcher */}
+          {showSwitcher && (
+            <div className="inline-flex flex-wrap items-center justify-center p-1.5 rounded-2xl bg-white/[0.03] border border-white/10 mt-8 gap-1.5 shadow-lg shadow-black/20">
+              <button
+                onClick={() => handleRoleChange("backend")}
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                  selectedRole === "backend"
+                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30 scale-[1.02]"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.04]"
+                }`}
+              >
+                <RoleIcon role="backend" className="w-4 h-4 text-purple-200" />
+                <span>Backend Engineering</span>
+              </button>
+
+              <button
+                onClick={() => handleRoleChange("frontend")}
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                  selectedRole === "frontend"
+                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30 scale-[1.02]"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.04]"
+                }`}
+              >
+                <RoleIcon role="frontend" className="w-4 h-4 text-purple-200" />
+                <span>Frontend Engineering</span>
+              </button>
+
+              <button
+                onClick={() => handleRoleChange("fullstack")}
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                  selectedRole === "fullstack"
+                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30 scale-[1.02]"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.04]"
+                }`}
+              >
+                <RoleIcon role="fullstack" className="w-4 h-4 text-purple-200" />
+                <span>Full-Stack Engineering</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            LEARNER PROGRESS TRACKER
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="max-w-3xl mx-auto mb-12 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-950/20 via-white/[0.02] to-purple-950/20 border border-purple-500/20 backdrop-blur-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-6 h-6 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-300">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-white">
+                Your progress — <span className="text-purple-300 font-bold">{completedCount}</span> of {steps.length} steps completed
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 self-end sm:self-auto">
+              <span className="text-xs font-mono font-bold text-purple-300 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">
+                {progressPercent}% Complete
+              </span>
+              {completedCount > 0 && (
+                <button
+                  onClick={() => {
+                    const updated = { ...completedSteps };
+                    steps.forEach((s) => delete updated[s.id]);
+                    saveCompletedSteps(updated);
+                  }}
+                  className="text-[11px] text-gray-400 hover:text-gray-200 transition-colors underline"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Visual Progress Bar */}
+          <div className="w-full h-2.5 bg-white/[0.06] rounded-full overflow-hidden p-0.5 border border-white/5">
+            <div
+              className="h-full bg-gradient-to-r from-purple-600 via-purple-500 to-emerald-400 rounded-full transition-all duration-500 ease-out shadow-sm"
+              style={{ width: `${progressPercent}%` }}
+            />
           </div>
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════
-            VISUAL ROADMAP FLOWCHART (Nodes, Connectors & Branches)
+            CORE ROADMAP JOURNEY (Vertical Step-by-Step Flow)
            ═══════════════════════════════════════════════════════════════ */}
-        <div className="max-w-4xl mx-auto">
-          <div className="space-y-6">
-            {stages.map((stage, idx) => {
-              const isLast = idx === stages.length - 1;
+        <div className="max-w-3xl mx-auto space-y-4">
+          {steps.map((step, idx) => {
+            const isExpanded = expandedStepId === step.id;
+            const isCompleted = !!completedSteps[step.id];
+            const isCurrent = step.id === currentStepId && !isCompleted;
+            const isLast = idx === steps.length - 1;
 
-              return (
-                <div key={stage.number} className="relative">
-                  {/* Stage Card Header */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/[0.05] flex items-center justify-center text-xs font-black text-purple-400">
-                      {stage.number}
-                    </span>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-base sm:text-lg font-black text-white tracking-tight">
-                        {stage.title}
-                      </h4>
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-white/[0.05] text-gray-400">
-                        {stage.category}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Stage Node Container */}
-                  {stage.isBranching && stage.branches ? (
-                    /* Branching Nodes (Side-by-side on desktop, stacked on mobile) */
-                    <div>
-                      <div className="text-xs text-gray-400 mb-3 leading-relaxed">
-                        {stage.desc}
-                      </div>
-
-                      <div className={`grid grid-cols-1 ${stage.branches.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3"} gap-4`}>
-                        {stage.branches.map((branch) => (
-                          <div
-                            key={branch.name}
-                            className={`p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
-                              branch.isAvailable
-                                ? "bg-purple-500/[0.03] border-purple-500/40 shadow-md shadow-purple-500/5 hover:border-purple-500/60"
-                                : "bg-white/[0.02] border-white/10"
-                            }`}
-                          >
-                            <div>
-                              <div className="flex items-center justify-between gap-2 mb-2">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
-                                  {branch.tag}
-                                </span>
-
-                                {branch.isAvailable ? (
-                                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                    <span>Available • {branch.lessons} Lessons</span>
-                                  </span>
-                                ) : (
-                                  <span className="text-[10px] font-semibold text-gray-400 px-2 py-0.5 rounded bg-white/[0.05]">
-                                    Coming Soon
-                                  </span>
-                                )}
-                              </div>
-
-                              <div className="flex items-center gap-2.5 mb-2">
-                                <div className="w-7 h-7 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center p-1 shrink-0">
-                                  <TechIcon slug={branch.slug || branch.name} className="w-4 h-4" />
-                                </div>
-                                <h5 className="text-lg font-bold text-white">
-                                  {branch.name}
-                                </h5>
-                              </div>
-
-                              <p className="text-xs text-gray-400 leading-relaxed mb-4">
-                                {branch.desc}
-                              </p>
-
-                              {/* Topics - borderless clean chips */}
-                              <div className="flex flex-wrap gap-1 mb-4">
-                                {branch.topics.map((t) => (
-                                  <span
-                                    key={t}
-                                    className={`px-2 py-0.5 rounded text-[10px] font-medium ${
-                                      branch.isAvailable
-                                        ? "bg-purple-500/15 text-purple-200 font-semibold"
-                                        : "bg-white/[0.05] text-gray-300"
-                                    }`}
-                                  >
-                                    {t}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-
-                            {/* Link for available branch */}
-                            {branch.isAvailable && branch.slug && (
-                              <Link
-                                href={`/roadmaps/${branch.slug}`}
-                                className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-sm"
-                              >
-                                <span>Explore {branch.name} Roadmap</span>
-                                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                </svg>
-                              </Link>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : stage.singleNode ? (
-                    /* Single Node (Full width) */
-                    <div
-                      className={`p-6 rounded-2xl border transition-all duration-300 ${
-                        stage.singleNode.isAvailable
-                          ? "bg-purple-500/[0.03] border-purple-500/40 shadow-md shadow-purple-500/5 hover:border-purple-500/60"
-                          : "bg-white/[0.02] border-white/10"
-                      }`}
-                    >
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
-                        <div>
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center p-1.5 shrink-0">
-                              <TechIcon slug={stage.singleNode.slug || stage.singleNode.name} className="w-5 h-5" />
-                            </div>
-                            <h5 className="text-base sm:text-lg font-bold text-white">
-                              {stage.singleNode.name}
-                            </h5>
-                          </div>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {stage.desc}
-                          </p>
-                        </div>
-
-                        {/* Availability Tag */}
-                        <div className="self-start sm:self-auto flex items-center gap-2">
-                          {stage.singleNode.isAvailable ? (
-                            <>
-                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                <span>Available • {stage.singleNode.lessons} Lessons</span>
-                              </span>
-
-                              {stage.singleNode.slug && (
-                                <Link
-                                  href={`/roadmaps/${stage.singleNode.slug}`}
-                                  className="hidden sm:inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-600 text-purple-300 hover:text-white text-xs font-bold transition-colors"
-                                >
-                                  <span>View Roadmap</span>
-                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                                  </svg>
-                                </Link>
-                              )}
-                            </>
-                          ) : (
-                            <span className="text-[11px] font-semibold text-gray-400 px-2.5 py-1 rounded-full bg-white/[0.05]">
-                              {stage.singleNode.tag}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Topic Chips - borderless clean chips */}
-                      <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-white/10">
-                        <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mr-1">
-                          Topics:
-                        </span>
-                        {stage.singleNode.topics.map((topic) => (
-                          <span
-                            key={topic}
-                            className={`px-2.5 py-0.5 rounded text-[11px] font-medium ${
-                              stage.singleNode?.isAvailable
-                                ? "bg-purple-500/15 text-purple-200 font-semibold"
-                                : "bg-white/[0.05] text-gray-300"
-                            }`}
-                          >
-                            {topic}
-                          </span>
-                        ))}
-
-                        {stage.singleNode.isAvailable && stage.singleNode.slug && (
-                          <Link
-                            href={`/roadmaps/${stage.singleNode.slug}`}
-                            className="sm:hidden text-xs font-bold text-purple-400 ml-auto"
-                          >
-                            View Roadmap →
-                          </Link>
+            return (
+              <div
+                key={step.id}
+                ref={(el) => {
+                  stepRefs.current[step.id] = el;
+                }}
+                className="relative"
+              >
+                {/* ─────────────────────────────────────────────────────────
+                    CARD (Collapsed or Expanded)
+                   ───────────────────────────────────────────────────────── */}
+                <div
+                  className={`rounded-2xl transition-all duration-300 border ${
+                    isExpanded
+                      ? "bg-[#0E121B] border-purple-500/40 shadow-xl shadow-purple-950/30 ring-1 ring-purple-500/20"
+                      : isCompleted
+                      ? "bg-white/[0.015] border-emerald-500/25 hover:border-emerald-500/40 hover:bg-white/[0.03]"
+                      : isCurrent
+                      ? "bg-gradient-to-b from-purple-950/20 to-white/[0.02] border-purple-500/50 shadow-lg shadow-purple-950/20"
+                      : "bg-white/[0.015] border-white/10 hover:border-white/20 hover:bg-white/[0.03]"
+                  }`}
+                >
+                  {/* Collapsed Step Header (Always Visible) */}
+                  <div
+                    onClick={() => handleToggleExpand(step.id)}
+                    className="p-5 sm:p-6 cursor-pointer select-none flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                  >
+                    <div className="flex items-start sm:items-center gap-4 min-w-0">
+                      {/* 1. Prominent Step Number */}
+                      <div
+                        className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-mono font-black text-lg transition-all ${
+                          isCompleted
+                            ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                            : isCurrent
+                            ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
+                            : "bg-white/[0.05] text-gray-300 border border-white/10"
+                        }`}
+                      >
+                        {isCompleted ? (
+                          <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          step.number
                         )}
                       </div>
-                    </div>
-                  ) : null}
 
-                  {/* Connecting Arrow between Stages */}
-                  {!isLast && (
-                    <div className="flex justify-center py-2 relative z-0">
-                      <div className="flex flex-col items-center">
-                        <div className="w-0.5 h-4 bg-white/10" />
+                      {/* 2. Short Title + 3. Outcome Sentence */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                            {step.title}
+                          </h3>
+                        </div>
+
+                        {/* One simple sentence explaining the outcome */}
+                        <p className="text-sm text-gray-400 line-clamp-2 leading-relaxed">
+                          {step.outcome}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right side: 4. Duration, 5. Status, 6. Expand Button */}
+                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/5 sm:shrink-0">
+                      {/* Duration */}
+                      <span className="text-xs font-medium text-gray-400 bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/5">
+                        {step.duration}
+                      </span>
+
+                      {/* Status Indicator */}
+                      {isCompleted ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          <span>Done</span>
+                        </span>
+                      ) : isCurrent ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                          <span>In Progress</span>
+                        </span>
+                      ) : (
+                        <span className="text-xs font-medium text-gray-400 px-2.5 py-1 rounded-full bg-white/[0.04]">
+                          Upcoming
+                        </span>
+                      )}
+
+                      {/* Clear CTA / Expand Control */}
+                      <button
+                        type="button"
+                        aria-label={isExpanded ? "Collapse step details" : "Expand step details"}
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                          isExpanded
+                            ? "bg-purple-600/20 text-purple-300 border border-purple-500/30"
+                            : "bg-white/[0.05] text-gray-400 hover:text-white hover:bg-white/[0.08]"
+                        }`}
+                      >
                         <svg
-                          className="w-4 h-4 text-purple-400/60 -mt-1"
+                          className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
@@ -664,45 +358,261 @@ export function Roadmap() {
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                         </svg>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* ─────────────────────────────────────────────────────────
+                      PROGRESSIVE DISCLOSURE (Expanded Content)
+                     ───────────────────────────────────────────────────────── */}
+                  {isExpanded && (
+                    <div className="px-5 sm:px-6 pb-6 pt-2 border-t border-white/10 space-y-6 animate-fadeIn">
+                      {/* What you'll learn */}
+                      <div className="pt-2">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-xs font-black uppercase tracking-wider text-purple-400">
+                            What you&apos;ll learn
+                          </span>
+                        </div>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          {step.whatYoullLearn.map((item, topicIdx) => (
+                            <li
+                              key={topicIdx}
+                              className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300 leading-relaxed bg-white/[0.02] p-2.5 rounded-xl border border-white/5"
+                            >
+                              <span className="flex-shrink-0 w-4 h-4 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-bold mt-0.5">
+                                •
+                              </span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Decision Point (When choices exist, explicitly state learner needs only ONE) */}
+                      {step.decisionPoint && (
+                        <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/30 border border-purple-500/30">
+                          <div className="mb-3">
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-purple-300">
+                                ⚖️ Decision Point
+                              </span>
+                              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 border border-purple-500/30">
+                                Pick Only One
+                              </span>
+                            </div>
+                            <h4 className="text-base font-bold text-white mt-1">
+                              {step.decisionPoint.title}
+                            </h4>
+                            <p className="text-xs text-purple-200/80 mt-0.5 italic">
+                              &ldquo;{step.decisionPoint.explanation}&rdquo;
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                            {step.decisionPoint.options.map((opt) => (
+                              <div
+                                key={opt.name}
+                                className={`p-4 rounded-xl border transition-all ${
+                                  opt.isRecommended
+                                    ? "bg-purple-900/30 border-purple-500/50 shadow-md shadow-purple-950/40 ring-1 ring-purple-500/30"
+                                    : "bg-white/[0.02] border-white/10"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between gap-2 mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <TechIcon slug={opt.slug || opt.name} className="w-5 h-5" />
+                                    <span className="text-sm font-bold text-white">
+                                      {opt.name}
+                                    </span>
+                                  </div>
+
+                                  {opt.isRecommended ? (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                      </svg>
+                                      Recommended
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] font-medium text-gray-400 px-2 py-0.5 rounded bg-white/[0.05]">
+                                      Alternative
+                                    </span>
+                                  )}
+                                </div>
+
+                                <p className="text-[11px] text-gray-400 leading-relaxed mb-2">
+                                  {opt.desc}
+                                </p>
+
+                                <span className="text-[10px] font-semibold text-gray-400">
+                                  {opt.tag}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Course Link and Completion Toggle */}
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-white/10">
+                        {step.courseLink ? (
+                          <Link
+                            href={`/roadmaps/${step.courseLink.slug}`}
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs sm:text-sm font-bold transition-all shadow-md shadow-purple-600/20"
+                          >
+                            <span>Explore {step.courseLink.title}</span>
+                            <span className="px-1.5 py-0.5 rounded bg-purple-700/50 text-[10px]">
+                              {step.courseLink.lessons} Lessons
+                            </span>
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                          </Link>
+                        ) : (
+                          <div className="text-xs text-gray-400 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                            <span>Core Milestone in the curriculum</span>
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={(e) => toggleStepCompleted(step.id, e)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                            isCompleted
+                              ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20"
+                              : "bg-white/[0.05] text-gray-300 border border-white/10 hover:bg-white/[0.1] hover:text-white"
+                          }`}
+                        >
+                          {isCompleted ? (
+                            <>
+                              <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span>Completed • Click to Undo</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-2 h-2 rounded-full border border-gray-400" />
+                              <span>Mark Step as Completed</span>
+                            </>
+                          )}
+                        </button>
                       </div>
                     </div>
                   )}
                 </div>
-              );
-            })}
+
+                {/* Vertical Connector Arrow between Steps */}
+                {!isLast && (
+                  <div className="flex justify-center py-2 relative z-0">
+                    <div className="flex flex-col items-center">
+                      <div className="w-0.5 h-3 bg-white/10" />
+                      <svg
+                        className="w-4 h-4 text-purple-400/60 -mt-0.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            ADVANCED TOPICS SECTION (Separated, Visually Lower Priority)
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="max-w-3xl mx-auto mt-16 pt-10 border-t border-white/10">
+          <div className="text-center sm:text-left mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] text-gray-400 text-xs font-semibold border border-white/10 mb-2">
+              <span>🚀 Beyond the Core Journey</span>
+            </div>
+            <h3 className="text-2xl font-bold text-white tracking-tight">
+              {currentRoadmap.advancedTopicsTitle}
+            </h3>
+            <p className="text-sm text-gray-400 mt-1 max-w-xl">
+              {currentRoadmap.advancedTopicsSubtitle}
+            </p>
           </div>
 
-          {/* Bottom Roadmap Action Box */}
-          <div className="mt-14 p-8 rounded-2xl bg-white/[0.02] border border-white/10 text-center">
-            <h4 className="text-xl font-black text-white mb-2">
-              Ready to follow the {roleMeta.title}?
-            </h4>
-            <p className="text-sm text-gray-400 max-w-lg mx-auto mb-6">
-              Track your progress, run code exercises, and follow structured stage milestones on LearnCraft.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href={`/roadmaps/role/${roleMeta.roleSlug}`}
-                className="px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs sm:text-sm transition-all hover:scale-105 shadow-md shadow-purple-600/20 flex items-center gap-2"
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {currentRoadmap.advancedTopics.map((adv) => (
+              <div
+                key={adv.id}
+                className="p-5 rounded-2xl bg-white/[0.015] border border-white/10 hover:border-white/20 transition-all group"
               >
-                <span>Open Full {selectedRole === "backend" ? "Backend" : selectedRole === "frontend" ? "Frontend" : "Full-Stack"} Flowchart</span>
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </Link>
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className="w-7 h-7 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center text-gray-400 group-hover:text-purple-300 transition-colors">
+                    <TechIcon slug={adv.iconSlug || adv.title} className="w-4 h-4" />
+                  </div>
+                  <h4 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors">
+                    {adv.title}
+                  </h4>
+                </div>
 
-              <Link
-                href="/roadmaps"
-                className="px-6 py-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-gray-300 font-bold text-xs sm:text-sm transition-colors border border-white/10"
-              >
-                Browse All 12+ Roadmaps
-              </Link>
-            </div>
+                <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                  {adv.description}
+                </p>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {adv.topics.map((t) => (
+                    <span
+                      key={t}
+                      className="px-2 py-0.5 rounded text-[10px] font-medium bg-white/[0.03] text-gray-400 border border-white/5"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            BOTTOM MOTIVATIONAL CTA
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="max-w-3xl mx-auto mt-16 p-8 sm:p-10 rounded-3xl bg-gradient-to-b from-purple-950/30 via-white/[0.02] to-white/[0.01] border border-purple-500/25 text-center shadow-xl shadow-purple-950/20">
+          <div className="w-12 h-12 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 mx-auto mb-4">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+
+          <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            Ready to start building?
+          </h3>
+          <p className="text-sm sm:text-base text-gray-300 max-w-lg mx-auto mt-2 mb-8 leading-relaxed">
+            You don&apos;t need to learn everything at once. Start with Step 1 and progress one skill at a time.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={handleStartStepOne}
+              className="px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all hover:scale-105 shadow-lg shadow-purple-600/30 flex items-center gap-2"
+            >
+              <span>Start Step 1</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+
+            <Link
+              href="/roadmaps"
+              className="px-6 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-gray-300 hover:text-white font-bold text-sm transition-colors border border-white/10"
+            >
+              View Full Curriculum
+            </Link>
           </div>
         </div>
       </div>
     </section>
   );
 }
-
-

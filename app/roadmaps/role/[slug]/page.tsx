@@ -8,13 +8,15 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { use } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
 import { RoleFlowChart } from "../../components/RoleFlowChart";
+import { Roadmap } from "@/app/learn/components/Roadmap";
 import { getRoleRoadmap } from "@/lib/roadmap-data";
+import type { JourneyRole } from "@/lib/roadmap-journey-data";
 
 export default function RoleRoadmapPage({
   params,
@@ -23,6 +25,9 @@ export default function RoleRoadmapPage({
 }) {
   const { slug } = use(params);
   const role = getRoleRoadmap(slug);
+  const [viewMode, setViewMode] = useState<"guided" | "flowchart">("guided");
+
+  const isGuidedRole = slug === "backend" || slug === "frontend" || slug === "fullstack";
 
   if (!role) {
     return (
@@ -58,18 +63,51 @@ export default function RoleRoadmapPage({
       <Nav />
 
       <main className="max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-ds-text-soft mb-6">
-          <Link href="/roadmaps" className="hover:text-ds-feature-base transition-colors font-medium">
-            Roadmaps
-          </Link>
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-          <span className="text-ds-text-strong font-bold">{role.title}</span>
-        </nav>
+        {/* Breadcrumb & View Mode Toggle */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <nav className="flex items-center gap-2 text-xs text-ds-text-soft">
+            <Link href="/roadmaps" className="hover:text-ds-feature-base transition-colors font-medium">
+              Roadmaps
+            </Link>
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-ds-text-strong font-bold">{role.title}</span>
+          </nav>
 
-        <RoleFlowChart role={role} />
+          {isGuidedRole && (
+            <div className="inline-flex items-center p-1 rounded-xl bg-white/[0.04] border border-white/10 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setViewMode("guided")}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  viewMode === "guided"
+                    ? "bg-purple-600 text-white shadow-sm"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                ✨ Guided Journey
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode("flowchart")}
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  viewMode === "flowchart"
+                    ? "bg-purple-600 text-white shadow-sm"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                📊 Technical Flowchart
+              </button>
+            </div>
+          )}
+        </div>
+
+        {isGuidedRole && viewMode === "guided" ? (
+          <Roadmap initialRole={slug as JourneyRole} showSwitcher={true} />
+        ) : (
+          <RoleFlowChart role={role} />
+        )}
       </main>
 
       <Footer />
