@@ -60,7 +60,7 @@ export function RoadmapFilter({
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 ${
               activeCategory === cat.key
                 ? "bg-ds-feature-base text-ds-static-white shadow-md shadow-ds-feature-base/15"
-                : "bg-ds-bg-white border border-ds-stroke-soft text-ds-text-sub hover:border-ds-feature-base/50 hover:text-ds-feature-dark"
+                : "bg-ds-bg-white border border-ds-stroke-soft text-ds-text-sub hover:border-ds-feature-base hover:text-ds-feature-dark"
             }`}
           >
             {cat.label}

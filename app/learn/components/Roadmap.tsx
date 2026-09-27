@@ -114,11 +114,11 @@ export function Roadmap({
 
   return (
     <section id="roadmap-preview" className="pt-16 pb-20 lg:pt-24 lg:pb-28 relative">
-      <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
+      <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
         {/* ═══════════════════════════════════════════════════════════════
             PAGE HEADER & ROLE SWITCHER
            ═══════════════════════════════════════════════════════════════ */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
+        <div className="max-w-4xl mx-auto text-center mb-12">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-xs font-bold uppercase tracking-wider mb-4">
             <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
@@ -131,7 +131,7 @@ export function Roadmap({
           </h2>
 
           {/* Single clean outcome subtitle */}
-          <p className="text-base sm:text-lg text-gray-300 mt-3 leading-relaxed max-w-2xl mx-auto font-normal">
+          <p className="text-base sm:text-lg text-gray-300 mt-3 leading-relaxed max-w-3xl mx-auto font-normal">
             {currentRoadmap.subtitle}
           </p>
 
@@ -202,7 +202,7 @@ export function Roadmap({
         {/* ═══════════════════════════════════════════════════════════════
             LEARNER PROGRESS TRACKER
            ═══════════════════════════════════════════════════════════════ */}
-        <div className="max-w-3xl mx-auto mb-12 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-purple-950/20 via-white/[0.02] to-purple-950/20 border border-purple-500/20 backdrop-blur-sm">
+        <div className="w-full mb-12 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-purple-950/20 via-white/[0.02] to-purple-950/20 border border-purple-500/20 backdrop-blur-sm">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-2.5">
               <div className="w-6 h-6 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-300">
@@ -246,7 +246,7 @@ export function Roadmap({
         {/* ═══════════════════════════════════════════════════════════════
             CORE ROADMAP JOURNEY (Vertical Step-by-Step Flow)
            ═══════════════════════════════════════════════════════════════ */}
-        <div className="max-w-3xl mx-auto space-y-4">
+        <div className="w-full space-y-4">
           {steps.map((step, idx) => {
             const isExpanded = expandedStepId === step.id;
             const isCompleted = !!completedSteps[step.id];
@@ -529,7 +529,7 @@ export function Roadmap({
         {/* ═══════════════════════════════════════════════════════════════
             ADVANCED TOPICS SECTION (Separated, Visually Lower Priority)
            ═══════════════════════════════════════════════════════════════ */}
-        <div className="max-w-3xl mx-auto mt-16 pt-10 border-t border-white/10">
+        <div className="w-full mt-16 pt-10 border-t border-white/10">
           <div className="text-center sm:text-left mb-6">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] text-gray-400 text-xs font-semibold border border-white/10 mb-2">
               <span>🚀 Beyond the Core Journey</span>
@@ -542,7 +542,7 @@ export function Roadmap({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentRoadmap.advancedTopics.map((adv) => (
               <div
                 key={adv.id}
@@ -579,7 +579,7 @@ export function Roadmap({
         {/* ═══════════════════════════════════════════════════════════════
             BOTTOM MOTIVATIONAL CTA
            ═══════════════════════════════════════════════════════════════ */}
-        <div className="max-w-3xl mx-auto mt-16 p-8 sm:p-10 rounded-3xl bg-gradient-to-b from-purple-950/30 via-white/[0.02] to-white/[0.01] border border-purple-500/25 text-center shadow-xl shadow-purple-950/20">
+        <div className="w-full mt-16 p-8 sm:p-10 rounded-3xl bg-gradient-to-b from-purple-950/30 via-white/[0.02] to-white/[0.01] border border-purple-500/25 text-center shadow-xl shadow-purple-950/20">
           <div className="w-12 h-12 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 mx-auto mb-4">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />

@@ -53,8 +53,8 @@ export function RoleFlowChart({ role }: RoleFlowChartProps) {
             <div
               className={`group relative p-5 sm:p-6 rounded-2xl border transition-all duration-300 ${
                 isAvailable
-                  ? "bg-ds-bg-white border-ds-stroke-soft hover:border-ds-feature-base/50 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
-                  : "bg-ds-bg-weak border-ds-stroke-soft/60 border-dashed opacity-70 cursor-default"
+                  ? "bg-ds-bg-white border-ds-stroke-soft hover:border-ds-feature-base hover:shadow-lg hover:-translate-y-0.5 cursor-pointer"
+                  : "bg-ds-bg-weak border-ds-stroke-soft border-dashed opacity-70 cursor-default"
               }`}
             >
               <div className="flex items-center gap-4">
@@ -96,7 +96,7 @@ export function RoleFlowChart({ role }: RoleFlowChartProps) {
                       </svg>
                     </>
                   ) : (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-ds-bg-soft text-ds-text-disabled border border-ds-stroke-soft/60">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-ds-bg-soft text-ds-text-disabled border border-ds-stroke-soft">
                       Coming Soon
                     </span>
                   )}
@@ -105,7 +105,7 @@ export function RoleFlowChart({ role }: RoleFlowChartProps) {
 
               {/* Alternatives (e.g., Express.js OR NestJS) */}
               {hasAlternatives && (
-                <div className="mt-3 pt-3 border-t border-ds-stroke-soft/60">
+                <div className="mt-3 pt-3 border-t border-ds-stroke-soft">
                   <span className="text-[10px] font-bold text-ds-text-soft uppercase tracking-wider">
                     Alternative:{" "}
                     {step.alternatives!.map((alt) => {

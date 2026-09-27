@@ -8,28 +8,45 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
 import { RoadmapFilter } from "./components/RoadmapFilter";
 import { SkillCard } from "./components/SkillCard";
-import { RoleCard } from "./components/RoleCard";
 import {
   SKILL_ROADMAPS,
-  ROLE_ROADMAPS,
   getSkillsByCategory,
 } from "@/lib/roadmap-data";
 import type { SkillCategory } from "@/lib/roadmap-data";
 
-export default function RoadmapsPage() {
+function RoadmapsContent() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<SkillCategory | "all">("all");
 
+  useEffect(() => {
+    if (categoryParam) {
+      if (categoryParam === "all") {
+        setActiveCategory("all");
+      } else if (
+        ["frontend", "backend", "database", "devops", "architecture", "language"].includes(
+          categoryParam,
+        )
+      ) {
+        setActiveCategory(categoryParam as SkillCategory);
+      }
+    }
+  }, [categoryParam]);
+
   const filteredSkills = useMemo(() => {
-    let skills = activeCategory === "all"
-      ? SKILL_ROADMAPS
-      : getSkillsByCategory(activeCategory);
+    let skills =
+      activeCategory === "all"
+        ? SKILL_ROADMAPS
+        : getSkillsByCategory(activeCategory);
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
@@ -37,7 +54,7 @@ export default function RoadmapsPage() {
         (s) =>
           s.title.toLowerCase().includes(q) ||
           s.description.toLowerCase().includes(q) ||
-          s.category.toLowerCase().includes(q)
+          s.category.toLowerCase().includes(q),
       );
     }
 
@@ -59,8 +76,18 @@ export default function RoadmapsPage() {
            ═══════════════════════════════════════════════════════════════ */}
         <section className="max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ds-feature-lighter text-ds-feature-dark text-xs font-bold border border-ds-feature-light mb-5">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l5.447 2.724A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
+              />
             </svg>
             <span>Learning Roadmaps</span>
           </div>
@@ -69,37 +96,15 @@ export default function RoadmapsPage() {
             Explore Roadmaps
           </h1>
           <p className="text-base sm:text-lg text-ds-text-sub mt-2">
-            Structured learning paths to guide your developer journey from fundamentals to production mastery.
+            Structured learning paths to guide your developer journey from
+            fundamentals to production mastery.
           </p>
-        </section>
-
-        {/* ═══════════════════════════════════════════════════════════════
-            CAREER PATHS (Role-Based)
-           ═══════════════════════════════════════════════════════════════ */}
-        <section>
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-ds-text-strong tracking-tight">
-                Career Paths
-              </h2>
-              <p className="text-sm text-ds-text-sub mt-1">
-                Curated skill sequences for specific developer roles.
-              </p>
-            </div>
-            <div className="h-px flex-1 bg-gradient-to-r from-ds-stroke-soft to-transparent hidden md:block mb-3" />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {ROLE_ROADMAPS.map((role) => (
-              <RoleCard key={role.id} role={role} />
-            ))}
-          </div>
         </section>
 
         {/* ═══════════════════════════════════════════════════════════════
             SKILL ROADMAPS
            ═══════════════════════════════════════════════════════════════ */}
-        <section>
+        <section id="skill-roadmaps" className="scroll-mt-24">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-ds-text-strong tracking-tight">
@@ -131,7 +136,9 @@ export default function RoadmapsPage() {
 
           {filteredSkills.length === 0 && (
             <div className="text-center py-16">
-              <p className="text-ds-text-soft text-sm">No roadmaps match your search.</p>
+              <p className="text-ds-text-soft text-sm">
+                No roadmaps match your search.
+              </p>
             </div>
           )}
         </section>
@@ -139,5 +146,13 @@ export default function RoadmapsPage() {
 
       <Footer />
     </InteractiveGrid>
+  );
+}
+
+export default function RoadmapsPage() {
+  return (
+    <Suspense fallback={null}>
+      <RoadmapsContent />
+    </Suspense>
   );
 }

@@ -73,7 +73,7 @@ export function StageSection({
         className={`w-full text-left p-5 sm:p-6 rounded-2xl bg-ds-bg-white border transition-all duration-300 group ${
           expanded
             ? `${colors.accent} shadow-md`
-            : "border-ds-stroke-soft hover:border-ds-feature-base/40 shadow-sm hover:shadow-md"
+            : "border-ds-stroke-soft hover:border-ds-feature-base shadow-sm hover:shadow-md"
         }`}
       >
         <div className="flex items-start justify-between gap-4">

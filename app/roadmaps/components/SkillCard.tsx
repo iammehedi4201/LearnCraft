@@ -21,8 +21,8 @@ export function SkillCard({ skill }: SkillCardProps) {
     <div
       className={`group relative p-6 rounded-2xl border transition-all duration-300 ${
         isAvailable
-          ? "bg-ds-bg-white border-ds-stroke-soft hover:border-ds-feature-base/50 hover:shadow-lg hover:-translate-y-1 cursor-pointer"
-          : "bg-ds-bg-weak border-ds-stroke-soft/60 opacity-60 cursor-default"
+          ? "bg-ds-bg-white border-ds-stroke-soft hover:border-ds-feature-base hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+          : "bg-ds-bg-weak border-ds-stroke-soft opacity-60 cursor-default"
       }`}
     >
       {/* Header */}
@@ -51,7 +51,7 @@ export function SkillCard({ skill }: SkillCardProps) {
             {skill.totalLessons} Lessons
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-ds-bg-soft text-ds-text-disabled border border-ds-stroke-soft/60">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-ds-bg-soft text-ds-text-disabled border border-ds-stroke-soft">
             Coming Soon
           </span>
         )}

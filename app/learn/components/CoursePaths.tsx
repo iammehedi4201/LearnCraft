@@ -9,35 +9,54 @@
  */
 
 import Link from "next/link";
-import { ROLE_ROADMAPS } from "@/lib/roadmap-data";
-import { RoleIcon } from "@/components/roadmap/TechIcon";
+import { ROLE_ROADMAPS, getSkillStatus } from "@/lib/roadmap-data";
+import { RoleIcon, TechIcon } from "@/components/roadmap/TechIcon";
+
+const ROLE_SKILL_LINKS: Record<string, string> = {
+  frontend: "/roadmaps?category=frontend#skill-roadmaps",
+  backend: "/roadmaps?category=backend#skill-roadmaps",
+  fullstack: "/roadmaps?category=all#skill-roadmaps",
+};
 
 export function CoursePaths() {
   return (
-    <section id="explore-roadmaps" className="pt-12 pb-16 lg:pt-16 lg:pb-24 relative">
+    <section
+      id="explore-roadmaps"
+      className="pt-12 pb-16 lg:pt-16 lg:pb-24 relative"
+    >
       <div className="container mx-auto px-4 sm:px-6">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-xs font-bold uppercase tracking-wider mb-3">
               <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
-              Role-Based Roadmaps
+              Skill-Based Roadmaps
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
-              Explore Learning Roadmaps
+              Explore Skill Roadmaps
             </h2>
             <p className="text-base sm:text-lg text-gray-400 mt-2 leading-relaxed">
-              Choose an engineering career path to master modern software development through production-tested milestones.
+              Select a specialized engineering path to dive into dedicated skill roadmaps, production frameworks, and interactive lessons.
             </p>
           </div>
 
           <Link
-            href="/roadmaps"
+            href="/roadmaps#skill-roadmaps"
             className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-bold transition-all self-start md:self-auto hover:border-purple-500/40"
           >
             <span>Browse All Roadmaps</span>
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
             </svg>
           </Link>
         </div>
@@ -45,12 +64,12 @@ export function CoursePaths() {
         {/* 3 Role-Based Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {ROLE_ROADMAPS.map((role) => {
-            const availableStepCount = role.steps.filter(
-              (st) =>
-                st.skillSlug === "nestjs" ||
-                st.skillSlug === "nextjs" ||
-                st.skillSlug === "tanstack"
-            ).length;
+            const destinationUrl =
+              ROLE_SKILL_LINKS[role.slug] || "/roadmaps#skill-roadmaps";
+
+            const liveSteps = role.steps.filter(
+              (st) => getSkillStatus(st.skillSlug) === "available",
+            );
 
             return (
               <div
@@ -61,7 +80,10 @@ export function CoursePaths() {
                   {/* Top Header Badge */}
                   <div className="flex items-center justify-between gap-3 mb-5">
                     <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[11px] font-bold">
-                      <RoleIcon role={role.slug} className="w-4 h-4 text-purple-400" />
+                      <RoleIcon
+                        role={role.slug}
+                        className="w-4 h-4 text-purple-400"
+                      />
                       <span>Career Path</span>
                     </span>
 
@@ -71,27 +93,43 @@ export function CoursePaths() {
                   </div>
 
                   {/* Title */}
-                  <h4 className="text-2xl font-black text-white tracking-tight mb-2 group-hover:text-purple-300 transition-colors">
-                    {role.title}
-                  </h4>
+                  <Link href={destinationUrl} className="block group/title">
+                    <h4 className="text-2xl font-black text-white tracking-tight mb-2 group-hover/title:text-purple-300 transition-colors">
+                      {role.title}
+                    </h4>
+                  </Link>
 
                   {/* Description */}
-                  <p className="text-xs sm:text-sm text-gray-400 leading-relaxed mb-6">
+                  <p className="text-xs sm:text-sm text-gray-400 leading-relaxed mb-4">
                     {role.description}
                   </p>
+
+                  {/* Live Skill Badges */}
+                  <div className="flex flex-wrap gap-1.5 mb-6">
+                    {liveSteps.map((st) => (
+                      <Link
+                        key={st.skillSlug}
+                        href={`/roadmaps/${st.skillSlug}`}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-purple-600/20 text-gray-300 hover:text-purple-300 border border-white/10 hover:border-purple-500/30 text-[11px] font-medium transition-all"
+                      >
+                        <TechIcon slug={st.skillSlug} className="w-3.5 h-3.5" />
+                        <span>{st.skillTitle}</span>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Footer Actions */}
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-4">
                   <div className="text-[11px] text-gray-400">
                     <strong className="text-purple-400 font-bold">
-                      {availableStepCount}
+                      {liveSteps.length}
                     </strong>{" "}
                     of {role.steps.length} skills live now
                   </div>
 
                   <Link
-                    href={`/roadmaps/role/${role.slug}`}
+                    href={destinationUrl}
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-purple-400 hover:text-purple-300 group-hover:gap-2 transition-all"
                   >
                     <span>View Roadmap</span>

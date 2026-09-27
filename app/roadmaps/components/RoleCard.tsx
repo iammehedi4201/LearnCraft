@@ -20,7 +20,7 @@ export function RoleCard({ role }: RoleCardProps) {
 
   return (
     <Link href={`/roadmaps/role/${role.slug}`}>
-      <div className="group relative p-6 sm:p-8 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full">
+      <div className="group relative p-6 sm:p-8 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full">
         {/* Icon */}
         <div className="w-12 h-12 rounded-2xl bg-ds-feature-lighter flex items-center justify-center mb-5 group-hover:scale-110 transition-transform">
           <RoleIcon role={role.slug} className="w-6 h-6 text-purple-400" />

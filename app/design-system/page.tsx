@@ -352,7 +352,7 @@ export default function DesignSystemPlayground(): JSX.Element {
                           {token.name}
                         </p>
                         <p className="text-[9px] font-mono text-ds-text-soft mt-0.5">{token.tailwindClass}</p>
-                        <div className="mt-2 pt-2 border-t border-ds-stroke-soft/60 flex items-center justify-between font-mono text-[9px] text-ds-text-sub">
+                        <div className="mt-2 pt-2 border-t border-ds-stroke-soft flex items-center justify-between font-mono text-[9px] text-ds-text-sub">
                           <span>L: {token.lightHex}</span>
                           <span>D: {token.darkHex}</span>
                         </div>

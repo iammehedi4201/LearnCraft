@@ -212,7 +212,7 @@ function renderToken(token: BlockToken, idx: number, compact: boolean): React.Re
         return (
           <h1
             key={key}
-            className={`font-bold text-ds-text-strong tracking-tight border-b border-ds-stroke-soft/60 pb-1.5 mt-2 first:mt-0 ${
+            className={`font-bold text-ds-text-strong tracking-tight border-b border-ds-stroke-soft pb-1.5 mt-2 first:mt-0 ${
               compact ? "text-[15px]" : "text-base sm:text-[17px]"
             }`}
           >

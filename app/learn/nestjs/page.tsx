@@ -237,7 +237,7 @@ export default function NestJSPage() {
                     </div>
                   </div>
 
-                  <div className="relative z-10 mt-4 pt-3 border-t border-ds-stroke-soft group-hover:border-ds-stroke-soft/80 text-[11px] font-mono text-ds-text-soft group-hover:text-ds-text-sub transition-colors duration-200">
+                  <div className="relative z-10 mt-4 pt-3 border-t border-ds-stroke-soft group-hover:border-ds-stroke-soft text-[11px] font-mono text-ds-text-soft group-hover:text-ds-text-sub transition-colors duration-200">
                     {phase.scope}
                   </div>
                 </button>

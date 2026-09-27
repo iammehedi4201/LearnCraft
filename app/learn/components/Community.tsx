@@ -48,7 +48,7 @@ export function Community() {
                 <div className="space-y-6">
                   <div className="h-4 w-1/2 bg-ds-bg-soft rounded-full" />
                   <div className="h-4 w-3/4 bg-ds-bg-weak/80 rounded-full" />
-                  <div className="h-32 w-full bg-ds-bg-weak/50 rounded-2xl border border-ds-stroke-soft/60" />
+                  <div className="h-32 w-full bg-ds-bg-weak/50 rounded-2xl border border-ds-stroke-soft" />
                   <div className="flex gap-4">
                     <div className="h-10 w-10 rounded-full bg-ds-info-lighter/50" />
                     <div className="space-y-2 flex-1">
