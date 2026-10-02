@@ -2,25 +2,21 @@
 
 /**
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * MY STUDY NOTES — Dedicated Notes & Highlights Workspace
+ * MY STUDY NOTES — Simple, Clean Personal Notes & Highlights Center
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * Clean, distraction-free knowledge management center for LearnCraft.
- * Organize, search, filter, edit, and export all personal notes and
- * lesson highlights taken during your learning journey.
+ * Distraction-free workspace to search, filter, edit, and organize all
+ * personal notes and highlights taken across LearnCraft lessons.
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
 import { useRevision } from "@/context/revision-context";
-import {
-  AnnotationItem,
-  RevisionSortOption,
-} from "@/types/revision";
+import { AnnotationItem, RevisionSortOption } from "@/types/revision";
 import {
   exportAnnotationsAsMarkdown,
   exportAnnotationsAsJson,
@@ -128,29 +124,17 @@ const IcCheck = () => (
   </svg>
 );
 
-const IcFolder = () => (
-  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-  </svg>
-);
-
-const IcBook = () => (
-  <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-  </svg>
-);
-
-const IcNoteEdit = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-  </svg>
-);
-
 const IcBolt = () => (
   <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+  </svg>
+);
+
+const IcDots = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+    <circle cx="12" cy="12" r="1.5" />
+    <circle cx="19" cy="12" r="1.5" />
+    <circle cx="5" cy="12" r="1.5" />
   </svg>
 );
 
@@ -169,7 +153,7 @@ function extractQuestion(item: AnnotationItem): string {
       raw = firstLine;
     }
   }
-  if (!raw) raw = item.selectedText || "Note";
+  if (!raw) raw = item.selectedText || "Study Note";
 
   return raw
     .replace(/^#{1,6}\s*/, "")
@@ -183,6 +167,8 @@ function extractQuestion(item: AnnotationItem): string {
 export default function NotesPage(): JSX.Element {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const optionsMenuRef = useRef<HTMLDivElement>(null);
+
   const {
     annotations,
     stats,
@@ -194,14 +180,29 @@ export default function NotesPage(): JSX.Element {
 
   const [activeTab, setActiveTab] = useState<NotesFilterTab>("all");
   const [selectedTopic, setSelectedTopic] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState<string>("" );
   const [sortBy, setSortBy] = useState<RevisionSortOption>("newest");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [importStatus, setImportStatus] = useState<string | null>(null);
+  const [isOptionsMenuOpen, setIsOptionsMenuOpen] = useState<boolean>(false);
 
   const favoritesCount = useMemo(() => {
     return annotations.filter((a) => Boolean(a.isFavorite)).length;
   }, [annotations]);
+
+  // Click outside to close options menu
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        optionsMenuRef.current &&
+        !optionsMenuRef.current.contains(e.target as Node)
+      ) {
+        setIsOptionsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Filter & search annotations
   const filteredAnnotations = useMemo(() => {
@@ -261,28 +262,7 @@ export default function NotesPage(): JSX.Element {
     return list;
   }, [annotations, activeTab, selectedTopic, searchQuery, sortBy]);
 
-  // Group filtered items by topic
-  const groupedByTopic = useMemo(() => {
-    const map = new Map<
-      string,
-      { topicTitle: string; topicId: string; items: AnnotationItem[] }
-    >();
-
-    filteredAnnotations.forEach((item) => {
-      if (!map.has(item.topicId)) {
-        map.set(item.topicId, {
-          topicId: item.topicId,
-          topicTitle: item.topicTitle,
-          items: [],
-        });
-      }
-      map.get(item.topicId)!.items.push(item);
-    });
-
-    return Array.from(map.values());
-  }, [filteredAnnotations]);
-
-  // Available topics for filter chips
+  // Available topics for dropdown
   const availableTopics = useMemo(() => {
     const topicCounts: Record<string, { title: string; count: number }> = {};
     annotations.forEach((item) => {
@@ -307,6 +287,7 @@ export default function NotesPage(): JSX.Element {
 
   // Export handlers
   const handleExportMarkdown = () => {
+    setIsOptionsMenuOpen(false);
     const md = exportAnnotationsAsMarkdown();
     const blob = new Blob([md], { type: "text/markdown" });
     const url = URL.createObjectURL(blob);
@@ -318,6 +299,7 @@ export default function NotesPage(): JSX.Element {
   };
 
   const handleExportJson = () => {
+    setIsOptionsMenuOpen(false);
     const json = exportAnnotationsAsJson();
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -328,17 +310,8 @@ export default function NotesPage(): JSX.Element {
     URL.revokeObjectURL(url);
   };
 
-  // Deep-link to lesson
-  const handleGoToLesson = (item: AnnotationItem) => {
-    const sectionQuery = item.sectionId
-      ? `&section=${encodeURIComponent(item.sectionId)}`
-      : "";
-    router.push(
-      `${item.lessonPath}?highlightId=${encodeURIComponent(item.id)}${sectionQuery}`,
-    );
-  };
-
   const handleFileImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsOptionsMenuOpen(false);
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -358,516 +331,345 @@ export default function NotesPage(): JSX.Element {
     e.target.value = "";
   };
 
-  const COLOR_BORDER: Record<string, string> = {
-    feature: "bg-ds-feature-base",
-    away: "bg-ds-away-base",
-    success: "bg-ds-success-base",
-    info: "bg-ds-info-base",
-    highlighted: "bg-amber-400",
+  // Deep-link to lesson
+  const handleGoToLesson = (item: AnnotationItem) => {
+    const sectionQuery = item.sectionId
+      ? `&section=${encodeURIComponent(item.sectionId)}`
+      : "";
+    router.push(
+      `${item.lessonPath}?highlightId=${encodeURIComponent(item.id)}${sectionQuery}`,
+    );
   };
 
   return (
     <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-ds-text-strong font-sans selection:bg-ds-feature-light/20">
       <Nav />
 
-      <main className="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20">
+      <main className="max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-20">
         {/* Import status banner */}
         {importStatus && (
-          <div className="mb-4 px-4 py-2.5 rounded-xl bg-ds-success-lighter border border-ds-success-base text-xs font-bold text-ds-success-dark flex items-center gap-2">
+          <div className="mb-4 px-4 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-bold text-emerald-400 flex items-center gap-2">
             <IcCheck /> {importStatus}
           </div>
         )}
 
-        {/* PAGE HEADER */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-ds-text-strong font-display">
-              My Study Notes & Highlights
+        {/* ─── SIMPLE CLEAN HEADER ─── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white font-display">
+              My Study Notes
             </h1>
-
-            <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-1.5">
-              <span className="text-xs text-ds-text-sub font-medium">
-                {stats.total} items saved
-              </span>
-              <span className="text-ds-stroke-soft">&middot;</span>
-              <span className="text-xs text-ds-feature-dark font-bold">
-                {stats.notesCount} notes
-              </span>
-              <span className="text-ds-stroke-soft">&middot;</span>
-              <span className="text-xs text-ds-away-dark font-bold">
-                {stats.highlightsCount} highlights
-              </span>
-              <span className="text-ds-stroke-soft">&middot;</span>
-              <span className="text-xs text-amber-400 font-bold">
-                {favoritesCount} starred
-              </span>
-              <span className="text-ds-stroke-soft">&middot;</span>
-              <span className="text-xs text-ds-success-dark font-bold">
-                {stats.topicsCount} topics
-              </span>
-            </div>
+            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+              Organize, search, and manage your notes and key takeaways.
+            </p>
           </div>
 
-          {/* Header Action Buttons */}
-          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-3 shrink-0">
             <Link
               href="/revision"
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40 hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 active:bg-purple-700 text-white font-bold text-xs shadow-lg shadow-purple-600/20 transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <IcBolt />
-              <span>Go to Quick Revision</span>
+              <span>Quick Revision</span>
             </Link>
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              onChange={handleFileImport}
-              className="hidden"
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="px-3.5 py-2 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong font-bold text-xs transition-all active:scale-95 shadow-sm flex items-center gap-1.5 cursor-pointer"
-              title="Import JSON backup"
-            >
-              <IcImport /> Import
-            </button>
-            <button
-              onClick={handleExportMarkdown}
-              className="px-3.5 py-2 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong font-bold text-xs transition-all active:scale-95 shadow-sm flex items-center gap-1.5 cursor-pointer"
-              title="Export as Markdown"
-            >
-              <IcDocument /> Markdown
-            </button>
-            <button
-              onClick={handleExportJson}
-              className="px-3.5 py-2 rounded-xl bg-ds-bg-white hover:bg-ds-bg-soft text-ds-text-strong font-bold text-xs transition-all active:scale-95 shadow-sm flex items-center gap-1.5 cursor-pointer"
-              title="JSON backup"
-            >
-              <IcSave /> JSON
-            </button>
-            <button
-              onClick={() => {
-                if (confirm("Reset and load sample revision notes?"))
-                  clearAllAnnotations(true);
-              }}
-              className="px-3 py-2 rounded-xl text-ds-text-soft hover:text-ds-text-strong text-xs font-bold transition-all hover:bg-ds-bg-weak cursor-pointer"
-            >
-              Restore Samples
-            </button>
+            {/* Options Dropdown Menu */}
+            <div className="relative" ref={optionsMenuRef}>
+              <button
+                onClick={() => setIsOptionsMenuOpen((prev) => !prev)}
+                className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white transition-all cursor-pointer flex items-center justify-center"
+                title="Backup & options"
+              >
+                <IcDots />
+              </button>
+
+              {isOptionsMenuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-48 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-2xl p-1.5 z-50 animate-in fade-in duration-150">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileImport}
+                    className="hidden"
+                  />
+                  <button
+                    onClick={() => {
+                      setIsOptionsMenuOpen(false);
+                      fileInputRef.current?.click();
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] flex items-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <IcImport />
+                    <span>Import Backup (.json)</span>
+                  </button>
+                  <button
+                    onClick={handleExportMarkdown}
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] flex items-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <IcDocument />
+                    <span>Export Markdown (.md)</span>
+                  </button>
+                  <button
+                    onClick={handleExportJson}
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] flex items-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <IcSave />
+                    <span>Export JSON (.json)</span>
+                  </button>
+                  <div className="h-px bg-white/[0.06] my-1" />
+                  <button
+                    onClick={() => {
+                      setIsOptionsMenuOpen(false);
+                      if (confirm("Reset notes and reload samples?")) {
+                        clearAllAnnotations(true);
+                      }
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-xl text-xs font-semibold text-rose-400 hover:bg-rose-500/10 flex items-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <span>Restore Samples</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* NAVIGATION & FILTER BAR */}
-        <div className="flex items-center gap-2 p-1.5 bg-ds-bg-white rounded-2xl shadow-sm mb-6 flex-wrap">
-          <div className="flex items-center gap-1">
+        {/* ─── SIMPLE UNIFIED FILTER BAR ─── */}
+        <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
+          {/* View / Type Filter Tabs */}
+          <div className="flex items-center p-1 bg-white/[0.03] border border-white/[0.06] rounded-xl flex-wrap">
             {[
-              {
-                key: "all",
-                icon: <IcGrid />,
-                label: "All Items",
-                count: stats.total,
-              },
-              {
-                key: "notes",
-                icon: <IcNote />,
-                label: "Notes",
-                count: stats.notesCount,
-              },
-              {
-                key: "highlights",
-                icon: <IcHighlight />,
-                label: "Highlights",
-                count: stats.highlightsCount,
-              },
-              {
-                key: "favorites",
-                icon: <IcStar filled={true} />,
-                label: "Starred",
-                count: favoritesCount,
-              },
-            ].map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key as NotesFilterTab)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  activeTab === tab.key
-                    ? "bg-ds-feature-base text-ds-static-white shadow-sm"
-                    : "text-ds-text-sub hover:text-ds-text-strong hover:bg-ds-bg-weak"
-                }`}
-              >
-                {tab.icon}
-                <span>{tab.label}</span>
-                {tab.count !== undefined && (
+              { key: "all", label: "All Items", count: annotations.length, icon: <IcGrid /> },
+              { key: "notes", label: "Notes", count: stats.notesCount, icon: <IcNote /> },
+              { key: "highlights", label: "Highlights", count: stats.highlightsCount, icon: <IcHighlight /> },
+              { key: "favorites", label: "Starred", count: favoritesCount, icon: <IcStar filled={true} /> },
+            ].map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key as NotesFilterTab)}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    isActive
+                      ? "bg-purple-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  {tab.icon}
+                  <span>{tab.label}</span>
                   <span
-                    className={`text-[10px] px-1.5 rounded-full font-mono ${
-                      activeTab === tab.key
-                        ? "bg-ds-static-white/20 text-ds-static-white"
-                        : "bg-ds-bg-soft text-ds-text-sub"
+                    className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+                      isActive ? "bg-white/20 text-white" : "bg-white/[0.05] text-slate-400"
                     }`}
                   >
                     {tab.count}
                   </span>
-                )}
-              </button>
-            ))}
-          </div>
-
-          <div className="w-px h-6 bg-ds-stroke-soft mx-1 hidden sm:block" />
-
-          {/* Search Input */}
-          <div className="relative flex-1 min-w-[180px]">
-            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ds-text-soft pointer-events-none">
-              <IcSearch />
-            </span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search notes, code snippets, lessons..."
-              className="w-full pl-9 pr-8 py-2 rounded-xl bg-ds-bg-weak text-xs text-ds-text-strong placeholder:text-ds-text-disabled focus:ring-2 focus:ring-ds-feature-base/20 outline-none transition-all"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ds-text-soft hover:text-ds-text-strong font-bold text-sm leading-none"
-              >
-                &times;
-              </button>
-            )}
-          </div>
-
-          {/* Sort Dropdown */}
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as RevisionSortOption)}
-            className="px-3 py-2 rounded-xl bg-ds-bg-weak text-xs font-bold text-ds-text-sub outline-none cursor-pointer"
-          >
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="topic">By Topic</option>
-            <option value="lesson">By Lesson</option>
-          </select>
-        </div>
-
-        {/* MAIN NOTES CONTENT AREA */}
-        <div className="flex gap-6 items-start">
-          {/* Left Sidebar (Topics list) */}
-          <aside className="w-52 shrink-0 hidden lg:flex flex-col gap-1 sticky top-6">
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-ds-text-soft px-2.5 mb-1">
-              Topics
-            </h3>
-            <button
-              onClick={() => setSelectedTopic("all")}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
-                selectedTopic === "all"
-                  ? "bg-ds-feature-base text-ds-static-white shadow-sm"
-                  : "text-ds-text-strong hover:bg-ds-bg-white hover:shadow-sm"
-              }`}
-            >
-              <IcFolder />
-              <span className="flex-1">All Topics</span>
-              <span
-                className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full ${
-                  selectedTopic === "all"
-                    ? "bg-ds-static-white/20 text-ds-static-white"
-                    : "bg-ds-bg-soft text-ds-text-soft"
-                }`}
-              >
-                {stats.total}
-              </span>
-            </button>
-            {availableTopics.map((topic) => {
-              const isActive = selectedTopic === topic.id;
-              return (
-                <button
-                  key={topic.id}
-                  onClick={() => setSelectedTopic(topic.id)}
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-left cursor-pointer ${
-                    isActive
-                      ? "bg-ds-feature-base text-ds-static-white shadow-sm"
-                      : "text-ds-text-strong hover:bg-ds-bg-white hover:shadow-sm"
-                  }`}
-                >
-                  <IcFolder />
-                  <span className="flex-1 truncate">{topic.title}</span>
-                  <span
-                    className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full shrink-0 ${
-                      isActive
-                        ? "bg-ds-static-white/20 text-ds-static-white"
-                        : "bg-ds-bg-soft text-ds-text-soft"
-                    }`}
-                  >
-                    {topic.count}
-                  </span>
                 </button>
               );
             })}
-          </aside>
+          </div>
 
-          {/* Notes Grid */}
-          <div className="flex-1 min-w-0">
-            {/* Mobile topic chips */}
-            <div className="flex gap-2 overflow-x-auto pb-2 mb-5 lg:hidden scrollbar-none">
-              <button
-                onClick={() => setSelectedTopic("all")}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold shrink-0 border transition-all ${
-                  selectedTopic === "all"
-                    ? "bg-ds-feature-base text-ds-static-white border-ds-feature-base"
-                    : "bg-ds-bg-white text-ds-text-sub border-white/[0.08]"
-                }`}
-              >
-                All ({stats.total})
-              </button>
-              {availableTopics.map((topic) => (
+          {/* Search Bar & Dropdown Selectors */}
+          <div className="flex items-center gap-2 flex-1 justify-end flex-wrap min-w-[280px]">
+            {/* Search Input */}
+            <div className="relative flex-1 max-w-xs min-w-[160px]">
+              <span className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                <IcSearch />
+              </span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search notes..."
+                className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-purple-500/50 transition-all"
+              />
+              {searchQuery && (
                 <button
-                  key={topic.id}
-                  onClick={() => setSelectedTopic(topic.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold shrink-0 border transition-all ${
-                    selectedTopic === topic.id
-                      ? "bg-ds-feature-base text-ds-static-white border-ds-feature-base"
-                      : "bg-ds-bg-white text-ds-text-sub border-white/[0.08]"
-                  }`}
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 hover:text-white"
                 >
-                  {topic.title}{" "}
-                  <span className="text-[10px] font-mono opacity-70 ml-1">
-                    {topic.count}
-                  </span>
+                  ✕
                 </button>
-              ))}
+              )}
             </div>
 
-            {/* Empty state */}
-            {groupedByTopic.length === 0 ? (
-              <div className="py-20 text-center bg-ds-bg-white rounded-3xl border border-white/[0.08]">
-                <div className="w-16 h-16 rounded-2xl bg-ds-feature-lighter text-ds-feature-dark flex items-center justify-center mx-auto mb-4">
-                  <IcNoteEdit />
-                </div>
-                <h3 className="text-lg font-bold text-ds-text-strong font-display">
-                  {searchQuery ? "No matching notes found" : "No notes saved yet"}
-                </h3>
-                <p className="text-sm text-ds-text-sub mt-2 max-w-xs mx-auto leading-relaxed">
-                  {searchQuery
-                    ? `No notes or highlights match "${searchQuery}".`
-                    : "Select any text in a lesson to save a highlight or add a personal note."}
-                </p>
-                {!searchQuery && (
-                  <div className="mt-6">
-                    <Link
-                      href="/learn/nestjs/nj02-oop-foundations"
-                      className="inline-flex px-5 py-2.5 rounded-xl bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold transition-all shadow-md"
-                    >
-                      Browse Lessons
-                      <svg
-                        className="w-3 h-3 ml-1.5 mt-0.5"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                      >
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                      </svg>
-                    </Link>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="space-y-10">
-                {groupedByTopic.map((group) => (
-                  <div key={group.topicId}>
-                    {/* Topic heading */}
-                    <div className="flex items-center gap-3 pb-3 mb-4">
-                      <div className="w-8 h-8 rounded-xl bg-ds-feature-lighter/80 flex items-center justify-center text-ds-feature-dark shrink-0">
-                        <IcFolder />
-                      </div>
-                      <h2 className="text-lg font-black text-ds-text-strong font-display tracking-tight">
-                        {group.topicTitle}
-                      </h2>
-                      <span className="text-[11px] font-bold text-ds-text-soft font-mono px-2.5 py-0.5 rounded-full bg-ds-bg-weak">
-                        {group.items.length}{" "}
-                        {group.items.length === 1 ? "item" : "items"}
-                      </span>
-                    </div>
-
-                    {/* Cards grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                      {group.items.map((item) => {
-                        const colorKey = item.color || "feature";
-                        const questionTitle = extractQuestion(item);
-
-                        return (
-                          <div
-                            key={item.id}
-                            className="flex flex-col rounded-2xl bg-ds-bg-white shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 overflow-hidden group border border-white/[0.06]"
-                          >
-                            {/* Accent stripe */}
-                            <div
-                              className={`h-1 w-full ${COLOR_BORDER[colorKey] || "bg-ds-feature-base"}`}
-                            />
-
-                            <div className="p-4 flex flex-col gap-3 flex-1">
-                              {/* Card header */}
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="min-w-0">
-                                  <p className="text-[10px] font-bold text-ds-text-soft uppercase tracking-wider truncate">
-                                    {item.topicTitle}
-                                  </p>
-                                  <div className="flex items-center gap-1.5 text-xs font-semibold text-ds-text-strong truncate mt-0.5">
-                                    <IcBook />
-                                    <span className="truncate">
-                                      {item.lessonTitle}
-                                    </span>
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center gap-1 shrink-0">
-                                  <button
-                                    onClick={() => toggleFavorite(item.id)}
-                                    className={`p-1.5 rounded-lg transition-all active:scale-90 cursor-pointer ${
-                                      item.isFavorite
-                                        ? "text-amber-500"
-                                        : "text-ds-text-disabled hover:text-amber-400"
-                                    }`}
-                                    title={
-                                      item.isFavorite
-                                        ? "Starred"
-                                        : "Star this note"
-                                    }
-                                  >
-                                    <IcStar filled={item.isFavorite ?? false} />
-                                  </button>
-                                  <button
-                                    onClick={() => toggleMastered(item.id)}
-                                    className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full transition-all cursor-pointer ${
-                                      item.mastered
-                                        ? "bg-ds-success-lighter text-ds-success-dark"
-                                        : "bg-ds-bg-weak text-ds-text-soft hover:text-ds-text-strong"
-                                    }`}
-                                    title={
-                                      item.mastered
-                                        ? "Mastered"
-                                        : "Mark as mastered"
-                                    }
-                                  >
-                                    {item.mastered ? "Mastered" : "Review"}
-                                  </button>
-                                </div>
-                              </div>
-
-                              {/* Clickable Note Body / Question */}
-                              <div
-                                onClick={() => openNoteDialog(item)}
-                                className="cursor-pointer group/q py-2 flex-1 flex flex-col justify-between gap-2.5 rounded-xl hover:bg-ds-bg-weak/40 p-2.5 -mx-2.5 transition-colors"
-                                title="Click to view full note in side panel"
-                              >
-                                <div>
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-ds-feature-lighter/70 text-ds-feature-dark font-bold text-[10px] uppercase tracking-wider mb-2">
-                                    {item.note ? "Note" : "Highlight"}
-                                  </span>
-                                  <h3 className="text-base font-bold text-ds-text-strong group-hover/q:text-ds-feature-base transition-colors leading-snug font-display">
-                                    {questionTitle}
-                                  </h3>
-                                </div>
-
-                                {item.note ? (
-                                  <div className="text-xs text-ds-text-sub line-clamp-3 leading-relaxed">
-                                    <MarkdownRenderer content={item.note} />
-                                  </div>
-                                ) : (
-                                  <blockquote className="text-xs text-ds-text-sub italic line-clamp-2">
-                                    &ldquo;{item.selectedText}&rdquo;
-                                  </blockquote>
-                                )}
-
-                                <div className="flex items-center gap-1 text-xs font-semibold text-ds-feature-base group-hover/q:translate-x-0.5 transition-transform pt-1">
-                                  <span>View full note</span>
-                                  <svg
-                                    className="w-3.5 h-3.5"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2.5"
-                                  >
-                                    <path d="M5 12h14" />
-                                    <path d="m12 5 7 7-7 7" />
-                                  </svg>
-                                </div>
-                              </div>
-
-                              {/* Saved Date */}
-                              <div className="flex items-center justify-between text-[10px] text-ds-text-disabled pt-1">
-                                <span>
-                                  Saved {new Date(item.createdAt).toLocaleDateString()}
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* Card footer */}
-                            <div className="px-4 py-3 bg-ds-bg-weak/30 flex items-center justify-between gap-2">
-                              <button
-                                onClick={() => handleGoToLesson(item)}
-                                className="px-3.5 py-1.5 rounded-xl bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold transition-all active:scale-95 shadow-sm flex items-center gap-1.5 cursor-pointer"
-                              >
-                                Lesson
-                                <svg
-                                  className="w-3 h-3"
-                                  viewBox="0 0 24 24"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  strokeWidth="2.5"
-                                >
-                                  <path d="M5 12h14" />
-                                  <path d="m12 5 7 7-7 7" />
-                                </svg>
-                              </button>
-
-                              <div className="flex items-center gap-0.5">
-                                <button
-                                  onClick={() =>
-                                    handleCopySnippet(
-                                      item.note || item.selectedText || questionTitle,
-                                      item.id,
-                                    )
-                                  }
-                                  className="p-2 rounded-xl text-ds-text-soft hover:text-ds-text-strong hover:bg-ds-bg-soft transition-colors cursor-pointer"
-                                  title="Copy text"
-                                >
-                                  {copiedId === item.id ? (
-                                    <IcCheck />
-                                  ) : (
-                                    <IcCopy />
-                                  )}
-                                </button>
-                                <button
-                                  onClick={() => openNoteDialog(item)}
-                                  className="p-2 rounded-xl text-ds-text-soft hover:text-ds-text-strong hover:bg-ds-bg-soft transition-colors cursor-pointer"
-                                  title="Open note in side panel"
-                                >
-                                  <IcEdit />
-                                </button>
-                                <button
-                                  onClick={() => {
-                                    if (confirm("Delete this item?"))
-                                      deleteAnnotation(item.id);
-                                  }}
-                                  className="p-2 rounded-xl text-ds-text-soft hover:text-ds-error-base hover:bg-ds-error-lighter transition-colors cursor-pointer"
-                                  title="Delete"
-                                >
-                                  <IcTrash />
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+            {/* Topic Filter Dropdown */}
+            {availableTopics.length > 1 && (
+              <select
+                value={selectedTopic}
+                onChange={(e) => setSelectedTopic(e.target.value)}
+                className="px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs font-bold text-slate-300 outline-none cursor-pointer"
+              >
+                <option value="all" className="bg-[#0E121B] text-white">
+                  All Topics ({annotations.length})
+                </option>
+                {availableTopics.map((t) => (
+                  <option key={t.id} value={t.id} className="bg-[#0E121B] text-white">
+                    {t.title} ({t.count})
+                  </option>
                 ))}
+              </select>
+            )}
+
+            {/* Sort Dropdown */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as RevisionSortOption)}
+              className="px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-xs font-bold text-slate-300 outline-none cursor-pointer"
+            >
+              <option value="newest" className="bg-[#0E121B] text-white">Newest</option>
+              <option value="oldest" className="bg-[#0E121B] text-white">Oldest</option>
+              <option value="topic" className="bg-[#0E121B] text-white">By Topic</option>
+              <option value="lesson" className="bg-[#0E121B] text-white">By Lesson</option>
+            </select>
+          </div>
+        </div>
+
+        {/* ─── NOTES FULL-WIDTH RESPONSIVE GRID ─── */}
+        {filteredAnnotations.length === 0 ? (
+          <div className="py-20 text-center bg-white/[0.02] border border-white/[0.06] rounded-3xl">
+            <div className="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-3 text-xl">
+              📝
+            </div>
+            <h3 className="text-base font-bold text-white font-display">
+              {searchQuery ? "No matching notes found" : "No study notes saved yet"}
+            </h3>
+            <p className="text-xs text-slate-400 mt-1 max-w-xs mx-auto leading-relaxed">
+              {searchQuery
+                ? `No items match "${searchQuery}". Try a different keyword.`
+                : "Highlight or take notes while studying lessons to build your personal knowledge base."}
+            </p>
+            {!searchQuery && (
+              <div className="mt-4">
+                <Link
+                  href="/learn/nestjs/nj02-oop-foundations"
+                  className="inline-flex px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all"
+                >
+                  Browse Lessons
+                </Link>
               </div>
             )}
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filteredAnnotations.map((item) => {
+              const questionTitle = extractQuestion(item);
+
+              return (
+                <div
+                  key={item.id}
+                  className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.12] transition-all flex flex-col justify-between gap-3 group"
+                >
+                  <div>
+                    {/* Header: Topic, Star & Mastered Toggle */}
+                    <div className="flex items-center justify-between text-xs text-slate-400 mb-2 gap-2">
+                      <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-300 text-[10px] font-bold uppercase truncate max-w-[140px]">
+                        {item.topicTitle}
+                      </span>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => toggleFavorite(item.id)}
+                          className={`p-1 rounded-lg transition-all active:scale-90 cursor-pointer ${
+                            item.isFavorite
+                              ? "text-amber-400"
+                              : "text-slate-500 hover:text-amber-400"
+                          }`}
+                          title={item.isFavorite ? "Starred" : "Star this note"}
+                        >
+                          <IcStar filled={Boolean(item.isFavorite)} />
+                        </button>
+                        <button
+                          onClick={() => toggleMastered(item.id)}
+                          className={`text-[9px] font-bold px-2 py-0.5 rounded-full transition-all cursor-pointer ${
+                            item.mastered
+                              ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/20"
+                              : "bg-white/[0.04] text-slate-400 hover:text-white"
+                          }`}
+                          title={item.mastered ? "Mastered" : "Mark as mastered"}
+                        >
+                          {item.mastered ? "Mastered" : "Review"}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Lesson Title */}
+                    <p className="text-[11px] text-slate-400 truncate mb-1.5 font-medium">
+                      {item.lessonTitle}
+                    </p>
+
+                    {/* Question / Note title */}
+                    <div
+                      onClick={() => openNoteDialog(item)}
+                      className="cursor-pointer group/title"
+                      title="Click to view & edit full note"
+                    >
+                      <h4 className="text-sm font-bold text-white group-hover/title:text-purple-300 transition-colors leading-snug font-display">
+                        {questionTitle}
+                      </h4>
+
+                      {/* Note or Highlight snippet */}
+                      <div className="mt-2 text-xs text-slate-400 line-clamp-3 leading-relaxed">
+                        {item.note ? (
+                          <MarkdownRenderer content={item.note} />
+                        ) : (
+                          <blockquote className="italic text-slate-300 border-l-2 border-purple-500/40 pl-2">
+                            &ldquo;{item.selectedText}&rdquo;
+                          </blockquote>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer: Lesson link & Actions */}
+                  <div className="flex items-center justify-between pt-3 border-t border-white/[0.04] text-xs">
+                    <button
+                      onClick={() => handleGoToLesson(item)}
+                      className="text-purple-400 hover:text-purple-300 font-bold hover:underline flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <span>Lesson</span>
+                      <span>→</span>
+                    </button>
+
+                    <div className="flex items-center gap-0.5">
+                      <button
+                        onClick={() =>
+                          handleCopySnippet(
+                            item.note || item.selectedText || questionTitle,
+                            item.id,
+                          )
+                        }
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
+                        title="Copy text snippet"
+                      >
+                        {copiedId === item.id ? <IcCheck /> : <IcCopy />}
+                      </button>
+                      <button
+                        onClick={() => openNoteDialog(item)}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
+                        title="Edit note"
+                      >
+                        <IcEdit />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (confirm("Delete this note?")) {
+                            deleteAnnotation(item.id);
+                          }
+                        }}
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                        title="Delete note"
+                      >
+                        <IcTrash />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </main>
 
       <Footer />

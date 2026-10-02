@@ -276,7 +276,7 @@ export default function QuickRevisionPage(): JSX.Element {
 
         {/* ─── VIEW 1: CLEAN INTERACTIVE FLASHCARD ─── */}
         {activeView === "flashcards" && (
-          <div>
+          <div className="w-full">
             {cardsList.length === 0 ? (
               <div className="py-16 text-center bg-white/[0.02] border border-white/[0.06] rounded-3xl">
                 <div className="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-3 text-xl">
@@ -298,7 +298,7 @@ export default function QuickRevisionPage(): JSX.Element {
                 </div>
               </div>
             ) : currentFlashcard ? (
-              <div className="space-y-4 max-w-3xl mx-auto">
+              <div className="space-y-4 w-full">
                 {/* Progress bar and counter */}
                 <div className="flex items-center justify-between text-xs text-slate-400">
                   <span className="font-mono font-bold text-white">
@@ -309,9 +309,9 @@ export default function QuickRevisionPage(): JSX.Element {
                   </span>
                 </div>
 
-                <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
+                <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-purple-500 rounded-full transition-all duration-300"
+                    className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-300"
                     style={{
                       width: `${((flashcardIndex + 1) / cardsList.length) * 100}%`,
                     }}
@@ -321,10 +321,11 @@ export default function QuickRevisionPage(): JSX.Element {
                 {/* The Flashcard */}
                 <div
                   onClick={() => setIsCardFlipped(!isCardFlipped)}
-                  className="min-h-[300px] p-6 sm:p-10 rounded-3xl bg-white/[0.02] border border-white/[0.08] hover:border-purple-500/30 shadow-2xl transition-all flex flex-col justify-between cursor-pointer group select-none"
+                  className="min-h-[320px] sm:min-h-[360px] p-8 sm:p-12 rounded-3xl bg-white/[0.02] border border-white/[0.08] hover:border-purple-500/30 shadow-2xl transition-all flex flex-col justify-between cursor-pointer group select-none relative overflow-hidden"
                 >
-                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-400">
-                    <span className="text-purple-400">
+                  <div className="flex items-center justify-between text-[11px] font-black uppercase tracking-wider text-slate-400">
+                    <span className="text-purple-400 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
                       {isCardFlipped ? "Answer / Note" : "Question"}
                     </span>
                     <span className="group-hover:text-purple-300 transition-colors">
@@ -334,26 +335,28 @@ export default function QuickRevisionPage(): JSX.Element {
 
                   <div className="py-8 my-auto">
                     {isCardFlipped ? (
-                      <div className="space-y-3">
+                      <div className="space-y-3 max-w-5xl">
                         {currentFlashcard.note ? (
-                          <div className="text-base text-slate-200 leading-relaxed">
+                          <div className="text-base sm:text-lg text-slate-200 leading-relaxed">
                             <MarkdownRenderer content={currentFlashcard.note} />
                           </div>
                         ) : (
-                          <blockquote className="text-sm text-slate-300 italic leading-relaxed">
+                          <blockquote className="text-base sm:text-lg text-slate-300 italic leading-relaxed">
                             &ldquo;{currentFlashcard.selectedText}&rdquo;
                           </blockquote>
                         )}
                       </div>
                     ) : (
-                      <h3 className="text-xl sm:text-2xl font-bold text-white leading-snug font-display">
-                        {extractQuestion(currentFlashcard)}
-                      </h3>
+                      <div className="max-w-5xl">
+                        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-snug font-display">
+                          {extractQuestion(currentFlashcard)}
+                        </h3>
+                      </div>
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-white/[0.06] text-xs text-slate-400">
-                    <span className="text-xs truncate max-w-[240px]">
+                  <div className="flex items-center justify-between pt-5 border-t border-white/[0.06] text-xs text-slate-400">
+                    <span className="text-xs truncate max-w-md">
                       {currentFlashcard.lessonTitle}
                     </span>
                     <button
@@ -370,39 +373,39 @@ export default function QuickRevisionPage(): JSX.Element {
 
                 {/* Grading buttons when card is revealed */}
                 {isCardFlipped ? (
-                  <div className="grid grid-cols-4 gap-2.5 pt-1 animate-in fade-in duration-150">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1 animate-in fade-in duration-150">
                     <button
                       onClick={() => handleGradeCard("again")}
-                      className="py-2.5 px-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold text-xs flex flex-col items-center cursor-pointer transition-all active:scale-95"
+                      className="py-3 px-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-300 font-bold text-xs flex flex-col items-center cursor-pointer transition-all active:scale-95"
                     >
-                      <span>Again</span>
+                      <span className="font-bold">Again</span>
                       <span className="text-[10px] font-mono text-rose-400">
                         {intervalPreviews.find((p) => p.grade === "again")?.badge || "< 1d"}
                       </span>
                     </button>
                     <button
                       onClick={() => handleGradeCard("hard")}
-                      className="py-2.5 px-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold text-xs flex flex-col items-center cursor-pointer transition-all active:scale-95"
+                      className="py-3 px-3 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-amber-300 font-bold text-xs flex flex-col items-center cursor-pointer transition-all active:scale-95"
                     >
-                      <span>Hard</span>
+                      <span className="font-bold">Hard</span>
                       <span className="text-[10px] font-mono text-amber-400">
                         {intervalPreviews.find((p) => p.grade === "hard")?.badge || "2d"}
                       </span>
                     </button>
                     <button
                       onClick={() => handleGradeCard("good")}
-                      className="py-2.5 px-2 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold text-xs flex flex-col items-center cursor-pointer transition-all active:scale-95"
+                      className="py-3 px-3 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 font-bold text-xs flex flex-col items-center cursor-pointer transition-all active:scale-95"
                     >
-                      <span>Good</span>
+                      <span className="font-bold">Good</span>
                       <span className="text-[10px] font-mono text-emerald-400">
                         {intervalPreviews.find((p) => p.grade === "good")?.badge || "6d"}
                       </span>
                     </button>
                     <button
                       onClick={() => handleGradeCard("easy")}
-                      className="py-2.5 px-2 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-bold text-xs flex flex-col items-center cursor-pointer transition-all active:scale-95"
+                      className="py-3 px-3 rounded-2xl bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-indigo-300 font-bold text-xs flex flex-col items-center cursor-pointer transition-all active:scale-95"
                     >
-                      <span>Easy</span>
+                      <span className="font-bold">Easy</span>
                       <span className="text-[10px] font-mono text-indigo-400">
                         {intervalPreviews.find((p) => p.grade === "easy")?.badge || "14d"}
                       </span>
@@ -414,13 +417,13 @@ export default function QuickRevisionPage(): JSX.Element {
                 <div className="flex items-center gap-3 pt-1">
                   <button
                     onClick={prevFlashcard}
-                    className="flex-1 py-3 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white font-bold text-xs transition-all active:scale-95 cursor-pointer"
+                    className="flex-1 py-3.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white font-bold text-xs sm:text-sm transition-all active:scale-95 cursor-pointer"
                   >
                     ← Previous
                   </button>
                   <button
                     onClick={nextFlashcard}
-                    className="flex-1 py-3 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-all active:scale-95 shadow-md cursor-pointer"
+                    className="flex-1 py-3.5 rounded-2xl bg-purple-600 hover:bg-purple-500 active:bg-purple-700 text-white font-bold text-xs sm:text-sm transition-all active:scale-95 shadow-md shadow-purple-600/20 cursor-pointer"
                   >
                     Next →
                   </button>
