@@ -22,10 +22,11 @@
 
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
-import { getAllAnnotations } from "@/lib/revision-storage";
+import { useModuleProgress } from "../hooks/use-module-progress";
+import { LessonNavFooter } from "../components/lesson-nav-footer";
 
 // Section components
 import { HeaderSection } from "./components/header-section";
@@ -62,12 +63,7 @@ const SECTIONS = [
   { id: "part15", label: "Quick Memory Guide", icon: "🎯" },
 ];
 
-const PROGRESS_STORAGE_KEY = "learncraft_progress_nj04-solid";
 
-type SavedProgress = {
-  activeSection?: unknown;
-  completedSections?: unknown;
-};
 
 export default function NJ04SOLID(): JSX.Element {
   return (
@@ -89,138 +85,26 @@ export default function NJ04SOLID(): JSX.Element {
 function NJ04SOLIDContent(): JSX.Element {
   const searchParams = useSearchParams();
   const isImproveMode = searchParams?.get("improveMode") === "true";
-  const highlightId = searchParams?.get("highlightId");
-  const sectionParam = searchParams?.get("section");
 
-  const [activeSection, setActiveSection] = useState<string>("part1");
-  const [completedSections, setCompletedSections] = useState<Set<string>>(
-    new Set(),
-  );
-
-  // Initialize from URL, highlight, or localStorage on mount
-  useEffect(() => {
-    // Restore validated completion data first so URL/deep-link branches do not
-    // accidentally lock modules that the learner already completed.
-    let savedActiveSection: string | undefined;
-    try {
-      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
-      if (saved) {
-        const value = JSON.parse(saved) as unknown;
-        if (typeof value !== "object" || value === null) {
-          throw new Error("Invalid saved SOLID progress");
-        }
-        const parsed = value as SavedProgress;
-        if (
-          typeof parsed.activeSection === "string" &&
-          SECTIONS.some((section) => section.id === parsed.activeSection)
-        ) {
-          savedActiveSection = parsed.activeSection;
-        }
-
-        if (Array.isArray(parsed.completedSections)) {
-          const validCompleted = parsed.completedSections.filter(
-            (id): id is string =>
-              typeof id === "string" &&
-              SECTIONS.some((section) => section.id === id),
-          );
-          setCompletedSections(new Set(validCompleted));
-        }
-      }
-    } catch {}
-
-    // 1. URL search param has highest priority
-    if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
-      setActiveSection(sectionParam);
-      const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
-      if (targetIdx > 0) {
-        setCompletedSections((prev) => {
-          const next = new Set(prev);
-          for (let i = 0; i < targetIdx; i++) {
-            next.add(SECTIONS[i].id);
-          }
-          return next;
-        });
-      }
-      return;
-    }
-
-    // 2. Highlight deep-link lookup
-    if (highlightId) {
-      const all = getAllAnnotations();
-      const target = all.find(
-        (a) =>
-          a.id === highlightId ||
-          a.id === `rev_${highlightId}` ||
-          `rev-highlight-${a.id}` === highlightId,
-      );
-      if (
-        target?.sectionId &&
-        SECTIONS.some((s) => s.id === target.sectionId)
-      ) {
-        setActiveSection(target.sectionId);
-        const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
-        if (targetIdx > 0) {
-          setCompletedSections((prev) => {
-            const next = new Set(prev);
-            for (let i = 0; i < targetIdx; i++) {
-              next.add(SECTIONS[i].id);
-            }
-            return next;
-          });
-        }
-        // Clean highlightId from URL so refresh does not force-jump to this note
-        if (typeof window !== "undefined") {
-          const url = new URL(window.location.href);
-          url.searchParams.delete("highlightId");
-          url.searchParams.set("section", target.sectionId);
-          window.history.replaceState(null, "", url.toString());
-        }
-        return;
-      }
-    }
-
-    // 3. Restore the saved active module when no URL/deep-link takes priority.
-    if (savedActiveSection) {
-      setActiveSection(savedActiveSection);
-    }
-  }, [highlightId, sectionParam]);
-
-  const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
-  const reachedCount = SECTIONS.filter(
-    ({ id }) => id === activeSection || completedSections.has(id),
-  ).length;
-  const progressPercent = Math.round((reachedCount / SECTIONS.length) * 100);
+  const {
+    isAuthenticated,
+    activeSection,
+    completedSections,
+    isLessonCompleted,
+    currentIndex,
+    progressPercent,
+    handleSectionChange,
+    completeLesson,
+    getStepState,
+  } = useModuleProgress({
+    lessonSlug: "nj04-solid",
+    sections: SECTIONS,
+  });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeSection]);
 
-  const handleSectionChange = (sectionId: string) => {
-    const nextCompleted = new Set([...completedSections, activeSection]);
-    setCompletedSections(nextCompleted);
-    setActiveSection(sectionId);
-
-    // Persist to localStorage
-    try {
-      localStorage.setItem(
-        PROGRESS_STORAGE_KEY,
-        JSON.stringify({
-          activeSection: sectionId,
-          completedSections: Array.from(nextCompleted),
-        }),
-      );
-    } catch {}
-
-    // Synchronize URL search param without full reload and delete highlightId
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("highlightId");
-      url.searchParams.set("section", sectionId);
-      window.history.replaceState(null, "", url.toString());
-    }
-  };
-
-  
   useEffect(() => {
     const handleNavigate = (e: Event) => {
       const customEvent = e as CustomEvent;
@@ -232,15 +116,7 @@ function NJ04SOLIDContent(): JSX.Element {
     };
     window.addEventListener("lc-navigate-module", handleNavigate);
     return () => window.removeEventListener("lc-navigate-module", handleNavigate);
-  }, [currentIndex, completedSections, activeSection]);
-
-  const getStepState = (index: number): "done" | "active" | "todo" => {
-    const section = SECTIONS[index];
-    if (section.id === activeSection) return "active";
-    if (completedSections.has(section.id) || index < currentIndex)
-      return "done";
-    return "todo";
-  };
+  }, [currentIndex, handleSectionChange]);
 
   const renderContent = () => {
     switch (activeSection) {
@@ -312,7 +188,7 @@ function NJ04SOLIDContent(): JSX.Element {
                       <button
                         type="button"
                         onClick={() => handleSectionChange(section.id)}
-                        disabled={isTodo}
+                        disabled={isAuthenticated && isTodo && index > currentIndex + 1}
                         aria-current={isActive ? "step" : undefined}
                         className={`
                           group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
@@ -322,7 +198,7 @@ function NJ04SOLIDContent(): JSX.Element {
                               ? "bg-ds-feature-lighter border border-ds-feature-base"
                               : isDone
                                 ? "hover:bg-ds-bg-weak cursor-pointer"
-                                : "opacity-50 cursor-not-allowed"
+                                : !isAuthenticated ? "hover:bg-ds-bg-weak cursor-pointer" : "opacity-50 cursor-not-allowed"
                           }
                         `}
                       >
@@ -407,7 +283,7 @@ function NJ04SOLIDContent(): JSX.Element {
                   Progress
                 </span>
                 <span className="text-[12px] font-bold text-ds-text-strong">
-                  {progressPercent}%
+                  {isAuthenticated ? `${progressPercent}%` : "0%"}
                 </span>
               </div>
               <div
@@ -416,18 +292,18 @@ function NJ04SOLIDContent(): JSX.Element {
                 aria-label="Lesson progress"
                 aria-valuemin={0}
                 aria-valuemax={SECTIONS.length}
-                aria-valuenow={reachedCount}
-                aria-valuetext={`${reachedCount} of ${SECTIONS.length} modules reached`}
+                aria-valuenow={completedSections.size}
+                aria-valuetext={`${completedSections.size} of ${SECTIONS.length} modules completed`}
               >
                 <div
                   className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
                   style={{
-                    width: `${progressPercent}%`,
+                    width: `${isAuthenticated ? `${progressPercent}%` : "0%"}`,
                   }}
                 />
               </div>
               <p className="mt-2 text-[10px] text-ds-text-soft">
-                {reachedCount} of {SECTIONS.length} modules reached
+                {isAuthenticated ? `${completedSections.size} of ${SECTIONS.length} modules completed` : "Sign in to save progress"}
               </p>
             </div>
 
@@ -446,14 +322,20 @@ function NJ04SOLIDContent(): JSX.Element {
               </button>
               <button
                 type="button"
-                onClick={() =>
-                  currentIndex < SECTIONS.length - 1 &&
-                  handleSectionChange(SECTIONS[currentIndex + 1].id)
-                }
-                disabled={currentIndex === SECTIONS.length - 1}
-                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10"
+                onClick={() => {
+                  if (currentIndex < SECTIONS.length - 1) {
+                    handleSectionChange(SECTIONS[currentIndex + 1].id);
+                  } else {
+                    completeLesson();
+                  }
+                }}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10 cursor-pointer"
               >
-                Next →
+                {currentIndex === SECTIONS.length - 1
+                  ? isLessonCompleted
+                    ? "Completed ✓"
+                    : "Finish Lesson ✓"
+                  : "Next →"}
               </button>
             </div>
           </aside>
@@ -466,6 +348,7 @@ function NJ04SOLIDContent(): JSX.Element {
               Now viewing: {SECTIONS[currentIndex]?.label}
             </p>
             <div>{renderContent()}</div>
+            <LessonNavFooter currentSlug="nj04-solid" />
           </main>
         </div>
       </div>

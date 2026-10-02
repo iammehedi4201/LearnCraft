@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
-import { getAllAnnotations } from "@/lib/revision-storage";
 import { ModuleGuide } from "@/components/module-guide";
+import { LessonNavFooter } from "../components/lesson-nav-footer";
+import { useModuleProgress } from "../hooks/use-module-progress";
 
 import { BeginnerMistakesSection } from "./components/beginner-mistakes-section";
 import { ClassesObjectsSection } from "./components/classes-objects-section";
@@ -114,127 +115,38 @@ const LEGACY_SECTION_TO_MODULE: Record<string, string> = {
 };
 
 const CORE_MODULE_COUNT = 3;
-const PROGRESS_STORAGE_KEY = "learncraft_progress_nj02-oop-foundations";
-
-function resolveModuleId(sectionId?: string | null): string | null {
-  if (!sectionId) return null;
-  if (SECTIONS.some((section) => section.id === sectionId)) return sectionId;
-  return LEGACY_SECTION_TO_MODULE[sectionId] ?? null;
-}
 
 export default function NJ02OOP(): JSX.Element {
   const searchParams = useSearchParams();
   const isImproveMode = searchParams?.get("improveMode") === "true";
-  const highlightId = searchParams?.get("highlightId");
-  const sectionParam = searchParams?.get("section");
 
-  const [activeSection, setActiveSection] = useState("fundamentals");
-  const [completedSections, setCompletedSections] = useState<Set<string>>(
-    new Set(),
-  );
+  const {
+    isAuthenticated,
+    activeSection,
+    completedSections,
+    isLessonCompleted,
+    currentIndex,
+    handleSectionChange,
+    completeLesson,
+    getStepState,
+  } = useModuleProgress({
+    lessonSlug: "nj02-oop-foundations",
+    sections: SECTIONS,
+    legacyMap: LEGACY_SECTION_TO_MODULE,
+  });
 
-  useEffect(() => {
-    const requestedModule = resolveModuleId(sectionParam);
-    if (requestedModule) {
-      setActiveSection(requestedModule);
-      const targetIndex = SECTIONS.findIndex(
-        (section) => section.id === requestedModule,
-      );
-      setCompletedSections((previous) => {
-        const next = new Set(previous);
-        for (let index = 0; index < targetIndex; index++) {
-          next.add(SECTIONS[index].id);
-        }
-        return next;
-      });
-      return;
-    }
-
-    if (highlightId) {
-      const target = getAllAnnotations().find(
-        (annotation) =>
-          annotation.id === highlightId ||
-          annotation.id === `rev_${highlightId}` ||
-          `rev-highlight-${annotation.id}` === highlightId,
-      );
-      const targetModule = resolveModuleId(target?.sectionId);
-
-      if (targetModule) {
-        setActiveSection(targetModule);
-        const targetIndex = SECTIONS.findIndex(
-          (section) => section.id === targetModule,
-        );
-        setCompletedSections((previous) => {
-          const next = new Set(previous);
-          for (let index = 0; index < targetIndex; index++) {
-            next.add(SECTIONS[index].id);
-          }
-          return next;
-        });
-
-        const url = new URL(window.location.href);
-        url.searchParams.delete("highlightId");
-        url.searchParams.set("section", targetModule);
-        window.history.replaceState(null, "", url.toString());
-        return;
-      }
-    }
-
-    try {
-      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
-      if (!saved) return;
-
-      const parsed = JSON.parse(saved);
-      const savedModule = resolveModuleId(parsed.activeSection);
-      if (savedModule) setActiveSection(savedModule);
-
-      if (Array.isArray(parsed.completedSections)) {
-        const migratedSections = parsed.completedSections
-          .map((section: unknown) =>
-            typeof section === "string" ? resolveModuleId(section) : null,
-          )
-          .filter((section: string | null): section is string => Boolean(section));
-        setCompletedSections(new Set(migratedSections));
-      }
-    } catch {}
-  }, [highlightId, sectionParam]);
-
-  const currentIndex = Math.max(
-    0,
-    SECTIONS.findIndex((section) => section.id === activeSection),
-  );
   const currentModule = SECTIONS[currentIndex];
-  const coreProgress = Math.min(
-    ((currentIndex + 1) / CORE_MODULE_COUNT) * 100,
-    100,
-  );
+  const completedCoreCount = SECTIONS.slice(0, CORE_MODULE_COUNT).filter((s) =>
+    completedSections.has(s.id)
+  ).length;
+  const coreProgress = isAuthenticated
+    ? Math.min((completedCoreCount / CORE_MODULE_COUNT) * 100, 100)
+    : 0;
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeSection]);
 
-  const handleSectionChange = (sectionId: string) => {
-    const nextCompleted = new Set([...completedSections, activeSection]);
-    setCompletedSections(nextCompleted);
-    setActiveSection(sectionId);
-
-    try {
-      localStorage.setItem(
-        PROGRESS_STORAGE_KEY,
-        JSON.stringify({
-          activeSection: sectionId,
-          completedSections: Array.from(nextCompleted),
-        }),
-      );
-    } catch {}
-
-    const url = new URL(window.location.href);
-    url.searchParams.delete("highlightId");
-    url.searchParams.set("section", sectionId);
-    window.history.replaceState(null, "", url.toString());
-  };
-
-  
   useEffect(() => {
     const handleNavigate = (e: Event) => {
       const customEvent = e as CustomEvent;
@@ -246,14 +158,7 @@ export default function NJ02OOP(): JSX.Element {
     };
     window.addEventListener("lc-navigate-module", handleNavigate);
     return () => window.removeEventListener("lc-navigate-module", handleNavigate);
-  }, [currentIndex, completedSections, activeSection]);
-
-  const getStepState = (index: number): "done" | "active" | "todo" => {
-    const section = SECTIONS[index];
-    if (section.id === activeSection) return "active";
-    if (completedSections.has(section.id) || index < currentIndex) return "done";
-    return "todo";
-  };
+  }, [currentIndex, handleSectionChange]);
 
   const renderContent = () => {
     switch (activeSection) {
@@ -329,11 +234,13 @@ export default function NJ02OOP(): JSX.Element {
                     <li key={section.id}>
                       <button
                         onClick={() => handleSectionChange(section.id)}
-                        disabled={isTodo}
+                        disabled={isAuthenticated && isTodo && index > currentIndex + 1}
                         className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-all duration-200 ${
                           isActive
                             ? "border border-ds-feature-base bg-ds-feature-lighter"
                             : isDone
+                              ? "cursor-pointer hover:bg-ds-bg-weak"
+                              : !isAuthenticated
                               ? "cursor-pointer hover:bg-ds-bg-weak"
                               : "cursor-not-allowed opacity-50"
                         }`}
@@ -386,19 +293,21 @@ export default function NJ02OOP(): JSX.Element {
                   Core Progress
                 </span>
                 <span className="text-xs font-bold text-ds-text-strong">
-                  {Math.round(coreProgress)}%
+                  {isAuthenticated ? `${Math.round(coreProgress)}%` : "0%"}
                 </span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-ds-bg-soft">
                 <div
                   className="h-full rounded-full bg-ds-feature-base transition-all duration-500"
-                  style={{ width: `${coreProgress}%` }}
+                  style={{ width: `${isAuthenticated ? coreProgress : 0}%` }}
                 />
               </div>
               <p className="mt-2 text-[10px] text-ds-text-soft">
-                {currentIndex >= CORE_MODULE_COUNT
+                {!isAuthenticated
+                  ? "Sign in to save progress"
+                  : completedCoreCount >= CORE_MODULE_COUNT
                   ? "Core complete · exploring optional material"
-                  : `${currentIndex + 1} of ${CORE_MODULE_COUNT} core modules`}
+                  : `${completedCoreCount} of ${CORE_MODULE_COUNT} core modules completed`}
               </p>
             </div>
 
@@ -409,19 +318,25 @@ export default function NJ02OOP(): JSX.Element {
                   handleSectionChange(SECTIONS[currentIndex - 1].id)
                 }
                 disabled={currentIndex === 0}
-                className="flex-1 rounded-xl border border-ds-stroke-soft bg-ds-bg-white py-2.5 text-xs font-bold text-ds-text-sub transition-all hover:bg-ds-bg-weak disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex-1 rounded-xl border border-ds-stroke-soft bg-ds-bg-white py-2.5 text-xs font-bold text-ds-text-sub transition-all hover:bg-ds-bg-weak disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
               >
                 ← Previous
               </button>
               <button
-                onClick={() =>
-                  currentIndex < SECTIONS.length - 1 &&
-                  handleSectionChange(SECTIONS[currentIndex + 1].id)
-                }
-                disabled={currentIndex === SECTIONS.length - 1}
-                className="flex-1 rounded-xl bg-ds-feature-base py-2.5 text-xs font-bold text-ds-static-white shadow-md transition-all hover:bg-ds-feature-dark disabled:cursor-not-allowed disabled:opacity-30"
+                onClick={() => {
+                  if (currentIndex < SECTIONS.length - 1) {
+                    handleSectionChange(SECTIONS[currentIndex + 1].id);
+                  } else {
+                    completeLesson();
+                  }
+                }}
+                className="flex-1 rounded-xl bg-ds-feature-base py-2.5 text-xs font-bold text-ds-static-white shadow-md transition-all hover:bg-ds-feature-dark disabled:cursor-not-allowed disabled:opacity-30 cursor-pointer"
               >
-                Next →
+                {currentIndex === SECTIONS.length - 1
+                  ? isLessonCompleted
+                    ? "Completed ✓"
+                    : "Finish Lesson ✓"
+                  : "Next →"}
               </button>
             </div>
           </aside>
@@ -462,19 +377,28 @@ export default function NJ02OOP(): JSX.Element {
                     ? "Use the final review as your checklist, then continue to TypeScript decorators."
                     : SECTIONS[currentIndex + 1]?.description}
               </p>
-              {currentIndex < SECTIONS.length - 1 && (
+              {currentIndex < SECTIONS.length - 1 ? (
                 <button
                   onClick={() =>
                     handleSectionChange(SECTIONS[currentIndex + 1].id)
                   }
-                  className="rounded-xl bg-ds-feature-base px-5 py-3 text-xs font-black text-ds-static-white shadow-sm transition-all hover:bg-ds-feature-dark"
+                  className="rounded-xl bg-ds-feature-base px-5 py-3 text-xs font-black text-ds-static-white shadow-sm transition-all hover:bg-ds-feature-dark cursor-pointer"
                 >
                   {activeSection === "practical-usage"
                     ? "Explore Advanced (Optional) →"
-                    : `Continue to ${SECTIONS[currentIndex + 1].stage} →`}
+                    : `Continue to ${SECTIONS[currentIndex + 1]?.stage} →`}
+                </button>
+              ) : (
+                <button
+                  onClick={completeLesson}
+                  className="rounded-xl bg-ds-success-base px-5 py-3 text-xs font-black text-ds-static-white shadow-sm transition-all hover:bg-ds-success-dark cursor-pointer"
+                >
+                  {isLessonCompleted ? "Lesson Completed ✓" : "Finish & Complete Lesson ✓"}
                 </button>
               )}
             </section>
+
+            <LessonNavFooter currentSlug="nj02-oop-foundations" />
           </main>
         </div>
       </div>

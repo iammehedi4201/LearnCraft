@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { ArrowLeft, ArrowRight, CheckCircle2, Circle, LayoutGrid, Clock } from "./icons";
 import {
   getNextLesson,
@@ -26,6 +27,9 @@ export function LessonNavFooter({
   currentSlug,
   onLessonComplete,
 }: LessonNavFooterProps) {
+  const { data: session } = useSession();
+  const isAuthenticated = Boolean(session?.user);
+
   const [completed, setCompleted] = useState<boolean>(false);
   const [showMilestone, setShowMilestone] = useState<boolean>(false);
 
@@ -34,6 +38,11 @@ export function LessonNavFooter({
   const currentStage = getStageByLessonSlug(currentSlug);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setCompleted(false);
+      return;
+    }
+
     setCompleted(isLessonComplete(currentSlug));
 
     const handleProgressUpdated = () => {
@@ -44,9 +53,11 @@ export function LessonNavFooter({
     return () => {
       window.removeEventListener("learncraft-progress-updated", handleProgressUpdated);
     };
-  }, [currentSlug]);
+  }, [currentSlug, isAuthenticated]);
 
   const handleToggleComplete = () => {
+    if (!isAuthenticated) return;
+
     const isNowDone = toggleLessonComplete(currentSlug);
     setCompleted(isNowDone);
 
@@ -63,7 +74,8 @@ export function LessonNavFooter({
   };
 
   const handleNextClick = () => {
-    if (!completed) {
+    // Only mark complete if authenticated
+    if (isAuthenticated && !completed) {
       markLessonComplete(currentSlug);
     }
   };
@@ -82,31 +94,52 @@ export function LessonNavFooter({
       {/* Completion toggle banner */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm">
         <div className="flex items-center gap-3">
-          <button
-            onClick={handleToggleComplete}
-            className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-              completed
-                ? "bg-ds-success-lighter text-ds-success-dark"
-                : "bg-ds-bg-weak text-ds-text-sub border border-ds-stroke-soft hover:bg-ds-bg-soft hover:text-ds-text-strong"
-            }`}
-          >
-            {completed ? (
-              <>
-                <CheckCircle2 className="w-4 h-4 text-ds-success-base" />
-                <span>Lesson Completed</span>
-              </>
-            ) : (
-              <>
-                <Circle className="w-4 h-4 text-ds-icon-sub" />
-                <span>Mark Lesson Complete</span>
-              </>
-            )}
-          </button>
-          <span className="text-xs text-ds-text-sub">
-            {completed
-              ? "Great job! Your path progress has been recorded."
-              : "Mark complete when you finish the exercises."}
-          </span>
+          {isAuthenticated ? (
+            <>
+              <button
+                onClick={handleToggleComplete}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  completed
+                    ? "bg-ds-success-lighter text-ds-success-dark"
+                    : "bg-ds-bg-weak text-ds-text-sub border border-ds-stroke-soft hover:bg-ds-bg-soft hover:text-ds-text-strong"
+                }`}
+              >
+                {completed ? (
+                  <>
+                    <CheckCircle2 className="w-4 h-4 text-ds-success-base" />
+                    <span>Lesson Completed</span>
+                  </>
+                ) : (
+                  <>
+                    <Circle className="w-4 h-4 text-ds-icon-sub" />
+                    <span>Mark Lesson Complete</span>
+                  </>
+                )}
+              </button>
+              <span className="text-xs text-ds-text-sub">
+                {completed
+                  ? "Great job! Your path progress has been recorded in your database."
+                  : "Mark complete when you finish the exercises."}
+              </span>
+            </>
+          ) : (
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== "undefined") {
+                    window.dispatchEvent(new CustomEvent("learncraft:open-auth-modal"));
+                  }
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-ds-feature-lighter hover:bg-ds-feature-light/40 border border-ds-feature-base/30 text-ds-feature-dark text-xs font-bold transition-all cursor-pointer"
+              >
+                <span>⚡ Sign In</span>
+              </button>
+              <span className="text-xs text-ds-text-sub">
+                Sign in to save your module progress to the database.
+              </span>
+            </div>
+          )}
         </div>
 
         <Link

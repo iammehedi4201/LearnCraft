@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import {
   CheckCircle2,
   ArrowRight,
@@ -15,6 +16,7 @@ import {
 import {
   isLessonComplete,
   getActiveLesson,
+  toggleLessonComplete,
 } from "../data/progress-store";
 
 interface JourneyViewProps {
@@ -59,10 +61,12 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
 
   const lessons = getLessonsByPhaseId(phase.id);
   const activeLesson = getActiveLesson();
+  const { data: session } = useSession();
+  const isAuthenticated = Boolean(session?.user);
 
-  const completedCount = lessons.filter(
-    (l) => isLessonComplete(l.slug) || isLessonComplete(l.code),
-  ).length;
+  const completedCount = isAuthenticated
+    ? lessons.filter((l) => isLessonComplete(l.slug) || isLessonComplete(l.code)).length
+    : 0;
 
   const currentPhaseIndex = PROGRESSION_PHASES.findIndex(
     (p) => p.id === phase.id,
@@ -105,8 +109,9 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
         {/* Phase Lessons Grid (Sequential Ordered Cards) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {lessons.map((lesson, idx) => {
-            const isDone =
-              isLessonComplete(lesson.slug) || isLessonComplete(lesson.code);
+            const isDone = Boolean(
+              isAuthenticated && (isLessonComplete(lesson.slug) || isLessonComplete(lesson.code))
+            );
             const isTarget =
               Boolean(activeLesson &&
               (activeLesson.slug === lesson.slug ||
@@ -134,17 +139,45 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
                       </span>
                     </div>
 
-                    {isDone ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-ds-success-dark bg-ds-success-lighter px-2.5 py-0.5 rounded-full">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-ds-success-base" />
-                        Done
-                      </span>
-                    ) : isTarget ? (
-                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-ds-feature-dark bg-ds-feature-lighter px-2.5 py-0.5 rounded-full">
-                        <span className="w-1.5 h-1.5 rounded-full bg-ds-feature-base animate-pulse" />
-                        Current
-                      </span>
-                    ) : null}
+                    {isAuthenticated && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleLessonComplete(lesson.slug);
+                        }}
+                        className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full transition-all cursor-pointer ${
+                          isDone
+                            ? "text-ds-success-dark bg-ds-success-lighter hover:bg-ds-success-light/40 border border-ds-success-base/30"
+                            : isTarget
+                            ? "text-ds-feature-dark bg-ds-feature-lighter hover:bg-ds-feature-light/40 border border-ds-feature-base/30"
+                            : "text-ds-text-soft bg-ds-bg-weak hover:text-ds-text-strong hover:bg-ds-bg-soft border border-ds-stroke-soft"
+                        }`}
+                        title={
+                          isDone
+                            ? "Completed in database — click to unmark"
+                            : "Click to mark complete in database"
+                        }
+                      >
+                        {isDone ? (
+                          <>
+                            <CheckCircle2 className="w-3.5 h-3.5 text-ds-success-base" />
+                            <span>Done</span>
+                          </>
+                        ) : isTarget ? (
+                          <>
+                            <span className="w-1.5 h-1.5 rounded-full bg-ds-feature-base animate-pulse" />
+                            <span>Current</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="w-2 h-2 rounded-full border border-ds-stroke-sub group-hover:border-ds-feature-base inline-block" />
+                            <span>Mark Done</span>
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
 
                   {/* Title */}

@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
-import { getAllAnnotations } from "@/lib/revision-storage";
+import { useModuleProgress } from "../hooks/use-module-progress";
 
 // Section components
 import { HeaderSection } from "./components/header-section";
@@ -49,109 +49,30 @@ const NJ06_REVISION_POINTS = [
   "Circular dependencies between modules should be solved with forwardRef() or refactoring to a shared module.",
 ];
 
-const PROGRESS_STORAGE_KEY = "learncraft_progress_nj06-modules";
 
 function NJ06ModulesContent(): JSX.Element {
   const searchParams = useSearchParams();
   const isImproveMode = searchParams?.get("improveMode") === "true";
-  const highlightId = searchParams?.get("highlightId");
-  const sectionParam = searchParams?.get("section");
 
-  const [activeSection, setActiveSection] = useState<string>("part1");
-  const [completedSections, setCompletedSections] = useState<Set<string>>(
-    new Set(),
-  );
-
-  useEffect(() => {
-    if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
-      setActiveSection(sectionParam);
-      const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
-      if (targetIdx > 0) {
-        setCompletedSections((prev) => {
-          const next = new Set(prev);
-          for (let i = 0; i < targetIdx; i++) {
-            next.add(SECTIONS[i].id);
-          }
-          return next;
-        });
-      }
-      return;
-    }
-
-    if (highlightId) {
-      const all = getAllAnnotations();
-      const target = all.find(
-        (a) =>
-          a.id === highlightId ||
-          a.id === `rev_${highlightId}` ||
-          `rev-highlight-${a.id}` === highlightId
-      );
-      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
-        setActiveSection(target.sectionId);
-        const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
-        if (targetIdx > 0) {
-          setCompletedSections((prev) => {
-            const next = new Set(prev);
-            for (let i = 0; i < targetIdx; i++) {
-              next.add(SECTIONS[i].id);
-            }
-            return next;
-          });
-        }
-        if (typeof window !== "undefined") {
-          const url = new URL(window.location.href);
-          url.searchParams.delete("highlightId");
-          url.searchParams.set("section", target.sectionId);
-          window.history.replaceState(null, "", url.toString());
-        }
-        return;
-      }
-    }
-
-    try {
-      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
-          setActiveSection(parsed.activeSection);
-        }
-        if (Array.isArray(parsed.completedSections)) {
-          setCompletedSections(new Set(parsed.completedSections));
-        }
-      }
-    } catch {}
-  }, [highlightId, sectionParam]);
-
-  const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
+  const {
+    isAuthenticated,
+    activeSection,
+    completedSections,
+    isLessonCompleted,
+    currentIndex,
+    progressPercent,
+    handleSectionChange,
+    completeLesson,
+    getStepState,
+  } = useModuleProgress({
+    lessonSlug: "nj06-modules",
+    sections: SECTIONS,
+  });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeSection]);
 
-  const handleSectionChange = (sectionId: string) => {
-    const nextCompleted = new Set([...completedSections, activeSection]);
-    setCompletedSections(nextCompleted);
-    setActiveSection(sectionId);
-
-    try {
-      localStorage.setItem(
-        PROGRESS_STORAGE_KEY,
-        JSON.stringify({
-          activeSection: sectionId,
-          completedSections: Array.from(nextCompleted),
-        })
-      );
-    } catch {}
-
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("highlightId");
-      url.searchParams.set("section", sectionId);
-      window.history.replaceState(null, "", url.toString());
-    }
-  };
-
-  
   useEffect(() => {
     const handleNavigate = (e: Event) => {
       const customEvent = e as CustomEvent;
@@ -163,15 +84,7 @@ function NJ06ModulesContent(): JSX.Element {
     };
     window.addEventListener("lc-navigate-module", handleNavigate);
     return () => window.removeEventListener("lc-navigate-module", handleNavigate);
-  }, [currentIndex, completedSections, activeSection]);
-
-  const getStepState = (index: number): "done" | "active" | "todo" => {
-    const section = SECTIONS[index];
-    if (section.id === activeSection) return "active";
-    if (completedSections.has(section.id) || index < currentIndex)
-      return "done";
-    return "todo";
-  };
+  }, [currentIndex, handleSectionChange]);
 
   const renderContent = () => {
     switch (activeSection) {
@@ -310,19 +223,19 @@ function NJ06ModulesContent(): JSX.Element {
                   Progress
                 </span>
                 <span className="text-[12px] font-bold text-ds-text-strong">
-                  {Math.round(((currentIndex + 1) / SECTIONS.length) * 100)}%
+                  {isAuthenticated ? `${progressPercent}%` : "0%"}
                 </span>
               </div>
               <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
                   style={{
-                    width: `${((currentIndex + 1) / SECTIONS.length) * 100}%`,
+                    width: `${isAuthenticated ? progressPercent : 0}%`,
                   }}
                 />
               </div>
               <p className="mt-2 text-[10px] text-ds-text-soft">
-                {currentIndex + 1} of {SECTIONS.length} steps
+                {isAuthenticated ? `${completedSections.size} of ${SECTIONS.length} modules completed` : "Sign in to save progress"}
               </p>
             </div>
 
@@ -339,14 +252,21 @@ function NJ06ModulesContent(): JSX.Element {
                 ← Prev
               </button>
               <button
-                onClick={() =>
-                  currentIndex < SECTIONS.length - 1 &&
-                  handleSectionChange(SECTIONS[currentIndex + 1].id)
-                }
-                disabled={currentIndex === SECTIONS.length - 1}
-                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10"
+                type="button"
+                onClick={() => {
+                  if (currentIndex < SECTIONS.length - 1) {
+                    handleSectionChange(SECTIONS[currentIndex + 1].id);
+                  } else {
+                    completeLesson();
+                  }
+                }}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10 cursor-pointer"
               >
-                Next →
+                {currentIndex === SECTIONS.length - 1
+                  ? isLessonCompleted
+                    ? "Completed ✓"
+                    : "Finish Lesson ✓"
+                  : "Next →"}
               </button>
             </div>
           </aside>

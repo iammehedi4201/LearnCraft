@@ -77,7 +77,8 @@ export function SkillCard({ skill }: SkillCardProps) {
   );
 
   if (isAvailable) {
-    return <Link href={`/roadmaps/${skill.slug}`}>{content}</Link>;
+    const targetHref = skill.learnPath || `/roadmaps/${skill.slug}`;
+    return <Link href={targetHref}>{content}</Link>;
   }
 
   return content;

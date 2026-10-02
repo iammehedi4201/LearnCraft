@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import {
   CheckCircle2,
   ArrowRight,
@@ -70,9 +71,12 @@ const STAGE_THEMES: Record<
 };
 
 export function FullRoadmap({ initialExpandedStageId: _initialExpandedStageId }: FullRoadmapProps) {
+  const { data: session } = useSession();
+  const isAuthenticated = Boolean(session?.user);
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTag, setSelectedTag] = useState<string>("ALL");
-  const activeLesson = getActiveLesson();
+  const activeLesson = isAuthenticated ? getActiveLesson() : null;
 
   const filteredStages = useMemo(() => {
     return NESTJS_STAGES.map((stage) => {
@@ -198,7 +202,7 @@ export function FullRoadmap({ initialExpandedStageId: _initialExpandedStageId }:
 
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="text-xs font-bold text-ds-text-sub bg-ds-bg-weak px-3 py-1 rounded-full border border-ds-stroke-soft">
-                      {stageStats.completed} / {stage.lessons.length}
+                      {isAuthenticated ? stageStats.completed : 0} / {stage.lessons.length}
                     </span>
                   </div>
                 </div>
@@ -207,10 +211,11 @@ export function FullRoadmap({ initialExpandedStageId: _initialExpandedStageId }:
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                   {stage.lessons.map((lesson) => {
                     const isDone =
-                      isLessonComplete(lesson.slug) ||
-                      isLessonComplete(lesson.code);
+                      isAuthenticated &&
+                      (isLessonComplete(lesson.slug) ||
+                       isLessonComplete(lesson.code));
                     const isCurrent =
-                      Boolean(activeLesson &&
+                      Boolean(isAuthenticated && activeLesson &&
                       (activeLesson.slug === lesson.slug ||
                        activeLesson.code === lesson.code));
 

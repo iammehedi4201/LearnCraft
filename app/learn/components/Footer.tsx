@@ -38,7 +38,7 @@ export function Footer() {
               {[
                 { name: 'Next.js Mastery', href: '/roadmaps/nextjs' },
                 { name: 'TanStack Query', href: '/roadmaps/tanstack' },
-                { name: 'NestJS Elite', href: '/roadmaps/nestjs' },
+                { name: 'NestJS Elite', href: '/learn/nestjs' },
                 { name: 'All Roadmaps', href: '/roadmaps' },
               ].map(item => (
                 <li key={item.name}>

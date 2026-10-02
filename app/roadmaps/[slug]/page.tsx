@@ -15,6 +15,7 @@ import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
 import { SkillRoadmapView } from "../components/SkillRoadmapView";
 import { getSkillRoadmap } from "@/lib/roadmap-data";
+import NestJSPage from "@/app/learn/nestjs/page";
 
 export default function SkillRoadmapPage({
   params,
@@ -23,6 +24,10 @@ export default function SkillRoadmapPage({
 }) {
   const { slug } = use(params);
   const skill = getSkillRoadmap(slug);
+
+  if (slug === "nestjs") {
+    return <NestJSPage />;
+  }
 
   if (!skill || skill.status !== "available") {
     return (

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
@@ -22,11 +23,13 @@ import {
   getGoal,
   getNextRecommendedLesson,
   getOverallProgress,
+  fetchProgressFromDB,
 } from "./data/progress-store";
 import { JourneyView } from "./components/journey-view";
 import { ReferenceView } from "./components/reference-view";
 
 export default function NestJSPage() {
+  const { data: session } = useSession();
   const [selectedPhase, setSelectedPhaseState] =
     useState<string>("fundamentals");
   const [nextLesson, setNextLesson] = useState<LessonMeta | null>(null);
@@ -37,7 +40,7 @@ export default function NestJSPage() {
     percent: 0,
   });
 
-  // Sync state from client storage & custom events
+  // Sync state from database & custom events
   useEffect(() => {
     const updateLocalState = () => {
       const storedPhase = getGoal() || "fundamentals";
@@ -46,10 +49,20 @@ export default function NestJSPage() {
       const rec = getNextRecommendedLesson();
       setNextLesson(rec);
 
-      const overall = getOverallProgress();
-      setProgressSummary(overall);
-      setHasStarted(overall.completedCount > 0);
+      if (!session?.user) {
+        setProgressSummary({ completedCount: 0, totalCount: 32, percent: 0 });
+        setHasStarted(false);
+      } else {
+        const overall = getOverallProgress();
+        setProgressSummary(overall);
+        setHasStarted(overall.completedCount > 0);
+      }
     };
+
+    // Load fresh progress directly from PostgreSQL database
+    fetchProgressFromDB().then(() => {
+      updateLocalState();
+    });
 
     updateLocalState();
 
@@ -67,7 +80,7 @@ export default function NestJSPage() {
         handleProgressUpdated,
       );
     };
-  }, []);
+  }, [session?.user]);
 
   const handlePhaseSelect = (phaseId: string) => {
     setSelectedPhaseState(phaseId);

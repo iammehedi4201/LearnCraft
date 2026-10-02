@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { markLessonComplete } from "../../data/progress-store";
 import {
   SectionContainer,
   TopicHeader,
@@ -12,6 +14,8 @@ import {
 // ═══════════════════════════════════════════════════════════
 
 export function SectionClosing() {
+  const { data: session } = useSession();
+  const isAuthenticated = Boolean(session?.user);
   return (
     <SectionContainer number={19} title="Summary & Next Steps">
       {/* ── Key Takeaways Grid ── */}
@@ -95,6 +99,11 @@ export function SectionClosing() {
 
           <Link
             href="/learn/nestjs/nj02-oop-foundations"
+            onClick={() => {
+              if (isAuthenticated) {
+                markLessonComplete("nj01-typescript-essentials");
+              }
+            }}
             className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white font-black text-sm transition-all shadow-lg shadow-ds-feature-base/20 hover:scale-[1.02]"
           >
             <span>Continue to NJ-02: OOP Foundations</span>

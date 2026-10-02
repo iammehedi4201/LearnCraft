@@ -11,6 +11,7 @@ import { SelectionToolbar } from "@/components/revision/SelectionToolbar";
 import { NoteDialog } from "@/components/revision/NoteDialog";
 import { ExistingHighlightPopover } from "@/components/revision/ExistingHighlightPopover";
 import { LessonAnnotationLayer } from "@/components/revision/LessonAnnotationLayer";
+import { SessionProvider } from "next-auth/react";
 import { Suspense } from "react";
 import { LessonImprovementOverlay } from "@/components/improve/LessonImprovementOverlay";
 
@@ -47,21 +48,23 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${manrope.variable} ${inter.variable} ${rajdhani.variable} min-h-screen`}
       >
-        <QueryProvider>
-          <ThemeProvider>
-            <RevisionProvider>
-              <Suspense fallback={<div className="min-h-screen bg-ds-bg-weak" />}>
-                {children}
-              </Suspense>
-              <ReadingControlPanel />
-              <SelectionToolbar />
-              <NoteDialog />
-              <ExistingHighlightPopover />
-              <LessonAnnotationLayer />
-              <LessonImprovementOverlay />
-            </RevisionProvider>
-          </ThemeProvider>
-        </QueryProvider>
+        <SessionProvider>
+          <QueryProvider>
+            <ThemeProvider>
+              <RevisionProvider>
+                <Suspense fallback={<div className="min-h-screen bg-ds-bg-weak" />}>
+                  {children}
+                </Suspense>
+                <ReadingControlPanel />
+                <SelectionToolbar />
+                <NoteDialog />
+                <ExistingHighlightPopover />
+                <LessonAnnotationLayer />
+                <LessonImprovementOverlay />
+              </RevisionProvider>
+            </ThemeProvider>
+          </QueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );

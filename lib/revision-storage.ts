@@ -3,17 +3,18 @@
  * REVISION STORAGE & PERSISTENCE ENGINE
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * Handles high-reliability storage, multi-tab sync, querying, filtering,
- * importing, and exporting of user highlights and personal notes.
+ * importing, exporting, and SM-2 Spaced Repetition reviews of user highlights
+ * and personal active recall notes.
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { AnnotationItem, RevisionStats } from "@/types/revision";
+import { AnnotationItem, RevisionStats, SM2Grade } from "@/types/revision";
+import { calculateSM2Review } from "./spaced-repetition";
 
 const STORAGE_KEY = "learncraft_revisions_v1";
 const REVISION_EVENT_NAME = "learncraft:revision-sync";
 
-// Default initial seed data to give users an immediate delightful experience
-// if they haven't highlighted anything yet!
+// Default initial seed data with SM-2 Spaced Repetition scheduling
 const INITIAL_SAMPLE_ANNOTATIONS: AnnotationItem[] = [
   {
     id: "sample_rev_01",
@@ -27,13 +28,27 @@ const INITIAL_SAMPLE_ANNOTATIONS: AnnotationItem[] = [
     selectedText: "Encapsulation is the concept of bundling data and methods together inside a class while restricting direct access to internal state.",
     contextBefore: "Let's explore the core pillars.",
     contextAfter: "This prevents accidental corruption.",
-    question: "What is Encapsulation in Object-Oriented Programming?",
-    note: "Encapsulation = Private fields (# or private) + controlled getter/setter methods.",
+    question: "What is Encapsulation in Object-Oriented Programming and how is it achieved in TypeScript?",
+    note: "Encapsulation = Private fields (`#field` or `private field`) + controlled public getter/setter methods. Prevents external mutation.",
     color: "feature",
-    createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
-    updatedAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 1 * 86400000).toISOString(),
     isFavorite: true,
     mastered: false,
+    repetition: 1,
+    interval: 1,
+    easinessFactor: 2.5,
+    nextReviewDate: new Date(Date.now() - 3600000).toISOString(), // Due right now
+    lastReviewedAt: new Date(Date.now() - 1 * 86400000).toISOString(),
+    reviewHistory: [
+      {
+        timestamp: new Date(Date.now() - 1 * 86400000).toISOString(),
+        grade: "good",
+        numericGrade: 4,
+        interval: 1,
+        easinessFactor: 2.5,
+      },
+    ],
   },
   {
     id: "sample_rev_02",
@@ -47,13 +62,19 @@ const INITIAL_SAMPLE_ANNOTATIONS: AnnotationItem[] = [
     selectedText: "staleTime defines how long data is considered fresh before a background refetch is triggered. gcTime defines how long inactive cached data remains in memory.",
     contextBefore: "Key cache lifecycle rule:",
     contextAfter: "Default staleTime is 0ms, gcTime is 5 minutes.",
-    question: "What is the key difference between staleTime and gcTime in TanStack Query?",
-    note: "staleTime = when to refetch. gcTime = garbage collection timer after unmount.",
+    question: "What is the crucial operational difference between staleTime and gcTime in TanStack Query?",
+    note: "`staleTime` determines freshness & trigger for background refetching on mount/window-focus. `gcTime` is the garbage collection countdown for unmounted/inactive queries.",
     color: "info",
-    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
-    updatedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+    createdAt: new Date(Date.now() - 3 * 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 3 * 86400000).toISOString(),
     isFavorite: true,
     mastered: false,
+    repetition: 0,
+    interval: 1,
+    easinessFactor: 2.5,
+    nextReviewDate: new Date().toISOString(), // Due today
+    lastReviewedAt: undefined,
+    reviewHistory: [],
   },
   {
     id: "sample_rev_03",
@@ -67,13 +88,41 @@ const INITIAL_SAMPLE_ANNOTATIONS: AnnotationItem[] = [
     selectedText: "React Server Components run only on the server, have direct database access, zero bundle size overhead, and cannot use useState or browser APIs.",
     contextBefore: "Understanding the boundary:",
     contextAfter: "Add 'use client' at the top when interactivity is needed.",
-    question: "What are the primary characteristics and limitations of React Server Components?",
-    note: "Default is Server Component. Only use 'use client' for hooks, event listeners, and browser APIs.",
+    question: "What are the core technical constraints and superpowers of React Server Components (RSC)?",
+    note: "Superpowers: Direct DB/ORM access, 0kb client bundle, secure tokens. Constraints: No hooks (`useState`, `useEffect`), no DOM/browser APIs, non-interactive.",
     color: "feature",
-    createdAt: new Date(Date.now() - 1 * 86400000).toISOString(),
-    updatedAt: new Date(Date.now() - 1 * 86400000).toISOString(),
+    createdAt: new Date(Date.now() - 14 * 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
     isFavorite: false,
     mastered: true,
+    repetition: 4,
+    interval: 24,
+    easinessFactor: 2.65,
+    nextReviewDate: new Date(Date.now() + 18 * 86400000).toISOString(), // Mastered, due in 18 days
+    lastReviewedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+    reviewHistory: [
+      {
+        timestamp: new Date(Date.now() - 14 * 86400000).toISOString(),
+        grade: "good",
+        numericGrade: 4,
+        interval: 1,
+        easinessFactor: 2.5,
+      },
+      {
+        timestamp: new Date(Date.now() - 10 * 86400000).toISOString(),
+        grade: "good",
+        numericGrade: 4,
+        interval: 6,
+        easinessFactor: 2.5,
+      },
+      {
+        timestamp: new Date(Date.now() - 2 * 86400000).toISOString(),
+        grade: "easy",
+        numericGrade: 5,
+        interval: 24,
+        easinessFactor: 2.65,
+      },
+    ],
   },
   {
     id: "sample_rev_04",
@@ -85,13 +134,19 @@ const INITIAL_SAMPLE_ANNOTATIONS: AnnotationItem[] = [
     lessonPath: "/learn/nestjs/nj01-typescript-essentials",
     sectionId: "part3",
     selectedText: "Generics allow writing flexible, reusable code that works with multiple types while maintaining complete type safety without resorting to any.",
-    question: "Why and when should you use Generics in TypeScript?",
-    note: "Think of Generics <T> as passing type arguments into a function definition.",
+    question: "Why should you use Generics `<T>` instead of `any` or `unknown` in reusable utilities?",
+    note: "Generics capture and propagate the exact incoming type parameter rather than discarding it like `any`. Guarantees return-type precision.",
     color: "away",
-    createdAt: new Date(Date.now() - 4 * 86400000).toISOString(),
-    updatedAt: new Date(Date.now() - 4 * 86400000).toISOString(),
+    createdAt: new Date(Date.now() - 2 * 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 86400000).toISOString(),
     isFavorite: true,
     mastered: false,
+    repetition: 0,
+    interval: 1,
+    easinessFactor: 2.5,
+    nextReviewDate: new Date().toISOString(), // Due today
+    lastReviewedAt: undefined,
+    reviewHistory: [],
   },
 ];
 
@@ -111,7 +166,6 @@ export function getAllAnnotations(): AnnotationItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
-      // Seed initial samples on first launch
       localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SAMPLE_ANNOTATIONS));
       return INITIAL_SAMPLE_ANNOTATIONS;
     }
@@ -150,6 +204,11 @@ export function addAnnotation(
     updatedAt: now,
     isFavorite: data.isFavorite ?? false,
     mastered: data.mastered ?? false,
+    repetition: 0,
+    interval: 1,
+    easinessFactor: 2.5,
+    nextReviewDate: now,
+    reviewHistory: [],
   };
 
   const current = getAllAnnotations();
@@ -184,6 +243,35 @@ export function updateAnnotation(
     saveAllAnnotations(updated);
   }
   return found;
+}
+
+/**
+ * Execute and record an SM-2 algorithmic review on a card
+ */
+export function recordSM2Review(
+  cardId: string,
+  grade: SM2Grade
+): AnnotationItem | null {
+  const current = getAllAnnotations();
+  const targetCard = current.find((c) => c.id === cardId);
+  if (!targetCard) return null;
+
+  const sm2Result = calculateSM2Review(targetCard, grade);
+  const updatedCard: AnnotationItem = {
+    ...targetCard,
+    repetition: sm2Result.repetition,
+    interval: sm2Result.interval,
+    easinessFactor: sm2Result.easinessFactor,
+    nextReviewDate: sm2Result.nextReviewDate,
+    lastReviewedAt: sm2Result.lastReviewedAt,
+    mastered: sm2Result.repetition >= 3 && sm2Result.interval >= 21,
+    reviewHistory: [...(targetCard.reviewHistory || []), sm2Result.reviewLog],
+    updatedAt: new Date().toISOString(),
+  };
+
+  const updated = current.map((c) => (c.id === cardId ? updatedCard : c));
+  saveAllAnnotations(updated);
+  return updatedCard;
 }
 
 /**
@@ -267,8 +355,9 @@ export function exportAnnotationsAsJson(): string {
   const all = getAllAnnotations();
   return JSON.stringify(
     {
-      version: "1.0.0",
+      version: "2.0.0",
       app: "LearnCraft",
+      engine: "SM-2 Spaced Repetition",
       exportedAt: new Date().toISOString(),
       annotations: all,
     },
@@ -284,10 +373,9 @@ export function exportAnnotationsAsMarkdown(): string {
   const all = getAllAnnotations();
   const stats = computeRevisionStats(all);
 
-  let md = `# LearnCraft — Quick Revision Notes\n\n`;
+  let md = `# LearnCraft — Spaced Memory & Revision Cheatsheet\n\n`;
   md += `*Generated on ${new Date().toLocaleDateString()} | Total Saved: ${stats.total} (${stats.notesCount} notes, ${stats.highlightsCount} highlights)*\n\n---\n\n`;
 
-  // Group by topic
   const grouped: Record<string, AnnotationItem[]> = {};
   all.forEach((item) => {
     if (!grouped[item.topicTitle]) grouped[item.topicTitle] = [];
@@ -298,9 +386,15 @@ export function exportAnnotationsAsMarkdown(): string {
     md += `## ${topicTitle}\n\n`;
     items.forEach((item, idx) => {
       md += `### ${idx + 1}. ${item.lessonTitle}\n`;
+      if (item.question) {
+        md += `**❓ Question:** ${item.question}\n\n`;
+      }
       md += `> "${item.selectedText}"\n\n`;
       if (item.note && item.note.trim()) {
         md += `**💡 Note:** ${item.note}\n\n`;
+      }
+      if (item.interval) {
+        md += `*SM-2 Interval: ${item.interval} days | Repetitions: ${item.repetition ?? 0}*\n\n`;
       }
       md += `*Lesson: [${item.lessonTitle}](${item.lessonPath})*\n\n`;
     });
