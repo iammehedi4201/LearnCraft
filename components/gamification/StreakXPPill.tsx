@@ -10,6 +10,8 @@
  */
 
 import { useState, useEffect, useRef } from "react";
+import { useSession } from "next-auth/react";
+import { openAuthModal } from "@/components/auth-modal";
 import {
   getGamificationState,
   GAMIFICATION_SYNC_EVENT,
@@ -17,6 +19,7 @@ import {
 import { UserGamificationState } from "@/types/gamification";
 
 export function StreakXPPill(): JSX.Element {
+  const { data: session } = useSession();
   const [state, setState] = useState<UserGamificationState | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -152,6 +155,19 @@ export function StreakXPPill(): JSX.Element {
               {state.streakFreezeAvailable ? "Ready" : "Used"}
             </span>
           </div>
+
+          {/* Guest Cloud Sync Prompt */}
+          {!session?.user && (
+            <button
+              onClick={() => {
+                setIsOpen(false);
+                openAuthModal();
+              }}
+              className="w-full mt-3 py-2 px-3 rounded-xl bg-purple-600/15 hover:bg-purple-600/25 border border-purple-500/20 text-purple-300 hover:text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <span>☁️ Sign in to backup streak & XP</span>
+            </button>
+          )}
         </div>
       )}
     </div>

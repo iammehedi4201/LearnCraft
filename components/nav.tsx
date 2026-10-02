@@ -73,6 +73,7 @@ const CATEGORIES: CategoryMeta[] = [
 ];
 
 function NavContent(): JSX.Element {
+  const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -432,30 +433,25 @@ function NavContent(): JSX.Element {
               </div>
             </div>
 
-            {/* Right Side Actions */}
+            {/* Right Side Actions — Clean & Streamlined */}
             <div className="flex items-center gap-2 sm:gap-3">
-              <Link
-                href="/notes"
-                className="hidden md:inline-flex px-3 py-2 text-ds-text-sub hover:text-ds-text-strong text-xs font-bold rounded-xl hover:bg-white/[0.04] transition-colors items-center gap-1.5"
-              >
-                <span>Notes</span>
-                {totalRevisions > 0 && (
-                  <span className="px-1.5 py-0.5 rounded-full bg-white/10 text-white text-[10px] font-mono">
-                    {totalRevisions}
-                  </span>
-                )}
-              </Link>
-
-              <Link
-                href="/revision"
-                className="hidden sm:inline-flex px-3.5 py-2 bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-ds-feature-base/15 items-center gap-1.5"
-              >
-                <span>Quick Revision</span>
-              </Link>
-
+              {/* Daily Streak & XP Widget */}
               <StreakXPPill />
 
-              <AuthButton />
+              {/* User Profile Dropdown or Sign In */}
+              {session?.user ? (
+                <UserNavMenu totalRevisions={totalRevisions} />
+              ) : (
+                <button
+                  onClick={openAuthModal}
+                  className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 border border-white/[0.08] text-white text-xs font-bold rounded-xl hover:bg-white/[0.06] hover:border-purple-500/40 transition-all cursor-pointer shadow-sm"
+                >
+                  <svg className="w-3.5 h-3.5 fill-currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                  </svg>
+                  <span>Sign In</span>
+                </button>
+              )}
 
               {/* Mobile Menu Toggle Button */}
               <button
@@ -578,9 +574,11 @@ function NavContent(): JSX.Element {
   );
 }
 
-function AuthButton() {
-  const { data: session, status } = useSession();
+function UserNavMenu({ totalRevisions }: { totalRevisions: number }) {
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced">("idle");
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (session?.user) {
@@ -591,71 +589,162 @@ function AuthButton() {
     }
   }, [session?.user]);
 
-  if (status === "loading") {
-    return (
-      <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft text-ds-text-sub text-xs font-semibold animate-pulse">
-        <span className="w-2 h-2 rounded-full bg-purple-500 animate-ping" />
-        <span>Signing in...</span>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
-  if (session && session.user) {
-    return (
-      <div className="hidden sm:flex items-center gap-2.5 bg-ds-bg-weak border border-ds-stroke-soft rounded-xl p-1 pr-3">
-        {session.user.image ? (
-          <img
-            src={session.user.image}
-            alt={session.user.name || "User avatar"}
-            className="w-6 h-6 rounded-lg object-cover ring-1 ring-white/10"
-          />
-        ) : (
-          <div className="w-6 h-6 rounded-lg bg-ds-feature-base text-ds-static-white flex items-center justify-center text-[10px] font-bold">
-            {session.user.name?.charAt(0) || "U"}
-          </div>
-        )}
-        <div className="flex items-center gap-1.5">
-          <span className="text-[11px] font-semibold text-ds-text-strong max-w-[100px] truncate">
-            {session.user.name?.split(" ")[0] || "Learner"}
-          </span>
-          {syncStatus === "synced" && (
-            <span
-              title="Cloud Synced to Neon Postgres"
-              className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-            >
-              ☁️ Synced
-            </span>
-          )}
-          {syncStatus === "syncing" && (
-            <span
-              title="Syncing progress to cloud..."
-              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20 animate-pulse"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
-              Syncing
-            </span>
-          )}
-        </div>
-        <button
-          onClick={() => signOut()}
-          className="text-[11px] font-bold text-ds-text-sub hover:text-ds-feature-base transition-colors ml-1 cursor-pointer"
-        >
-          Sign Out
-        </button>
-      </div>
-    );
-  }
+  if (!session?.user) return null;
 
   return (
-    <button
-      onClick={openAuthModal}
-      className="hidden sm:flex items-center gap-2 px-3 py-1.5 border border-ds-stroke-soft text-ds-text-strong text-xs font-bold rounded-xl hover:bg-ds-bg-weak hover:border-purple-500/40 transition-all cursor-pointer shadow-sm"
-    >
-      <svg className="w-3.5 h-3.5 fill-currentColor" viewBox="0 0 24 24">
-        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-      </svg>
-      Sign In
-    </button>
+    <div className="relative" ref={menuRef}>
+      {/* Profile Trigger Button */}
+      <button
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex items-center gap-2 p-1 pl-1.5 pr-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/30 transition-all cursor-pointer group"
+        title="User Menu & Study Hub"
+      >
+        <div className="relative">
+          {session.user.image ? (
+            <img
+              src={session.user.image}
+              alt={session.user.name || "Avatar"}
+              className="w-6 h-6 rounded-lg object-cover ring-1 ring-white/10"
+            />
+          ) : (
+            <div className="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center text-[10px] font-bold">
+              {session.user.name?.charAt(0) || "U"}
+            </div>
+          )}
+          {syncStatus === "synced" && (
+            <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-[#0E121B]" />
+          )}
+        </div>
+
+        <span className="text-xs font-bold text-white max-w-[90px] truncate hidden sm:inline-block">
+          {session.user.name?.split(" ")[0] || "Profile"}
+        </span>
+
+        <svg
+          className={`w-3.5 h-3.5 text-slate-400 group-hover:text-white transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {/* User Dropdown Menu */}
+      {isOpen && (
+        <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-[#0E121B]/95 backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-2 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
+          {/* User Info Header */}
+          <div className="p-3 pb-2.5 border-b border-white/[0.06] mb-1">
+            <div className="flex items-center gap-2.5 mb-1.5">
+              {session.user.image ? (
+                <img
+                  src={session.user.image}
+                  alt={session.user.name || "Avatar"}
+                  className="w-8 h-8 rounded-xl object-cover ring-1 ring-white/10"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-bold">
+                  {session.user.name?.charAt(0) || "U"}
+                </div>
+              )}
+              <div className="overflow-hidden">
+                <h4 className="text-xs font-bold text-white truncate">
+                  {session.user.name || "Learner"}
+                </h4>
+                <p className="text-[10px] text-slate-400 font-mono truncate">
+                  {session.user.email || "GitHub Account"}
+                </p>
+              </div>
+            </div>
+
+            {/* Sync Badge */}
+            <div className="flex items-center gap-1.5 pt-1 text-[10px] font-mono text-emerald-400">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Cloud Sync Active (PostgreSQL)</span>
+            </div>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="space-y-0.5">
+            <Link
+              href="/notes"
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-purple-400">📝</span>
+                <span>My Study Notes</span>
+              </div>
+              {totalRevisions > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-white/10 text-white text-[10px] font-mono font-bold">
+                  {totalRevisions}
+                </span>
+              )}
+            </Link>
+
+            <Link
+              href="/revision"
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-purple-400">⚡</span>
+                <span>Quick Revision & Flashcards</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/roadmaps"
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-purple-400">🗺️</span>
+                <span>Skill Roadmaps</span>
+              </div>
+            </Link>
+          </div>
+
+          <div className="h-px bg-white/[0.06] my-1" />
+
+          {/* Sign Out Button */}
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              signOut();
+            }}
+            className="w-full flex items-center gap-2 p-2 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors cursor-pointer"
+          >
+            <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span>Sign Out</span>
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 

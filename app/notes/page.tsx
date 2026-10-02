@@ -12,6 +12,8 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { openAuthModal } from "@/components/auth-modal";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
@@ -166,6 +168,7 @@ function extractQuestion(item: AnnotationItem): string {
 
 export default function NotesPage(): JSX.Element {
   const router = useRouter();
+  const { data: session } = useSession();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const optionsMenuRef = useRef<HTMLDivElement>(null);
 
@@ -434,6 +437,35 @@ export default function NotesPage(): JSX.Element {
             </div>
           </div>
         </div>
+
+        {/* ─── CLOUD SYNC & GUEST STATUS BANNER ─── */}
+        {session?.user ? (
+          <div className="mb-6 px-4 py-2.5 rounded-xl bg-purple-500/[0.06] border border-purple-500/15 flex items-center justify-between text-xs text-slate-300">
+            <div className="flex items-center gap-2">
+              <span className="text-emerald-400">☁️</span>
+              <span>
+                <strong className="text-white">Cloud Sync Active</strong> — Logged in as <span className="text-purple-300 font-mono">@{session.user.name || "user"}</span>. Your notes & highlights are securely backed up.
+              </span>
+            </div>
+            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md font-bold">Synced</span>
+          </div>
+        ) : (
+          <div className="mb-6 px-4 py-2.5 rounded-xl bg-amber-500/[0.06] border border-amber-500/15 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-300">
+            <div className="flex items-center gap-2">
+              <span className="text-amber-400">💾</span>
+              <span>
+                <strong className="text-white">Local Storage Active</strong> — Notes and highlights are saved in this browser. Sign in with GitHub to backup and sync across devices.
+              </span>
+            </div>
+            <button
+              onClick={() => openAuthModal()}
+              className="px-3 py-1 rounded-lg bg-white/[0.08] hover:bg-white/[0.15] text-white font-bold text-xs transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
+            >
+              <span>Sign in with GitHub</span>
+              <span className="text-purple-400">→</span>
+            </button>
+          </div>
+        )}
 
         {/* ─── SIMPLE UNIFIED FILTER BAR ─── */}
         <div className="flex items-center justify-between gap-3 mb-6 flex-wrap">
