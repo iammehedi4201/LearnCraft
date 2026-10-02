@@ -15,12 +15,13 @@ import { useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { reconcileCloudProgress } from "@/lib/progress-sync";
 import { useRevision } from "@/context/revision-context";
-import { TechIcon } from "@/components/roadmap/TechIcon";
 import {
   SKILL_ROADMAPS,
   type SkillRoadmap,
 } from "@/lib/roadmap-data";
+import { TechIcon } from "@/components/roadmap/TechIcon";
 import { AuthModal, openAuthModal } from "@/components/auth-modal";
+import { StreakXPPill } from "@/components/gamification/StreakXPPill";
 
 export function Nav() {
   return (
@@ -451,6 +452,8 @@ function NavContent(): JSX.Element {
               >
                 <span>Quick Revision</span>
               </Link>
+
+              <StreakXPPill />
 
               <AuthButton />
 

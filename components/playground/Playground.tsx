@@ -29,6 +29,14 @@ import { PlaygroundTests } from "./PlaygroundTests";
 import { PlaygroundHints } from "./PlaygroundHints";
 import { PlaygroundFullscreen } from "./PlaygroundFullscreen";
 import { PlaygroundExamplePanel } from "./PlaygroundExamplePanel";
+import { PlaygroundHistoryModal } from "./PlaygroundHistoryModal";
+import { CodeChallengeBanner } from "./CodeChallengeBanner";
+import {
+  savePlaygroundSnapshot,
+  getPlaygroundSnapshots,
+  type PlaygroundSnapshot,
+} from "@/lib/playground-history";
+import { recordActivity } from "@/lib/gamification";
 import { EnhancedCodeBlock } from "../enhanced-code-display";
 import "./playground.css";
 
@@ -56,6 +64,19 @@ export function Playground({
   const [hintsUsed, setHintsUsed] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
+
+  // ─── History & Snapshots State ───
+  const contextKey = exercise?.id || `${runtimeType}_${language || "code"}`;
+  const [snapshots, setSnapshots] = useState<PlaygroundSnapshot[]>([]);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  const reloadSnapshots = useCallback(() => {
+    setSnapshots(getPlaygroundSnapshots(contextKey));
+  }, [contextKey]);
+
+  useEffect(() => {
+    reloadSnapshots();
+  }, [reloadSnapshots]);
   
   // ─── Improve Mode State ───
   const [isImproveMode, setIsImproveMode] = useState(false);
@@ -167,6 +188,14 @@ export function Playground({
       setOutput(result.output);
       setError(result.error);
       setDuration(result.duration);
+
+      // Save execution snapshot to history
+      savePlaygroundSnapshot(
+        contextKey,
+        codeToRun,
+        result.error ? "error" : "success"
+      );
+      reloadSnapshots();
     } catch (e) {
       setError({
         message:
@@ -186,6 +215,8 @@ export function Playground({
     isRunning,
     getRuntime,
     displayLanguage,
+    contextKey,
+    reloadSnapshots,
   ]);
 
   const handleCheck = useCallback(async () => {
@@ -235,6 +266,23 @@ export function Playground({
         });
         setOutput(runResult.output);
         setDuration(runResult.duration);
+
+        // Save tested snapshot
+        savePlaygroundSnapshot(
+          contextKey,
+          codeToCheck,
+          result.passed ? "tested" : "error"
+        );
+        reloadSnapshots();
+
+        // Award XP on successful challenge completion
+        if (result.passed) {
+          recordActivity(
+            "exercise_pass",
+            `Passed code challenge: ${exercise.title}`,
+            { exerciseId: exercise.id }
+          );
+        }
       } else {
         await handleRun();
       }
@@ -256,6 +304,8 @@ export function Playground({
     exercise,
     getRuntime,
     handleRun,
+    contextKey,
+    reloadSnapshots,
   ]);
 
   const handleReset = useCallback(() => {
@@ -306,6 +356,18 @@ export function Playground({
       }
     },
     [isFullscreen, expandedLayoutMode],
+  );
+
+  const handleRestoreFromHistory = useCallback(
+    (restoredCode: string) => {
+      const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
+      if (is3Pane) {
+        setPracticeCode(restoredCode);
+      } else {
+        setCode(restoredCode);
+      }
+    },
+    [isFullscreen, expandedLayoutMode]
   );
 
   const handleFullscreen = useCallback(() => {
@@ -801,6 +863,17 @@ export function Playground({
         )}
       </div>
 
+      {/* Code Challenge Result Banner */}
+      {testResults && (
+        <div className="px-4 py-2 bg-black/20">
+          <CodeChallengeBanner
+            testResults={testResults}
+            onShowNextHint={handleHint}
+            hintsAvailable={hasHints && hintsUsed < totalHints}
+          />
+        </div>
+      )}
+
       {/* Test Results */}
       {testResults && <PlaygroundTests results={testResults} />}
 
@@ -817,6 +890,8 @@ export function Playground({
       <PlaygroundToolbar
         onRun={handleRun}
         onFormat={handleFormat}
+        onHistory={() => setIsHistoryOpen(true)}
+        snapshotsCount={snapshots.length}
         isWordWrap={isWordWrap}
         onToggleWordWrap={handleToggleWordWrap}
         onCheck={hasExercise ? handleCheck : undefined}
@@ -830,6 +905,16 @@ export function Playground({
         hintsUsed={hintsUsed}
         totalHints={totalHints}
         showCopyToast={showCopyToast}
+      />
+
+      {/* History Snapshots Modal */}
+      <PlaygroundHistoryModal
+        isOpen={isHistoryOpen}
+        contextKey={contextKey}
+        snapshots={snapshots}
+        onClose={() => setIsHistoryOpen(false)}
+        onRestore={handleRestoreFromHistory}
+        onSnapshotsUpdated={reloadSnapshots}
       />
     </div>
   );

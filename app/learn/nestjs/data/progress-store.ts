@@ -153,6 +153,13 @@ export function markLessonComplete(slugOrCode: string): boolean {
       new CustomEvent("learncraft-progress-updated", { detail: inMemoryProgress })
     );
 
+    // Dynamic XP Reward & Daily Streak tracking
+    try {
+      import("@/lib/gamification").then(({ recordActivity }) => {
+        recordActivity("lesson_complete", `Completed lesson: ${slugOrCode}`, { lesson: slugOrCode });
+      });
+    } catch {}
+
     // Save directly to Neon PostgreSQL: lesson is completed (completed: true, score: 100)
     fetch("/api/progress", {
       method: "POST",

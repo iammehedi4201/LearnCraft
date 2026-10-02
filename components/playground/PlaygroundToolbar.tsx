@@ -5,6 +5,8 @@ interface PlaygroundToolbarProps {
   onCheck?: () => void;
   onHint?: () => void;
   onFormat?: () => void;
+  onHistory?: () => void;
+  snapshotsCount?: number;
   isWordWrap?: boolean;
   onToggleWordWrap?: () => void;
   onReset: () => void;
@@ -23,6 +25,8 @@ export function PlaygroundToolbar({
   onCheck,
   onHint,
   onFormat,
+  onHistory,
+  snapshotsCount,
   isWordWrap,
   onToggleWordWrap,
   onReset,
@@ -120,6 +124,22 @@ export function PlaygroundToolbar({
       </div>
 
       <div className="playground-toolbar-right">
+        {/* History / Snapshots */}
+        {onHistory && (
+          <button
+            className="playground-btn playground-btn--ghost"
+            onClick={onHistory}
+            title={snapshotsCount ? `History (${snapshotsCount} snapshots)` : "Code snapshot history"}
+            id="playground-history-btn"
+          >
+            <span className="playground-btn-icon">🕒</span>
+            <span className="hidden sm:inline">History</span>
+            {snapshotsCount && snapshotsCount > 0 ? (
+              <span className="playground-badge">{snapshotsCount}</span>
+            ) : null}
+          </button>
+        )}
+
         {/* Copy */}
         <button
           className="playground-btn playground-btn--ghost"

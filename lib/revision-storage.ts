@@ -214,6 +214,13 @@ export function addAnnotation(
   const current = getAllAnnotations();
   const updated = [newItem, ...current];
   saveAllAnnotations(updated);
+
+  try {
+    import("./gamification").then(({ recordActivity }) => {
+      recordActivity("note_create", `Created study note for ${newItem.lessonTitle}`);
+    });
+  } catch {}
+
   return newItem;
 }
 
@@ -271,6 +278,13 @@ export function recordSM2Review(
 
   const updated = current.map((c) => (c.id === cardId ? updatedCard : c));
   saveAllAnnotations(updated);
+
+  try {
+    import("./gamification").then(({ recordActivity }) => {
+      recordActivity("flashcard_review", `Reviewed card with grade '${grade}'`);
+    });
+  } catch {}
+
   return updatedCard;
 }
 
