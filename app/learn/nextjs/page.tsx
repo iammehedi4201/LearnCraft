@@ -1,298 +1,497 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Nav } from "@/components/nav";
+import { Footer } from "@/app/learn/components/Footer";
+import { InteractiveGrid } from "@/components/interactive-grid";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Sparkles,
+  Target,
+  Zap,
+  Server,
+  Shield,
+  Layers,
+  Check,
+  Clock,
+  Award,
+  Database,
+} from "./components/icons";
+import {
+  NEXTJS_STAGES,
+  NextjsLessonMeta,
+} from "./data/nextjs-curriculum";
+import {
+  setStage,
+  getStage,
+  getNextRecommendedLesson,
+  getOverallProgress,
+  fetchProgressFromDB,
+  isLessonComplete,
+  getActiveLesson,
+  toggleLessonComplete,
+  getCompletionByStage,
+} from "./data/progress-store";
 
 export default function NextJsHub(): JSX.Element {
-  const basics = [
-    {
-      code: "NX-01",
-      name: "App Router Fundamentals",
-      path: "/learn/nextjs/nx01-app-router",
-      desc: "Understand the App Router (pages, layouts, segments)",
-      color: "purple",
-    },
-    {
-      code: "NX-02",
-      name: "File-Based Routing",
-      path: "/learn/nextjs/nx02-routing",
-      desc: "How Next.js organizes routes using filesystem conventions",
-      color: "purple",
-    },
-    {
-      code: "NX-03",
-      name: "Server vs Client Components",
-      path: "/learn/nextjs/nx03-server-client",
-      desc: "RSC vs client components, when to use each",
-      color: "purple",
-    },
-    {
-      code: "NX-04",
-      name: "Layouts & Nesting",
-      path: "/learn/nextjs/nx04-layouts",
-      desc: "Shared layouts, route groups, nested routing patterns",
-      color: "purple",
-    },
-    {
-      code: "NX-05",
-      name: "Dynamic Routes",
-      path: "/learn/nextjs/nx05-dynamic",
-      desc: "Segment parameters, catch-all routes, optional segments",
-      color: "purple",
-    },
-    {
-      code: "NX-06",
-      name: "Server-side Data Fetching",
-      path: "/learn/nextjs/nx06-server-fetch",
-      desc: "Async components, fetch in layout/page, no loading states",
-      color: "purple",
-    },
-  ];
+  const { data: session } = useSession();
+  const [selectedStageId, setSelectedStageId] = useState<string>("stage-1");
+  const [nextLesson, setNextLesson] = useState<NextjsLessonMeta | null>(null);
+  const [hasStarted, setHasStarted] = useState<boolean>(false);
+  const [progressSummary, setProgressSummary] = useState({
+    completedCount: 0,
+    totalCount: 22,
+    percent: 0,
+  });
 
-  const intermediate = [
-    {
-      code: "NX-07",
-      name: "Client-side Data Fetching",
-      path: "/learn/nextjs/nx07-client-fetch",
-      desc: 'useEffect pattern, loading states, "use client" components',
-      color: "orange",
-    },
-    {
-      code: "NX-08",
-      name: "Error Handling & Error.tsx",
-      path: "/learn/nextjs/nx08-errors",
-      desc: "Error boundaries, error.tsx files, error recovery",
-      color: "orange",
-    },
-    {
-      code: "NX-09",
-      name: "Loading States & Loading.tsx",
-      path: "/learn/nextjs/nx09-loading",
-      desc: "Instant UI feedback with loading.tsx and Suspense",
-      color: "orange",
-    },
-    {
-      code: "NX-10",
-      name: "Route Handlers",
-      path: "/learn/nextjs/nx10-route-handlers",
-      desc: "Create API routes with /app/api/route.ts",
-      color: "orange",
-    },
-    {
-      code: "NX-11",
-      name: "Middleware",
-      path: "/learn/nextjs/nx11-middleware",
-      desc: "Authorization, logging, request/response modification",
-      color: "orange",
-    },
-    {
-      code: "NX-12",
-      name: "Metadata & SEO",
-      path: "/learn/nextjs/nx12-metadata",
-      desc: "Dynamic metadata, Open Graph, page titles",
-      color: "orange",
-    },
-  ];
+  const isAuthenticated = Boolean(session?.user);
 
-  const advanced = [
-    {
-      code: "NX-13",
-      name: "Image Optimization",
-      path: "/learn/nextjs/nx13-images",
-      desc: "Next.js Image component, automatic optimization",
-      color: "pink",
-    },
-    {
-      code: "NX-14",
-      name: "Font Optimization",
-      path: "/learn/nextjs/nx14-fonts",
-      desc: "next/font for self-hosted and Google Fonts",
-      color: "pink",
-    },
-    {
-      code: "NX-15",
-      name: "Script Optimization",
-      path: "/learn/nextjs/nx15-scripts",
-      desc: "next/script for third-party scripts",
-      color: "pink",
-    },
-    {
-      code: "NX-16",
-      name: "Static Generation (SSG)",
-      path: "/learn/nextjs/nx16-ssg",
-      desc: "Pre-render at build time, generateStaticParams",
-      color: "pink",
-    },
-    {
-      code: "NX-17",
-      name: "Incremental Static Regeneration (ISR)",
-      path: "/learn/nextjs/nx17-isr",
-      desc: "Revalidate specific pages at intervals",
-      color: "pink",
-    },
-    {
-      code: "NX-18",
-      name: "On-Demand Revalidation",
-      path: "/learn/nextjs/nx18-on-demand-revalidate",
-      desc: "Manually trigger cache invalidation from API routes",
-      color: "pink",
-    },
-    {
-      code: "NX-19",
-      name: "Caching Strategies",
-      path: "/learn/nextjs/nx19-caching",
-      desc: "request memoization, data cache, full route cache",
-      color: "pink",
-    },
-    {
-      code: "NX-20",
-      name: "Environment Variables",
-      path: "/learn/nextjs/nx20-env",
-      desc: "NEXT_PUBLIC_, server-only vars, .env files",
-      color: "pink",
-    },
-  ];
+  // Sync state from database & custom events
+  useEffect(() => {
+    const updateLocalState = () => {
+      const storedStage = getStage() || "stage-1";
+      setSelectedStageId(storedStage);
 
-  const FeatureCard = ({
-    code,
-    name,
-    path,
-    desc,
-    color = "purple",
-  }: {
-    code: string;
-    name: string;
-    path: string;
-    desc: string;
-    color?: string;
-  }) => (
-    <Link
-      href={path}
-      className="group relative block p-6 glass-card rounded-2xl hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-    >
-      <div className="relative z-10">
-        <div className="flex items-center gap-2 mb-3">
-          <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-${color}-500/10 text-${color}-600`}>
-            {code}
-          </span>
-        </div>
-        <h3 className="font-display font-bold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary transition-colors">
-          {name}
-        </h3>
-        <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{desc}</p>
-      </div>
-      <div className={`absolute bottom-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity transform group-hover:translate-x-0 translate-x-4`}>
-        <svg className={`w-5 h-5 text-${color}-500`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-      </div>
-    </Link>
-  );
+      const rec = getNextRecommendedLesson();
+      setNextLesson(rec);
+
+      if (!session?.user) {
+        setProgressSummary({ completedCount: 0, totalCount: 22, percent: 0 });
+        setHasStarted(false);
+      } else {
+        const overall = getOverallProgress();
+        setProgressSummary(overall);
+        setHasStarted(overall.completedCount > 0);
+      }
+    };
+
+    // Load fresh progress directly from PostgreSQL database
+    fetchProgressFromDB().then(() => {
+      updateLocalState();
+    });
+
+    updateLocalState();
+
+    const handleProgressUpdated = () => {
+      updateLocalState();
+    };
+
+    window.addEventListener(
+      "learncraft-progress-updated",
+      handleProgressUpdated
+    );
+    window.addEventListener(
+      "nextjs-progress-updated",
+      handleProgressUpdated
+    );
+    return () => {
+      window.removeEventListener(
+        "learncraft-progress-updated",
+        handleProgressUpdated
+      );
+      window.removeEventListener(
+        "nextjs-progress-updated",
+        handleProgressUpdated
+      );
+    };
+  }, [session?.user]);
+
+  const handleStageSelect = (stageId: string) => {
+    setSelectedStageId(stageId);
+    setStage(stageId);
+  };
+
+  const activeStage =
+    NEXTJS_STAGES.find((s) => s.id === selectedStageId) || NEXTJS_STAGES[0];
+  const activeLesson = getActiveLesson();
+  const stageStats = getCompletionByStage(activeStage.id);
+
+  const getStageIcon = (stageNumber: number) => {
+    switch (stageNumber) {
+      case 1:
+        return <Layers className="w-4 h-4 text-purple-400" />;
+      case 2:
+        return <Server className="w-4 h-4 text-sky-400" />;
+      case 3:
+        return <Zap className="w-4 h-4 text-amber-400" />;
+      case 4:
+        return <Database className="w-4 h-4 text-emerald-400" />;
+      case 5:
+        return <Shield className="w-4 h-4 text-rose-400" />;
+      default:
+        return <Sparkles className="w-4 h-4 text-purple-400" />;
+    }
+  };
 
   return (
-    <>
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-ds-text-strong flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-300 overflow-x-hidden transition-colors duration-300">
       <Nav />
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="mb-20">
-          <Link
-            href="/learn"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-primary transition-colors mb-8"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-            Back to Learning Paths
-          </Link>
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div className="max-w-3xl">
-              <h1 className="text-display text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl mb-4">
-                Next.js <span className="text-purple-600 dark:text-purple-400">14+</span>
-              </h1>
-              <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-                Master the world's most popular React framework. From basic routing
-                to advanced rendering strategies and performance optimizations.
-              </p>
+
+      <main className="flex-1 max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full space-y-10">
+        {/* =========================================================================
+            1. HERO SECTION
+           ========================================================================= */}
+        <section className="p-6 sm:p-8 md:p-10 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="max-w-4xl relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-300 text-xs font-mono font-bold mb-5 border border-purple-500/20">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Next.js 15 App Router Learning Path</span>
             </div>
-            <div className="flex items-center gap-2 text-sm font-medium text-slate-500 bg-slate-100 px-4 py-2 rounded-full">
-              <div className="h-2 w-2 rounded-full bg-purple-500 animate-pulse" />
-              Progress: 0 / 20 Complete
+
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-ds-text-strong leading-tight">
+              Learn Next.js
+            </h1>
+            <p className="text-base sm:text-lg text-ds-text-sub mt-2 font-normal">
+              From App Router foundations to Server Actions, Streaming, Caching & Production Deployment.
+            </p>
+
+            {/* Outcomes Checklist */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-7 text-xs sm:text-sm">
+              <div className="flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span className="text-ds-text-strong font-medium">
+                  Master App Router, nested layouts, client navigation & dynamic segments
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span className="text-ds-text-strong font-medium">
+                  Bridge Server & Client Components (RSC) with Suspense streaming
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span className="text-ds-text-strong font-medium">
+                  Mutate data with Server Actions, form state & optimistic UI
+                </span>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span className="text-ds-text-strong font-medium">
+                  Optimize with 4-layer caching, on-demand ISR & Edge Middleware
+                </span>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Basics */}
-        <section className="mb-20">
-          <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-display text-2xl font-bold text-slate-900 dark:text-white">
-              Foundations
-            </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-purple-200 dark:from-purple-900/50 to-transparent" />
-            <span className="text-xs font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 px-3 py-1 rounded-full uppercase tracking-widest">NX-01 to NX-06</span>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {basics.map((f) => (
-              <FeatureCard key={f.code} {...f} />
-            ))}
+            {/* Primary Action Button */}
+            <div className="flex items-center gap-3.5 pt-1">
+              {nextLesson && (
+                <Link
+                  href={nextLesson.path}
+                  className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm transition-all shadow-md shadow-purple-600/20 active:scale-95"
+                >
+                  <span>
+                    {hasStarted
+                      ? `Continue: ${nextLesson.name}`
+                      : `Start Learning: ${nextLesson.name}`}
+                  </span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              )}
+            </div>
+
+            {hasStarted && nextLesson && (
+              <div className="mt-5 flex items-center gap-2 text-xs text-ds-text-sub">
+                <span className="text-emerald-500 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                  {progressSummary.completedCount} of {progressSummary.totalCount} completed
+                </span>
+                <span>·</span>
+                <span>
+                  Next:{" "}
+                  <strong className="text-ds-text-strong">
+                    {nextLesson.name}
+                  </strong>{" "}
+                  ({nextLesson.code})
+                </span>
+              </div>
+            )}
           </div>
         </section>
 
-        {/* Intermediate */}
-        <section className="mb-20">
-          <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-display text-2xl font-bold text-slate-900 dark:text-white">
-              Intermediate
-            </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-orange-200 dark:from-orange-900/50 to-transparent" />
-            <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 px-3 py-1 rounded-full uppercase tracking-widest">NX-07 to NX-12</span>
+        {/* =========================================================================
+            2. 5-STAGE PROGRESSION SELECTOR
+           ========================================================================= */}
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-ds-text-strong">
+              <Target className="w-4 h-4 text-purple-500" />
+              <span>5-Stage Professional Curriculum</span>
+            </div>
+            <span className="text-xs text-ds-text-soft">
+              Curated progression from core UI primitives to enterprise deployment
+            </span>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {intermediate.map((f) => (
-              <FeatureCard key={f.code} {...f} />
-            ))}
-          </div>
-        </section>
 
-        {/* Advanced */}
-        <section className="mb-20">
-          <div className="flex items-center gap-4 mb-10">
-            <h2 className="text-display text-2xl font-bold text-slate-900 dark:text-white">
-              Advanced Performance
-            </h2>
-            <div className="h-px flex-1 bg-gradient-to-r from-pink-200 dark:from-pink-900/50 to-transparent" />
-            <span className="text-xs font-bold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-900/20 px-3 py-1 rounded-full uppercase tracking-widest">NX-13 to NX-20</span>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {advanced.map((f) => (
-              <FeatureCard key={f.code} {...f} />
-            ))}
-          </div>
-        </section>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
+            {NEXTJS_STAGES.map((stage) => {
+              const isSelected = selectedStageId === stage.id;
+              const stats = getCompletionByStage(stage.id);
 
-        <div className="relative group overflow-hidden rounded-3xl bg-slate-900 p-8 sm:p-12 text-white shadow-2xl">
-          <div className="relative z-10 flex flex-col md:flex-row gap-12 items-center">
-            <div className="flex-1">
-              <h3 className="text-display text-2xl font-bold mb-4">Production-Ready Lessons</h3>
-              <p className="text-slate-400 leading-relaxed mb-8 max-w-xl">
-                Learn how to build scalable, high-performance applications that follow
-                official Next.js recommendations and industry best practices.
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="flex -space-x-3">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="h-10 w-10 rounded-full border-2 border-slate-900 bg-slate-800 flex items-center justify-center text-xs font-bold">
-                      {i}
+              return (
+                <button
+                  key={stage.id}
+                  onClick={() => handleStageSelect(stage.id)}
+                  className={`group p-4 sm:p-5 rounded-2xl text-left transition-all duration-300 ease-out relative cursor-pointer border flex flex-col justify-between overflow-hidden ${
+                    isSelected
+                      ? "bg-ds-bg-white border-purple-500 ring-2 ring-purple-500/20 shadow-md shadow-purple-500/5"
+                      : "bg-ds-bg-white hover:bg-ds-bg-weak/70 border-ds-stroke-soft hover:border-purple-500/40 shadow-sm hover:shadow-md hover:-translate-y-1"
+                  }`}
+                >
+                  <div className="relative z-10">
+                    {/* Top row: Icon + Stage / Status */}
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-8 h-8 rounded-xl bg-ds-bg-weak group-hover:bg-ds-bg-soft flex items-center justify-center border border-ds-stroke-soft group-hover:border-purple-500/30 transition-colors duration-200">
+                        {getStageIcon(stage.stageNumber)}
+                      </div>
+
+                      {isSelected ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-500 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">
+                          <Check className="w-3 h-3 text-purple-500" />
+                          Stage {stage.stageNumber}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold text-ds-text-soft group-hover:text-ds-text-sub uppercase tracking-wider transition-colors duration-200">
+                          STAGE 0{stage.stageNumber}
+                        </span>
+                      )}
                     </div>
-                  ))}
-                </div>
-                <span className="text-sm text-slate-400 font-medium">Full-Stack Roadmap</span>
+
+                    <div className="text-sm font-bold text-ds-text-strong group-hover:text-purple-500 transition-colors duration-200 leading-snug">
+                      {stage.name}
+                    </div>
+
+                    <div className="text-xs text-ds-text-sub group-hover:text-ds-text-strong/90 transition-colors duration-200 mt-1 leading-relaxed line-clamp-2">
+                      {stage.subtitle}
+                    </div>
+                  </div>
+
+                  <div className="relative z-10 mt-4 pt-3 border-t border-ds-stroke-soft flex items-center justify-between text-[11px] font-mono text-ds-text-soft">
+                    <span>{stage.lessons.length} Lessons</span>
+                    {isAuthenticated && stats.completed > 0 && (
+                      <span className="text-emerald-500 font-bold">
+                        {stats.completed}/{stats.total}
+                      </span>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* =========================================================================
+            3. FOCUSED STAGE CONTENT & LESSONS GRID
+           ========================================================================= */}
+        <section className="space-y-6">
+          {/* Stage Header Banner */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider bg-purple-500/10 text-purple-500 border border-purple-500/20 px-3 py-1 rounded-xl">
+                  STAGE 0{activeStage.stageNumber}
+                </span>
+                <h2 className="text-lg sm:text-xl font-bold text-ds-text-strong tracking-tight">
+                  {activeStage.name}
+                </h2>
               </div>
+              <p className="text-xs sm:text-sm text-ds-text-sub font-normal">
+                {activeStage.milestone}
+              </p>
             </div>
-            <div className="flex-shrink-0">
-              <div className="h-24 w-24 rounded-3xl bg-white dark:bg-slate-900/50 backdrop-blur flex items-center justify-center border border-white/20">
-                <svg className="w-12 h-12 text-purple-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
-              </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="text-xs font-bold text-ds-text-sub bg-ds-bg-weak px-3 py-1 rounded-full border border-ds-stroke-soft">
+                {stageStats.completed} / {activeStage.lessons.length} Completed
+              </span>
             </div>
           </div>
-          <div className="absolute -right-16 -bottom-16 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl group-hover:bg-purple-500/20 transition-colors duration-500" />
-        </div>
-      </div>
-    </>
+
+          {/* Lessons Grid (Sequential Ordered Cards) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {activeStage.lessons.map((lesson, idx) => {
+              const isDone = Boolean(
+                isAuthenticated &&
+                  (isLessonComplete(lesson.slug) || isLessonComplete(lesson.code))
+              );
+              const isTarget = Boolean(
+                activeLesson &&
+                  (activeLesson.slug === lesson.slug ||
+                    activeLesson.code === lesson.code)
+              );
+
+              return (
+                <Link
+                  key={lesson.slug}
+                  href={lesson.path}
+                  className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-[#0E121B] border transition-all duration-300 ease-out shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer overflow-hidden ${
+                    isTarget
+                      ? "border-purple-500/40 ring-1 ring-purple-500/20 bg-purple-500/[0.03]"
+                      : "border-white/[0.06] hover:border-white/[0.12]"
+                  }`}
+                >
+                  <div className="relative z-10">
+                    {/* Card Header: Step Index, Code & Completion Toggle */}
+                    <div className="flex items-center justify-between gap-3 mb-3.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-mono font-bold text-slate-400 bg-white/[0.04] group-hover:text-slate-300 px-2 py-0.5 rounded-md transition-colors duration-200">
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
+                        <span className="font-mono text-xs font-black tracking-wider text-white bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/[0.06] group-hover:border-purple-500/40 group-hover:text-purple-300 transition-colors duration-200">
+                          {lesson.code}
+                        </span>
+                        <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-white/[0.03] text-slate-400">
+                          {lesson.tag}
+                        </span>
+                      </div>
+
+                      {isAuthenticated && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            toggleLessonComplete(lesson.slug);
+                          }}
+                          className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full transition-all cursor-pointer outline-none focus:outline-none ${
+                            isDone
+                              ? "text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20"
+                              : isTarget
+                              ? "text-purple-300 bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30"
+                              : "text-slate-400 bg-white/[0.04] hover:text-white hover:bg-white/[0.08] border border-white/[0.06]"
+                          }`}
+                          title={
+                            isDone
+                              ? "Completed in database — click to unmark"
+                              : "Click to mark complete in database"
+                          }
+                        >
+                          {isDone ? (
+                            <>
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>Done</span>
+                            </>
+                          ) : isTarget ? (
+                            <>
+                              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                              <span>Current</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-2 h-2 rounded-full border border-white/20 group-hover:border-purple-400 inline-block" />
+                              <span>Mark Done</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors duration-200 leading-snug tracking-tight">
+                      {lesson.name}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-xs sm:text-sm text-slate-400 group-hover:text-slate-300 transition-colors duration-200 line-clamp-2 mt-2 leading-relaxed font-normal">
+                      {lesson.desc}
+                    </p>
+
+                    {/* Prerequisite Pill */}
+                    {lesson.prerequisite && (
+                      <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 bg-white/[0.03] group-hover:bg-white/[0.06] px-2.5 py-1 rounded-lg transition-colors duration-200 border border-white/[0.04]">
+                        <span className="text-slate-500 font-semibold">
+                          Requires:
+                        </span>
+                        <span>{lesson.prerequisite}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Footer */}
+                  <div className="relative z-10 flex items-center justify-between gap-3 mt-6 pt-4 border-t border-white/[0.06] text-xs">
+                    <span className="inline-flex items-center gap-1.5 text-slate-400 font-medium">
+                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                      <span>{lesson.estimatedMinutes}m</span>
+                    </span>
+
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] text-slate-300 border border-white/[0.06] group-hover:bg-purple-600 group-hover:text-white group-hover:border-transparent font-bold transition-all duration-200 ease-out shadow-sm">
+                      <span>
+                        {isDone ? "Review" : isTarget ? "Continue" : "Start"}
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200 ease-out" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Stage Capstone Milestone Card */}
+          {activeStage.capstone && (
+            <div className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-purple-500/30 hover:border-purple-500/50 shadow-xl relative overflow-hidden transition-all duration-300">
+              <div className="absolute top-0 right-0 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div className="space-y-3 max-w-3xl">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      {activeStage.capstone.badge}
+                    </span>
+                    <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                      +{activeStage.capstone.xpReward} XP
+                    </span>
+                    <span className="px-3 py-1 rounded-full text-[11px] font-mono text-slate-400 bg-white/[0.04] border border-white/[0.08]">
+                      {activeStage.capstone.estimatedMinutes} mins
+                    </span>
+                    {isLessonComplete(activeStage.capstone.slug) && (
+                      <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span>Completed ✅</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                    {activeStage.capstone.title}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
+                    {activeStage.capstone.desc}
+                  </p>
+
+                  {/* Skills Taught */}
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {activeStage.capstone.skillsTaught.map((skill) => (
+                      <span
+                        key={skill}
+                        className="text-[11px] px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300 font-mono"
+                      >
+                        ✓ {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="shrink-0 flex items-center">
+                  <Link
+                    href={activeStage.capstone.path}
+                    className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm transition-all shadow-lg shadow-purple-600/25 active:scale-95 whitespace-nowrap"
+                  >
+                    <Award className="w-4 h-4" />
+                    <span>Launch Stage {activeStage.stageNumber} Capstone</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+      </main>
+
+      <Footer />
+    </InteractiveGrid>
   );
 }
-

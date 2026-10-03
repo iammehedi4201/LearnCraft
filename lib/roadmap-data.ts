@@ -9,6 +9,7 @@
  */
 
 import { NESTJS_STAGES } from "@/app/learn/nestjs/data/nestjs-curriculum";
+import { NEXTJS_STAGES } from "@/app/learn/nextjs/data/nextjs-curriculum";
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -89,58 +90,24 @@ const nestjsStages: RoadmapStage[] = NESTJS_STAGES.map((stage) => ({
 }));
 
 // ─────────────────────────────────────────────────────────────
-// Next.js — defined here (no separate curriculum data file)
+// Next.js — derived from nextjs-curriculum
 // ─────────────────────────────────────────────────────────────
 
-const nextjsStages: RoadmapStage[] = [
-  {
-    id: "nextjs-basics",
-    stageNumber: 1,
-    name: "Core Fundamentals",
-    subtitle: "App Router & Component Model",
-    description: "Understand the App Router, file-based routing, Server/Client components, layouts, and dynamic routing.",
-    lessons: [
-      { code: "NX-01", name: "App Router Fundamentals", slug: "nx01-app-router", path: "/learn/nextjs/nx01-app-router", desc: "Understand the App Router (pages, layouts, segments)" },
-      { code: "NX-02", name: "File-Based Routing", slug: "nx02-routing", path: "/learn/nextjs/nx02-routing", desc: "How Next.js organizes routes using filesystem conventions" },
-      { code: "NX-03", name: "Server vs Client Components", slug: "nx03-server-client", path: "/learn/nextjs/nx03-server-client", desc: "RSC vs client components, when to use each" },
-      { code: "NX-04", name: "Layouts & Nesting", slug: "nx04-layouts", path: "/learn/nextjs/nx04-layouts", desc: "Shared layouts, route groups, nested routing patterns" },
-      { code: "NX-05", name: "Dynamic Routes", slug: "nx05-dynamic", path: "/learn/nextjs/nx05-dynamic", desc: "Segment parameters, catch-all routes, optional segments" },
-      { code: "NX-06", name: "Server-side Data Fetching", slug: "nx06-server-fetch", path: "/learn/nextjs/nx06-server-fetch", desc: "Async components, fetch in layout/page" },
-    ],
-  },
-  {
-    id: "nextjs-intermediate",
-    stageNumber: 2,
-    name: "Data & Middleware",
-    subtitle: "Client Fetching, Error Handling & Edge",
-    description: "Master client-side data fetching, error boundaries, loading states, route handlers, middleware, and SEO metadata.",
-    lessons: [
-      { code: "NX-07", name: "Client-side Data Fetching", slug: "nx07-client-fetch", path: "/learn/nextjs/nx07-client-fetch", desc: "useEffect pattern, loading states, 'use client' components" },
-      { code: "NX-08", name: "Error Handling", slug: "nx08-errors", path: "/learn/nextjs/nx08-errors", desc: "Error boundaries, error.tsx files, error recovery" },
-      { code: "NX-09", name: "Loading States & Streaming", slug: "nx09-loading", path: "/learn/nextjs/nx09-loading", desc: "Instant UI feedback with loading.tsx and Suspense" },
-      { code: "NX-10", name: "Route Handlers", slug: "nx10-route-handlers", path: "/learn/nextjs/nx10-route-handlers", desc: "Create API routes with /app/api/route.ts" },
-      { code: "NX-11", name: "Middleware", slug: "nx11-middleware", path: "/learn/nextjs/nx11-middleware", desc: "Authorization, logging, request/response modification" },
-      { code: "NX-12", name: "Metadata & SEO", slug: "nx12-metadata", path: "/learn/nextjs/nx12-metadata", desc: "Dynamic metadata, Open Graph, page titles" },
-    ],
-  },
-  {
-    id: "nextjs-advanced",
-    stageNumber: 3,
-    name: "Optimization & Production",
-    subtitle: "Caching, Static Generation & Deployment",
-    description: "Image/font optimization, static site generation, ISR, caching architecture, environment variables, and deployment.",
-    lessons: [
-      { code: "NX-13", name: "Image Optimization", slug: "nx13-images", path: "/learn/nextjs/nx13-images", desc: "next/image component and optimization strategies" },
-      { code: "NX-14", name: "Font Optimization", slug: "nx14-fonts", path: "/learn/nextjs/nx14-fonts", desc: "next/font and font loading performance" },
-      { code: "NX-15", name: "Script Loading", slug: "nx15-scripts", path: "/learn/nextjs/nx15-scripts", desc: "Script loading strategies and third-party scripts" },
-      { code: "NX-16", name: "Static Site Generation (SSG)", slug: "nx16-ssg", path: "/learn/nextjs/nx16-ssg", desc: "Pre-render pages at build time" },
-      { code: "NX-17", name: "Incremental Static Regeneration", slug: "nx17-isr", path: "/learn/nextjs/nx17-isr", desc: "Update static content without full rebuilds" },
-      { code: "NX-18", name: "Caching Architecture", slug: "nx18-caching", path: "/learn/nextjs/nx18-caching", desc: "Request memoization, data cache, full route cache" },
-      { code: "NX-19", name: "Environment Variables", slug: "nx19-env", path: "/learn/nextjs/nx19-env", desc: "Public/private env vars and security best practices" },
-      { code: "NX-20", name: "Deployment", slug: "nx20-deployment", path: "/learn/nextjs/nx20-deployment", desc: "Vercel and Docker deployment strategies" },
-    ],
-  },
-];
+const nextjsStages: RoadmapStage[] = NEXTJS_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
 
 // ─────────────────────────────────────────────────────────────
 // TanStack Query — defined here
@@ -226,7 +193,7 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     category: "frontend",
     level: "beginner-advanced",
     status: "available",
-    totalLessons: 20,
+    totalLessons: 22,
     stages: nextjsStages,
     learnPath: "/learn/nextjs",
     badgeColor: "bg-ds-feature-lighter text-ds-feature-dark border-ds-feature-light",
