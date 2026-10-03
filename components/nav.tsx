@@ -652,35 +652,35 @@ function UserNavMenu({ totalRevisions }: { totalRevisions: number }) {
 
       {/* User Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-[#0E121B]/95 backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-2 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
+        <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl bg-[#0E121B]/95 backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-2 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
           {/* User Info Header */}
           <div className="p-3 pb-2.5 border-b border-white/[0.06] mb-1">
-            <div className="flex items-center gap-2.5 mb-1.5">
+            <div className="flex items-center gap-3 mb-2">
               {session.user.image ? (
                 <img
                   src={session.user.image}
                   alt={session.user.name || "Avatar"}
-                  className="w-8 h-8 rounded-xl object-cover ring-1 ring-white/10"
+                  className="w-9 h-9 rounded-xl object-cover ring-1 ring-white/10 shrink-0"
                 />
               ) : (
-                <div className="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-bold">
+                <div className="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
                   {session.user.name?.charAt(0) || "U"}
                 </div>
               )}
-              <div className="overflow-hidden">
-                <h4 className="text-xs font-bold text-white truncate">
+              <div className="min-w-0 flex-1">
+                <h4 className="text-sm font-bold text-white truncate">
                   {session.user.name || "Learner"}
                 </h4>
-                <p className="text-[10px] text-slate-400 font-mono truncate">
+                <p className="text-xs text-slate-400 truncate" title={session.user.email || undefined}>
                   {session.user.email || "GitHub Account"}
                 </p>
               </div>
             </div>
 
             {/* Sync Badge */}
-            <div className="flex items-center gap-1.5 pt-1 text-[10px] font-mono text-emerald-400">
+            <div className="flex items-center gap-1.5 pt-0.5 text-[11px] font-medium text-emerald-400">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Cloud Sync Active (PostgreSQL)</span>
+              <span>Cloud Sync Active</span>
             </div>
           </div>
 

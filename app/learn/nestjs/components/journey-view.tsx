@@ -147,7 +147,7 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
                           e.stopPropagation();
                           toggleLessonComplete(lesson.slug);
                         }}
-                        className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full transition-all cursor-pointer ${
+                        className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full transition-all cursor-pointer outline-none focus:outline-none ${
                           isDone
                             ? "text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20"
                             : isTarget
