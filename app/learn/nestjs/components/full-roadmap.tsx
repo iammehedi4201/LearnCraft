@@ -223,10 +223,10 @@ export function FullRoadmap({ initialExpandedStageId: _initialExpandedStageId }:
                       <Link
                         key={lesson.slug}
                         href={lesson.path}
-                        className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-ds-bg-white border transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer overflow-hidden ${
+                        className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-[#0E121B] border transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1 cursor-pointer overflow-hidden ${
                           isCurrent
-                            ? "border-ds-feature-base ring-2 ring-ds-feature-base/20 bg-ds-feature-lighter/[0.06] shadow-md shadow-ds-feature-base/5"
-                            : `border-ds-stroke-soft ${theme.borderHover}`
+                            ? "border-purple-500/40 ring-1 ring-purple-500/20 bg-purple-500/[0.03] shadow-md shadow-purple-950/20"
+                            : "border-white/[0.06] hover:border-white/[0.12]"
                         }`}
                       >
                         {/* Ambient Corner Glow on Hover */}
@@ -238,18 +238,18 @@ export function FullRoadmap({ initialExpandedStageId: _initialExpandedStageId }:
                           {/* Card Top Row: Code, Status & Tag */}
                           <div className="flex items-center justify-between gap-2 mb-4">
                             <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs font-black tracking-wider text-ds-text-strong bg-ds-bg-weak px-2.5 py-1 rounded-lg border border-ds-stroke-soft group-hover:border-ds-feature-base/40 group-hover:text-ds-feature-base transition-colors">
+                              <span className="font-mono text-xs font-black tracking-wider text-white bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/[0.06] group-hover:border-purple-500/40 group-hover:text-purple-300 transition-colors">
                                 {lesson.code}
                               </span>
 
                               {isDone ? (
-                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-ds-success-dark bg-ds-success-lighter px-2.5 py-0.5 rounded-full border border-ds-stroke-soft">
-                                  <CheckCircle2 className="w-3.5 h-3.5 text-ds-success-base" />
+                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                                   Done
                                 </span>
                               ) : isCurrent ? (
-                                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-ds-feature-dark bg-ds-feature-lighter px-2.5 py-0.5 rounded-full border border-ds-feature-base animate-pulse">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-ds-feature-base" />
+                                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-purple-300 bg-purple-500/15 px-2.5 py-0.5 rounded-full border border-purple-500/30">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
                                   Current
                                 </span>
                               ) : null}

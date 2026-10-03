@@ -121,20 +121,20 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
               <Link
                 key={lesson.slug}
                 href={lesson.path}
-                className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-ds-bg-white border transition-all duration-300 ease-out shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer overflow-hidden ${
+                className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-[#0E121B] border transition-all duration-300 ease-out shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer overflow-hidden ${
                   isTarget
-                    ? "border-ds-feature-base ring-1 ring-ds-feature-base/20 bg-ds-feature-lighter/[0.04]"
-                    : `border-ds-stroke-soft ${accent.borderHover}`
+                    ? "border-purple-500/40 ring-1 ring-purple-500/20 bg-purple-500/[0.03]"
+                    : "border-white/[0.06] hover:border-white/[0.12]"
                 }`}
               >
                 <div className="relative z-10">
                   {/* Card Header: Step Index, Code & Status */}
                   <div className="flex items-center justify-between gap-3 mb-3.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono font-bold text-ds-text-soft bg-ds-bg-weak group-hover:text-ds-text-sub px-2 py-0.5 rounded-md transition-colors duration-200">
+                      <span className="text-[11px] font-mono font-bold text-slate-400 bg-white/[0.04] group-hover:text-slate-300 px-2 py-0.5 rounded-md transition-colors duration-200">
                         {String(idx + 1).padStart(2, "0")}
                       </span>
-                      <span className="font-mono text-xs font-black tracking-wider text-ds-text-strong bg-ds-bg-weak px-2.5 py-1 rounded-lg border border-ds-stroke-soft group-hover:border-ds-feature-base/40 group-hover:text-ds-feature-base transition-colors duration-200">
+                      <span className="font-mono text-xs font-black tracking-wider text-white bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/[0.06] group-hover:border-purple-500/40 group-hover:text-purple-300 transition-colors duration-200">
                         {lesson.code}
                       </span>
                     </div>
@@ -149,10 +149,10 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
                         }}
                         className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full transition-all cursor-pointer ${
                           isDone
-                            ? "text-ds-success-dark bg-ds-success-lighter hover:bg-ds-success-light/40 border border-ds-success-base/30"
+                            ? "text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20"
                             : isTarget
-                            ? "text-ds-feature-dark bg-ds-feature-lighter hover:bg-ds-feature-light/40 border border-ds-feature-base/30"
-                            : "text-ds-text-soft bg-ds-bg-weak hover:text-ds-text-strong hover:bg-ds-bg-soft border border-ds-stroke-soft"
+                            ? "text-purple-300 bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30"
+                            : "text-slate-400 bg-white/[0.04] hover:text-white hover:bg-white/[0.08] border border-white/[0.06]"
                         }`}
                         title={
                           isDone
@@ -162,17 +162,17 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
                       >
                         {isDone ? (
                           <>
-                            <CheckCircle2 className="w-3.5 h-3.5 text-ds-success-base" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                             <span>Done</span>
                           </>
                         ) : isTarget ? (
                           <>
-                            <span className="w-1.5 h-1.5 rounded-full bg-ds-feature-base animate-pulse" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
                             <span>Current</span>
                           </>
                         ) : (
                           <>
-                            <span className="w-2 h-2 rounded-full border border-ds-stroke-sub group-hover:border-ds-feature-base inline-block" />
+                            <span className="w-2 h-2 rounded-full border border-white/20 group-hover:border-purple-400 inline-block" />
                             <span>Mark Done</span>
                           </>
                         )}
