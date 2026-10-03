@@ -12,7 +12,8 @@ export type XPEventType =
   | "exercise_pass"       // +15 XP
   | "flashcard_review"    // +5 XP
   | "note_create"         // +5 XP
-  | "streak_bonus";       // +10 XP
+  | "streak_bonus"        // +10 XP
+  | "project_complete";   // +100 XP
 
 export interface XPLogEntry {
   id: string;

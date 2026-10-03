@@ -47,6 +47,7 @@ export function Playground({
   exercise,
   className = "",
   height = "240px",
+  onSuccess,
 }: PlaygroundProps) {
   const exampleCode = exercise?.starterCode ?? starterCode ?? "";
 
@@ -282,6 +283,9 @@ export function Playground({
             `Passed code challenge: ${exercise.title}`,
             { exerciseId: exercise.id }
           );
+          if (onSuccess) {
+            onSuccess(result);
+          }
         }
       } else {
         await handleRun();

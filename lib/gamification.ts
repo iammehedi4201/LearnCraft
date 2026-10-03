@@ -68,6 +68,7 @@ export const XP_VALUES: Record<XPEventType, number> = {
   flashcard_review: 5,
   note_create: 5,
   streak_bonus: 10,
+  project_complete: 100,
 };
 
 // Compute Level info from total XP

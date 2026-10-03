@@ -12,6 +12,22 @@ export interface LessonMeta {
   stepNumber: number;
 }
 
+export interface CapstoneProjectMeta {
+  id: string;
+  stageNumber: number;
+  slug: string;
+  title: string;
+  subtitle: string;
+  desc: string;
+  path: string;
+  badge: string;
+  xpReward: number;
+  estimatedMinutes: number;
+  prerequisites: string[];
+  skillsTaught: string[];
+  stepsCount: number;
+}
+
 export interface StageMeta {
   id: string;
   stageNumber: number;
@@ -27,6 +43,7 @@ export interface StageMeta {
     textAccent: string;
   };
   lessons: LessonMeta[];
+  capstone?: CapstoneProjectMeta;
 }
 
 export interface ProgressionPhaseMeta {
@@ -39,6 +56,27 @@ export interface ProgressionPhaseMeta {
   icon: "zap" | "server" | "shield" | "layers";
   lessonCodes: string[];
 }
+
+export const STAGE_1_CAPSTONE: CapstoneProjectMeta = {
+  id: "capstone-stage-1",
+  stageNumber: 1,
+  slug: "stage-1-task-manager",
+  title: "CLI Task Manager & Engine",
+  subtitle: "Stage 1 Capstone Project",
+  desc: "Build an interactive, object-oriented Command-Line Task Management System combining Types, Classes, Generics, and SOLID principles.",
+  path: "/learn/nestjs/projects/stage-1-task-manager",
+  badge: "🛠️ Capstone",
+  xpReward: 100,
+  estimatedMinutes: 25,
+  prerequisites: ["NJ-01", "NJ-02", "NJ-03"],
+  skillsTaught: [
+    "Object-Oriented Domain Modeling",
+    "Generic Repositories & Collections",
+    "Polymorphic Logger & Event Handling",
+    "Encapsulation, Invariants & Type Guards"
+  ],
+  stepsCount: 3,
+};
 
 export const NESTJS_STAGES: StageMeta[] = [
   {
@@ -55,6 +93,7 @@ export const NESTJS_STAGES: StageMeta[] = [
       bgSubtle: "bg-ds-bg-weak",
       textAccent: "text-ds-success-dark",
     },
+    capstone: STAGE_1_CAPSTONE,
     lessons: [
       {
         code: "NJ-01",
