@@ -337,6 +337,52 @@ console.log("Metadata:", generatePageMetadata("My Portfolio", "Full-stack develo
   },
 ];
 
+function renderFormattedInstruction(instruction: string) {
+  // Strip leading numbering like "1. ", "2. ", etc.
+  const clean = instruction.replace(/^\d+\.\s*/, "");
+
+  // Split on backticks: odd indexes are code snippets
+  const parts = clean.split(/`([^`]+)`/g);
+
+  return (
+    <div className="inline leading-relaxed">
+      {parts.map((part, i) => {
+        if (i % 2 === 1) {
+          return (
+            <code
+              key={i}
+              className="font-mono text-[11px] sm:text-xs font-semibold px-2 py-0.5 mx-1 rounded-md bg-purple-950/60 text-purple-200 border border-purple-500/30 inline-block my-0.5 shadow-xs"
+            >
+              {part}
+            </code>
+          );
+        }
+
+        // Format arrow symbol if present
+        if (part.includes("→")) {
+          const arrowSegments = part.split("→");
+          return (
+            <span key={i}>
+              {arrowSegments.map((seg, sIdx) => (
+                <span key={sIdx}>
+                  {seg}
+                  {sIdx < arrowSegments.length - 1 && (
+                    <span className="text-purple-400 font-bold mx-1.5 inline-block">
+                      →
+                    </span>
+                  )}
+                </span>
+              ))}
+            </span>
+          );
+        }
+
+        return <span key={i}>{part}</span>;
+      })}
+    </div>
+  );
+}
+
 export default function Stage1PortfolioDocsProjectPage(): JSX.Element {
   const [activeStepId, setActiveStepId] = useState<number>(1);
   const [completedSteps, setCompletedSteps] = useState<Record<number, boolean>>({});
@@ -503,17 +549,36 @@ export default function Stage1PortfolioDocsProjectPage(): JSX.Element {
           </div>
 
           {/* Requirements Callout */}
-          <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
-            <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-              <span>📋</span> Requirements & Specification
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-xs text-slate-300">
+          <div className="p-6 rounded-2xl bg-[#090D16] border border-white/[0.08] shadow-xl space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/[0.06] pb-3.5">
+              <div className="flex items-center gap-2.5">
+                <span className="text-base">📋</span>
+                <div>
+                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-purple-300">
+                    Requirements & Specification
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    Implement the required types, methods, and functions in the playground below:
+                  </p>
+                </div>
+              </div>
+              <span className="text-[11px] font-mono font-semibold text-purple-300 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20 self-start sm:self-auto">
+                {activeStep.instructions.length} Tasks Required
+              </span>
+            </div>
+
+            <div className="space-y-3">
               {activeStep.instructions.map((inst, idx) => (
                 <div
                   key={idx}
-                  className="p-3 rounded-xl bg-[#0E121B] border border-white/[0.04]"
+                  className="flex items-start gap-3.5 p-4 rounded-xl bg-[#0E131F] border border-white/[0.06] hover:border-purple-500/30 transition-all text-xs sm:text-sm text-slate-200 leading-relaxed shadow-sm group"
                 >
-                  {inst}
+                  <span className="shrink-0 w-7 h-7 rounded-lg bg-gradient-to-br from-purple-500/20 to-purple-900/40 text-purple-300 border border-purple-500/30 flex items-center justify-center font-mono text-xs font-bold shrink-0 mt-0.5 shadow-xs">
+                    {String(idx + 1).padStart(2, "0")}
+                  </span>
+                  <div className="flex-1 min-w-0 pt-0.5">
+                    {renderFormattedInstruction(inst)}
+                  </div>
                 </div>
               ))}
             </div>
