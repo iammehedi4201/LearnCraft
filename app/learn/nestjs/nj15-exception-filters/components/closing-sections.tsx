@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 🚨 🛡️</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-15 Completed!
+          Module NJ-17 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You have mastered universal error handling and exception formatting in NestJS. Next, explore the foundational entry point of the pipeline: NestJS Middleware!
+          You have mastered universal error handling and exception formatting in NestJS. Next, see the big picture and master the complete execution order in NJ-18: Request Lifecycle!
         </p>
 
         <Link
-          href="/learn/nestjs/nj16-middleware"
+          href="/learn/nestjs/nj11-request-lifecycle"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-16: Middleware (Phase 03 Finale) →
+          Proceed to NJ-18: Request Lifecycle →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the final lesson in Phase 03 (Request Pipeline)?"
-        answer="NJ-16: Middleware (Express compatibility, functional vs class middleware, Morgan logging, and Helmet integration)."
+        question="What is the next topic after Exception Filters?"
+        answer="NJ-18: Request Lifecycle (learning the exact execution sequence: Middleware → Guards → Interceptors → Pipes → Handler → Exception Filters)."
       />
     </SectionContainer>
   );

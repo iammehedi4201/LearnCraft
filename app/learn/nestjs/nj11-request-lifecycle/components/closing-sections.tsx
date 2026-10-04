@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 🚦 ⚡</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-11 Completed!
+          Module NJ-18 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You now possess an expert understanding of how NestJS processes incoming requests from the moment they hit the server until the response is sent back to the client.
+          You now possess an expert understanding of how NestJS processes incoming requests from the moment they hit the server until the response is sent back. Next, master the outermost layer in NJ-19: Middleware!
         </p>
 
         <Link
-          href="/learn/nestjs/nj12-pipes"
+          href="/learn/nestjs/nj16-middleware"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-12: Pipes &amp; Transformation →
+          Proceed to NJ-19: Middleware Pipeline →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the next topic in Phase 03?"
-        answer="NJ-12: Pipes & Transformation (Deep dive into ParseIntPipe, ValidationPipe, and custom transformation pipes)."
+        question="What is the next topic after Request Lifecycle?"
+        answer="NJ-19: Middleware Pipeline (Express-style middleware, CORS headers, logging, and global consumer bindings)."
       />
     </SectionContainer>
   );

@@ -63,6 +63,12 @@ const STAGE_THEMES: Record<
     glowBg: "group-hover:bg-ds-stable-base/10",
   },
   6: {
+    badge: "bg-purple-500/15 text-purple-700 dark:text-purple-300 border-ds-stroke-soft",
+    accent: "text-purple-600 dark:text-purple-400",
+    borderHover: "hover:border-purple-500/60",
+    glowBg: "group-hover:bg-purple-500/10",
+  },
+  7: {
     badge: "bg-ds-highlighted-lighter text-ds-highlighted-dark border-ds-stroke-soft",
     accent: "text-ds-highlighted-dark",
     borderHover: "hover:border-ds-highlighted-base/60",

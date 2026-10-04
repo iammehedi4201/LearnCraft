@@ -51,25 +51,25 @@ export function ClosingSections() {
 
       {/* ── Milestone Card ── */}
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
-        <span className="text-5xl block mb-3">🎓 🔌 ⚙️</span>
+        <span className="text-5xl block mb-3">🎓 🔌 🗄️</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-26 Completed!
+          Module NJ-11 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You have mastered environment variable validation, namespaced configurations, and 12-factor architecture! Next, learn how to build high-performance structured JSON logging with NestJS-Pino in NJ-27!
+          You have mastered environment variable validation, ConfigModule schemas, and 12-factor configuration! Now let&apos;s use your environment variables to connect a PostgreSQL database with Prisma ORM in NJ-12!
         </p>
 
         <Link
-          href="/learn/nestjs/nj27-logging"
+          href="/learn/nestjs/nj21-database-prisma"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-27: Structured Logging with Pino →
+          Proceed to NJ-12: Database Setup with Prisma →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the next topic in Phase 06?"
-        answer="NJ-27: Structured Logging with Pino (nestjs-pino, JSON log formats, correlation IDs, pino-pretty in dev, and Datadog/ELK integration)."
+        question="What is the next topic after Configuration?"
+        answer="NJ-12: Database Setup with Prisma (connecting PostgreSQL, generating PrismaClient, and creating a global PrismaService)."
       />
     </SectionContainer>
   );

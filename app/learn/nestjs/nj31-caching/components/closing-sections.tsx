@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 🔴 ⚡</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-31 Completed!
+          Module NJ-29 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You have mastered in-memory caching, distributed Redis stores, and cache stampede prevention! Next, prepare for the <strong>GRAND FINALE</strong> of the entire NestJS curriculum: <strong>NJ-32: Production Deployment, Multi-Stage Docker &amp; Health Checks</strong>!
+          You have mastered in-memory caching, distributed Redis stores, and cache stampede prevention! Next, learn how to handle streaming multipart file uploads and cloud storage in NJ-30!
         </p>
 
         <Link
-          href="/learn/nestjs/nj32-deployment"
+          href="/learn/nestjs/nj30-file-uploads"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-32: Production Deployment &amp; Docker (Grand Finale!) →
+          Proceed to NJ-30: File Uploads &amp; Cloud Storage →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the final lesson in Phase 06 and the entire NestJS Master Roadmap?"
-        answer="NJ-32: Production Deployment, Docker & DevOps (Multi-stage Dockerfiles, Terminus Health Checks, Graceful Shutdown, PM2/Cluster Mode, and CI/CD GitHub Actions)."
+        question="What is the next topic after Caching?"
+        answer="NJ-30: File Uploads & Cloud Storage (@nestjs/platform-express Multer, FileInterceptor, MaxFileSizeValidator, and Pre-Signed Upload URLs)."
       />
     </SectionContainer>
   );

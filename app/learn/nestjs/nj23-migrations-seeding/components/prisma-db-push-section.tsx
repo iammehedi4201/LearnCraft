@@ -10,40 +10,47 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 5 — PRISMA DB PUSH VS MIGRATE DEV
+// MODULE 5 — IDEMPOTENT SEEDING STRATEGIES IN NESTJS
 // ═══════════════════════════════════════════════════════════
 
 export function PrismaDbPushSection() {
   return (
-    <SectionContainer number={5} title="Prototyping: prisma db push vs prisma migrate dev">
-      {/* ── 5.1 db push vs migrate ── */}
+    <SectionContainer number={5} title="Idempotent Seeding: Check-Then-Insert vs Upsert">
+      {/* ── 5.1 Idempotency ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="When to Use db push vs True Migrations"
-          description="Understand the difference between instant schema syncing and version-controlled migration files."
+          number={5}
+          title="Guaranteeing Repeatable State Initialization"
+          description="How to design seed routines that can run 100 times without duplicating records or crashing."
           color="rose"
         />
 
         <ComparisonTable
-          headers={["Feature", "npx prisma db push", "npx prisma migrate dev"]}
+          headers={["Strategy", "How It Works", "Pros", "Cons"]}
           rows={[
-            ["Generates SQL Files?", "❌ No", "✅ Yes (stored in prisma/migrations)"],
-            ["Best For", "Rapid local prototyping & hackathons", "Production teamwork & staging releases"],
-            ["Data Loss Risk", "⚠️ High (can drop columns instantly)", "🛡️ Low (prompts and shows exact SQL changes)"],
-            ["History Ledger", "Does NOT record in _prisma_migrations", "Records full history with checksums"],
+            ["Check-Then-Insert", "Queries repo for existing identifier; skips creation if found", "Simple to understand, leaves existing custom data untouched", "Requires two repo calls (find + create)"],
+            ["Upsert (Update or Insert)", "Inserts if not present, or updates existing record to match seed template", "Guarantees seed data is always updated to latest schema", "May overwrite user modifications in dev environments"],
+            ["Wipe-Then-Seed", "Clears all repository maps and repopulates from scratch", "Guaranteed pristine state every run", "Destroys all testing state created during manual testing"],
           ]}
         />
 
         <PredictOutputBox
-          code={`# Scenario: You rename column "phoneNumber" to "mobile" in schema.prisma
-# And run: npx prisma db push`}
-          answer={`Predicted Outcome of db push:\n\nPrisma will detect that "phoneNumber" was removed and "mobile" was added.\nIt will warn: "You are about to drop the column 'phoneNumber' with 500 rows of data."\n\nIf confirmed with --accept-data-loss, all existing phone numbers are permanently deleted!\n(With 'migrate dev', you can customize the generated SQL to rename the column without losing data!)`}
+          code={`// Scenario: A developer runs the seed script twice in a row:
+// npm run seed
+// npm run seed
+//
+// What happens if the seeder lacks idempotency checks?`}
+          answer={`Predicted Outcome without Idempotency:
+
+The second run throws a DuplicateKeyException:
+Error: Entity with email 'admin@learncraft.dev' already exists!
+
+By implementing an idempotent check (e.g., 'if (await this.repo.findByEmail(email)) return;'), subsequent runs log 'Skipping existing records' and exit successfully with code 0!`}
         />
 
         <QuickCheck
-          question="Why should 'prisma db push' NEVER be used on production databases?"
-          answer="Because it directly syncs schemas without recording migration history, which can accidentally drop tables or columns and cause permanent data loss."
+          question="What does 'idempotent' mean in the context of NestJS state seeding?"
+          answer="It means that running the seeding routine multiple times has the exact same side-effect and final state as running it once, without producing duplicates or throwing errors."
         />
       </div>
 

@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 🛂 🔒</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-13 Completed!
+          Module NJ-20 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You now have production-grade mastery of NestJS Guards, token authentication, and Role-Based Access Control. Next, discover how Interceptors manipulate response streams using RxJS!
+          You now have production-grade mastery of NestJS Guards, execution context inspection, and route gates. Next, enter Stage 5 to build custom decorators like @CurrentUser() and implement full JWT Authentication!
         </p>
 
         <Link
-          href="/learn/nestjs/nj14-interceptors"
+          href="/learn/nestjs/nj17-custom-decorators"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-14: Interceptors &amp; RxJS →
+          Proceed to NJ-21: Custom Route Decorators →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the next topic in Phase 03?"
-        answer="NJ-14: Interceptors (Response transformation, logging execution time, caching with RxJS operators)."
+        question="What is the next topic after Guards?"
+        answer="NJ-21: Custom Route Decorators (@CurrentUser, @Public, and custom metadata extraction) leading into JWT Authentication."
       />
     </SectionContainer>
   );

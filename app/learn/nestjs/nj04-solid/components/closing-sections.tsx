@@ -84,17 +84,26 @@ export function ClosingSections() {
       {/* ── Next Step Card ── */}
       <div className="p-6 bg-ds-success-lighter border border-ds-success-base rounded-2xl">
         <h4 className="font-bold text-base mb-2 text-ds-success-dark flex items-center gap-2">
-          <span>🚀</span> Ready to Start Building!
+          <span>🚀</span> Stage 1 Foundations Complete!
         </h4>
-        <p className="text-sm text-ds-text-strong leading-relaxed mb-4">
-          Now that you understand OOP, Decorators, and SOLID Principles, you are fully prepared to build real NestJS applications!
+        <p className="text-sm text-ds-text-strong leading-relaxed mb-5">
+          Now that you understand TypeScript, OOP, Decorators, and SOLID Principles, you can test your knowledge in the hands-on Capstone project or jump right into NestJS scaffolding.
         </p>
-        <Link
-          href="/learn/nestjs/nj05-setup"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-sm shadow-ds-feature-base/15"
-        >
-          Proceed to NJ-05: NestJS Setup & Installation →
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/learn/nestjs/projects/stage-1-task-manager"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-purple-600 hover:bg-purple-700 transition-all shadow-sm"
+          >
+            <span>🛠️ Build Stage 1 Capstone: CLI Task Manager</span>
+            <span className="text-[10px] bg-purple-800/80 px-2 py-0.5 rounded-md font-mono">+100 XP</span>
+          </Link>
+          <Link
+            href="/learn/nestjs/nj05-setup"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-sm shadow-ds-feature-base/15"
+          >
+            <span>Proceed to NJ-05: NestJS Setup & Installation →</span>
+          </Link>
+        </div>
       </div>
 
       <QuickCheck

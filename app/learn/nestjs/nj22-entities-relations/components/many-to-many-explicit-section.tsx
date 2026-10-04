@@ -10,58 +10,71 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 5 — EXPLICIT MANY-TO-MANY WITH JOIN MODELS
+// MODULE 5 — ASSOCIATIVE DOMAIN ENTITIES (JOIN MODELS)
 // ═══════════════════════════════════════════════════════════
 
 export function ManyToManyExplicitSection() {
   return (
-    <SectionContainer number={5} title="Explicit Many-to-Many with Metadata Columns">
-      {/* ── 5.1 Explicit M-to-N ── */}
+    <SectionContainer number={5} title="Associative Entities with Business Metadata">
+      {/* ── 5.1 Associative Entity ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Storing Extra Data on Relationships"
-          description="When relationships have attributes like 'assignedAt', 'roleOnTeam', or 'enrollmentDate'."
+          number={5}
+          title="When Relationships Carry Business State"
+          description="Modeling rich associations like enrollments, memberships, or team roles as distinct domain classes."
           color="rose"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>📊</span> The Explicit Join Model Pattern
+            <span>📊</span> The TeamMembershipEntity Pattern
           </h4>
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            When a relationship has attributes (such as <code>role</code>, <code>joinedAt</code>, or <code>isSuspended</code>), it is no longer just a pair of IDs. It becomes a first-class Associative Entity with its own business behaviors:
+          </p>
           <EnhancedCodeBlock
-            code={`model User {
-  id    Int            @id @default(autoincrement())
-  teams UsersOnTeams[]
-}
+            code={`export type TeamRole = "MEMBER" | "LEAD" | "ADMIN";
 
-model Team {
-  id      Int            @id @default(autoincrement())
-  name    String
-  members UsersOnTeams[]
-}
+export class TeamMembershipEntity {
+  private _isSuspended: boolean = false;
 
-// Explicit Join Table with extra metadata fields:
-model UsersOnTeams {
-  userId     Int
-  teamId     Int
-  user       User     @relation(fields: [userId], references: [id])
-  team       Team     @relation(fields: [teamId], references: [id])
-  
-  // Custom relationship metadata:
-  role       String   @default("member") // e.g. "admin", "viewer"
-  assignedAt DateTime @default(now())
+  constructor(
+    public readonly id: string,
+    public readonly userId: string,
+    public readonly teamId: string,
+    public role: TeamRole = "MEMBER",
+    public readonly joinedAt: Date = new Date(),
+  ) {}
 
-  // Composite Primary Key:
-  @@id([userId, teamId])
+  get isSuspended(): boolean {
+    return this._isSuspended;
+  }
+
+  promoteToLead(): void {
+    if (this._isSuspended) {
+      throw new Error("Cannot promote a suspended team member");
+    }
+    this.role = "LEAD";
+  }
+
+  suspend(reason: string): void {
+    if (!reason || reason.trim().length === 0) {
+      throw new Error("Suspension reason is required");
+    }
+    this._isSuspended = true;
+  }
+
+  restore(): void {
+    this._isSuspended = false;
+  }
 }`}
-            language="prisma"
+            language="typescript"
           />
         </WhyBox>
 
         <QuickCheck
-          question="When should you choose an explicit many-to-many relationship instead of an implicit one in Prisma?"
-          answer="When you need to store extra columns on the relationship itself (such as 'assignedAt', 'memberRole', or 'sortOrder')."
+          question="When should you create a separate Associative Entity instead of just storing an array of IDs?"
+          answer="Whenever the connection between two entities carries business attributes or lifecycle states (e.g., membership role, enrollment grade, joined date, suspension flag)."
         />
       </div>
 

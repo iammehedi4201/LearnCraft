@@ -52,22 +52,22 @@ export function ClosingSections() {
       {/* ── Next Step Card ── */}
       <div className="p-6 bg-ds-success-lighter border border-ds-success-base rounded-2xl">
         <h4 className="font-bold text-base mb-2 text-ds-success-dark flex items-center gap-2">
-          <span>🚀</span> Next Up: NestJS Controllers (NJ-07)
+          <span>🚀</span> Next Up: DTOs &amp; Validation (NJ-10)
         </h4>
         <p className="text-sm text-ds-text-strong leading-relaxed mb-4">
-          Now that you know how modules hold your application together, let&apos;s master <strong>Controllers</strong> — the front door that handles HTTP requests (GET, POST, PUT, DELETE), route parameters, and query strings!
+          Now that you know how modules structure your application, let&apos;s protect your API with <strong>DTOs and class-validator</strong> — validating incoming user payloads before controller methods run!
         </p>
         <Link
-          href="/learn/nestjs/nj07-controllers"
+          href="/learn/nestjs/nj10-dto-validation"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-sm shadow-ds-feature-base/15"
         >
-          Proceed to NJ-07: NestJS Controllers →
+          Proceed to NJ-10: DTOs &amp; Validation →
         </Link>
       </div>
 
       <QuickCheck
         question="What is the next topic after NestJS Modules?"
-        answer="NestJS Controllers (NJ-07) — learning how to handle HTTP routes, request bodies, query params, and status codes."
+        answer="DTOs & Validation (NJ-10) — learning how to validate incoming request bodies and contracts with class-validator."
       />
     </SectionContainer>
   );

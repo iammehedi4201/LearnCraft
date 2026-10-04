@@ -10,80 +10,79 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 6 — DATABASE SEEDING WITH PRISMA/SEED.TS
+// MODULE 6 — THE SEEDERMODULE & SEEDERSERVICE PATTERN
 // ═══════════════════════════════════════════════════════════
 
 export function SeedingDatabaseSection() {
   return (
-    <SectionContainer number={6} title="Database Seeding with prisma/seed.ts">
-      {/* ── 6.1 Database Seeding ── */}
+    <SectionContainer number={6} title="Designing a Dedicated SeederModule & SeederService">
+      {/* ── 6.1 Seeder Service ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Populating Initial & Test Data Automatically"
-          description="Write idempotent seed scripts with upsert to create admin accounts and default categories."
+          number={6}
+          title="Modular State Seeding Architecture"
+          description="How to encapsulate initialization logic into a dedicated SeederModule with injected domain repositories."
           color="primary"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>🌱</span> Writing the Seed Script
+            <span>🌱</span> Modular Seeder Architecture
           </h4>
           <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
-            Create <code>prisma/seed.ts</code> using <code>upsert</code> so re-running the seed never duplicates records:
+            Rather than spreading ad-hoc insertion scripts across individual controllers, encapsulate domain data seeding into a dedicated <code>SeederService</code>:
           </p>
           <EnhancedCodeBlock
-            code={`// prisma/seed.ts
-import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+            code={`import { Injectable, Logger } from '@nestjs/common';
+import { UsersRepository } from '../users/users.repository';
+import { CategoriesRepository } from '../catalog/categories.repository';
 
-const prisma = new PrismaClient();
+@Injectable()
+export class SeederService {
+  private readonly logger = new Logger(SeederService.name);
 
-async function main() {
-  const passwordHash = await bcrypt.hash('Admin@123', 10);
+  constructor(
+    private readonly usersRepo: UsersRepository,
+    private readonly categoriesRepo: CategoriesRepository,
+  ) {}
 
-  // ⭐ Use upsert: Updates if exists, creates if missing (idempotent):
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@learncraft.dev' },
-    update: {},
-    create: {
-      email: 'admin@learncraft.dev',
-      name: 'Super Administrator',
-      passwordHash,
-      role: 'ADMIN',
-    },
-  });
+  async seedAll(): Promise<void> {
+    this.logger.log('Starting full domain seeding sequence...');
+    await this.seedCategories();
+    await this.seedDefaultAdmin();
+    this.logger.log('✅ All seed sequences finished.');
+  }
 
-  console.log('✅ Seeded super admin:', admin.email);
-}
+  private async seedCategories(): Promise<void> {
+    const defaultCategories = ['Engineering', 'Design', 'Architecture', 'Security'];
+    for (const name of defaultCategories) {
+      const exists = await this.categoriesRepo.findByName(name);
+      if (!exists) {
+        await this.categoriesRepo.create({ name });
+      }
+    }
+    this.logger.log(\`Processed \${defaultCategories.length} categories.\`);
+  }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });`}
-            language="typescript"
-          />
-          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed my-3">
-            Configure the seed command in <code>package.json</code>:
-          </p>
-          <EnhancedCodeBlock
-            code={`// package.json
-{
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
+  private async seedDefaultAdmin(): Promise<void> {
+    const admin = await this.usersRepo.findByEmail('admin@learncraft.dev');
+    if (!admin) {
+      await this.usersRepo.create({
+        email: 'admin@learncraft.dev',
+        username: 'sysadmin',
+        roles: ['ADMIN'],
+      });
+      this.logger.log('Created default administrator account.');
+    }
   }
 }`}
-            language="json"
+            language="typescript"
           />
         </WhyBox>
 
         <QuickCheck
-          question="Why should database seed scripts use 'upsert' instead of 'create'?"
-          answer="Because 'upsert' is idempotent: running the seed script multiple times will safely update or skip existing records without crashing with duplicate unique key errors."
+          question="Why should SeederService inject repositories instead of manipulating raw files or global state directly?"
+          answer="Injecting repositories leverages NestJS dependency injection, ensures domain entity validation methods run, and allows mock repositories to be used during tests."
         />
       </div>
 

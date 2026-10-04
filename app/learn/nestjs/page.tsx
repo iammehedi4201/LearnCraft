@@ -8,16 +8,17 @@ import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
 import {
   ArrowRight,
-  CheckCircle2,
   Sparkles,
-  Target,
-  Zap,
-  Server,
-  Shield,
-  Layers,
-  Check,
+  BookOpen,
+  Award,
 } from "./components/icons";
-import { PROGRESSION_PHASES, LessonMeta } from "./data/nestjs-curriculum";
+import {
+  PROGRESSION_PHASES,
+  LessonMeta,
+  NESTJS_PREREQUISITES,
+  NESTJS_CAPSTONE,
+  NESTJS_RELATED_TOPICS,
+} from "./data/nestjs-curriculum";
 import {
   setGoal,
   getGoal,
@@ -43,11 +44,21 @@ export default function NestJSPage() {
   // Sync state from database & custom events
   useEffect(() => {
     const updateLocalState = () => {
-      const storedPhase = getGoal() || "fundamentals";
-      setSelectedPhaseState(storedPhase);
-
       const rec = getNextRecommendedLesson();
       setNextLesson(rec);
+
+      // Determine active phase from next lesson or stored goal
+      const storedPhase = getGoal();
+      if (storedPhase) {
+        setSelectedPhaseState(storedPhase);
+      } else if (rec) {
+        const matchingPhase = PROGRESSION_PHASES.find((p) =>
+          p.lessonCodes.includes(rec.code),
+        );
+        if (matchingPhase) {
+          setSelectedPhaseState(matchingPhase.id);
+        }
+      }
 
       if (!session?.user) {
         setProgressSummary({ completedCount: 0, totalCount: 32, percent: 0 });
@@ -59,7 +70,6 @@ export default function NestJSPage() {
       }
     };
 
-    // Load fresh progress directly from PostgreSQL database
     fetchProgressFromDB().then(() => {
       updateLocalState();
     });
@@ -87,172 +97,156 @@ export default function NestJSPage() {
     setGoal(phaseId);
   };
 
-  const getPhaseIcon = (iconType: string) => {
-    switch (iconType) {
-      case "zap":
-        return <Zap className="w-4 h-4 text-ds-feature-base" />;
-      case "server":
-        return <Server className="w-4 h-4 text-ds-feature-base" />;
-      case "shield":
-        return <Shield className="w-4 h-4 text-ds-feature-base" />;
-      case "layers":
-        return <Layers className="w-4 h-4 text-ds-feature-base" />;
-      default:
-        return <Sparkles className="w-4 h-4 text-ds-feature-base" />;
-    }
-  };
-
-  // const activePhaseConfig =
-  //   PROGRESSION_PHASES.find((p) => p.id === selectedPhase) ||
-  //   PROGRESSION_PHASES[0];
+  const isAllComplete = progressSummary.completedCount >= 32;
 
   return (
-    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-ds-text-strong flex flex-col font-sans selection:bg-ds-feature-light/20 selection:text-ds-feature-dark overflow-x-hidden transition-colors duration-300">
+    <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
       <Nav />
 
-      <main
-        className="flex-1 max-w-[95rem]
-       mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full space-y-10"
-      >
+      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 w-full space-y-8">
         {/* =========================================================================
-            1. HERO SECTION
+            1. HERO (CLEAN, FOCUSED, LOW NOISE)
            ========================================================================= */}
-        <section className="p-6 sm:p-8 md:p-10 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm relative overflow-hidden">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ds-feature-lighter text-ds-feature-dark text-xs font-mono font-bold mb-5">
+        <section className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-xl relative overflow-hidden">
+          <div className="max-w-2xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-mono font-medium">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Interactive Backend Learning Path</span>
+              <span>Core NestJS Mastery</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-ds-text-strong leading-tight">
-              Learn NestJS
-            </h1>
-            <p className="text-base sm:text-lg text-ds-text-sub mt-2 font-normal">
-              Build a real backend API — step by step.
-            </p>
-
-            {/* Outcomes Checklist */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-7 text-xs sm:text-sm">
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-ds-success-base shrink-0" />
-                <span className="text-ds-text-strong font-medium">
-                  Build modular REST APIs with NestJS
-                </span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-ds-success-base shrink-0" />
-                <span className="text-ds-text-strong font-medium">
-                  Connect to databases with Prisma & PostgreSQL
-                </span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-ds-success-base shrink-0" />
-                <span className="text-ds-text-strong font-medium">
-                  Implement JWT authentication & RBAC guards
-                </span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-ds-success-base shrink-0" />
-                <span className="text-ds-text-strong font-medium">
-                  Test, document, dockerize, and deploy
-                </span>
-              </div>
+            <div>
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white leading-tight">
+                Learn NestJS
+              </h1>
+              <p className="text-sm sm:text-base text-slate-300 mt-2 font-normal leading-relaxed">
+                Master enterprise Node.js architecture with clean modular structure, Inversion of Control (DI), and the complete HTTP request pipeline.
+              </p>
             </div>
 
-            {/* Primary Action Button */}
-            <div className="flex items-center gap-3.5 pt-1">
-              {nextLesson && (
+            {/* Metrics & Progress Bar */}
+            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
+              <span>32 Lessons</span>
+              <span>·</span>
+              <span>~16 Hours</span>
+              <span>·</span>
+              <span className="text-emerald-400 font-semibold font-mono">
+                {progressSummary.completedCount} of 32 completed ({progressSummary.percent}%)
+              </span>
+            </div>
+
+            {/* Single Primary Action CTA */}
+            <div className="pt-2">
+              {isAllComplete ? (
+                <Link
+                  href={NESTJS_CAPSTONE.path}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-600/20 active:scale-95 cursor-pointer"
+                >
+                  <Award className="w-4 h-4" />
+                  <span>Launch NestJS Capstone Project →</span>
+                </Link>
+              ) : nextLesson ? (
                 <Link
                   href={nextLesson.path}
-                  className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white font-bold text-xs sm:text-sm transition-all shadow-md shadow-ds-feature-base/10 active:scale-95"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-600/20 active:scale-95 cursor-pointer"
                 >
                   <span>
                     {hasStarted
                       ? `Continue: ${nextLesson.name}`
-                      : `Start Learning: ${nextLesson.name}`}
+                      : `Start: ${nextLesson.name}`}
                   </span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-              )}
+              ) : null}
             </div>
-
-            {hasStarted && nextLesson && (
-              <div className="mt-5 flex items-center gap-2 text-xs text-ds-text-sub">
-                <span className="text-ds-success-dark font-bold bg-ds-success-lighter px-2.5 py-0.5 rounded-full">
-                  {progressSummary.completedCount} of{" "}
-                  {progressSummary.totalCount} completed
-                </span>
-                <span>·</span>
-                <span>
-                  Next:{" "}
-                  <strong className="text-ds-text-strong">
-                    {nextLesson.name}
-                  </strong>{" "}
-                  ({nextLesson.code})
-                </span>
-              </div>
-            )}
           </div>
         </section>
 
         {/* =========================================================================
-            2. PROGRESSION PHASE SELECTOR (FUNDAMENTALS -> INTERMEDIATE -> ADVANCED -> REFERENCE)
+            2. PREREQUISITES (SIMPLE, CLEAN, CALM HIGHLIGHT)
            ========================================================================= */}
-        <section className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-ds-text-strong">
-              <Target className="w-4 h-4 text-ds-feature-base" />
-              <span>Select Your Learning Phase</span>
+        <section className="p-5 sm:p-6 rounded-2xl bg-[#0E121B] border border-white/[0.08] space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-purple-400">
+                Prerequisites
+              </span>
+              <span className="text-xs text-slate-400">
+                Recommended foundations to learn before starting NestJS:
+              </span>
             </div>
-            <span className="text-xs text-ds-text-soft">
-              Progress naturally from core concepts to enterprise production
-            </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+            {NESTJS_PREREQUISITES.map((prereq) => (
+              <Link
+                key={prereq.id}
+                href={prereq.path}
+                className="group p-4 rounded-xl bg-[#090C14] border border-white/[0.05] hover:border-purple-500/40 hover:bg-[#0c101a] transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="font-bold text-white group-hover:text-purple-300 transition-colors">
+                      {prereq.title}
+                    </span>
+                    <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20">
+                      {prereq.badge}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                    {prereq.desc}
+                  </p>
+                </div>
+
+                <div className="mt-3 pt-2.5 border-t border-white/[0.04] text-[11px] text-purple-400 font-medium flex items-center justify-between">
+                  <span>Review topic</span>
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* =========================================================================
+            3. CLEAN PHASE SELECTOR (SIMPLE TABS, NO CLUTTER)
+           ========================================================================= */}
+        <section className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
+              Curriculum (8 Phases)
+            </span>
+
+            <button
+              type="button"
+              onClick={() =>
+                setSelectedPhaseState((prev) =>
+                  prev === "reference" ? "fundamentals" : "reference",
+                )
+              }
+              className="text-xs text-slate-400 hover:text-purple-300 transition-colors cursor-pointer"
+            >
+              {selectedPhase === "reference"
+                ? "← Back to Lessons"
+                : "Cheatsheets & Reference"}
+            </button>
+          </div>
+
+          {/* Simple Clean Horizontal Phase Tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             {PROGRESSION_PHASES.map((phase) => {
               const isSelected = selectedPhase === phase.id;
               return (
                 <button
                   key={phase.id}
                   onClick={() => handlePhaseSelect(phase.id)}
-                  className={`group p-5 rounded-2xl text-left transition-all duration-300 ease-out relative cursor-pointer border flex flex-col justify-between overflow-hidden ${
+                  className={`shrink-0 px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer border ${
                     isSelected
-                      ? "bg-ds-bg-white border-ds-feature-base ring-2 ring-ds-feature-base/20 shadow-md shadow-ds-feature-base/5"
-                      : "bg-ds-bg-white hover:bg-ds-bg-weak/70 border-ds-stroke-soft hover:border-ds-feature-base/50 shadow-sm hover:shadow-md hover:-translate-y-1"
+                      ? "bg-purple-600 text-white border-purple-500 font-bold shadow-md shadow-purple-600/20"
+                      : "bg-[#0E121B] text-slate-300 hover:text-white border-white/[0.06] hover:border-white/[0.15]"
                   }`}
                 >
-                  <div className="relative z-10">
-                    {/* Top row: Icon + Scope / Status */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <div className="w-8 h-8 rounded-xl bg-ds-bg-weak group-hover:bg-ds-bg-soft flex items-center justify-center border border-ds-stroke-soft group-hover:border-ds-feature-base/30 transition-colors duration-200">
-                        {getPhaseIcon(phase.icon)}
-                      </div>
-
-                      {isSelected ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-ds-feature-dark bg-ds-feature-lighter px-2.5 py-0.5 rounded-full">
-                          <Check className="w-3.5 h-3.5 text-ds-feature-base" />
-                          Active Phase
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-bold text-ds-text-soft group-hover:text-ds-text-sub uppercase tracking-wider transition-colors duration-200">
-                          {phase.tag}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="text-sm font-bold text-ds-text-strong group-hover:text-ds-feature-base transition-colors duration-200 leading-snug">
-                      {phase.label}
-                    </div>
-
-                    <div className="text-xs text-ds-text-sub group-hover:text-ds-text-strong/90 transition-colors duration-200 mt-1 leading-relaxed line-clamp-2">
-                      {phase.desc}
-                    </div>
-                  </div>
-
-                  <div className="relative z-10 mt-4 pt-3 border-t border-ds-stroke-soft group-hover:border-ds-stroke-soft text-[11px] font-mono text-ds-text-soft group-hover:text-ds-text-sub transition-colors duration-200">
-                    {phase.scope}
-                  </div>
+                  <span>
+                    {phase.phaseNumber}. {phase.label}
+                  </span>
                 </button>
               );
             })}
@@ -260,11 +254,26 @@ export default function NestJSPage() {
         </section>
 
         {/* =========================================================================
-            3. FOCUSED PHASE CONTENT SECTION
+            4. ACTIVE CURRICULUM LESSONS (SPACIOUS & FOCUSED)
            ========================================================================= */}
         <section>
           {selectedPhase === "reference" ? (
-            <ReferenceView />
+            <div className="space-y-4">
+              <div className="p-4 rounded-2xl bg-[#0E121B] border border-white/[0.08] flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs font-bold text-white">
+                  <BookOpen className="w-4 h-4 text-purple-400" />
+                  <span>NestJS CLI & Decorators Cheatsheet</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedPhaseState("fundamentals")}
+                  className="text-xs font-medium text-purple-400 hover:text-purple-300 underline cursor-pointer"
+                >
+                  Back to Lessons
+                </button>
+              </div>
+              <ReferenceView />
+            </div>
           ) : (
             <JourneyView
               phaseId={selectedPhase}
@@ -272,6 +281,55 @@ export default function NestJSPage() {
             />
           )}
         </section>
+
+        {/* =========================================================================
+            5. FINAL CAPSTONE PROJECT (CLEAN & SIMPLE)
+           ========================================================================= */}
+        <section className="p-5 sm:p-6 rounded-2xl bg-[#0E121B] border border-white/[0.08] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-purple-400 uppercase tracking-wider">
+                Final Capstone
+              </span>
+              <span className="text-xs text-slate-400">·</span>
+              <span className="text-xs font-mono text-emerald-400">+{NESTJS_CAPSTONE.xpReward} XP</span>
+            </div>
+            <h3 className="text-base sm:text-lg font-bold text-white">
+              {NESTJS_CAPSTONE.title} — {NESTJS_CAPSTONE.subtitle}
+            </h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              {NESTJS_CAPSTONE.desc}
+            </p>
+          </div>
+
+          <Link
+            href={NESTJS_CAPSTONE.path}
+            className="shrink-0 px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs transition-all shadow-md shadow-purple-600/20 active:scale-95 cursor-pointer flex items-center gap-2"
+          >
+            <span>View Capstone Project</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </section>
+
+        {/* =========================================================================
+            6. ECOSYSTEM TOPICS (MINIMAL 1-LINE FOOTER)
+           ========================================================================= */}
+        <div className="pt-4 border-t border-white/[0.06] text-center text-xs text-slate-400 flex flex-wrap items-center justify-center gap-2">
+          <span>Explore after NestJS:</span>
+          {NESTJS_RELATED_TOPICS.map((topic, i) => (
+            <span key={topic.id} className="inline-flex items-center gap-2">
+              <Link
+                href={topic.path}
+                className="text-slate-300 hover:text-purple-400 font-medium transition-colors"
+              >
+                {topic.title}
+              </Link>
+              {i < NESTJS_RELATED_TOPICS.length - 1 && (
+                <span className="text-slate-600">·</span>
+              )}
+            </span>
+          ))}
+        </div>
       </main>
 
       <Footer />

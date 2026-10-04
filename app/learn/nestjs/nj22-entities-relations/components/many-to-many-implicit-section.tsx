@@ -10,54 +10,73 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 4 — IMPLICIT MANY-TO-MANY RELATIONS
+// MODULE 4 — MANY-TO-MANY DOMAIN ASSOCIATIONS (POSTS & TAGS)
 // ═══════════════════════════════════════════════════════════
 
 export function ManyToManyImplicitSection() {
   return (
-    <SectionContainer number={4} title="Implicit Many-to-Many Relations (Posts & Tags)">
-      {/* ── 4.1 Implicit M-to-N ── */}
+    <SectionContainer number={4} title="Many-to-Many Associations (Posts & Tags)">
+      {/* ── 4.1 M-to-N with ID Sets ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Zero-Boilerplate Many-to-Many"
-          description="Let Prisma automatically manage the underlying join table."
+          number={4}
+          title="Modeling Many-to-Many Without Circular References"
+          description="How to associate entities many-to-many in NestJS using Set<string> identity references."
           color="primary"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>🏷️</span> Clean Many-to-Many Syntax
+            <span>🏷️</span> Identity Referencing Over Object Nesting
           </h4>
           <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
-            Simply declare arrays on both sides of the relationship:
+            In Node.js backends, nesting full objects bidirectionally (e.g. <code>post.tags[0].posts[0].tags[0]...</code>) causes JSON serialization crashes and memory leaks. In domain models, reference each other using unique IDs:
           </p>
           <EnhancedCodeBlock
-            code={`model Post {
-  id    Int    @id @default(autoincrement())
-  title String
-  tags  Tag[]  // ⭐ Array of Tags
+            code={`export class TagEntity {
+  constructor(
+    public readonly id: string,
+    public name: string,
+  ) {
+    this.name = name.toLowerCase().trim();
+  }
 }
 
-model Tag {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  posts Post[] // ⭐ Array of Posts
-}
+export class ArticleEntity {
+  private readonly _tagIds = new Set<string>();
 
-// Prisma automatically creates the PostgreSQL join table: "_PostToTag"
-// Querying a post with its tags:
-const post = await prisma.post.findUnique({
-  where: { id: 1 },
-  include: { tags: true },
-});`}
-            language="prisma"
+  constructor(
+    public readonly id: string,
+    public title: string,
+    public content: string,
+  ) {}
+
+  get tagIds(): readonly string[] {
+    return Array.from(this._tagIds);
+  }
+
+  addTag(tagId: string): void {
+    if (this._tagIds.size >= 10) {
+      throw new Error("An article cannot have more than 10 tags");
+    }
+    this._tagIds.add(tagId);
+  }
+
+  removeTag(tagId: string): void {
+    this._tagIds.delete(tagId);
+  }
+
+  hasTag(tagId: string): boolean {
+    return this._tagIds.has(tagId);
+  }
+}`}
+            language="typescript"
           />
         </WhyBox>
 
         <QuickCheck
-          question="What is an 'implicit' many-to-many relationship in Prisma?"
-          answer="A many-to-many relation where you define arrays on both models without creating a dedicated join model; Prisma automatically creates and manages the intermediate SQL table behind the scenes."
+          question="Why use 'Set<string>' for tag IDs rather than a simple array?"
+          answer="Set guarantees tag uniqueness (O(1) duplicate prevention) and O(1) membership checks without needing manual .includes() or .indexOf() loops."
         />
       </div>
 

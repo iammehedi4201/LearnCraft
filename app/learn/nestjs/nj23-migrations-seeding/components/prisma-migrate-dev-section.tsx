@@ -10,61 +10,62 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 2 — PRISMA MIGRATE DEV WORKFLOW
+// MODULE 2 — NESTJS LIFECYCLE HOOKS (ONMODULEINIT)
 // ═══════════════════════════════════════════════════════════
 
 export function PrismaMigrateDevSection() {
   return (
-    <SectionContainer number={2} title="Development Migrations with prisma migrate dev">
-      {/* ── 2.1 Migrate Dev ── */}
+    <SectionContainer number={2} title="NestJS Lifecycle Hooks: OnModuleInit & OnApplicationBootstrap">
+      {/* ── 2.1 OnModuleInit ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="The Local Migration Command"
-          description="How npx prisma migrate dev diffs your schema, generates SQL, applies changes, and updates TypeScript types in one step."
+          number={2}
+          title="Executing Asynchronous Setup with OnModuleInit"
+          description="How implementing the OnModuleInit interface lets providers run asynchronous setup as soon as dependencies are ready."
           color="sky"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>💻</span> Running prisma migrate dev
+            <span>💻</span> Implementing the OnModuleInit Interface
           </h4>
-          <EnhancedCodeBlock
-            code={`# Step 1: Edit your prisma/schema.prisma file
-# Step 2: Run the migration command with a descriptive name:
-npx prisma migrate dev --name add_profile_table
-
-# Output:
-# Prisma Migrate created and applied the following migration(s):
-#   └─ 20260818153000_add_profile_table/migration.sql
-# 
-# ✔ Generated Prisma Client (v5.x)`}
-            language="bash"
-          />
-          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mt-3">
-            Behind the scenes, Prisma generated pure SQL that was committed to your repository:
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            NestJS calls the <code>onModuleInit()</code> method automatically once all dependencies of that module have been resolved and injected:
           </p>
           <EnhancedCodeBlock
-            code={`-- prisma/migrations/20260818153000_add_profile_table/migration.sql
-CREATE TABLE "Profile" (
-    "id" SERIAL NOT NULL,
-    "bio" TEXT,
-    "userId" INTEGER NOT NULL,
+            code={`import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
+import { UsersRepository } from './users.repository';
 
-    CONSTRAINT "Profile_pkey" PRIMARY KEY ("id")
-);
+@Injectable()
+export class StateInitializationService implements OnModuleInit {
+  private readonly logger = new Logger(StateInitializationService.name);
 
-CREATE UNIQUE INDEX "Profile_userId_key" ON "Profile"("userId");
+  constructor(private readonly usersRepo: UsersRepository) {}
 
-ALTER TABLE "Profile" ADD CONSTRAINT "Profile_userId_fkey" 
-    FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;`}
-            language="sql"
+  async onModuleInit(): Promise<void> {
+    this.logger.log('Executing OnModuleInit: verifying seed state...');
+    
+    // Check if initial admin user exists; if not, seed it:
+    const adminExists = await this.usersRepo.findByEmail('admin@learncraft.dev');
+    if (!adminExists) {
+      await this.usersRepo.create({
+        email: 'admin@learncraft.dev',
+        username: 'superadmin',
+        roles: ['ADMIN'],
+      });
+      this.logger.log('✅ Default superadmin seeded successfully.');
+    } else {
+      this.logger.log('ℹ️ Admin user already exists. Skipping seed.');
+    }
+  }
+}`}
+            language="typescript"
           />
         </WhyBox>
 
         <QuickCheck
-          question="What 4 things happen automatically when you run 'npx prisma migrate dev'?"
-          answer="1. Diffs schema against DB, 2. Generates an SQL migration file, 3. Applies the SQL to the local database, 4. Runs 'prisma generate' to rebuild TypeScript types."
+          question="Does NestJS begin listening for HTTP requests before or after all onModuleInit() promises resolve?"
+          answer="After! NestJS awaits all onModuleInit() and onApplicationBootstrap() hooks before app.listen() opens the network port to client requests."
         />
       </div>
 

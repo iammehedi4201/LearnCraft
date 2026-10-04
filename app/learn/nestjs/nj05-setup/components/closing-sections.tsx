@@ -52,16 +52,16 @@ export function ClosingSections() {
       {/* ── Next Step Card ── */}
       <div className="p-6 bg-ds-success-lighter border border-ds-success-base rounded-2xl">
         <h4 className="font-bold text-base mb-2 text-ds-success-dark flex items-center gap-2">
-          <span>🚀</span> Next Up: NestJS Modules (NJ-06)
+          <span>🚀</span> Next Up: Controllers & HTTP Routing (NJ-06)
         </h4>
         <p className="text-sm text-ds-text-strong leading-relaxed mb-4">
-          Now that you know how a NestJS project starts, it is time to understand the building block of all NestJS applications: <strong>Modules</strong>!
+          Now that you know how a NestJS project is scaffolded and booted, it is time to build your first HTTP endpoints and handle incoming requests with <strong>Controllers</strong>!
         </p>
         <Link
-          href="/learn/nestjs/nj06-modules"
+          href="/learn/nestjs/nj07-controllers"
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-sm shadow-ds-feature-base/15"
         >
-          Proceed to NJ-06: NestJS Modules →
+          Proceed to NJ-06: Controllers & HTTP Routing →
         </Link>
       </div>
 

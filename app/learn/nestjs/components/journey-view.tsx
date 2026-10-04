@@ -5,14 +5,11 @@ import { useSession } from "next-auth/react";
 import {
   CheckCircle2,
   ArrowRight,
-  ArrowLeft,
   Clock,
-  Award,
 } from "./icons";
 import {
   PROGRESSION_PHASES,
   getLessonsByPhaseId,
-  STAGE_1_CAPSTONE,
 } from "../data/nestjs-curriculum";
 import {
   isLessonComplete,
@@ -34,29 +31,53 @@ const PHASE_ACCENTS: Record<
   }
 > = {
   fundamentals: {
-    badge: "bg-ds-success-lighter text-ds-success-dark border-ds-stroke-soft",
-    borderHover: "hover:border-ds-success-base/50",
-    glowBg: "group-hover:bg-ds-success-base/5",
+    badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    borderHover: "hover:border-emerald-500/50",
+    glowBg: "group-hover:bg-emerald-500/5",
   },
-  intermediate: {
-    badge: "bg-ds-info-lighter text-ds-info-dark border-ds-stroke-soft",
-    borderHover: "hover:border-ds-info-base/50",
-    glowBg: "group-hover:bg-ds-info-base/5",
+  "core-arch": {
+    badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
+    borderHover: "hover:border-purple-500/50",
+    glowBg: "group-hover:bg-purple-500/5",
   },
-  advanced: {
-    badge: "bg-ds-feature-lighter text-ds-feature-dark border-ds-stroke-soft",
-    borderHover: "hover:border-ds-feature-base/50",
-    glowBg: "group-hover:bg-ds-feature-base/5",
+  "http-apis": {
+    badge: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+    borderHover: "hover:border-sky-500/50",
+    glowBg: "group-hover:bg-sky-500/5",
+  },
+  lifecycle: {
+    badge: "bg-amber-500/10 text-amber-300 border-amber-500/20",
+    borderHover: "hover:border-amber-500/50",
+    glowBg: "group-hover:bg-amber-500/5",
+  },
+  "error-handling": {
+    badge: "bg-rose-500/10 text-rose-300 border-rose-500/20",
+    borderHover: "hover:border-rose-500/50",
+    glowBg: "group-hover:bg-rose-500/5",
+  },
+  auth: {
+    badge: "bg-indigo-500/10 text-indigo-300 border-indigo-500/20",
+    borderHover: "hover:border-indigo-500/50",
+    glowBg: "group-hover:bg-indigo-500/5",
+  },
+  testing: {
+    badge: "bg-teal-500/10 text-teal-300 border-teal-500/20",
+    borderHover: "hover:border-teal-500/50",
+    glowBg: "group-hover:bg-teal-500/5",
+  },
+  "best-practices": {
+    badge: "bg-purple-500/15 text-purple-300 border-purple-500/30",
+    borderHover: "hover:border-purple-500/50",
+    glowBg: "group-hover:bg-purple-500/5",
   },
   reference: {
-    badge:
-      "bg-ds-highlighted-lighter text-ds-highlighted-dark border-ds-stroke-soft",
-    borderHover: "hover:border-ds-highlighted-base/50",
-    glowBg: "group-hover:bg-ds-highlighted-base/5",
+    badge: "bg-slate-500/10 text-slate-300 border-slate-500/20",
+    borderHover: "hover:border-slate-500/50",
+    glowBg: "group-hover:bg-slate-500/5",
   },
 };
 
-export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
+export function JourneyView({ phaseId }: JourneyViewProps) {
   const phase =
     PROGRESSION_PHASES.find((p) => p.id === phaseId) || PROGRESSION_PHASES[0];
 
@@ -69,16 +90,6 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
     ? lessons.filter((l) => isLessonComplete(l.slug) || isLessonComplete(l.code)).length
     : 0;
 
-  const currentPhaseIndex = PROGRESSION_PHASES.findIndex(
-    (p) => p.id === phase.id,
-  );
-  const prevPhase =
-    currentPhaseIndex > 0 ? PROGRESSION_PHASES[currentPhaseIndex - 1] : null;
-  const nextPhase =
-    currentPhaseIndex >= 0 && currentPhaseIndex < PROGRESSION_PHASES.length - 2
-      ? PROGRESSION_PHASES[currentPhaseIndex + 1]
-      : null;
-
   const accent = PHASE_ACCENTS[phase.id] || PHASE_ACCENTS.fundamentals;
 
   return (
@@ -86,7 +97,7 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
       {/* Current Phase Main Container */}
       <div className="space-y-5">
         {/* Phase Header Banner */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <span
               className={`text-xs font-mono font-bold uppercase tracking-wider border px-3 py-1 rounded-xl ${accent.badge}`}
@@ -94,14 +105,14 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
               {phase.tag}
             </span>
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-ds-text-strong tracking-tight">
+              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
                 {phase.label}
               </h2>
             </div>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <span className="text-xs font-bold text-ds-text-sub bg-ds-bg-weak px-3 py-1 rounded-full">
+            <span className="text-xs font-bold text-slate-400 bg-white/[0.04] border border-white/[0.06] px-3 py-1 rounded-full">
               {completedCount} / {lessons.length} Completed
             </span>
           </div>
@@ -182,19 +193,19 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-base font-bold text-ds-text-strong group-hover:text-ds-feature-base transition-colors duration-200 leading-snug tracking-tight">
+                  <h3 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors duration-200 leading-snug tracking-tight">
                     {lesson.name}
                   </h3>
 
                   {/* Description */}
-                  <p className="text-xs sm:text-sm text-ds-text-sub group-hover:text-ds-text-strong/90 transition-colors duration-200 line-clamp-2 mt-2 leading-relaxed font-normal">
+                  <p className="text-xs sm:text-sm text-slate-400 group-hover:text-slate-300 transition-colors duration-200 line-clamp-2 mt-2 leading-relaxed font-normal">
                     {lesson.desc}
                   </p>
 
-                  {/* Prerequisite Pill - Clean Borderless Design */}
+                  {/* Prerequisite Pill */}
                   {lesson.prerequisite && (
-                    <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-medium text-ds-text-sub bg-ds-bg-weak group-hover:bg-ds-bg-soft px-2.5 py-1 rounded-lg transition-colors duration-200">
-                      <span className="text-ds-text-soft font-semibold">
+                    <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 bg-white/[0.04] group-hover:bg-white/[0.06] px-2.5 py-1 rounded-lg transition-colors duration-200 border border-white/[0.04]">
+                      <span className="text-slate-400 font-semibold">
                         Requires:
                       </span>
                       <span>{lesson.prerequisite}</span>
@@ -203,13 +214,13 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
                 </div>
 
                 {/* Footer */}
-                <div className="relative z-10 flex items-center justify-between gap-3 mt-6 pt-4 border-t border-ds-stroke-soft text-xs">
-                  <span className="inline-flex items-center gap-1.5 text-ds-text-soft font-medium">
-                    <Clock className="w-3.5 h-3.5 text-ds-icon-sub" />
+                <div className="relative z-10 flex items-center justify-between gap-3 mt-6 pt-4 border-t border-white/[0.06] text-xs">
+                  <span className="inline-flex items-center gap-1.5 text-slate-400 font-medium">
+                    <Clock className="w-3.5 h-3.5 text-slate-400" />
                     <span>{lesson.estimatedMinutes}m</span>
                   </span>
 
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-ds-bg-weak text-ds-text-sub border border-ds-stroke-soft group-hover:bg-ds-feature-base group-hover:text-ds-static-white group-hover:border-transparent font-bold transition-all duration-200 ease-out shadow-sm">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] text-slate-300 border border-white/[0.06] group-hover:bg-purple-600 group-hover:text-white group-hover:border-transparent font-bold transition-all duration-200 ease-out shadow-sm">
                     <span>
                       {isDone ? "Review" : isTarget ? "Continue" : "Start"}
                     </span>
@@ -219,83 +230,6 @@ export function JourneyView({ phaseId, onSelectPhase }: JourneyViewProps) {
               </Link>
             );
           })}
-        </div>
-
-        {/* Phase Capstone Milestone Card */}
-        {phase.id === "fundamentals" && (
-          <div className="p-6 rounded-3xl bg-[#0E121B] border border-purple-500/30 hover:border-purple-500/50 shadow-xl relative overflow-hidden transition-all duration-300">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
-              <div className="space-y-2 max-w-2xl">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                    🛠️ Stage 1 Capstone Project
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
-                    +{STAGE_1_CAPSTONE.xpReward} XP
-                  </span>
-                  {isLessonComplete(STAGE_1_CAPSTONE.slug) && (
-                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                      <span>Completed ✅</span>
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                  {STAGE_1_CAPSTONE.title}
-                </h3>
-
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                  {STAGE_1_CAPSTONE.desc}
-                </p>
-              </div>
-
-              <div className="shrink-0 flex items-center gap-3">
-                <Link
-                  href={STAGE_1_CAPSTONE.path}
-                  className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow-lg shadow-purple-600/20 transition-all flex items-center gap-2 cursor-pointer"
-                >
-                  <span>{isLessonComplete(STAGE_1_CAPSTONE.slug) ? "Review Project" : "Start Capstone Lab"}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Phase Navigation Footer (Prev / Next Phase) */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft flex flex-col sm:flex-row items-center justify-between gap-4">
-          {prevPhase ? (
-            <button
-              onClick={() => onSelectPhase && onSelectPhase(prevPhase.id)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ds-bg-weak hover:bg-ds-bg-soft text-ds-text-sub hover:text-ds-text-strong border border-ds-stroke-soft text-xs font-bold transition-all duration-200 ease-out w-full sm:w-auto justify-center"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>
-                {prevPhase.tag}: {prevPhase.label}
-              </span>
-            </button>
-          ) : (
-            <div />
-          )}
-
-          {nextPhase ? (
-            <button
-              onClick={() => onSelectPhase && onSelectPhase(nextPhase.id)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white text-xs font-bold transition-all duration-200 ease-out shadow-sm active:scale-95 w-full sm:w-auto justify-center"
-            >
-              <span>
-                Next: {nextPhase.tag} ({nextPhase.label})
-              </span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          ) : (
-            <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-ds-success-lighter text-ds-success-dark text-xs font-bold">
-              <Award className="w-4 h-4 text-ds-success-base" />
-              <span>Final Learning Phase</span>
-            </div>
-          )}
         </div>
       </div>
     </div>

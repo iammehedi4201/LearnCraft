@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 📄 ⚡</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-24 Completed!
+          Module NJ-15 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You have mastered high-performance database pagination, dynamic multi-field filtering, and safe sorting! Next, finish Phase 05 with Database Transactions, Clean Repository Patterns, and Response Serialization in NJ-25!
+          You have mastered high-performance database pagination, dynamic queries, and schema modeling! Next, take full control of incoming request inputs with Pipes &amp; Data Transformation in NJ-16!
         </p>
 
         <Link
-          href="/learn/nestjs/nj25-serialization"
+          href="/learn/nestjs/nj12-pipes"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-25: Transactions, Repositories &amp; Serialization →
+          Proceed to NJ-16: Pipes &amp; Data Transformation →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the final lesson in Phase 05?"
-        answer="NJ-25: Transactions, Repositories & Serialization (Interactive $transaction, optimistic locking, Repository pattern abstraction, and ClassSerializerInterceptor)."
+        question="What is the next topic after Pagination & Filtering?"
+        answer="NJ-16: Pipes & Data Transformation (using ParseIntPipe, ParseUUIDPipe, and custom transformation pipes to sanitize route params and query strings)."
       />
     </SectionContainer>
   );

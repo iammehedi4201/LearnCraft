@@ -11,60 +11,57 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 1 — THE BIG PICTURE (DATABASE MIGRATIONS & SEEDING)
+// MODULE 1 — THE BIG PICTURE (STATE SEEDING & LIFECYCLE HOOKS)
 // ═══════════════════════════════════════════════════════════
 
 export function HeaderSection() {
   return (
-    <SectionContainer number={1} title="The Big Picture: Migrations & Seeding in Prisma">
-      {/* ── 1.1 Why Migrations ── */}
+    <SectionContainer number={1} title="The Big Picture: State Initialization & Lifecycle Hooks">
+      {/* ── 1.1 Why Lifecycle Initialization Matters ── */}
       <div className="mb-16">
         <TopicHeader
           number={1}
-          title="Version Control for Your Database"
-          description="How migrations track schema changes over time across your entire team and production servers."
+          title="Controlling Application Bootstrap in NestJS"
+          description="How NestJS lifecycle hooks allow providers to initialize default state, seed mock data, and safely warm caches before handling requests."
           color="primary"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>⏱️</span> Why Can't We Just Edit the Database Directly?
+            <span>🌱</span> Why Bootstrap Initialization Matters
           </h4>
           <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
-            If you manually add a column via a database GUI on your local laptop, your teammates&apos; computers and your production server won&apos;t receive that change.
-          </p>
-          <p className="text-xs sm:text-sm text-ds-text-strong leading-relaxed mb-3">
-            <strong>Database Migrations</strong> are like Git commits for your database structure:
+            A backend server is rarely ready to accept client traffic immediately upon instantiation. Before answering HTTP requests, your application frequently needs to:
           </p>
           <ul className="list-disc pl-5 space-y-1 text-xs text-ds-text-sub">
-            <li>Every change generates a timestamped SQL file (e.g. <code>20260818_add_phone_number/migration.sql</code>).</li>
-            <li>You commit this SQL file to Git alongside your NestJS code.</li>
-            <li>Production CI/CD pipelines automatically apply pending migrations on deployment with zero downtime!</li>
+            <li><strong>Seed Seed/Default Data:</strong> Create default roles (ADMIN, USER), system settings, or initial catalog records if the state is empty.</li>
+            <li><strong>Warm In-Memory State:</strong> Pre-load configuration maps, load static catalogs, or initialize cache indices.</li>
+            <li><strong>Validate Runtime Prerequisites:</strong> Ensure necessary environment variables or third-party API credentials are verified.</li>
           </ul>
         </WhyBox>
 
-        <AnalogyBox title="The Architectural Blueprint Revision History">
+        <AnalogyBox title="The Restaurant Opening Routine">
           <p className="mb-2">
-            Think of database migrations like <strong>Architectural Construction Blueprints</strong>:
+            Think of NestJS Lifecycle Hooks like opening a gourmet restaurant:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-xs text-ds-text-sub">
             <li>
-              <strong>Initial Build (Migration 1):</strong> &quot;Pour foundation and build 2 floors&quot; (Create initial tables).
+              <strong>Constructor (Instantiation):</strong> The chefs, waitstaff, and manager arrive in the building.
             </li>
             <li>
-              <strong>Revision 2 (Migration 2):</strong> &quot;Add an elevator shaft and fire escape&quot; (Add new columns and foreign key indexes).
+              <strong>OnModuleInit (Prep &amp; Seeding):</strong> The chefs prep ingredients, light the stoves, and bake fresh bread. No customers are allowed in yet!
             </li>
             <li>
-              <strong>Every Construction Worker is Synchronized:</strong> Because every engineer follows the numbered blueprint changelog in order, every building is identical!
+              <strong>OnApplicationBootstrap (Doors Open):</strong> The front doors unlock and the restaurant begins taking customer reservations and orders.
             </li>
           </ul>
         </AnalogyBox>
 
-        <EasyRuleCard rule="In development: npx prisma migrate dev. In production CI/CD: npx prisma migrate deploy." />
+        <EasyRuleCard rule="Never perform heavy asynchronous network calls or database seeding in TypeScript constructors. Always use NestJS lifecycle hooks like OnModuleInit." />
 
         <QuickCheck
-          question="What is the primary purpose of a database migration?"
-          answer="To record and apply incremental schema changes (adding tables/columns) in a reproducible, version-controlled way across local, staging, and production databases."
+          question="Why should asynchronous data seeding NEVER be called inside a service constructor?"
+          answer="Constructors in TypeScript/JavaScript cannot be asynchronous (they cannot return Promises). If an async operation fails in a constructor, it causes unhandled rejections and race conditions during DI resolution."
         />
       </div>
 

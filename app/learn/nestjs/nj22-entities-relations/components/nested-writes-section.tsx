@@ -10,69 +10,75 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 7 — NESTED WRITES & RELATIONAL MUTATIONS
+// MODULE 7 — AGGREGATE ROOTS & ATOMIC COMPOSITION
 // ═══════════════════════════════════════════════════════════
 
 export function NestedWritesSection() {
   return (
-    <SectionContainer number={7} title="Nested Writes (create, connect, connectOrCreate)">
-      {/* ── 7.1 Nested Writes ── */}
+    <SectionContainer number={7} title="Aggregate Roots & Atomic Multi-Entity Composition">
+      {/* ── 7.1 Aggregate Roots ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Atomic Multi-Table Mutations"
-          description="Create, connect, or update related records in a single database operation."
+          number={7}
+          title="Atomic Composition of Related Entities"
+          description="How Aggregate Roots group multiple related domain entities into a single transaction boundary."
           color="amber"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>✨</span> 3 Powerful Nested Write Patterns
+            <span>✨</span> The Order &amp; OrderItem Aggregate
           </h4>
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            In domain-driven design, child entities like <code>OrderItem</code> should not be saved independently without validating the parent <code>Order</code> total and customer credit limit:
+          </p>
           <EnhancedCodeBlock
-            code={`// 1. Nested Create (Creates User AND Profile simultaneously):
-const userWithProfile = await prisma.user.create({
-  data: {
-    email: 'alice@learncraft.dev',
-    passwordHash: 'hashed...',
-    profile: {
-      create: { bio: 'Full-stack TypeScript developer' },
-    },
-  },
-});
+            code={`export class OrderItemEntity {
+  constructor(
+    public readonly productId: string,
+    public readonly quantity: number,
+    public readonly unitPriceCents: number,
+  ) {
+    if (quantity <= 0) throw new Error("Quantity must be positive");
+    if (unitPriceCents < 0) throw new Error("Price cannot be negative");
+  }
 
-// 2. Nested Connect (Attaches new Post to an existing Author):
-const newPost = await prisma.post.create({
-  data: {
-    title: 'Mastering NestJS 2026',
-    author: {
-      connect: { id: 42 }, // Links to User with id 42
-    },
-  },
-});
+  get totalCents(): number {
+    return this.quantity * this.unitPriceCents;
+  }
+}
 
-// 3. Nested connectOrCreate (Finds existing tag or creates a new one):
-const taggedPost = await prisma.post.create({
-  data: {
-    title: 'Prisma Guide',
-    author: { connect: { id: 42 } },
-    tags: {
-      connectOrCreate: [
-        {
-          where: { name: 'nestjs' },
-          create: { name: 'nestjs' },
-        },
-      ],
-    },
-  },
-});`}
+export class OrderAggregate {
+  private readonly _items: OrderItemEntity[] = [];
+  public status: "PENDING" | "PAID" | "CANCELLED" = "PENDING";
+
+  constructor(
+    public readonly id: string,
+    public readonly customerId: string,
+  ) {}
+
+  addItem(productId: string, quantity: number, unitPriceCents: number): void {
+    if (this.status !== "PENDING") {
+      throw new Error("Cannot add items to a non-pending order");
+    }
+    this._items.push(new OrderItemEntity(productId, quantity, unitPriceCents));
+  }
+
+  get items(): readonly OrderItemEntity[] {
+    return Object.freeze([...this._items]);
+  }
+
+  get subtotalCents(): number {
+    return this._items.reduce((sum, item) => sum + item.totalCents, 0);
+  }
+}`}
             language="typescript"
           />
         </WhyBox>
 
         <QuickCheck
-          question="What is the advantage of 'connectOrCreate' when adding tags or categories to a post?"
-          answer="It avoids duplicate tag entries by linking to an existing tag if one already exists, or creating a new tag if it doesn't."
+          question="What is an Aggregate Root in NestJS domain modeling?"
+          answer="An Aggregate Root is the main parent entity (e.g. Order) that controls access, modifications, and consistency invariants for all its internal child entities (e.g. OrderItems)."
         />
       </div>
 

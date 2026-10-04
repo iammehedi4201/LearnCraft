@@ -9,39 +9,37 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 12 — PRISMA CLI COMMANDS MASTER REFERENCE
+// MODULE 12 — NESTJS LIFECYCLE HOOKS MASTER REFERENCE
 // ═══════════════════════════════════════════════════════════
 
 export function ConceptTablesSection() {
   return (
-    <SectionContainer number={12} title="Prisma CLI Commands Master Reference">
-      {/* ── 12.1 Commands Table ── */}
+    <SectionContainer number={12} title="NestJS Lifecycle Hooks Master Reference">
+      {/* ── 12.1 Lifecycle Reference ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="The Complete Prisma CLI Cheat Sheet"
-          description="Every essential Prisma command for development, testing, and production."
+          number={12}
+          title="Lifecycle Methods &amp; Bootstrap APIs"
+          description="A complete architectural cheat sheet of all initialization, execution, and teardown APIs in NestJS."
           color="primary"
         />
 
         <ComparisonTable
-          headers={["Command", "Environment", "Action Performed"]}
+          headers={["Lifecycle Hook / API", "Scope", "Primary Use Case", "Async Support"]}
           rows={[
-            ["prisma init", "Setup", "Initializes schema.prisma and .env configuration files"],
-            ["prisma generate", "Any", "Rebuilds TypeScript types inside node_modules/@prisma/client"],
-            ["prisma migrate dev", "Development", "Diffs schema, creates new SQL migration, applies locally, and generates types"],
-            ["prisma migrate deploy", "Production / CI", "Applies pending migration SQL files non-interactively without prompt"],
-            ["prisma migrate reset", "Development", "Drops database, reruns all migrations from scratch, and seeds data"],
-            ["prisma migrate status", "Any", "Checks if the live database is in sync with migrations directory"],
-            ["prisma db push", "Prototyping", "Directly syncs schema.prisma to database without generating migration files"],
-            ["prisma db seed", "Development", "Executes the seed script defined in package.json"],
-            ["prisma studio", "Development", "Opens the visual browser database editor on port 5555"],
+            ["onModuleInit()", "Module / Provider", "Initialize provider state, verify seed data, load configs", "✅ Supported (returns Promise)"],
+            ["onApplicationBootstrap()", "Application-wide", "Cross-module verification once all modules have initialized", "✅ Supported (returns Promise)"],
+            ["app.listen(port)", "Application Server", "Binds HTTP listener and begins accepting inbound client connections", "✅ Supported (returns Promise)"],
+            ["app.enableShutdownHooks()", "Application Setup", "Registers Node.js OS signal listeners for SIGINT and SIGTERM", "Synchronous configuration"],
+            ["beforeApplicationShutdown(signal)", "Module / Provider", "Drain queues and finish in-flight requests before sockets close", "✅ Supported (returns Promise)"],
+            ["onModuleDestroy()", "Module / Provider", "Clear intervals, flush logger buffers, release file handles", "✅ Supported (returns Promise)"],
+            ["createApplicationContext()", "Headless Runner", "Instantiates DI container for standalone CLI seeders and jobs", "✅ Supported (returns Promise)"],
           ]}
         />
 
         <QuickCheck
-          question="Which command checks if your live database has any unapplied migrations without executing them?"
-          answer="npx prisma migrate status."
+          question="Can onModuleDestroy() perform asynchronous cleanup (like waiting for a database transaction to finish)?"
+          answer="Yes! onModuleDestroy() can return a Promise, and NestJS will await its completion before continuing process termination."
         />
       </div>
 

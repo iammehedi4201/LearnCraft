@@ -1,16 +1,14 @@
 /**
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * NJ-32 — Production Deployment, Docker & DevOps (Grand Finale)
+ * NJ-32 — Production Build, Health Checks & Graceful Teardown
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  *
  * CORE CONCEPT
  * ────────────
- * Production engineering, containerization, and DevOps in NestJS:
- * 3-stage multi-stage Dockerfiles (90MB Alpine, non-root user node),
- * docker-compose orchestration with PostgreSQL and Redis health checks,
- * @nestjs/terminus Liveness and Readiness probes, graceful shutdown hooks,
- * PM2 cluster mode, automated GitHub Actions CI/CD pipeline, and the
- * 20-Point Production Readiness Pre-Launch Checklist.
+ * Production execution and readiness in pure NestJS:
+ * Compiling with nest build, node dist/main.js, production ConfigModule
+ * validation, @nestjs/terminus health probes, graceful shutdown hooks,
+ * PM2 process management, and Node.js V8 runtime flags.
  *
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
@@ -31,8 +29,8 @@ import { TerminusHealthChecksSection } from "./components/terminus-health-checks
 import { GracefulShutdownSignalsSection } from "./components/graceful-shutdown-signals-section";
 import { ProcessManagerPm2Section } from "./components/process-manager-pm2-section";
 import { CiCdGithubActionsSection } from "./components/ci-cd-github-actions-section";
-import { EnvironmentSecretsHardeningSection } from "./components/environment-secrets-hardening-section";
 import { ProductionChecklistSection } from "./components/production-checklist-section";
+import { EnvironmentSecretsHardeningSection } from "./components/environment-secrets-hardening-section";
 import { BeginnerMistakesSection } from "./components/beginner-mistakes-section";
 import { InterviewQaSection } from "./components/interview-qa-section";
 import { ConceptTablesSection } from "./components/concept-tables-section";
@@ -40,22 +38,21 @@ import { CodingExercisesSection } from "./components/coding-exercises-section";
 import { ClosingSections } from "./components/closing-sections";
 
 const SECTIONS = [
-  { id: "part1",  label: "The Big Picture",             icon: "🚀" },
-  { id: "part2",  label: "Multi-Stage Dockerfile",      icon: "🐳" },
-  { id: "part3",  label: "Production Docker Compose",   icon: "📦" },
-  { id: "part4",  label: "Terminus Health Checks",      icon: "🩺" },
-  { id: "part5",  label: "Graceful Shutdown Hooks",     icon: "🛑" },
-  { id: "part6",  label: "PM2 Process Manager",         icon: "⚙️" },
-  { id: "part7",  label: "GitHub Actions CI/CD",        icon: "🔄" },
-  { id: "part8",  label: "Production Security",         icon: "🛡️" },
-  { id: "part9",  label: "20-Point Flight Checklist",   icon: "📋" },
-  { id: "part10", label: "Top 5 Beginner Mistakes",     icon: "⚠️" },
-  { id: "part11", label: "Top 5 Interview Q&As",        icon: "💡" },
-  { id: "part12", label: "Kubernetes Probes Matrix",    icon: "📊" },
-  { id: "part13", label: "DevOps Coding Practice",      icon: "💻" },
-  { id: "part14", label: "Grand Master Graduation",     icon: "🎓" },
+  { id: "part1",  label: "The Big Picture",              icon: "🚀" },
+  { id: "part2",  label: "nest build Compilation",       icon: "📦" },
+  { id: "part3",  label: "Production Config Hardening",  icon: "⚙️" },
+  { id: "part4",  label: "Terminus Health Checks",       icon: "🩺" },
+  { id: "part5",  label: "Graceful Shutdown Hooks",      icon: "🛑" },
+  { id: "part6",  label: "Process Management (PM2)",     icon: "🔄" },
+  { id: "part7",  label: "Node.js Runtime Tuning",       icon: "⚡" },
+  { id: "part8",  label: "Production Checklist",         icon: "📋" },
+  { id: "part9",  label: "Secrets & Security",           icon: "🔐" },
+  { id: "part10", label: "Top 5 Beginner Mistakes",      icon: "⚠️" },
+  { id: "part11", label: "Top 5 Interview Q&As",         icon: "💡" },
+  { id: "part12", label: "Production Master Matrix",     icon: "📊" },
+  { id: "part13", label: "Deployment Practice",          icon: "💻" },
+  { id: "part14", label: "Graduation & Mastery",         icon: "🎓" },
 ];
-
 
 export default function NJ32Deployment(): JSX.Element {
   const searchParams = useSearchParams();
@@ -102,8 +99,8 @@ export default function NJ32Deployment(): JSX.Element {
       case "part5":  return <GracefulShutdownSignalsSection />;
       case "part6":  return <ProcessManagerPm2Section />;
       case "part7":  return <CiCdGithubActionsSection />;
-      case "part8":  return <EnvironmentSecretsHardeningSection />;
-      case "part9":  return <ProductionChecklistSection />;
+      case "part8":  return <ProductionChecklistSection />;
+      case "part9":  return <EnvironmentSecretsHardeningSection />;
       case "part10": return <BeginnerMistakesSection />;
       case "part11": return <InterviewQaSection />;
       case "part12": return <ConceptTablesSection />;
@@ -121,165 +118,165 @@ export default function NJ32Deployment(): JSX.Element {
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
           {/* Stepper Sidebar */}
           {!isImproveMode && (
-<aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
-            {/* Header */}
-            <div className="px-2 mb-3 shrink-0">
-              <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
-                Modules
-              </p>
-            </div>
+            <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
+              {/* Header */}
+              <div className="px-2 mb-3 shrink-0">
+                <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
+                  Modules
+                </p>
+              </div>
 
-            {/* Stepper (Scrollable List) */}
-            <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
-              <ol className="space-y-1.5 relative">
-                {SECTIONS.map((section, index) => {
-                  const state = getStepState(index);
-                  const isActive = state === "active";
-                  const isDone = state === "done";
-                  const isTodo = state === "todo";
+              {/* Stepper (Scrollable List) */}
+              <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
+                <ol className="space-y-1.5 relative">
+                  {SECTIONS.map((section, index) => {
+                    const state = getStepState(index);
+                    const isActive = state === "active";
+                    const isDone = state === "done";
+                    const isTodo = state === "todo";
 
-                  return (
-                    <li key={section.id}>
-                      <button
-                        onClick={() => handleSectionChange(section.id)}
-                        disabled={isAuthenticated && isTodo && index > currentIndex + 1}
-                        className={`
-                          group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
-                          transition-all duration-200 text-left
-                          ${
-                            isActive
-                              ? "bg-ds-feature-lighter border border-ds-feature-base"
-                              : isDone
-                                ? "hover:bg-ds-bg-weak cursor-pointer"
-                                : !isAuthenticated ? "hover:bg-ds-bg-weak cursor-pointer" : "opacity-50 cursor-not-allowed"
-                          }
-                        `}
-                      >
-                        {/* Step indicator circle */}
-                        <div
+                    return (
+                      <li key={section.id}>
+                        <button
+                          onClick={() => handleSectionChange(section.id)}
+                          disabled={isAuthenticated && isTodo && index > currentIndex + 1}
                           className={`
-                            relative z-10 flex-shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center
-                            text-[11px] font-bold transition-all duration-200
+                            group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+                            transition-all duration-200 text-left
                             ${
                               isActive
-                                ? "bg-ds-feature-base text-ds-static-white scale-105 shadow-sm shadow-ds-feature-base/10"
+                                ? "bg-ds-feature-lighter border border-ds-feature-base"
                                 : isDone
-                                  ? "bg-ds-success-base text-ds-static-white"
-                                  : "bg-ds-bg-weak text-ds-text-disabled border border-ds-stroke-soft"
+                                  ? "hover:bg-ds-bg-weak cursor-pointer"
+                                  : !isAuthenticated ? "hover:bg-ds-bg-weak cursor-pointer" : "opacity-50 cursor-not-allowed"
                             }
                           `}
                         >
-                          {isDone ? (
-                            <svg
-                              className="w-3.5 h-3.5"
-                              viewBox="0 0 14 14"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <polyline points="2,7 5.5,10.5 12,3.5" />
-                            </svg>
-                          ) : (
-                            <span>{index + 1}</span>
-                          )}
-                        </div>
-
-                        {/* Label area */}
-                        <div className="flex flex-col items-start gap-0.5 min-w-0 flex-1">
-                          <span
+                          {/* Step indicator circle */}
+                          <div
                             className={`
-                              text-[13px] font-semibold leading-tight truncate transition-colors duration-200
+                              relative z-10 flex-shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center
+                              text-[11px] font-bold transition-all duration-200
                               ${
                                 isActive
-                                  ? "text-ds-feature-dark font-black"
+                                  ? "bg-ds-feature-base text-ds-static-white scale-105 shadow-sm shadow-ds-feature-base/10"
                                   : isDone
-                                    ? "text-ds-text-strong group-hover:text-ds-feature-base"
-                                    : "text-ds-text-disabled"
+                                    ? "bg-ds-success-base text-ds-static-white"
+                                    : "bg-ds-bg-weak text-ds-text-disabled border border-ds-stroke-soft"
                               }
                             `}
                           >
-                            {section.label}
-                          </span>
+                            {isDone ? (
+                              <svg
+                                className="w-3.5 h-3.5"
+                                viewBox="0 0 14 14"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polyline points="2,7 5.5,10.5 12,3.5" />
+                              </svg>
+                            ) : (
+                              <span>{index + 1}</span>
+                            )}
+                          </div>
+
+                          {/* Label area */}
+                          <div className="flex flex-col items-start gap-0.5 min-w-0 flex-1">
+                            <span
+                              className={`
+                                text-[13px] font-semibold leading-tight truncate transition-colors duration-200
+                                ${
+                                  isActive
+                                    ? "text-ds-feature-dark font-black"
+                                    : isDone
+                                      ? "text-ds-text-strong group-hover:text-ds-feature-base"
+                                      : "text-ds-text-disabled"
+                                }
+                              `}
+                            >
+                              {section.label}
+                            </span>
+                            {isActive && (
+                              <span className="text-[10px] font-medium text-ds-feature-base">
+                                In progress
+                              </span>
+                            )}
+                            {isDone && (
+                              <span className="text-[10px] text-ds-success-dark font-medium">
+                                Completed
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Active indicator dot */}
                           {isActive && (
-                            <span className="text-[10px] font-medium text-ds-feature-base">
-                              In progress
-                            </span>
+                            <div className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0" />
                           )}
-                          {isDone && (
-                            <span className="text-[10px] text-ds-success-dark font-medium">
-                              Completed
-                            </span>
-                          )}
-                        </div>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </nav>
 
-                        {/* Active indicator dot */}
-                        {isActive && (
-                          <div className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0" />
-                        )}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-            </nav>
-
-            {/* Progress box */}
-            <div className="mt-4 shrink-0 px-4 py-3.5 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[9px] font-black text-ds-text-soft uppercase tracking-widest">
-                  Progress
-                </span>
-                <span className="text-[12px] font-bold text-ds-text-strong">
-                  {isAuthenticated ? `${progressPercent}%` : "0%"}
-                </span>
+              {/* Progress box */}
+              <div className="mt-4 shrink-0 px-4 py-3.5 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[9px] font-black text-ds-text-soft uppercase tracking-widest">
+                    Progress
+                  </span>
+                  <span className="text-[12px] font-bold text-ds-text-strong">
+                    {isAuthenticated ? `${progressPercent}%` : "0%"}
+                  </span>
+                </div>
+                <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
+                    style={{
+                      width: `${isAuthenticated ? progressPercent : 0}%`,
+                    }}
+                  />
+                </div>
+                <p className="mt-2 text-[10px] text-ds-text-soft">
+                  {isAuthenticated ? `${completedSections.size} of ${SECTIONS.length} modules completed` : "Sign in to save progress"}
+                </p>
               </div>
-              <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
-                  style={{
-                    width: `${isAuthenticated ? progressPercent : 0}%`,
-                  }}
-                />
-              </div>
-              <p className="mt-2 text-[10px] text-ds-text-soft">
-                {isAuthenticated ? `${completedSections.size} of ${SECTIONS.length} modules completed` : "Sign in to save progress"}
-              </p>
-            </div>
 
-            {/* Prev / Next navigation */}
-            <div className="mt-3 shrink-0 flex gap-2">
-              <button
-                onClick={() =>
-                  currentIndex > 0 &&
-                  handleSectionChange(SECTIONS[currentIndex - 1].id)
-                }
-                disabled={currentIndex === 0}
-                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold border border-ds-stroke-soft text-ds-text-sub bg-ds-bg-white hover:bg-ds-bg-weak hover:text-ds-text-strong disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-              >
-                ← Prev
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (currentIndex < SECTIONS.length - 1) {
-                    handleSectionChange(SECTIONS[currentIndex + 1].id);
-                  } else {
-                    completeLesson();
+              {/* Prev / Next navigation */}
+              <div className="mt-3 shrink-0 flex gap-2">
+                <button
+                  onClick={() =>
+                    currentIndex > 0 &&
+                    handleSectionChange(SECTIONS[currentIndex - 1].id)
                   }
-                }}
-                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10 cursor-pointer"
-              >
-                {currentIndex === SECTIONS.length - 1
-                  ? isLessonCompleted
-                    ? "Completed ✓"
-                    : "Finish Lesson ✓"
-                  : "Next →"}
-              </button>
-            </div>
-          </aside>
-)}
+                  disabled={currentIndex === 0}
+                  className="flex-1 py-2.5 rounded-xl text-[12px] font-bold border border-ds-stroke-soft text-ds-text-sub bg-ds-bg-white hover:bg-ds-bg-weak hover:text-ds-text-strong disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  ← Prev
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (currentIndex < SECTIONS.length - 1) {
+                      handleSectionChange(SECTIONS[currentIndex + 1].id);
+                    } else {
+                      completeLesson();
+                    }
+                  }}
+                  className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10 cursor-pointer"
+                >
+                  {currentIndex === SECTIONS.length - 1
+                    ? isLessonCompleted
+                      ? "Completed ✓"
+                      : "Finish Lesson ✓"
+                    : "Next →"}
+                </button>
+              </div>
+            </aside>
+          )}
 
           {/* Main Content */}
           <main className={`${isImproveMode ? "w-full min-w-0" : "flex-1 min-w-0 max-w-6xl"}`}>

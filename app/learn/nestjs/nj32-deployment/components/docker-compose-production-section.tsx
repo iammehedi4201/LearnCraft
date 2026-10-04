@@ -10,83 +10,59 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 3 — DOCKER-COMPOSE PRODUCTION STACK
+// MODULE 3 — PRODUCTION CONFIGURATION HARDENING
 // ═══════════════════════════════════════════════════════════
 
 export function DockerComposeProductionSection() {
   return (
-    <SectionContainer number={3} title="Full Production Stack with Docker Compose">
-      {/* ── 3.1 Docker Compose ── */}
+    <SectionContainer number={3} title="Production Configuration &amp; Environment Hardening">
+      {/* ── 3.1 Production Config ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Orchestrating NestJS, PostgreSQL &amp; Redis"
-          description="A complete production-ready docker-compose.yml with health checks and persistent volumes."
+          number={3}
+          title="Validating Production Environment Invariants"
+          description="How to configure ConfigModule with strict validation to ensure the server never starts with missing or insecure variables."
           color="emerald"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>🐳</span> docker-compose.prod.yml
+            <span>⚙️</span> Strict Production Config Validation
           </h4>
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            In production, failing to provide a required secret (e.g. <code>JWT_SECRET</code>) must crash the server during bootstrap with a clear error message, rather than failing later during user requests:
+          </p>
           <EnhancedCodeBlock
-            code={`version: '3.8'
+            code={`import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import * as Joi from 'joi';
 
-services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: runner
-    restart: always
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=postgresql://postgres:secretpassword@postgres:5432/learncraft?schema=public
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
-  postgres:
-    image: postgres:16-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: secretpassword
-      POSTGRES_DB: learncraft
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
-    restart: always
-    volumes:
-      - redisdata:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  pgdata:
-  redisdata:`}
-            language="yaml"
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true, // ⭐ Caches process.env lookups in memory for high performance
+      validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid('development', 'production', 'test').default('production'),
+        PORT: Joi.number().default(3000),
+        JWT_SECRET: Joi.string().min(32).required(), // ⭐ Crash on startup if secret is missing or too short
+        API_PREFIX: Joi.string().default('api/v1'),
+      }),
+      validationOptions: {
+        allowUnknown: true,
+        abortEarly: false, // Report all missing variables at once
+      },
+    }),
+  ],
+})
+export class AppModule {}`}
+            language="typescript"
           />
         </WhyBox>
 
         <QuickCheck
-          question="Why is 'condition: service_healthy' essential in depends_on?"
-          answer="It ensures the NestJS API container does NOT start until PostgreSQL and Redis have fully booted, accepted socket connections, and passed their internal health checks."
+          question="Why enable 'cache: true' in ConfigModule for production?"
+          answer="Reading from Node.js 'process.env' is surprisingly slow because it performs system calls. 'cache: true' caches variable values in memory, speeding up lookups by up to 10x."
         />
       </div>
 

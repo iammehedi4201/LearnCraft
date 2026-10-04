@@ -10,55 +10,65 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 7 — TEST DATABASE ISOLATION & TEARDOWN
+// MODULE 7 — TEST STATE ISOLATION & LIFECYCLE TEARDOWN
 // ═══════════════════════════════════════════════════════════
 
 export function TestDatabaseLifecycleSection() {
   return (
-    <SectionContainer number={7} title="Test Database Isolation &amp; Teardown">
-      {/* ── 7.1 Database Cleanup ── */}
+    <SectionContainer number={7} title="Test State Isolation &amp; Lifecycle Teardown">
+      {/* ── 7.1 State Isolation ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Cleaning State Between Tests"
-          description="Ensure test independence by wiping database tables between test suites."
+          number={7}
+          title="Guaranteeing Test Independence & Clean Teardown"
+          description="How to reset in-memory state between tests and close the testing module to avoid memory leaks."
           color="primary"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>🧹</span> Automated Database Truncate Utility
+            <span>🧹</span> Complete Test Lifecycle Harness
           </h4>
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            Every test must run in a pristine sandbox. Reset repository collections in <code>beforeEach</code> and gracefully close the testing module in <code>afterAll</code>:
+          </p>
           <EnhancedCodeBlock
-            code={`// test/utils/clean-db.ts
-import { PrismaClient } from '@prisma/client';
+            code={`describe('CatalogService Integration Harness', () => {
+  let app: INestApplication;
+  let repo: InMemoryCatalogRepository;
 
-export async function cleanDatabase(prisma: PrismaClient) {
-  // ⭐ Truncates all tables and resets auto-increment sequences in milliseconds:
-  const tablenames = await prisma.$queryRaw<Array<{ tablename: string }>>\`
-    SELECT tablename FROM pg_tables WHERE schemaname='public' AND tablename != '_prisma_migrations';
-  \`;
+  beforeAll(async () => {
+    const moduleRef = await Test.createTestingModule({
+      imports: [CatalogModule],
+    }).compile();
 
-  const tables = tablenames
-    .map(({ tablename }) => \`"\${tablename}"\`)
-    .join(', ');
+    app = moduleRef.createNestApplication();
+    await app.init();
+    repo = app.get(CATALOG_REPOSITORY);
+  });
 
-  if (tables.length > 0) {
-    await prisma.$executeRawUnsafe(\`TRUNCATE TABLE \${tables} RESTART IDENTITY CASCADE;\`);
-  }
-}
+  // ⭐ Reset state before each individual test case:
+  beforeEach(async () => {
+    await repo.clear();
+  });
 
-// Usage in beforeEach:
-beforeEach(async () => {
-  await cleanDatabase(prisma);
+  // ⭐ Crucial: Close application to trigger OnModuleDestroy and release sockets:
+  afterAll(async () => {
+    await app.close();
+  });
+
+  it('runs against an empty catalog', async () => {
+    const items = await repo.findAll();
+    expect(items).toHaveLength(0);
+  });
 });`}
             language="typescript"
           />
         </WhyBox>
 
         <QuickCheck
-          question="Why is TRUNCATE TABLE ... RESTART IDENTITY CASCADE preferred over DELETE FROM in test cleanup?"
-          answer="TRUNCATE is dramatically faster (it deallocates data pages directly rather than deleting row-by-row) and resets auto-incrementing ID primary keys back to 1."
+          question="Why must 'await app.close()' be called inside the afterAll() hook of an integration or E2E test?"
+          answer="It triggers all OnModuleDestroy and BeforeApplicationShutdown hooks, closes open HTTP listeners, and allows the Jest test runner to exit without hanging indefinitely."
         />
       </div>
 

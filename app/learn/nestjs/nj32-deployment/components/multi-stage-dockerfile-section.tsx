@@ -11,69 +11,70 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 2 — MULTI-STAGE PRODUCTION DOCKERFILE
+// MODULE 2 — PRODUCTION COMPILATION WITH NEST BUILD
 // ═══════════════════════════════════════════════════════════
 
 export function MultiStageDockerfileSection() {
   return (
-    <SectionContainer number={2} title="Production Multi-Stage Dockerfile">
-      {/* ── 2.1 Multi-Stage Docker ── */}
+    <SectionContainer number={2} title="Production Compilation with nest build">
+      {/* ── 2.1 Production Compilation ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Building an Ultra-Secure 90MB Alpine Image"
-          description="Separate compilation from execution, strip devDependencies, and drop root privileges."
+          number={2}
+          title="Transpiling TypeScript to Optimized JavaScript"
+          description="How nest build transpiles decorator metadata, bundles assets, and creates an optimized dist/ artifact."
           color="sky"
         />
 
         <EnhancedCodeBlock
-          code={`# ── Stage 1: Base & Dependencies ──
-FROM node:20-alpine AS deps
-WORKDIR /app
-RUN apk add --no-cache libc6-compat
-COPY package*.json ./
-COPY prisma ./prisma/
-RUN npm ci
+          code={`# Run in terminal:
+npm run build
 
-# ── Stage 2: TypeScript & Prisma Builder ──
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN npx prisma generate
-RUN npm run build
-RUN npm prune --production # ⭐ Strip out @types, jest, and devDependencies!
+# Output generated in project root:
+# dist/
+# ├── app.module.js
+# ├── app.module.d.ts
+# ├── app.module.js.map
+# ├── main.js
+# ├── main.js.map
+# └── users/
+#     ├── users.controller.js
+#     ├── users.service.js
+#     └── users.module.js
 
-# ── Stage 3: Production Runner ──
-FROM node:20-alpine AS runner
-WORKDIR /app
-ENV NODE_ENV=production
-RUN apk add --no-cache dumb-init
+# Accelerated Build with SWC (10x-20x faster compilation):
+nest build -b swc`}
+          language="bash"
+        />
 
-# Security: Never run containers as root!
-USER node
+        <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mt-3 mb-4">
+          In production, Node.js never executes TypeScript files directly with <code>ts-node</code>. Instead, it runs the compiled JavaScript output using the native V8 engine:
+        </p>
 
-COPY --chown=node:node --from=builder /app/node_modules ./node_modules
-COPY --chown=node:node --from=builder /app/dist ./dist
-COPY --chown=node:node --from=builder /app/prisma ./prisma
-
-EXPOSE 3000
-CMD ["dumb-init", "node", "dist/main.js"]`}
-          language="dockerfile"
+        <EnhancedCodeBlock
+          code={`// package.json scripts:
+{
+  "scripts": {
+    "build": "nest build",
+    "start:prod": "node dist/main.js"
+  }
+}`}
+          language="json"
         />
 
         <PredictOutputBox
-          code={`# Single Stage Dockerfile vs Multi-Stage Alpine
-# Single stage image size: ~1.2 Gigabytes
-# Multi-stage Alpine image size: ~92 Megabytes`}
-          answer={`Predicted Build Outcome:\n\n1. Over 92% reduction in Docker image size (from 1.2GB down to 92MB)!\n2. 5x faster container deployment and pull times in Kubernetes.\n3. Zero security vulnerabilities from build tools (gcc, git, typescript compiler removed from runner).`}
+          code={`// Why is running 'node dist/main.js' significantly faster than 'ts-node src/main.ts'?`}
+          answer={`Predicted Performance Difference:
+
+1. ts-node compiles TypeScript in-memory on every single server startup, adding 5-15 seconds of boot latency and consuming 150MB+ extra RAM.
+2. 'node dist/main.js' executes pre-compiled, optimized plain V8 JavaScript with zero startup compilation overhead (~100ms boot time).`}
         />
 
-        <EasyRuleCard rule="Always run 'USER node' in your runner stage to prevent container-escape privilege escalation vulnerabilities." />
+        <EasyRuleCard rule="Always run 'nest build' before deploying and execute 'node dist/main.js' in production environments." />
 
         <QuickCheck
-          question="Why is 'dumb-init' used as the ENTRYPOINT/CMD wrapper in Node.js Docker containers?"
-          answer="Node.js was not designed to run as PID 1; dumb-init properly forwards Unix signals (like SIGTERM) and reaps zombie child processes during container shutdowns."
+          question="What does the SWC builder flag ('nest build -b swc') do?"
+          answer="It replaces the standard TypeScript tsc compiler with the Rust-based SWC compiler, reducing compilation times by up to 20x while preserving decorator metadata."
         />
       </div>
 

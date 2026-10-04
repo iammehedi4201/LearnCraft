@@ -49,28 +49,35 @@ export function ClosingSections() {
 
       <Divider />
 
-      {/* ── Phase 03 Capstone Celebration ── */}
+      {/* ── Milestone Card ── */}
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
-        <span className="text-5xl block mb-3">🎓 🏆 🚀</span>
+        <span className="text-5xl block mb-3">🎓 ⚙️ 🛡️</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Phase 03 (Request Pipeline &amp; Lifecycle) Complete!
+          Module NJ-19 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          Congratulations! You have completed all 6 modules of the Request Pipeline:
-          <strong> Request Lifecycle (NJ-11)</strong>, <strong>Pipes &amp; Transformation (NJ-12)</strong>, <strong>Guards &amp; Authorization (NJ-13)</strong>, <strong>Interceptors (NJ-14)</strong>, <strong>Exception Filters (NJ-15)</strong>, and <strong>Middleware (NJ-16)</strong>!
+          You have mastered low-level HTTP manipulation with NestJS Middleware! Next, move one layer deeper into route protection and authorization gates with Guards in NJ-20!
         </p>
 
-        <Link
-          href="/learn/nestjs"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
-        >
-          Return to NestJS Roadmap Hub 🏠
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/learn/nestjs/nj13-guards"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
+          >
+            Proceed to NJ-20: Guards &amp; Route Gates →
+          </Link>
+          <Link
+            href="/learn/nestjs"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-text-strong bg-ds-bg-white hover:bg-ds-bg-weak border border-ds-stroke-soft transition-all shadow-sm"
+          >
+            NestJS Overview 🏠
+          </Link>
+        </div>
       </div>
 
       <QuickCheck
-        question="What are the next lessons in Phase 04 (Authentication & Security)?"
-        answer="Phase 04 covers NJ-17: Custom Decorators, NJ-18: Authentication (JWT & Passport), NJ-19: RBAC Authorization, and NJ-20: Security Hardening (Helmet, CORS, Throttler)."
+        question="What is the next topic after Middleware?"
+        answer="NJ-20: Guards & Route Gates (CanActivate, ExecutionContext, and route authorization)."
       />
     </SectionContainer>
   );
