@@ -10,6 +10,7 @@
 
 import { NESTJS_STAGES } from "@/app/learn/nestjs/data/nestjs-curriculum";
 import { NEXTJS_STAGES } from "@/app/learn/nextjs/data/nextjs-curriculum";
+import { TYPESCRIPT_STAGES } from "@/app/learn/typescript/data/typescript-curriculum";
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -94,6 +95,26 @@ const nestjsStages: RoadmapStage[] = NESTJS_STAGES.map((stage) => ({
 // ─────────────────────────────────────────────────────────────
 
 const nextjsStages: RoadmapStage[] = NEXTJS_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+// ─────────────────────────────────────────────────────────────
+// TypeScript — derived from typescript-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const typescriptStages: RoadmapStage[] = TYPESCRIPT_STAGES.map((stage) => ({
   id: stage.id,
   stageNumber: stage.stageNumber,
   name: stage.name,
@@ -235,11 +256,25 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     icon: "🔷",
     category: "language",
     level: "beginner-advanced",
+    status: "available",
+    totalLessons: 32,
+    stages: typescriptStages,
+    learnPath: "/learn/typescript",
+    badgeColor: "bg-blue-500/15 text-blue-400 border-blue-500/30",
+  },
+  {
+    id: "oop",
+    slug: "oop",
+    title: "OOP Fundamentals",
+    description: "Object-Oriented Architecture, Classes & SOLID Principles",
+    icon: "🧩",
+    category: "architecture",
+    level: "beginner-advanced",
     status: "coming-soon",
     totalLessons: 0,
     stages: [],
-    learnPath: "",
-    badgeColor: "bg-ds-verified-lighter text-ds-verified-dark border-ds-verified-light",
+    learnPath: "/learn/oop",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
     id: "react",
