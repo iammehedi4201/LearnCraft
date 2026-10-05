@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Nav } from "@/components/nav";
@@ -8,21 +8,22 @@ import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
 import {
   ArrowRight,
-  CheckCircle2,
   Sparkles,
-  Target,
-  Zap,
-  Server,
-  Shield,
-  Layers,
-  Check,
-  Clock,
   Award,
-  Database,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Target,
 } from "./components/icons";
 import {
-  NEXTJS_STAGES,
+  NEXTJS_PROGRESSION_PHASES,
   NextjsLessonMeta,
+  NEXTJS_PREREQUISITES,
+  NEXTJS_CAPSTONE,
+  NEXTJS_RELATED_TOPICS,
+  getNextjsLessonsByPhaseId,
 } from "./data/nextjs-curriculum";
 import {
   setStage,
@@ -31,32 +32,73 @@ import {
   getOverallProgress,
   fetchProgressFromDB,
   isLessonComplete,
-  getActiveLesson,
-  toggleLessonComplete,
-  getCompletionByStage,
 } from "./data/progress-store";
+import { JourneyView } from "./components/journey-view";
 
 export default function NextJsHub(): JSX.Element {
   const { data: session } = useSession();
-  const [selectedStageId, setSelectedStageId] = useState<string>("stage-1");
+  const [selectedPhase, setSelectedPhaseState] = useState<string>("foundations");
   const [nextLesson, setNextLesson] = useState<NextjsLessonMeta | null>(null);
   const [hasStarted, setHasStarted] = useState<boolean>(false);
+  const [showPrereqs, setShowPrereqs] = useState<boolean>(false);
   const [progressSummary, setProgressSummary] = useState({
     completedCount: 0,
     totalCount: 22,
     percent: 0,
   });
 
-  const isAuthenticated = Boolean(session?.user);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState<boolean>(false);
+  const [canScrollRight, setCanScrollRight] = useState<boolean>(true);
+
+  const checkScrollability = useCallback(() => {
+    if (tabsRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
+      setCanScrollLeft(scrollLeft > 5);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
+    }
+  }, []);
+
+  const scrollTabs = (direction: "left" | "right") => {
+    if (tabsRef.current) {
+      const scrollAmount = direction === "left" ? -320 : 320;
+      tabsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      setTimeout(checkScrollability, 300);
+    }
+  };
+
+  const handleTabsWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (tabsRef.current && e.deltaY !== 0) {
+      tabsRef.current.scrollLeft += e.deltaY;
+      checkScrollability();
+    }
+  };
 
   // Sync state from database & custom events
   useEffect(() => {
     const updateLocalState = () => {
-      const storedStage = getStage() || "stage-1";
-      setSelectedStageId(storedStage);
-
       const rec = getNextRecommendedLesson();
       setNextLesson(rec);
+
+      const storedStage = getStage();
+      if (storedStage) {
+        // Map stored stage id if needed
+        const matchPhase = NEXTJS_PROGRESSION_PHASES.find(
+          (p) => p.id === storedStage || `stage-${p.phaseNumber}` === storedStage
+        );
+        if (matchPhase) {
+          setSelectedPhaseState(matchPhase.id);
+        } else {
+          setSelectedPhaseState(storedStage);
+        }
+      } else if (rec) {
+        const matchingPhase = NEXTJS_PROGRESSION_PHASES.find((p) =>
+          p.lessonCodes.includes(rec.code)
+        );
+        if (matchingPhase) {
+          setSelectedPhaseState(matchingPhase.id);
+        }
+      }
 
       if (!session?.user) {
         setProgressSummary({ completedCount: 0, totalCount: 22, percent: 0 });
@@ -68,7 +110,6 @@ export default function NextJsHub(): JSX.Element {
       }
     };
 
-    // Load fresh progress directly from PostgreSQL database
     fetchProgressFromDB().then(() => {
       updateLocalState();
     });
@@ -99,396 +140,448 @@ export default function NextJsHub(): JSX.Element {
     };
   }, [session?.user]);
 
-  const handleStageSelect = (stageId: string) => {
-    setSelectedStageId(stageId);
-    setStage(stageId);
-  };
+  useEffect(() => {
+    checkScrollability();
+    window.addEventListener("resize", checkScrollability);
+    return () => window.removeEventListener("resize", checkScrollability);
+  }, [checkScrollability]);
 
-  const activeStage =
-    NEXTJS_STAGES.find((s) => s.id === selectedStageId) || NEXTJS_STAGES[0];
-  const activeLesson = getActiveLesson();
-  const stageStats = getCompletionByStage(activeStage.id);
-
-  const getStageIcon = (stageNumber: number) => {
-    switch (stageNumber) {
-      case 1:
-        return <Layers className="w-4 h-4 text-purple-400" />;
-      case 2:
-        return <Server className="w-4 h-4 text-sky-400" />;
-      case 3:
-        return <Zap className="w-4 h-4 text-amber-400" />;
-      case 4:
-        return <Database className="w-4 h-4 text-emerald-400" />;
-      case 5:
-        return <Shield className="w-4 h-4 text-rose-400" />;
-      default:
-        return <Sparkles className="w-4 h-4 text-purple-400" />;
+  // Auto-scroll selected phase tab into view
+  useEffect(() => {
+    if (tabsRef.current) {
+      const activeBtn = tabsRef.current.querySelector(
+        `[data-phase-id="${selectedPhase}"]`
+      ) as HTMLElement | null;
+      if (activeBtn) {
+        activeBtn.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest",
+        });
+      }
+      checkScrollability();
     }
+  }, [selectedPhase, checkScrollability]);
+
+  const handlePhaseSelect = (phaseId: string) => {
+    setSelectedPhaseState(phaseId);
+    setStage(phaseId);
   };
+
+  const isAllComplete = progressSummary.completedCount >= 22;
+
+  // Helper to check if an entire phase is completed
+  const isPhaseCompleted = (phaseId: string) => {
+    const phaseLessons = getNextjsLessonsByPhaseId(phaseId);
+    if (!phaseLessons.length) return false;
+    return phaseLessons.every(
+      (l) => isLessonComplete(l.slug) || isLessonComplete(l.code)
+    );
+  };
+
+  // Helper to check how many lessons in a phase are done
+  const getPhaseCompletedCount = (phaseId: string) => {
+    const phaseLessons = getNextjsLessonsByPhaseId(phaseId);
+    return phaseLessons.filter(
+      (l) => isLessonComplete(l.slug) || isLessonComplete(l.code)
+    ).length;
+  };
+
+  const currentPhaseIndex = NEXTJS_PROGRESSION_PHASES.findIndex(
+    (p) => p.id === selectedPhase
+  );
+  const activePhase =
+    NEXTJS_PROGRESSION_PHASES[
+      currentPhaseIndex >= 0 ? currentPhaseIndex : 0
+    ];
 
   return (
-    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-ds-text-strong flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-300 overflow-x-hidden transition-colors duration-300">
+    <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
       <Nav />
 
-      <main className="flex-1 max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 w-full space-y-10">
+      <main className="flex-1 max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 w-full space-y-8">
         {/* =========================================================================
-            1. HERO SECTION
+            1. HERO WITH INTEGRATED "START HERE / NEXT STEP" SPOTLIGHT CARD
            ========================================================================= */}
-        <section className="p-6 sm:p-8 md:p-10 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
+        <section className="p-6 sm:p-8 md:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-2xl relative overflow-hidden">
+          {/* Ambient Glow */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-blue-600/5 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="max-w-4xl relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-300 text-xs font-mono font-bold mb-5 border border-purple-500/20">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Next.js 15 App Router Learning Path</span>
-            </div>
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left: Course Overview & Progress */}
+            <div className="lg:col-span-7 space-y-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-mono font-semibold">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Next.js 15 App Router Mastery</span>
+              </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-ds-text-strong leading-tight">
-              Learn Next.js
-            </h1>
-            <p className="text-base sm:text-lg text-ds-text-sub mt-2 font-normal">
-              From App Router foundations to Server Actions, Streaming, Caching & Production Deployment.
-            </p>
+              <div>
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+                  Learn Next.js
+                </h1>
+                <p className="text-sm sm:text-base md:text-lg text-slate-300 mt-2.5 font-normal leading-relaxed max-w-2xl">
+                  A structured, step-by-step curriculum from App Router fundamentals to Server Components, Server Actions, 4-layer caching, and production Docker deployment.
+                </p>
+              </div>
 
-            {/* Outcomes Checklist */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 my-7 text-xs sm:text-sm">
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span className="text-ds-text-strong font-medium">
-                  Master App Router, nested layouts, client navigation & dynamic segments
-                </span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span className="text-ds-text-strong font-medium">
-                  Bridge Server & Client Components (RSC) with Suspense streaming
-                </span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span className="text-ds-text-strong font-medium">
-                  Mutate data with Server Actions, form state & optimistic UI
-                </span>
-              </div>
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span className="text-ds-text-strong font-medium">
-                  Optimize with 4-layer caching, on-demand ISR & Edge Middleware
-                </span>
-              </div>
-            </div>
-
-            {/* Primary Action Button */}
-            <div className="flex items-center gap-3.5 pt-1">
-              {nextLesson && (
-                <Link
-                  href={nextLesson.path}
-                  className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm transition-all shadow-md shadow-purple-600/20 active:scale-95"
-                >
-                  <span>
-                    {hasStarted
-                      ? `Continue: ${nextLesson.name}`
-                      : `Start Learning: ${nextLesson.name}`}
+              {/* Progress Bar & Key Metrics */}
+              <div className="space-y-2 pt-1 max-w-xl">
+                <div className="flex items-center justify-between text-xs sm:text-sm">
+                  <div className="flex items-center gap-2.5 text-slate-400 font-medium">
+                    <span>5 Phases</span>
+                    <span>·</span>
+                    <span>22 Lessons</span>
+                    <span>·</span>
+                    <span>~12 Hours</span>
+                  </div>
+                  <span className="text-emerald-400 font-bold font-mono">
+                    {progressSummary.completedCount} of 22 Completed ({progressSummary.percent}%)
                   </span>
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+                </div>
+
+                {/* Visual Progress Bar */}
+                <div className="w-full h-2 rounded-full bg-white/[0.06] overflow-hidden border border-white/[0.04]">
+                  <div
+                    className="h-full bg-gradient-to-r from-purple-500 via-purple-400 to-emerald-400 transition-all duration-500 rounded-full"
+                    style={{ width: `${Math.max(progressSummary.percent, 0)}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Focused "Start Here" / "Continue Learning" Guided Card */}
+            <div className="lg:col-span-5">
+              <div className="relative p-6 sm:p-7 rounded-2xl bg-[#090C14] border border-purple-500/30 ring-1 ring-purple-500/20 shadow-xl shadow-purple-950/20 space-y-4">
+                {/* Step indicator header */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-mono font-bold uppercase tracking-wider">
+                    <Target className="w-3.5 h-3.5 text-purple-400" />
+                    <span>
+                      {isAllComplete
+                        ? "🎉 Curriculum Complete"
+                        : hasStarted
+                        ? `Continue · Step ${(nextLesson?.stepNumber || 1)} of 22`
+                        : "🎯 Start Here · Step 1 of 22"}
+                    </span>
+                  </div>
+
+                  {nextLesson && (
+                    <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
+                      <Clock className="w-3.5 h-3.5 text-slate-500" />
+                      <span>{nextLesson.estimatedMinutes}m</span>
+                    </span>
+                  )}
+                </div>
+
+                {/* Lesson Title & Brief description */}
+                {isAllComplete ? (
+                  <div className="space-y-1.5">
+                    <h2 className="text-lg sm:text-xl font-bold text-white">
+                      You've Completed All 22 Lessons!
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                      Put your full-stack Next.js skills into practice with the Master Capstone Project: Enterprise Multi-Tenant SaaS Platform.
+                    </p>
+                  </div>
+                ) : nextLesson ? (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-2 text-xs font-mono text-purple-400 font-bold">
+                      <span>{nextLesson.code}</span>
+                      <span>·</span>
+                      <span>Phase 01 App Router</span>
+                    </div>
+                    <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug">
+                      {nextLesson.name}
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed line-clamp-2">
+                      {nextLesson.desc}
+                    </p>
+                  </div>
+                ) : null}
+
+                {/* Primary Action Button */}
+                <div className="pt-2">
+                  {isAllComplete ? (
+                    <Link
+                      href={NEXTJS_CAPSTONE.path}
+                      className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-600/30 active:scale-[0.98] cursor-pointer"
+                    >
+                      <Award className="w-4 h-4" />
+                      <span>Launch Master Capstone →</span>
+                    </Link>
+                  ) : nextLesson ? (
+                    <Link
+                      href={nextLesson.path}
+                      className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-600/30 active:scale-[0.98] cursor-pointer"
+                    >
+                      <span>
+                        {hasStarted
+                          ? `Continue: ${nextLesson.name}`
+                          : `Start Step 1: ${nextLesson.name}`}
+                      </span>
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* =========================================================================
+            2. PROGRESSIVE DISCLOSURE: PREREQUISITES COLLAPSIBLE HELPER
+           ========================================================================= */}
+        <section className="rounded-2xl bg-[#0E121B] border border-white/[0.08] overflow-hidden transition-all">
+          <button
+            type="button"
+            onClick={() => setShowPrereqs((prev) => !prev)}
+            className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
+            aria-expanded={showPrereqs}
+          >
+            <div className="flex items-center gap-3">
+              <span className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold shrink-0">
+                💡
+              </span>
+              <div>
+                <span className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
+                  <span>Prerequisites & Foundation</span>
+                  <span className="text-[11px] font-normal text-slate-400 font-sans hidden sm:inline">
+                    — Need a React or TypeScript refresher before diving in?
+                  </span>
+                </span>
+                <p className="text-xs text-slate-400 mt-0.5 sm:hidden">
+                  Recommended React & TypeScript foundation
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-semibold text-purple-400 shrink-0">
+              <span>{showPrereqs ? "Hide" : "View Prerequisites"}</span>
+              {showPrereqs ? (
+                <ChevronUp className="w-4 h-4" />
+              ) : (
+                <ChevronDown className="w-4 h-4" />
               )}
             </div>
+          </button>
 
-            {hasStarted && nextLesson && (
-              <div className="mt-5 flex items-center gap-2 text-xs text-ds-text-sub">
-                <span className="text-emerald-500 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
-                  {progressSummary.completedCount} of {progressSummary.totalCount} completed
-                </span>
-                <span>·</span>
-                <span>
-                  Next:{" "}
-                  <strong className="text-ds-text-strong">
-                    {nextLesson.name}
-                  </strong>{" "}
-                  ({nextLesson.code})
-                </span>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* =========================================================================
-            2. 5-STAGE PROGRESSION SELECTOR
-           ========================================================================= */}
-        <section className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-ds-text-strong">
-              <Target className="w-4 h-4 text-purple-500" />
-              <span>5-Stage Professional Curriculum</span>
-            </div>
-            <span className="text-xs text-ds-text-soft">
-              Curated progression from core UI primitives to enterprise deployment
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
-            {NEXTJS_STAGES.map((stage) => {
-              const isSelected = selectedStageId === stage.id;
-              const stats = getCompletionByStage(stage.id);
-
-              return (
-                <button
-                  key={stage.id}
-                  onClick={() => handleStageSelect(stage.id)}
-                  className={`group p-4 sm:p-5 rounded-2xl text-left transition-all duration-300 ease-out relative cursor-pointer border flex flex-col justify-between overflow-hidden ${
-                    isSelected
-                      ? "bg-ds-bg-white border-purple-500 ring-2 ring-purple-500/20 shadow-md shadow-purple-500/5"
-                      : "bg-ds-bg-white hover:bg-ds-bg-weak/70 border-ds-stroke-soft hover:border-purple-500/40 shadow-sm hover:shadow-md hover:-translate-y-1"
-                  }`}
-                >
-                  <div className="relative z-10">
-                    {/* Top row: Icon + Stage / Status */}
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <div className="w-8 h-8 rounded-xl bg-ds-bg-weak group-hover:bg-ds-bg-soft flex items-center justify-center border border-ds-stroke-soft group-hover:border-purple-500/30 transition-colors duration-200">
-                        {getStageIcon(stage.stageNumber)}
-                      </div>
-
-                      {isSelected ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-purple-500 bg-purple-500/10 px-2 py-0.5 rounded-full border border-purple-500/20">
-                          <Check className="w-3 h-3 text-purple-500" />
-                          Stage {stage.stageNumber}
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-bold text-ds-text-soft group-hover:text-ds-text-sub uppercase tracking-wider transition-colors duration-200">
-                          STAGE 0{stage.stageNumber}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="text-sm font-bold text-ds-text-strong group-hover:text-purple-500 transition-colors duration-200 leading-snug">
-                      {stage.name}
-                    </div>
-
-                    <div className="text-xs text-ds-text-sub group-hover:text-ds-text-strong/90 transition-colors duration-200 mt-1 leading-relaxed line-clamp-2">
-                      {stage.subtitle}
-                    </div>
-                  </div>
-
-                  <div className="relative z-10 mt-4 pt-3 border-t border-ds-stroke-soft flex items-center justify-between text-[11px] font-mono text-ds-text-soft">
-                    <span>{stage.lessons.length} Lessons</span>
-                    {isAuthenticated && stats.completed > 0 && (
-                      <span className="text-emerald-500 font-bold">
-                        {stats.completed}/{stats.total}
-                      </span>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* =========================================================================
-            3. FOCUSED STAGE CONTENT & LESSONS GRID
-           ========================================================================= */}
-        <section className="space-y-6">
-          {/* Stage Header Banner */}
-          <div className="p-5 sm:p-6 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2.5">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider bg-purple-500/10 text-purple-500 border border-purple-500/20 px-3 py-1 rounded-xl">
-                  STAGE 0{activeStage.stageNumber}
-                </span>
-                <h2 className="text-lg sm:text-xl font-bold text-ds-text-strong tracking-tight">
-                  {activeStage.name}
-                </h2>
-              </div>
-              <p className="text-xs sm:text-sm text-ds-text-sub font-normal">
-                {activeStage.milestone}
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 shrink-0">
-              <span className="text-xs font-bold text-ds-text-sub bg-ds-bg-weak px-3 py-1 rounded-full border border-ds-stroke-soft">
-                {stageStats.completed} / {activeStage.lessons.length} Completed
-              </span>
-            </div>
-          </div>
-
-          {/* Lessons Grid (Sequential Ordered Cards) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {activeStage.lessons.map((lesson, idx) => {
-              const isDone = Boolean(
-                isAuthenticated &&
-                  (isLessonComplete(lesson.slug) || isLessonComplete(lesson.code))
-              );
-              const isTarget = Boolean(
-                activeLesson &&
-                  (activeLesson.slug === lesson.slug ||
-                    activeLesson.code === lesson.code)
-              );
-
-              return (
+          {showPrereqs && (
+            <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-white/[0.04] grid grid-cols-1 sm:grid-cols-2 gap-4 animate-in fade-in duration-200">
+              {NEXTJS_PREREQUISITES.map((prereq) => (
                 <Link
-                  key={lesson.slug}
-                  href={lesson.path}
-                  className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-[#0E121B] border transition-all duration-300 ease-out shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer overflow-hidden ${
-                    isTarget
-                      ? "border-purple-500/40 ring-1 ring-purple-500/20 bg-purple-500/[0.03]"
-                      : "border-white/[0.06] hover:border-white/[0.12]"
-                  }`}
+                  key={prereq.id}
+                  href={prereq.path}
+                  className="group p-4 rounded-xl bg-[#090C14] border border-white/[0.05] hover:border-purple-500/40 hover:bg-[#0c101a] transition-all flex flex-col justify-between gap-3"
                 >
-                  <div className="relative z-10">
-                    {/* Card Header: Step Index, Code & Completion Toggle */}
-                    <div className="flex items-center justify-between gap-3 mb-3.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-[11px] font-mono font-bold text-slate-400 bg-white/[0.04] group-hover:text-slate-300 px-2 py-0.5 rounded-md transition-colors duration-200">
-                          {String(idx + 1).padStart(2, "0")}
-                        </span>
-                        <span className="font-mono text-xs font-black tracking-wider text-white bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/[0.06] group-hover:border-purple-500/40 group-hover:text-purple-300 transition-colors duration-200">
-                          {lesson.code}
-                        </span>
-                        <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded bg-white/[0.03] text-slate-400">
-                          {lesson.tag}
-                        </span>
-                      </div>
-
-                      {isAuthenticated && (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            toggleLessonComplete(lesson.slug);
-                          }}
-                          className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full transition-all cursor-pointer outline-none focus:outline-none ${
-                            isDone
-                              ? "text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20"
-                              : isTarget
-                              ? "text-purple-300 bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30"
-                              : "text-slate-400 bg-white/[0.04] hover:text-white hover:bg-white/[0.08] border border-white/[0.06]"
-                          }`}
-                          title={
-                            isDone
-                              ? "Completed in database — click to unmark"
-                              : "Click to mark complete in database"
-                          }
-                        >
-                          {isDone ? (
-                            <>
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                              <span>Done</span>
-                            </>
-                          ) : isTarget ? (
-                            <>
-                              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-                              <span>Current</span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="w-2 h-2 rounded-full border border-white/20 group-hover:border-purple-400 inline-block" />
-                              <span>Mark Done</span>
-                            </>
-                          )}
-                        </button>
-                      )}
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-white group-hover:text-purple-300 transition-colors text-sm">
+                        {prereq.title}
+                      </span>
+                      <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20 font-bold">
+                        {prereq.badge}
+                      </span>
                     </div>
-
-                    {/* Title */}
-                    <h3 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors duration-200 leading-snug tracking-tight">
-                      {lesson.name}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-xs sm:text-sm text-slate-400 group-hover:text-slate-300 transition-colors duration-200 line-clamp-2 mt-2 leading-relaxed font-normal">
-                      {lesson.desc}
+                    <p className="text-xs text-slate-400 leading-relaxed">
+                      {prereq.desc}
                     </p>
-
-                    {/* Prerequisite Pill */}
-                    {lesson.prerequisite && (
-                      <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 bg-white/[0.03] group-hover:bg-white/[0.06] px-2.5 py-1 rounded-lg transition-colors duration-200 border border-white/[0.04]">
-                        <span className="text-slate-500 font-semibold">
-                          Requires:
-                        </span>
-                        <span>{lesson.prerequisite}</span>
-                      </div>
-                    )}
                   </div>
 
-                  {/* Footer */}
-                  <div className="relative z-10 flex items-center justify-between gap-3 mt-6 pt-4 border-t border-white/[0.06] text-xs">
-                    <span className="inline-flex items-center gap-1.5 text-slate-400 font-medium">
-                      <Clock className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{lesson.estimatedMinutes}m</span>
-                    </span>
-
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] text-slate-300 border border-white/[0.06] group-hover:bg-purple-600 group-hover:text-white group-hover:border-transparent font-bold transition-all duration-200 ease-out shadow-sm">
-                      <span>
-                        {isDone ? "Review" : isTarget ? "Continue" : "Start"}
-                      </span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200 ease-out" />
-                    </div>
+                  <div className="text-xs text-purple-400 font-medium flex items-center justify-between pt-1 border-t border-white/[0.03] group-hover:text-purple-300">
+                    <span>Review foundation</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
-              );
-            })}
-          </div>
-
-          {/* Stage Capstone Milestone Card */}
-          {activeStage.capstone && (
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-purple-500/30 hover:border-purple-500/50 shadow-xl relative overflow-hidden transition-all duration-300">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <div className="space-y-3 max-w-3xl">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                      {activeStage.capstone.badge}
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
-                      +{activeStage.capstone.xpReward} XP
-                    </span>
-                    <span className="px-3 py-1 rounded-full text-[11px] font-mono text-slate-400 bg-white/[0.04] border border-white/[0.08]">
-                      {activeStage.capstone.estimatedMinutes} mins
-                    </span>
-                    {isLessonComplete(activeStage.capstone.slug) && (
-                      <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        <span>Completed ✅</span>
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                    {activeStage.capstone.title}
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
-                    {activeStage.capstone.desc}
-                  </p>
-
-                  {/* Skills Taught */}
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {activeStage.capstone.skillsTaught.map((skill) => (
-                      <span
-                        key={skill}
-                        className="text-[11px] px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.06] text-slate-300 font-mono"
-                      >
-                        ✓ {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="shrink-0 flex items-center">
-                  <Link
-                    href={activeStage.capstone.path}
-                    className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs sm:text-sm transition-all shadow-lg shadow-purple-600/25 active:scale-95 whitespace-nowrap"
-                  >
-                    <Award className="w-4 h-4" />
-                    <span>Launch Stage {activeStage.stageNumber} Capstone</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
+              ))}
             </div>
           )}
         </section>
+
+        {/* =========================================================================
+            3. STEP-BY-STEP CURRICULUM: 5 PHASES NAVIGATION
+           ========================================================================= */}
+        <section className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                <span>Curriculum Learning Path</span>
+                <span className="text-xs font-normal text-slate-400">
+                  (5 Guided Phases)
+                </span>
+              </h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Follow the sequential roadmap from App Router foundations to production SaaS architecture.
+              </p>
+            </div>
+
+            {/* Step Counter & Carousel Controls */}
+            <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+              <span className="text-xs font-mono text-slate-400 font-semibold px-2.5 py-1 rounded-lg bg-[#0E121B] border border-white/[0.06]">
+                Phase {activePhase.phaseNumber.toString().padStart(2, "0")} / 05
+              </span>
+
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => scrollTabs("left")}
+                  disabled={!canScrollLeft}
+                  aria-label="Scroll phases left"
+                  className="p-2 rounded-xl bg-[#0E121B] border border-white/[0.08] text-slate-400 hover:text-white hover:border-purple-500/40 hover:bg-white/[0.04] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollTabs("right")}
+                  disabled={!canScrollRight}
+                  aria-label="Scroll phases right"
+                  className="p-2 rounded-xl bg-[#0E121B] border border-white/[0.08] text-slate-400 hover:text-white hover:border-purple-500/40 hover:bg-white/[0.04] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Enclosed Floating Phase Tabs Carousel */}
+          <div className="relative rounded-2xl bg-[#0E121B] border border-white/[0.08] p-2 shadow-xl">
+            {/* Left Gradient Edge Fade */}
+            <div
+              className={`absolute left-2 top-2 bottom-2 w-10 bg-gradient-to-r from-[#0E121B] to-transparent pointer-events-none z-10 transition-opacity duration-300 rounded-l-xl ${
+                canScrollLeft ? "opacity-100" : "opacity-0"
+              }`}
+            />
+
+            {/* Scrollable Track (Zero Scrollbar Gutter) */}
+            <div
+              ref={tabsRef}
+              onWheel={handleTabsWheel}
+              onScroll={checkScrollability}
+              className="flex items-center gap-2 overflow-x-auto py-0.5 px-0.5 scroll-smooth no-scrollbar select-none cursor-grab active:cursor-grabbing [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+            >
+              {NEXTJS_PROGRESSION_PHASES.map((phase) => {
+                const isSelected = selectedPhase === phase.id;
+                const phaseDone = isPhaseCompleted(phase.id);
+                const phaseDoneCount = getPhaseCompletedCount(phase.id);
+
+                return (
+                  <button
+                    key={phase.id}
+                    data-phase-id={phase.id}
+                    onClick={() => handlePhaseSelect(phase.id)}
+                    className={`group shrink-0 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer flex items-center gap-2.5 border ${
+                      isSelected
+                        ? "bg-purple-600 text-white border-purple-400/40 shadow-lg shadow-purple-600/30 scale-[1.01]"
+                        : phaseDone
+                        ? "bg-emerald-500/10 text-emerald-300 hover:text-white border-emerald-500/20 hover:bg-emerald-500/15"
+                        : "bg-white/[0.02] text-slate-300 hover:text-white border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.12]"
+                    }`}
+                  >
+                    {/* Phase Number or Check Icon */}
+                    <span
+                      className={`w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-mono font-bold transition-colors ${
+                        isSelected
+                          ? "bg-white/20 text-white"
+                          : phaseDone
+                          ? "bg-emerald-500/20 text-emerald-400"
+                          : "bg-white/[0.05] text-slate-400 group-hover:text-slate-200"
+                      }`}
+                    >
+                      {phaseDone ? "✓" : phase.phaseNumber}
+                    </span>
+
+                    {/* Phase Label */}
+                    <span className="whitespace-nowrap font-medium">
+                      {phase.label}
+                    </span>
+
+                    {/* Lesson Count Progress Chip */}
+                    <span
+                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded transition-colors ${
+                        isSelected
+                          ? "bg-purple-700/60 text-purple-100"
+                          : phaseDone
+                          ? "bg-emerald-500/20 text-emerald-300"
+                          : "bg-white/[0.04] text-slate-400 group-hover:text-slate-300"
+                      }`}
+                    >
+                      {phaseDoneCount}/{phase.lessonCodes.length}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Right Gradient Edge Fade */}
+            <div
+              className={`absolute right-2 top-2 bottom-2 w-10 bg-gradient-to-l from-[#0E121B] to-transparent pointer-events-none z-10 transition-opacity duration-300 rounded-r-xl ${
+                canScrollRight ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          </div>
+        </section>
+
+        {/* =========================================================================
+            4. ACTIVE PHASE LESSONS JOURNEY VIEW (SEQUENTIAL, CLEAR, STEP-BY-STEP)
+           ========================================================================= */}
+        <section>
+          <JourneyView
+            phaseId={selectedPhase}
+            onSelectPhase={handlePhaseSelect}
+          />
+        </section>
+
+        {/* =========================================================================
+            5. FINAL CAPSTONE PROJECT BANNER
+           ========================================================================= */}
+        <section className="p-6 sm:p-8 rounded-2xl bg-[#0E121B] border border-white/[0.08] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold text-purple-400 uppercase tracking-wider bg-purple-500/10 border border-purple-500/20 px-2.5 py-0.5 rounded-md">
+                Final Master Capstone
+              </span>
+              <span className="text-xs text-slate-400">·</span>
+              <span className="text-xs font-mono text-emerald-400 font-semibold">
+                +{NEXTJS_CAPSTONE.xpReward} XP
+              </span>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+              {NEXTJS_CAPSTONE.title} — {NEXTJS_CAPSTONE.subtitle}
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              {NEXTJS_CAPSTONE.desc}
+            </p>
+          </div>
+
+          <Link
+            href={NEXTJS_CAPSTONE.path}
+            className="shrink-0 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-600/20 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+          >
+            <span>View Master Capstone</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </section>
+
+        {/* =========================================================================
+            6. ECOSYSTEM TOPICS (MINIMAL 1-LINE FOOTER)
+           ========================================================================= */}
+        <div className="pt-4 border-t border-white/[0.06] text-center text-xs text-slate-400 flex flex-wrap items-center justify-center gap-2">
+          <span>Explore after Next.js:</span>
+          {NEXTJS_RELATED_TOPICS.map((topic, i) => (
+            <span key={topic.id} className="inline-flex items-center gap-2">
+              <Link
+                href={topic.path}
+                className="text-slate-300 hover:text-purple-400 font-medium transition-colors"
+              >
+                {topic.title}
+              </Link>
+              {i < NEXTJS_RELATED_TOPICS.length - 1 && (
+                <span className="text-slate-600">·</span>
+              )}
+            </span>
+          ))}
+        </div>
       </main>
 
       <Footer />

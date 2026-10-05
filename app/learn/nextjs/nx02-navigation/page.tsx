@@ -460,24 +460,26 @@ export function SiteNav() {
 
           {/* Main Content Pane */}
           <main className="flex-1 min-w-0 max-w-5xl space-y-8">
-            <header className="space-y-2 border-b border-white/[0.08] pb-6">
-              <div className="flex items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/25">
-                  NX-02
-                </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  {SECTIONS[currentIndex]?.label}
-                </span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                Client Navigation & &lt;Link&gt;
-              </h1>
-              <p className="text-sm text-slate-300">
-                Eliminate hard page refreshes, automatically prefetch links in the viewport, and build reactive active state headers with <code>usePathname()</code>.
-              </p>
-            </header>
+            <div className="p-6 sm:p-8 lg:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-xl space-y-8">
+              <header className="space-y-2 border-b border-white/[0.08] pb-6">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/25">
+                    NX-02
+                  </span>
+                  <span className="text-xs text-slate-400 font-mono">
+                    {SECTIONS[currentIndex]?.label}
+                  </span>
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                  Client Navigation & &lt;Link&gt;
+                </h1>
+                <p className="text-sm text-slate-300">
+                  Eliminate hard page refreshes, automatically prefetch links in the viewport, and build reactive active state headers with <code>usePathname()</code>.
+                </p>
+              </header>
 
-            {renderSectionContent()}
+              {renderSectionContent()}
+            </div>
 
             <NextjsLessonNavFooter currentSlug="nx02-navigation" />
           </main>

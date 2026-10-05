@@ -31,7 +31,7 @@ export function Nav() {
   );
 }
 
-type CoreCategory = "frontend" | "backend" | "database" | "devops";
+type CoreCategory = "language" | "frontend" | "backend" | "database" | "devops";
 
 interface CategoryMeta {
   id: CoreCategory;
@@ -42,6 +42,13 @@ interface CategoryMeta {
 }
 
 const CATEGORIES: CategoryMeta[] = [
+  {
+    id: "language",
+    label: "Languages",
+    icon: "💻",
+    description: "Core programming languages, type systems, runtime internals & compiler pipelines",
+    upcomingTopics: ["JavaScript Deep Dive", "Go Basics"],
+  },
   {
     id: "frontend",
     label: "Frontend",
@@ -77,9 +84,9 @@ function NavContent(): JSX.Element {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<CoreCategory>("frontend");
+  const [activeCategory, setActiveCategory] = useState<CoreCategory>("language");
   const [searchQuery, setSearchQuery] = useState("");
-  const [mobileActiveCategory, setMobileActiveCategory] = useState<CoreCategory>("frontend");
+  const [mobileActiveCategory, setMobileActiveCategory] = useState<CoreCategory>("language");
 
   const menuRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -134,13 +141,14 @@ function NavContent(): JSX.Element {
       return () => clearTimeout(timer);
     } else {
       setSearchQuery("");
-      setActiveCategory("frontend");
+      setActiveCategory("language");
     }
   }, [isMenuOpen]);
 
   // Available live courses mapped by category
   const availableSkillsByCategory = useMemo(() => {
     const map: Record<CoreCategory, SkillRoadmap[]> = {
+      language: [],
       frontend: [],
       backend: [],
       database: [],

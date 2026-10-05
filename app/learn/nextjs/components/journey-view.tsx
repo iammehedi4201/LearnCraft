@@ -7,9 +7,9 @@ import {
   Clock,
 } from "./icons";
 import {
-  PROGRESSION_PHASES,
-  getLessonsByPhaseId,
-} from "../data/nestjs-curriculum";
+  NEXTJS_PROGRESSION_PHASES,
+  getNextjsLessonsByPhaseId,
+} from "../data/nextjs-curriculum";
 import {
   isLessonComplete,
   getActiveLesson,
@@ -26,10 +26,10 @@ export function JourneyView({
   onSelectPhase: _onSelectPhase,
 }: JourneyViewProps) {
   const phase =
-    PROGRESSION_PHASES.find((p) => p.id === phaseId) ||
-    PROGRESSION_PHASES[0];
+    NEXTJS_PROGRESSION_PHASES.find((p) => p.id === phaseId) ||
+    NEXTJS_PROGRESSION_PHASES[0];
 
-  const lessons = getLessonsByPhaseId(phase.id);
+  const lessons = getNextjsLessonsByPhaseId(phase.id);
   const activeLesson = getActiveLesson();
 
   const completedCount = lessons.filter(
@@ -44,7 +44,7 @@ export function JourneyView({
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2.5 py-0.5 rounded-lg">
-              Phase {phase.phaseNumber.toString().padStart(2, "0")} of 08
+              Phase {phase.phaseNumber.toString().padStart(2, "0")} of 05
             </span>
             <span className="text-slate-500 hidden sm:inline">·</span>
             <span className="text-xs font-mono text-slate-400 font-medium">

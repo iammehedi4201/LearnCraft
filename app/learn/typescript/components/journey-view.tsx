@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import {
   CheckCircle2,
   ArrowRight,
@@ -22,43 +21,6 @@ interface JourneyViewProps {
   onSelectPhase?: (phaseId: string) => void;
 }
 
-const DEFAULT_BADGE = "bg-purple-500/10 text-purple-300 border-purple-500/20";
-
-const PHASE_ACCENTS: Record<
-  string,
-  {
-    badge: string;
-  }
-> = {
-  fundamentals: {
-    badge: DEFAULT_BADGE,
-  },
-  "functions-composition": {
-    badge: DEFAULT_BADGE,
-  },
-  narrowing: {
-    badge: DEFAULT_BADGE,
-  },
-  generics: {
-    badge: DEFAULT_BADGE,
-  },
-  classes: {
-    badge: DEFAULT_BADGE,
-  },
-  "advanced-types": {
-    badge: DEFAULT_BADGE,
-  },
-  compilation: {
-    badge: DEFAULT_BADGE,
-  },
-  "practical-patterns": {
-    badge: DEFAULT_BADGE,
-  },
-  "debugging-best-practices": {
-    badge: DEFAULT_BADGE,
-  },
-};
-
 export function JourneyView({
   phaseId,
   onSelectPhase: _onSelectPhase,
@@ -69,78 +31,95 @@ export function JourneyView({
 
   const lessons = getLessonsByPhaseId(phase.id);
   const activeLesson = getActiveLesson();
-  const { data: session } = useSession();
-  const isAuthenticated = Boolean(session?.user);
 
-  const completedCount = isAuthenticated
-    ? lessons.filter((l) => isLessonComplete(l.slug) || isLessonComplete(l.code)).length
-    : 0;
-
-  const accent = PHASE_ACCENTS[phase.id] || PHASE_ACCENTS.fundamentals;
+  const completedCount = lessons.filter(
+    (l) => isLessonComplete(l.slug) || isLessonComplete(l.code),
+  ).length;
+  const isPhaseAllDone = completedCount === lessons.length && lessons.length > 0;
 
   return (
-    <div className="space-y-6">
-      {/* Current Phase Main Container */}
-      <div className="space-y-5">
-        {/* Phase Header Banner */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <span
-              className={`text-xs font-mono font-bold uppercase tracking-wider border px-3 py-1 rounded-xl ${accent.badge}`}
-            >
-              {phase.tag}
+    <div className="space-y-5">
+      {/* Unified Phase Context Banner */}
+      <div className="p-5 sm:p-6 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2.5 py-0.5 rounded-lg">
+              Phase {phase.phaseNumber.toString().padStart(2, "0")} of 09
             </span>
-            <div>
-              <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-                {phase.label}
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                {phase.desc}
-              </p>
-            </div>
+            <span className="text-slate-500 hidden sm:inline">·</span>
+            <span className="text-xs font-mono text-slate-400 font-medium">
+              {phase.scope}
+            </span>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
-            <span className="text-xs font-bold text-slate-400 bg-white/[0.04] border border-white/[0.06] px-3 py-1 rounded-full">
-              {completedCount} / {lessons.length} Completed
-            </span>
-          </div>
+          <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+            {phase.label}
+          </h3>
+          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-3xl">
+            {phase.desc}
+          </p>
         </div>
 
-        {/* Phase Lessons Grid (Sequential Ordered Cards) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {lessons.map((lesson, idx) => {
-            const isDone = Boolean(
-              isAuthenticated && (isLessonComplete(lesson.slug) || isLessonComplete(lesson.code))
-            );
-            const isTarget =
-              Boolean(activeLesson &&
+        <div className="shrink-0 flex items-center gap-3">
+          <span
+            className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-full border transition-colors ${
+              isPhaseAllDone
+                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                : "bg-white/[0.04] text-slate-300 border-white/[0.08]"
+            }`}
+          >
+            {isPhaseAllDone
+              ? "✓ Phase Completed"
+              : `${completedCount} of ${lessons.length} Completed`}
+          </span>
+        </div>
+      </div>
+
+      {/* Sequential Ordered Lesson Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {lessons.map((lesson, idx) => {
+          const isDone = isLessonComplete(lesson.slug) || isLessonComplete(lesson.code);
+          const isTarget = Boolean(
+            activeLesson &&
               (activeLesson.slug === lesson.slug ||
-               activeLesson.code === lesson.code));
+                activeLesson.code === lesson.code),
+          );
+          const stepNumber = lesson.stepNumber || idx + 1;
 
-            return (
-              <Link
-                key={lesson.slug}
-                href={lesson.path}
-                className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-[#0E121B] border transition-all duration-300 ease-out shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer overflow-hidden ${
-                  isTarget
-                    ? "border-purple-500/40 ring-1 ring-purple-500/20 bg-purple-500/[0.03]"
-                    : "border-white/[0.06] hover:border-white/[0.12]"
-                }`}
-              >
-                <div className="relative z-10">
-                  {/* Card Header: Step Index, Code & Status */}
-                  <div className="flex items-center justify-between gap-3 mb-3.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono font-bold text-slate-400 bg-white/[0.04] group-hover:text-slate-300 px-2 py-0.5 rounded-md transition-colors duration-200">
-                        {String(idx + 1).padStart(2, "0")}
-                      </span>
-                      <span className="font-mono text-xs font-black tracking-wider text-white bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/[0.06] group-hover:border-purple-500/40 group-hover:text-purple-300 transition-colors duration-200">
-                        {lesson.code}
-                      </span>
-                    </div>
+          return (
+            <div
+              key={lesson.slug}
+              className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-[#0E121B] border transition-all duration-300 ease-out shadow-sm hover:shadow-xl hover:-translate-y-1 overflow-hidden ${
+                isTarget
+                  ? "border-purple-500 ring-2 ring-purple-500/25 bg-purple-500/[0.03] shadow-purple-950/20"
+                  : isDone
+                  ? "border-emerald-500/30 bg-emerald-500/[0.02] hover:border-emerald-500/50"
+                  : "border-white/[0.07] hover:border-white/[0.15]"
+              }`}
+            >
+              {/* Card Header: Step number, Code badge, Status & Mark Done */}
+              <div className="relative z-10 space-y-3.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[11px] font-mono font-bold text-slate-400 bg-white/[0.04] px-2 py-0.5 rounded-md">
+                      Step {String(stepNumber).padStart(2, "0")}
+                    </span>
+                    <span
+                      className={`font-mono text-xs font-black tracking-wider px-2 py-0.5 rounded-md border ${
+                        isTarget
+                          ? "bg-purple-500/20 text-purple-200 border-purple-500/40"
+                          : isDone
+                          ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                          : "bg-white/[0.04] text-slate-300 border-white/[0.08]"
+                      }`}
+                    >
+                      {lesson.code}
+                    </span>
+                  </div>
 
-                    {isAuthenticated && (
+                  {/* Status Indicator / Mark Complete Toggle */}
+                  <div className="flex items-center gap-2">
+                    {isDone ? (
                       <button
                         type="button"
                         onClick={(e) => {
@@ -148,78 +127,90 @@ export function JourneyView({
                           e.stopPropagation();
                           toggleLessonComplete(lesson.slug);
                         }}
-                        className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-0.5 rounded-full transition-all cursor-pointer outline-none focus:outline-none ${
-                          isDone
-                            ? "text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20"
-                            : isTarget
-                            ? "text-purple-300 bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30"
-                            : "text-slate-400 bg-white/[0.04] hover:text-white hover:bg-white/[0.08] border border-white/[0.06]"
-                        }`}
-                        title={
-                          isDone
-                            ? "Completed in database — click to unmark"
-                            : "Click to mark complete in database"
-                        }
+                        className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all cursor-pointer"
+                        title="Completed — click to toggle"
                       >
-                        {isDone ? (
-                          <>
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                            <span>Done</span>
-                          </>
-                        ) : isTarget ? (
-                          <>
-                            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-                            <span>Current</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="w-2 h-2 rounded-full border border-white/20 group-hover:border-purple-400 inline-block" />
-                            <span>Mark Done</span>
-                          </>
-                        )}
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Done</span>
                       </button>
+                    ) : isTarget ? (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full text-purple-300 bg-purple-500/15 border border-purple-500/30 shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                        <span>
+                          {completedCount === 0 && idx === 0
+                            ? "Start Here"
+                            : "Current"}
+                        </span>
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-mono text-slate-400 bg-white/[0.03] px-2 py-0.5 rounded-md">
+                        Step {idx + 1}
+                      </span>
                     )}
                   </div>
+                </div>
 
-                  {/* Title */}
-                  <h3 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors duration-200 leading-snug tracking-tight">
+                {/* Lesson Title */}
+                <Link href={lesson.path} className="block group-hover:underline">
+                  <h4
+                    className={`text-base font-bold transition-colors duration-200 leading-snug tracking-tight ${
+                      isTarget
+                        ? "text-white group-hover:text-purple-300"
+                        : isDone
+                        ? "text-slate-100 group-hover:text-emerald-300"
+                        : "text-slate-200 group-hover:text-white"
+                    }`}
+                  >
                     {lesson.name}
-                  </h3>
+                  </h4>
+                </Link>
 
-                  {/* Description */}
-                  <p className="text-xs sm:text-sm text-slate-400 group-hover:text-slate-300 transition-colors duration-200 line-clamp-2 mt-2 leading-relaxed font-normal">
-                    {lesson.desc}
-                  </p>
+                {/* Lesson Description */}
+                <p className="text-xs sm:text-sm text-slate-400 line-clamp-2 leading-relaxed font-normal">
+                  {lesson.desc}
+                </p>
 
-                  {/* Prerequisite Pill */}
-                  {lesson.prerequisite && (
-                    <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 bg-white/[0.04] group-hover:bg-white/[0.06] px-2.5 py-1 rounded-lg transition-colors duration-200 border border-white/[0.04]">
-                      <span className="text-slate-400 font-semibold">
-                        Requires:
-                      </span>
-                      <span>{lesson.prerequisite}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Footer */}
-                <div className="relative z-10 flex items-center justify-between gap-3 mt-6 pt-4 border-t border-white/[0.06] text-xs">
-                  <span className="inline-flex items-center gap-1.5 text-slate-400 font-medium">
-                    <Clock className="w-3.5 h-3.5 text-slate-400" />
-                    <span>{lesson.estimatedMinutes}m</span>
-                  </span>
-
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/[0.04] text-slate-300 border border-white/[0.06] group-hover:bg-purple-600 group-hover:text-white group-hover:border-transparent font-bold transition-all duration-200 ease-out shadow-sm">
-                    <span>
-                      {isDone ? "Review" : isTarget ? "Continue" : "Start"}
+                {/* Prerequisite & Foundation Chain */}
+                {lesson.prerequisite && (
+                  <div className="inline-flex items-center gap-1.5 text-[11px] font-medium text-slate-400 bg-white/[0.03] px-2.5 py-1 rounded-lg border border-white/[0.04]">
+                    <span className="text-slate-400 font-semibold">
+                      Requires:
                     </span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200 ease-out" />
+                    <span className="text-slate-300">{lesson.prerequisite}</span>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                )}
+              </div>
+
+              {/* Card Footer: Duration, XP & Direct Action CTA */}
+              <div className="relative z-10 flex items-center justify-between gap-3 mt-6 pt-4 border-t border-white/[0.06] text-xs">
+                <span className="inline-flex items-center gap-1.5 text-slate-400 font-medium">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>{lesson.estimatedMinutes}m</span>
+                </span>
+
+                <Link
+                  href={lesson.path}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer shadow-sm ${
+                    isTarget
+                      ? "bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/30 ring-1 ring-purple-400/40"
+                      : isDone
+                      ? "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/20"
+                      : "bg-white/[0.04] text-slate-300 hover:text-white hover:bg-purple-600 hover:border-transparent border border-white/[0.06]"
+                  }`}
+                >
+                  <span>
+                    {isDone
+                      ? "Review Lesson"
+                      : isTarget
+                      ? "Start Lesson"
+                      : "Start Step"}
+                  </span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

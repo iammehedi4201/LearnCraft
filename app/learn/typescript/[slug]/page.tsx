@@ -115,69 +115,125 @@ export default function TypeScriptLessonPage(): JSX.Element {
           return (
             <section
               id="part1"
-              className="p-6 sm:p-8 rounded-2xl bg-[#0E121B] border border-white/[0.08] space-y-6 animate-in fade-in slide-in-from-bottom-3 duration-300"
+              className="p-6 sm:p-8 lg:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] space-y-8 shadow-xl animate-in fade-in slide-in-from-bottom-3 duration-300"
             >
-              <div className="flex items-center gap-3">
-                <span className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 font-bold font-mono text-sm">
+              {/* Header with pill badge */}
+              <div className="flex items-center gap-4 pb-6 border-b border-white/[0.08]">
+                <div className="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/25 flex items-center justify-center text-purple-300 font-bold font-mono text-sm shrink-0 shadow-sm shadow-purple-500/10">
                   01
-                </span>
+                </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white tracking-tight">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 font-mono text-[10px] font-bold uppercase tracking-wider mb-1">
+                    <Sparkles className="w-3 h-3" />
+                    Core Architecture Concept
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                     The Static Typing Mental Model
                   </h2>
-                  <p className="text-xs sm:text-sm text-slate-400">
-                    Why TypeScript exists and how its type system differs from runtime languages.
+                  <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                    Why TypeScript exists and how ahead-of-time checking guarantees safety.
                   </p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
-                <div className="p-5 rounded-xl bg-[#090C14] border border-white/[0.05] space-y-3">
-                  <div className="flex items-center gap-2 text-rose-400 text-xs font-mono font-bold">
-                    <span>JavaScript (Dynamic Runtime Typing)</span>
+              {/* Side-by-Side Comparison Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+                {/* JavaScript Box */}
+                <div className="flex flex-col justify-between rounded-2xl bg-[#090C14] border border-rose-500/25 overflow-hidden shadow-lg hover:border-rose-500/40 transition-all">
+                  {/* Top Bar */}
+                  <div className="p-5 pb-4 space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                        <span className="font-mono text-xs font-bold text-rose-300">
+                          JavaScript
+                        </span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-mono font-medium">
+                        Dynamic · Runtime Failure
+                      </span>
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      Variables have no static types — only values in memory have types. Type errors remain hidden until code executes in production.
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    In JavaScript, variables have no types — only the values in memory have types. Mistakes are discovered only at runtime in production.
-                  </p>
-                  <pre className="p-3 rounded-lg bg-black/40 text-xs font-mono text-slate-300 overflow-x-auto">
-{`// JavaScript: Crashes at 3 AM in production
-function sendWelcomeEmail(user) {
+
+                  {/* Code Box */}
+                  <div className="border-t border-rose-500/20 bg-black/60">
+                    <div className="px-4 py-2 bg-black/40 border-b border-white/[0.05] flex items-center justify-between text-[11px] font-mono text-slate-400">
+                      <span className="flex items-center gap-1.5 text-slate-300">
+                        <span className="w-2 h-2 rounded-full bg-rose-500/80" />
+                        app.js
+                      </span>
+                      <span className="text-rose-400 font-semibold text-[10px]">Uncaught TypeError</span>
+                    </div>
+                    <pre className="p-4 text-xs font-mono text-slate-300 leading-relaxed overflow-x-auto">
+{`function sendWelcomeEmail(user) {
+  // 💥 Crashes in production if user.profile is undefined
   return "Sending to: " + user.profile.email.toLowerCase();
 }
-// TypeError: Cannot read properties of undefined`}
-                  </pre>
+
+sendWelcomeEmail({ id: "101" });
+// ❌ TypeError: Cannot read properties of undefined`}
+                    </pre>
+                  </div>
                 </div>
 
-                <div className="p-5 rounded-xl bg-[#090C14] border border-purple-500/30 space-y-3">
-                  <div className="flex items-center gap-2 text-purple-300 text-xs font-mono font-bold">
-                    <span>TypeScript (Static Ahead-of-Time Checking)</span>
+                {/* TypeScript Box */}
+                <div className="flex flex-col justify-between rounded-2xl bg-[#090C14] border border-purple-500/30 overflow-hidden shadow-lg hover:border-purple-500/50 transition-all ring-1 ring-purple-500/10">
+                  {/* Top Bar */}
+                  <div className="p-5 pb-4 space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
+                        <span className="font-mono text-xs font-bold text-purple-300">
+                          TypeScript
+                        </span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-md bg-purple-500/15 text-purple-300 border border-purple-500/30 text-[10px] font-mono font-medium">
+                        Static · Ahead-of-Time
+                      </span>
+                    </div>
+
+                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      Evaluates shapes, contracts, and data flow <em>before</em> code runs, catching bugs instantly right inside your editor.
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
-                    TypeScript evaluates shapes, contracts, and data flow <em>before</em> code runs, validating assumptions right inside your editor.
-                  </p>
-                  <pre className="p-3 rounded-lg bg-black/40 text-xs font-mono text-purple-200 overflow-x-auto">
-{`// TypeScript: Caught immediately in editor
-interface User {
+
+                  {/* Code Box */}
+                  <div className="border-t border-purple-500/20 bg-black/60">
+                    <div className="px-4 py-2 bg-black/40 border-b border-white/[0.05] flex items-center justify-between text-[11px] font-mono text-slate-400">
+                      <span className="flex items-center gap-1.5 text-purple-300 font-medium">
+                        <span className="w-2 h-2 rounded-full bg-purple-400" />
+                        app.ts
+                      </span>
+                      <span className="text-emerald-400 font-semibold text-[10px]">Compiler Protected ✓</span>
+                    </div>
+                    <pre className="p-4 text-xs font-mono text-purple-200 leading-relaxed overflow-x-auto">
+{`interface User {
   id: string;
   profile?: { email: string };
 }
 
 function sendWelcomeEmail(user: User): string {
-  // TS Error: Object is possibly 'undefined'
-  return "Sending to: " + user.profile.email;
+  // 🛡️ TS Error caught before running code:
+  // Object is possibly 'undefined'
+  return "Sending to: " + user.profile?.email ?? "no-email";
 }`}
-                  </pre>
+                    </pre>
+                  </div>
                 </div>
               </div>
 
               {/* The Erasure Principle Callout */}
-              <div className="p-4 rounded-xl bg-purple-500/[0.06] border border-purple-500/20 space-y-2">
+              <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-500/[0.08] to-purple-500/[0.02] border border-purple-500/25 space-y-2">
                 <div className="flex items-center gap-2 text-purple-300 text-xs font-bold uppercase tracking-wider font-mono">
-                  <Sparkles className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4 text-purple-400" />
                   <span>The Golden Rule: Type Erasure</span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  TypeScript types exist <strong>strictly at compile time</strong>. When the compiler finishes, all types, interfaces, generics, and annotations are completely stripped away (erased). The resulting JavaScript has <strong>zero runtime overhead</strong>.
+                  TypeScript types exist <strong>strictly at compile time</strong>. When the compiler finishes, all types, interfaces, generics, and annotations are completely stripped away (erased). The resulting JavaScript has <strong>zero runtime performance overhead</strong>.
                 </p>
               </div>
             </section>

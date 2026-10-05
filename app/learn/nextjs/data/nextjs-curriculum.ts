@@ -645,3 +645,76 @@ export function getNextjsLessonsByPhaseId(phaseId: string): NextjsLessonMeta[] {
     .map((code) => all.find((l) => l.code === code))
     .filter((l): l is NextjsLessonMeta => l !== undefined);
 }
+
+export interface NextjsPrerequisiteTopicMeta {
+  id: string;
+  title: string;
+  desc: string;
+  tag: string;
+  badge: string;
+  path: string;
+  level?: string;
+}
+
+export interface NextjsRelatedTopicMeta {
+  id: string;
+  title: string;
+  desc: string;
+  badge: string;
+  path: string;
+}
+
+export const NEXTJS_PREREQUISITES: NextjsPrerequisiteTopicMeta[] = [
+  {
+    id: "prereq-react",
+    title: "React Fundamentals & JSX",
+    desc: "Components, props, useState, useEffect, JSX syntax, and standard DOM event handling.",
+    tag: "Required Foundation",
+    badge: "React",
+    path: "/roadmaps?category=framework#skill-roadmaps",
+    level: "Beginner → Intermediate",
+  },
+  {
+    id: "prereq-ts",
+    title: "TypeScript Essentials",
+    desc: "Basic types, interfaces, generics, and type annotations for React components and props.",
+    tag: "Recommended",
+    badge: "TS",
+    path: "/learn/typescript",
+    level: "Beginner",
+  },
+];
+
+export const NEXTJS_CAPSTONE: NextjsCapstoneProjectMeta = NEXTJS_STAGE_5_CAPSTONE;
+
+export const NEXTJS_RELATED_TOPICS: NextjsRelatedTopicMeta[] = [
+  {
+    id: "rel-ts",
+    title: "TypeScript",
+    desc: "Static typing mental models, generics, and compiler configuration.",
+    badge: "Language",
+    path: "/learn/typescript",
+  },
+  {
+    id: "rel-tanstack",
+    title: "TanStack Query",
+    desc: "Asynchronous server state management and optimistic caching.",
+    badge: "Frontend",
+    path: "/learn/tanstack",
+  },
+  {
+    id: "rel-nestjs",
+    title: "NestJS",
+    desc: "Enterprise Node.js backend with dependency injection and modules.",
+    badge: "Backend",
+    path: "/learn/nestjs",
+  },
+  {
+    id: "rel-oop",
+    title: "OOP Fundamentals",
+    desc: "SOLID principles and design patterns.",
+    badge: "Architecture",
+    path: "/learn/oop",
+  },
+];
+
