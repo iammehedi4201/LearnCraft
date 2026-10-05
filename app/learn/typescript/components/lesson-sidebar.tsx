@@ -34,7 +34,7 @@ export function TypeScriptLessonSidebar({
   onNext,
 }: TypeScriptLessonSidebarProps) {
   return (
-    <aside className="w-full lg:w-[300px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-6rem)] flex flex-col border border-white/[0.08] rounded-2xl bg-[#0E121B] p-4 shadow-xl">
+    <aside className="w-full lg:w-[300px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-white/[0.08] rounded-2xl bg-[#0E121B] p-4 shadow-xl">
       {/* Header */}
       <div className="px-2 mb-3 shrink-0 flex items-center justify-between">
         <div>
@@ -53,7 +53,7 @@ export function TypeScriptLessonSidebar({
       </div>
 
       {/* Stepper (Scrollable List) */}
-      <nav className="flex-1 overflow-y-auto pr-1 space-y-1 scrollbar-thin scrollbar-thumb-white/10">
+      <nav className="flex-1 min-h-0 overflow-y-auto pr-1 space-y-1 scrollbar-thin scrollbar-thumb-white/10">
         <ol className="space-y-1.5 relative">
           {sections.map((section, index) => {
             const state = getStepState(index);
@@ -188,7 +188,7 @@ export function TypeScriptLessonSidebar({
       </div>
 
       {/* Course Hub link */}
-      <div className="mt-3 pt-3 border-t border-white/[0.06] text-center">
+      <div className="mt-3 pt-3 shrink-0 border-t border-white/[0.06] text-center">
         <Link
           href="/learn/typescript"
           className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 transition-colors font-medium"

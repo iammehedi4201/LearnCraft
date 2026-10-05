@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { NextjsSectionItem } from "../hooks/use-nextjs-module-progress";
+import { LayoutGrid } from "./icons";
 
 interface NextjsLessonSidebarProps {
   lessonCode: string;
@@ -172,6 +174,17 @@ export function NextjsLessonSidebar({
               : "Finish Lesson ✓"
             : "Next →"}
         </button>
+      </div>
+
+      {/* Course Hub link */}
+      <div className="mt-3 pt-3 shrink-0 border-t border-white/[0.06] text-center">
+        <Link
+          href="/learn/nextjs"
+          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 transition-colors font-medium"
+        >
+          <LayoutGrid className="w-3.5 h-3.5" />
+          <span>Next.js Curriculum</span>
+        </Link>
       </div>
     </aside>
   );

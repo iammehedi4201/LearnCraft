@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, ArrowRight, CheckCircle2, Circle, LayoutGrid, Clock } from "./icons";
+import { ArrowLeft, ArrowRight, CheckCircle2, Circle } from "./icons";
 import {
   getNextLesson,
   getPrevLesson,
@@ -15,7 +15,6 @@ import {
   toggleLessonComplete,
   getCompletionByStage,
 } from "../data/progress-store";
-import { ContentTagBadge } from "./content-tag-badge";
 import { MilestoneCelebration } from "./milestone-celebration";
 
 interface LessonNavFooterProps {
@@ -91,132 +90,105 @@ export function LessonNavFooter({
         />
       )}
 
-      {/* Completion toggle banner */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm">
-        <div className="flex items-center gap-3">
-          {isAuthenticated ? (
-            <>
-              <button
-                onClick={handleToggleComplete}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
-                  completed
-                    ? "bg-ds-success-lighter text-ds-success-dark"
-                    : "bg-ds-bg-weak text-ds-text-sub border border-ds-stroke-soft hover:bg-ds-bg-soft hover:text-ds-text-strong"
-                }`}
-              >
-                {completed ? (
-                  <>
-                    <CheckCircle2 className="w-4 h-4 text-ds-success-base" />
-                    <span>Lesson Completed</span>
-                  </>
-                ) : (
-                  <>
-                    <Circle className="w-4 h-4 text-ds-icon-sub" />
-                    <span>Mark Lesson Complete</span>
-                  </>
-                )}
-              </button>
-              <span className="text-xs text-ds-text-sub">
-                {completed
-                  ? "Great job! Your path progress has been recorded in your database."
-                  : "Mark complete when you finish the exercises."}
-              </span>
-            </>
-          ) : (
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={() => {
-                  if (typeof window !== "undefined") {
-                    window.dispatchEvent(new CustomEvent("learncraft:open-auth-modal"));
-                  }
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-ds-feature-lighter hover:bg-ds-feature-light/40 border border-ds-feature-base/30 text-ds-feature-dark text-xs font-bold transition-all cursor-pointer"
-              >
-                <span>⚡ Sign In</span>
-              </button>
-              <span className="text-xs text-ds-text-sub">
-                Sign in to save your module progress to the database.
-              </span>
-            </div>
-          )}
-        </div>
-
-        <Link
-          href="/learn/nestjs"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-ds-text-sub hover:text-ds-feature-dark transition-colors"
-        >
-          <LayoutGrid className="w-3.5 h-3.5" />
-          <span>Full Roadmap</span>
-        </Link>
-      </div>
-
-      {/* Prev / Next navigation cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Primary Navigation Controls (3-Column Layout from Image 2) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
         {/* Previous Lesson */}
-        {prevLesson ? (
-          <Link
-            href={prevLesson.path}
-            className="group flex flex-col justify-between p-5 rounded-2xl border border-ds-stroke-soft bg-ds-bg-white hover:border-ds-stroke-sub hover:shadow-md transition-all text-left"
-          >
-            <div className="flex items-center gap-2 text-xs font-semibold text-ds-text-soft group-hover:text-ds-text-strong transition-colors mb-2">
-              <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-              <span>Previous Lesson</span>
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-ds-text-soft bg-ds-bg-weak px-1.5 py-0.5 rounded">
-                  {prevLesson.code}
+        <div className="flex justify-start">
+          {prevLesson ? (
+            <Link
+              href={prevLesson.path}
+              className="group flex items-center gap-3 p-3 rounded-xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base transition-all text-left w-full sm:w-auto shadow-sm"
+            >
+              <div className="w-8 h-8 rounded-lg bg-ds-bg-weak group-hover:bg-ds-feature-lighter flex items-center justify-center text-ds-text-soft group-hover:text-ds-feature-dark transition-colors">
+                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              </div>
+              <div className="overflow-hidden">
+                <span className="text-[10px] font-mono text-ds-text-soft block uppercase">
+                  Previous ({prevLesson.code})
                 </span>
-                <span className="text-sm font-bold text-ds-text-strong group-hover:text-ds-feature-dark transition-colors">
+                <span className="text-xs font-bold text-ds-text-strong group-hover:text-ds-feature-dark truncate block max-w-[180px]">
                   {prevLesson.name}
                 </span>
               </div>
-              <p className="text-xs text-ds-text-sub line-clamp-1 mt-1">
-                {prevLesson.desc}
-              </p>
-            </div>
-          </Link>
-        ) : (
-          <div className="p-5 rounded-2xl border border-ds-stroke-soft bg-ds-bg-weak text-ds-text-disabled text-xs flex items-center justify-center font-medium">
-            You are at the start of the curriculum.
-          </div>
-        )}
+            </Link>
+          ) : (
+            <Link
+              href="/learn/nestjs"
+              className="inline-flex items-center gap-2 text-xs text-ds-text-soft hover:text-ds-text-strong p-3"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>NestJS Hub</span>
+            </Link>
+          )}
+        </div>
+
+        {/* Completion Toggle in Center */}
+        <div className="flex justify-center">
+          {isAuthenticated ? (
+            <button
+              type="button"
+              onClick={handleToggleComplete}
+              className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
+                completed
+                  ? "bg-ds-success-lighter text-ds-success-dark border border-ds-success-base/30"
+                  : "bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white shadow-ds-feature-base/20"
+              }`}
+            >
+              {completed ? (
+                <>
+                  <CheckCircle2 className="w-4 h-4 text-ds-success-base" />
+                  <span>Lesson Completed</span>
+                </>
+              ) : (
+                <>
+                  <Circle className="w-4 h-4 text-white/60" />
+                  <span>Mark as Complete</span>
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  window.dispatchEvent(
+                    new CustomEvent("learncraft:open-auth-modal")
+                  );
+                }
+              }}
+              className="text-xs text-ds-text-soft hover:text-ds-feature-dark font-mono transition-colors cursor-pointer"
+            >
+              Sign in to save progress
+            </button>
+          )}
+        </div>
 
         {/* Next Lesson */}
-        {nextLesson ? (
-          <Link
-            href={nextLesson.path}
-            onClick={handleNextClick}
-            className="group flex flex-col justify-between p-5 rounded-2xl border border-ds-feature-base bg-ds-feature-lighter text-ds-text-strong hover:bg-ds-feature-light/30 transition-all text-right shadow-sm"
-          >
-            <div className="flex items-center justify-end gap-2 text-xs text-ds-feature-dark font-bold mb-2">
-              <span>Next Lesson</span>
-              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-            </div>
-            <div>
-              <div className="flex items-center justify-end gap-2">
-                <span className="text-sm font-black text-ds-text-strong group-hover:text-ds-feature-dark transition-colors">
+        <div className="flex justify-end">
+          {nextLesson ? (
+            <Link
+              href={nextLesson.path}
+              onClick={handleNextClick}
+              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base transition-all text-right w-full sm:w-auto shadow-sm"
+            >
+              <div className="overflow-hidden">
+                <span className="text-[10px] font-mono text-ds-feature-dark block uppercase">
+                  Next ({nextLesson.code})
+                </span>
+                <span className="text-xs font-bold text-ds-text-strong group-hover:text-ds-feature-dark truncate block max-w-[180px]">
                   {nextLesson.name}
                 </span>
-                <span className="font-mono text-xs font-bold text-ds-feature-dark bg-ds-feature-lighter px-2 py-0.5 rounded-md">
-                  {nextLesson.code}
-                </span>
               </div>
-              <div className="flex items-center justify-end gap-3 mt-2">
-                <span className="inline-flex items-center gap-1 text-[11px] text-ds-text-soft font-medium">
-                  <Clock className="w-3 h-3" />
-                  {nextLesson.estimatedMinutes} min
-                </span>
-                <ContentTagBadge tag={nextLesson.tag} size="sm" />
+              <div className="w-8 h-8 rounded-lg bg-ds-feature-lighter group-hover:bg-ds-feature-base flex items-center justify-center text-ds-feature-dark group-hover:text-ds-static-white transition-colors">
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </div>
-            </div>
-          </Link>
-        ) : (
-          <div className="p-5 rounded-2xl bg-ds-success-lighter text-ds-success-dark text-xs flex items-center justify-center font-bold">
-            🎉 You have reached the end of the curriculum!
-          </div>
-        )}
+            </Link>
+          ) : (
+            <span className="text-xs text-ds-success-dark font-bold p-3">
+              🎉 All Lessons Completed
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

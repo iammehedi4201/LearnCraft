@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Nav } from "@/components/nav";
@@ -10,6 +10,8 @@ import {
   ArrowRight,
   Sparkles,
   Award,
+  ChevronLeft,
+  ChevronRight,
 } from "./components/icons";
 import {
   TYPESCRIPT_PROGRESSION_PHASES,
@@ -38,6 +40,33 @@ export default function TypeScriptPage() {
     totalCount: 32,
     percent: 0,
   });
+
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState<boolean>(false);
+  const [canScrollRight, setCanScrollRight] = useState<boolean>(true);
+
+  const checkScrollability = useCallback(() => {
+    if (tabsRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
+      setCanScrollLeft(scrollLeft > 5);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
+    }
+  }, []);
+
+  const scrollTabs = (direction: "left" | "right") => {
+    if (tabsRef.current) {
+      const scrollAmount = direction === "left" ? -320 : 320;
+      tabsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
+      setTimeout(checkScrollability, 300);
+    }
+  };
+
+  const handleTabsWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (tabsRef.current && e.deltaY !== 0) {
+      tabsRef.current.scrollLeft += e.deltaY;
+      checkScrollability();
+    }
+  };
 
   // Sync state from database & custom events
   useEffect(() => {
@@ -98,6 +127,29 @@ export default function TypeScriptPage() {
     };
   }, [session?.user]);
 
+  useEffect(() => {
+    checkScrollability();
+    window.addEventListener("resize", checkScrollability);
+    return () => window.removeEventListener("resize", checkScrollability);
+  }, [checkScrollability]);
+
+  // Auto-scroll selected phase tab into view
+  useEffect(() => {
+    if (tabsRef.current) {
+      const activeBtn = tabsRef.current.querySelector(
+        `[data-phase-id="${selectedPhase}"]`,
+      ) as HTMLElement | null;
+      if (activeBtn) {
+        activeBtn.scrollIntoView({
+          behavior: "smooth",
+          inline: "center",
+          block: "nearest",
+        });
+      }
+      checkScrollability();
+    }
+  }, [selectedPhase, checkScrollability]);
+
   const handlePhaseSelect = (phaseId: string) => {
     setSelectedPhaseState(phaseId);
     setGoal(phaseId);
@@ -109,28 +161,28 @@ export default function TypeScriptPage() {
     <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
       <Nav />
 
-      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 w-full space-y-8">
+      <main className="flex-1 max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 w-full space-y-8">
         {/* =========================================================================
-            1. HERO (CLEAN, FOCUSED, LOW NOISE — PURPLE THEME)
+            1. HERO (EXPANSIVE, COMFORTABLE, STUDIO GRADE — PURPLE THEME)
            ========================================================================= */}
-        <section className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-xl relative overflow-hidden">
-          <div className="max-w-2xl space-y-4">
+        <section className="p-6 sm:p-8 md:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-xl relative overflow-hidden">
+          <div className="max-w-4xl space-y-5">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-mono font-medium">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Core TypeScript Mastery</span>
             </div>
 
             <div>
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white leading-tight">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
                 Learn TypeScript
               </h1>
-              <p className="text-sm sm:text-base text-slate-300 mt-2 font-normal leading-relaxed">
+              <p className="text-base sm:text-lg text-slate-300 mt-2 font-normal leading-relaxed max-w-3xl">
                 Master modern static typing, advanced type system mechanics, generics, and compiler configuration for industrial-grade web applications.
               </p>
             </div>
 
             {/* Metrics & Progress Bar */}
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
+            <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-slate-400 pt-1">
               <span>32 Lessons</span>
               <span>·</span>
               <span>~16 Hours</span>
@@ -168,7 +220,7 @@ export default function TypeScriptPage() {
         </section>
 
         {/* =========================================================================
-            2. PREREQUISITES (SIMPLE, CLEAN, CALM HIGHLIGHT)
+            2. PREREQUISITES (FULL-WIDTH EXPANSIVE CARD)
            ========================================================================= */}
         <section className="p-5 sm:p-6 rounded-2xl bg-[#0E121B] border border-white/[0.08] space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
@@ -177,35 +229,38 @@ export default function TypeScriptPage() {
                 Prerequisites
               </span>
               <span className="text-xs text-slate-400">
-                Recommended foundations to learn before starting TypeScript:
+                Recommended foundation to learn before starting TypeScript:
               </span>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          <div className="pt-1">
             {TYPESCRIPT_PREREQUISITES.map((prereq) => (
               <Link
                 key={prereq.id}
                 href={prereq.path}
-                className="group p-4 rounded-xl bg-[#090C14] border border-white/[0.05] hover:border-purple-500/40 hover:bg-[#0c101a] transition-all flex flex-col justify-between"
+                className="group p-4 sm:p-5 rounded-xl bg-[#090C14] border border-white/[0.05] hover:border-purple-500/40 hover:bg-[#0c101a] transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
               >
-                <div>
-                  <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="font-bold text-white group-hover:text-purple-300 transition-colors">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-white group-hover:text-purple-300 transition-colors text-sm sm:text-base">
                       {prereq.title}
                     </span>
-                    <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded border border-purple-500/20">
+                    <span className="text-[10px] font-mono text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded border border-purple-500/20 font-bold">
                       {prereq.badge}
                     </span>
+                    <span className="text-[11px] text-slate-400 font-mono">
+                      · {prereq.tag}
+                    </span>
                   </div>
-                  <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">
+                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-3xl">
                     {prereq.desc}
                   </p>
                 </div>
 
-                <div className="mt-3 pt-2.5 border-t border-white/[0.04] text-[11px] text-purple-400 font-medium flex items-center justify-between">
+                <div className="shrink-0 text-xs sm:text-sm text-purple-400 font-medium flex items-center gap-2 group-hover:text-purple-300">
                   <span>Review topic</span>
-                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
             ))}
@@ -213,26 +268,54 @@ export default function TypeScriptPage() {
         </section>
 
         {/* =========================================================================
-            3. CLEAN PHASE SELECTOR (PURPLE THEME TABS)
+            3. CLEAN PHASE SELECTOR (SMOOTH SCROLLING & ARROW NAVIGATION)
            ========================================================================= */}
         <section className="space-y-4">
           <div className="flex items-center justify-between gap-4">
             <span className="text-xs font-bold uppercase tracking-wider text-slate-300">
               Curriculum (9 Phases)
             </span>
+
+            {/* Scroll Navigation Arrows */}
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => scrollTabs("left")}
+                disabled={!canScrollLeft}
+                aria-label="Scroll phases left"
+                className="p-1.5 rounded-lg bg-[#0E121B] border border-white/[0.08] text-slate-400 hover:text-white hover:border-purple-500/40 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollTabs("right")}
+                disabled={!canScrollRight}
+                aria-label="Scroll phases right"
+                className="p-1.5 rounded-lg bg-[#0E121B] border border-white/[0.08] text-slate-400 hover:text-white hover:border-purple-500/40 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
-          {/* Simple Clean Horizontal Phase Tabs */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          {/* Smooth Scrollable Horizontal Phase Tabs */}
+          <div
+            ref={tabsRef}
+            onWheel={handleTabsWheel}
+            onScroll={checkScrollability}
+            className="flex items-center gap-2.5 overflow-x-auto pb-2 pt-1 scroll-smooth scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-purple-500/30 cursor-grab active:cursor-grabbing"
+          >
             {TYPESCRIPT_PROGRESSION_PHASES.map((phase) => {
               const isSelected = selectedPhase === phase.id;
               return (
                 <button
                   key={phase.id}
+                  data-phase-id={phase.id}
                   onClick={() => handlePhaseSelect(phase.id)}
                   className={`shrink-0 px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer border ${
                     isSelected
-                      ? "bg-purple-600 text-white border-purple-500 font-bold shadow-md shadow-purple-600/20"
+                      ? "bg-purple-600 text-white border-purple-500 font-bold shadow-md shadow-purple-600/20 scale-[1.02]"
                       : "bg-[#0E121B] text-slate-300 hover:text-white border-white/[0.06] hover:border-white/[0.15]"
                   }`}
                 >
@@ -309,3 +392,4 @@ export default function TypeScriptPage() {
     </InteractiveGrid>
   );
 }
+

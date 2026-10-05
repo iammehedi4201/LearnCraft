@@ -14,6 +14,9 @@
  */
 
 "use client";
+import { LayoutGrid } from "../components/icons";
+
+import Link from "next/link";
 
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
@@ -275,6 +278,16 @@ export default function NJ30FileUploads(): JSX.Element {
                     : "Finish Lesson ✓"
                   : "Next →"}
               </button>
+            </div>
+            {/* Course Hub link */}
+            <div className="mt-3 pt-3 shrink-0 border-t border-ds-stroke-soft text-center">
+              <Link
+                href="/learn/nestjs"
+                className="inline-flex items-center gap-1.5 text-xs text-ds-text-sub hover:text-ds-feature-dark transition-colors font-semibold"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>NestJS Curriculum</span>
+              </Link>
             </div>
           </aside>
 )}

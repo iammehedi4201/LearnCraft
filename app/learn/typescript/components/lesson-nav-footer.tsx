@@ -8,12 +8,10 @@ import {
   ArrowRight,
   CheckCircle2,
   Circle,
-  LayoutGrid,
 } from "./icons";
 import {
   getNextLesson,
   getPrevLesson,
-  getStageByLessonSlug,
 } from "../data/typescript-curriculum";
 import {
   isLessonComplete,
@@ -36,7 +34,6 @@ export function LessonNavFooter({
 
   const prevLesson = getPrevLesson(currentSlug);
   const nextLesson = getNextLesson(currentSlug);
-  const currentStage = getStageByLessonSlug(currentSlug);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -81,33 +78,6 @@ export function LessonNavFooter({
 
   return (
     <div className="mt-16 pt-8 border-t border-white/[0.08] space-y-6">
-      {/* Current Stage Context Bar */}
-      {currentStage && (
-        <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-[#0E121B] border border-white/[0.06]">
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-mono font-bold text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded-lg">
-              Stage {currentStage.stageNumber}
-            </span>
-            <div>
-              <span className="text-xs font-bold text-white block">
-                {currentStage.name}
-              </span>
-              <span className="text-[11px] text-slate-400">
-                {currentStage.subtitle}
-              </span>
-            </div>
-          </div>
-
-          <Link
-            href="/learn/typescript"
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 font-medium transition-colors"
-          >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Course Hub</span>
-          </Link>
-        </div>
-      )}
-
       {/* Primary Navigation Controls */}
       <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
         {/* Previous Lesson */}
