@@ -610,11 +610,11 @@ export const MONGODB_STAGES: StageMeta[] = MONGODB_PROGRESSION_PHASES.map((phase
   subtitle: phase.scope,
   description: phase.desc,
   theme: {
-    badge: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
-    dot: "bg-emerald-400",
-    border: "border-emerald-500/30",
-    bgSubtle: "bg-emerald-500/[0.03]",
-    textAccent: "text-emerald-400",
+    badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
+    dot: "bg-purple-400",
+    border: "border-purple-500/30",
+    bgSubtle: "bg-purple-500/[0.03]",
+    textAccent: "text-purple-400",
   },
   lessons: MONGODB_LESSONS.filter((l) => l.phaseId === phase.id),
   capstone: phase.phaseNumber === 10 ? MONGODB_CAPSTONE : undefined,
@@ -645,6 +645,13 @@ export const MONGODB_RELATED_TOPICS = [
     desc: "Architect enterprise microservices with dependency injection and modular database providers.",
     badge: "Framework",
     path: "/learn/nestjs",
+  },
+  {
+    id: "rel-postgresql",
+    title: "PostgreSQL",
+    desc: "Contrast document databases with relational 3NF tables, ACID transactions, and SQL joins.",
+    badge: "Database",
+    path: "/learn/postgresql",
   },
 ];
 

@@ -499,7 +499,7 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     totalLessons: 26,
     stages: mongodbStages,
     learnPath: "/learn/mongodb",
-    badgeColor: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
     id: "redis",

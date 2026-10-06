@@ -9,7 +9,6 @@ import { Playground } from "@/components/playground/Playground";
 import {
   ArrowLeft,
   CheckCircle2,
-  Leaf,
 } from "../../components/icons";
 import { MONGODB_CAPSTONE } from "../../data/mongodb-curriculum";
 
@@ -98,95 +97,125 @@ function executeCheckoutTransaction(customerId, cartItems) {
     const product = products.find(p => p._id === item.productId);
     if (!product || product.stock < item.quantity) {
       console.error(\`TRANSACTION ABORTED: Insufficient stock for \${item.productId}\`);
-      return { success: false, reason: "OUT_OF_STOCK" };
+      return false;
     }
   }
 
-  // Deduct stock and commit new order document
-  let orderTotal = 0;
-  cartItems.forEach(item => {
+  // Deduct inventory
+  for (const item of cartItems) {
     const product = products.find(p => p._id === item.productId);
     product.stock -= item.quantity;
-    orderTotal += product.price * item.quantity;
-  });
+    console.log(\`✓ Deducted \${item.quantity} units from \${product.title}. Remaining: \${product.stock}\`);
+  }
 
-  const newOrder = {
-    _id: "ord_" + Math.floor(Math.random() * 9000 + 1000),
+  // Record order
+  const newOrderId = "ord_" + (orders.length + 9001);
+  const total = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  orders.push({
+    _id: newOrderId,
     customerId,
     status: "completed",
     createdAt: new Date(),
-    items: cartItems.map(i => {
-      const p = products.find(prod => prod._id === i.productId);
-      return { productId: p._id, title: p.title, price: p.price, quantity: i.quantity };
-    }),
-    totalAmount: Math.round(orderTotal * 100) / 100
-  };
-  orders.push(newOrder);
+    items: cartItems,
+    totalAmount: total,
+    shippingAddress: { city: "Dhaka", country: "Bangladesh" }
+  });
 
-  console.log("TRANSACTION COMMITTED ✓");
-  console.log("Created Order:", newOrder._id, "Total: $" + newOrder.totalAmount);
-  return { success: true, orderId: newOrder._id };
+  console.log(\`✓ Order \${newOrderId} successfully recorded with total $\${total.toFixed(2)}\`);
+  console.log("TRANSACTION COMMITTED TO CLUSTER.");
+  return true;
 }
 
-// Test Checkout Transaction
-executeCheckoutTransaction("usr_01", [{ productId: "prd_103", quantity: 3 }]);
-console.log("Remaining stock for prd_103:", products.find(p => p._id === "prd_103").stock);
+executeCheckoutTransaction("usr_01", [
+  { productId: "prd_101", title: "Ergonomic Mechanical Keyboard", price: 149.99, quantity: 2 }
+]);
+
+// 4. Index Evaluation Report
+console.log("\\n=== 4. COMPOUND INDEX EVALUATION (ESR RULE) ===");
+console.log("Index candidate: { customerId: 1, createdAt: -1, status: 1 }");
+console.log("Equality filter: customerId matches accurately (E)");
+console.log("Sort operator: createdAt descending uses index directly without in-memory sort (S)");
+console.log("Range check: status: { $in: [...] } evaluated last (R)");
+console.log("Execution winning plan: IXSCAN on index with 0 documents examined outside target set.");
 `;
 
-export default function MongodbCapstonePage() {
+export default function MongoDBCapstonePage() {
   const [activeTab, setActiveTab] = useState<
     "overview" | "schema" | "aggregation" | "indexing" | "transactions"
   >("overview");
 
+  const tabs: { id: typeof activeTab; label: string }[] = [
+    { id: "overview", label: "Architecture Overview" },
+    { id: "schema", label: "Schema Validation ($jsonSchema)" },
+    { id: "aggregation", label: "Sales Analytics Pipeline" },
+    { id: "indexing", label: "Compound Index Strategy (ESR)" },
+    { id: "transactions", label: "Atomic Checkout Transaction" },
+  ];
+
   return (
-    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20 overflow-x-hidden transition-colors duration-300">
+    <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
       <Nav />
 
       <main className="max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-10">
-        {/* Back Link & Header */}
-        <div className="space-y-4">
-          <Link
-            href="/learn/mongodb"
-            className="inline-flex items-center gap-2 text-xs font-bold text-ds-text-soft hover:text-ds-feature-dark transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Back to MongoDB Curriculum</span>
+        {/* Breadcrumb Navigation */}
+        <nav className="flex items-center gap-2 text-xs text-slate-400">
+          <Link href="/roadmaps" className="hover:text-purple-300 transition-colors font-medium">
+            Roadmaps
           </Link>
+          <span>/</span>
+          <Link href="/learn/mongodb" className="hover:text-purple-300 transition-colors font-medium">
+            MongoDB
+          </Link>
+          <span>/</span>
+          <span className="text-white font-bold">Capstone Project</span>
+        </nav>
 
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-ds-stroke-soft">
-            <div className="space-y-2 max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-300 text-xs font-bold border border-emerald-500/30">
-                <Leaf className="w-3.5 h-3.5" />
-                <span>Final Database Capstone</span>
-                <span className="text-emerald-400">·</span>
-                <span>400 XP</span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl font-black text-ds-text-strong tracking-tight font-display">
-                {MONGODB_CAPSTONE.title}
-              </h1>
-              <p className="text-sm sm:text-base text-ds-text-sub leading-relaxed font-normal">
-                {MONGODB_CAPSTONE.desc}
-              </p>
-            </div>
+        {/* Hero Banner */}
+        <section className="p-8 sm:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-2xl relative overflow-hidden space-y-4">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+
+          <div className="relative z-10 flex flex-wrap items-center gap-3">
+            <span className="text-xs font-mono font-bold uppercase tracking-wider text-purple-300 bg-purple-500/10 border border-purple-500/20 px-3 py-1 rounded-full">
+              Phase 11 · Capstone Project
+            </span>
+            <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 font-bold">
+              +{MONGODB_CAPSTONE.xpReward} XP
+            </span>
+            <span className="text-xs font-mono text-slate-400">
+              ⏱️ ~{MONGODB_CAPSTONE.estimatedMinutes} mins
+            </span>
           </div>
-        </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-ds-stroke-soft">
-          {[
-            { id: "overview", label: "Overview & Requirements" },
-            { id: "schema", label: "Document Schemas & $jsonSchema" },
-            { id: "aggregation", label: "Sales Analytics Aggregation" },
-            { id: "indexing", label: "Compound Indexing (ESR Rule)" },
-            { id: "transactions", label: "ACID Checkout Transactions" },
-          ].map((tab) => (
+          <div className="relative z-10">
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight font-display">
+              {MONGODB_CAPSTONE.title}
+            </h1>
+            <p className="text-base text-slate-300 mt-2 max-w-3xl leading-relaxed">
+              {MONGODB_CAPSTONE.desc}
+            </p>
+          </div>
+
+          <div className="relative z-10 pt-4 flex items-center gap-3">
+            <Link
+              href="/learn/mongodb"
+              className="inline-flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-white px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.02] hover:bg-white/[0.06] transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to MongoDB Curriculum</span>
+            </Link>
+          </div>
+        </section>
+
+        {/* Tab Navigation */}
+        <div className="flex items-center gap-2 border-b border-white/[0.08] pb-4 overflow-x-auto">
+          {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "bg-ds-feature-base text-ds-static-white shadow-sm shadow-ds-feature-base/20"
-                  : "bg-ds-bg-white text-ds-text-sub hover:text-ds-text-strong border border-ds-stroke-soft"
+                  ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30"
+                  : "text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent"
               }`}
             >
               {tab.label}
@@ -198,22 +227,22 @@ export default function MongodbCapstonePage() {
         {activeTab === "overview" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
-              <div className="p-6 sm:p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
-                <h2 className="text-xl font-bold text-ds-text-strong">Architecture Specifications</h2>
-                <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed">
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-4">
+                <h2 className="text-xl font-bold text-white">Architecture Specifications</h2>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                   ShopSphere is an enterprise multi-vendor e-commerce platform. It requires balanced data modeling: customer identities are stored centrally, but order documents embed product price and title snapshots at the moment of checkout to guarantee that historical reports are never skewed if a vendor changes prices later.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                  <div className="p-4 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft space-y-2">
-                    <span className="text-xs font-bold text-ds-feature-dark">Embedded Subdocuments</span>
-                    <p className="text-xs text-ds-text-sub leading-relaxed">
+                  <div className="p-4 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-2">
+                    <span className="text-xs font-bold text-purple-300">Embedded Subdocuments</span>
+                    <p className="text-xs text-slate-400 leading-relaxed">
                       Line items, line discounts, and shipping addresses are embedded directly inside orders to ensure single-read atomicity.
                     </p>
                   </div>
-                  <div className="p-4 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft space-y-2">
+                  <div className="p-4 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-2">
                     <span className="text-xs font-bold text-emerald-400">Referenced Relationships</span>
-                    <p className="text-xs text-ds-text-sub leading-relaxed">
+                    <p className="text-xs text-slate-400 leading-relaxed">
                       Users, payment authorizations, and catalog categories are referenced via ObjectIds to allow independent account management.
                     </p>
                   </div>
@@ -221,14 +250,14 @@ export default function MongodbCapstonePage() {
               </div>
 
               {/* Interactive Simulation Playground */}
-              <div className="p-6 sm:p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-ds-text-strong">Interactive Database Engine Simulator</h3>
+                  <h3 className="text-lg font-bold text-white">Interactive Database Engine Simulator</h3>
                   <span className="text-xs font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
                     Live Engine Simulation
                   </span>
                 </div>
-                <div className="rounded-2xl overflow-hidden border border-ds-stroke-soft">
+                <div className="rounded-2xl overflow-hidden border border-white/[0.08]">
                   <Playground runtime="javascript" starterCode={CAPSTONE_SIMULATION_CODE} height="480px" />
                 </div>
               </div>
@@ -236,11 +265,11 @@ export default function MongodbCapstonePage() {
 
             {/* Checklist */}
             <div className="space-y-6">
-              <div className="p-6 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
-                <h3 className="text-base font-bold text-ds-text-strong">Verification Checklist</h3>
+              <div className="p-6 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-4">
+                <h3 className="text-base font-bold text-white">Verification Checklist</h3>
                 <div className="space-y-3">
                   {MONGODB_CAPSTONE.keyFeatures.map((feat, idx) => (
-                    <div key={idx} className="flex items-start gap-2.5 text-xs text-ds-text-sub leading-relaxed">
+                    <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-400 leading-relaxed">
                       <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                       <span>{feat}</span>
                     </div>
@@ -248,14 +277,14 @@ export default function MongodbCapstonePage() {
                 </div>
               </div>
 
-              <div className="p-6 rounded-3xl bg-ds-feature-lighter border border-ds-feature-base/20 space-y-3">
-                <span className="text-[10px] font-mono uppercase tracking-wider text-ds-feature-dark font-bold block">
+              <div className="p-6 rounded-3xl bg-purple-500/[0.05] border border-purple-500/20 space-y-3">
+                <span className="text-[10px] font-mono uppercase tracking-wider text-purple-300 font-bold block">
                   Capstone Evaluation
                 </span>
-                <h4 className="text-sm font-bold text-ds-text-strong">
+                <h4 className="text-sm font-bold text-white">
                   Database Reasoning & Engineering
                 </h4>
-                <p className="text-xs text-ds-text-sub leading-relaxed">
+                <p className="text-xs text-slate-400 leading-relaxed">
                   Completing this capstone demonstrates mastery of document design, aggregation processing, query optimization, and transaction safety.
                 </p>
               </div>
@@ -265,13 +294,13 @@ export default function MongodbCapstonePage() {
 
         {/* Tab 2: Schema */}
         {activeTab === "schema" && (
-          <div className="p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-6">
-            <h2 className="text-xl font-bold text-ds-text-strong">Production Collection Schemas with $jsonSchema</h2>
-            <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed">
+          <div className="p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-6">
+            <h2 className="text-xl font-bold text-white">Production Collection Schemas with $jsonSchema</h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               Enforce structural integrity at the MongoDB engine layer to prevent malformed documents:
             </p>
 
-            <pre className="p-5 rounded-2xl bg-ds-bg-soft border border-ds-stroke-soft text-xs font-mono text-ds-text-strong overflow-x-auto leading-relaxed">
+            <pre className="p-5 rounded-2xl bg-slate-950 border border-white/[0.08] text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
 {`// MongoDB JSON Schema Validator Rule for Orders Collection
 db.createCollection("orders", {
   validator: {
@@ -317,13 +346,13 @@ db.createCollection("orders", {
 
         {/* Tab 3: Aggregation */}
         {activeTab === "aggregation" && (
-          <div className="p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-6">
-            <h2 className="text-xl font-bold text-ds-text-strong">Sales Analytics Aggregation Pipeline</h2>
-            <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed">
+          <div className="p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-6">
+            <h2 className="text-xl font-bold text-white">Sales Analytics Aggregation Pipeline</h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               Multi-stage pipeline calculating quarterly revenue per product category with $lookup customer joining:
             </p>
 
-            <pre className="p-5 rounded-2xl bg-ds-bg-soft border border-ds-stroke-soft text-xs font-mono text-ds-text-strong overflow-x-auto leading-relaxed">
+            <pre className="p-5 rounded-2xl bg-slate-950 border border-white/[0.08] text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
 {`// Analytics Pipeline: Revenue by Category
 db.orders.aggregate([
   // Stage 1: Only consider finalized sales
@@ -366,13 +395,13 @@ db.orders.aggregate([
 
         {/* Tab 4: Indexing */}
         {activeTab === "indexing" && (
-          <div className="p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-6">
-            <h2 className="text-xl font-bold text-ds-text-strong">Compound Index Strategy (The ESR Rule)</h2>
-            <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed">
+          <div className="p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-6">
+            <h2 className="text-xl font-bold text-white">Compound Index Strategy (The ESR Rule)</h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               High-frequency query: Customer order history filtered by customer ID, ordered by date, within status ranges.
             </p>
 
-            <pre className="p-5 rounded-2xl bg-ds-bg-soft border border-ds-stroke-soft text-xs font-mono text-ds-text-strong overflow-x-auto leading-relaxed">
+            <pre className="p-5 rounded-2xl bg-slate-950 border border-white/[0.08] text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
 {`// Target Query Pattern:
 db.orders.find({
   customerId: "usr_01",              // 1. Equality filter
@@ -394,13 +423,13 @@ db.orders.createIndex({
 
         {/* Tab 5: Transactions */}
         {activeTab === "transactions" && (
-          <div className="p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-6">
-            <h2 className="text-xl font-bold text-ds-text-strong">Atomic Multi-Document Checkout Transaction</h2>
-            <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed">
+          <div className="p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-6">
+            <h2 className="text-xl font-bold text-white">Atomic Multi-Document Checkout Transaction</h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               Execute order creation and inventory deductions atomically inside a single ClientSession:
             </p>
 
-            <pre className="p-5 rounded-2xl bg-ds-bg-soft border border-ds-stroke-soft text-xs font-mono text-ds-text-strong overflow-x-auto leading-relaxed">
+            <pre className="p-5 rounded-2xl bg-slate-950 border border-white/[0.08] text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
 {`// Multi-Document Transaction using ClientSession
 async function processOrderCheckout(client, customerId, cartItems) {
   const session = client.startSession();

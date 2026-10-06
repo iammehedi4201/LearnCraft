@@ -13,6 +13,7 @@ import {
 import {
   isLessonComplete,
   getActiveLesson,
+  toggleLessonComplete,
 } from "../data/progress-store";
 
 interface JourneyViewProps {
@@ -32,29 +33,29 @@ export function JourneyView({
   const activeLesson = getActiveLesson();
 
   const completedCount = lessons.filter(
-    (l) => isLessonComplete(l.slug) || isLessonComplete(l.code),
+    (l) => isLessonComplete(l.slug) || isLessonComplete(l.code)
   ).length;
   const isPhaseAllDone = completedCount === lessons.length && lessons.length > 0;
 
   return (
     <div className="space-y-5">
       {/* Unified Phase Context Banner */}
-      <div className="p-5 sm:p-6 rounded-2xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-5 sm:p-6 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-ds-feature-dark bg-ds-feature-lighter border border-ds-feature-base/30 px-2.5 py-0.5 rounded-lg">
-              Phase {phase.phaseNumber.toString().padStart(2, "0")} of {MONGODB_PROGRESSION_PHASES.length.toString().padStart(2, "0")}
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2.5 py-0.5 rounded-lg">
+              Phase {phase.phaseNumber.toString().padStart(2, "0")} of 10
             </span>
-            <span className="text-ds-text-soft hidden sm:inline">·</span>
-            <span className="text-xs font-mono text-ds-text-sub font-medium">
+            <span className="text-slate-500 hidden sm:inline">·</span>
+            <span className="text-xs font-mono text-slate-400 font-medium">
               {phase.scope}
             </span>
           </div>
 
-          <h3 className="text-lg sm:text-xl font-bold text-ds-text-strong tracking-tight">
+          <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
             {phase.label}
           </h3>
-          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed max-w-3xl">
+          <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-3xl">
             {phase.desc}
           </p>
         </div>
@@ -63,8 +64,8 @@ export function JourneyView({
           <span
             className={`text-xs font-mono font-bold px-3.5 py-1.5 rounded-full border transition-colors ${
               isPhaseAllDone
-                ? "bg-ds-success-lighter text-ds-success-dark border-ds-success-base/30"
-                : "bg-ds-bg-weak text-ds-text-strong border-ds-stroke-soft"
+                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                : "bg-white/[0.04] text-slate-300 border-white/[0.08]"
             }`}
           >
             {isPhaseAllDone
@@ -81,74 +82,115 @@ export function JourneyView({
           const isTarget = Boolean(
             activeLesson &&
               (activeLesson.slug === lesson.slug ||
-                activeLesson.code === lesson.code),
+                activeLesson.code === lesson.code)
           );
           const stepNumber = lesson.stepNumber || idx + 1;
 
           return (
             <div
               key={lesson.slug}
-              className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-ds-bg-white border transition-all duration-300 ease-out shadow-sm hover:shadow-lg hover:-translate-y-1 overflow-hidden ${
+              className={`group relative flex flex-col justify-between p-6 rounded-2xl bg-[#0E121B] border transition-all duration-300 ease-out shadow-sm hover:shadow-xl hover:-translate-y-1 overflow-hidden ${
                 isTarget
-                  ? "border-ds-feature-base ring-2 ring-ds-feature-base/20 bg-ds-feature-lighter/10"
+                  ? "border-purple-500 ring-2 ring-purple-500/25 bg-purple-500/[0.03] shadow-purple-950/20"
                   : isDone
-                  ? "border-ds-success-base/40 bg-ds-success-lighter/10 hover:border-ds-success-base/60"
-                  : "border-ds-stroke-soft hover:border-ds-feature-base/50"
+                  ? "border-emerald-500/30 bg-emerald-500/[0.02] hover:border-emerald-500/50"
+                  : "border-white/[0.07] hover:border-white/[0.15]"
               }`}
             >
-              {/* Card Header: Step number, Code badge, Status */}
-              <div>
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-ds-bg-weak border border-ds-stroke-soft text-[11px] font-mono font-bold text-ds-text-soft flex items-center justify-center">
-                      {stepNumber.toString().padStart(2, "0")}
+              {/* Card Header: Step number, Code badge, Status & Mark Done */}
+              <div className="relative z-10 space-y-3.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[11px] font-mono font-bold text-slate-400 bg-white/[0.04] px-2 py-0.5 rounded-md">
+                      Step {String(stepNumber).padStart(2, "0")}
                     </span>
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold text-ds-feature-dark bg-ds-feature-lighter border border-ds-feature-base/20">
+                    <span
+                      className={`font-mono text-xs font-black tracking-wider px-2 py-0.5 rounded-md border ${
+                        isTarget
+                          ? "bg-purple-500/20 text-purple-200 border-purple-500/40"
+                          : isDone
+                          ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30"
+                          : "bg-white/[0.04] text-slate-300 border-white/[0.08]"
+                      }`}
+                    >
                       {lesson.code}
                     </span>
                   </div>
 
-                  {isDone ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-ds-success-dark bg-ds-success-lighter border border-ds-success-base/30 px-2 py-0.5 rounded-full">
-                      <CheckCircle2 className="w-3 h-3 text-ds-success-base" />
-                      Completed
-                    </span>
-                  ) : isTarget ? (
-                    <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-ds-feature-dark bg-ds-feature-lighter border border-ds-feature-base/30 px-2 py-0.5 rounded-full animate-pulse">
-                      Next Up
-                    </span>
-                  ) : (
-                    <span className="text-[10px] font-mono text-ds-text-soft">
-                      {lesson.estimatedMinutes}m
-                    </span>
-                  )}
+                  {/* Status Indicator / Mark Complete Toggle */}
+                  <div className="flex items-center gap-2">
+                    {isDone ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleLessonComplete(lesson.slug);
+                        }}
+                        className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 transition-all cursor-pointer"
+                        title="Completed — click to toggle"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Done</span>
+                      </button>
+                    ) : isTarget ? (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full text-purple-300 bg-purple-500/15 border border-purple-500/30 shadow-sm">
+                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                        <span>Current</span>
+                      </span>
+                    ) : (
+                      <span className="text-[11px] font-mono text-slate-400 bg-white/[0.03] px-2 py-0.5 rounded-md">
+                        Step {stepNumber}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Lesson Title & Description */}
-                <h4 className="text-base font-bold text-ds-text-strong group-hover:text-ds-feature-dark transition-colors mb-2 line-clamp-2">
-                  {lesson.name}
-                </h4>
-                <p className="text-xs text-ds-text-sub leading-relaxed line-clamp-3 mb-4">
+                {/* Lesson Title */}
+                <Link href={lesson.path} className="block group-hover:underline">
+                  <h4
+                    className={`text-base font-bold transition-colors duration-200 leading-snug tracking-tight ${
+                      isTarget
+                        ? "text-white group-hover:text-purple-300"
+                        : isDone
+                        ? "text-slate-100 group-hover:text-emerald-300"
+                        : "text-slate-200 group-hover:text-white"
+                    }`}
+                  >
+                    {lesson.name}
+                  </h4>
+                </Link>
+
+                {/* Lesson Description */}
+                <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
                   {lesson.desc}
                 </p>
               </div>
 
               {/* Card Footer: Metadata badges & Action Link */}
-              <div className="pt-4 border-t border-ds-stroke-soft flex items-center justify-between">
-                <div className="flex items-center gap-2 text-[11px] text-ds-text-soft font-mono">
+              <div className="relative z-10 pt-4 mt-4 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {lesson.estimatedMinutes}m
+                    <Clock className="w-3 h-3 text-slate-500" />
+                    <span>{lesson.estimatedMinutes}m</span>
                   </span>
                   <span>·</span>
-                  <span className="text-ds-success-dark font-bold">+{lesson.xpReward} XP</span>
+                  <span className="text-purple-300 font-semibold">
+                    +{lesson.xpReward} XP
+                  </span>
                 </div>
 
                 <Link
                   href={lesson.path}
-                  className="inline-flex items-center gap-1 text-xs font-bold text-ds-feature-dark group-hover:text-ds-feature-base group-hover:translate-x-0.5 transition-all"
+                  className={`inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg transition-all ${
+                    isTarget
+                      ? "bg-purple-600 text-white shadow-md shadow-purple-600/30 hover:bg-purple-500"
+                      : isDone
+                      ? "text-slate-300 hover:text-white hover:bg-white/[0.05]"
+                      : "text-purple-400 hover:text-purple-300 hover:bg-purple-500/10"
+                  }`}
                 >
-                  <span>{isDone ? "Review" : "Start"}</span>
+                  <span>{isDone ? "Review" : isTarget ? "Continue" : "Start Step"}</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

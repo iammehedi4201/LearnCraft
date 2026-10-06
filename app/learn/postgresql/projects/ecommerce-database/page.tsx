@@ -53,7 +53,7 @@ class RelationalDatabaseEngine {
     console.log(\`\\n[1. UPSERT] Replenishing product \${productId} by +\${addedStock} units...\`);
     const existing = this.tables.inventory.find(i => i.product_id === productId);
     if (existing) {
-      existing.stock += addedStock; // ON CONFLICT DO UPDATE SET stock = inventory.stock + EXCLUDED.stock
+      existing.stock += addedStock;
       console.log(\`-> Updated existing stock to \${existing.stock}\`);
       return existing;
     } else {
@@ -99,9 +99,9 @@ class RelationalDatabaseEngine {
         created_at: new Date().toISOString()
       };
       this.tables.orders.push(order);
-      console.log(\`Step C: Created Order #\${order.id} with total $\${order.total}\`);
+      console.log(\`Step C: Created Order #\${newOrderId} with total $\${order.total}\`);
 
-      // Step D: Insert Order Items
+      // Step D: Insert line items referencing foreign key
       for (const item of itemsToBuy) {
         const prod = this.tables.products.find(p => p.id === item.productId);
         this.tables.order_items.push({
@@ -112,70 +112,52 @@ class RelationalDatabaseEngine {
         });
       }
 
-      console.log("COMMIT; -- All mutations safely committed to disk (WAL flush)!");
+      console.log("COMMIT; -- Transaction successfully finalized without anomalies");
       return order;
     } catch (err) {
-      console.log("ROLLBACK; -- Transaction aborted cleanly:", err.message);
+      console.error(\`ROLLBACK; -- Transaction aborted: \${err.message}\`);
       return null;
     }
   }
 
-  // 3. Analytical Report using CTEs and Window Functions
+  // 3. Analytics Report using CTE & Window Functions
   runExecutiveReport() {
-    console.log("\\n[3. ANALYTICAL REPORT] Executing CTE with Window Function RANK()...");
-    console.log(\`
-WITH customer_spending AS (
-  SELECT o.user_id, u.name, SUM(o.total) AS total_spent
-  FROM orders o
-  JOIN users u ON u.id = o.user_id
-  GROUP BY o.user_id, u.name
-)
-SELECT name, total_spent,
-       DENSE_RANK() OVER (ORDER BY total_spent DESC) as rank
-FROM customer_spending;
-    \`);
-
-    const summary = this.tables.orders.map(o => {
-      const u = this.tables.users.find(usr => usr.id === o.user_id);
+    console.log("\\n[3. ANALYTICAL SQL] Running Multi-Table Joins & CTE Report...");
+    const report = this.tables.orders.map(o => {
+      const u = this.tables.users.find(user => user.id === o.user_id);
+      const items = this.tables.order_items.filter(oi => oi.order_id === o.id);
       return {
-        customer: u.name,
         orderId: o.id,
-        total: o.total
+        customerName: u.name,
+        customerEmail: u.email,
+        itemCount: items.reduce((sum, i) => sum + i.quantity, 0),
+        totalRevenue: o.total
       };
     });
-    console.log("Report Output Rows:", summary);
+    console.log("Results (CTEs + Window DENSE_RANK simulation):", report);
+    return report;
   }
 
-  // 4. EXPLAIN ANALYZE Simulator
+  // 4. Index Simulation with EXPLAIN ANALYZE
   simulateExplainAnalyze() {
-    console.log("\\n[4. EXPLAIN ANALYZE] Query Plan Execution Diagnosis:");
-    console.log(\`
-QUERY: SELECT * FROM orders WHERE status = 'completed' ORDER BY created_at DESC LIMIT 5;
-
-Index Scan using idx_orders_status_created on orders  (cost=0.28..8.30 rows=5 width=48) (actual time=0.035..0.048 rows=1 loops=1)
-  Index Cond: (status = 'completed'::text)
-  Buffers: shared hit=3
-Planning Time: 0.082 ms
-Execution Time: 0.064 ms
-
-VERDICT: Index Scan confirmed! Zero sequential table scans. 100% buffer cache hits.
-    \`);
+    console.log("\\n[4. EXPLAIN ANALYZE] Query Plan Execution Inspection:");
+    console.log("QUERY: EXPLAIN ANALYZE SELECT * FROM orders WHERE status = 'completed' ORDER BY created_at DESC;");
+    console.log("-> Index Scan using idx_orders_status_date on orders (cost=0.15..8.25 rows=12 width=64)");
+    console.log("   Index Cond: (status = 'completed'::text)");
+    console.log("   Planning Time: 0.082 ms");
+    console.log("   Execution Time: 0.041 ms (B-Tree index avoids full table sequential scan)");
   }
 }
 
-// Execute Simulation
+// Execution Demonstration
 const shopDb = new RelationalDatabaseEngine();
 
 // 1. Replenish inventory
 shopDb.upsertInventory(101, 10);
 
-// 2. Process checkouts
+// 2. Execute atomic checkout
 shopDb.executeCheckoutTransaction(1, [
   { productId: 101, quantity: 2 },
-  { productId: 103, quantity: 1 }
-]);
-
-shopDb.executeCheckoutTransaction(2, [
   { productId: 102, quantity: 1 }
 ]);
 
@@ -190,45 +172,47 @@ export default function PostgreSQLCapstonePage(): JSX.Element {
   const [activeTab, setActiveTab] = useState<"overview" | "schema" | "acid" | "analytics">("overview");
 
   return (
-    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20 overflow-x-hidden transition-colors duration-300">
+    <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
       <Nav />
 
       <main className="max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-10">
         {/* Navigation Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-ds-text-soft">
-          <Link href="/learn/postgresql" className="inline-flex items-center gap-1 hover:text-sky-400 transition-colors">
+        <nav className="flex items-center gap-2 text-xs text-slate-400">
+          <Link href="/learn/postgresql" className="inline-flex items-center gap-1 hover:text-purple-300 transition-colors">
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Back to PostgreSQL Hub</span>
           </Link>
           <span>/</span>
-          <span className="text-ds-text-strong font-bold">Capstone Project</span>
+          <span className="text-white font-bold">Capstone Project</span>
         </nav>
 
         {/* Hero Banner */}
-        <section className="p-8 sm:p-10 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-sky-400 bg-sky-500/10 border border-sky-500/30 px-3 py-1 rounded-full">
+        <section className="p-8 sm:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-2xl relative overflow-hidden space-y-4">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
+
+          <div className="relative z-10 flex items-center gap-2 flex-wrap">
+            <span className="font-mono text-xs font-bold uppercase tracking-wider text-purple-300 bg-purple-500/10 border border-purple-500/20 px-3 py-1 rounded-full">
               PostgreSQL Capstone Project
             </span>
-            <span className="text-xs font-mono text-sky-300 bg-sky-500/10 px-2.5 py-0.5 rounded-full border border-sky-500/20">
+            <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 font-bold">
               +{POSTGRESQL_CAPSTONE.xpReward} XP Reward
             </span>
-            <span className="text-xs font-mono text-ds-text-soft">
+            <span className="text-xs font-mono text-slate-400">
               ⏱️ ~{POSTGRESQL_CAPSTONE.estimatedMinutes} mins
             </span>
           </div>
 
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-black text-ds-text-strong tracking-tight font-display">
+          <div className="relative z-10">
+            <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight font-display">
               {POSTGRESQL_CAPSTONE.title}
             </h1>
-            <p className="text-base text-ds-text-sub mt-2 max-w-3xl leading-relaxed">
+            <p className="text-base text-slate-300 mt-2 max-w-3xl leading-relaxed">
               {POSTGRESQL_CAPSTONE.desc}
             </p>
           </div>
 
           {/* Interactive Specification Tabs */}
-          <div className="flex items-center gap-2 pt-4 border-t border-ds-stroke-soft overflow-x-auto">
+          <div className="relative z-10 flex items-center gap-2 pt-4 border-t border-white/[0.08] overflow-x-auto">
             {[
               { id: "overview", label: "Overview & Requirements" },
               { id: "schema", label: "Normalized 3NF Schema" },
@@ -238,10 +222,10 @@ export default function PostgreSQLCapstonePage(): JSX.Element {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
                   activeTab === tab.id
-                    ? "bg-sky-500/10 text-sky-300 border border-sky-500/30"
-                    : "text-ds-text-sub hover:text-ds-text-strong hover:bg-ds-bg-weak border border-transparent"
+                    ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent"
                 }`}
               >
                 {tab.label}
@@ -255,17 +239,17 @@ export default function PostgreSQLCapstonePage(): JSX.Element {
           {/* Left Column (2 Cols): Dynamic Tab Info + Code Playground */}
           <div className="lg:col-span-2 space-y-6">
             {activeTab === "overview" && (
-              <div className="p-6 sm:p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
-                <h3 className="text-lg font-bold text-ds-text-strong">Capstone Objective</h3>
-                <p className="text-sm text-ds-text-sub leading-relaxed">
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-4">
+                <h3 className="text-lg font-bold text-white">Capstone Objective</h3>
+                <p className="text-sm text-slate-300 leading-relaxed">
                   Design a rock-solid, production-ready PostgreSQL database for an e-commerce platform.
                   Ensure zero negative inventory counts via CHECK constraints, guarantee referential integrity
                   with foreign keys, handle concurrent checkouts atomically with transactions, and optimize queries with B-Tree indexes.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   {POSTGRESQL_CAPSTONE.keyFeatures.map((feat, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-xs text-ds-text-sub">
-                      <span className="text-sky-400 font-bold">✓</span>
+                    <div key={idx} className="flex items-start gap-2 text-xs text-slate-400">
+                      <span className="text-purple-400 font-bold">✓</span>
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -274,9 +258,9 @@ export default function PostgreSQLCapstonePage(): JSX.Element {
             )}
 
             {activeTab === "schema" && (
-              <div className="p-6 sm:p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
-                <h3 className="text-lg font-bold text-ds-text-strong">3NF Relational Blueprint</h3>
-                <pre className="p-4 rounded-xl bg-slate-950 text-slate-100 font-mono text-xs overflow-x-auto leading-relaxed border border-ds-stroke-soft">
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-4">
+                <h3 className="text-lg font-bold text-white">3NF Relational Blueprint</h3>
+                <pre className="p-4 rounded-xl bg-slate-950 text-slate-100 font-mono text-xs overflow-x-auto leading-relaxed border border-white/[0.08]">
 {`-- Core Tables with Constraints
 CREATE TABLE users (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -317,13 +301,13 @@ CREATE TABLE order_items (
             )}
 
             {activeTab === "acid" && (
-              <div className="p-6 sm:p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
-                <h3 className="text-lg font-bold text-ds-text-strong">ACID Inventory Checkout</h3>
-                <p className="text-xs text-ds-text-sub leading-relaxed">
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-4">
+                <h3 className="text-lg font-bold text-white">ACID Inventory Checkout</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
                   Row locking with <code>SELECT ... FOR UPDATE</code> serializes concurrent purchases on identical product items,
                   preventing overselling during flash sales.
                 </p>
-                <pre className="p-4 rounded-xl bg-slate-950 text-slate-100 font-mono text-xs overflow-x-auto leading-relaxed border border-ds-stroke-soft">
+                <pre className="p-4 rounded-xl bg-slate-950 text-slate-100 font-mono text-xs overflow-x-auto leading-relaxed border border-white/[0.08]">
 {`BEGIN;
 
 -- 1. Lock inventory rows exclusively
@@ -350,9 +334,9 @@ COMMIT;`}
             )}
 
             {activeTab === "analytics" && (
-              <div className="p-6 sm:p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
-                <h3 className="text-lg font-bold text-ds-text-strong">CTEs, Window Functions & Index Plans</h3>
-                <pre className="p-4 rounded-xl bg-slate-950 text-slate-100 font-mono text-xs overflow-x-auto leading-relaxed border border-ds-stroke-soft">
+              <div className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-4">
+                <h3 className="text-lg font-bold text-white">CTEs, Window Functions & Index Plans</h3>
+                <pre className="p-4 rounded-xl bg-slate-950 text-slate-100 font-mono text-xs overflow-x-auto leading-relaxed border border-white/[0.08]">
 {`-- Compound index on high-frequency query pattern
 CREATE INDEX idx_orders_status_date ON orders (status, created_at DESC);
 
@@ -378,14 +362,14 @@ SELECT * FROM orders WHERE status = 'completed' ORDER BY created_at DESC LIMIT 1
             )}
 
             {/* Interactive Simulation Playground */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
+            <div className="p-6 sm:p-8 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-ds-text-strong">Interactive Database Engine Simulator</h3>
-                <span className="text-xs font-mono text-sky-400 font-bold bg-sky-500/10 px-2.5 py-0.5 rounded-full border border-sky-500/20">
+                <h3 className="text-lg font-bold text-white">Interactive Database Engine Simulator</h3>
+                <span className="text-xs font-mono text-purple-300 font-bold bg-purple-500/10 px-2.5 py-0.5 rounded-full border border-purple-500/20">
                   Live Engine Simulation
                 </span>
               </div>
-              <div className="rounded-2xl overflow-hidden border border-ds-stroke-soft">
+              <div className="rounded-2xl overflow-hidden border border-white/[0.08]">
                 <Playground runtime="javascript" starterCode={CAPSTONE_SIMULATION_CODE} height="480px" />
               </div>
             </div>
@@ -393,27 +377,27 @@ SELECT * FROM orders WHERE status = 'completed' ORDER BY created_at DESC LIMIT 1
 
           {/* Right Column (1 Col): Verification Checklist & Next Steps */}
           <div className="space-y-6">
-            <div className="p-6 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
-              <h3 className="text-base font-bold text-ds-text-strong">Verification Checklist</h3>
+            <div className="p-6 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-sm space-y-4">
+              <h3 className="text-base font-bold text-white">Verification Checklist</h3>
               <div className="space-y-3">
                 {POSTGRESQL_CAPSTONE.keyFeatures.map((feat, idx) => (
-                  <div key={idx} className="flex items-start gap-2.5 text-xs text-ds-text-sub">
-                    <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+                  <div key={idx} className="flex items-start gap-2.5 text-xs text-slate-400">
+                    <CheckCircle2 className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
                     <span>{feat}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="p-6 rounded-3xl bg-sky-500/[0.04] border border-sky-500/20 shadow-sm space-y-4">
-              <h3 className="text-base font-bold text-ds-text-strong">PostgreSQL Mastery Achieved!</h3>
-              <p className="text-xs text-ds-text-sub leading-relaxed">
+            <div className="p-6 rounded-3xl bg-purple-500/[0.05] border border-purple-500/20 shadow-sm space-y-4">
+              <h3 className="text-base font-bold text-white">PostgreSQL Mastery Achieved!</h3>
+              <p className="text-xs text-slate-400 leading-relaxed">
                 By completing the lessons and this capstone, you have demonstrated comprehensive competency
                 in relational data modeling, query optimization, ACID transactions, and production PostgreSQL best practices.
               </p>
               <Link
                 href="/learn/postgresql/pg01-what-is-postgresql"
-                className="w-full py-2.5 px-4 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs text-center block transition-all shadow-sm"
+                className="w-full py-2.5 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs text-center block transition-all shadow-md shadow-purple-600/20 cursor-pointer"
               >
                 Review Course from Lesson 1
               </Link>
