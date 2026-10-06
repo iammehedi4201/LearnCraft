@@ -66,6 +66,7 @@ export default function JSLessonPage(): JSX.Element {
     handleSectionChange,
     handlePrev,
     handleNext,
+    completeLesson,
     getStepState,
   } = useJSModuleProgress({
     lessonSlug: slug,
@@ -629,7 +630,12 @@ export default function JSLessonPage(): JSX.Element {
             </div>
 
             {/* Inter-Lesson Global Navigation Footer */}
-            <LessonNavFooter currentSlug={lesson.slug} />
+            <LessonNavFooter
+              currentSlug={lesson.slug}
+              isLessonCompleted={isLessonCompleted}
+              canComplete={currentIndex === sections.length - 1}
+              onLessonComplete={completeLesson}
+            />
           </main>
         </div>
       </div>

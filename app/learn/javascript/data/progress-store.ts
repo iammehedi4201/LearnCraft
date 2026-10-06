@@ -34,10 +34,26 @@ export async function fetchProgressFromDB(): Promise<JSProgress> {
     try {
       const res = await fetch("/api/progress", { cache: "no-store" });
       if (res.status === 401) {
+        // Unauthenticated / Guest mode: Hydrate from localStorage instead of wiping
+        let localCompleted: string[] = [];
+        let localSlug: string | null = null;
+        let localGoal: string = "foundations";
+        try {
+          const raw = localStorage.getItem("learncraft_js_progress");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed.completedLessons)) {
+              localCompleted = parsed.completedLessons;
+            }
+            localSlug = parsed.currentLessonSlug || null;
+            localGoal = parsed.selectedGoal || "foundations";
+          }
+        } catch {}
+
         inMemoryProgress = {
-          completedLessons: [],
-          currentLessonSlug: null,
-          selectedGoal: "foundations",
+          completedLessons: localCompleted,
+          currentLessonSlug: localSlug,
+          selectedGoal: localGoal,
           lastVisitedAt: Date.now(),
         };
         isDbHydrated = true;
@@ -63,12 +79,35 @@ export async function fetchProgressFromDB(): Promise<JSProgress> {
 
           const activeSlug = startedLessons[0]?.module || inMemoryProgress.currentLessonSlug;
 
+          // Merge DB completions with local cache
+          let localCompleted: string[] = [];
+          try {
+            const raw = localStorage.getItem("learncraft_js_progress");
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed.completedLessons)) {
+                localCompleted = parsed.completedLessons;
+              }
+            }
+          } catch {}
+
+          const mergedCompleted = Array.from(
+            new Set([...completedFromDb, ...localCompleted])
+          );
+
           inMemoryProgress = {
             ...inMemoryProgress,
-            completedLessons: Array.from(new Set(completedFromDb)),
+            completedLessons: mergedCompleted,
             currentLessonSlug: activeSlug || null,
             lastVisitedAt: Date.now(),
           };
+
+          try {
+            localStorage.setItem(
+              "learncraft_js_progress",
+              JSON.stringify(inMemoryProgress)
+            );
+          } catch {}
 
           isDbHydrated = true;
 
@@ -81,6 +120,25 @@ export async function fetchProgressFromDB(): Promise<JSProgress> {
       }
     } catch (err) {
       console.error("[JSProgressStore] Error fetching from DB:", err);
+      // Fallback: read localStorage
+      try {
+        const raw = localStorage.getItem("learncraft_js_progress");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          inMemoryProgress = {
+            completedLessons: parsed.completedLessons || [],
+            currentLessonSlug: parsed.currentLessonSlug || null,
+            selectedGoal: parsed.selectedGoal || "foundations",
+            lastVisitedAt: Date.now(),
+          };
+          isDbHydrated = true;
+          window.dispatchEvent(
+            new CustomEvent("learncraft-js-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
+        }
+      } catch {}
     } finally {
       ongoingDbFetch = null;
     }
@@ -148,43 +206,47 @@ export function saveProgress(progress: Partial<JSProgress>): void {
 }
 
 export function isLessonComplete(slugOrCode: string): boolean {
+  if (!slugOrCode) return false;
   const p = getProgress();
-  return p.completedLessons.some(
+  const all = getAllLessons();
+  const matchedLesson = all.find(
     (l) =>
-      l === slugOrCode ||
-      l.toLowerCase() === slugOrCode.toLowerCase() ||
-      slugOrCode.endsWith(`/${l}`) ||
-      l.endsWith(`/${slugOrCode}`)
+      l.slug === slugOrCode ||
+      l.code === slugOrCode ||
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
+
+  return p.completedLessons.some((item) => {
+    const norm = item.toLowerCase();
+    if (norm === slugOrCode.toLowerCase()) return true;
+    if (
+      matchedLesson &&
+      (norm === matchedLesson.slug.toLowerCase() ||
+        norm === matchedLesson.code.toLowerCase())
+    ) {
+      return true;
+    }
+    return false;
+  });
 }
 
 export async function markLessonComplete(slug: string): Promise<void> {
-  const p = getProgress();
-  if (!p.completedLessons.includes(slug)) {
-    const updated = [...p.completedLessons, slug];
-    saveProgress({ completedLessons: updated });
-
-    try {
-      await fetch("/api/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          module: slug,
-          completed: true,
-          activeModule: slug,
-        }),
-      });
-    } catch (err) {
-      console.error("[JSProgressStore] Error syncing with DB:", err);
-    }
-  }
-}
-
-export async function markLessonIncomplete(slug: string): Promise<void> {
-  const p = getProgress();
-  const updated = p.completedLessons.filter(
-    (l) => l !== slug && !slug.endsWith(`/${l}`) && !l.endsWith(`/${slug}`)
+  if (!slug) return;
+  const all = getAllLessons();
+  const matched = all.find(
+    (l) =>
+      l.slug === slug ||
+      l.code === slug ||
+      l.slug.toLowerCase() === slug.toLowerCase() ||
+      l.code.toLowerCase() === slug.toLowerCase()
   );
+  const canonicalSlug = matched?.slug || slug;
+
+  const p = getProgress();
+  if (isLessonComplete(canonicalSlug)) return;
+
+  const updated = Array.from(new Set([...p.completedLessons, canonicalSlug]));
   saveProgress({ completedLessons: updated });
 
   try {
@@ -192,9 +254,50 @@ export async function markLessonIncomplete(slug: string): Promise<void> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        module: slug,
+        module: canonicalSlug,
+        completed: true,
+        activeModule: canonicalSlug,
+        score: 100,
+        force: true,
+      }),
+    });
+  } catch (err) {
+    console.error("[JSProgressStore] Error syncing with DB:", err);
+  }
+}
+
+export async function markLessonIncomplete(slug: string): Promise<void> {
+  if (!slug) return;
+  const all = getAllLessons();
+  const matched = all.find(
+    (l) =>
+      l.slug === slug ||
+      l.code === slug ||
+      l.slug.toLowerCase() === slug.toLowerCase() ||
+      l.code.toLowerCase() === slug.toLowerCase()
+  );
+  const targetSlug = matched?.slug || slug;
+  const targetCode = matched?.code;
+
+  const p = getProgress();
+  const updated = p.completedLessons.filter((s) => {
+    const norm = s.toLowerCase();
+    if (norm === targetSlug.toLowerCase()) return false;
+    if (targetCode && norm === targetCode.toLowerCase()) return false;
+    return true;
+  });
+  saveProgress({ completedLessons: updated });
+
+  try {
+    await fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        module: targetSlug,
         completed: false,
-        activeModule: slug,
+        activeModule: targetSlug,
+        score: 0,
+        force: true,
       }),
     });
   } catch (err) {

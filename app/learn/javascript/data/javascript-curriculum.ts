@@ -9,6 +9,8 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export type ContentTag = "CORE" | "BUILD" | "PROFESSIONAL" | "REFERENCE";
 
 export interface LessonMeta {
@@ -780,4 +782,44 @@ export function getLessonsByPhaseId(phaseId: string): LessonMeta[] {
   return phase.lessonCodes
     .map((code) => all.find((l) => l.code === code))
     .filter((l): l is LessonMeta => l !== undefined);
+}
+
+export function getJavaScriptCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "javascript",
+    title: "Learn JavaScript",
+    prerequisites: {
+      items: [
+        "Basic computer literacy and browsing the web",
+        "Writing basic HTML tags and structure",
+        "Opening the browser Developer Tools console (F12)",
+      ],
+      refresherHref: "/roadmaps?category=language#skill-roadmaps",
+      refresherLabel: "New to web development? Open the Web Basics guide",
+    },
+    capstone: {
+      title: JS_CAPSTONE.title,
+      description:
+        "Your finish line: build a complete, modular Task & Workflow Management application using everything you learn.",
+      href: JS_CAPSTONE.path,
+    },
+    phases: JS_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.label,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
 }
