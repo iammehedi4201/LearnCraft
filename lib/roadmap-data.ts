@@ -18,6 +18,8 @@ import { NODEJS_STAGES } from "@/app/learn/nodejs/data/nodejs-curriculum";
 import { EXPRESS_STAGES } from "@/app/learn/express/data/express-curriculum";
 import { MONGODB_STAGES } from "@/app/learn/mongodb/data/mongodb-curriculum";
 import { POSTGRESQL_STAGES } from "@/app/learn/postgresql/data/postgresql-curriculum";
+import { PRISMA_STAGES } from "@/app/learn/prisma/data/prisma-curriculum";
+import { REDUX_STAGES } from "@/app/learn/redux/data/redux-curriculum";
 
 
 
@@ -26,7 +28,7 @@ import { POSTGRESQL_STAGES } from "@/app/learn/postgresql/data/postgresql-curric
 // ─────────────────────────────────────────────────────────────
 
 export type SkillStatus = "available" | "coming-soon";
-export type SkillCategory = "frontend" | "backend" | "database" | "devops" | "architecture" | "language";
+export type SkillCategory = "frontend" | "backend" | "database" | "orm" | "state-management" | "language";
 export type SkillLevel = "beginner" | "intermediate" | "advanced" | "beginner-advanced";
 
 export interface RoadmapLesson {
@@ -279,7 +281,45 @@ const postgresqlStages: RoadmapStage[] = POSTGRESQL_STAGES.map((stage) => ({
   })),
 }));
 
+// ─────────────────────────────────────────────────────────────
+// Prisma — derived from prisma-curriculum
+// ─────────────────────────────────────────────────────────────
 
+const prismaStages: RoadmapStage[] = PRISMA_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+// ─────────────────────────────────────────────────────────────
+// Redux — derived from redux-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const reduxStages: RoadmapStage[] = REDUX_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
 
 // ─────────────────────────────────────────────────────────────
 // TanStack Query — defined here
@@ -502,6 +542,34 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
+    id: "prisma",
+    slug: "prisma",
+    title: "Prisma",
+    description: "Next-Generation Typed ORM, Migrations & Data Access",
+    icon: "💎",
+    category: "orm",
+    level: "beginner-advanced",
+    status: "available",
+    totalLessons: 27,
+    stages: prismaStages,
+    learnPath: "/learn/prisma",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
+  },
+  {
+    id: "redux",
+    slug: "redux",
+    title: "Redux",
+    description: "Predictable State Management, Redux Toolkit, Selectors & One-Way Data Flow",
+    icon: "🟣",
+    category: "state-management",
+    level: "beginner-advanced",
+    status: "available",
+    totalLessons: 26,
+    stages: reduxStages,
+    learnPath: "/learn/redux",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
+  },
+  {
     id: "redis",
     slug: "redis",
     title: "Redis",
@@ -521,7 +589,7 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     title: "Docker",
     description: "Containerization, Compose & Production Deployment",
     icon: "🐳",
-    category: "devops",
+    category: "backend",
     level: "intermediate",
     status: "coming-soon",
     totalLessons: 0,
@@ -546,6 +614,7 @@ export const ROLE_ROADMAPS: RoleRoadmap[] = [
       { skillSlug: "javascript", skillTitle: "JavaScript", required: true },
       { skillSlug: "typescript", skillTitle: "TypeScript", required: true },
       { skillSlug: "react", skillTitle: "React", required: true },
+      { skillSlug: "redux", skillTitle: "Redux", required: true },
       { skillSlug: "nextjs", skillTitle: "Next.js", required: true },
       // { skillSlug: "tanstack", skillTitle: "TanStack Query", required: true },
     ],
@@ -564,6 +633,7 @@ export const ROLE_ROADMAPS: RoleRoadmap[] = [
       { skillSlug: "nestjs", skillTitle: "NestJS", required: true },
       { skillSlug: "postgresql", skillTitle: "PostgreSQL", required: true, alternatives: ["mongodb"] },
       { skillSlug: "mongodb", skillTitle: "MongoDB", required: false },
+      { skillSlug: "prisma", skillTitle: "Prisma (ORM)", required: true },
       { skillSlug: "redis", skillTitle: "Redis", required: false },
       { skillSlug: "docker", skillTitle: "Docker", required: true },
     ],
@@ -578,11 +648,13 @@ export const ROLE_ROADMAPS: RoleRoadmap[] = [
       { skillSlug: "javascript", skillTitle: "JavaScript", required: true },
       { skillSlug: "typescript", skillTitle: "TypeScript", required: true },
       { skillSlug: "react", skillTitle: "React", required: true },
+      { skillSlug: "redux", skillTitle: "Redux", required: true },
       { skillSlug: "nextjs", skillTitle: "Next.js", required: true },
       // { skillSlug: "tanstack", skillTitle: "TanStack Query", required: true },
       { skillSlug: "nodejs", skillTitle: "Node.js", required: true },
       { skillSlug: "nestjs", skillTitle: "NestJS", required: true },
       { skillSlug: "postgresql", skillTitle: "PostgreSQL", required: true },
+      { skillSlug: "prisma", skillTitle: "Prisma (ORM)", required: true },
       { skillSlug: "redis", skillTitle: "Redis", required: false },
       { skillSlug: "docker", skillTitle: "Docker", required: true },
     ],
@@ -597,8 +669,8 @@ export const CATEGORY_META: Record<SkillCategory, { label: string; icon: string 
   frontend: { label: "Frontend", icon: "🎨" },
   backend: { label: "Backend", icon: "⚙️" },
   database: { label: "Database", icon: "🗄️" },
-  devops: { label: "DevOps", icon: "🐳" },
-  architecture: { label: "Architecture", icon: "🏗️" },
+  orm: { label: "ORM", icon: "💎" },
+  "state-management": { label: "State Management", icon: "🔄" },
   language: { label: "Languages", icon: "📝" },
 };
 
@@ -615,6 +687,12 @@ export function getSkillRoadmap(slug: string): SkillRoadmap | undefined {
   }
   if (slug === "postgres" || slug === "postgresql" || slug === "psql") {
     return SKILL_ROADMAPS.find((s) => s.slug === "postgresql" || s.slug === "postgres");
+  }
+  if (slug === "prisma" || slug === "prisma-orm") {
+    return SKILL_ROADMAPS.find((s) => s.slug === "prisma");
+  }
+  if (slug === "redux" || slug === "redux-toolkit" || slug === "rtk") {
+    return SKILL_ROADMAPS.find((s) => s.slug === "redux");
   }
   return SKILL_ROADMAPS.find((s) => s.slug === slug);
 }

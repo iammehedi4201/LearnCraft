@@ -31,7 +31,7 @@ export function Nav() {
   );
 }
 
-type CoreCategory = "language" | "frontend" | "backend" | "database" | "devops";
+type CoreCategory = "language" | "frontend" | "backend" | "database" | "orm" | "state-management";
 
 interface CategoryMeta {
   id: CoreCategory;
@@ -71,11 +71,18 @@ const CATEGORIES: CategoryMeta[] = [
     upcomingTopics: ["PostgreSQL", "MongoDB", "Redis"],
   },
   {
-    id: "devops",
-    label: "DevOps & Cloud",
-    icon: "🐳",
-    description: "Containerization, CI/CD pipelines, Docker, Kubernetes & cloud deployment",
-    upcomingTopics: ["Docker", "Kubernetes", "CI/CD & Cloud"],
+    id: "orm",
+    label: "ORM",
+    icon: "💎",
+    description: "Type-safe ORMs, data-access layers, migrations & schema contracts",
+    upcomingTopics: ["Prisma", "Drizzle ORM"],
+  },
+  {
+    id: "state-management",
+    label: "State Management",
+    icon: "🔄",
+    description: "Predictable client state, one-way data flow, Redux Toolkit & store architectures",
+    upcomingTopics: ["Redux", "Zustand"],
   },
 ];
 
@@ -152,7 +159,8 @@ function NavContent(): JSX.Element {
       frontend: [],
       backend: [],
       database: [],
-      devops: [],
+      orm: [],
+      "state-management": [],
     };
 
     SKILL_ROADMAPS.forEach((skill) => {
