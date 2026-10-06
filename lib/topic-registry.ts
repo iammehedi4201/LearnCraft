@@ -86,10 +86,44 @@ export const TOPICS_META: Record<
     icon: "🚀",
     description: "Core Learning Craft Foundations",
   },
+  mongodb: {
+    title: "MongoDB",
+    badgeColor: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
+    icon: "🍃",
+    description: "Document Database, Aggregation, Indexes & Data Modeling",
+  },
 };
 
 // Known lessons database map
 export const KNOWN_LESSONS: Record<string, { code: string; name: string; topicId: string }> = {
+  // MongoDB Lessons
+  "/learn/mongodb/mdb01-what-is-mongodb": { code: "MDB-01", name: "What Is MongoDB & Why Documents?", topicId: "mongodb" },
+  "/learn/mongodb/mdb02-databases-collections-bson": { code: "MDB-02", name: "Databases, Collections & BSON Data Types", topicId: "mongodb" },
+  "/learn/mongodb/mdb03-mongosh-and-compass": { code: "MDB-03", name: "Working with the Mongo Shell (mongosh) & Compass", topicId: "mongodb" },
+  "/learn/mongodb/mdb04-create-insert": { code: "MDB-04", name: "Inserting Documents (insertOne & insertMany)", topicId: "mongodb" },
+  "/learn/mongodb/mdb05-read-find-projections": { code: "MDB-05", name: "Reading Documents (find, findOne & Projections)", topicId: "mongodb" },
+  "/learn/mongodb/mdb06-update-operators": { code: "MDB-06", name: "Updating Documents ($set, $inc, $unset & updateOne)", topicId: "mongodb" },
+  "/learn/mongodb/mdb07-delete-documents": { code: "MDB-07", name: "Deleting Documents (deleteOne & deleteMany)", topicId: "mongodb" },
+  "/learn/mongodb/mdb08-comparison-logical-operators": { code: "MDB-08", name: "Comparison & Logical Operators", topicId: "mongodb" },
+  "/learn/mongodb/mdb09-element-evaluation-operators": { code: "MDB-09", name: "Element & Evaluation Operators ($exists, $regex)", topicId: "mongodb" },
+  "/learn/mongodb/mdb10-sort-limit-pagination": { code: "MDB-10", name: "Cursor Methods: Sorting, Limiting & Pagination", topicId: "mongodb" },
+  "/learn/mongodb/mdb11-querying-arrays-nested": { code: "MDB-11", name: "Querying Arrays & Nested Objects with Dot Notation", topicId: "mongodb" },
+  "/learn/mongodb/mdb12-updating-arrays-operators": { code: "MDB-12", name: "Updating Arrays ($push, $pull, $addToSet & Positional $)", topicId: "mongodb" },
+  "/learn/mongodb/mdb13-embedding-vs-referencing": { code: "MDB-13", name: "Embedding vs Referencing: The Core Design Decision", topicId: "mongodb" },
+  "/learn/mongodb/mdb14-modeling-relationships": { code: "MDB-14", name: "Modeling 1-to-1, 1-to-Many & Many-to-Many Relationships", topicId: "mongodb" },
+  "/learn/mongodb/mdb15-denormalization-unbounded-growth": { code: "MDB-15", name: "Denormalization Strategies & Preventing Unbounded Growth", topicId: "mongodb" },
+  "/learn/mongodb/mdb16-schema-validation-rules": { code: "MDB-16", name: "JSON Schema Validation Rules with $jsonSchema", topicId: "mongodb" },
+  "/learn/mongodb/mdb17-enforcing-validation-actions": { code: "MDB-17", name: "Enforcing Validation Actions & Modifying Existing Schemas", topicId: "mongodb" },
+  "/learn/mongodb/mdb18-aggregation-pipeline-model": { code: "MDB-18", name: "The Aggregation Pipeline: $match & $project", topicId: "mongodb" },
+  "/learn/mongodb/mdb19-group-metrics-accumulation": { code: "MDB-19", name: "Grouping & Computing Metrics ($group, $sum, $avg)", topicId: "mongodb" },
+  "/learn/mongodb/mdb20-unwind-array-processing": { code: "MDB-20", name: "Array Deconstruction ($unwind) & Count Stages", topicId: "mongodb" },
+  "/learn/mongodb/mdb21-lookup-collection-joins": { code: "MDB-21", name: "Joining Collections with $lookup (Left Outer Joins)", topicId: "mongodb" },
+  "/learn/mongodb/mdb22-indexes-fundamentals": { code: "MDB-22", name: "How Indexes Work: Single-Field, Compound & Unique", topicId: "mongodb" },
+  "/learn/mongodb/mdb23-explain-plan-esr-rule": { code: "MDB-23", name: "Analyzing Queries with explain() & The ESR Rule", topicId: "mongodb" },
+  "/learn/mongodb/mdb24-atomicity-multi-doc-transactions": { code: "MDB-24", name: "Document Atomicity vs Multi-Document ACID Transactions", topicId: "mongodb" },
+  "/learn/mongodb/mdb25-debugging-anti-patterns": { code: "MDB-25", name: "Debugging Slow Queries & Common Schema Anti-Patterns", topicId: "mongodb" },
+  "/learn/mongodb/mdb26-production-best-practices": { code: "MDB-26", name: "Production Best Practices, Sizing & Security Checklist", topicId: "mongodb" },
+
   // Express.js Lessons
   "/learn/express/exp01-what-is-express": { code: "EXP-01", name: "What Is Express.js", topicId: "express" },
   "/learn/express/exp02-app-object": { code: "EXP-02", name: "Creating the Application & The app Object", topicId: "express" },

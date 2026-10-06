@@ -12,7 +12,7 @@ import {
 import {
   getNextLesson,
   getPrevLesson,
-} from "../data/express-curriculum";
+} from "../data/mongodb-curriculum";
 import {
   isLessonComplete,
   toggleLessonComplete,
@@ -52,7 +52,7 @@ export function LessonNavFooter({
     };
 
     window.addEventListener(
-      "learncraft-express-progress-updated",
+      "learncraft-mongodb-progress-updated",
       handleProgressUpdated
     );
     window.addEventListener(
@@ -62,7 +62,7 @@ export function LessonNavFooter({
     return () => {
       isMounted = false;
       window.removeEventListener(
-        "learncraft-express-progress-updated",
+        "learncraft-mongodb-progress-updated",
         handleProgressUpdated
       );
       window.removeEventListener(
@@ -106,11 +106,11 @@ export function LessonNavFooter({
             </Link>
           ) : (
             <Link
-              href="/learn/express"
+              href="/learn/mongodb"
               className="inline-flex items-center gap-2 text-xs text-ds-text-soft hover:text-ds-text-strong p-3"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Express.js Hub</span>
+              <span>MongoDB Hub</span>
             </Link>
           )}
         </div>
@@ -169,7 +169,7 @@ export function LessonNavFooter({
             </Link>
           ) : (
             <Link
-              href="/learn/express/projects/task-flow-api"
+              href="/learn/mongodb/projects/ecommerce-database"
               className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-ds-feature-lighter border border-ds-feature-base/30 hover:border-ds-feature-base transition-all text-right w-full sm:w-auto shadow-sm"
             >
               <div className="overflow-hidden">
@@ -177,7 +177,7 @@ export function LessonNavFooter({
                   Final Capstone
                 </span>
                 <span className="text-xs font-bold text-ds-feature-dark truncate block max-w-[180px]">
-                  TaskFlow API
+                  ShopSphere DB
                 </span>
               </div>
               <div className="w-8 h-8 rounded-lg bg-ds-feature-base text-ds-static-white flex items-center justify-center">

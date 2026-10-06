@@ -10,20 +10,20 @@ import {
   getStageByLessonSlug,
   getAllLessons,
   LessonMeta,
-} from "../data/express-curriculum";
+} from "../data/mongodb-curriculum";
 import {
-  getExpressLessonContent,
-  ExpressLessonContent,
-} from "../data/express-lesson-content";
+  getMongodbLessonContent,
+  MongodbLessonContent,
+} from "../data/mongodb-lesson-content";
 import { setCurrentLesson } from "../data/progress-store";
 import { LessonNavFooter } from "../components/lesson-nav-footer";
-import { ExpressLessonSidebar } from "../components/lesson-sidebar";
-import { useExpressModuleProgress } from "../hooks/use-express-module-progress";
+import { MongodbLessonSidebar } from "../components/lesson-sidebar";
+import { useMongodbModuleProgress } from "../hooks/use-mongodb-module-progress";
 
-export default function ExpressLessonPage(): JSX.Element {
+export default function MongodbLessonPage(): JSX.Element {
   const params = useParams();
   const rawSlug = params?.slug as string;
-  const slug = rawSlug || "exp01-what-is-express";
+  const slug = rawSlug || "mdb01-what-is-mongodb";
 
   const { data: session } = useSession();
   const isAuthenticated = Boolean(session?.user);
@@ -32,19 +32,17 @@ export default function ExpressLessonPage(): JSX.Element {
     return getLessonBySlug(slug) || getAllLessons()[0];
   });
 
-  const [lessonContent, setLessonContent] = useState<ExpressLessonContent>(() => {
-    return getExpressLessonContent(slug);
+  const [lessonContent, setLessonContent] = useState<MongodbLessonContent>(() => {
+    return getMongodbLessonContent(slug);
   });
 
-  const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<number | null>(
-    null
-  );
+  const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<number | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
 
   useEffect(() => {
     const foundLesson = getLessonBySlug(slug) || getAllLessons()[0];
     setLesson(foundLesson);
-    setLessonContent(getExpressLessonContent(slug));
+    setLessonContent(getMongodbLessonContent(slug));
     setCurrentLesson(foundLesson.slug);
     setSelectedQuizAnswer(null);
     setQuizSubmitted(false);
@@ -62,7 +60,7 @@ export default function ExpressLessonPage(): JSX.Element {
     handlePrev,
     handleNext,
     getStepState,
-  } = useExpressModuleProgress({
+  } = useMongodbModuleProgress({
     lessonSlug: slug,
     sections,
   });
@@ -103,7 +101,7 @@ export default function ExpressLessonPage(): JSX.Element {
                   {lessonContent.part1.title}
                 </h2>
               </div>
-              <span className="text-2xl">💡</span>
+              <span className="text-2xl">🍃</span>
             </div>
 
             <div className="text-sm sm:text-base text-ds-text-strong leading-relaxed font-normal bg-ds-feature-lighter p-5 rounded-2xl border border-ds-feature-base/20">
@@ -329,7 +327,7 @@ export default function ExpressLessonPage(): JSX.Element {
             <div className="rounded-2xl overflow-hidden border border-ds-stroke-soft shadow-sm">
               <Playground
                 key={`${slug}-${activeSection}`}
-                runtime="typescript"
+                runtime="javascript"
                 starterCode={lessonContent.part5.starterCode}
               />
             </div>
@@ -486,7 +484,7 @@ export default function ExpressLessonPage(): JSX.Element {
            ========================================================================= */}
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
           {/* Stepper Sidebar on the LEFT */}
-          <ExpressLessonSidebar
+          <MongodbLessonSidebar
             lessonCode={lesson.code}
             stageName={stage?.name}
             sections={sections}
@@ -507,7 +505,7 @@ export default function ExpressLessonPage(): JSX.Element {
               {/* Lesson Hero Header Card */}
               <section className="p-8 rounded-3xl bg-ds-bg-white border border-ds-stroke-soft shadow-sm space-y-4">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="font-mono text-xs font-black tracking-wider text-ds-feature-dark bg-ds-feature-lighter border border-ds-feature-base/30 px-3 py-1 rounded-lg">
+                  <span className="font-mono text-xs font-black tracking-wider text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-3 py-1 rounded-lg">
                     {lesson.code}
                   </span>
                   {stage && (
@@ -521,8 +519,8 @@ export default function ExpressLessonPage(): JSX.Element {
                   <span className="text-xs font-mono text-ds-text-soft bg-ds-bg-weak border border-ds-stroke-soft px-2.5 py-0.5 rounded">
                     ⏱️ {lesson.estimatedMinutes} mins
                   </span>
-                  <span className="text-xs font-mono text-ds-success-dark bg-ds-success-lighter border border-ds-success-base/30 px-2.5 py-0.5 rounded font-bold">
-                    +100 XP
+                  <span className="text-xs font-mono text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2.5 py-0.5 rounded font-bold">
+                    +{lesson.xpReward} XP
                   </span>
                   {lesson.prerequisite && (
                     <span className="text-xs text-ds-text-soft bg-ds-bg-weak px-2.5 py-0.5 rounded border border-ds-stroke-soft">

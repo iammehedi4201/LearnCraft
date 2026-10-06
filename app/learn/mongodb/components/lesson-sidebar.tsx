@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { LayoutGrid } from "./icons";
-import { ExpressSectionItem } from "../hooks/use-express-module-progress";
+import { MongodbSectionItem } from "../hooks/use-mongodb-module-progress";
 
-interface ExpressLessonSidebarProps {
+interface MongodbLessonSidebarProps {
   lessonCode: string;
   stageName?: string;
-  sections: ExpressSectionItem[];
+  sections: MongodbSectionItem[];
   currentIndex: number;
   progressPercent: number;
   completedSectionsCount: number;
@@ -19,7 +19,7 @@ interface ExpressLessonSidebarProps {
   onNext: () => void;
 }
 
-export function ExpressLessonSidebar({
+export function MongodbLessonSidebar({
   lessonCode,
   stageName: _stageName,
   sections,
@@ -32,7 +32,7 @@ export function ExpressLessonSidebar({
   onSelectSection,
   onPrev,
   onNext,
-}: ExpressLessonSidebarProps) {
+}: MongodbLessonSidebarProps) {
   return (
     <aside className="w-full lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
       {/* Header */}
@@ -194,11 +194,11 @@ export function ExpressLessonSidebar({
       {/* Course Hub link */}
       <div className="mt-3 pt-3 shrink-0 border-t border-ds-stroke-soft text-center">
         <Link
-          href="/learn/express"
+          href="/learn/mongodb"
           className="inline-flex items-center gap-1.5 text-xs text-ds-text-sub hover:text-ds-feature-dark transition-colors font-semibold"
         >
           <LayoutGrid className="w-3.5 h-3.5" />
-          <span>Express.js Curriculum</span>
+          <span>MongoDB Curriculum</span>
         </Link>
       </div>
     </aside>

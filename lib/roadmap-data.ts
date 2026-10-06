@@ -16,6 +16,8 @@ import { JS_STAGES } from "@/app/learn/javascript/data/javascript-curriculum";
 import { REACT_STAGES } from "@/app/learn/react/data/react-curriculum";
 import { NODEJS_STAGES } from "@/app/learn/nodejs/data/nodejs-curriculum";
 import { EXPRESS_STAGES } from "@/app/learn/express/data/express-curriculum";
+import { MONGODB_STAGES } from "@/app/learn/mongodb/data/mongodb-curriculum";
+
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -236,6 +238,27 @@ const expressStages: RoadmapStage[] = EXPRESS_STAGES.map((stage) => ({
 }));
 
 // ─────────────────────────────────────────────────────────────
+// MongoDB — derived from mongodb-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const mongodbStages: RoadmapStage[] = MONGODB_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+
+// ─────────────────────────────────────────────────────────────
 // TanStack Query — defined here
 // ─────────────────────────────────────────────────────────────
 
@@ -445,15 +468,15 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     id: "mongodb",
     slug: "mongodb",
     title: "MongoDB",
-    description: "Document Database, Aggregation & Atlas",
+    description: "Document Database, Aggregation, Indexes & Data Modeling",
     icon: "🍃",
     category: "database",
     level: "beginner-advanced",
-    status: "coming-soon",
-    totalLessons: 0,
-    stages: [],
-    learnPath: "",
-    badgeColor: "bg-ds-success-lighter text-ds-success-dark border-ds-success-light",
+    status: "available",
+    totalLessons: 26,
+    stages: mongodbStages,
+    learnPath: "/learn/mongodb",
+    badgeColor: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
   },
   {
     id: "redis",
@@ -563,6 +586,9 @@ export const CATEGORY_META: Record<SkillCategory, { label: string; icon: string 
 export function getSkillRoadmap(slug: string): SkillRoadmap | undefined {
   if (slug === "express" || slug === "expressjs") {
     return SKILL_ROADMAPS.find((s) => s.slug === "expressjs" || s.slug === "express");
+  }
+  if (slug === "mongo" || slug === "mongodb") {
+    return SKILL_ROADMAPS.find((s) => s.slug === "mongodb" || s.slug === "mongo");
   }
   return SKILL_ROADMAPS.find((s) => s.slug === slug);
 }
