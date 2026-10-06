@@ -37,16 +37,47 @@ export function useTypeScriptModuleProgress({
     [sections]
   );
 
+  const storageKey = `learncraft_ts_sections_${lessonSlug}`;
+
   const [activeSection, setActiveSection] = useState<string>(() => {
     const resolvedFromUrl = resolveId(sectionParam);
     if (resolvedFromUrl) return resolvedFromUrl;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(`learncraft_ts_sections_${lessonSlug}`);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const resolved = resolveId(parsed.activeSection);
+          if (resolved) return resolved;
+        }
+      } catch {}
+    }
     return sections[0]?.id || "part1";
   });
 
-  const [completedSections, setCompletedSections] = useState<Set<string>>(
-    new Set()
-  );
-  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(false);
+  const [completedSections, setCompletedSections] = useState<Set<string>>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (isLessonComplete(lessonSlug)) {
+          return new Set(sections.map((s) => s.id));
+        }
+        const raw = localStorage.getItem(`learncraft_ts_sections_${lessonSlug}`);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.completedSections)) {
+            const valid = parsed.completedSections.filter((id: string) =>
+              sections.some((s) => s.id === id)
+            );
+            return new Set(valid);
+          }
+        }
+      } catch {}
+    }
+    return new Set();
+  });
+  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(() => {
+    return isLessonComplete(lessonSlug);
+  });
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const isMountedRef = useRef(true);
@@ -64,14 +95,61 @@ export function useTypeScriptModuleProgress({
   useEffect(() => {
     if (status === "loading") return;
 
+    let isMounted = true;
+
+    // Check localStorage hydration first (works for guests and as offline cache)
+    const hydrateFromLocal = () => {
+      try {
+        const alreadyComplete = isLessonComplete(lessonSlug);
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const validCompleted = Array.isArray(parsed.completedSections)
+            ? parsed.completedSections.filter((id: string) =>
+                sections.some((s) => s.id === id)
+              )
+            : [];
+
+          const isFullyDone =
+            alreadyComplete ||
+            Boolean(parsed.isCompleted) ||
+            (sections.length > 0 && validCompleted.length >= sections.length);
+
+          if (isFullyDone) {
+            if (isMounted) {
+              setCompletedSections(new Set(sections.map((s) => s.id)));
+              setIsLessonCompleted(true);
+            }
+          } else {
+            if (isMounted) {
+              setCompletedSections(new Set(validCompleted));
+              setIsLessonCompleted(false);
+            }
+          }
+
+          const resolvedActive = resolveId(parsed.activeSection);
+          if (!sectionParam && resolvedActive && isMounted) {
+            setActiveSection(resolvedActive);
+          }
+        } else if (alreadyComplete) {
+          if (isMounted) {
+            setCompletedSections(new Set(sections.map((s) => s.id)));
+            setIsLessonCompleted(true);
+          }
+        } else {
+          if (isMounted) {
+            setCompletedSections(new Set());
+            setIsLessonCompleted(false);
+          }
+        }
+      } catch {}
+    };
+
     if (!isAuthenticated) {
-      setCompletedSections(new Set());
-      setIsLessonCompleted(false);
-      setIsLoaded(true);
+      hydrateFromLocal();
+      if (isMounted) setIsLoaded(true);
       return;
     }
-
-    let isMounted = true;
 
     async function loadProgressFromDatabase() {
       try {
@@ -94,35 +172,46 @@ export function useTypeScriptModuleProgress({
                 .map((id: string) => resolveId(id))
                 .filter((id: string | null): id is string => Boolean(id));
 
-              if (record.completed && validCompleted.length === 0) {
+              const isDone =
+                record.completed === true ||
+                (sections.length > 0 && validCompleted.length >= sections.length);
+
+              if (isDone) {
                 validCompleted = sections.map((s) => s.id);
               }
 
               const completedSet = new Set<string>(validCompleted);
-              if (isMounted) setCompletedSections(completedSet);
+              if (isMounted) {
+                setCompletedSections(completedSet);
+                setIsLessonCompleted(isDone);
+              }
 
               const resolvedActive = resolveId(record.activeModule);
               if (!sectionParam && resolvedActive && isMounted) {
                 setActiveSection(resolvedActive);
               }
 
-              if (
-                record.completed ||
-                (sections.length > 0 && completedSet.size >= sections.length)
-              ) {
-                if (isMounted) setIsLessonCompleted(true);
-              }
+              // Also persist back to localStorage
+              try {
+                localStorage.setItem(
+                  storageKey,
+                  JSON.stringify({
+                    activeSection: resolvedActive || activeSectionRef.current,
+                    completedSections: Array.from(completedSet),
+                    isCompleted: isDone,
+                    updatedAt: Date.now(),
+                  })
+                );
+              } catch {}
             } else {
-              if (isMounted) {
-                setIsLessonCompleted(isLessonComplete(lessonSlug));
-              }
+              hydrateFromLocal();
             }
           }
+        } else {
+          hydrateFromLocal();
         }
       } catch {
-        if (isMounted) {
-          setIsLessonCompleted(isLessonComplete(lessonSlug));
-        }
+        hydrateFromLocal();
       } finally {
         if (isMounted) setIsLoaded(true);
       }
@@ -133,7 +222,7 @@ export function useTypeScriptModuleProgress({
     return () => {
       isMounted = false;
     };
-  }, [lessonSlug, isAuthenticated, status, resolveId, sectionParam, sections]);
+  }, [lessonSlug, isAuthenticated, status, resolveId, sectionParam, sections, storageKey]);
 
   // 2. Helper to sync progress to server
   const saveProgressToServer = useCallback(
@@ -151,8 +240,14 @@ export function useTypeScriptModuleProgress({
             module: lessonSlug,
             activeModule,
             completedModules: completedList,
+            totalModules: sections.length,
             completed: lessonFinished,
-            score: lessonFinished ? 100 : 0,
+            score: lessonFinished
+              ? 100
+              : sections.length > 0
+              ? Math.round((completedList.length / sections.length) * 100)
+              : 0,
+            force: true,
           }),
         });
 
@@ -163,7 +258,7 @@ export function useTypeScriptModuleProgress({
         // ignore offline errors
       }
     },
-    [lessonSlug, isAuthenticated]
+    [lessonSlug, isAuthenticated, sections.length]
   );
 
   // 3. User switches section
@@ -185,11 +280,23 @@ export function useTypeScriptModuleProgress({
           markLessonComplete(lessonSlug);
         }
 
+        try {
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              activeSection: validId,
+              completedSections: Array.from(next),
+              isCompleted: allDone,
+              updatedAt: Date.now(),
+            })
+          );
+        } catch {}
+
         saveProgressToServer(validId, Array.from(next), allDone);
         return next;
       });
     },
-    [resolveId, sections, lessonSlug, saveProgressToServer]
+    [resolveId, sections.length, lessonSlug, saveProgressToServer, storageKey]
   );
 
   // 4. Compute index & percentage
@@ -219,9 +326,22 @@ export function useTypeScriptModuleProgress({
     const allIds = sections.map((s) => s.id);
     setCompletedSections(new Set(allIds));
     setIsLessonCompleted(true);
+
+    try {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({
+          activeSection: activeSectionRef.current,
+          completedSections: allIds,
+          isCompleted: true,
+          updatedAt: Date.now(),
+        })
+      );
+    } catch {}
+
     await markLessonComplete(lessonSlug);
     await saveProgressToServer(activeSectionRef.current, allIds, true);
-  }, [sections, lessonSlug, saveProgressToServer]);
+  }, [sections, lessonSlug, saveProgressToServer, storageKey]);
 
   // 7. Step navigation
   const handlePrev = useCallback(() => {

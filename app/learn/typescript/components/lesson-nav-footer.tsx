@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -13,41 +12,47 @@ import {
   getNextLesson,
   getPrevLesson,
 } from "../data/typescript-curriculum";
-import {
-  isLessonComplete,
-  toggleLessonComplete,
-} from "../data/progress-store";
+import { isLessonComplete } from "../data/progress-store";
 
 interface LessonNavFooterProps {
   currentSlug: string;
+  isLessonCompleted?: boolean;
+  canComplete?: boolean;
   onLessonComplete?: () => void;
 }
 
 export function LessonNavFooter({
   currentSlug,
+  isLessonCompleted,
+  canComplete,
   onLessonComplete,
 }: LessonNavFooterProps) {
-  const { data: session } = useSession();
-  const isAuthenticated = Boolean(session?.user);
-
-  const [completed, setCompleted] = useState<boolean>(false);
+  const [completed, setCompleted] = useState<boolean>(() => {
+    if (isLessonCompleted !== undefined) return isLessonCompleted;
+    return isLessonComplete(currentSlug);
+  });
 
   const prevLesson = getPrevLesson(currentSlug);
   const nextLesson = getNextLesson(currentSlug);
 
   useEffect(() => {
-    let isMounted = true;
-
-    if (!isAuthenticated) {
-      setCompleted(false);
-      return;
+    if (isLessonCompleted !== undefined) {
+      setCompleted(isLessonCompleted);
+    } else {
+      setCompleted(isLessonComplete(currentSlug));
     }
+  }, [currentSlug, isLessonCompleted]);
 
-    setCompleted(isLessonComplete(currentSlug));
+  useEffect(() => {
+    let isMounted = true;
 
     const handleProgressUpdated = () => {
       if (isMounted) {
-        setCompleted(isLessonComplete(currentSlug));
+        if (isLessonCompleted !== undefined) {
+          setCompleted(isLessonCompleted);
+        } else {
+          setCompleted(isLessonComplete(currentSlug));
+        }
       }
     };
 
@@ -70,16 +75,7 @@ export function LessonNavFooter({
         handleProgressUpdated
       );
     };
-  }, [currentSlug, isAuthenticated]);
-
-  const handleToggleComplete = async () => {
-    if (!isAuthenticated) return;
-    const nextState = await toggleLessonComplete(currentSlug);
-    setCompleted(nextState);
-    if (nextState && onLessonComplete) {
-      onLessonComplete();
-    }
-  };
+  }, [currentSlug, isLessonCompleted]);
 
   return (
     <div className="mt-16 pt-8 border-t border-white/[0.08] space-y-6">
@@ -115,34 +111,27 @@ export function LessonNavFooter({
           )}
         </div>
 
-        {/* Completion Toggle */}
+        {/* Completion Indicator */}
         <div className="flex justify-center">
-          {isAuthenticated ? (
+          {completed ? (
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>Lesson Completed</span>
+            </div>
+          ) : canComplete && onLessonComplete ? (
             <button
               type="button"
-              onClick={handleToggleComplete}
-              className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
-                completed
-                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
-                  : "bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/20"
-              }`}
+              onClick={onLessonComplete}
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/20 transition-all cursor-pointer"
             >
-              {completed ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Lesson Completed</span>
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 text-white/60" />
-                  <span>Mark as Complete</span>
-                </>
-              )}
+              <CheckCircle2 className="w-4 h-4 text-white/70" />
+              <span>Finish & Complete Lesson ✓</span>
             </button>
           ) : (
-            <span className="text-xs text-slate-500 font-mono">
-              Sign in to save progress
-            </span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06] text-slate-400 text-xs font-mono">
+              <Circle className="w-3.5 h-3.5 text-slate-500" />
+              <span>Complete all modules to finish</span>
+            </div>
           )}
         </div>
 

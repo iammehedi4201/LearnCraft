@@ -875,7 +875,7 @@ export function getTypeScriptCourse(): Course {
         .map((code) => allLessons.find((l) => l.code === code))
         .filter((l): l is LessonMeta => l !== undefined)
         .map((l) => ({
-          id: l.code,
+          id: l.slug,
           code: l.code,
           title: l.name,
           description: l.desc,

@@ -1,19 +1,15 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
-import {
-  TYPESCRIPT_RELATED_TOPICS,
-  getTypeScriptCourse,
-} from "./data/typescript-curriculum";
+import { getTypeScriptCourse } from "./data/typescript-curriculum";
 import {
   fetchProgressFromDB,
   getProgress,
 } from "./data/progress-store";
-import { CurriculumPath, type Progress } from "@/components/curriculum";
+import { CurriculumPath, getCurriculumState, type Progress } from "@/components/curriculum";
 
 export default function TypeScriptPage() {
   const typescriptCourse = getTypeScriptCourse();
@@ -38,9 +34,11 @@ export default function TypeScriptPage() {
   const handleCurriculumProgressChange = useCallback(
     (newProgress: Progress) => {
       setCourseProgress(newProgress);
-      if (newProgress.prereqConfirmed && typeof window !== "undefined") {
+      if (typeof window !== "undefined") {
         try {
-          localStorage.setItem("learncraft_ts_prereq_confirmed", "true");
+          if (newProgress.prereqConfirmed) {
+            localStorage.setItem("learncraft_ts_prereq_confirmed", "true");
+          }
         } catch {
           // ignore
         }
@@ -100,19 +98,13 @@ export default function TypeScriptPage() {
     };
   }, []);
 
-  // Compute metrics from data
-  const totalPhases = typescriptCourse.phases.length;
-  const totalLessons = typescriptCourse.phases.reduce(
-    (acc, p) => acc + p.lessons.length,
-    0,
-  );
-  const completedCount = courseProgress.completedLessonIds.length;
-  const completedPhasesCount = typescriptCourse.phases.filter((phase) =>
-    phase.lessons.length > 0 &&
-    phase.lessons.every((l) => courseProgress.completedLessonIds.includes(l.id)),
-  ).length;
-  const progressPercent =
-    totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+  // Compute metrics from curriculum state (authoritative single source of truth)
+  const curriculumState = getCurriculumState(typescriptCourse, courseProgress);
+  const totalPhases = curriculumState.phases.length;
+  const totalLessons = curriculumState.totalLessonsCount;
+  const completedCount = curriculumState.completedLessonsCount;
+  const completedPhasesCount = curriculumState.completedPhases.length;
+  const progressPercent = curriculumState.progressPercent;
 
   const handleResetForDemo = () => {
     const emptyProgress: Progress = { completedLessonIds: [], prereqConfirmed: false };
@@ -121,6 +113,12 @@ export default function TypeScriptPage() {
       try {
         localStorage.removeItem("learncraft_ts_prereq_confirmed");
         localStorage.removeItem(`learncraft_progress_${typescriptCourse.id}`);
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith("learncraft_ts_sections_") || key === "learncraft_ts_progress")) {
+            localStorage.removeItem(key);
+          }
+        }
         localStorage.setItem(
           "learncraft_ts_progress",
           JSON.stringify({ completedLessons: [], lastVisitedAt: Date.now() }),
@@ -214,26 +212,6 @@ export default function TypeScriptPage() {
             onProgressChange={handleCurriculumProgressChange}
           />
         </section>
-
-        {/* =========================================================================
-            3. ECOSYSTEM TOPICS (MINIMAL 1-LINE FOOTER)
-           ========================================================================= */}
-        <div className="pt-6 border-t border-white/[0.06] text-center text-xs text-slate-400 flex flex-wrap items-center justify-center gap-2">
-          <span>Explore after TypeScript:</span>
-          {TYPESCRIPT_RELATED_TOPICS.map((topic, i) => (
-            <span key={topic.id} className="inline-flex items-center gap-2">
-              <Link
-                href={topic.path}
-                className="text-slate-300 hover:text-purple-400 font-medium transition-colors"
-              >
-                {topic.title}
-              </Link>
-              {i < TYPESCRIPT_RELATED_TOPICS.length - 1 && (
-                <span className="text-slate-600">·</span>
-              )}
-            </span>
-          ))}
-        </div>
       </main>
 
       <Footer />

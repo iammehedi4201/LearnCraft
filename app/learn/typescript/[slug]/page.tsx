@@ -72,6 +72,7 @@ export default function TypeScriptLessonPage(): JSX.Element {
     handleSectionChange,
     handlePrev,
     handleNext,
+    completeLesson,
     getStepState,
   } = useTypeScriptModuleProgress({
     lessonSlug: slug,
@@ -802,7 +803,12 @@ console.log("Practicing ${lesson.code}: ${lesson.name}");
             </div>
 
             {/* Lesson Navigation Footer */}
-            <LessonNavFooter currentSlug={lesson.slug} />
+            <LessonNavFooter
+              currentSlug={lesson.slug}
+              isLessonCompleted={isLessonCompleted}
+              canComplete={currentIndex === sections.length - 1}
+              onLessonComplete={completeLesson}
+            />
           </main>
         </div>
       </div>

@@ -48,12 +48,34 @@ export function getCurriculumState(
     });
   });
 
-  const validLessonIdSet = new Set(flattenedLessons.map((item) => item.lesson.id));
+  // 3. Helper to match a progressId with a lesson by id, code, or href slug (case-insensitively)
+  const isLessonMatch = (
+    lesson: (typeof validPhases)[0]["lessons"][0],
+    progressId: string,
+  ): boolean => {
+    if (!progressId || typeof progressId !== "string") return false;
+    const cleanProgressId = progressId.trim().toLowerCase();
+    const cleanId = lesson.id?.trim().toLowerCase();
+    if (cleanId && cleanId === cleanProgressId) return true;
 
-  // 3. Ignore progress IDs that no longer exist in the course data
-  const validCompletedSet = new Set(
-    completedIds.filter((id) => validLessonIdSet.has(id)),
-  );
+    const cleanCode = lesson.code?.trim().toLowerCase();
+    if (cleanCode && cleanCode === cleanProgressId) return true;
+
+    if (lesson.href) {
+      const slug = lesson.href.split("/").filter(Boolean).pop()?.toLowerCase();
+      if (slug && slug === cleanProgressId) return true;
+    }
+
+    return false;
+  };
+
+  // Find set of canonical lesson.ids that are completed, ignoring any stale/unrecognized IDs
+  const validCompletedSet = new Set<string>();
+  flattenedLessons.forEach((item) => {
+    if (completedIds.some((pId) => isLessonMatch(item.lesson, pId))) {
+      validCompletedSet.add(item.lesson.id);
+    }
+  });
 
   const totalLessonsCount = flattenedLessons.length;
   const completedLessonsCount = validCompletedSet.size;

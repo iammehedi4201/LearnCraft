@@ -275,4 +275,113 @@ const courseWithEdgeCases: Course = {
   console.log("  ✓ 3.1 Edge cases (empty phases, stale progress IDs) passed");
 }
 
+{
+  // Test 3.2: Flexible matching by lesson code and href slug
+  const courseWithSlugsAndCodes: Course = {
+    id: "typescript-test",
+    title: "TypeScript Flexible Match",
+    phases: [
+      {
+        id: "p1",
+        name: "Phase 1",
+        lessons: [
+          {
+            id: "ts01-mental-model",
+            code: "TS-01",
+            title: "Mental Model",
+            href: "/learn/typescript/ts01-mental-model",
+          },
+          {
+            id: "ts02-type-annotations",
+            code: "TS-02",
+            title: "Type Annotations",
+            href: "/learn/typescript/ts02-type-annotations",
+          },
+        ],
+      },
+    ],
+  };
+
+  // Progress has code "ts-01" (lowercase of TS-01) and slug for second lesson
+  const progressMatchByCodeAndSlug: Progress = {
+    completedLessonIds: ["ts-01", "ts02-type-annotations"],
+    prereqConfirmed: false,
+  };
+  const state = getCurriculumState(courseWithSlugsAndCodes, progressMatchByCodeAndSlug);
+
+  assert(state.completedLessonsCount === 2, `Both lessons should be matched, got ${state.completedLessonsCount}`);
+  assert(state.phases[0].status === "completed", "Phase 1 should be completed");
+  assert(state.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed");
+  assert(state.phases[0].lessons[1].status === "completed", "Lesson 2 should be completed");
+  console.log("  ✓ 3.2 Flexible matching by code, slug, and case-insensitivity passed");
+}
+
+// =========================================================================
+// TEST SUITE 4: Authoritative TypeScript Curriculum Progression
+// =========================================================================
+console.log("\nTesting Course 4: Authoritative TypeScript Curriculum Dynamic States...");
+
+import { getTypeScriptCourse, getAllLessons } from "../../../app/learn/typescript/data/typescript-curriculum";
+
+const tsCourse = getTypeScriptCourse();
+
+// 4.1: Brand-new user (0 lessons completed)
+{
+  const state = getCurriculumState(tsCourse, { completedLessonIds: [], prereqConfirmed: false });
+  assert(state.totalLessonsCount === 32, `Total lessons should be 32, got ${state.totalLessonsCount}`);
+  assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
+  assert(state.phases[0].doneSteps === 0, `Phase 1 done steps should be 0, got ${state.phases[0].doneSteps}`);
+  assert(state.phases[0].lessons[0].status === "current", "Lesson 1 should be current");
+  assert(state.currentStepChip === "START HERE · STEP 1 OF 5", `Chip should be 'START HERE · STEP 1 OF 5', got '${state.currentStepChip}'`);
+  console.log("  ✓ 4.1 Authoritative TypeScript initial state verified");
+}
+
+// 4.2: User completes Lesson 1 by slug
+{
+  const state = getCurriculumState(tsCourse, { completedLessonIds: ["ts01-mental-model"], prereqConfirmed: true });
+  assert(state.completedLessonsCount === 1, `Completed count should be 1, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
+  assert(state.phases[0].doneSteps === 1, `Phase 1 done steps should be 1, got ${state.phases[0].doneSteps}`);
+  assert(state.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed");
+  assert(state.phases[0].lessons[1].status === "current", "Lesson 2 should be current");
+  assert(state.phases[0].lessons[2].status === "next", "Lesson 3 should be next");
+  assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 5", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 5', got '${state.currentStepChip}'`);
+  console.log("  ✓ 4.2 Authoritative TypeScript single lesson completion verified");
+}
+
+// 4.3: User completes all 5 lessons of Phase 1 (resolves user's screenshot scenario)
+{
+  const phase1Slugs = [
+    "ts01-mental-model",
+    "ts02-primitives-inference",
+    "ts03-arrays-tuples",
+    "ts04-object-types",
+    "ts05-special-types",
+  ];
+  const state = getCurriculumState(tsCourse, { completedLessonIds: phase1Slugs, prereqConfirmed: true });
+  assert(state.completedLessonsCount === 5, `Completed count should be 5, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 1, `Completed phases should be 1, got ${state.completedPhases.length}`);
+  assert(state.phases[0].status === "completed", "Phase 1 should be completed");
+  assert(state.phases[0].doneSteps === 5, "Phase 1 done steps should be 5");
+  assert(state.phases[1].status === "current", "Phase 2 should be unlocked and current");
+  assert(state.currentLesson?.code === "TS-06", `Current lesson should be TS-06, got ${state.currentLesson?.code}`);
+  assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 4", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 4', got '${state.currentStepChip}'`);
+  console.log("  ✓ 4.3 Authoritative TypeScript Phase 1 full completion & Phase 2 unlock verified");
+}
+
+// 4.4: User completes all 9 phases (all 32 lessons) -> Capstone unlocks!
+{
+  const all32Slugs = getAllLessons().map((l) => l.slug);
+
+  const state = getCurriculumState(tsCourse, { completedLessonIds: all32Slugs, prereqConfirmed: true });
+  assert(state.completedLessonsCount === 32, `Completed count should be 32, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 9, `All 9 phases should be completed, got ${state.completedPhases.length}`);
+  assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
+  assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);
+  assert(state.isCourseComplete === true, "Course should be marked complete");
+  assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 9 phases");
+  console.log("  ✓ 4.4 All 9 phases finished -> Capstone successfully unlocked verified!");
+}
+
 console.log("\n🎉 ALL UNIT TESTS PASSED SUCCESSFULLY!\n");

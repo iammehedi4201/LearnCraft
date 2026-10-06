@@ -34,10 +34,26 @@ export async function fetchProgressFromDB(): Promise<TypeScriptProgress> {
     try {
       const res = await fetch("/api/progress", { cache: "no-store" });
       if (res.status === 401) {
+        // Unauthenticated / Guest mode: Hydrate from localStorage instead of wiping
+        let localCompleted: string[] = [];
+        let localSlug: string | null = null;
+        let localGoal: string = "fundamentals";
+        try {
+          const raw = localStorage.getItem("learncraft_ts_progress");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed.completedLessons)) {
+              localCompleted = parsed.completedLessons;
+            }
+            localSlug = parsed.currentLessonSlug || null;
+            localGoal = parsed.selectedGoal || "fundamentals";
+          }
+        } catch {}
+
         inMemoryProgress = {
-          completedLessons: [],
-          currentLessonSlug: null,
-          selectedGoal: "fundamentals",
+          completedLessons: localCompleted,
+          currentLessonSlug: localSlug,
+          selectedGoal: localGoal,
           lastVisitedAt: Date.now(),
         };
         isDbHydrated = true;
@@ -63,12 +79,35 @@ export async function fetchProgressFromDB(): Promise<TypeScriptProgress> {
 
           const activeSlug = startedLessons[0]?.module || inMemoryProgress.currentLessonSlug;
 
+          // Merge DB completions with local cache
+          let localCompleted: string[] = [];
+          try {
+            const raw = localStorage.getItem("learncraft_ts_progress");
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed.completedLessons)) {
+                localCompleted = parsed.completedLessons;
+              }
+            }
+          } catch {}
+
+          const mergedCompleted = Array.from(
+            new Set([...completedFromDb, ...localCompleted])
+          );
+
           inMemoryProgress = {
             ...inMemoryProgress,
-            completedLessons: Array.from(new Set(completedFromDb)),
+            completedLessons: mergedCompleted,
             currentLessonSlug: activeSlug || null,
             lastVisitedAt: Date.now(),
           };
+
+          try {
+            localStorage.setItem(
+              "learncraft_ts_progress",
+              JSON.stringify(inMemoryProgress)
+            );
+          } catch {}
 
           isDbHydrated = true;
 
@@ -81,6 +120,25 @@ export async function fetchProgressFromDB(): Promise<TypeScriptProgress> {
       }
     } catch (err) {
       console.error("[TypeScriptProgressStore] Error fetching from DB:", err);
+      // Fallback: read localStorage
+      try {
+        const raw = localStorage.getItem("learncraft_ts_progress");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          inMemoryProgress = {
+            completedLessons: parsed.completedLessons || [],
+            currentLessonSlug: parsed.currentLessonSlug || null,
+            selectedGoal: parsed.selectedGoal || "fundamentals",
+            lastVisitedAt: Date.now(),
+          };
+          isDbHydrated = true;
+          window.dispatchEvent(
+            new CustomEvent("learncraft-ts-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
+        }
+      } catch {}
     } finally {
       ongoingDbFetch = null;
     }
@@ -116,19 +174,54 @@ export function getProgress(): TypeScriptProgress {
 }
 
 export function isLessonComplete(slugOrCode: string): boolean {
+  if (!slugOrCode) return false;
   const p = getProgress();
-  return (
-    p.completedLessons.includes(slugOrCode) ||
-    p.completedLessons.some((item) => item.toLowerCase() === slugOrCode.toLowerCase())
+  const all = getAllLessons();
+  const matchedLesson = all.find(
+    (l) =>
+      l.slug === slugOrCode ||
+      l.code === slugOrCode ||
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
+
+  return p.completedLessons.some((item) => {
+    const norm = item.toLowerCase();
+    if (norm === slugOrCode.toLowerCase()) return true;
+    if (
+      matchedLesson &&
+      (norm === matchedLesson.slug.toLowerCase() ||
+        norm === matchedLesson.code.toLowerCase())
+    ) {
+      return true;
+    }
+    return false;
+  });
 }
 
 export async function toggleLessonComplete(slug: string): Promise<boolean> {
+  if (!slug) return false;
+  const all = getAllLessons();
+  const matched = all.find(
+    (l) =>
+      l.slug === slug ||
+      l.code === slug ||
+      l.slug.toLowerCase() === slug.toLowerCase() ||
+      l.code.toLowerCase() === slug.toLowerCase()
+  );
+  const targetSlug = matched?.slug || slug;
+  const targetCode = matched?.code;
+
   const p = getProgress();
-  const alreadyDone = p.completedLessons.includes(slug);
+  const alreadyDone = isLessonComplete(targetSlug);
   const nextCompleted = alreadyDone
-    ? p.completedLessons.filter((s) => s !== slug)
-    : [...p.completedLessons, slug];
+    ? p.completedLessons.filter((s) => {
+        const norm = s.toLowerCase();
+        if (norm === targetSlug.toLowerCase()) return false;
+        if (targetCode && norm === targetCode.toLowerCase()) return false;
+        return true;
+      })
+    : Array.from(new Set([...p.completedLessons, targetSlug]));
 
   inMemoryProgress = {
     ...p,
@@ -157,9 +250,10 @@ export async function toggleLessonComplete(slug: string): Promise<boolean> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        module: slug,
+        module: targetSlug,
         completed: !alreadyDone,
         score: !alreadyDone ? 100 : 0,
+        force: true,
       }),
     });
   } catch {
@@ -170,10 +264,21 @@ export async function toggleLessonComplete(slug: string): Promise<boolean> {
 }
 
 export async function markLessonComplete(slug: string): Promise<void> {
-  const p = getProgress();
-  if (p.completedLessons.includes(slug)) return;
+  if (!slug) return;
+  const all = getAllLessons();
+  const matched = all.find(
+    (l) =>
+      l.slug === slug ||
+      l.code === slug ||
+      l.slug.toLowerCase() === slug.toLowerCase() ||
+      l.code.toLowerCase() === slug.toLowerCase()
+  );
+  const canonicalSlug = matched?.slug || slug;
 
-  const nextCompleted = [...p.completedLessons, slug];
+  if (isLessonComplete(canonicalSlug)) return;
+
+  const p = getProgress();
+  const nextCompleted = Array.from(new Set([...p.completedLessons, canonicalSlug]));
   inMemoryProgress = {
     ...p,
     completedLessons: nextCompleted,
@@ -200,9 +305,10 @@ export async function markLessonComplete(slug: string): Promise<void> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        module: slug,
+        module: canonicalSlug,
         completed: true,
         score: 100,
+        force: true,
       }),
     });
   } catch {
