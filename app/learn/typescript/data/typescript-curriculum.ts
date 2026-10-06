@@ -10,6 +10,8 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export type ContentTag = "CORE" | "BUILD" | "PROFESSIONAL" | "REFERENCE";
 
 export interface LessonMeta {
@@ -843,4 +845,44 @@ export function getLessonsByPhaseId(phaseId: string): LessonMeta[] {
   return phase.lessonCodes
     .map((code) => all.find((l) => l.code === code))
     .filter((l): l is LessonMeta => l !== undefined);
+}
+
+export function getTypeScriptCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "typescript",
+    title: "Learn TypeScript",
+    prerequisites: {
+      items: [
+        "Variables, functions, and arrays in JavaScript",
+        "Objects, arrow functions, and destructuring",
+        "Running a script with Node.js or the browser console",
+      ],
+      refresherHref: "/roadmaps?category=language#skill-roadmaps",
+      refresherLabel: "Not sure? Open the JavaScript refresher",
+    },
+    capstone: {
+      title: TYPESCRIPT_CAPSTONE.title,
+      description:
+        "Your finish line: build a production-grade query and validation engine using everything you learn.",
+      href: TYPESCRIPT_CAPSTONE.path,
+    },
+    phases: TYPESCRIPT_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.label,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.code,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
 }
