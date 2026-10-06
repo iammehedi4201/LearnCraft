@@ -456,4 +456,76 @@ const jsCourse = getJavaScriptCourse();
   console.log("  ✓ 5.4 All 8 phases finished -> JavaScript Capstone successfully unlocked verified!");
 }
 
+// =========================================================================
+// TEST SUITE 6: Authoritative OOP Curriculum Progression
+// =========================================================================
+console.log("\nTesting Course 6: Authoritative OOP Curriculum Dynamic States...");
+
+import { getOOPCourse, getAllLessons as getAllOOPLessons } from "../../../app/learn/oop/data/oop-curriculum";
+
+const oopCourse = getOOPCourse();
+
+// 6.1: Brand-new user (0 lessons completed)
+{
+  const state = getCurriculumState(oopCourse, { completedLessonIds: [], prereqConfirmed: false });
+  assert(state.totalLessonsCount === 16, `Total lessons should be 16, got ${state.totalLessonsCount}`);
+  assert(state.phases.length === 4, `Total phases should be 4, got ${state.phases.length}`);
+  assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
+  assert(state.phases[0].doneSteps === 0, `Phase 1 done steps should be 0, got ${state.phases[0].doneSteps}`);
+  assert(state.phases[0].lessons[0].status === "current", "Lesson 1 should be current");
+  assert(state.currentLesson?.code === "OOP-01", `Current lesson code should be OOP-01, got ${state.currentLesson?.code}`);
+  assert(state.showPrerequisitesCard === true, "Prereq card should show on first visit");
+  assert(state.currentStepChip === "START HERE · STEP 1 OF 5", `Chip should be 'START HERE · STEP 1 OF 5', got '${state.currentStepChip}'`);
+  console.log("  ✓ 6.1 Authoritative OOP initial state verified");
+}
+
+// 6.2: User completes single lesson by slug
+{
+  const state = getCurriculumState(oopCourse, { completedLessonIds: ["oop01-why-oop"], prereqConfirmed: true });
+  assert(state.completedLessonsCount === 1, `Completed count should be 1, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
+  assert(state.showPrerequisitesCard === false, "Prereq card should hide when progress > 0");
+  assert(state.phases[0].doneSteps === 1, `Phase 1 done steps should be 1, got ${state.phases[0].doneSteps}`);
+  assert(state.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed");
+  assert(state.phases[0].lessons[1].status === "current", "Lesson 2 should be current");
+  assert(state.currentLesson?.code === "OOP-02", `Current lesson should be OOP-02, got ${state.currentLesson?.code}`);
+  assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 5", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 5', got '${state.currentStepChip}'`);
+  console.log("  ✓ 6.2 Authoritative OOP single lesson completion verified");
+}
+
+// 6.3: User completes Phase 1 (5 lessons) -> Phase 2 unlocks
+{
+  const phase1Slugs = [
+    "oop01-why-oop",
+    "oop02-encapsulation",
+    "oop03-abstraction",
+    "oop04-inheritance",
+    "oop05-polymorphism",
+  ];
+  const state = getCurriculumState(oopCourse, { completedLessonIds: phase1Slugs, prereqConfirmed: true });
+  assert(state.completedLessonsCount === 5, `Completed count should be 5, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 1, `Completed phases should be 1, got ${state.completedPhases.length}`);
+  assert(state.phases[0].status === "completed", "Phase 1 should be completed");
+  assert(state.phases[1].status === "current", "Phase 2 should be current");
+  assert(state.currentLesson?.code === "OOP-06", `Current lesson should be OOP-06, got ${state.currentLesson?.code}`);
+  assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 3", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 3', got '${state.currentStepChip}'`);
+  console.log("  ✓ 6.3 Authoritative OOP Phase 1 completion and Phase 2 unlock verified");
+}
+
+// 6.4: User completes all 4 phases (all 16 lessons) -> Capstone unlocks!
+{
+  const all16Slugs = getAllOOPLessons().map((l) => l.slug);
+  assert(all16Slugs.length === 16, `Expected 16 OOP lesson slugs, got ${all16Slugs.length}`);
+
+  const state = getCurriculumState(oopCourse, { completedLessonIds: all16Slugs, prereqConfirmed: true });
+  assert(state.completedLessonsCount === 16, `Completed count should be 16, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 4, `All 4 phases should be completed, got ${state.completedPhases.length}`);
+  assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
+  assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);
+  assert(state.isCourseComplete === true, "Course should be marked complete");
+  assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 4 phases");
+  console.log("  ✓ 6.4 All 4 phases finished -> OOP Capstone successfully unlocked verified!");
+}
+
 console.log("\n🎉 ALL UNIT TESTS PASSED SUCCESSFULLY!\n");

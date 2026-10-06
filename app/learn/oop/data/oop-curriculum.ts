@@ -10,6 +10,8 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export type ContentTag = "CORE" | "BUILD" | "PROFESSIONAL" | "REFERENCE";
 
 export interface LessonMeta {
@@ -526,4 +528,44 @@ export function getLessonsByPhaseId(phaseId: string): LessonMeta[] {
   return phase.lessonCodes
     .map((code) => all.find((l) => l.code === code))
     .filter((l): l is LessonMeta => l !== undefined);
+}
+
+export function getOOPCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "oop",
+    title: "Learn OOP",
+    prerequisites: {
+      items: [
+        "Variables, control flow, and basic functions in any language",
+        "Writing functions and passing parameters",
+        "Basic familiarity with JavaScript or TypeScript syntax",
+      ],
+      refresherHref: "/roadmaps?category=language#skill-roadmaps",
+      refresherLabel: "Need a refresher? Open the Programming Basics guide",
+    },
+    capstone: {
+      title: OOP_CAPSTONE.title,
+      description:
+        "Your finish line: architect a robust, decoupled Task Management & Workflow Automation Engine demonstrating pure encapsulation, polymorphism, composition over inheritance, and full SOLID compliance.",
+      href: OOP_CAPSTONE.path,
+    },
+    phases: OOP_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.label,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
 }
