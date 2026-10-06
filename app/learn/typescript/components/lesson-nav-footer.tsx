@@ -36,6 +36,8 @@ export function LessonNavFooter({
   const nextLesson = getNextLesson(currentSlug);
 
   useEffect(() => {
+    let isMounted = true;
+
     if (!isAuthenticated) {
       setCompleted(false);
       return;
@@ -44,7 +46,9 @@ export function LessonNavFooter({
     setCompleted(isLessonComplete(currentSlug));
 
     const handleProgressUpdated = () => {
-      setCompleted(isLessonComplete(currentSlug));
+      if (isMounted) {
+        setCompleted(isLessonComplete(currentSlug));
+      }
     };
 
     window.addEventListener(
@@ -56,6 +60,7 @@ export function LessonNavFooter({
       handleProgressUpdated
     );
     return () => {
+      isMounted = false;
       window.removeEventListener(
         "learncraft-ts-progress-updated",
         handleProgressUpdated

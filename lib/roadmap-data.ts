@@ -11,6 +11,11 @@
 import { NESTJS_STAGES } from "@/app/learn/nestjs/data/nestjs-curriculum";
 import { NEXTJS_STAGES } from "@/app/learn/nextjs/data/nextjs-curriculum";
 import { TYPESCRIPT_STAGES } from "@/app/learn/typescript/data/typescript-curriculum";
+import { OOP_STAGES } from "@/app/learn/oop/data/oop-curriculum";
+import { JS_STAGES } from "@/app/learn/javascript/data/javascript-curriculum";
+import { REACT_STAGES } from "@/app/learn/react/data/react-curriculum";
+import { NODEJS_STAGES } from "@/app/learn/nodejs/data/nodejs-curriculum";
+import { EXPRESS_STAGES } from "@/app/learn/express/data/express-curriculum";
 
 // ─────────────────────────────────────────────────────────────
 // Types
@@ -131,9 +136,110 @@ const typescriptStages: RoadmapStage[] = TYPESCRIPT_STAGES.map((stage) => ({
 }));
 
 // ─────────────────────────────────────────────────────────────
+// OOP — derived from oop-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const oopStages: RoadmapStage[] = OOP_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+// ─────────────────────────────────────────────────────────────
+// JavaScript — derived from javascript-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const javascriptStages: RoadmapStage[] = JS_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+// ─────────────────────────────────────────────────────────────
+// React — derived from react-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const reactStages: RoadmapStage[] = REACT_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+// ─────────────────────────────────────────────────────────────
+// Node.js — derived from nodejs-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const nodejsStages: RoadmapStage[] = NODEJS_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+// ─────────────────────────────────────────────────────────────
+// Express.js — derived from express-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const expressStages: RoadmapStage[] = EXPRESS_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+// ─────────────────────────────────────────────────────────────
 // TanStack Query — defined here
 // ─────────────────────────────────────────────────────────────
 
+/*
 const tanstackStages: RoadmapStage[] = [
   {
     id: "tanstack-foundations",
@@ -185,6 +291,7 @@ const tanstackStages: RoadmapStage[] = [
     ],
   },
 ];
+*/
 
 // ─────────────────────────────────────────────────────────────
 // Skill Roadmaps Registry
@@ -219,6 +326,7 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     learnPath: "/learn/nextjs",
     badgeColor: "bg-ds-feature-lighter text-ds-feature-dark border-ds-feature-light",
   },
+  /*
   {
     id: "tanstack",
     slug: "tanstack",
@@ -233,20 +341,21 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     learnPath: "/learn/tanstack",
     badgeColor: "bg-ds-info-lighter text-ds-info-dark border-ds-info-light",
   },
-  // Coming Soon skills
+  */
+  // Language skills
   {
     id: "javascript",
     slug: "javascript",
     title: "JavaScript",
-    description: "Core JS Fundamentals, Event Loop & Async",
+    description: "Core JS Fundamentals, Event Loop, Closures & Modern ES6+",
     icon: "💛",
     category: "language",
     level: "beginner-advanced",
-    status: "coming-soon",
-    totalLessons: 0,
-    stages: [],
-    learnPath: "",
-    badgeColor: "bg-ds-away-lighter text-ds-away-dark border-ds-away-light",
+    status: "available",
+    totalLessons: 30,
+    stages: javascriptStages,
+    learnPath: "/learn/javascript",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
     id: "typescript",
@@ -268,11 +377,11 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     title: "OOP Fundamentals",
     description: "Object-Oriented Architecture, Classes & SOLID Principles",
     icon: "🧩",
-    category: "architecture",
+    category: "language",
     level: "beginner-advanced",
-    status: "coming-soon",
-    totalLessons: 0,
-    stages: [],
+    status: "available",
+    totalLessons: 16,
+    stages: oopStages,
     learnPath: "/learn/oop",
     badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
@@ -284,11 +393,11 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     icon: "⚛️",
     category: "frontend",
     level: "beginner-advanced",
-    status: "coming-soon",
-    totalLessons: 0,
-    stages: [],
-    learnPath: "",
-    badgeColor: "bg-ds-verified-lighter text-ds-verified-dark border-ds-verified-light",
+    status: "available",
+    totalLessons: 27,
+    stages: reactStages,
+    learnPath: "/learn/react",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
     id: "nodejs",
@@ -298,11 +407,11 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     icon: "🟢",
     category: "backend",
     level: "beginner-advanced",
-    status: "coming-soon",
-    totalLessons: 0,
-    stages: [],
-    learnPath: "",
-    badgeColor: "bg-ds-success-lighter text-ds-success-dark border-ds-success-light",
+    status: "available",
+    totalLessons: 24,
+    stages: nodejsStages,
+    learnPath: "/learn/nodejs",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
     id: "expressjs",
@@ -311,12 +420,12 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     description: "Minimal & Flexible Web Application Framework",
     icon: "🚂",
     category: "backend",
-    level: "beginner",
-    status: "coming-soon",
-    totalLessons: 0,
-    stages: [],
-    learnPath: "",
-    badgeColor: "bg-ds-faded-lighter text-ds-faded-dark border-ds-faded-light",
+    level: "beginner-advanced",
+    status: "available",
+    totalLessons: 28,
+    stages: expressStages,
+    learnPath: "/learn/express",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
     id: "postgresql",
@@ -392,7 +501,7 @@ export const ROLE_ROADMAPS: RoleRoadmap[] = [
       { skillSlug: "typescript", skillTitle: "TypeScript", required: true },
       { skillSlug: "react", skillTitle: "React", required: true },
       { skillSlug: "nextjs", skillTitle: "Next.js", required: true },
-      { skillSlug: "tanstack", skillTitle: "TanStack Query", required: true },
+      // { skillSlug: "tanstack", skillTitle: "TanStack Query", required: true },
     ],
   },
   {
@@ -424,7 +533,7 @@ export const ROLE_ROADMAPS: RoleRoadmap[] = [
       { skillSlug: "typescript", skillTitle: "TypeScript", required: true },
       { skillSlug: "react", skillTitle: "React", required: true },
       { skillSlug: "nextjs", skillTitle: "Next.js", required: true },
-      { skillSlug: "tanstack", skillTitle: "TanStack Query", required: true },
+      // { skillSlug: "tanstack", skillTitle: "TanStack Query", required: true },
       { skillSlug: "nodejs", skillTitle: "Node.js", required: true },
       { skillSlug: "nestjs", skillTitle: "NestJS", required: true },
       { skillSlug: "postgresql", skillTitle: "PostgreSQL", required: true },
@@ -452,6 +561,9 @@ export const CATEGORY_META: Record<SkillCategory, { label: string; icon: string 
 // ─────────────────────────────────────────────────────────────
 
 export function getSkillRoadmap(slug: string): SkillRoadmap | undefined {
+  if (slug === "express" || slug === "expressjs") {
+    return SKILL_ROADMAPS.find((s) => s.slug === "expressjs" || s.slug === "express");
+  }
   return SKILL_ROADMAPS.find((s) => s.slug === slug);
 }
 

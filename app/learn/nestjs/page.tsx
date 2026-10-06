@@ -79,7 +79,10 @@ export default function NestJSPage() {
 
   // Sync state from database & custom events
   useEffect(() => {
+    let isMounted = true;
+
     const updateLocalState = () => {
+      if (!isMounted) return;
       const rec = getNextRecommendedLesson();
       setNextLesson(rec);
 
@@ -107,13 +110,17 @@ export default function NestJSPage() {
     };
 
     fetchProgressFromDB().then(() => {
-      updateLocalState();
+      if (isMounted) {
+        updateLocalState();
+      }
     });
 
     updateLocalState();
 
     const handleProgressUpdated = () => {
-      updateLocalState();
+      if (isMounted) {
+        updateLocalState();
+      }
     };
 
     window.addEventListener(
@@ -121,6 +128,7 @@ export default function NestJSPage() {
       handleProgressUpdated,
     );
     return () => {
+      isMounted = false;
       window.removeEventListener(
         "learncraft-progress-updated",
         handleProgressUpdated,

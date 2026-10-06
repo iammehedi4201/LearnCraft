@@ -182,6 +182,8 @@ export const BACKEND_JOURNEY: JourneyRoadmap = {
             tag: "Minimalist & unopinionated",
             desc: "Lightweight routing and bare-metal HTTP handling with maximum configuration freedom.",
             isRecommended: false,
+            isAvailable: true,
+            lessons: 28,
           },
           {
             name: "Fastify",
@@ -606,6 +608,8 @@ export const FULLSTACK_JOURNEY: JourneyRoadmap = {
             tag: "Minimalist & fast",
             desc: "Lightweight routing or direct full-stack server functions.",
             isRecommended: false,
+            isAvailable: true,
+            lessons: 28,
           },
         ],
       },

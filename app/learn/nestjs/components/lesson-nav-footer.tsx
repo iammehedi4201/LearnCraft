@@ -37,19 +37,25 @@ export function LessonNavFooter({
   const currentStage = getStageByLessonSlug(currentSlug);
 
   useEffect(() => {
+    let isMounted = true;
     if (!isAuthenticated) {
       setCompleted(false);
       return;
     }
 
-    setCompleted(isLessonComplete(currentSlug));
+    if (isMounted) {
+      setCompleted(isLessonComplete(currentSlug));
+    }
 
     const handleProgressUpdated = () => {
-      setCompleted(isLessonComplete(currentSlug));
+      if (isMounted) {
+        setCompleted(isLessonComplete(currentSlug));
+      }
     };
 
     window.addEventListener("learncraft-progress-updated", handleProgressUpdated);
     return () => {
+      isMounted = false;
       window.removeEventListener("learncraft-progress-updated", handleProgressUpdated);
     };
   }, [currentSlug, isAuthenticated]);

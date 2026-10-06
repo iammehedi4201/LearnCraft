@@ -4,15 +4,17 @@ import { useState, useEffect } from 'react';
 
 const snippets = [
   {
-    id: 'tanstack',
-    label: 'TanStack Query',
-    code: `const { data, isLoading } = useQuery({
-  queryKey: ['analytics'],
-  queryFn: fetchStats,
-  staleTime: 60 * 1000,
-  retry: 3,
-});`,
-    color: 'text-ds-info-base'
+    id: 'nodejs',
+    label: 'Node.js Runtime',
+    code: `import { createServer } from 'node:http';
+
+const server = createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ status: 'ok', time: Date.now() }));
+});
+
+server.listen(3000);`,
+    color: 'text-purple-400'
   },
   {
     id: 'nextjs',

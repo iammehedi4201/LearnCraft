@@ -36,20 +36,26 @@ export function NextjsLessonNavFooter({
   const currentStage = getNextjsStageByLessonSlug(currentSlug);
 
   useEffect(() => {
+    let isMounted = true;
     if (!isAuthenticated) {
       setCompleted(false);
       return;
     }
 
-    setCompleted(isLessonComplete(currentSlug));
+    if (isMounted) {
+      setCompleted(isLessonComplete(currentSlug));
+    }
 
     const handleProgressUpdated = () => {
-      setCompleted(isLessonComplete(currentSlug));
+      if (isMounted) {
+        setCompleted(isLessonComplete(currentSlug));
+      }
     };
 
     window.addEventListener("learncraft-progress-updated", handleProgressUpdated);
     window.addEventListener("nextjs-progress-updated", handleProgressUpdated);
     return () => {
+      isMounted = false;
       window.removeEventListener("learncraft-progress-updated", handleProgressUpdated);
       window.removeEventListener("nextjs-progress-updated", handleProgressUpdated);
     };

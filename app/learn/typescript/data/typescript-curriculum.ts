@@ -125,6 +125,7 @@ export const TYPESCRIPT_RELATED_TOPICS: RelatedTopicMeta[] = [
     badge: "Full-Stack",
     path: "/learn/nextjs",
   },
+  /*
   {
     id: "rel-tanstack",
     title: "TanStack Query",
@@ -132,6 +133,7 @@ export const TYPESCRIPT_RELATED_TOPICS: RelatedTopicMeta[] = [
     badge: "Frontend",
     path: "/learn/tanstack",
   },
+  */
 ];
 
 // ─────────────────────────────────────────────────────────────

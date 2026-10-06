@@ -49,6 +49,14 @@ export function useTypeScriptModuleProgress({
   const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
   const activeSectionRef = useRef(activeSection);
   activeSectionRef.current = activeSection;
 
@@ -68,8 +76,12 @@ export function useTypeScriptModuleProgress({
     async function loadProgressFromDatabase() {
       try {
         const res = await fetch("/api/progress", { cache: "no-store" });
-        if (res.ok && isMounted) {
+        if (!isMounted) return;
+
+        if (res.ok) {
           const json = await res.json();
+          if (!isMounted) return;
+
           if (json.success && Array.isArray(json.data)) {
             const record = json.data.find(
               (d: any) =>
@@ -87,10 +99,10 @@ export function useTypeScriptModuleProgress({
               }
 
               const completedSet = new Set<string>(validCompleted);
-              setCompletedSections(completedSet);
+              if (isMounted) setCompletedSections(completedSet);
 
               const resolvedActive = resolveId(record.activeModule);
-              if (!sectionParam && resolvedActive) {
+              if (!sectionParam && resolvedActive && isMounted) {
                 setActiveSection(resolvedActive);
               }
 
@@ -98,10 +110,12 @@ export function useTypeScriptModuleProgress({
                 record.completed ||
                 (sections.length > 0 && completedSet.size >= sections.length)
               ) {
-                setIsLessonCompleted(true);
+                if (isMounted) setIsLessonCompleted(true);
               }
             } else {
-              setIsLessonCompleted(isLessonComplete(lessonSlug));
+              if (isMounted) {
+                setIsLessonCompleted(isLessonComplete(lessonSlug));
+              }
             }
           }
         }
