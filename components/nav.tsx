@@ -31,7 +31,7 @@ export function Nav() {
   );
 }
 
-type CoreCategory = "language" | "frontend" | "backend" | "database" | "orm" | "state-management";
+type CoreCategory = "language" | "frontend" | "backend" | "database" | "orm" | "state-management" | "architecture";
 
 interface CategoryMeta {
   id: CoreCategory;
@@ -83,6 +83,13 @@ const CATEGORIES: CategoryMeta[] = [
     icon: "🔄",
     description: "Predictable client state, one-way data flow, Redux Toolkit & store architectures",
     upcomingTopics: ["Redux", "Zustand"],
+  },
+  {
+    id: "architecture",
+    label: "System Design",
+    icon: "📐",
+    description: "Distributed systems, capacity planning, load balancing & scalable architecture",
+    upcomingTopics: ["System Design", "Microservices Patterns"],
   },
 ];
 
@@ -161,6 +168,7 @@ function NavContent(): JSX.Element {
       database: [],
       orm: [],
       "state-management": [],
+      architecture: [],
     };
 
     SKILL_ROADMAPS.forEach((skill) => {

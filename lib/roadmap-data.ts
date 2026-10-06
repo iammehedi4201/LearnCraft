@@ -20,6 +20,7 @@ import { MONGODB_STAGES } from "@/app/learn/mongodb/data/mongodb-curriculum";
 import { POSTGRESQL_STAGES } from "@/app/learn/postgresql/data/postgresql-curriculum";
 import { PRISMA_STAGES } from "@/app/learn/prisma/data/prisma-curriculum";
 import { REDUX_STAGES } from "@/app/learn/redux/data/redux-curriculum";
+import { SYSTEM_DESIGN_STAGES } from "@/app/learn/system-design/data/system-design-curriculum";
 
 
 
@@ -28,7 +29,7 @@ import { REDUX_STAGES } from "@/app/learn/redux/data/redux-curriculum";
 // ─────────────────────────────────────────────────────────────
 
 export type SkillStatus = "available" | "coming-soon";
-export type SkillCategory = "frontend" | "backend" | "database" | "orm" | "state-management" | "language";
+export type SkillCategory = "frontend" | "backend" | "database" | "orm" | "state-management" | "architecture" | "language";
 export type SkillLevel = "beginner" | "intermediate" | "advanced" | "beginner-advanced";
 
 export interface RoadmapLesson {
@@ -322,6 +323,26 @@ const reduxStages: RoadmapStage[] = REDUX_STAGES.map((stage) => ({
 }));
 
 // ─────────────────────────────────────────────────────────────
+// System Design — derived from system-design-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const systemDesignStages: RoadmapStage[] = SYSTEM_DESIGN_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+// ─────────────────────────────────────────────────────────────
 // TanStack Query — defined here
 // ─────────────────────────────────────────────────────────────
 
@@ -570,6 +591,20 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
+    id: "system-design",
+    slug: "system-design",
+    title: "System Design",
+    description: "Distributed Systems, Scalability, Caching, Sharding & High-Availability Architecture",
+    icon: "📐",
+    category: "architecture",
+    level: "beginner-advanced",
+    status: "available",
+    totalLessons: 28,
+    stages: systemDesignStages,
+    learnPath: "/learn/system-design",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
+  },
+  {
     id: "redis",
     slug: "redis",
     title: "Redis",
@@ -634,6 +669,7 @@ export const ROLE_ROADMAPS: RoleRoadmap[] = [
       { skillSlug: "postgresql", skillTitle: "PostgreSQL", required: true, alternatives: ["mongodb"] },
       { skillSlug: "mongodb", skillTitle: "MongoDB", required: false },
       { skillSlug: "prisma", skillTitle: "Prisma (ORM)", required: true },
+      { skillSlug: "system-design", skillTitle: "System Design", required: true },
       { skillSlug: "redis", skillTitle: "Redis", required: false },
       { skillSlug: "docker", skillTitle: "Docker", required: true },
     ],
@@ -655,6 +691,7 @@ export const ROLE_ROADMAPS: RoleRoadmap[] = [
       { skillSlug: "nestjs", skillTitle: "NestJS", required: true },
       { skillSlug: "postgresql", skillTitle: "PostgreSQL", required: true },
       { skillSlug: "prisma", skillTitle: "Prisma (ORM)", required: true },
+      { skillSlug: "system-design", skillTitle: "System Design", required: true },
       { skillSlug: "redis", skillTitle: "Redis", required: false },
       { skillSlug: "docker", skillTitle: "Docker", required: true },
     ],
@@ -671,6 +708,7 @@ export const CATEGORY_META: Record<SkillCategory, { label: string; icon: string 
   database: { label: "Database", icon: "🗄️" },
   orm: { label: "ORM", icon: "💎" },
   "state-management": { label: "State Management", icon: "🔄" },
+  architecture: { label: "System Design", icon: "📐" },
   language: { label: "Languages", icon: "📝" },
 };
 
@@ -693,6 +731,9 @@ export function getSkillRoadmap(slug: string): SkillRoadmap | undefined {
   }
   if (slug === "redux" || slug === "redux-toolkit" || slug === "rtk") {
     return SKILL_ROADMAPS.find((s) => s.slug === "redux");
+  }
+  if (slug === "system-design" || slug === "systemdesign" || slug === "architecture" || slug === "sysdesign") {
+    return SKILL_ROADMAPS.find((s) => s.slug === "system-design");
   }
   return SKILL_ROADMAPS.find((s) => s.slug === slug);
 }

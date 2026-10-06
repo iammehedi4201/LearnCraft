@@ -33,7 +33,7 @@ function RoadmapsContent() {
       if (categoryParam === "all") {
         setActiveCategory("all");
       } else if (
-        ["frontend", "backend", "database", "orm", "state-management", "language"].includes(
+        ["frontend", "backend", "database", "orm", "state-management", "architecture", "language"].includes(
           categoryParam,
         )
       ) {
