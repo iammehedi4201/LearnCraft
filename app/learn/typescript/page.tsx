@@ -134,7 +134,7 @@ export default function TypeScriptPage() {
     <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
       <Nav />
 
-      <main className="flex-1 max-w-[880px] mx-auto px-4 sm:px-0 py-8 md:py-10 w-full space-y-[28px]">
+      <main className="flex-1 max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 w-full space-y-[28px]">
         {/* =========================================================================
             1. COURSE HEADER (Matches Image 2 exactly)
            ========================================================================= */}

@@ -56,7 +56,7 @@ export const CurrentStepCard: React.FC<CurrentStepCardProps> = ({
 
         {/* Description */}
         {lesson.description && (
-          <p className="text-sm sm:text-base text-[#b4b4cc] leading-relaxed max-w-2xl">
+          <p className="text-sm sm:text-base text-[#b4b4cc] leading-relaxed max-w-4xl">
             {lesson.description}
           </p>
         )}

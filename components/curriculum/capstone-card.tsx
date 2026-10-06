@@ -29,7 +29,7 @@ export const CapstoneCard: React.FC<CapstoneCardProps> = ({
         aria-label="Unlocked Capstone Project"
         className={`w-full rounded-[16px] bg-[#171428] border-2 border-[#7c3aed] p-6 sm:p-7 shadow-2xl shadow-purple-950/30 transition-all duration-200 motion-reduce:transition-none flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden ${className}`}
       >
-        <div className="space-y-2.5 max-w-2xl">
+        <div className="space-y-2.5 max-w-4xl">
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-mono tracking-[0.08em] uppercase font-bold text-[#ddd6fe] bg-[#2e2160] px-2.5 py-0.5 rounded border border-[#7c3aed]/40">
               FINAL CAPSTONE · UNLOCKED

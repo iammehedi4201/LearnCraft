@@ -143,7 +143,7 @@ export const CurriculumPath: React.FC<CurriculumPathProps> = ({
 
   return (
     <div
-      className={`w-full max-w-[880px] mx-auto px-4 sm:px-0 space-y-[28px] text-[#ececf4] font-sans transition-all duration-200 motion-reduce:transition-none ${className}`}
+      className={`w-full max-w-5xl lg:max-w-6xl mx-auto space-y-[28px] text-[#ececf4] font-sans transition-all duration-200 motion-reduce:transition-none ${className}`}
       data-testid="curriculum-learning-path"
     >
       {/* =========================================================================
