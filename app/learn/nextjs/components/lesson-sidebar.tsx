@@ -137,21 +137,19 @@ export function NextjsLessonSidebar({
             Progress
           </span>
           <span className="text-xs font-mono font-bold text-white">
-            {isAuthenticated ? `${progressPercent}%` : "0%"}
+            {`${progressPercent}%`}
           </span>
         </div>
         <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out bg-purple-600"
             style={{
-              width: `${isAuthenticated ? progressPercent : 0}%`,
+              width: `${progressPercent}%`,
             }}
           />
         </div>
         <p className="mt-2 text-[10px] text-slate-400">
-          {isAuthenticated
-            ? `${completedSectionsCount} of ${sections.length} parts completed`
-            : "Sign in to save progress in PostgreSQL"}
+          {`${completedSectionsCount} of ${sections.length} parts completed`}
         </p>
       </div>
 

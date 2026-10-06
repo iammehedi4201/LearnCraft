@@ -8,6 +8,8 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export type ContentTag = "CORE" | "BUILD" | "PROFESSIONAL" | "REFERENCE";
 
 export interface NextjsLessonMeta {
@@ -717,4 +719,44 @@ export const NEXTJS_RELATED_TOPICS: NextjsRelatedTopicMeta[] = [
     path: "/learn/oop",
   },
 ];
+
+export function getNextjsCourse(): Course {
+  const allLessons = getAllNextjsLessons();
+  return {
+    id: "nextjs",
+    title: "Learn Next.js",
+    prerequisites: {
+      items: [
+        "React fundamentals: components, JSX, props, and useState",
+        "Modern JavaScript: async/await, ES modules, and destructuring",
+        "Basic TypeScript types and component props typing",
+      ],
+      refresherHref: "/roadmaps?category=framework#skill-roadmaps",
+      refresherLabel: "Need a refresher? Open the React Fundamentals guide",
+    },
+    capstone: {
+      title: NEXTJS_CAPSTONE.title,
+      description:
+        "Your finish line: architect a production-grade multi-tenant SaaS application with cookie authentication, Edge Middleware route protection, Stripe webhook API route handlers, and standalone Docker deployment.",
+      href: NEXTJS_CAPSTONE.path,
+    },
+    phases: NEXTJS_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.label,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is NextjsLessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
+}
 

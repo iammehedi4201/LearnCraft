@@ -40,22 +40,42 @@ export async function fetchProgressFromDB(): Promise<NextjsProgress> {
     try {
       const res = await fetch("/api/progress", { cache: "no-store" });
       if (res.status === 401) {
-        // User not signed in
+        // Unauthenticated / Guest mode: Hydrate from localStorage instead of wiping
+        let localCompleted: string[] = [];
+        let localSlug: string | null = null;
+        let localStage: string = "stage-1";
+        try {
+          const raw = localStorage.getItem("learncraft_nextjs_progress");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed.completedLessons)) {
+              localCompleted = parsed.completedLessons;
+            }
+            localSlug = parsed.currentLessonSlug || null;
+            localStage = parsed.selectedStage || "stage-1";
+          }
+        } catch {}
+
         inMemoryProgress = {
-          completedLessons: [],
-          currentLessonSlug: null,
-          selectedStage: "stage-1",
+          completedLessons: localCompleted,
+          currentLessonSlug: localSlug,
+          selectedStage: localStage,
           lastVisitedAt: Date.now(),
         };
         isDbHydrated = true;
 
         window.dispatchEvent(
-          new CustomEvent("learncraft-progress-updated", {
+          new CustomEvent("learncraft-nextjs-progress-updated", {
             detail: inMemoryProgress,
           })
         );
         window.dispatchEvent(
           new CustomEvent("nextjs-progress-updated", {
+            detail: inMemoryProgress,
+          })
+        );
+        window.dispatchEvent(
+          new CustomEvent("learncraft-progress-updated", {
             detail: inMemoryProgress,
           })
         );
@@ -79,18 +99,41 @@ export async function fetchProgressFromDB(): Promise<NextjsProgress> {
           const activeSlug =
             startedLessons[0]?.module || inMemoryProgress.currentLessonSlug;
 
+          // Merge DB completions with local cache
+          let localCompleted: string[] = [];
+          try {
+            const raw = localStorage.getItem("learncraft_nextjs_progress");
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed.completedLessons)) {
+                localCompleted = parsed.completedLessons;
+              }
+            }
+          } catch {}
+
+          const mergedCompleted = Array.from(
+            new Set([...completedFromDb, ...localCompleted])
+          );
+
           inMemoryProgress = {
             ...inMemoryProgress,
-            completedLessons: Array.from(new Set(completedFromDb)),
+            completedLessons: mergedCompleted,
             currentLessonSlug: activeSlug || null,
             lastVisitedAt: Date.now(),
           };
+
+          try {
+            localStorage.setItem(
+              "learncraft_nextjs_progress",
+              JSON.stringify(inMemoryProgress)
+            );
+          } catch {}
 
           isDbHydrated = true;
 
           // Notify subscribers of updated database truth
           window.dispatchEvent(
-            new CustomEvent("learncraft-progress-updated", {
+            new CustomEvent("learncraft-nextjs-progress-updated", {
               detail: inMemoryProgress,
             })
           );
@@ -99,10 +142,44 @@ export async function fetchProgressFromDB(): Promise<NextjsProgress> {
               detail: inMemoryProgress,
             })
           );
+          window.dispatchEvent(
+            new CustomEvent("learncraft-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
         }
       }
     } catch (err) {
       console.warn("[NextjsProgressStore] Failed to fetch progress from DB:", err);
+      // Fallback: read localStorage
+      try {
+        const raw = localStorage.getItem("learncraft_nextjs_progress");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          inMemoryProgress = {
+            completedLessons: parsed.completedLessons || [],
+            currentLessonSlug: parsed.currentLessonSlug || null,
+            selectedStage: parsed.selectedStage || "stage-1",
+            lastVisitedAt: Date.now(),
+          };
+          isDbHydrated = true;
+          window.dispatchEvent(
+            new CustomEvent("learncraft-nextjs-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
+          window.dispatchEvent(
+            new CustomEvent("nextjs-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
+          window.dispatchEvent(
+            new CustomEvent("learncraft-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
+        }
+      } catch {}
     } finally {
       ongoingDbFetch = null;
     }
@@ -112,42 +189,105 @@ export async function fetchProgressFromDB(): Promise<NextjsProgress> {
   return ongoingDbFetch;
 }
 
-// Trigger initial DB fetch on client bundle load
-if (typeof window !== "undefined") {
-  fetchProgressFromDB().catch(() => {});
-}
-
 export function getProgress(): NextjsProgress {
+  if (typeof window === "undefined") return inMemoryProgress;
+
+  try {
+    const raw = localStorage.getItem("learncraft_nextjs_progress");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (isDbHydrated) {
+        const mergedCompleted = Array.from(
+          new Set([...inMemoryProgress.completedLessons, ...(parsed.completedLessons || [])])
+        );
+        inMemoryProgress.completedLessons = mergedCompleted;
+        if (!inMemoryProgress.currentLessonSlug && parsed.currentLessonSlug) {
+          inMemoryProgress.currentLessonSlug = parsed.currentLessonSlug;
+        }
+      } else {
+        inMemoryProgress = {
+          completedLessons: Array.isArray(parsed.completedLessons) ? parsed.completedLessons : [],
+          currentLessonSlug: parsed.currentLessonSlug || null,
+          selectedStage: parsed.selectedStage || "stage-1",
+          lastVisitedAt: parsed.lastVisitedAt || Date.now(),
+        };
+      }
+    }
+  } catch (err) {
+    console.error("[NextjsProgressStore] Error reading local storage:", err);
+  }
+
   return inMemoryProgress;
 }
 
-export function isLessonComplete(slugOrCode: string): boolean {
-  return inMemoryProgress.completedLessons.some(
-    (item) =>
-      item === slugOrCode ||
-      item.toLowerCase() === slugOrCode.toLowerCase() ||
-      item.endsWith(`/${slugOrCode}`)
+export function saveProgress(progress: Partial<NextjsProgress>): void {
+  if (typeof window === "undefined") return;
+
+  const current = getProgress();
+  const updated: NextjsProgress = {
+    ...current,
+    ...progress,
+    lastVisitedAt: Date.now(),
+  };
+
+  inMemoryProgress = updated;
+
+  try {
+    localStorage.setItem("learncraft_nextjs_progress", JSON.stringify(updated));
+  } catch (err) {
+    console.error("[NextjsProgressStore] Error writing to local storage:", err);
+  }
+
+  window.dispatchEvent(
+    new CustomEvent("learncraft-nextjs-progress-updated", {
+      detail: updated,
+    })
   );
+  window.dispatchEvent(
+    new CustomEvent("nextjs-progress-updated", {
+      detail: updated,
+    })
+  );
+  window.dispatchEvent(
+    new CustomEvent("learncraft-progress-updated", {
+      detail: updated,
+    })
+  );
+}
+
+export function isLessonComplete(slugOrCode: string): boolean {
+  if (!slugOrCode) return false;
+  const p = getProgress();
+  const all = getAllNextjsLessons();
+  const matchedLesson = all.find(
+    (l) =>
+      l.slug === slugOrCode ||
+      l.code === slugOrCode ||
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
+  );
+
+  return p.completedLessons.some((item) => {
+    const norm = item.toLowerCase();
+    if (norm === slugOrCode.toLowerCase()) return true;
+    if (
+      matchedLesson &&
+      (norm === matchedLesson.slug.toLowerCase() ||
+        norm === matchedLesson.code.toLowerCase())
+    ) {
+      return true;
+    }
+    return false;
+  });
 }
 
 /**
  * Record lesson started in PostgreSQL database
  */
 export function recordLessonStart(slug: string): void {
-  inMemoryProgress = {
-    ...inMemoryProgress,
-    currentLessonSlug: slug,
-    lastVisitedAt: Date.now(),
-  };
+  saveProgress({ currentLessonSlug: slug });
 
   if (typeof window !== "undefined") {
-    window.dispatchEvent(
-      new CustomEvent("learncraft-progress-updated", { detail: inMemoryProgress })
-    );
-    window.dispatchEvent(
-      new CustomEvent("nextjs-progress-updated", { detail: inMemoryProgress })
-    );
-
     // Save directly to Neon PostgreSQL: lesson started (completed: false)
     fetch("/api/progress", {
       method: "POST",
@@ -163,38 +303,39 @@ export function recordLessonStart(slug: string): void {
  * Mark a lesson completed in PostgreSQL database
  */
 export function markLessonComplete(slugOrCode: string): boolean {
-  if (isLessonComplete(slugOrCode)) return false;
+  if (!slugOrCode) return false;
+  const all = getAllNextjsLessons();
+  const matched = all.find(
+    (l) =>
+      l.slug === slugOrCode ||
+      l.code === slugOrCode ||
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
+  );
+  const canonicalSlug = matched?.slug || slugOrCode;
 
-  const next = [...inMemoryProgress.completedLessons, slugOrCode];
-  inMemoryProgress = {
-    ...inMemoryProgress,
-    completedLessons: next,
-    lastVisitedAt: Date.now(),
-  };
+  const p = getProgress();
+  if (isLessonComplete(canonicalSlug)) return false;
+
+  const updated = Array.from(new Set([...p.completedLessons, canonicalSlug]));
+  saveProgress({ completedLessons: updated });
 
   if (typeof window !== "undefined") {
-    window.dispatchEvent(
-      new CustomEvent("learncraft-progress-updated", { detail: inMemoryProgress })
-    );
-    window.dispatchEvent(
-      new CustomEvent("nextjs-progress-updated", { detail: inMemoryProgress })
-    );
-
     // Gamification XP Reward & Daily Streak tracking
     try {
       import("@/lib/gamification").then(({ recordActivity }) => {
-        recordActivity("lesson_complete", `Completed Next.js lesson: ${slugOrCode}`, {
-          lesson: slugOrCode,
+        recordActivity("lesson_complete", `Completed Next.js lesson: ${canonicalSlug}`, {
+          lesson: canonicalSlug,
           skill: "nextjs",
         });
       });
     } catch {}
 
-    // Save directly to Neon PostgreSQL: lesson is completed (completed: true, score: 100)
+    // Save directly to Neon PostgreSQL
     fetch("/api/progress", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ module: slugOrCode, completed: true, score: 100 }),
+      body: JSON.stringify({ module: canonicalSlug, completed: true, score: 100 }),
     }).catch((err) =>
       console.warn("[NextjsProgressStore] Failed to mark complete in DB:", err)
     );
@@ -207,33 +348,36 @@ export function markLessonComplete(slugOrCode: string): boolean {
  * Unmark a completed lesson in PostgreSQL database
  */
 export function unmarkLessonComplete(slugOrCode: string): void {
-  const next = inMemoryProgress.completedLessons.filter(
-    (item) =>
-      item !== slugOrCode &&
-      item.toLowerCase() !== slugOrCode.toLowerCase() &&
-      !item.endsWith(`/${slugOrCode}`)
+  if (!slugOrCode) return;
+  const all = getAllNextjsLessons();
+  const matched = all.find(
+    (l) =>
+      l.slug === slugOrCode ||
+      l.code === slugOrCode ||
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
+  const canonicalSlug = matched?.slug || slugOrCode;
 
-  inMemoryProgress = {
-    ...inMemoryProgress,
-    completedLessons: next,
-    lastVisitedAt: Date.now(),
-  };
+  const p = getProgress();
+  const updated = p.completedLessons.filter((s) => {
+    const norm = s.toLowerCase();
+    if (norm === canonicalSlug.toLowerCase()) return false;
+    if (matched && (norm === matched.code.toLowerCase() || norm === matched.slug.toLowerCase())) {
+      return false;
+    }
+    return true;
+  });
+
+  saveProgress({ completedLessons: updated });
 
   if (typeof window !== "undefined") {
-    window.dispatchEvent(
-      new CustomEvent("learncraft-progress-updated", { detail: inMemoryProgress })
-    );
-    window.dispatchEvent(
-      new CustomEvent("nextjs-progress-updated", { detail: inMemoryProgress })
-    );
-
     // Force unmark in Neon PostgreSQL
     fetch("/api/progress", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        module: slugOrCode,
+        module: canonicalSlug,
         completed: false,
         force: true,
         score: 0,
@@ -259,11 +403,11 @@ export function setCurrentLesson(slug: string): void {
 }
 
 export function setStage(stageId: string): void {
-  inMemoryProgress = { ...inMemoryProgress, selectedStage: stageId };
+  saveProgress({ selectedStage: stageId });
 }
 
 export function getStage(): string | null {
-  return inMemoryProgress.selectedStage;
+  return getProgress().selectedStage;
 }
 
 export function getCompletionByStage(stageId: string): {
@@ -302,16 +446,7 @@ export function getOverallProgress(): {
   percent: number;
 } {
   const all = getAllNextjsLessons();
-  const { completedLessons } = getProgress();
-  const completedCount = all.filter((l) =>
-    completedLessons.some(
-      (c) =>
-        c === l.slug ||
-        c === l.code ||
-        c.toLowerCase() === l.slug.toLowerCase() ||
-        c.toLowerCase() === l.code.toLowerCase()
-    )
-  ).length;
+  const completedCount = all.filter((l) => isLessonComplete(l.slug)).length;
   const totalCount = all.length;
   const percent =
     totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;

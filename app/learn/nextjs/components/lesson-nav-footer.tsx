@@ -2,117 +2,93 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { ArrowLeft, ArrowRight, CheckCircle2, Circle } from "./icons";
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Circle,
+} from "./icons";
 import {
   getNextNextjsLesson,
   getPrevNextjsLesson,
-  getNextjsStageByLessonSlug,
+  NEXTJS_CAPSTONE,
 } from "../data/nextjs-curriculum";
-import {
-  isLessonComplete,
-  markLessonComplete,
-  toggleLessonComplete,
-  getCompletionByStage,
-} from "../data/progress-store";
+import { isLessonComplete } from "../data/progress-store";
 
-interface NextjsLessonNavFooterProps {
+interface LessonNavFooterProps {
   currentSlug: string;
+  isLessonCompleted?: boolean;
+  canComplete?: boolean;
   onLessonComplete?: () => void;
 }
 
-export function NextjsLessonNavFooter({
+export function LessonNavFooter({
   currentSlug,
+  isLessonCompleted,
+  canComplete,
   onLessonComplete,
-}: NextjsLessonNavFooterProps) {
-  const { data: session } = useSession();
-  const isAuthenticated = Boolean(session?.user);
-
-  const [completed, setCompleted] = useState<boolean>(false);
-  const [showCelebration, setShowCelebration] = useState<boolean>(false);
+}: LessonNavFooterProps) {
+  const [completed, setCompleted] = useState<boolean>(() => {
+    if (isLessonCompleted !== undefined) return isLessonCompleted;
+    return isLessonComplete(currentSlug);
+  });
 
   const prevLesson = getPrevNextjsLesson(currentSlug);
   const nextLesson = getNextNextjsLesson(currentSlug);
-  const currentStage = getNextjsStageByLessonSlug(currentSlug);
+
+  useEffect(() => {
+    if (isLessonCompleted !== undefined) {
+      setCompleted(isLessonCompleted);
+    } else {
+      setCompleted(isLessonComplete(currentSlug));
+    }
+  }, [currentSlug, isLessonCompleted]);
 
   useEffect(() => {
     let isMounted = true;
-    if (!isAuthenticated) {
-      setCompleted(false);
-      return;
-    }
-
-    if (isMounted) {
-      setCompleted(isLessonComplete(currentSlug));
-    }
 
     const handleProgressUpdated = () => {
       if (isMounted) {
-        setCompleted(isLessonComplete(currentSlug));
+        if (isLessonCompleted !== undefined) {
+          setCompleted(isLessonCompleted);
+        } else {
+          setCompleted(isLessonComplete(currentSlug));
+        }
       }
     };
 
-    window.addEventListener("learncraft-progress-updated", handleProgressUpdated);
-    window.addEventListener("nextjs-progress-updated", handleProgressUpdated);
+    window.addEventListener(
+      "learncraft-nextjs-progress-updated",
+      handleProgressUpdated
+    );
+    window.addEventListener(
+      "nextjs-progress-updated",
+      handleProgressUpdated
+    );
+    window.addEventListener(
+      "learncraft-progress-updated",
+      handleProgressUpdated
+    );
     return () => {
       isMounted = false;
-      window.removeEventListener("learncraft-progress-updated", handleProgressUpdated);
-      window.removeEventListener("nextjs-progress-updated", handleProgressUpdated);
+      window.removeEventListener(
+        "learncraft-nextjs-progress-updated",
+        handleProgressUpdated
+      );
+      window.removeEventListener(
+        "nextjs-progress-updated",
+        handleProgressUpdated
+      );
+      window.removeEventListener(
+        "learncraft-progress-updated",
+        handleProgressUpdated
+      );
     };
-  }, [currentSlug, isAuthenticated]);
-
-  const handleToggleComplete = () => {
-    if (!isAuthenticated) return;
-
-    const isNowDone = toggleLessonComplete(currentSlug);
-    setCompleted(isNowDone);
-
-    if (isNowDone && currentStage) {
-      const stageStats = getCompletionByStage(currentStage.id);
-      if (stageStats.isCompleted) {
-        setShowCelebration(true);
-      }
-    }
-
-    if (onLessonComplete) {
-      onLessonComplete();
-    }
-  };
-
-  const handleNextClick = () => {
-    if (isAuthenticated && !completed) {
-      markLessonComplete(currentSlug);
-    }
-  };
+  }, [currentSlug, isLessonCompleted]);
 
   return (
-    <div className="mt-14 pt-8 border-t border-white/[0.08] space-y-6">
-      {/* Stage Celebration Banner */}
-      {showCelebration && currentStage && (
-        <div className="p-6 rounded-2xl bg-gradient-to-r from-purple-950/60 to-slate-900 border border-purple-500/40 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 animate-in fade-in duration-300">
-          <div className="space-y-1">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-purple-400">
-              🎉 Stage Complete!
-            </span>
-            <h4 className="text-lg font-bold text-white">
-              You finished {currentStage.name}!
-            </h4>
-            <p className="text-xs text-slate-300">
-              {currentStage.capstone ? "You are now ready to tackle the Stage Capstone project!" : "Keep up the momentum!"}
-            </p>
-          </div>
-          {currentStage.capstone && (
-            <Link
-              href={currentStage.capstone.path}
-              className="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md transition-all whitespace-nowrap cursor-pointer"
-            >
-              Start Capstone Project →
-            </Link>
-          )}
-        </div>
-      )}
-
-      {/* Primary Navigation Controls (3-Column Layout from Image 2) */}
+    <div className="mt-16 pt-8 border-t border-white/[0.08] space-y-6">
+      {/* Primary Navigation Controls */}
       <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
         {/* Previous Lesson */}
         <div className="flex justify-start">
@@ -139,59 +115,41 @@ export function NextjsLessonNavFooter({
               className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 p-3"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Next.js Roadmap</span>
+              <span>Next.js Hub</span>
             </Link>
           )}
         </div>
 
-        {/* Completion Toggle in Center */}
+        {/* Completion Indicator */}
         <div className="flex justify-center">
-          {isAuthenticated ? (
+          {completed ? (
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>Lesson Completed</span>
+            </div>
+          ) : canComplete && onLessonComplete ? (
             <button
               type="button"
-              onClick={handleToggleComplete}
-              className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
-                completed
-                  ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25"
-                  : "bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/20"
-              }`}
+              onClick={onLessonComplete}
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/20 transition-all cursor-pointer"
             >
-              {completed ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Lesson Completed</span>
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 text-white/60" />
-                  <span>Mark as Complete</span>
-                </>
-              )}
+              <CheckCircle2 className="w-4 h-4 text-white/70" />
+              <span>Finish & Complete Lesson ✓</span>
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.dispatchEvent(
-                    new CustomEvent("learncraft:open-auth-modal")
-                  );
-                }
-              }}
-              className="text-xs text-slate-500 hover:text-purple-400 font-mono transition-colors cursor-pointer"
-            >
-              Sign in to save progress
-            </button>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06] text-slate-400 text-xs font-mono">
+              <Circle className="w-3.5 h-3.5 text-slate-500" />
+              <span>Complete all modules to finish</span>
+            </div>
           )}
         </div>
 
-        {/* Next Lesson / Capstone */}
+        {/* Next Lesson */}
         <div className="flex justify-end">
           {nextLesson ? (
             <Link
               href={nextLesson.path}
-              onClick={handleNextClick}
-              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-[#0E121B] border border-white/[0.06] hover:border-purple-500/40 transition-all text-right w-full sm:w-auto"
+              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-[#0E121B] border border-white/[0.06] hover:border-purple-500/40 transition-all text-right w-full sm:w-auto ml-auto"
             >
               <div className="overflow-hidden">
                 <span className="text-[10px] font-mono text-purple-400 block uppercase">
@@ -205,21 +163,19 @@ export function NextjsLessonNavFooter({
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </Link>
-          ) : currentStage?.capstone ? (
+          ) : (
             <Link
-              href={currentStage.capstone.path}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all"
+              href={NEXTJS_CAPSTONE.path}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all ml-auto"
             >
               <span>Launch Capstone</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
-          ) : (
-            <span className="text-xs text-emerald-400 font-bold p-3">
-              🎉 All Lessons Completed
-            </span>
           )}
         </div>
       </div>
     </div>
   );
 }
+
+export { LessonNavFooter as NextjsLessonNavFooter };
