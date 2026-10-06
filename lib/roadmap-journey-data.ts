@@ -221,6 +221,8 @@ export const BACKEND_JOURNEY: JourneyRoadmap = {
             tag: "Industry gold standard • ACID compliance",
             desc: "Rock-solid relational database with rich indexing, JSON support, and high reliability.",
             isRecommended: true,
+            isAvailable: true,
+            lessons: 29,
           },
           {
             name: "MongoDB",
@@ -640,6 +642,8 @@ export const FULLSTACK_JOURNEY: JourneyRoadmap = {
             tag: "Relational standard • High reliability",
             desc: "Robust relational database with rich indexing and data integrity.",
             isRecommended: true,
+            isAvailable: true,
+            lessons: 29,
           },
           {
             name: "MongoDB",

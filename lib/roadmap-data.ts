@@ -17,6 +17,8 @@ import { REACT_STAGES } from "@/app/learn/react/data/react-curriculum";
 import { NODEJS_STAGES } from "@/app/learn/nodejs/data/nodejs-curriculum";
 import { EXPRESS_STAGES } from "@/app/learn/express/data/express-curriculum";
 import { MONGODB_STAGES } from "@/app/learn/mongodb/data/mongodb-curriculum";
+import { POSTGRESQL_STAGES } from "@/app/learn/postgresql/data/postgresql-curriculum";
+
 
 
 // ─────────────────────────────────────────────────────────────
@@ -257,6 +259,27 @@ const mongodbStages: RoadmapStage[] = MONGODB_STAGES.map((stage) => ({
   })),
 }));
 
+// ─────────────────────────────────────────────────────────────
+// PostgreSQL — derived from postgresql-curriculum
+// ─────────────────────────────────────────────────────────────
+
+const postgresqlStages: RoadmapStage[] = POSTGRESQL_STAGES.map((stage) => ({
+  id: stage.id,
+  stageNumber: stage.stageNumber,
+  name: stage.name,
+  subtitle: stage.subtitle,
+  description: stage.description,
+  lessons: stage.lessons.map((lesson) => ({
+    code: lesson.code,
+    name: lesson.name,
+    slug: lesson.slug,
+    path: lesson.path,
+    desc: lesson.desc,
+    estimatedMinutes: lesson.estimatedMinutes,
+  })),
+}));
+
+
 
 // ─────────────────────────────────────────────────────────────
 // TanStack Query — defined here
@@ -454,15 +477,15 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     id: "postgresql",
     slug: "postgresql",
     title: "PostgreSQL",
-    description: "Relational Database Design, Queries & Optimization",
+    description: "Relational Database Design, SQL, Joins, ACID & Performance Tuning",
     icon: "🐘",
     category: "database",
     level: "beginner-advanced",
-    status: "coming-soon",
-    totalLessons: 0,
-    stages: [],
-    learnPath: "",
-    badgeColor: "bg-ds-info-lighter text-ds-info-dark border-ds-info-light",
+    status: "available",
+    totalLessons: 29,
+    stages: postgresqlStages,
+    learnPath: "/learn/postgresql",
+    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
     id: "mongodb",
@@ -589,6 +612,9 @@ export function getSkillRoadmap(slug: string): SkillRoadmap | undefined {
   }
   if (slug === "mongo" || slug === "mongodb") {
     return SKILL_ROADMAPS.find((s) => s.slug === "mongodb" || s.slug === "mongo");
+  }
+  if (slug === "postgres" || slug === "postgresql" || slug === "psql") {
+    return SKILL_ROADMAPS.find((s) => s.slug === "postgresql" || s.slug === "postgres");
   }
   return SKILL_ROADMAPS.find((s) => s.slug === slug);
 }

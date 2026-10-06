@@ -92,10 +92,47 @@ export const TOPICS_META: Record<
     icon: "🍃",
     description: "Document Database, Aggregation, Indexes & Data Modeling",
   },
+  postgresql: {
+    title: "PostgreSQL",
+    badgeColor: "bg-purple-500/10 text-purple-300 border-purple-500/20",
+    icon: "🐘",
+    description: "Relational Database Design, SQL, Joins, ACID & Performance Tuning",
+  },
 };
 
 // Known lessons database map
 export const KNOWN_LESSONS: Record<string, { code: string; name: string; topicId: string }> = {
+  // PostgreSQL Lessons
+  "/learn/postgresql/pg01-what-is-postgresql": { code: "PG-01", name: "What Is PostgreSQL & The Relational Paradigm", topicId: "postgresql" },
+  "/learn/postgresql/pg02-databases-schemas-tables": { code: "PG-02", name: "PostgreSQL Hierarchy: Databases, Schemas & Tables", topicId: "postgresql" },
+  "/learn/postgresql/pg03-core-data-types": { code: "PG-03", name: "Core Data Types: Integers, Text, Decimals & Timestamps", topicId: "postgresql" },
+  "/learn/postgresql/pg04-create-table-ddl": { code: "PG-04", name: "Defining Tables: CREATE TABLE & Safe Alterations", topicId: "postgresql" },
+  "/learn/postgresql/pg05-insert-and-select": { code: "PG-05", name: "Inserting & Reading Rows (INSERT INTO & SELECT)", topicId: "postgresql" },
+  "/learn/postgresql/pg06-update-and-delete": { code: "PG-06", name: "Modifying & Deleting Data (UPDATE, DELETE & Safety Guards)", topicId: "postgresql" },
+  "/learn/postgresql/pg07-returning-clause": { code: "PG-07", name: "PostgreSQL Superpower: The RETURNING Clause", topicId: "postgresql" },
+  "/learn/postgresql/pg08-where-filtering-operators": { code: "PG-08", name: "Filtering Rows: WHERE, Comparison & Logical Operators", topicId: "postgresql" },
+  "/learn/postgresql/pg09-null-three-valued-logic": { code: "PG-09", name: "The Three-Valued Logic of NULL in SQL", topicId: "postgresql" },
+  "/learn/postgresql/pg10-ordering-and-pagination": { code: "PG-10", name: "Ordering & Pagination: ORDER BY, LIMIT, OFFSET & Keyset", topicId: "postgresql" },
+  "/learn/postgresql/pg11-primary-foreign-keys": { code: "PG-11", name: "Primary Keys & Foreign Key References", topicId: "postgresql" },
+  "/learn/postgresql/pg12-inner-join-multi-table": { code: "PG-12", name: "Combining Related Tables: INNER JOIN", topicId: "postgresql" },
+  "/learn/postgresql/pg13-outer-joins-left-right": { code: "PG-13", name: "Preserving Unmatched Data: LEFT JOIN & RIGHT JOIN", topicId: "postgresql" },
+  "/learn/postgresql/pg14-modeling-cardinality": { code: "PG-14", name: "Modeling Relationships: 1-to-1, 1-to-N & Junction Tables", topicId: "postgresql" },
+  "/learn/postgresql/pg15-aggregate-functions-group-by": { code: "PG-15", name: "Aggregate Functions & Grouping (COUNT, SUM, AVG, GROUP BY)", topicId: "postgresql" },
+  "/learn/postgresql/pg16-having-vs-where": { code: "PG-16", name: "Filtering Aggregated Groups: HAVING vs WHERE", topicId: "postgresql" },
+  "/learn/postgresql/pg17-subqueries-and-ctes": { code: "PG-17", name: "Subqueries & Common Table Expressions (CTEs with WITH)", topicId: "postgresql" },
+  "/learn/postgresql/pg18-window-functions": { code: "PG-18", name: "Window Functions: ROW_NUMBER, RANK & OVER (PARTITION BY)", topicId: "postgresql" },
+  "/learn/postgresql/pg19-upserts-on-conflict": { code: "PG-19", name: "Idempotent Inserts: ON CONFLICT DO UPDATE / NOTHING", topicId: "postgresql" },
+  "/learn/postgresql/pg20-normalization-1nf-2nf-3nf": { code: "PG-20", name: "Database Normalization: 1NF, 2NF & 3NF Made Simple", topicId: "postgresql" },
+  "/learn/postgresql/pg21-strategic-denormalization": { code: "PG-21", name: "Strategic Denormalization & Read Optimization", topicId: "postgresql" },
+  "/learn/postgresql/pg22-jsonb-semi-structured-data": { code: "PG-22", name: "Working with Semi-Structured Data: PostgreSQL JSONB", topicId: "postgresql" },
+  "/learn/postgresql/pg23-constraints-integrity": { code: "PG-23", name: "Integrity Constraints: UNIQUE, NOT NULL & CHECK", topicId: "postgresql" },
+  "/learn/postgresql/pg24-foreign-key-referential-actions": { code: "PG-24", name: "Referential Actions: ON DELETE CASCADE vs RESTRICT", topicId: "postgresql" },
+  "/learn/postgresql/pg25-transactions-acid-foundations": { code: "PG-25", name: "ACID Foundations: BEGIN, COMMIT & ROLLBACK", topicId: "postgresql" },
+  "/learn/postgresql/pg26-isolation-levels-concurrency": { code: "PG-26", name: "Concurrency & Transaction Isolation Levels", topicId: "postgresql" },
+  "/learn/postgresql/pg27-indexes-btree-compound": { code: "PG-27", name: "How Indexes Work: B-Tree, Compound & Unique Indexes", topicId: "postgresql" },
+  "/learn/postgresql/pg28-explain-analyze-query-plans": { code: "PG-28", name: "Dissecting Execution Plans: EXPLAIN & EXPLAIN ANALYZE", topicId: "postgresql" },
+  "/learn/postgresql/pg29-debugging-production-best-practices": { code: "PG-29", name: "Debugging Common PostgreSQL Errors & Production Best Practices", topicId: "postgresql" },
+
   // MongoDB Lessons
   "/learn/mongodb/mdb01-what-is-mongodb": { code: "MDB-01", name: "What Is MongoDB & Why Documents?", topicId: "mongodb" },
   "/learn/mongodb/mdb02-databases-collections-bson": { code: "MDB-02", name: "Databases, Collections & BSON Data Types", topicId: "mongodb" },
