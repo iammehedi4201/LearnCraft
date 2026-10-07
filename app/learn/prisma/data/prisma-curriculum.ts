@@ -8,6 +8,8 @@
  * Transactions & Concurrency, Error Handling, and Generated Types.
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export interface LessonMeta {
   code: string;
   slug: string;
@@ -674,3 +676,46 @@ export function getPrevLesson(currentSlug: string): LessonMeta | null {
   if (idx <= 0) return null;
   return PRISMA_LESSONS[idx - 1];
 }
+
+export const PROGRESSION_PHASES = PRISMA_PROGRESSION_PHASES;
+
+export function getPrismaCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "prisma",
+    title: "Learn Prisma",
+    prerequisites: {
+      items: [
+        "TypeScript fundamentals: types, interfaces, async/await, and promises",
+        "Relational database concepts: tables, rows, primary keys, and foreign keys",
+        "Familiarity with Node.js runtime and npm packages",
+      ],
+      refresherHref: "/learn/postgresql",
+      refresherLabel: "Need a refresher? Open the PostgreSQL curriculum",
+    },
+    capstone: {
+      title: PRISMA_CAPSTONE.title,
+      description:
+        "Your finish line: architect and implement OrderFlow, a production-grade Prisma data-access engine featuring multi-entity schemas, declarative SQL migrations, atomic nested writes, and interactive transactions.",
+      href: PRISMA_CAPSTONE.path,
+    },
+    phases: PRISMA_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.name,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
+}
+

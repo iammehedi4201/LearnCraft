@@ -82,12 +82,50 @@ export async function toggleLessonComplete(slugOrCode: string): Promise<boolean>
       body: JSON.stringify({
         topicId: "prisma",
         lessonCode: lesson?.code || slugOrCode,
+        lessonId: targetKey,
+        isCompleted: !isCompleted,
         completed: !isCompleted,
       }),
     });
   } catch {}
 
   return !isCompleted;
+}
+
+export function getProgress(): ProgressState {
+  return getStoredState();
+}
+
+export async function unmarkLessonComplete(slugOrCode: string): Promise<void> {
+  const state = getStoredState();
+  const lesson = PRISMA_LESSONS.find(
+    (l) => l.slug.toLowerCase() === slugOrCode.toLowerCase() || l.code.toLowerCase() === slugOrCode.toLowerCase()
+  );
+  const targetKey = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const codeKey = lesson ? lesson.code.toLowerCase() : "";
+
+  const nextCompleted = state.completedLessons.filter(
+    (k) => k !== targetKey && k !== codeKey
+  );
+
+  saveState({
+    ...state,
+    completedLessons: nextCompleted,
+  });
+
+  try {
+    await fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        topicId: "prisma",
+        lessonCode: lesson?.code || slugOrCode,
+        lessonId: targetKey,
+        isCompleted: false,
+        completed: false,
+      }),
+    });
+  } catch {}
 }
 
 export async function markLessonComplete(slugOrCode: string): Promise<void> {
@@ -177,9 +215,18 @@ export async function fetchProgressFromDB(): Promise<void> {
     const res = await fetch("/api/progress?topicId=prisma");
     if (!res.ok) return;
     const data = await res.json();
-    if (Array.isArray(data.completedLessonCodes)) {
+    const serverCodes: string[] = Array.isArray(data.completedLessonCodes)
+      ? data.completedLessonCodes
+      : Array.isArray(data.completedLessonIds)
+      ? data.completedLessonIds
+      : Array.isArray(data.completedLessons)
+      ? data.completedLessons
+      : [];
+    if (serverCodes.length > 0) {
       const state = getStoredState();
-      const combined = Array.from(new Set([...state.completedLessons, ...data.completedLessonCodes.map((c: string) => c.toLowerCase())]));
+      const combined = Array.from(
+        new Set([...state.completedLessons, ...serverCodes.map((c: string) => c.toLowerCase())])
+      );
       saveState({ ...state, completedLessons: combined });
     }
   } catch {}

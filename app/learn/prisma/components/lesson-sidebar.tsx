@@ -152,22 +152,28 @@ export function PrismaLessonSidebar({
             Progress
           </span>
           <span className="text-[12px] font-bold text-white">
-            {isAuthenticated ? `${progressPercent}%` : "0%"}
+            {progressPercent}%
           </span>
         </div>
         <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-purple-500 to-emerald-400"
             style={{
-              width: `${isAuthenticated ? progressPercent : 0}%`,
+              width: `${progressPercent}%`,
             }}
           />
         </div>
-        <p className="mt-2 text-[10px] text-slate-400">
-          {isAuthenticated
-            ? `${completedSectionsCount} of ${sections.length} modules completed`
-            : "Sign in to save progress"}
-        </p>
+        <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400">
+          <span>{completedSectionsCount} of {sections.length} parts</span>
+          <span className="flex items-center gap-1 font-mono text-[9px]">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isAuthenticated ? "bg-emerald-400" : "bg-slate-500"
+              }`}
+            />
+            {isAuthenticated ? "Cloud" : "Local"}
+          </span>
+        </div>
       </div>
 
       {/* Prev / Next navigation */}
