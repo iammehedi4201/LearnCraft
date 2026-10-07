@@ -8,6 +8,8 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export interface LessonMeta {
   code: string;
   name: string;
@@ -607,3 +609,65 @@ export function getPrevLessonSlug(currentSlug: string): string | null {
   if (idx <= 0) return null;
   return all[idx - 1].slug;
 }
+
+export function getNextLesson(currentSlug: string): LessonMeta | null {
+  const all = ALL_SYSTEM_DESIGN_LESSONS;
+  const idx = all.findIndex(
+    (l) => l.slug.toLowerCase() === currentSlug.toLowerCase() || l.code.toLowerCase() === currentSlug.toLowerCase()
+  );
+  if (idx === -1 || idx === all.length - 1) return null;
+  return all[idx + 1];
+}
+
+export function getPrevLesson(currentSlug: string): LessonMeta | null {
+  const all = ALL_SYSTEM_DESIGN_LESSONS;
+  const idx = all.findIndex(
+    (l) => l.slug.toLowerCase() === currentSlug.toLowerCase() || l.code.toLowerCase() === currentSlug.toLowerCase()
+  );
+  if (idx <= 0) return null;
+  return all[idx - 1];
+}
+
+export const PROGRESSION_PHASES = SYSTEM_DESIGN_PROGRESSION_PHASES;
+export const SYSTEM_DESIGN_LESSONS = ALL_SYSTEM_DESIGN_LESSONS;
+
+export function getSystemDesignCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "system-design",
+    title: "Learn System Design",
+    prerequisites: {
+      items: [
+        "Basic programming knowledge: functions, data structures, and in-memory execution",
+        "Client-server architecture, HTTP request-response cycle, and REST APIs",
+        "Basic database concepts: relational tables, document storage, and CRUD",
+      ],
+      refresherHref: "/learn/nodejs",
+      refresherLabel: "Need a refresher? Open the Node.js curriculum",
+    },
+    capstone: {
+      title: SYSTEM_DESIGN_CAPSTONE.title,
+      description:
+        "Your finish line: architect and trace PulseScale, an industrial-grade notification delivery platform processing 100M events/day with multi-tier routing, sliding-window rate limiting, priority queues, and circuit breakers.",
+      href: SYSTEM_DESIGN_CAPSTONE.path,
+    },
+    phases: SYSTEM_DESIGN_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.title,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
+}
+

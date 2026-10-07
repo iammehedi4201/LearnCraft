@@ -63,37 +63,62 @@ function saveProgressState(state: SystemDesignProgressState): void {
   }
 }
 
+export function getProgress(): { completedLessons: string[]; lastVisitedLesson: string } {
+  const state = getProgressState();
+  return {
+    completedLessons: state.completedLessons,
+    lastVisitedLesson: state.currentLessonSlug || "sys01-what-is-system-design",
+  };
+}
+
 export function isLessonComplete(slugOrCode: string): boolean {
   const state = getProgressState();
-  return state.completedLessons.includes(slugOrCode);
+  const slugLower = slugOrCode.toLowerCase();
+  const lesson = ALL_SYSTEM_DESIGN_LESSONS.find(
+    (l) => l.slug.toLowerCase() === slugLower || l.code.toLowerCase() === slugLower
+  );
+  if (!lesson) return state.completedLessons.some((c) => c.toLowerCase() === slugLower);
+  return (
+    state.completedLessons.some((c) => c.toLowerCase() === lesson.slug.toLowerCase()) ||
+    state.completedLessons.some((c) => c.toLowerCase() === lesson.code.toLowerCase())
+  );
 }
 
-export function markLessonComplete(slug: string): void {
+export function markLessonComplete(slugOrCode: string): void {
   const state = getProgressState();
-  if (!state.completedLessons.includes(slug)) {
-    state.completedLessons.push(slug);
-    state.lastActiveTimestamp = Date.now();
-    saveProgressState(state);
-    syncProgressToDB(slug, true);
-  }
+  const lesson = ALL_SYSTEM_DESIGN_LESSONS.find(
+    (l) => l.slug.toLowerCase() === slugOrCode.toLowerCase() || l.code.toLowerCase() === slugOrCode.toLowerCase()
+  );
+  const targetKey = lesson ? lesson.slug : slugOrCode;
+  const codeKey = lesson ? lesson.code : "";
+  const updated = Array.from(new Set([...state.completedLessons, targetKey, codeKey].filter(Boolean)));
+  state.completedLessons = updated;
+  state.lastActiveTimestamp = Date.now();
+  saveProgressState(state);
+  syncProgressToDB(targetKey, true);
 }
 
-export function unmarkLessonComplete(slug: string): void {
+export function unmarkLessonComplete(slugOrCode: string): void {
   const state = getProgressState();
-  if (state.completedLessons.includes(slug)) {
-    state.completedLessons = state.completedLessons.filter((s) => s !== slug);
-    state.lastActiveTimestamp = Date.now();
-    saveProgressState(state);
-    syncProgressToDB(slug, false);
-  }
+  const lesson = ALL_SYSTEM_DESIGN_LESSONS.find(
+    (l) => l.slug.toLowerCase() === slugOrCode.toLowerCase() || l.code.toLowerCase() === slugOrCode.toLowerCase()
+  );
+  const targetKey = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const codeKey = lesson ? lesson.code.toLowerCase() : "";
+  state.completedLessons = state.completedLessons.filter(
+    (s) => s.toLowerCase() !== targetKey && s.toLowerCase() !== codeKey
+  );
+  state.lastActiveTimestamp = Date.now();
+  saveProgressState(state);
+  syncProgressToDB(lesson?.slug || slugOrCode, false);
 }
 
-export function toggleLessonComplete(slug: string): boolean {
-  if (isLessonComplete(slug)) {
-    unmarkLessonComplete(slug);
+export function toggleLessonComplete(slugOrCode: string): boolean {
+  if (isLessonComplete(slugOrCode)) {
+    unmarkLessonComplete(slugOrCode);
     return false;
   } else {
-    markLessonComplete(slug);
+    markLessonComplete(slugOrCode);
     return true;
   }
 }
@@ -119,6 +144,20 @@ export function setGoal(phaseId: string): void {
 export function getGoal(): string | null {
   const state = getProgressState();
   return state.targetGoalPhaseId;
+}
+
+export function getActiveLesson(): LessonMeta | null {
+  if (!isClient()) return ALL_SYSTEM_DESIGN_LESSONS[0];
+  try {
+    const saved = localStorage.getItem("learncraft_system_design_current_lesson_v1") || getProgressState().currentLessonSlug;
+    if (saved) {
+      const match = ALL_SYSTEM_DESIGN_LESSONS.find(
+        (l) => l.slug.toLowerCase() === saved.toLowerCase() || l.code.toLowerCase() === saved.toLowerCase()
+      );
+      if (match) return match;
+    }
+  } catch {}
+  return getNextRecommendedLesson() || ALL_SYSTEM_DESIGN_LESSONS[0];
 }
 
 export function getNextRecommendedLesson(): LessonMeta | null {
@@ -164,10 +203,17 @@ export async function fetchProgressFromDB(): Promise<void> {
     const res = await fetch("/api/progress?topicId=system-design");
     if (!res.ok) return;
     const data = await res.json();
-    if (data && Array.isArray(data.completedLessons)) {
+    const serverCodes: string[] = Array.isArray(data.completedLessonCodes)
+      ? data.completedLessonCodes
+      : Array.isArray(data.completedLessonIds)
+      ? data.completedLessonIds
+      : Array.isArray(data.completedLessons)
+      ? data.completedLessons
+      : [];
+    if (serverCodes.length > 0) {
       const state = getProgressState();
       // Union of local and remote completed lessons
-      const merged = Array.from(new Set([...state.completedLessons, ...data.completedLessons]));
+      const merged = Array.from(new Set([...state.completedLessons, ...serverCodes.map((s: string) => s.toLowerCase())]));
       state.completedLessons = merged;
       saveProgressState(state);
     }

@@ -83,9 +83,20 @@ export function LessonNavFooter({ currentSlug }: LessonNavFooterProps) {
             </div>
           </Link>
         ) : (
-          <div className="text-xs text-slate-400 font-mono italic p-3">
-            First lesson in curriculum
-          </div>
+          <Link
+            href="/learn/system-design"
+            className="group flex items-center gap-3 p-3 rounded-xl bg-[#090C14] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.02] transition-all"
+          >
+            <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:text-purple-400 group-hover:-translate-x-0.5 transition-all" />
+            <div className="min-w-0">
+              <span className="block text-[10px] font-mono uppercase tracking-wider text-slate-400">
+                Curriculum Hub
+              </span>
+              <span className="block text-xs font-bold text-white truncate group-hover:text-purple-300 transition-colors">
+                System Design Overview
+              </span>
+            </div>
+          </Link>
         )}
       </div>
 
