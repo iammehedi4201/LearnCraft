@@ -600,4 +600,74 @@ const nextjsCourse = getNextjsCourse();
   console.log("  ✓ 7.4 All 5 phases finished -> Next.js Capstone successfully unlocked verified!");
 }
 
+// =========================================================================
+// TEST SUITE 8: Authoritative React.js Curriculum Progression
+// =========================================================================
+console.log("\nTesting Course 8: Authoritative React.js Curriculum Dynamic States...");
+
+import { getReactCourse, getAllLessons as getAllReactLessons } from "../../../app/learn/react/data/react-curriculum";
+
+const reactCourse = getReactCourse();
+
+// 8.1: Brand-new user (0 lessons completed)
+{
+  const state = getCurriculumState(reactCourse, { completedLessonIds: [], prereqConfirmed: false });
+  assert(state.totalLessonsCount === 27, `Total lessons should be 27, got ${state.totalLessonsCount}`);
+  assert(state.phases.length === 9, `Total phases should be 9, got ${state.phases.length}`);
+  assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
+  assert(state.phases[0].doneSteps === 0, `Phase 1 done steps should be 0, got ${state.phases[0].doneSteps}`);
+  assert(state.phases[0].lessons[0].status === "current", "Lesson 1 should be current");
+  assert(state.currentLesson?.code === "REACT-01", `Current lesson code should be REACT-01, got ${state.currentLesson?.code}`);
+  assert(state.showPrerequisitesCard === true, "Prereq card should show on first visit");
+  assert(state.currentStepChip === "START HERE · STEP 1 OF 3", `Chip should be 'START HERE · STEP 1 OF 3', got '${state.currentStepChip}'`);
+  console.log("  ✓ 8.1 Authoritative React.js initial state verified");
+}
+
+// 8.2: User completes single lesson by slug
+{
+  const state = getCurriculumState(reactCourse, { completedLessonIds: ["react01-what-is-react"], prereqConfirmed: true });
+  assert(state.completedLessonsCount === 1, `Completed count should be 1, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
+  assert(state.showPrerequisitesCard === false, "Prereq card should hide when progress > 0");
+  assert(state.phases[0].doneSteps === 1, `Phase 1 done steps should be 1, got ${state.phases[0].doneSteps}`);
+  assert(state.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed");
+  assert(state.phases[0].lessons[1].status === "current", "Lesson 2 should be current");
+  assert(state.currentLesson?.code === "REACT-02", `Current lesson should be REACT-02, got ${state.currentLesson?.code}`);
+  assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 3", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 3', got '${state.currentStepChip}'`);
+  console.log("  ✓ 8.2 Authoritative React.js single lesson completion verified");
+}
+
+// 8.3: User completes Phase 1 (3 lessons) -> Phase 2 unlocks
+{
+  const phase1Slugs = [
+    "react01-what-is-react",
+    "react02-jsx-and-elements",
+    "react03-components-and-composition",
+  ];
+  const state = getCurriculumState(reactCourse, { completedLessonIds: phase1Slugs, prereqConfirmed: true });
+  assert(state.completedLessonsCount === 3, `Completed count should be 3, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 1, `Completed phases should be 1, got ${state.completedPhases.length}`);
+  assert(state.phases[0].status === "completed", "Phase 1 should be completed");
+  assert(state.phases[1].status === "current", "Phase 2 should be current");
+  assert(state.currentLesson?.code === "REACT-04", `Current lesson should be REACT-04, got ${state.currentLesson?.code}`);
+  assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 3", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 3', got '${state.currentStepChip}'`);
+  console.log("  ✓ 8.3 Authoritative React.js Phase 1 completion and Phase 2 unlock verified");
+}
+
+// 8.4: User completes all 9 phases (all 27 lessons) -> Capstone unlocks!
+{
+  const all27Slugs = getAllReactLessons().map((l) => l.slug);
+  assert(all27Slugs.length === 27, `Expected 27 React lesson slugs, got ${all27Slugs.length}`);
+
+  const state = getCurriculumState(reactCourse, { completedLessonIds: all27Slugs, prereqConfirmed: true });
+  assert(state.completedLessonsCount === 27, `Completed count should be 27, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 9, `All 9 phases should be completed, got ${state.completedPhases.length}`);
+  assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
+  assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);
+  assert(state.isCourseComplete === true, "Course should be marked complete");
+  assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 9 phases");
+  console.log("  ✓ 8.4 All 9 phases finished -> React.js Capstone successfully unlocked verified!");
+}
+
 console.log("\n🎉 ALL UNIT TESTS PASSED SUCCESSFULLY!\n");

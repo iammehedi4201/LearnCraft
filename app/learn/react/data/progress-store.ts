@@ -35,16 +35,37 @@ export async function fetchProgressFromDB(): Promise<ReactProgress> {
     try {
       const res = await fetch("/api/progress", { cache: "no-store" });
       if (res.status === 401) {
+        // Unauthenticated / Guest mode: Hydrate from localStorage instead of wiping
+        let localCompleted: string[] = [];
+        let localSlug: string | null = null;
+        let localGoal: string = "fundamentals";
+        try {
+          const raw = localStorage.getItem("learncraft_react_progress");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed.completedLessons)) {
+              localCompleted = parsed.completedLessons;
+            }
+            localSlug = parsed.currentLessonSlug || null;
+            localGoal = parsed.selectedGoal || "fundamentals";
+          }
+        } catch {}
+
         inMemoryProgress = {
-          completedLessons: [],
-          currentLessonSlug: null,
-          selectedGoal: "fundamentals",
+          completedLessons: localCompleted,
+          currentLessonSlug: localSlug,
+          selectedGoal: localGoal,
           lastVisitedAt: Date.now(),
         };
         isDbHydrated = true;
 
         window.dispatchEvent(
           new CustomEvent("learncraft-react-progress-updated", {
+            detail: inMemoryProgress,
+          })
+        );
+        window.dispatchEvent(
+          new CustomEvent("learncraft-progress-updated", {
             detail: inMemoryProgress,
           })
         );
@@ -64,12 +85,35 @@ export async function fetchProgressFromDB(): Promise<ReactProgress> {
 
           const activeSlug = startedLessons[0]?.module || inMemoryProgress.currentLessonSlug;
 
+          // Merge DB completions with local cache
+          let localCompleted: string[] = [];
+          try {
+            const raw = localStorage.getItem("learncraft_react_progress");
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed.completedLessons)) {
+                localCompleted = parsed.completedLessons;
+              }
+            }
+          } catch {}
+
+          const mergedCompleted = Array.from(
+            new Set([...completedFromDb, ...localCompleted])
+          );
+
           inMemoryProgress = {
             ...inMemoryProgress,
-            completedLessons: Array.from(new Set(completedFromDb)),
+            completedLessons: mergedCompleted,
             currentLessonSlug: activeSlug || null,
             lastVisitedAt: Date.now(),
           };
+
+          try {
+            localStorage.setItem(
+              "learncraft_react_progress",
+              JSON.stringify(inMemoryProgress)
+            );
+          } catch {}
 
           isDbHydrated = true;
 
@@ -78,10 +122,39 @@ export async function fetchProgressFromDB(): Promise<ReactProgress> {
               detail: inMemoryProgress,
             })
           );
+          window.dispatchEvent(
+            new CustomEvent("learncraft-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
         }
       }
     } catch (err) {
       console.error("[ReactProgressStore] Error fetching from DB:", err);
+      // Fallback: read localStorage
+      try {
+        const raw = localStorage.getItem("learncraft_react_progress");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          inMemoryProgress = {
+            completedLessons: parsed.completedLessons || [],
+            currentLessonSlug: parsed.currentLessonSlug || null,
+            selectedGoal: parsed.selectedGoal || "fundamentals",
+            lastVisitedAt: Date.now(),
+          };
+          isDbHydrated = true;
+          window.dispatchEvent(
+            new CustomEvent("learncraft-react-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
+          window.dispatchEvent(
+            new CustomEvent("learncraft-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
+        }
+      } catch {}
     } finally {
       ongoingDbFetch = null;
     }
@@ -146,46 +219,55 @@ export function saveProgress(progress: Partial<ReactProgress>): void {
       detail: updated,
     })
   );
+  window.dispatchEvent(
+    new CustomEvent("learncraft-progress-updated", {
+      detail: updated,
+    })
+  );
 }
 
 export function isLessonComplete(slugOrCode: string): boolean {
+  if (!slugOrCode) return false;
   const p = getProgress();
-  return p.completedLessons.some(
+  const all = getAllLessons();
+  const matchedLesson = all.find(
     (l) =>
-      l === slugOrCode ||
-      l.toLowerCase() === slugOrCode.toLowerCase() ||
-      slugOrCode.endsWith(`/${l}`) ||
-      l.endsWith(`/${slugOrCode}`)
+      l.slug === slugOrCode ||
+      l.code === slugOrCode ||
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
+
+  return p.completedLessons.some((item) => {
+    const norm = item.toLowerCase();
+    if (norm === slugOrCode.toLowerCase()) return true;
+    if (
+      matchedLesson &&
+      (norm === matchedLesson.slug.toLowerCase() ||
+        norm === matchedLesson.code.toLowerCase())
+    ) {
+      return true;
+    }
+    return false;
+  });
 }
 
 export async function markLessonComplete(slug: string): Promise<void> {
-  const p = getProgress();
-  if (!p.completedLessons.includes(slug)) {
-    const updated = [...p.completedLessons, slug];
-    saveProgress({ completedLessons: updated });
-
-    try {
-      await fetch("/api/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          module: slug,
-          completed: true,
-          activeModule: slug,
-        }),
-      });
-    } catch (err) {
-      console.error("[ReactProgressStore] Error syncing with DB:", err);
-    }
-  }
-}
-
-export async function markLessonIncomplete(slug: string): Promise<void> {
-  const p = getProgress();
-  const updated = p.completedLessons.filter(
-    (l) => l !== slug && !slug.endsWith(`/${l}`) && !l.endsWith(`/${slug}`)
+  if (!slug) return;
+  const all = getAllLessons();
+  const matched = all.find(
+    (l) =>
+      l.slug === slug ||
+      l.code === slug ||
+      l.slug.toLowerCase() === slug.toLowerCase() ||
+      l.code.toLowerCase() === slug.toLowerCase()
   );
+  const canonicalSlug = matched?.slug || slug;
+
+  const p = getProgress();
+  if (isLessonComplete(canonicalSlug)) return;
+
+  const updated = Array.from(new Set([...p.completedLessons, canonicalSlug]));
   saveProgress({ completedLessons: updated });
 
   try {
@@ -193,19 +275,59 @@ export async function markLessonIncomplete(slug: string): Promise<void> {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        module: slug,
-        completed: false,
-        activeModule: slug,
+        module: canonicalSlug,
+        completed: true,
+        activeModule: canonicalSlug,
+        score: 100,
       }),
     });
-  } catch (err) {
-    console.error("[ReactProgressStore] Error syncing with DB:", err);
+  } catch {
+    // Offline/guest resilient
+  }
+}
+
+export async function markLessonIncomplete(slug: string): Promise<void> {
+  if (!slug) return;
+  const all = getAllLessons();
+  const matched = all.find(
+    (l) =>
+      l.slug === slug ||
+      l.code === slug ||
+      l.slug.toLowerCase() === slug.toLowerCase() ||
+      l.code.toLowerCase() === slug.toLowerCase()
+  );
+  const canonicalSlug = matched?.slug || slug;
+
+  const p = getProgress();
+  const updated = p.completedLessons.filter((s) => {
+    const norm = s.toLowerCase();
+    if (norm === canonicalSlug.toLowerCase()) return false;
+    if (matched && (norm === matched.code.toLowerCase() || norm === matched.slug.toLowerCase())) {
+      return false;
+    }
+    return true;
+  });
+
+  saveProgress({ completedLessons: updated });
+
+  try {
+    await fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        module: canonicalSlug,
+        completed: false,
+        activeModule: canonicalSlug,
+        score: 0,
+      }),
+    });
+  } catch {
+    // Offline/guest resilient
   }
 }
 
 export async function toggleLessonComplete(slug: string): Promise<boolean> {
-  const currentlyDone = isLessonComplete(slug);
-  if (currentlyDone) {
+  if (isLessonComplete(slug)) {
     await markLessonIncomplete(slug);
     return false;
   } else {

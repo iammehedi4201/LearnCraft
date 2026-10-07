@@ -66,6 +66,7 @@ export default function ReactLessonPage(): JSX.Element {
     progressPercent,
     completedSectionsCount,
     isLessonCompleted,
+    completeLesson,
     handleSectionChange,
     handlePrev,
     handleNext,
@@ -524,7 +525,12 @@ export default function ReactLessonPage(): JSX.Element {
             </div>
 
             {/* Inter-Lesson Global Navigation Footer */}
-            <LessonNavFooter currentSlug={lesson.slug} />
+            <LessonNavFooter
+              currentSlug={lesson.slug}
+              isLessonCompleted={isLessonCompleted}
+              canComplete={currentIndex === sections.length - 1}
+              onLessonComplete={completeLesson}
+            />
           </main>
         </div>
       </div>

@@ -11,6 +11,8 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export interface LessonMeta {
   code: string;
   stepNumber: number;
@@ -776,4 +778,44 @@ export function getLessonsByPhaseId(phaseId: string): LessonMeta[] {
   return phase.lessonCodes
     .map((code) => all.find((l) => l.code === code))
     .filter((l): l is LessonMeta => l !== undefined);
+}
+
+export function getReactCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "react",
+    title: "Learn React.js",
+    prerequisites: {
+      items: [
+        "HTML fundamentals and basic DOM tree structure",
+        "Modern JavaScript: let/const, arrow functions, destructuring, and array methods",
+        "Understanding ES modules: import and export syntax",
+      ],
+      refresherHref: "/learn/javascript",
+      refresherLabel: "Need a refresher? Open the JavaScript curriculum",
+    },
+    capstone: {
+      title: REACT_CAPSTONE.title,
+      description:
+        "Your finish line: architect a complete, modular Task & Workflow Dashboard application using everything you learn.",
+      href: REACT_CAPSTONE.path,
+    },
+    phases: REACT_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.label,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
 }
