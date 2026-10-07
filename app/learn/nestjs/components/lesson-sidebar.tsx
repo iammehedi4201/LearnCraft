@@ -155,21 +155,19 @@ export function NestjsLessonSidebar({
             Progress
           </span>
           <span className="text-[12px] font-bold text-ds-text-strong">
-            {isAuthenticated ? `${progressPercent}%` : "0%"}
+            {progressPercent}%
           </span>
         </div>
         <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
             style={{
-              width: `${isAuthenticated ? progressPercent : 0}%`,
+              width: `${progressPercent}%`,
             }}
           />
         </div>
         <p className="mt-2 text-[10px] text-ds-text-soft">
-          {isAuthenticated
-            ? `${completedSectionsCount} of ${sections.length} modules completed`
-            : "Sign in to save progress"}
+          {`${completedSectionsCount} of ${sections.length} modules completed`}
         </p>
       </div>
 

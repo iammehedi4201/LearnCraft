@@ -2,34 +2,36 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { ArrowLeft, ArrowRight, CheckCircle2, Circle } from "./icons";
 import {
   getNextLesson,
   getPrevLesson,
   getStageByLessonSlug,
+  NESTJS_CAPSTONE,
 } from "../data/nestjs-curriculum";
 import {
   isLessonComplete,
-  markLessonComplete,
-  toggleLessonComplete,
   getCompletionByStage,
 } from "../data/progress-store";
 import { MilestoneCelebration } from "./milestone-celebration";
 
 interface LessonNavFooterProps {
   currentSlug: string;
+  isLessonCompleted?: boolean;
+  canComplete?: boolean;
   onLessonComplete?: () => void;
 }
 
 export function LessonNavFooter({
   currentSlug,
+  isLessonCompleted,
+  canComplete,
   onLessonComplete,
 }: LessonNavFooterProps) {
-  const { data: session } = useSession();
-  const isAuthenticated = Boolean(session?.user);
-
-  const [completed, setCompleted] = useState<boolean>(false);
+  const [completed, setCompleted] = useState<boolean>(() => {
+    if (isLessonCompleted !== undefined) return isLessonCompleted;
+    return isLessonComplete(currentSlug);
+  });
   const [showMilestone, setShowMilestone] = useState<boolean>(false);
 
   const prevLesson = getPrevLesson(currentSlug);
@@ -37,56 +39,61 @@ export function LessonNavFooter({
   const currentStage = getStageByLessonSlug(currentSlug);
 
   useEffect(() => {
-    let isMounted = true;
-    if (!isAuthenticated) {
-      setCompleted(false);
-      return;
-    }
-
-    if (isMounted) {
+    if (isLessonCompleted !== undefined) {
+      setCompleted(isLessonCompleted);
+    } else {
       setCompleted(isLessonComplete(currentSlug));
     }
+  }, [currentSlug, isLessonCompleted]);
+
+  useEffect(() => {
+    let isMounted = true;
 
     const handleProgressUpdated = () => {
       if (isMounted) {
-        setCompleted(isLessonComplete(currentSlug));
+        if (isLessonCompleted !== undefined) {
+          setCompleted(isLessonCompleted);
+        } else {
+          setCompleted(isLessonComplete(currentSlug));
+        }
       }
     };
 
-    window.addEventListener("learncraft-progress-updated", handleProgressUpdated);
+    window.addEventListener(
+      "learncraft-nestjs-progress-updated",
+      handleProgressUpdated
+    );
+    window.addEventListener(
+      "learncraft-progress-updated",
+      handleProgressUpdated
+    );
     return () => {
       isMounted = false;
-      window.removeEventListener("learncraft-progress-updated", handleProgressUpdated);
+      window.removeEventListener(
+        "learncraft-nestjs-progress-updated",
+        handleProgressUpdated
+      );
+      window.removeEventListener(
+        "learncraft-progress-updated",
+        handleProgressUpdated
+      );
     };
-  }, [currentSlug, isAuthenticated]);
+  }, [currentSlug, isLessonCompleted]);
 
-  const handleToggleComplete = () => {
-    if (!isAuthenticated) return;
-
-    const isNowDone = toggleLessonComplete(currentSlug);
-    setCompleted(isNowDone);
-
-    if (isNowDone && currentStage) {
+  const handleCompleteAction = () => {
+    if (onLessonComplete) {
+      onLessonComplete();
+    }
+    if (currentStage) {
       const stageStats = getCompletionByStage(currentStage.id);
       if (stageStats.isCompleted) {
         setShowMilestone(true);
       }
     }
-
-    if (onLessonComplete) {
-      onLessonComplete();
-    }
-  };
-
-  const handleNextClick = () => {
-    // Only mark complete if authenticated
-    if (isAuthenticated && !completed) {
-      markLessonComplete(currentSlug);
-    }
   };
 
   return (
-    <div className="mt-14 pt-8 border-t border-ds-stroke-soft space-y-6">
+    <div className="mt-14 pt-8 border-t border-white/[0.08] space-y-6">
       {/* Milestone alert if the current stage just reached completion */}
       {showMilestone && currentStage && (
         <MilestoneCelebration
@@ -96,23 +103,23 @@ export function LessonNavFooter({
         />
       )}
 
-      {/* Primary Navigation Controls (3-Column Layout from Image 2) */}
+      {/* Primary Navigation Controls */}
       <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
         {/* Previous Lesson */}
         <div className="flex justify-start">
           {prevLesson ? (
             <Link
               href={prevLesson.path}
-              className="group flex items-center gap-3 p-3 rounded-xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base transition-all text-left w-full sm:w-auto shadow-sm"
+              className="group flex items-center gap-3 p-3 rounded-xl bg-[#0E121B] border border-white/[0.06] hover:border-purple-500/40 transition-all text-left w-full sm:w-auto shadow-sm"
             >
-              <div className="w-8 h-8 rounded-lg bg-ds-bg-weak group-hover:bg-ds-feature-lighter flex items-center justify-center text-ds-text-soft group-hover:text-ds-feature-dark transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-white/[0.04] group-hover:bg-purple-500/10 flex items-center justify-center text-slate-400 group-hover:text-purple-300 transition-colors">
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
               </div>
               <div className="overflow-hidden">
-                <span className="text-[10px] font-mono text-ds-text-soft block uppercase">
+                <span className="text-[10px] font-mono text-slate-500 block uppercase">
                   Previous ({prevLesson.code})
                 </span>
-                <span className="text-xs font-bold text-ds-text-strong group-hover:text-ds-feature-dark truncate block max-w-[180px]">
+                <span className="text-xs font-bold text-slate-200 group-hover:text-purple-300 truncate block max-w-[180px]">
                   {prevLesson.name}
                 </span>
               </div>
@@ -120,7 +127,7 @@ export function LessonNavFooter({
           ) : (
             <Link
               href="/learn/nestjs"
-              className="inline-flex items-center gap-2 text-xs text-ds-text-soft hover:text-ds-text-strong p-3"
+              className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 p-3"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>NestJS Hub</span>
@@ -128,44 +135,27 @@ export function LessonNavFooter({
           )}
         </div>
 
-        {/* Completion Toggle in Center */}
+        {/* Completion Indicator */}
         <div className="flex justify-center">
-          {isAuthenticated ? (
+          {completed ? (
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>Lesson Completed</span>
+            </div>
+          ) : canComplete && onLessonComplete ? (
             <button
               type="button"
-              onClick={handleToggleComplete}
-              className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
-                completed
-                  ? "bg-ds-success-lighter text-ds-success-dark border border-ds-success-base/30"
-                  : "bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white shadow-ds-feature-base/20"
-              }`}
+              onClick={handleCompleteAction}
+              className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/20 transition-all cursor-pointer"
             >
-              {completed ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-ds-success-base" />
-                  <span>Lesson Completed</span>
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 text-white/60" />
-                  <span>Mark as Complete</span>
-                </>
-              )}
+              <CheckCircle2 className="w-4 h-4 text-white/70" />
+              <span>Finish & Complete Lesson ✓</span>
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={() => {
-                if (typeof window !== "undefined") {
-                  window.dispatchEvent(
-                    new CustomEvent("learncraft:open-auth-modal")
-                  );
-                }
-              }}
-              className="text-xs text-ds-text-soft hover:text-ds-feature-dark font-mono transition-colors cursor-pointer"
-            >
-              Sign in to save progress
-            </button>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/[0.03] border border-white/[0.06] text-slate-400 text-xs font-mono">
+              <Circle className="w-3.5 h-3.5 text-slate-500" />
+              <span>Complete all modules to finish</span>
+            </div>
           )}
         </div>
 
@@ -174,25 +164,28 @@ export function LessonNavFooter({
           {nextLesson ? (
             <Link
               href={nextLesson.path}
-              onClick={handleNextClick}
-              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base transition-all text-right w-full sm:w-auto shadow-sm"
+              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-[#0E121B] border border-white/[0.06] hover:border-purple-500/40 transition-all text-right w-full sm:w-auto ml-auto shadow-sm"
             >
               <div className="overflow-hidden">
-                <span className="text-[10px] font-mono text-ds-feature-dark block uppercase">
+                <span className="text-[10px] font-mono text-purple-400 block uppercase">
                   Next ({nextLesson.code})
                 </span>
-                <span className="text-xs font-bold text-ds-text-strong group-hover:text-ds-feature-dark truncate block max-w-[180px]">
+                <span className="text-xs font-bold text-slate-200 group-hover:text-purple-300 truncate block max-w-[180px]">
                   {nextLesson.name}
                 </span>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-ds-feature-lighter group-hover:bg-ds-feature-base flex items-center justify-center text-ds-feature-dark group-hover:text-ds-static-white transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 group-hover:bg-purple-600 flex items-center justify-center text-purple-300 group-hover:text-white transition-colors">
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </Link>
           ) : (
-            <span className="text-xs text-ds-success-dark font-bold p-3">
-              🎉 All Lessons Completed
-            </span>
+            <Link
+              href={NESTJS_CAPSTONE.path}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all ml-auto"
+            >
+              <span>Launch Capstone</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           )}
         </div>
       </div>

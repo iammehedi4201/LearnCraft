@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { markLessonComplete } from "../data/progress-store";
+import { markLessonComplete, isLessonComplete } from "../data/progress-store";
 import { getAllAnnotations } from "@/lib/revision-storage";
 
 export interface SectionItem {
@@ -31,6 +31,8 @@ export function useModuleProgress({
   const sectionParam = searchParams?.get("section");
   const highlightId = searchParams?.get("highlightId");
 
+  const storageKey = `learncraft_nj_sections_${lessonSlug}`;
+
   const resolveId = useCallback(
     (id?: string | null): string | null => {
       if (!id) return null;
@@ -51,8 +53,30 @@ export function useModuleProgress({
     return sections[0]?.id || "part1";
   });
 
-  const [completedSections, setCompletedSections] = useState<Set<string>>(new Set());
-  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(false);
+  const [completedSections, setCompletedSections] = useState<Set<string>>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (isLessonComplete(lessonSlug)) {
+          return new Set(sections.map((s) => s.id));
+        }
+        const cached = localStorage.getItem(storageKey);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed?.completedSections)) {
+            const valid = parsed.completedSections.filter((id: string) =>
+              sections.some((s) => s.id === id)
+            );
+            return new Set(valid);
+          }
+        }
+      } catch {}
+    }
+    return new Set();
+  });
+
+  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(() => {
+    return isLessonComplete(lessonSlug);
+  });
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const activeSectionRef = useRef(activeSection);
@@ -83,19 +107,61 @@ export function useModuleProgress({
     }
   }, [highlightId, resolveId]);
 
-  // 1. Database Hydration (ONLY when authenticated)
+  // 1. Hydrate progress
   useEffect(() => {
     if (status === "loading") return;
 
+    let isMounted = true;
+
+    // Check localStorage hydration first
+    const hydrateFromLocal = () => {
+      try {
+        const alreadyComplete = isLessonComplete(lessonSlug);
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const validCompleted = Array.isArray(parsed.completedSections)
+            ? parsed.completedSections.filter((id: string) =>
+                sections.some((s) => s.id === id)
+              )
+            : [];
+
+          const isFullyDone =
+            alreadyComplete ||
+            Boolean(parsed.isCompleted) ||
+            (sections.length > 0 && validCompleted.length >= sections.length);
+
+          if (isFullyDone) {
+            if (isMounted) {
+              setCompletedSections(new Set(sections.map((s) => s.id)));
+              setIsLessonCompleted(true);
+            }
+          } else {
+            if (isMounted) {
+              setCompletedSections(new Set(validCompleted));
+              setIsLessonCompleted(false);
+            }
+          }
+
+          const resolvedActive = resolveId(parsed.activeSection);
+          if (!sectionParam && resolvedActive && isMounted) {
+            setActiveSection(resolvedActive);
+          }
+        } else if (alreadyComplete) {
+          if (isMounted) {
+            setCompletedSections(new Set(sections.map((s) => s.id)));
+            setIsLessonCompleted(true);
+          }
+        }
+      } catch {}
+    };
+
+    hydrateFromLocal();
+
     if (!isAuthenticated) {
-      // Unauthenticated users must NEVER have completed modules or saved progress
-      setCompletedSections(new Set());
-      setIsLessonCompleted(false);
       setIsLoaded(true);
       return;
     }
-
-    let isMounted = true;
 
     async function loadProgressFromDatabase() {
       try {
@@ -114,7 +180,6 @@ export function useModuleProgress({
                 .map((id: string) => resolveId(id))
                 .filter((id: string | null): id is string => Boolean(id));
 
-              // If lesson is marked completed in DB, ensure all sections in this lesson are marked completed
               if (record.completed && validCompleted.length === 0) {
                 validCompleted = sections.map((s) => s.id);
               }
@@ -122,28 +187,29 @@ export function useModuleProgress({
               const completedSet = new Set<string>(validCompleted);
               setCompletedSections(completedSet);
 
-              // Restore active section from database if not specified in URL
               const resolvedActive = resolveId(record.activeModule);
               if (!sectionParam && resolvedActive) {
                 setActiveSection(resolvedActive);
               }
 
-              if (record.completed || (sections.length > 0 && completedSet.size >= sections.length)) {
+              const isDone =
+                record.completed ||
+                (sections.length > 0 && completedSet.size >= sections.length);
+              if (isDone) {
                 setIsLessonCompleted(true);
               }
-            } else {
-              // First time starting this lesson: record started in DB
-              fetch("/api/progress", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  module: lessonSlug,
-                  activeModule: activeSectionRef.current,
-                  completedModules: [],
-                  completed: false,
-                  totalModules: sections.length,
-                }),
-              }).catch(() => {});
+
+              // Update local cache
+              try {
+                localStorage.setItem(
+                  storageKey,
+                  JSON.stringify({
+                    completedSections: Array.from(completedSet),
+                    activeSection: resolvedActive || activeSectionRef.current,
+                    isCompleted: isDone,
+                  })
+                );
+              } catch {}
             }
           }
         }
@@ -159,32 +225,24 @@ export function useModuleProgress({
     return () => {
       isMounted = false;
     };
-  }, [isAuthenticated, lessonSlug, resolveId, sectionParam, sections, status]);
+  }, [isAuthenticated, lessonSlug, resolveId, sectionParam, sections, status, storageKey]);
 
-  // 2. Handle module progression & save to database
+  // 2. Handle module progression
   const handleSectionChange = useCallback(
     (newSectionId: string) => {
       const resolvedTarget = resolveId(newSectionId) || newSectionId;
       const currentActive = activeSectionRef.current;
       setActiveSection(resolvedTarget);
 
-      // Smooth scroll to top of lesson content
       if (typeof window !== "undefined") {
         window.scrollTo({ top: 0, behavior: "smooth" });
 
-        // Update URL search param
         const url = new URL(window.location.href);
         url.searchParams.delete("highlightId");
         url.searchParams.set("section", resolvedTarget);
         window.history.replaceState(null, "", url.toString());
       }
 
-      // If user is NOT signed in, DO NOT save progress to database
-      if (!isAuthenticated) {
-        return;
-      }
-
-      // Build updated completed set
       setCompletedSections((prev) => {
         const next = new Set(prev);
         if (currentActive) {
@@ -196,38 +254,47 @@ export function useModuleProgress({
 
         if (allCompleted) {
           setIsLessonCompleted(true);
+          markLessonComplete(lessonSlug);
         }
 
-        // Save progress to PostgreSQL database
-        fetch("/api/progress", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            module: lessonSlug,
-            activeModule: resolvedTarget,
-            completedModules: completedArray,
-            totalModules: sections.length,
-            completed: allCompleted,
-          }),
-        })
-          .then(() => {
-            if (allCompleted) {
-              markLessonComplete(lessonSlug);
-            }
-          })
-          .catch((err) => console.warn("[useModuleProgress] DB save error:", err));
+        // Persist to local storage
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(
+              storageKey,
+              JSON.stringify({
+                completedSections: completedArray,
+                activeSection: resolvedTarget,
+                isCompleted: allCompleted,
+              })
+            );
+          } catch {}
+        }
+
+        // Persist to DB if authenticated
+        if (isAuthenticated) {
+          fetch("/api/progress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              module: lessonSlug,
+              activeModule: resolvedTarget,
+              completedModules: completedArray,
+              totalModules: sections.length,
+              completed: allCompleted,
+            }),
+          }).catch((err) => console.warn("[useModuleProgress] DB save error:", err));
+        }
 
         return next;
       });
     },
-    [isAuthenticated, lessonSlug, resolveId, sections.length]
+    [isAuthenticated, lessonSlug, resolveId, sections.length, storageKey]
   );
 
   // 3. Mark current module complete
   const markCurrentModuleComplete = useCallback(
     (moduleId?: string) => {
-      if (!isAuthenticated) return;
-
       const targetId = moduleId || activeSectionRef.current;
       if (!targetId) return;
 
@@ -240,57 +307,77 @@ export function useModuleProgress({
 
         if (allCompleted) {
           setIsLessonCompleted(true);
+          markLessonComplete(lessonSlug);
         }
 
-        fetch("/api/progress", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            module: lessonSlug,
-            activeModule: activeSectionRef.current,
-            completedModules: completedArray,
-            totalModules: sections.length,
-            completed: allCompleted,
-          }),
-        })
-          .then(() => {
-            if (allCompleted) {
-              markLessonComplete(lessonSlug);
-            }
-          })
-          .catch((err) => console.warn("[useModuleProgress] DB mark error:", err));
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(
+              storageKey,
+              JSON.stringify({
+                completedSections: completedArray,
+                activeSection: activeSectionRef.current,
+                isCompleted: allCompleted,
+              })
+            );
+          } catch {}
+        }
+
+        if (isAuthenticated) {
+          fetch("/api/progress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              module: lessonSlug,
+              activeModule: activeSectionRef.current,
+              completedModules: completedArray,
+              totalModules: sections.length,
+              completed: allCompleted,
+            }),
+          }).catch((err) => console.warn("[useModuleProgress] DB mark error:", err));
+        }
 
         return next;
       });
     },
-    [isAuthenticated, lessonSlug, sections.length]
+    [isAuthenticated, lessonSlug, sections.length, storageKey]
   );
 
   // 4. Mark all modules and complete the lesson
   const completeLesson = useCallback(() => {
-    if (!isAuthenticated) return;
-
     const allModuleIds = sections.map((s) => s.id);
     setCompletedSections(new Set(allModuleIds));
     setIsLessonCompleted(true);
+    markLessonComplete(lessonSlug);
 
-    fetch("/api/progress", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        module: lessonSlug,
-        activeModule: sections[sections.length - 1]?.id,
-        completedModules: allModuleIds,
-        totalModules: sections.length,
-        completed: true,
-        score: 100,
-      }),
-    })
-      .then(() => {
-        markLessonComplete(lessonSlug);
-      })
-      .catch((err) => console.warn("[useModuleProgress] DB complete error:", err));
-  }, [isAuthenticated, lessonSlug, sections]);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            completedSections: allModuleIds,
+            activeSection: sections[sections.length - 1]?.id,
+            isCompleted: true,
+          })
+        );
+      } catch {}
+    }
+
+    if (isAuthenticated) {
+      fetch("/api/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          module: lessonSlug,
+          activeModule: sections[sections.length - 1]?.id,
+          completedModules: allModuleIds,
+          totalModules: sections.length,
+          completed: true,
+          score: 100,
+        }),
+      }).catch((err) => console.warn("[useModuleProgress] DB complete error:", err));
+    }
+  }, [isAuthenticated, lessonSlug, sections, storageKey]);
 
   // 5. Compute sidebar step state
   const getStepState = useCallback(
@@ -300,18 +387,13 @@ export function useModuleProgress({
 
       if (section.id === activeSection) return "active";
 
-      // If user is not authenticated, DO NOT show any completed state!
-      if (!isAuthenticated) {
-        return "todo";
-      }
-
       if (completedSections.has(section.id)) {
         return "done";
       }
 
       return "todo";
     },
-    [activeSection, completedSections, isAuthenticated, sections]
+    [activeSection, completedSections, sections]
   );
 
   const currentIndex = Math.max(
@@ -319,20 +401,39 @@ export function useModuleProgress({
     sections.findIndex((s) => s.id === activeSection)
   );
 
+  const completedSectionsCount = completedSections.size;
+
   const progressPercent =
-    isAuthenticated && sections.length > 0
+    sections.length > 0
       ? Math.round((completedSections.size / sections.length) * 100)
       : 0;
+
+  const handlePrev = useCallback(() => {
+    if (currentIndex > 0) {
+      handleSectionChange(sections[currentIndex - 1].id);
+    }
+  }, [currentIndex, handleSectionChange, sections]);
+
+  const handleNext = useCallback(() => {
+    if (currentIndex < sections.length - 1) {
+      handleSectionChange(sections[currentIndex + 1].id);
+    } else {
+      completeLesson();
+    }
+  }, [completeLesson, currentIndex, handleSectionChange, sections]);
 
   return {
     isAuthenticated,
     activeSection,
     completedSections,
+    completedSectionsCount,
     isLessonCompleted,
     isLoaded,
     currentIndex,
     progressPercent,
     handleSectionChange,
+    handlePrev,
+    handleNext,
     markCurrentModuleComplete,
     completeLesson,
     getStepState,

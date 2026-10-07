@@ -1,3 +1,5 @@
+import type { Course } from "@/components/curriculum/types";
+
 export type ContentTag = "CORE" | "BUILD" | "PROFESSIONAL" | "REFERENCE";
 
 export interface LessonMeta {
@@ -643,92 +645,91 @@ export const NESTJS_STAGES: StageMeta[] = [
   },
 ];
 
-export const PROGRESSION_PHASES: ProgressionPhaseMeta[] = [
+export const NESTJS_PROGRESSION_PHASES: ProgressionPhaseMeta[] = [
   {
-    id: "fundamentals",
+    id: "fundamentals-arch",
     phaseNumber: 1,
-    label: "NestJS Fundamentals",
+    label: "Fundamentals & Core Architecture",
     tag: "Phase 01",
-    desc: "What NestJS is, CLI, project structure, main.ts & application bootstrap",
-    scope: "NestJS Basics & Scaffolding",
-    icon: "zap",
-    lessonCodes: ["NJ-05"],
+    desc: "What NestJS is, CLI scaffolding, main.ts bootstrap, controllers, providers, DI container & feature modules",
+    scope: "Core Scaffolding & Architecture",
+    icon: "layers",
+    lessonCodes: ["NJ-05", "NJ-06", "NJ-07", "NJ-08", "NJ-09"],
   },
   {
-    id: "core-arch",
+    id: "dtos-validation-config",
     phaseNumber: 2,
-    label: "Core Architecture",
+    label: "DTOs, Validation & Configuration",
     tag: "Phase 02",
-    desc: "Modules, Controllers, Providers, Services, DI & IoC container",
-    scope: "Core Building Blocks",
+    desc: "Data Transfer Objects, ValidationPipe, ConfigModule environment loading & repository state decoupling",
+    scope: "Request Contracts & Config",
     icon: "server",
-    lessonCodes: ["NJ-06", "NJ-07", "NJ-08", "NJ-09"],
+    lessonCodes: ["NJ-10", "NJ-11", "NJ-12"],
   },
   {
-    id: "http-apis",
+    id: "domain-lifecycle",
     phaseNumber: 3,
-    label: "Building HTTP APIs",
+    label: "Domain Modeling & Lifecycle Hooks",
     tag: "Phase 03",
-    desc: "Routing, request handling, DTOs, ValidationPipe & in-memory state",
-    scope: "REST API Contracts & Data",
-    icon: "layers",
-    lessonCodes: ["NJ-10", "NJ-11", "NJ-12", "NJ-13", "NJ-14", "NJ-15"],
-  },
-  {
-    id: "lifecycle",
-    phaseNumber: 4,
-    label: "Request Lifecycle",
-    tag: "Phase 04",
-    desc: "Execution order: Middleware, Guards, Interceptors, Pipes & ExecutionContext",
-    scope: "Request Pipeline & Guards",
-    icon: "shield",
-    lessonCodes: ["NJ-16", "NJ-17", "NJ-18", "NJ-20", "NJ-21"],
-  },
-  {
-    id: "error-handling",
-    phaseNumber: 5,
-    label: "Exception Handling",
-    tag: "Phase 05",
-    desc: "Built-in HTTP exceptions, custom exception filters & error response design",
-    scope: "Resilient Error Architecture",
-    icon: "zap",
-    lessonCodes: ["NJ-19"],
-  },
-  {
-    id: "auth",
-    phaseNumber: 6,
-    label: "Auth & Authorization",
-    tag: "Phase 06",
-    desc: "Auth vs Authz, AuthGuard, bearer token strategy, @CurrentUser & RBAC",
-    scope: "Access Control & Security",
-    icon: "shield",
-    lessonCodes: ["NJ-22", "NJ-23", "NJ-24", "NJ-26"],
-  },
-  {
-    id: "testing",
-    phaseNumber: 7,
-    label: "Testing NestJS",
-    tag: "Phase 07",
-    desc: "Unit testing services & controllers, mocking providers, Supertest E2E",
-    scope: "Automated Test Suites",
+    desc: "Domain entities, OnModuleInit lifecycle hooks, bootstrap seeding & query pagination with filtering",
+    scope: "Domain Modeling & Lifecycle",
     icon: "server",
-    lessonCodes: ["NJ-28", "NJ-29"],
+    lessonCodes: ["NJ-13", "NJ-14", "NJ-15"],
   },
   {
-    id: "best-practices",
-    phaseNumber: 8,
-    label: "Best Practices & Mastery",
-    tag: "Phase 08",
-    desc: "Module organization, thin controllers, production build, Terminus & Capstone",
-    scope: "Engineering Mastery & Capstone",
+    id: "request-pipeline",
+    phaseNumber: 4,
+    label: "Request Pipeline, Pipes & Filters",
+    tag: "Phase 04",
+    desc: "Pipes, custom exception filters, request execution lifecycle, middleware pipeline & route guards",
+    scope: "Pipeline & Execution Flow",
+    icon: "shield",
+    lessonCodes: ["NJ-16", "NJ-17", "NJ-18", "NJ-19", "NJ-20"],
+  },
+  {
+    id: "auth-security",
+    phaseNumber: 5,
+    label: "Authentication & Security Hardening",
+    tag: "Phase 05",
+    desc: "Custom route decorators, Passport JWT authentication, RBAC authorization, serialization & security",
+    scope: "Auth & Access Control",
+    icon: "shield",
+    lessonCodes: ["NJ-21", "NJ-22", "NJ-23", "NJ-24", "NJ-25"],
+  },
+  {
+    id: "performance-observability",
+    phaseNumber: 6,
+    label: "Interceptors, Observability & Performance",
+    tag: "Phase 06",
+    desc: "RxJS interceptors, OpenAPI Swagger documentation, structured Pino logging, Redis caching & file uploads",
+    scope: "Observability & Performance",
+    icon: "zap",
+    lessonCodes: ["NJ-26", "NJ-27", "NJ-28", "NJ-29", "NJ-30"],
+  },
+  {
+    id: "testing-deployment",
+    phaseNumber: 7,
+    label: "Automated Testing & Production Readiness",
+    tag: "Phase 07",
+    desc: "Unit testing, Jest mocks, Supertest E2E, nest build compilation, Terminus health checks & Capstone",
+    scope: "Testing & Production Ship",
     icon: "layers",
-    lessonCodes: ["NJ-25", "NJ-27", "NJ-30", "NJ-31", "NJ-32"],
+    lessonCodes: ["NJ-31", "NJ-32"],
   },
 ];
+
+export const PROGRESSION_PHASES = NESTJS_PROGRESSION_PHASES;
 
 // Helper Functions
 export function getAllLessons(): LessonMeta[] {
   return NESTJS_STAGES.flatMap((stage) => stage.lessons);
+}
+
+export function getCourseLessons(): LessonMeta[] {
+  const all = getAllLessons();
+  return NESTJS_PROGRESSION_PHASES.flatMap((phase) =>
+    phase.lessonCodes.map((code) => all.find((l) => l.code === code)).filter((l): l is LessonMeta => l !== undefined)
+  );
 }
 
 export function getStages(): StageMeta[] {
@@ -758,29 +759,59 @@ export function getStageByLessonSlug(slug: string): StageMeta | undefined {
 }
 
 export function getNextLesson(currentSlug: string): LessonMeta | null {
-  const all = getAllLessons();
-  const index = all.findIndex(
+  const courseLessons = getCourseLessons();
+  const index = courseLessons.findIndex(
     (l) =>
       l.slug === currentSlug ||
       l.path.endsWith(`/${currentSlug}`) ||
       l.path.includes(currentSlug),
   );
-  if (index >= 0 && index < all.length - 1) {
-    return all[index + 1];
+  if (index >= 0 && index < courseLessons.length - 1) {
+    return courseLessons[index + 1];
+  }
+  if (index >= 0) {
+    return null; // Reached end of course -> Capstone
+  }
+
+  // Fallback for foundation lessons
+  const all = getAllLessons();
+  const allIndex = all.findIndex(
+    (l) =>
+      l.slug === currentSlug ||
+      l.path.endsWith(`/${currentSlug}`) ||
+      l.path.includes(currentSlug),
+  );
+  if (allIndex >= 0 && allIndex < all.length - 1) {
+    return all[allIndex + 1];
   }
   return null;
 }
 
 export function getPrevLesson(currentSlug: string): LessonMeta | null {
-  const all = getAllLessons();
-  const index = all.findIndex(
+  const courseLessons = getCourseLessons();
+  const index = courseLessons.findIndex(
     (l) =>
       l.slug === currentSlug ||
       l.path.endsWith(`/${currentSlug}`) ||
       l.path.includes(currentSlug),
   );
   if (index > 0) {
-    return all[index - 1];
+    return courseLessons[index - 1];
+  }
+  if (index === 0) {
+    return null; // First lesson of course -> NestJS Hub
+  }
+
+  // Fallback for foundation lessons
+  const all = getAllLessons();
+  const allIndex = all.findIndex(
+    (l) =>
+      l.slug === currentSlug ||
+      l.path.endsWith(`/${currentSlug}`) ||
+      l.path.includes(currentSlug),
+  );
+  if (allIndex > 0) {
+    return all[allIndex - 1];
   }
   return null;
 }
@@ -791,4 +822,44 @@ export function getLessonsByPhaseId(phaseId: string): LessonMeta[] {
   return phase.lessonCodes
     .map((code) => all.find((l) => l.code === code))
     .filter((l): l is LessonMeta => l !== undefined);
+}
+
+export function getNestjsCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "nestjs",
+    title: "Learn NestJS",
+    prerequisites: {
+      items: [
+        "TypeScript static typing mental models, generics, and class decorators",
+        "Object-oriented programming: classes, encapsulation, inheritance, and SOLID principles",
+        "Basic familiarity with HTTP protocols, REST endpoints, and status codes",
+      ],
+      refresherHref: "/learn/typescript",
+      refresherLabel: "Need a refresher? Open the TypeScript curriculum",
+    },
+    capstone: {
+      title: NESTJS_CAPSTONE.title,
+      description:
+        "Your finish line: architect a production-grade NestJS REST API demonstrating modular feature boundaries, dependency injection, DTO validation, and automated tests.",
+      href: NESTJS_CAPSTONE.path,
+    },
+    phases: NESTJS_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.label,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
 }

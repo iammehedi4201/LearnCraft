@@ -670,4 +670,76 @@ const reactCourse = getReactCourse();
   console.log("  ✓ 8.4 All 9 phases finished -> React.js Capstone successfully unlocked verified!");
 }
 
+// =========================================================================
+// TEST SUITE 9: Authoritative NestJS Curriculum Progression
+// =========================================================================
+console.log("\nTesting Course 9: Authoritative NestJS Curriculum Dynamic States...");
+
+import { getNestjsCourse, getCourseLessons as getCourseNestjsLessons } from "../../../app/learn/nestjs/data/nestjs-curriculum";
+
+const nestjsCourse = getNestjsCourse();
+
+// 9.1: Brand-new user (0 lessons completed) -> Starts immediately on NJ-05 (Project Setup & Scaffolding)
+{
+  const state = getCurriculumState(nestjsCourse, { completedLessonIds: [], prereqConfirmed: false });
+  assert(state.totalLessonsCount === 28, `Total lessons should be 28, got ${state.totalLessonsCount}`);
+  assert(state.phases.length === 7, `Total phases should be 7, got ${state.phases.length}`);
+  assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
+  assert(state.phases[0].doneSteps === 0, `Phase 1 done steps should be 0, got ${state.phases[0].doneSteps}`);
+  assert(state.phases[0].lessons[0].status === "current", "Lesson 1 (NJ-05) should be current");
+  assert(state.currentLesson?.code === "NJ-05", `Current lesson code should be NJ-05, got ${state.currentLesson?.code}`);
+  assert(state.showPrerequisitesCard === true, "Prereq card should show on first visit");
+  assert(state.currentStepChip === "START HERE · STEP 1 OF 5", `Chip should be 'START HERE · STEP 1 OF 5', got '${state.currentStepChip}'`);
+  console.log("  ✓ 9.1 Authoritative NestJS initial state verified (starts on NJ-05)");
+}
+
+// 9.2: User completes single lesson by slug (nj05-setup)
+{
+  const state = getCurriculumState(nestjsCourse, { completedLessonIds: ["nj05-setup"], prereqConfirmed: true });
+  assert(state.completedLessonsCount === 1, `Completed count should be 1, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
+  assert(state.showPrerequisitesCard === false, "Prereq card should hide when progress > 0");
+  assert(state.phases[0].doneSteps === 1, `Phase 1 done steps should be 1, got ${state.phases[0].doneSteps}`);
+  assert(state.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed");
+  assert(state.phases[0].lessons[1].status === "current", "Lesson 2 (NJ-06) should be current");
+  assert(state.currentLesson?.code === "NJ-06", `Current lesson should be NJ-06, got ${state.currentLesson?.code}`);
+  assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 5", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 5', got '${state.currentStepChip}'`);
+  console.log("  ✓ 9.2 Authoritative NestJS single lesson completion verified");
+}
+
+// 9.3: User completes Phase 1 (5 lessons) -> Phase 2 unlocks (NJ-10 DTOs & Validation)
+{
+  const phase1Slugs = [
+    "nj05-setup",
+    "nj07-controllers",
+    "nj08-services",
+    "nj09-dependency-injection",
+    "nj06-modules",
+  ];
+  const state = getCurriculumState(nestjsCourse, { completedLessonIds: phase1Slugs, prereqConfirmed: true });
+  assert(state.completedLessonsCount === 5, `Completed count should be 5, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 1, `Completed phases should be 1, got ${state.completedPhases.length}`);
+  assert(state.phases[0].status === "completed", "Phase 1 should be completed");
+  assert(state.phases[1].status === "current", "Phase 2 should be current");
+  assert(state.currentLesson?.code === "NJ-10", `Current lesson should be NJ-10, got ${state.currentLesson?.code}`);
+  assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 3", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 3', got '${state.currentStepChip}'`);
+  console.log("  ✓ 9.3 Authoritative NestJS Phase 1 completion and Phase 2 unlock verified");
+}
+
+// 9.4: User completes all 7 phases (all 28 focused NestJS lessons) -> Capstone unlocks!
+{
+  const all28Slugs = getCourseNestjsLessons().map((l) => l.slug);
+  assert(all28Slugs.length === 28, `Expected 28 NestJS lesson slugs, got ${all28Slugs.length}`);
+
+  const state = getCurriculumState(nestjsCourse, { completedLessonIds: all28Slugs, prereqConfirmed: true });
+  assert(state.completedLessonsCount === 28, `Completed count should be 28, got ${state.completedLessonsCount}`);
+  assert(state.completedPhases.length === 7, `All 7 phases should be completed, got ${state.completedPhases.length}`);
+  assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
+  assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);
+  assert(state.isCourseComplete === true, "Course should be marked complete");
+  assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 7 phases");
+  console.log("  ✓ 9.4 All 7 phases finished -> NestJS Capstone successfully unlocked verified!");
+}
+
 console.log("\n🎉 ALL UNIT TESTS PASSED SUCCESSFULLY!\n");

@@ -1,4 +1,4 @@
-import { getAllLessons, NESTJS_STAGES, LessonMeta, StageMeta } from "./nestjs-curriculum";
+import { getAllLessons, getCourseLessons, NESTJS_STAGES, LessonMeta, StageMeta } from "./nestjs-curriculum";
 
 export interface NestJSProgress {
   completedLessons: string[];
@@ -34,15 +34,33 @@ export async function fetchProgressFromDB(): Promise<NestJSProgress> {
     try {
       const res = await fetch("/api/progress", { cache: "no-store" });
       if (res.status === 401) {
-        // User is not signed in: reset completed lessons to empty
+        // User is not signed in: hydrate from localStorage cache rather than wiping progress
+        let localCompleted: string[] = [];
+        if (typeof window !== "undefined") {
+          try {
+            const raw = localStorage.getItem("learncraft_nestjs_progress");
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed?.completedLessons)) {
+                localCompleted = parsed.completedLessons;
+              }
+            }
+          } catch {}
+        }
+
         inMemoryProgress = {
-          completedLessons: [],
+          completedLessons: localCompleted,
           currentLessonSlug: null,
           selectedGoal: "build-api",
           lastVisitedAt: Date.now(),
         };
         isDbHydrated = true;
 
+        window.dispatchEvent(
+          new CustomEvent("learncraft-nestjs-progress-updated", {
+            detail: inMemoryProgress,
+          })
+        );
         window.dispatchEvent(
           new CustomEvent("learncraft-progress-updated", {
             detail: inMemoryProgress,
@@ -65,16 +83,45 @@ export async function fetchProgressFromDB(): Promise<NestJSProgress> {
 
           const activeSlug = startedLessons[0]?.module || inMemoryProgress.currentLessonSlug;
 
+          // Merge with any local offline completed lessons
+          let localCompleted: string[] = [];
+          if (typeof window !== "undefined") {
+            try {
+              const raw = localStorage.getItem("learncraft_nestjs_progress");
+              if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed?.completedLessons)) {
+                  localCompleted = parsed.completedLessons;
+                }
+              }
+            } catch {}
+          }
+          const merged = Array.from(new Set([...completedFromDb, ...localCompleted]));
+
           inMemoryProgress = {
             ...inMemoryProgress,
-            completedLessons: Array.from(new Set(completedFromDb)),
+            completedLessons: merged,
             currentLessonSlug: activeSlug || null,
             lastVisitedAt: Date.now(),
           };
 
+          if (typeof window !== "undefined") {
+            try {
+              localStorage.setItem(
+                "learncraft_nestjs_progress",
+                JSON.stringify({ completedLessons: merged, lastVisitedAt: Date.now() })
+              );
+            } catch {}
+          }
+
           isDbHydrated = true;
 
           // Notify all subscribers of updated database truth
+          window.dispatchEvent(
+            new CustomEvent("learncraft-nestjs-progress-updated", {
+              detail: inMemoryProgress,
+            })
+          );
           window.dispatchEvent(
             new CustomEvent("learncraft-progress-updated", {
               detail: inMemoryProgress,
@@ -99,16 +146,41 @@ if (typeof window !== "undefined") {
 }
 
 export function getProgress(): NestJSProgress {
+  if (typeof window !== "undefined" && inMemoryProgress.completedLessons.length === 0) {
+    try {
+      const raw = localStorage.getItem("learncraft_nestjs_progress");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed?.completedLessons) && parsed.completedLessons.length > 0) {
+          inMemoryProgress = {
+            ...inMemoryProgress,
+            completedLessons: parsed.completedLessons,
+          };
+        }
+      }
+    } catch {}
+  }
   return inMemoryProgress;
 }
 
 export function isLessonComplete(slugOrCode: string): boolean {
-  return inMemoryProgress.completedLessons.some(
-    (item) =>
-      item === slugOrCode ||
-      item.toLowerCase() === slugOrCode.toLowerCase() ||
-      item.endsWith(`/${slugOrCode}`)
+  const allLessons = getAllLessons();
+  const match = allLessons.find(
+    (l) =>
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
+  const matchSlug = match ? match.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const matchCode = match ? match.code.toLowerCase() : slugOrCode.toLowerCase();
+
+  return inMemoryProgress.completedLessons.some((item) => {
+    const lower = item.toLowerCase();
+    return (
+      lower === matchSlug ||
+      lower === matchCode ||
+      item.endsWith(`/${slugOrCode}`)
+    );
+  });
 }
 
 /**
@@ -149,6 +221,16 @@ export function markLessonComplete(slugOrCode: string): boolean {
   };
 
   if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(
+        "learncraft_nestjs_progress",
+        JSON.stringify({ completedLessons: next, lastVisitedAt: Date.now() })
+      );
+    } catch {}
+
+    window.dispatchEvent(
+      new CustomEvent("learncraft-nestjs-progress-updated", { detail: inMemoryProgress })
+    );
     window.dispatchEvent(
       new CustomEvent("learncraft-progress-updated", { detail: inMemoryProgress })
     );
@@ -175,12 +257,19 @@ export function markLessonComplete(slugOrCode: string): boolean {
  * Unmark a completed lesson in PostgreSQL database
  */
 export function unmarkLessonComplete(slugOrCode: string): void {
-  const next = inMemoryProgress.completedLessons.filter(
-    (item) =>
-      item !== slugOrCode &&
-      item.toLowerCase() !== slugOrCode.toLowerCase() &&
-      !item.endsWith(`/${slugOrCode}`)
+  const allLessons = getAllLessons();
+  const match = allLessons.find(
+    (l) =>
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
+  const matchSlug = match ? match.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const matchCode = match ? match.code.toLowerCase() : slugOrCode.toLowerCase();
+
+  const next = inMemoryProgress.completedLessons.filter((item) => {
+    const lower = item.toLowerCase();
+    return lower !== matchSlug && lower !== matchCode && !item.endsWith(`/${slugOrCode}`);
+  });
 
   inMemoryProgress = {
     ...inMemoryProgress,
@@ -189,6 +278,16 @@ export function unmarkLessonComplete(slugOrCode: string): void {
   };
 
   if (typeof window !== "undefined") {
+    try {
+      localStorage.setItem(
+        "learncraft_nestjs_progress",
+        JSON.stringify({ completedLessons: next, lastVisitedAt: Date.now() })
+      );
+    } catch {}
+
+    window.dispatchEvent(
+      new CustomEvent("learncraft-nestjs-progress-updated", { detail: inMemoryProgress })
+    );
     window.dispatchEvent(
       new CustomEvent("learncraft-progress-updated", { detail: inMemoryProgress })
     );
@@ -259,7 +358,7 @@ export function getOverallProgress(): {
   totalCount: number;
   percent: number;
 } {
-  const all = getAllLessons();
+  const all = getCourseLessons();
   const { completedLessons } = getProgress();
   const completedCount = all.filter((l) =>
     completedLessons.some(
@@ -277,7 +376,7 @@ export function getOverallProgress(): {
 }
 
 export function getActiveLesson(): LessonMeta | null {
-  const all = getAllLessons();
+  const all = getCourseLessons();
   const { currentLessonSlug } = getProgress();
 
   if (!currentLessonSlug) return null;
@@ -289,7 +388,7 @@ export function getActiveLesson(): LessonMeta | null {
 }
 
 export function getNextRecommendedLesson(): LessonMeta {
-  const all = getAllLessons();
+  const all = getCourseLessons();
   const active = getActiveLesson();
 
   if (active) {
