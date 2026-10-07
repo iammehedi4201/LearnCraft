@@ -118,13 +118,21 @@ export async function markLessonComplete(slugOrCode: string): Promise<void> {
   const all = getAllLessons();
   const lesson = all.find(
     (l) =>
-      l.slug === slugOrCode ||
-      l.code.toUpperCase() === slugOrCode.toUpperCase()
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
   const identifier = lesson ? lesson.slug : slugOrCode;
 
   const current = getProgress();
-  if (!current.completedLessons.includes(identifier)) {
+  const isDone = current.completedLessons.some((id) => {
+    const lower = id.toLowerCase();
+    return (
+      lower === identifier.toLowerCase() ||
+      (lesson && lower === lesson.code.toLowerCase())
+    );
+  });
+
+  if (!isDone) {
     const nextCompleted = [...current.completedLessons, identifier];
     saveProgress({ completedLessons: nextCompleted });
 
@@ -139,25 +147,26 @@ export async function markLessonComplete(slugOrCode: string): Promise<void> {
         }),
       });
     } catch (err) {
-      console.error("[NodeProgressStore] DB write failed on markLessonComplete:", err);
+      console.warn("[NodeProgressStore] DB write failed on markLessonComplete:", err);
     }
   }
 }
 
-export async function toggleLessonComplete(slugOrCode: string): Promise<boolean> {
+export async function unmarkLessonComplete(slugOrCode: string): Promise<void> {
   const all = getAllLessons();
   const lesson = all.find(
     (l) =>
-      l.slug === slugOrCode ||
-      l.code.toUpperCase() === slugOrCode.toUpperCase()
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
-  const identifier = lesson ? lesson.slug : slugOrCode;
+  const matchSlug = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const matchCode = lesson ? lesson.code.toLowerCase() : slugOrCode.toLowerCase();
 
   const current = getProgress();
-  const isCurrentlyDone = current.completedLessons.includes(identifier);
-  const nextCompleted = isCurrentlyDone
-    ? current.completedLessons.filter((s) => s !== identifier)
-    : [...current.completedLessons, identifier];
+  const nextCompleted = current.completedLessons.filter((item) => {
+    const lower = item.toLowerCase();
+    return lower !== matchSlug && lower !== matchCode && !item.endsWith(`/${slugOrCode}`);
+  });
 
   saveProgress({ completedLessons: nextCompleted });
 
@@ -166,16 +175,34 @@ export async function toggleLessonComplete(slugOrCode: string): Promise<boolean>
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        module: identifier,
-        completed: !isCurrentlyDone,
-        score: !isCurrentlyDone ? 100 : 0,
+        module: slugOrCode,
+        completed: false,
+        force: true,
+        score: 0,
       }),
     });
   } catch (err) {
-    console.error("[NodeProgressStore] DB write failed on toggleLessonComplete:", err);
+    console.warn("[NodeProgressStore] DB write failed on unmarkLessonComplete:", err);
   }
+}
 
-  return !isCurrentlyDone;
+export async function toggleLessonComplete(slugOrCode: string): Promise<boolean> {
+  const all = getAllLessons();
+  const lesson = all.find(
+    (l) =>
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
+  );
+  const identifier = lesson ? lesson.slug : slugOrCode;
+
+  const isCurrentlyDone = isLessonComplete(slugOrCode);
+  if (isCurrentlyDone) {
+    await unmarkLessonComplete(identifier);
+    return false;
+  } else {
+    await markLessonComplete(identifier);
+    return true;
+  }
 }
 
 export function isLessonComplete(slugOrCode: string): boolean {
@@ -183,18 +210,21 @@ export function isLessonComplete(slugOrCode: string): boolean {
   const all = getAllLessons();
   const lesson = all.find(
     (l) =>
-      l.slug === slugOrCode ||
-      l.code.toUpperCase() === slugOrCode.toUpperCase()
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
 
-  if (lesson) {
-    return (
-      current.completedLessons.includes(lesson.slug) ||
-      current.completedLessons.includes(lesson.code)
-    );
-  }
+  const matchSlug = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const matchCode = lesson ? lesson.code.toLowerCase() : slugOrCode.toLowerCase();
 
-  return current.completedLessons.includes(slugOrCode);
+  return current.completedLessons.some((item) => {
+    const lower = item.toLowerCase();
+    return (
+      lower === matchSlug ||
+      lower === matchCode ||
+      item.endsWith(`/${slugOrCode}`)
+    );
+  });
 }
 
 export function setCurrentLesson(slug: string): void {

@@ -9,6 +9,8 @@
  * transactions, and query debugging.
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export interface LessonMeta {
   code: string;
   slug: string;
@@ -694,3 +696,46 @@ export function getPrevLesson(currentSlug: string): LessonMeta | null {
   if (idx <= 0) return null;
   return MONGODB_LESSONS[idx - 1];
 }
+
+export const PROGRESSION_PHASES = MONGODB_PROGRESSION_PHASES;
+
+export function getMongoDBCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "mongodb",
+    title: "Learn MongoDB",
+    prerequisites: {
+      items: [
+        "JSON data structures: key-value pairs, nested objects, and arrays",
+        "Basic understanding of backend databases and persistent storage",
+        "Familiarity with command-line terminal basics",
+      ],
+      refresherHref: "/learn/javascript",
+      refresherLabel: "Need a refresher? Open the JavaScript curriculum",
+    },
+    capstone: {
+      title: MONGODB_CAPSTONE.title,
+      description:
+        "Your finish line: architect and optimize a complete, production-grade MongoDB database featuring schema validation, compound indexes with ESR, analytics aggregation pipelines, and ACID transactions.",
+      href: MONGODB_CAPSTONE.path,
+    },
+    phases: MONGODB_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.name,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
+}
+

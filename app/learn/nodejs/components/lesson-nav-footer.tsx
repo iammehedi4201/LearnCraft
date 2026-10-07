@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -12,6 +11,7 @@ import {
 import {
   getNextLesson,
   getPrevLesson,
+  NODEJS_CAPSTONE,
 } from "../data/nodejs-curriculum";
 import {
   isLessonComplete,
@@ -20,34 +20,41 @@ import {
 
 interface LessonNavFooterProps {
   currentSlug: string;
+  isLessonCompleted?: boolean;
   onLessonComplete?: () => void;
 }
 
 export function LessonNavFooter({
   currentSlug,
+  isLessonCompleted,
   onLessonComplete,
 }: LessonNavFooterProps) {
-  const { data: session } = useSession();
-  const isAuthenticated = Boolean(session?.user);
-
-  const [completed, setCompleted] = useState<boolean>(false);
+  const [completed, setCompleted] = useState<boolean>(() => {
+    if (isLessonCompleted !== undefined) return isLessonCompleted;
+    return isLessonComplete(currentSlug);
+  });
 
   const prevLesson = getPrevLesson(currentSlug);
   const nextLesson = getNextLesson(currentSlug);
 
   useEffect(() => {
-    let isMounted = true;
-
-    if (!isAuthenticated) {
-      setCompleted(false);
-      return;
+    if (isLessonCompleted !== undefined) {
+      setCompleted(isLessonCompleted);
+    } else {
+      setCompleted(isLessonComplete(currentSlug));
     }
+  }, [currentSlug, isLessonCompleted]);
 
-    setCompleted(isLessonComplete(currentSlug));
+  useEffect(() => {
+    let isMounted = true;
 
     const handleProgressUpdated = () => {
       if (isMounted) {
-        setCompleted(isLessonComplete(currentSlug));
+        if (isLessonCompleted !== undefined) {
+          setCompleted(isLessonCompleted);
+        } else {
+          setCompleted(isLessonComplete(currentSlug));
+        }
       }
     };
 
@@ -70,10 +77,9 @@ export function LessonNavFooter({
         handleProgressUpdated
       );
     };
-  }, [currentSlug, isAuthenticated]);
+  }, [currentSlug, isLessonCompleted]);
 
   const handleToggleComplete = async () => {
-    if (!isAuthenticated) return;
     const nextState = await toggleLessonComplete(currentSlug);
     setCompleted(nextState);
     if (nextState && onLessonComplete) {
@@ -105,40 +111,39 @@ export function LessonNavFooter({
               </div>
             </Link>
           ) : (
-            <div />
+            <Link
+              href="/learn/nodejs"
+              className="inline-flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 p-3"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Node.js Hub</span>
+            </Link>
           )}
         </div>
 
-        {/* Mark Done Toggle */}
+        {/* Completion Indicator / Toggle */}
         <div className="flex justify-center">
-          {isAuthenticated ? (
-            <button
-              onClick={handleToggleComplete}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
-                completed
-                  ? "bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 shadow-emerald-500/10"
-                  : "bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08]"
-              }`}
-            >
-              {completed ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Completed (Click to Unmark)</span>
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 text-slate-400" />
-                  <span>Mark Lesson Complete</span>
-                </>
-              )}
-            </button>
-          ) : (
-            <div className="text-center">
-              <span className="text-xs text-slate-500 font-mono">
-                Sign in to track progress
-              </span>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={handleToggleComplete}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
+              completed
+                ? "bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 shadow-emerald-500/10"
+                : "bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08]"
+            }`}
+          >
+            {completed ? (
+              <>
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Completed (Click to Unmark)</span>
+              </>
+            ) : (
+              <>
+                <Circle className="w-4 h-4 text-slate-400" />
+                <span>Mark Lesson Complete</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Next Lesson */}
@@ -146,22 +151,28 @@ export function LessonNavFooter({
           {nextLesson ? (
             <Link
               href={nextLesson.path}
-              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-[#0E121B] border border-white/[0.06] hover:border-purple-500/40 transition-all text-right w-full sm:w-auto"
+              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-[#0E121B] border border-white/[0.06] hover:border-purple-500/40 transition-all text-right w-full sm:w-auto ml-auto"
             >
               <div className="overflow-hidden">
-                <span className="text-[10px] font-mono text-slate-500 block uppercase">
+                <span className="text-[10px] font-mono text-purple-400 block uppercase">
                   Next ({nextLesson.code})
                 </span>
                 <span className="text-xs font-bold text-slate-200 group-hover:text-purple-300 truncate block max-w-[180px]">
                   {nextLesson.name}
                 </span>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-white/[0.04] group-hover:bg-purple-500/10 flex items-center justify-center text-slate-400 group-hover:text-purple-300 transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 group-hover:bg-purple-600 flex items-center justify-center text-purple-300 group-hover:text-white transition-colors">
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </Link>
           ) : (
-            <div />
+            <Link
+              href={NODEJS_CAPSTONE.path}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all ml-auto"
+            >
+              <span>Launch Capstone</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           )}
         </div>
       </div>

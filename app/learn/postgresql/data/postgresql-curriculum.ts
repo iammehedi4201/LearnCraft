@@ -10,6 +10,8 @@
  * B-Tree indexes, EXPLAIN / EXPLAIN ANALYZE, query debugging, and production best practices.
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export interface LessonMeta {
   code: string;
   slug: string;
@@ -761,3 +763,47 @@ export function getPrevLesson(currentSlug: string): LessonMeta | null {
   if (idx <= 0) return null;
   return POSTGRESQL_LESSONS[idx - 1];
 }
+
+export const PROGRESSION_PHASES = POSTGRESQL_PROGRESSION_PHASES;
+
+export function getPostgresqlCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "postgresql",
+    title: "Learn PostgreSQL",
+    prerequisites: {
+      items: [
+        "Basic SQL concepts: tables, rows, columns, and data types",
+        "Fundamental understanding of databases and persistent data storage",
+        "Familiarity with terminal commands and client tools",
+      ],
+      refresherHref: "/learn/nodejs",
+      refresherLabel: "Need a refresher? Open the Node.js curriculum",
+    },
+    capstone: {
+      title: POSTGRESQL_CAPSTONE.title,
+      description:
+        "Your finish line: architect and optimize a complete, production-grade PostgreSQL relational database featuring 3NF normalization, foreign key cascades, ACID transactions with row locks, and window function analytics.",
+      href: POSTGRESQL_CAPSTONE.path,
+    },
+    phases: POSTGRESQL_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.name,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
+}
+
+export const getPostgreSQLCourse = getPostgresqlCourse;

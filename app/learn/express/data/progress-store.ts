@@ -115,9 +115,25 @@ export async function fetchProgressFromDB(): Promise<void> {
 }
 
 export function isLessonComplete(slugOrCode: string): boolean {
-  const { completedLessons } = getProgress();
-  const normalized = slugOrCode.toLowerCase();
-  return completedLessons.some((item) => item.toLowerCase() === normalized);
+  const current = getProgress();
+  const all = getAllLessons();
+  const lesson = all.find(
+    (l) =>
+      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
+      l.code.toLowerCase() === slugOrCode.toLowerCase()
+  );
+
+  const matchSlug = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const matchCode = lesson ? lesson.code.toLowerCase() : slugOrCode.toLowerCase();
+
+  return current.completedLessons.some((item) => {
+    const lower = item.toLowerCase();
+    return (
+      lower === matchSlug ||
+      lower === matchCode ||
+      item.endsWith(`/${slugOrCode}`)
+    );
+  });
 }
 
 export async function markLessonComplete(slugOrCode: string): Promise<boolean> {
@@ -160,50 +176,51 @@ export async function markLessonComplete(slugOrCode: string): Promise<boolean> {
   return false;
 }
 
-export async function toggleLessonComplete(slugOrCode: string): Promise<boolean> {
-  const current = getProgress();
+export async function unmarkLessonComplete(slugOrCode: string): Promise<void> {
   const all = getAllLessons();
   const lesson = all.find(
     (l) =>
       l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
       l.code.toLowerCase() === slugOrCode.toLowerCase()
   );
+  const matchSlug = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const matchCode = lesson ? lesson.code.toLowerCase() : slugOrCode.toLowerCase();
 
-  const targetSlug = lesson ? lesson.slug : slugOrCode;
-  const isDone = isLessonComplete(targetSlug);
+  const current = getProgress();
+  const nextCompleted = current.completedLessons.filter((item) => {
+    const lower = item.toLowerCase();
+    return lower !== matchSlug && lower !== matchCode && !item.endsWith(`/${slugOrCode}`);
+  });
 
-  let updated: string[];
-  if (isDone) {
-    updated = current.completedLessons.filter(
-      (s) => s.toLowerCase() !== targetSlug.toLowerCase()
-    );
-  } else {
-    updated = [...current.completedLessons, targetSlug];
-  }
+  saveProgress({ completedLessons: nextCompleted });
 
-  saveProgress({ completedLessons: updated });
-
-  // Sync to PostgreSQL DB
   if (isBrowser()) {
     try {
       await fetch("/api/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          module: targetSlug,
-          completed: !isDone,
-          activeModule: "part1",
-          completedModules: !isDone ? ["part1", "part2", "part3", "part4"] : [],
-          totalModules: 4,
-          score: !isDone ? 100 : 0,
+          module: slugOrCode,
+          completed: false,
+          force: true,
+          score: 0,
         }),
       });
     } catch (err) {
-      console.warn("[ExpressProgressStore] DB sync failed:", err);
+      console.warn("[ExpressProgressStore] DB unmark sync failed:", err);
     }
   }
+}
 
-  return !isDone;
+export async function toggleLessonComplete(slugOrCode: string): Promise<boolean> {
+  const isDone = isLessonComplete(slugOrCode);
+  if (isDone) {
+    await unmarkLessonComplete(slugOrCode);
+    return false;
+  } else {
+    await markLessonComplete(slugOrCode);
+    return true;
+  }
 }
 
 export function setCurrentLesson(slug: string): void {

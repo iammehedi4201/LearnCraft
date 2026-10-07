@@ -37,16 +37,47 @@ export function useNodeModuleProgress({
     [sections]
   );
 
+  const storageKey = `learncraft_node_sections_${lessonSlug}`;
+
   const [activeSection, setActiveSection] = useState<string>(() => {
     const resolvedFromUrl = resolveId(sectionParam);
     if (resolvedFromUrl) return resolvedFromUrl;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const resolved = resolveId(parsed.activeSection);
+          if (resolved) return resolved;
+        }
+      } catch {}
+    }
     return sections[0]?.id || "part1";
   });
 
-  const [completedSections, setCompletedSections] = useState<Set<string>>(
-    new Set()
-  );
-  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(false);
+  const [completedSections, setCompletedSections] = useState<Set<string>>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (isLessonComplete(lessonSlug)) {
+          return new Set(sections.map((s) => s.id));
+        }
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.completedSections)) {
+            const valid = parsed.completedSections.filter((id: string) =>
+              sections.some((s) => s.id === id)
+            );
+            return new Set(valid);
+          }
+        }
+      } catch {}
+    }
+    return new Set();
+  });
+  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(() => {
+    return isLessonComplete(lessonSlug);
+  });
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const isMountedRef = useRef(true);
@@ -63,14 +94,31 @@ export function useNodeModuleProgress({
   useEffect(() => {
     if (status === "loading") return;
 
+    let isMounted = true;
+
+    // Check localStorage hydration first
+    try {
+      if (isLessonComplete(lessonSlug)) {
+        setIsLessonCompleted(true);
+        setCompletedSections(new Set(sections.map((s) => s.id)));
+      } else {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.completedSections)) {
+            const valid = parsed.completedSections.filter((id: string) =>
+              sections.some((s) => s.id === id)
+            );
+            setCompletedSections(new Set(valid));
+          }
+        }
+      }
+    } catch {}
+
     if (!isAuthenticated) {
-      setCompletedSections(new Set());
-      setIsLessonCompleted(false);
       setIsLoaded(true);
       return;
     }
-
-    let isMounted = true;
 
     async function loadProgressFromDatabase() {
       try {
@@ -131,7 +179,7 @@ export function useNodeModuleProgress({
     return () => {
       isMounted = false;
     };
-  }, [lessonSlug, isAuthenticated, status, resolveId, sections, sectionParam]);
+  }, [lessonSlug, isAuthenticated, status, resolveId, sections, sectionParam, storageKey]);
 
   const currentIndex = sections.findIndex((s) => s.id === activeSection);
   const safeCurrentIndex = currentIndex === -1 ? 0 : currentIndex;
@@ -143,11 +191,33 @@ export function useNodeModuleProgress({
 
   const persistProgress = useCallback(
     async (nextCompleted: Set<string>, nextActiveId: string) => {
-      if (!isAuthenticated) return;
-
       const completedArray = Array.from(nextCompleted);
       const isComplete =
         sections.length > 0 && completedArray.length >= sections.length;
+
+      // Always persist to localStorage
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              completedSections: completedArray,
+              activeSection: nextActiveId,
+              isCompleted: isComplete,
+              lastUpdated: Date.now(),
+            })
+          );
+        } catch {}
+      }
+
+      if (isComplete && isMountedRef.current) {
+        await markLessonComplete(lessonSlug);
+        if (isMountedRef.current) {
+          setIsLessonCompleted(true);
+        }
+      }
+
+      if (!isAuthenticated) return;
 
       try {
         await fetch("/api/progress", {
@@ -161,18 +231,11 @@ export function useNodeModuleProgress({
             score: isComplete ? 100 : Math.round((completedArray.length / sections.length) * 100),
           }),
         });
-
-        if (isComplete && isMountedRef.current) {
-          await markLessonComplete(lessonSlug);
-          if (isMountedRef.current) {
-            setIsLessonCompleted(true);
-          }
-        }
       } catch (err) {
         console.error("[useNodeModuleProgress] Error persisting progress:", err);
       }
     },
-    [isAuthenticated, lessonSlug, sections.length]
+    [isAuthenticated, lessonSlug, sections.length, storageKey]
   );
 
   const handleSectionChange = useCallback(

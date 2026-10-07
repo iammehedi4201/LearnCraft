@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { markLessonComplete } from "../data/progress-store";
+import { markLessonComplete, isLessonComplete } from "../data/progress-store";
 
 export interface ExpressSectionItem {
   id: string;
@@ -37,16 +37,48 @@ export function useExpressModuleProgress({
     [sections]
   );
 
+  const storageKey = `learncraft_express_sections_${lessonSlug}`;
+
   const [activeSection, setActiveSection] = useState<string>(() => {
     const resolvedFromUrl = resolveId(sectionParam);
     if (resolvedFromUrl) return resolvedFromUrl;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const resolved = resolveId(parsed.activeSection);
+          if (resolved) return resolved;
+        }
+      } catch {}
+    }
     return sections[0]?.id || "part1";
   });
 
-  const [completedSections, setCompletedSections] = useState<Set<string>>(
-    new Set()
-  );
-  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(false);
+  const [completedSections, setCompletedSections] = useState<Set<string>>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (isLessonComplete(lessonSlug)) {
+          return new Set(sections.map((s) => s.id));
+        }
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.completedSections)) {
+            const valid = parsed.completedSections.filter((id: string) =>
+              sections.some((s) => s.id === id)
+            );
+            return new Set(valid);
+          }
+        }
+      } catch {}
+    }
+    return new Set();
+  });
+
+  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(() => {
+    return isLessonComplete(lessonSlug);
+  });
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   const isMountedRef = useRef(true);
@@ -63,14 +95,31 @@ export function useExpressModuleProgress({
   useEffect(() => {
     if (status === "loading") return;
 
+    let isMounted = true;
+
+    // Check localStorage hydration first
+    try {
+      if (isLessonComplete(lessonSlug)) {
+        setIsLessonCompleted(true);
+        setCompletedSections(new Set(sections.map((s) => s.id)));
+      } else {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.completedSections)) {
+            const valid = parsed.completedSections.filter((id: string) =>
+              sections.some((s) => s.id === id)
+            );
+            setCompletedSections(new Set(valid));
+          }
+        }
+      }
+    } catch {}
+
     if (!isAuthenticated) {
-      setCompletedSections(new Set());
-      setIsLessonCompleted(false);
       setIsLoaded(true);
       return;
     }
-
-    let isMounted = true;
 
     async function loadProgressFromDatabase() {
       try {
@@ -141,7 +190,7 @@ export function useExpressModuleProgress({
     return () => {
       isMounted = false;
     };
-  }, [isAuthenticated, lessonSlug, resolveId, sectionParam, sections, status]);
+  }, [isAuthenticated, lessonSlug, resolveId, sectionParam, sections, status, storageKey]);
 
   const handleSectionChange = useCallback(
     (newSectionId: string) => {
@@ -157,10 +206,6 @@ export function useExpressModuleProgress({
         window.history.replaceState(null, "", url.toString());
       }
 
-      if (!isAuthenticated) {
-        return;
-      }
-
       setCompletedSections((prev) => {
         const next = new Set(prev);
         if (currentActive) {
@@ -171,34 +216,46 @@ export function useExpressModuleProgress({
         const allCompleted =
           sections.length > 0 && completedArray.length >= sections.length;
 
-        if (allCompleted && isMountedRef.current) {
-          setIsLessonCompleted(true);
+        // Persist to localStorage
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(
+              storageKey,
+              JSON.stringify({
+                completedSections: completedArray,
+                activeSection: resolvedTarget,
+                isCompleted: allCompleted,
+                lastUpdated: Date.now(),
+              })
+            );
+          } catch {}
         }
 
-        fetch("/api/progress", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            module: lessonSlug,
-            activeModule: resolvedTarget,
-            completedModules: completedArray,
-            totalModules: sections.length,
-            completed: allCompleted,
-          }),
-        })
-          .then(() => {
-            if (allCompleted) {
-              markLessonComplete(lessonSlug);
-            }
-          })
-          .catch((err) =>
+        if (allCompleted && isMountedRef.current) {
+          setIsLessonCompleted(true);
+          markLessonComplete(lessonSlug);
+        }
+
+        if (isAuthenticated) {
+          fetch("/api/progress", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              module: lessonSlug,
+              activeModule: resolvedTarget,
+              completedModules: completedArray,
+              totalModules: sections.length,
+              completed: allCompleted,
+            }),
+          }).catch((err) =>
             console.warn("[useExpressModuleProgress] DB save error:", err)
           );
+        }
 
         return next;
       });
     },
-    [isAuthenticated, lessonSlug, resolveId, sections.length]
+    [isAuthenticated, lessonSlug, resolveId, sections.length, storageKey]
   );
 
   const handleNext = useCallback(() => {
@@ -216,13 +273,29 @@ export function useExpressModuleProgress({
   }, [activeSection, handleSectionChange, sections]);
 
   const completeLesson = useCallback(() => {
-    if (!isAuthenticated) return;
-
     const allModuleIds = sections.map((s) => s.id);
     if (isMountedRef.current) {
       setCompletedSections(new Set(allModuleIds));
       setIsLessonCompleted(true);
     }
+
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            completedSections: allModuleIds,
+            activeSection: sections[sections.length - 1]?.id || "part1",
+            isCompleted: true,
+            lastUpdated: Date.now(),
+          })
+        );
+      } catch {}
+    }
+
+    markLessonComplete(lessonSlug);
+
+    if (!isAuthenticated) return;
 
     fetch("/api/progress", {
       method: "POST",
@@ -235,14 +308,10 @@ export function useExpressModuleProgress({
         completed: true,
         score: 100,
       }),
-    })
-      .then(() => {
-        markLessonComplete(lessonSlug);
-      })
-      .catch((err) =>
-        console.warn("[useExpressModuleProgress] DB complete error:", err)
-      );
-  }, [isAuthenticated, lessonSlug, sections]);
+    }).catch((err) =>
+      console.warn("[useExpressModuleProgress] DB complete error:", err)
+    );
+  }, [isAuthenticated, lessonSlug, sections, storageKey]);
 
   const getStepState = useCallback(
     (index: number): "done" | "active" | "todo" => {
@@ -251,17 +320,13 @@ export function useExpressModuleProgress({
 
       if (section.id === activeSection) return "active";
 
-      if (!isAuthenticated) {
-        return "todo";
-      }
-
       if (completedSections.has(section.id)) {
         return "done";
       }
 
       return "todo";
     },
-    [activeSection, completedSections, isAuthenticated, sections]
+    [activeSection, completedSections, sections]
   );
 
   const currentIndex = Math.max(
@@ -270,7 +335,7 @@ export function useExpressModuleProgress({
   );
 
   const progressPercent =
-    isAuthenticated && sections.length > 0
+    sections.length > 0
       ? Math.round((completedSections.size / sections.length) * 100)
       : 0;
 

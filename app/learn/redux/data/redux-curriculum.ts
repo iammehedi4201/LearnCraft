@@ -11,6 +11,8 @@
  * Middleware, and Redux DevTools debugging.
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export interface LessonMeta {
   code: string;
   slug: string;
@@ -684,4 +686,46 @@ export function getStageByLessonSlug(slug: string): StageMeta | undefined {
   const lesson = getLessonBySlug(slug);
   if (!lesson) return undefined;
   return REDUX_STAGES.find((s) => s.id === lesson.phaseId);
+}
+
+export const PROGRESSION_PHASES = REDUX_PROGRESSION_PHASES;
+
+export function getReduxCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "redux",
+    title: "Learn Redux",
+    prerequisites: {
+      items: [
+        "JavaScript fundamentals: objects, arrays, spread operators, and immutability",
+        "React fundamentals: components, props, useState, and component trees",
+        "Understanding of prop drilling and component state limitations",
+      ],
+      refresherHref: "/learn/react",
+      refresherLabel: "Need a refresher? Open the React curriculum",
+    },
+    capstone: {
+      title: REDUX_CAPSTONE.title,
+      description:
+        "Your finish line: architect and implement StoreFlow, an enterprise-grade Redux Toolkit state engine featuring modular domain slices, memoized Reselect selectors, async checkout thunks, and Redux DevTools inspection.",
+      href: REDUX_CAPSTONE.path,
+    },
+    phases: REDUX_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.name,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
 }

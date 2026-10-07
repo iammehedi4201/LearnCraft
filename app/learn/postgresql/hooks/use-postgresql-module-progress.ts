@@ -1,7 +1,7 @@
 /**
  * PostgreSQL Module Progress Hook — LearnCraft
  * Tracks active section progression within a lesson, auto-marks completion,
- * and maintains clean mounted safety checks.
+ * hydrates offline/guest state from localStorage, and maintains clean mounted safety checks.
  */
 "use client";
 
@@ -31,13 +31,44 @@ export function usePostgresqlModuleProgress({
   const { data: session } = useSession();
   const isAuthenticated = Boolean(session?.user);
 
-  const [activeSection, setActiveSection] = useState<string>(
-    sections[0]?.id || "part1"
-  );
-  const [completedSections, setCompletedSections] = useState<Set<string>>(
-    new Set()
-  );
-  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(false);
+  const storageKey = `learncraft_postgresql_sections_${lessonSlug}`;
+
+  const [activeSection, setActiveSection] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.activeSection && sections.some((s) => s.id === parsed.activeSection)) {
+            return parsed.activeSection;
+          }
+        }
+      } catch {}
+    }
+    return sections[0]?.id || "part1";
+  });
+
+  const [completedSections, setCompletedSections] = useState<Set<string>>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (isLessonComplete(lessonSlug)) {
+          return new Set(sections.map((s) => s.id));
+        }
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.completedSections)) {
+            return new Set(parsed.completedSections);
+          }
+        }
+      } catch {}
+    }
+    return new Set();
+  });
+
+  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(() => {
+    return isLessonComplete(lessonSlug);
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -62,32 +93,32 @@ export function usePostgresqlModuleProgress({
     sections.findIndex((s) => s.id === activeSection)
   );
 
+  const completedSectionsCount = completedSections.size;
   const progressPercent =
     sections.length > 0
-      ? Math.round(((currentIndex + 1) / sections.length) * 100)
+      ? Math.round((completedSectionsCount / sections.length) * 100)
       : 0;
 
   const handleSectionChange = useCallback(
     (sectionId: string) => {
       setActiveSection(sectionId);
       setCompletedSections((prev) => {
-        const next = new Set(prev);
-        // Mark all prior sections as completed
-        const targetIndex = sections.findIndex((s) => s.id === sectionId);
-        sections.forEach((s, idx) => {
-          if (idx <= targetIndex) next.add(s.id);
-        });
+        const next = new Set([...prev, sectionId]);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(
+              storageKey,
+              JSON.stringify({
+                activeSection: sectionId,
+                completedSections: Array.from(next),
+              })
+            );
+          } catch {}
+        }
         return next;
       });
-
-      // If user reaches last section (summary), mark whole lesson as complete
-      if (sectionId === sections[sections.length - 1]?.id) {
-        markLessonComplete(lessonSlug).then(() => {
-          setIsLessonCompleted(true);
-        });
-      }
     },
-    [sections, lessonSlug]
+    [storageKey]
   );
 
   const handlePrev = useCallback(() => {
@@ -96,27 +127,44 @@ export function usePostgresqlModuleProgress({
     }
   }, [currentIndex, sections, handleSectionChange]);
 
-  const handleNext = useCallback(() => {
+  const handleNext = useCallback(async () => {
     if (currentIndex < sections.length - 1) {
       handleSectionChange(sections[currentIndex + 1].id);
+    } else {
+      // Completed the entire module
+      await markLessonComplete(lessonSlug);
+      setIsLessonCompleted(true);
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              activeSection: sections[sections.length - 1]?.id,
+              completedSections: sections.map((s) => s.id),
+            })
+          );
+        } catch {}
+      }
     }
-  }, [currentIndex, sections, handleSectionChange]);
+  }, [currentIndex, sections, lessonSlug, handleSectionChange, storageKey]);
 
   const getStepState = useCallback(
     (index: number): "done" | "active" | "todo" => {
       if (index === currentIndex) return "active";
-      if (completedSections.has(sections[index]?.id) || index < currentIndex)
+      if (completedSections.has(sections[index]?.id) || index < currentIndex) {
         return "done";
+      }
       return "todo";
     },
     [currentIndex, completedSections, sections]
   );
 
   return {
+    isAuthenticated,
     activeSection,
     currentIndex,
     progressPercent,
-    completedSectionsCount: completedSections.size,
+    completedSectionsCount,
     isLessonCompleted,
     handleSectionChange,
     handlePrev,

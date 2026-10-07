@@ -26,13 +26,44 @@ export function useMongodbModuleProgress({
   const { data: session } = useSession();
   const isAuthenticated = Boolean(session?.user);
 
-  const [activeSection, setActiveSection] = useState<string>(
-    sections[0]?.id || "part1"
-  );
-  const [completedSections, setCompletedSections] = useState<Set<string>>(
-    new Set()
-  );
-  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(false);
+  const storageKey = `learncraft_mongodb_sections_${lessonSlug}`;
+
+  const [activeSection, setActiveSection] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.activeSection && sections.some((s) => s.id === parsed.activeSection)) {
+            return parsed.activeSection;
+          }
+        }
+      } catch {}
+    }
+    return sections[0]?.id || "part1";
+  });
+
+  const [completedSections, setCompletedSections] = useState<Set<string>>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        if (isLessonComplete(lessonSlug)) {
+          return new Set(sections.map((s) => s.id));
+        }
+        const raw = localStorage.getItem(storageKey);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.completedSections)) {
+            return new Set(parsed.completedSections);
+          }
+        }
+      } catch {}
+    }
+    return new Set();
+  });
+
+  const [isLessonCompleted, setIsLessonCompleted] = useState<boolean>(() => {
+    return isLessonComplete(lessonSlug);
+  });
 
   useEffect(() => {
     let isMounted = true;
@@ -57,15 +88,33 @@ export function useMongodbModuleProgress({
     sections.findIndex((s) => s.id === activeSection)
   );
 
+  const completedSectionsCount = completedSections.size;
   const progressPercent =
     sections.length > 0
-      ? Math.round(((currentIndex + 1) / sections.length) * 100)
+      ? Math.round((completedSectionsCount / sections.length) * 100)
       : 0;
 
-  const handleSectionChange = useCallback((sectionId: string) => {
-    setActiveSection(sectionId);
-    setCompletedSections((prev) => new Set([...prev, sectionId]));
-  }, []);
+  const handleSectionChange = useCallback(
+    (sectionId: string) => {
+      setActiveSection(sectionId);
+      setCompletedSections((prev) => {
+        const next = new Set([...prev, sectionId]);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(
+              storageKey,
+              JSON.stringify({
+                activeSection: sectionId,
+                completedSections: Array.from(next),
+              })
+            );
+          } catch {}
+        }
+        return next;
+      });
+    },
+    [storageKey]
+  );
 
   const handlePrev = useCallback(() => {
     if (currentIndex > 0) {
@@ -78,12 +127,21 @@ export function useMongodbModuleProgress({
       handleSectionChange(sections[currentIndex + 1].id);
     } else {
       // Completed the entire module
-      if (isAuthenticated) {
-        await markLessonComplete(lessonSlug);
-        setIsLessonCompleted(true);
+      await markLessonComplete(lessonSlug);
+      setIsLessonCompleted(true);
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              activeSection: sections[sections.length - 1]?.id,
+              completedSections: sections.map((s) => s.id),
+            })
+          );
+        } catch {}
       }
     }
-  }, [currentIndex, sections, lessonSlug, isAuthenticated, handleSectionChange]);
+  }, [currentIndex, sections, lessonSlug, handleSectionChange, storageKey]);
 
   const getStepState = useCallback(
     (index: number): "done" | "active" | "todo" => {
@@ -101,7 +159,7 @@ export function useMongodbModuleProgress({
     activeSection,
     currentIndex,
     progressPercent,
-    completedSectionsCount: completedSections.size,
+    completedSectionsCount,
     isLessonCompleted,
     handleSectionChange,
     handlePrev,

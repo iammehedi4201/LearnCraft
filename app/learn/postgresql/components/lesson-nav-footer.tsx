@@ -55,7 +55,18 @@ export function LessonNavFooter({ currentSlug }: LessonNavFooterProps) {
           </div>
         </Link>
       ) : (
-        <div className="w-full sm:w-auto" />
+        <Link
+          href="/learn/postgresql"
+          className="w-full sm:w-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/[0.08] bg-[#0E121B] hover:bg-white/[0.04] text-slate-300 hover:text-white text-xs font-semibold transition-all group shadow-sm"
+        >
+          <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:-translate-x-0.5 transition-transform" />
+          <div className="text-left">
+            <span className="block text-[10px] text-slate-500 font-mono uppercase">
+              Curriculum Hub
+            </span>
+            <span className="truncate max-w-[200px] block">PostgreSQL Overview</span>
+          </div>
+        </Link>
       )}
 
       {/* Mark Completed Toggle */}

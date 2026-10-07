@@ -89,6 +89,38 @@ export async function toggleLessonComplete(slugOrCode: string): Promise<boolean>
   return !isCompleted;
 }
 
+export function getProgress(): ProgressState {
+  return getStoredState();
+}
+
+export async function unmarkLessonComplete(slugOrCode: string): Promise<void> {
+  const state = getStoredState();
+  const lesson = MONGODB_LESSONS.find(
+    (l) => l.slug.toLowerCase() === slugOrCode.toLowerCase() || l.code.toLowerCase() === slugOrCode.toLowerCase()
+  );
+  const targetKey = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const codeKey = lesson ? lesson.code.toLowerCase() : "";
+
+  const updatedList = state.completedLessons.filter((k) => k !== targetKey && k !== codeKey);
+  const newState: ProgressState = {
+    ...state,
+    completedLessons: updatedList,
+  };
+  saveState(newState);
+
+  try {
+    await fetch("/api/progress", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        topicId: "mongodb",
+        lessonCode: lesson?.code || slugOrCode,
+        completed: false,
+      }),
+    });
+  } catch {}
+}
+
 export async function markLessonComplete(slugOrCode: string): Promise<void> {
   if (!isLessonComplete(slugOrCode)) {
     await toggleLessonComplete(slugOrCode);

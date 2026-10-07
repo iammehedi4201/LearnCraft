@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -12,6 +11,7 @@ import {
 import {
   getNextLesson,
   getPrevLesson,
+  MONGODB_CAPSTONE,
 } from "../data/mongodb-curriculum";
 import {
   isLessonComplete,
@@ -20,34 +20,41 @@ import {
 
 interface LessonNavFooterProps {
   currentSlug: string;
+  isLessonCompleted?: boolean;
   onLessonComplete?: () => void;
 }
 
 export function LessonNavFooter({
   currentSlug,
+  isLessonCompleted,
   onLessonComplete,
 }: LessonNavFooterProps) {
-  const { data: session } = useSession();
-  const isAuthenticated = Boolean(session?.user);
-
-  const [completed, setCompleted] = useState<boolean>(false);
+  const [completed, setCompleted] = useState<boolean>(() => {
+    if (isLessonCompleted !== undefined) return isLessonCompleted;
+    return isLessonComplete(currentSlug);
+  });
 
   const prevLesson = getPrevLesson(currentSlug);
   const nextLesson = getNextLesson(currentSlug);
 
   useEffect(() => {
-    let isMounted = true;
-
-    if (!isAuthenticated) {
-      setCompleted(false);
-      return;
+    if (isLessonCompleted !== undefined) {
+      setCompleted(isLessonCompleted);
+    } else {
+      setCompleted(isLessonComplete(currentSlug));
     }
+  }, [currentSlug, isLessonCompleted]);
 
-    setCompleted(isLessonComplete(currentSlug));
+  useEffect(() => {
+    let isMounted = true;
 
     const handleProgressUpdated = () => {
       if (isMounted) {
-        setCompleted(isLessonComplete(currentSlug));
+        if (isLessonCompleted !== undefined) {
+          setCompleted(isLessonCompleted);
+        } else {
+          setCompleted(isLessonComplete(currentSlug));
+        }
       }
     };
 
@@ -70,10 +77,9 @@ export function LessonNavFooter({
         handleProgressUpdated
       );
     };
-  }, [currentSlug, isAuthenticated]);
+  }, [currentSlug, isLessonCompleted]);
 
   const handleToggleComplete = async () => {
-    if (!isAuthenticated) return;
     const nextState = await toggleLessonComplete(currentSlug);
     setCompleted(nextState);
     if (nextState && onLessonComplete) {
@@ -117,35 +123,27 @@ export function LessonNavFooter({
 
         {/* Mark Done Toggle */}
         <div className="flex justify-center">
-          {isAuthenticated ? (
-            <button
-              type="button"
-              onClick={handleToggleComplete}
-              className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
-                completed
-                  ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25"
-                  : "bg-purple-600 hover:bg-purple-500 text-white shadow-purple-600/20"
-              }`}
-            >
-              {completed ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Completed (Click to Unmark)</span>
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 text-white/80" />
-                  <span>Mark Lesson Complete</span>
-                </>
-              )}
-            </button>
-          ) : (
-            <div className="text-center">
-              <span className="text-xs text-slate-400 font-mono bg-white/[0.04] border border-white/[0.06] px-4 py-2 rounded-xl">
-                Sign in to track progress
-              </span>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={handleToggleComplete}
+            className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
+              completed
+                ? "bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25"
+                : "bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08]"
+            }`}
+          >
+            {completed ? (
+              <>
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Completed (Click to Unmark)</span>
+              </>
+            ) : (
+              <>
+                <Circle className="w-4 h-4 text-slate-400" />
+                <span>Mark Lesson Complete</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Next Lesson */}
@@ -169,7 +167,7 @@ export function LessonNavFooter({
             </Link>
           ) : (
             <Link
-              href="/learn/mongodb/projects/ecommerce-database"
+              href={MONGODB_CAPSTONE.path}
               className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-purple-500/10 border border-purple-500/30 hover:border-purple-500/50 transition-all text-right w-full sm:w-auto shadow-sm"
             >
               <div className="overflow-hidden">

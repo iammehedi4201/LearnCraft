@@ -1,79 +1,51 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useState, useEffect, useCallback } from "react";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
+import { getMongoDBCourse } from "./data/mongodb-curriculum";
 import {
-  ArrowRight,
-  Sparkles,
-  Award,
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  Target,
-} from "./components/icons";
-import {
-  MONGODB_PROGRESSION_PHASES,
-  LessonMeta,
-  MONGODB_PREREQUISITES,
-  MONGODB_CAPSTONE,
-  MONGODB_RELATED_TOPICS,
-  getLessonsByPhaseId,
-} from "./data/mongodb-curriculum";
-import {
-  setGoal,
-  getGoal,
-  getNextRecommendedLesson,
-  getOverallProgress,
   fetchProgressFromDB,
-  isLessonComplete,
+  getProgress,
 } from "./data/progress-store";
-import { JourneyView } from "./components/journey-view";
+import { CurriculumPath, getCurriculumState, type Progress } from "@/components/curriculum";
 
 export default function MongoDBPage() {
-  const { data: session } = useSession();
-  const [selectedPhase, setSelectedPhaseState] =
-    useState<string>("fundamentals");
-  const [nextLesson, setNextLesson] = useState<LessonMeta | null>(null);
-  const [hasStarted, setHasStarted] = useState<boolean>(false);
-  const [showPrereqs, setShowPrereqs] = useState<boolean>(false);
-  const [progressSummary, setProgressSummary] = useState({
-    completedCount: 0,
-    totalCount: 26,
-    percent: 0,
+  const mongodbCourse = getMongoDBCourse();
+
+  const [courseProgress, setCourseProgress] = useState<Progress>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const p = getProgress();
+        const prereqConfirmed =
+          localStorage.getItem("learncraft_mongodb_prereq_confirmed") === "true";
+        return {
+          completedLessonIds: p.completedLessons || [],
+          prereqConfirmed,
+        };
+      } catch {
+        // fallback
+      }
+    }
+    return { completedLessonIds: [], prereqConfirmed: false };
   });
 
-  const tabsRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState<boolean>(false);
-  const [canScrollRight, setCanScrollRight] = useState<boolean>(true);
-
-  const checkScrollability = useCallback(() => {
-    if (tabsRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tabsRef.current;
-      setCanScrollLeft(scrollLeft > 5);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5);
-    }
-  }, []);
-
-  const scrollTabs = (direction: "left" | "right") => {
-    if (tabsRef.current) {
-      const scrollAmount = direction === "left" ? -320 : 320;
-      tabsRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
-      setTimeout(checkScrollability, 300);
-    }
-  };
-
-  const handleTabsWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    if (tabsRef.current && e.deltaY !== 0) {
-      tabsRef.current.scrollLeft += e.deltaY;
-      checkScrollability();
-    }
-  };
+  const handleCurriculumProgressChange = useCallback(
+    (newProgress: Progress) => {
+      setCourseProgress(newProgress);
+      if (typeof window !== "undefined") {
+        try {
+          if (newProgress.prereqConfirmed) {
+            localStorage.setItem("learncraft_mongodb_prereq_confirmed", "true");
+          }
+        } catch {
+          // ignore
+        }
+      }
+    },
+    [],
+  );
 
   // Sync state from database & custom events
   useEffect(() => {
@@ -81,30 +53,14 @@ export default function MongoDBPage() {
 
     const updateLocalState = () => {
       if (!isMounted) return;
-      const rec = getNextRecommendedLesson();
-      setNextLesson(rec);
-
-      const storedPhase = getGoal();
-      if (storedPhase) {
-        setSelectedPhaseState(storedPhase);
-      } else if (rec) {
-        const matchingPhase = MONGODB_PROGRESSION_PHASES.find((p) =>
-          p.lessonCodes.includes(rec.code)
-        );
-        if (matchingPhase) {
-          setSelectedPhaseState(matchingPhase.id);
-        }
-      }
-
-      if (!session?.user) {
-        const overall = getOverallProgress();
-        setProgressSummary(overall);
-        setHasStarted(overall.completedCount > 0);
-      } else {
-        const overall = getOverallProgress();
-        setProgressSummary(overall);
-        setHasStarted(overall.completedCount > 0);
-      }
+      const p = getProgress();
+      const prereqConfirmed =
+        typeof window !== "undefined" &&
+        localStorage.getItem("learncraft_mongodb_prereq_confirmed") === "true";
+      setCourseProgress({
+        completedLessonIds: p.completedLessons || [],
+        prereqConfirmed,
+      });
     };
 
     fetchProgressFromDB().then(() => {
@@ -123,457 +79,143 @@ export default function MongoDBPage() {
 
     window.addEventListener(
       "learncraft-mongodb-progress-updated",
-      handleProgressUpdated
+      handleProgressUpdated,
     );
     window.addEventListener(
       "learncraft-progress-updated",
-      handleProgressUpdated
+      handleProgressUpdated,
     );
     return () => {
       isMounted = false;
       window.removeEventListener(
         "learncraft-mongodb-progress-updated",
-        handleProgressUpdated
+        handleProgressUpdated,
       );
       window.removeEventListener(
         "learncraft-progress-updated",
-        handleProgressUpdated
+        handleProgressUpdated,
       );
     };
-  }, [session?.user]);
+  }, []);
 
-  useEffect(() => {
-    checkScrollability();
-    window.addEventListener("resize", checkScrollability);
-    return () => window.removeEventListener("resize", checkScrollability);
-  }, [checkScrollability]);
+  // Compute metrics from curriculum state (authoritative single source of truth)
+  const curriculumState = getCurriculumState(mongodbCourse, courseProgress);
+  const totalPhases = curriculumState.phases.length;
+  const totalLessons = curriculumState.totalLessonsCount;
+  const completedCount = curriculumState.completedLessonsCount;
+  const completedPhasesCount = curriculumState.completedPhases.length;
+  const progressPercent = curriculumState.progressPercent;
 
-  // Auto-scroll selected phase tab into view
-  useEffect(() => {
-    if (tabsRef.current) {
-      const activeBtn = tabsRef.current.querySelector(
-        `[data-phase-id="${selectedPhase}"]`
-      ) as HTMLElement | null;
-      if (activeBtn) {
-        activeBtn.scrollIntoView({
-          behavior: "smooth",
-          inline: "center",
-          block: "nearest",
-        });
+  const handleResetForDemo = () => {
+    const emptyProgress: Progress = { completedLessonIds: [], prereqConfirmed: false };
+    setCourseProgress(emptyProgress);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem("learncraft_mongodb_prereq_confirmed");
+        localStorage.removeItem(`learncraft_progress_${mongodbCourse.id}`);
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+          if (
+            key &&
+            (key.startsWith("learncraft_mongodb_sections_") ||
+              key === "learncraft_mongodb_progress_v1")
+          ) {
+            localStorage.removeItem(key);
+          }
+        }
+        localStorage.setItem(
+          "learncraft_mongodb_progress_v1",
+          JSON.stringify({ completedLessons: [], lastVisitedLesson: "mdb01-what-is-mongodb" }),
+        );
+        window.dispatchEvent(new CustomEvent("learncraft-mongodb-progress-updated"));
+      } catch {
+        // ignore
       }
-      checkScrollability();
     }
-  }, [selectedPhase, checkScrollability]);
-
-  const handlePhaseSelect = (phaseId: string) => {
-    setSelectedPhaseState(phaseId);
-    setGoal(phaseId);
   };
-
-  const isAllComplete = progressSummary.completedCount >= 26;
-
-  const isPhaseCompleted = (phaseId: string) => {
-    const phaseLessons = getLessonsByPhaseId(phaseId);
-    if (!phaseLessons.length) return false;
-    return phaseLessons.every(
-      (l) => isLessonComplete(l.slug) || isLessonComplete(l.code)
-    );
-  };
-
-  const getPhaseCompletedCount = (phaseId: string) => {
-    const phaseLessons = getLessonsByPhaseId(phaseId);
-    return phaseLessons.filter(
-      (l) => isLessonComplete(l.slug) || isLessonComplete(l.code)
-    ).length;
-  };
-
-  const currentPhaseIndex = MONGODB_PROGRESSION_PHASES.findIndex(
-    (p) => p.id === selectedPhase
-  );
-  const activePhase =
-    MONGODB_PROGRESSION_PHASES[
-      currentPhaseIndex >= 0 ? currentPhaseIndex : 0
-    ];
 
   return (
     <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
       <Nav />
 
-      <main className="flex-1 max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 w-full space-y-8">
+      <main className="flex-1 max-w-5xl lg:max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 w-full space-y-[28px]">
         {/* =========================================================================
-            1. HERO WITH INTEGRATED "START HERE / NEXT STEP" SPOTLIGHT CARD
+            1. COURSE HEADER (Matches TypeScript Curriculum Page Layout)
            ========================================================================= */}
-        <section className="p-6 sm:p-8 md:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-2xl relative overflow-hidden">
-          {/* Ambient Glow */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-          <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-blue-600/5 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left: Course Overview & Progress */}
-            <div className="lg:col-span-7 space-y-5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-mono font-semibold">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Core MongoDB Mastery</span>
+        <header className="space-y-2">
+          {completedCount === 0 ? (
+            <>
+              {/* Category Eyebrow */}
+              <div className="text-xs font-mono tracking-[0.08em] uppercase text-[#a78bfa] font-semibold">
+                MONGODB · DOCUMENT DATABASE & DATA MODELING
               </div>
 
-              <div>
-                <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-tight">
+              {/* Title */}
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#ececf4] tracking-tight">
+                Learn MongoDB
+              </h1>
+
+              {/* Subtitle */}
+              <p className="text-sm sm:text-base md:text-lg text-[#b4b4cc] font-normal leading-relaxed">
+                Follow one step at a time. You only ever need to look at the highlighted step.
+              </p>
+
+              {/* Metrics */}
+              <div className="pt-2 flex flex-wrap items-center gap-x-6 gap-y-1.5 text-xs sm:text-sm font-mono text-[#9a9ab5]">
+                <span>{totalPhases} phases</span>
+                <span>{totalLessons} lessons</span>
+                <span>~13 hours</span>
+                <span>{completedCount} of {totalLessons} completed</span>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* In Progress Header View */}
+              <div className="flex items-baseline justify-between gap-4">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#ececf4] tracking-tight">
                   Learn MongoDB
                 </h1>
-                <p className="text-sm sm:text-base md:text-lg text-slate-300 mt-2.5 font-normal leading-relaxed max-w-2xl">
-                  Master the document data model, BSON types, high-speed CRUD operations, array updates, schema validation, aggregation pipelines, and compound index performance.
-                </p>
-              </div>
-
-              {/* Progress Bar & Key Metrics */}
-              <div className="space-y-2 pt-1 max-w-xl">
-                <div className="flex items-center justify-between text-xs sm:text-sm">
-                  <div className="flex items-center gap-2.5 text-slate-400 font-medium">
-                    <span>10 Phases</span>
-                    <span>·</span>
-                    <span>26 Lessons</span>
-                    <span>·</span>
-                    <span>~14 Hours</span>
-                  </div>
-                  <span className="text-emerald-400 font-bold font-mono">
-                    {progressSummary.completedCount} of 26 Completed ({progressSummary.percent}%)
-                  </span>
-                </div>
-
-                {/* Visual Progress Bar */}
-                <div className="w-full h-2 rounded-full bg-white/[0.06] overflow-hidden border border-white/[0.04]">
-                  <div
-                    className="h-full bg-gradient-to-r from-purple-500 via-purple-400 to-emerald-400 transition-all duration-500 rounded-full"
-                    style={{ width: `${Math.max(progressSummary.percent, 0)}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Focused "Start Here" / "Continue Learning" Guided Card */}
-            <div className="lg:col-span-5">
-              <div className="relative p-6 sm:p-7 rounded-2xl bg-[#090C14] border border-purple-500/30 ring-1 ring-purple-500/20 shadow-xl shadow-purple-950/20 space-y-4">
-                {/* Step indicator header */}
-                <div className="flex items-center justify-between gap-2">
-                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-mono font-bold uppercase tracking-wider">
-                    <Target className="w-3.5 h-3.5 text-purple-400" />
-                    <span>
-                      {isAllComplete
-                        ? "🎉 Curriculum Complete"
-                        : hasStarted
-                        ? `Continue · Step ${(nextLesson?.stepNumber || 1)} of 26`
-                        : "🎯 Start Here · Step 1 of 26"}
-                    </span>
-                  </div>
-
-                  {nextLesson && (
-                    <span className="text-xs font-mono text-slate-400 flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-slate-500" />
-                      <span>{nextLesson.estimatedMinutes}m</span>
-                    </span>
-                  )}
-                </div>
-
-                {/* Lesson Title & Brief description */}
-                {isAllComplete ? (
-                  <div className="space-y-1.5">
-                    <h2 className="text-lg sm:text-xl font-bold text-white">
-                      You've Completed All 26 Lessons!
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                      Put your document database skills into practice with the final Capstone Project: ShopSphere E-Commerce Database Architecture & Analytics Engine.
-                    </p>
-                  </div>
-                ) : nextLesson ? (
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 text-xs font-mono text-purple-400 font-bold">
-                      <span>{nextLesson.code}</span>
-                      <span>·</span>
-                      <span>Phase {String(nextLesson.phaseNumber).padStart(2, "0")} Fundamentals</span>
-                    </div>
-                    <h2 className="text-lg sm:text-xl font-bold text-white tracking-tight leading-snug">
-                      {nextLesson.name}
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-400 leading-relaxed line-clamp-2">
-                      {nextLesson.desc}
-                    </p>
-                  </div>
-                ) : null}
-
-                {/* Primary Action Button */}
-                <div className="pt-2">
-                  {isAllComplete ? (
-                    <Link
-                      href={MONGODB_CAPSTONE.path}
-                      className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-600/30 active:scale-[0.98] cursor-pointer"
-                    >
-                      <Award className="w-4 h-4" />
-                      <span>Launch MongoDB Capstone →</span>
-                    </Link>
-                  ) : nextLesson ? (
-                    <Link
-                      href={nextLesson.path}
-                      className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-600/30 active:scale-[0.98] cursor-pointer"
-                    >
-                      <span>
-                        {hasStarted
-                          ? `Continue: ${nextLesson.name}`
-                          : `Start Step 1: ${nextLesson.name}`}
-                      </span>
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* =========================================================================
-            2. PROGRESSIVE DISCLOSURE: PREREQUISITES COLLAPSIBLE HELPER
-           ========================================================================= */}
-        <section className="rounded-2xl bg-[#0E121B] border border-white/[0.08] overflow-hidden transition-all">
-          <button
-            type="button"
-            onClick={() => setShowPrereqs((prev) => !prev)}
-            className="w-full p-4 sm:p-5 flex items-center justify-between gap-4 text-left hover:bg-white/[0.02] transition-colors cursor-pointer"
-            aria-expanded={showPrereqs}
-          >
-            <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center text-sm font-bold shrink-0">
-                💡
-              </span>
-              <div>
-                <span className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-                  <span>Prerequisites & Foundation</span>
-                  <span className="text-[11px] font-normal text-slate-400 font-sans hidden sm:inline">
-                    — Need a data structures or JSON refresher before diving in?
-                  </span>
-                </span>
-                <p className="text-xs text-slate-400 mt-0.5 sm:hidden">
-                  Recommended JSON & data structure foundation
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-xs font-semibold text-purple-400 shrink-0">
-              <span>{showPrereqs ? "Hide" : "View Prerequisites"}</span>
-              {showPrereqs ? (
-                <ChevronUp className="w-4 h-4" />
-              ) : (
-                <ChevronDown className="w-4 h-4" />
-              )}
-            </div>
-          </button>
-
-          {showPrereqs && (
-            <div className="px-4 sm:px-5 pb-5 pt-1 border-t border-white/[0.04] grid grid-cols-1 sm:grid-cols-3 gap-4 animate-in fade-in duration-200">
-              {MONGODB_PREREQUISITES.items.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="group p-4 rounded-xl bg-[#090C14] border border-white/[0.05] hover:border-purple-500/40 hover:bg-[#0c101a] transition-all flex flex-col justify-between gap-3"
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-bold text-white group-hover:text-purple-300 transition-colors text-sm">
-                        {item.name}
-                      </span>
-                      <span
-                        className={`text-[10px] font-mono px-2 py-0.5 rounded border font-bold ${
-                          item.required
-                            ? "bg-rose-500/10 text-rose-300 border-rose-500/20"
-                            : "bg-purple-500/10 text-purple-400 border-purple-500/20"
-                        }`}
-                      >
-                        {item.required ? "Required" : "Recommended"}
-                      </span>
-                    </div>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      {item.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-
-        {/* =========================================================================
-            3. STEP-BY-STEP CURRICULUM: 10 PHASES NAVIGATION
-           ========================================================================= */}
-        <section className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
-            <div>
-              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                <span>Curriculum Learning Path</span>
-                <span className="text-xs font-normal text-slate-400">
-                  (10 Guided Phases)
-                </span>
-              </h2>
-              <p className="text-xs text-slate-400 mt-0.5">
-                Follow the sequential roadmap from document fundamentals to advanced aggregation and index performance.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
-              <span className="text-xs font-mono text-slate-400 font-semibold px-2.5 py-1 rounded-lg bg-[#0E121B] border border-white/[0.06]">
-                Phase {activePhase.phaseNumber.toString().padStart(2, "0")} / 10
-              </span>
-
-              <div className="flex items-center gap-1">
                 <button
                   type="button"
-                  onClick={() => scrollTabs("left")}
-                  disabled={!canScrollLeft}
-                  aria-label="Scroll phases left"
-                  className="p-2 rounded-xl bg-[#0E121B] border border-white/[0.08] text-slate-400 hover:text-white hover:border-purple-500/40 hover:bg-white/[0.04] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
+                  onClick={handleResetForDemo}
+                  className="text-xs font-mono text-[#a78bfa] hover:text-white underline underline-offset-4 cursor-pointer"
                 >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => scrollTabs("right")}
-                  disabled={!canScrollRight}
-                  aria-label="Scroll phases right"
-                  className="p-2 rounded-xl bg-[#0E121B] border border-white/[0.08] text-slate-400 hover:text-white hover:border-purple-500/40 hover:bg-white/[0.04] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer shadow-sm"
-                >
-                  <ChevronRight className="w-4 h-4" />
+                  Back to the first-visit view
                 </button>
               </div>
-            </div>
-          </div>
 
-          {/* Enclosed Floating Phase Tabs Carousel */}
-          <div className="relative rounded-2xl bg-[#0E121B] border border-white/[0.08] p-2 shadow-xl">
-            {/* Left Gradient Edge Fade */}
-            <div
-              className={`absolute left-2 top-2 bottom-2 w-10 bg-gradient-to-r from-[#0E121B] to-transparent pointer-events-none z-10 transition-opacity duration-300 rounded-l-xl ${
-                canScrollLeft ? "opacity-100" : "opacity-0"
-              }`}
-            />
+              <div className="flex items-center justify-between text-xs sm:text-sm font-mono text-[#9a9ab5] pt-1">
+                <span>{completedCount} of {totalLessons} lessons completed</span>
+                <span>{completedPhasesCount} of {totalPhases} phases done</span>
+              </div>
 
-            {/* Scrollable Track (Zero Scrollbar Gutter) */}
-            <div
-              ref={tabsRef}
-              onWheel={handleTabsWheel}
-              onScroll={checkScrollability}
-              className="flex items-center gap-2 overflow-x-auto py-0.5 px-0.5 scroll-smooth no-scrollbar select-none cursor-grab active:cursor-grabbing [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-            >
-              {MONGODB_PROGRESSION_PHASES.map((phase) => {
-                const isSelected = selectedPhase === phase.id;
-                const phaseDone = isPhaseCompleted(phase.id);
-                const phaseDoneCount = getPhaseCompletedCount(phase.id);
-
-                return (
-                  <button
-                    key={phase.id}
-                    data-phase-id={phase.id}
-                    onClick={() => handlePhaseSelect(phase.id)}
-                    className={`group shrink-0 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer flex items-center gap-2.5 border ${
-                      isSelected
-                        ? "bg-purple-600 text-white border-purple-400/40 shadow-lg shadow-purple-600/30 scale-[1.01]"
-                        : phaseDone
-                        ? "bg-emerald-500/10 text-emerald-300 hover:text-white border-emerald-500/20 hover:bg-emerald-500/15"
-                        : "bg-white/[0.02] text-slate-300 hover:text-white border-white/[0.06] hover:bg-white/[0.06] hover:border-white/[0.12]"
-                    }`}
-                  >
-                    {/* Phase Number or Check Icon */}
-                    <span
-                      className={`w-5 h-5 rounded-lg flex items-center justify-center text-[10px] font-mono font-bold transition-colors ${
-                        isSelected
-                          ? "bg-white/20 text-white"
-                          : phaseDone
-                          ? "bg-emerald-500/20 text-emerald-400"
-                          : "bg-white/[0.05] text-slate-400 group-hover:text-slate-200"
-                      }`}
-                    >
-                      {phaseDone ? "✓" : phase.phaseNumber}
-                    </span>
-
-                    {/* Phase Label */}
-                    <span className="whitespace-nowrap font-medium">
-                      {phase.label}
-                    </span>
-
-                    {/* Lesson Count Progress Chip */}
-                    <span
-                      className={`text-[10px] font-mono px-1.5 py-0.5 rounded transition-colors ${
-                        isSelected
-                          ? "bg-purple-700/60 text-purple-100"
-                          : phaseDone
-                          ? "bg-emerald-500/20 text-emerald-300"
-                          : "bg-white/[0.04] text-slate-400 group-hover:text-slate-200"
-                      }`}
-                    >
-                      {phaseDoneCount}/{phase.lessonCodes.length}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Right Gradient Edge Fade */}
-            <div
-              className={`absolute right-2 top-2 bottom-2 w-10 bg-gradient-to-l from-[#0E121B] to-transparent pointer-events-none z-10 transition-opacity duration-300 rounded-r-xl ${
-                canScrollRight ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          </div>
-
-          {/* Active Phase Lesson Cards Grid */}
-          <JourneyView phaseId={selectedPhase} onSelectPhase={handlePhaseSelect} />
-        </section>
-
-        {/* =========================================================================
-            4. CAPSTONE PROJECT SPOTLIGHT CARD
-           ========================================================================= */}
-        <section className="p-6 sm:p-8 rounded-2xl bg-[#0E121B] border border-white/[0.08] flex flex-col md:flex-row md:items-center justify-between gap-6 relative overflow-hidden">
-          <div className="space-y-2 max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-purple-400 uppercase tracking-wider bg-purple-500/10 border border-purple-500/20 px-2.5 py-0.5 rounded-md">
-                Final Capstone
-              </span>
-              <span className="text-xs text-slate-400">·</span>
-              <span className="text-xs font-mono text-emerald-400 font-semibold">
-                +{MONGODB_CAPSTONE.xpReward} XP
-              </span>
-            </div>
-            <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
-              {MONGODB_CAPSTONE.title} — {MONGODB_CAPSTONE.subtitle}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-              {MONGODB_CAPSTONE.desc}
-            </p>
-          </div>
-
-          <Link
-            href={MONGODB_CAPSTONE.path}
-            className="shrink-0 px-6 py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all shadow-lg shadow-purple-600/20 active:scale-95 cursor-pointer flex items-center justify-center gap-2"
-          >
-            <span>View Capstone Project</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </section>
-
-        {/* =========================================================================
-            5. ECOSYSTEM TOPICS (MINIMAL 1-LINE FOOTER)
-           ========================================================================= */}
-        <div className="pt-4 border-t border-white/[0.06] text-center text-xs text-slate-400 flex flex-wrap items-center justify-center gap-2">
-          <span>Explore after MongoDB:</span>
-          {MONGODB_RELATED_TOPICS.map((topic, i) => (
-            <span key={topic.id} className="inline-flex items-center gap-2">
-              <Link
-                href={topic.path}
-                className="text-slate-300 hover:text-purple-400 font-medium transition-colors"
+              {/* Progress bar */}
+              <div
+                className="w-full h-1.5 rounded-full bg-[#23233a] overflow-hidden mt-1.5"
+                role="progressbar"
+                aria-valuenow={progressPercent}
+                aria-valuemin={0}
+                aria-valuemax={100}
               >
-                {topic.title}
-              </Link>
-              {i < MONGODB_RELATED_TOPICS.length - 1 && (
-                <span className="text-slate-600">·</span>
-              )}
-            </span>
-          ))}
-        </div>
+                <div
+                  className="h-full bg-[#34d399] transition-all duration-300 rounded-full"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </>
+          )}
+        </header>
+
+        {/* =========================================================================
+            2. CURRICULUM LEARNING PATH (DATA-DRIVEN, PROGRESSIVE DISCLOSURE)
+           ========================================================================= */}
+        <section aria-label="Curriculum Learning Path">
+          <CurriculumPath
+            course={mongodbCourse}
+            progress={courseProgress}
+            onProgressChange={handleCurriculumProgressChange}
+          />
+        </section>
       </main>
 
       <Footer />

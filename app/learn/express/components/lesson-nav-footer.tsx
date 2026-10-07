@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -12,6 +11,7 @@ import {
 import {
   getNextLesson,
   getPrevLesson,
+  EXPRESS_CAPSTONE,
 } from "../data/express-curriculum";
 import {
   isLessonComplete,
@@ -20,34 +20,41 @@ import {
 
 interface LessonNavFooterProps {
   currentSlug: string;
+  isLessonCompleted?: boolean;
   onLessonComplete?: () => void;
 }
 
 export function LessonNavFooter({
   currentSlug,
+  isLessonCompleted,
   onLessonComplete,
 }: LessonNavFooterProps) {
-  const { data: session } = useSession();
-  const isAuthenticated = Boolean(session?.user);
-
-  const [completed, setCompleted] = useState<boolean>(false);
+  const [completed, setCompleted] = useState<boolean>(() => {
+    if (isLessonCompleted !== undefined) return isLessonCompleted;
+    return isLessonComplete(currentSlug);
+  });
 
   const prevLesson = getPrevLesson(currentSlug);
   const nextLesson = getNextLesson(currentSlug);
 
   useEffect(() => {
-    let isMounted = true;
-
-    if (!isAuthenticated) {
-      setCompleted(false);
-      return;
+    if (isLessonCompleted !== undefined) {
+      setCompleted(isLessonCompleted);
+    } else {
+      setCompleted(isLessonComplete(currentSlug));
     }
+  }, [currentSlug, isLessonCompleted]);
 
-    setCompleted(isLessonComplete(currentSlug));
+  useEffect(() => {
+    let isMounted = true;
 
     const handleProgressUpdated = () => {
       if (isMounted) {
-        setCompleted(isLessonComplete(currentSlug));
+        if (isLessonCompleted !== undefined) {
+          setCompleted(isLessonCompleted);
+        } else {
+          setCompleted(isLessonComplete(currentSlug));
+        }
       }
     };
 
@@ -70,10 +77,9 @@ export function LessonNavFooter({
         handleProgressUpdated
       );
     };
-  }, [currentSlug, isAuthenticated]);
+  }, [currentSlug, isLessonCompleted]);
 
   const handleToggleComplete = async () => {
-    if (!isAuthenticated) return;
     const nextState = await toggleLessonComplete(currentSlug);
     setCompleted(nextState);
     if (nextState && onLessonComplete) {
@@ -82,7 +88,7 @@ export function LessonNavFooter({
   };
 
   return (
-    <div className="mt-14 pt-8 border-t border-ds-stroke-soft space-y-6">
+    <div className="mt-14 pt-8 border-t border-white/[0.08] space-y-6">
       {/* Primary Navigation Controls */}
       <div className="grid grid-cols-1 sm:grid-cols-3 items-center gap-4">
         {/* Previous Lesson */}
@@ -90,16 +96,16 @@ export function LessonNavFooter({
           {prevLesson ? (
             <Link
               href={prevLesson.path}
-              className="group flex items-center gap-3 p-3 rounded-xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base transition-all text-left w-full sm:w-auto shadow-sm"
+              className="group flex items-center gap-3 p-3 rounded-xl bg-[#0E121B] border border-white/[0.06] hover:border-purple-500/40 transition-all text-left w-full sm:w-auto shadow-sm"
             >
-              <div className="w-8 h-8 rounded-lg bg-ds-bg-weak group-hover:bg-ds-feature-lighter flex items-center justify-center text-ds-text-soft group-hover:text-ds-feature-dark transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-white/[0.04] group-hover:bg-purple-500/10 flex items-center justify-center text-slate-400 group-hover:text-purple-300 transition-colors">
                 <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
               </div>
               <div className="overflow-hidden">
-                <span className="text-[10px] font-mono text-ds-text-soft block uppercase">
+                <span className="text-[10px] font-mono text-slate-500 block uppercase">
                   Previous ({prevLesson.code})
                 </span>
-                <span className="text-xs font-bold text-ds-text-strong group-hover:text-ds-feature-dark truncate block max-w-[180px]">
+                <span className="text-xs font-bold text-slate-200 group-hover:text-purple-300 truncate block max-w-[180px]">
                   {prevLesson.name}
                 </span>
               </div>
@@ -107,7 +113,7 @@ export function LessonNavFooter({
           ) : (
             <Link
               href="/learn/express"
-              className="inline-flex items-center gap-2 text-xs text-ds-text-soft hover:text-ds-text-strong p-3"
+              className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-slate-200 p-3"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Express.js Hub</span>
@@ -117,35 +123,27 @@ export function LessonNavFooter({
 
         {/* Mark Done Toggle */}
         <div className="flex justify-center">
-          {isAuthenticated ? (
-            <button
-              type="button"
-              onClick={handleToggleComplete}
-              className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
-                completed
-                  ? "bg-ds-success-lighter text-ds-success-dark border border-ds-success-base/30"
-                  : "bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white shadow-ds-feature-base/20"
-              }`}
-            >
-              {completed ? (
-                <>
-                  <CheckCircle2 className="w-4 h-4 text-ds-success-base" />
-                  <span>Completed (Click to Unmark)</span>
-                </>
-              ) : (
-                <>
-                  <Circle className="w-4 h-4 text-ds-static-white/80" />
-                  <span>Mark Lesson Complete</span>
-                </>
-              )}
-            </button>
-          ) : (
-            <div className="text-center">
-              <span className="text-xs text-ds-text-soft font-mono bg-ds-bg-weak border border-ds-stroke-soft px-4 py-2 rounded-xl">
-                Sign in to track progress
-              </span>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={handleToggleComplete}
+            className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-xs transition-all shadow-sm cursor-pointer ${
+              completed
+                ? "bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 shadow-emerald-500/10"
+                : "bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/[0.08]"
+            }`}
+          >
+            {completed ? (
+              <>
+                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <span>Completed (Click to Unmark)</span>
+              </>
+            ) : (
+              <>
+                <Circle className="w-4 h-4 text-slate-400" />
+                <span>Mark Lesson Complete</span>
+              </>
+            )}
+          </button>
         </div>
 
         {/* Next Lesson */}
@@ -153,36 +151,27 @@ export function LessonNavFooter({
           {nextLesson ? (
             <Link
               href={nextLesson.path}
-              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-ds-bg-white border border-ds-stroke-soft hover:border-ds-feature-base transition-all text-right w-full sm:w-auto shadow-sm"
+              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-[#0E121B] border border-white/[0.06] hover:border-purple-500/40 transition-all text-right w-full sm:w-auto shadow-sm"
             >
               <div className="overflow-hidden">
-                <span className="text-[10px] font-mono text-ds-text-soft block uppercase">
+                <span className="text-[10px] font-mono text-purple-400 block uppercase">
                   Next ({nextLesson.code})
                 </span>
-                <span className="text-xs font-bold text-ds-text-strong group-hover:text-ds-feature-dark truncate block max-w-[180px]">
+                <span className="text-xs font-bold text-slate-200 group-hover:text-purple-300 truncate block max-w-[180px]">
                   {nextLesson.name}
                 </span>
               </div>
-              <div className="w-8 h-8 rounded-lg bg-ds-bg-weak group-hover:bg-ds-feature-lighter flex items-center justify-center text-ds-text-soft group-hover:text-ds-feature-dark transition-colors">
+              <div className="w-8 h-8 rounded-lg bg-purple-500/10 group-hover:bg-purple-600 flex items-center justify-center text-purple-300 group-hover:text-white transition-colors">
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </Link>
           ) : (
             <Link
-              href="/learn/express/projects/task-flow-api"
-              className="group flex items-center justify-end gap-3 p-3 rounded-xl bg-ds-feature-lighter border border-ds-feature-base/30 hover:border-ds-feature-base transition-all text-right w-full sm:w-auto shadow-sm"
+              href={EXPRESS_CAPSTONE.path}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all ml-auto"
             >
-              <div className="overflow-hidden">
-                <span className="text-[10px] font-mono text-ds-feature-dark block uppercase font-bold">
-                  Final Capstone
-                </span>
-                <span className="text-xs font-bold text-ds-feature-dark truncate block max-w-[180px]">
-                  TaskFlow API
-                </span>
-              </div>
-              <div className="w-8 h-8 rounded-lg bg-ds-feature-base text-ds-static-white flex items-center justify-center">
-                <ArrowRight className="w-4 h-4" />
-              </div>
+              <span>Launch Capstone</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           )}
         </div>

@@ -3,6 +3,8 @@
  * 10 Phases, 28 In-Depth Lessons, and 1 Comprehensive Capstone Project.
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export interface LessonMeta {
   code: string;
   slug: string;
@@ -711,3 +713,46 @@ export function getPrevLesson(currentSlug: string): LessonMeta | null {
   if (idx <= 0) return null;
   return EXPRESS_LESSONS[idx - 1];
 }
+
+export const PROGRESSION_PHASES = EXPRESS_PROGRESSION_PHASES;
+
+export function getExpressCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "express",
+    title: "Learn Express.js",
+    prerequisites: {
+      items: [
+        "JavaScript fundamentals: async/await, Promises, arrow functions, and ES Modules",
+        "Node.js runtime basics: modules, package.json dependencies, and npm scripts",
+        "HTTP essentials: client-server architecture, methods (GET/POST/PUT/DELETE), and status codes",
+      ],
+      refresherHref: "/learn/nodejs",
+      refresherLabel: "Need a refresher? Open the Node.js curriculum",
+    },
+    capstone: {
+      title: EXPRESS_CAPSTONE.title,
+      description:
+        "Your finish line: architect and test a complete, production-grade Express.js REST API featuring modular routers, input validation, JWT authentication, and centralized error middleware.",
+      href: EXPRESS_CAPSTONE.path,
+    },
+    phases: EXPRESS_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.name,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
+}
+

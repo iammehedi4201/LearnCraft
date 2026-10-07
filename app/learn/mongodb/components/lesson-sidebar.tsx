@@ -152,21 +152,19 @@ export function MongodbLessonSidebar({
             Progress
           </span>
           <span className="text-[12px] font-bold text-white">
-            {isAuthenticated ? `${progressPercent}%` : "0%"}
+            {progressPercent}%
           </span>
         </div>
         <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-500 ease-out bg-gradient-to-r from-purple-500 to-emerald-400"
             style={{
-              width: `${isAuthenticated ? progressPercent : 0}%`,
+              width: `${progressPercent}%`,
             }}
           />
         </div>
         <p className="mt-2 text-[10px] text-slate-400">
-          {isAuthenticated
-            ? `${completedSectionsCount} of ${sections.length} modules completed`
-            : "Sign in to save progress"}
+          {completedSectionsCount} of {sections.length} modules completed
         </p>
       </div>
 

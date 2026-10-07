@@ -12,6 +12,8 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
+import type { Course } from "@/components/curriculum/types";
+
 export interface LessonMeta {
   code: string;
   stepNumber: number;
@@ -716,3 +718,46 @@ export function getLessonsByPhaseId(phaseId: string): LessonMeta[] {
     .map((code) => all.find((l) => l.code === code))
     .filter((l): l is LessonMeta => l !== undefined);
 }
+
+export const PROGRESSION_PHASES = NODEJS_PROGRESSION_PHASES;
+
+export function getNodejsCourse(): Course {
+  const allLessons = getAllLessons();
+  return {
+    id: "nodejs",
+    title: "Learn Node.js",
+    prerequisites: {
+      items: [
+        "JavaScript syntax: arrow functions, destructuring, and spread operators",
+        "Asynchronous programming: Promises, async/await, and the microtask queue",
+        "ES Modules (import/export) and foundational modular programming",
+      ],
+      refresherHref: "/learn/javascript",
+      refresherLabel: "Need a refresher? Open the JavaScript curriculum",
+    },
+    capstone: {
+      title: NODEJS_CAPSTONE.title,
+      description:
+        "Your finish line: architect a production-grade backend server strictly using Node.js core modules—native HTTP routing, streaming file storage, EventEmitter audit logging, and graceful process signals.",
+      href: NODEJS_CAPSTONE.path,
+    },
+    phases: NODEJS_PROGRESSION_PHASES.map((phase) => ({
+      id: phase.id,
+      name: phase.label,
+      summary: phase.desc,
+      lessons: phase.lessonCodes
+        .map((code) => allLessons.find((l) => l.code === code))
+        .filter((l): l is LessonMeta => l !== undefined)
+        .map((l) => ({
+          id: l.slug,
+          code: l.code,
+          title: l.name,
+          description: l.desc,
+          minutes: l.estimatedMinutes,
+          requires: l.prerequisite,
+          href: l.path,
+        })),
+    })),
+  };
+}
+
