@@ -796,11 +796,11 @@ export function DataDrivenLessonView({
         </div>
       </div>
 
-      {/* Floating Notes & Bookmarks Button (Bottom Right) */}
+      {/* Floating Notes & Bookmarks Button (Positioned cleanly alongside Reading Preferences button) */}
       <button
         onClick={() => setIsNotesOpen(true)}
         title="Open Notes & Bookmarks Drawer (Ctrl+J)"
-        className="fixed bottom-6 right-6 z-40 px-3.5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xl shadow-purple-600/30 border border-white/20 flex items-center gap-2 transition-all cursor-pointer hover:scale-105 active:scale-95"
+        className="fixed bottom-[28px] right-[86px] max-[400px]:bottom-4 max-[400px]:right-[72px] max-[400px]:w-12 max-[400px]:px-0 z-40 h-12 px-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xl shadow-purple-600/30 border border-white/20 flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-105 active:scale-95"
       >
         <span className="text-base">📝</span>
         <span className="text-xs font-bold hidden sm:inline">Notes</span>

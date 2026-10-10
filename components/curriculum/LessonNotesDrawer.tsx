@@ -139,7 +139,7 @@ export function LessonNotesDrawer({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[10000] flex justify-end animate-in fade-in duration-200">
       {/* Backdrop */}
       <div
         onClick={onClose}
