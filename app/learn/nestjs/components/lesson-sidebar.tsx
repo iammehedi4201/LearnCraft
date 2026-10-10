@@ -37,13 +37,13 @@ export function NestjsLessonSidebar({
   onNext,
 }: NestjsLessonSidebarProps) {
   return (
-    <aside className="w-full lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
+    <aside className="w-full lg:w-[300px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-white/[0.08] rounded-2xl bg-[#0E121B] p-4 shadow-xl">
       {/* Header */}
       <div className="px-2 mb-3 shrink-0 flex items-center justify-between">
-        <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em]">
           {moduleCode} Modules
         </p>
-        <span className="text-[10px] font-mono text-ds-feature-dark font-bold bg-ds-feature-lighter px-2 py-0.5 rounded-full border border-ds-feature-base/20 shrink-0">
+        <span className="text-[10px] font-mono text-purple-300 font-bold bg-purple-500/15 px-2 py-0.5 rounded-full border border-purple-500/25 shrink-0">
           {sections.length} parts
         </span>
       </div>
@@ -69,26 +69,26 @@ export function NestjsLessonSidebar({
                     transition-all duration-200 text-left
                     ${
                       isActive
-                        ? "bg-ds-feature-lighter border border-ds-feature-base"
+                        ? "bg-purple-600/15 border border-purple-500/40 shadow-sm shadow-purple-600/10"
                         : isDone
-                        ? "hover:bg-ds-bg-weak cursor-pointer"
+                        ? "hover:bg-white/[0.04] cursor-pointer"
                         : !isAuthenticated
-                        ? "hover:bg-ds-bg-weak cursor-pointer"
-                        : "opacity-50 cursor-not-allowed"
+                        ? "hover:bg-white/[0.04] cursor-pointer"
+                        : "opacity-40 cursor-not-allowed"
                     }
                   `}
                 >
                   {/* Step indicator circle */}
                   <div
                     className={`
-                      relative z-10 flex-shrink-0 w-[28px] h-[28px] rounded-full flex items-center justify-center
+                      relative z-10 flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center
                       text-[11px] font-bold transition-all duration-200
                       ${
                         isActive
-                          ? "bg-ds-feature-base text-ds-static-white scale-105 shadow-sm shadow-ds-feature-base/10"
+                          ? "bg-purple-600 text-white scale-105 shadow-md shadow-purple-600/30 ring-2 ring-purple-500/30"
                           : isDone
-                          ? "bg-ds-success-base text-ds-static-white"
-                          : "bg-ds-bg-weak text-ds-text-disabled border border-ds-stroke-soft"
+                          ? "bg-emerald-500 text-white"
+                          : "bg-white/[0.04] text-slate-400 border border-white/[0.08]"
                       }
                     `}
                   >
@@ -113,25 +113,25 @@ export function NestjsLessonSidebar({
                   <div className="flex flex-col items-start gap-0.5 min-w-0 flex-1">
                     <span
                       className={`
-                        text-[13px] font-semibold leading-tight truncate transition-colors duration-200
+                        text-xs font-semibold leading-tight truncate transition-colors duration-200
                         ${
                           isActive
-                            ? "text-ds-feature-dark font-black"
+                            ? "text-purple-300 font-bold"
                             : isDone
-                            ? "text-ds-text-strong group-hover:text-ds-feature-base"
-                            : "text-ds-text-sub group-hover:text-ds-text-strong"
+                            ? "text-slate-200 group-hover:text-purple-300"
+                            : "text-slate-400 group-hover:text-slate-200"
                         }
                       `}
                     >
                       {section.label}
                     </span>
                     {isActive && (
-                      <span className="text-[10px] font-medium text-ds-feature-base">
+                      <span className="text-[10px] font-medium text-purple-400">
                         In progress
                       </span>
                     )}
                     {isDone && (
-                      <span className="text-[10px] text-ds-success-dark font-medium">
+                      <span className="text-[10px] text-emerald-400 font-medium">
                         Completed
                       </span>
                     )}
@@ -139,7 +139,7 @@ export function NestjsLessonSidebar({
 
                   {/* Active indicator dot */}
                   {isActive && (
-                    <div className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0" />
+                    <div className="ml-auto w-2 h-2 rounded-full bg-purple-400 shrink-0 animate-pulse" />
                   )}
                 </button>
               </li>
@@ -149,25 +149,25 @@ export function NestjsLessonSidebar({
       </nav>
 
       {/* Progress box */}
-      <div className="mt-4 shrink-0 px-4 py-3.5 rounded-xl bg-ds-bg-weak border border-ds-stroke-soft">
+      <div className="mt-4 shrink-0 px-4 py-3.5 rounded-xl bg-black/40 border border-white/[0.06]">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-[9px] font-black text-ds-text-soft uppercase tracking-widest">
+          <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
             Progress
           </span>
-          <span className="text-[12px] font-bold text-ds-text-strong">
+          <span className="text-xs font-mono font-bold text-white">
             {progressPercent}%
           </span>
         </div>
-        <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
+        <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
           <div
-            className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
+            className="h-full rounded-full transition-all duration-500 ease-out bg-purple-600"
             style={{
               width: `${progressPercent}%`,
             }}
           />
         </div>
-        <p className="mt-2 text-[10px] text-ds-text-soft">
-          {`${completedSectionsCount} of ${sections.length} modules completed`}
+        <p className="mt-2 text-[10px] text-slate-400">
+          {`${completedSectionsCount} of ${sections.length} parts completed`}
         </p>
       </div>
 
@@ -176,13 +176,13 @@ export function NestjsLessonSidebar({
         <button
           onClick={onPrev}
           disabled={currentIndex === 0}
-          className="flex-1 py-2.5 rounded-xl text-[12px] font-bold border border-ds-stroke-soft text-ds-text-sub bg-ds-bg-white hover:bg-ds-bg-weak hover:text-ds-text-strong disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+          className="flex-1 py-2 rounded-xl text-xs font-bold border border-white/[0.08] text-slate-300 bg-white/[0.02] hover:bg-white/[0.06] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
         >
           ← Prev
         </button>
         <button
           onClick={onNext}
-          className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10 cursor-pointer"
+          className="flex-1 py-2 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-purple-600/20 cursor-pointer"
         >
           {currentIndex === sections.length - 1
             ? isLessonCompleted
@@ -193,10 +193,10 @@ export function NestjsLessonSidebar({
       </div>
 
       {/* Course Hub link */}
-      <div className="mt-3 pt-3 shrink-0 border-t border-ds-stroke-soft text-center">
+      <div className="mt-3 pt-3 shrink-0 border-t border-white/[0.06] text-center">
         <Link
           href="/learn/nestjs"
-          className="inline-flex items-center gap-1.5 text-xs text-ds-text-sub hover:text-ds-feature-dark transition-colors font-semibold"
+          className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 transition-colors font-medium"
         >
           <LayoutGrid className="w-3.5 h-3.5" />
           <span>NestJS Curriculum</span>
