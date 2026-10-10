@@ -1,6 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+
+const ProgressPayloadSchema = z.object({
+  module: z.string().trim().min(1, "Module ID is required").max(100),
+  completed: z.boolean().optional(),
+  score: z.number().min(0).max(100).nullable().optional(),
+  force: z.boolean().optional(),
+  activeModule: z.string().nullable().optional(),
+  completedModules: z.array(z.string()).optional(),
+  totalModules: z.number().int().nonnegative().optional(),
+});
 
 async function getAuthenticatedUserId(req: NextRequest): Promise<string | null> {
   // 1. Check database sessionToken directly from cookies (NextAuth Prisma adapter strategy)
@@ -51,7 +62,11 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: true, data: progress });
   } catch (error: any) {
     console.error("Fetch Progress Error:", error);
-    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    const message =
+      process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : error?.message || "Internal Server Error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -63,6 +78,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    let rawBody: unknown;
+    try {
+      rawBody = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    }
+
+    const parseResult = ProgressPayloadSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          details: parseResult.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
     const {
       module,
       completed,
@@ -71,11 +104,7 @@ export async function POST(req: NextRequest) {
       activeModule,
       completedModules,
       totalModules,
-    } = await req.json();
-
-    if (!module) {
-      return NextResponse.json({ error: "Module ID is required" }, { status: 400 });
-    }
+    } = parseResult.data;
 
     const existing = await (prisma.progress as any).findUnique({
       where: {
@@ -152,6 +181,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, progress });
   } catch (error: any) {
     console.error("Progress Sync Error:", error);
-    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    const message =
+      process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : error?.message || "Internal Server Error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

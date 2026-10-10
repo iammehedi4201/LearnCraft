@@ -307,6 +307,7 @@ export function recordActivity(
   };
 
   saveGamificationState(updatedState);
+  pushGamificationToCloud();
 
   return {
     xpEarned: xpAward,
@@ -314,3 +315,130 @@ export function recordActivity(
     isStreakMaintained,
   };
 }
+
+/**
+ * Merge local and remote gamification states deterministically (Local-First CRDT strategy)
+ */
+export function mergeGamificationStates(
+  local: UserGamificationState,
+  remote: UserGamificationState
+): UserGamificationState {
+  const totalXP = Math.max(local.totalXP || 0, remote.totalXP || 0);
+  const currentStreak = Math.max(local.currentStreak || 1, remote.currentStreak || 1);
+  const longestStreak = Math.max(local.longestStreak || 1, remote.longestStreak || 1, currentStreak);
+
+  let lastActiveDate = local.lastActiveDate;
+  if (!lastActiveDate || (remote.lastActiveDate && remote.lastActiveDate > lastActiveDate)) {
+    lastActiveDate = remote.lastActiveDate;
+  }
+
+  const mergedHistory: Record<string, DailyActivityRecord> = {
+    ...(remote.dailyHistory || {}),
+  };
+  for (const [date, localRec] of Object.entries(local.dailyHistory || {})) {
+    if (!mergedHistory[date]) {
+      mergedHistory[date] = localRec;
+    } else {
+      const remRec = mergedHistory[date];
+      mergedHistory[date] = {
+        date,
+        xpEarned: Math.max(localRec.xpEarned || 0, remRec.xpEarned || 0),
+        lessonsCompleted: Math.max(localRec.lessonsCompleted || 0, remRec.lessonsCompleted || 0),
+        exercisesPassed: Math.max(localRec.exercisesPassed || 0, remRec.exercisesPassed || 0),
+        flashcardsReviewed: Math.max(localRec.flashcardsReviewed || 0, remRec.flashcardsReviewed || 0),
+        notesCreated: Math.max(localRec.notesCreated || 0, remRec.notesCreated || 0),
+      };
+    }
+  }
+
+  const logMap = new Map<string, XPLogEntry>();
+  for (const log of [...(remote.recentXPLogs || []), ...(local.recentXPLogs || [])]) {
+    if (log && log.id && !logMap.has(log.id)) {
+      logMap.set(log.id, log);
+    }
+  }
+  const mergedLogs = Array.from(logMap.values())
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .slice(0, 20);
+
+  const { levelInfo, xpToNextLevel, levelProgressPercent } =
+    calculateLevelInfo(totalXP);
+
+  return {
+    currentStreak,
+    longestStreak,
+    lastActiveDate: lastActiveDate ?? null,
+    streakFreezeAvailable: local.streakFreezeAvailable ?? remote.streakFreezeAvailable ?? true,
+    streakFreezeUsedDate: local.streakFreezeUsedDate || remote.streakFreezeUsedDate || null,
+    totalXP,
+    currentLevel: levelInfo,
+    xpToNextLevel,
+    levelProgressPercent,
+    weeklyGoalTarget: local.weeklyGoalTarget || remote.weeklyGoalTarget || 5,
+    weeklyGoalCompleted: Math.max(local.weeklyGoalCompleted || 0, remote.weeklyGoalCompleted || 0),
+    recentXPLogs: mergedLogs,
+    dailyHistory: mergedHistory,
+  };
+}
+
+let syncTimeout: any = null;
+
+/**
+ * Push current local state to cloud (debounced)
+ */
+export function pushGamificationToCloud(): void {
+  if (typeof window === "undefined") return;
+  if (syncTimeout) clearTimeout(syncTimeout);
+
+  syncTimeout = setTimeout(async () => {
+    try {
+      const current = getGamificationState();
+      await fetch("/api/gamification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(current),
+      });
+    } catch (err) {
+      console.warn("[Gamification] Cloud sync failed:", err);
+    }
+  }, 1000);
+}
+
+/**
+ * Reconcile local gamification state with PostgreSQL cloud state
+ */
+export async function syncGamificationWithCloud(): Promise<UserGamificationState> {
+  const localState = getGamificationState();
+  if (typeof window === "undefined") return localState;
+
+  try {
+    const res = await fetch("/api/gamification", { cache: "no-store" });
+    if (!res.ok) return localState;
+
+    const data = await res.json();
+    if (!data.success) return localState;
+
+    if (!data.state) {
+      // Cloud is empty, push local state to initialize
+      pushGamificationToCloud();
+      return localState;
+    }
+
+    const merged = mergeGamificationStates(localState, data.state);
+    saveGamificationState(merged);
+
+    // If local state had more XP or progress, push merged back to cloud
+    if (
+      (localState.totalXP || 0) > (data.state.totalXP || 0) ||
+      (localState.currentStreak || 1) > (data.state.currentStreak || 1)
+    ) {
+      pushGamificationToCloud();
+    }
+
+    return merged;
+  } catch (err) {
+    console.warn("[Gamification] Error reconciling with cloud:", err);
+    return localState;
+  }
+}
+

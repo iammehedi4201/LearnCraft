@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import { openAuthModal } from "@/components/auth-modal";
 import {
   getGamificationState,
+  syncGamificationWithCloud,
   GAMIFICATION_SYNC_EVENT,
 } from "@/lib/gamification";
 import { UserGamificationState } from "@/types/gamification";
@@ -27,6 +28,12 @@ export function StreakXPPill(): JSX.Element {
   useEffect(() => {
     setState(getGamificationState());
 
+    if (session?.user) {
+      syncGamificationWithCloud().then((synced) => {
+        setState(synced);
+      });
+    }
+
     const handleSync = () => setState(getGamificationState());
     window.addEventListener(GAMIFICATION_SYNC_EVENT, handleSync);
     window.addEventListener("storage", handleSync);
@@ -35,7 +42,7 @@ export function StreakXPPill(): JSX.Element {
       window.removeEventListener(GAMIFICATION_SYNC_EVENT, handleSync);
       window.removeEventListener("storage", handleSync);
     };
-  }, []);
+  }, [session?.user]);
 
   // Click outside listener
   useEffect(() => {
@@ -156,8 +163,13 @@ export function StreakXPPill(): JSX.Element {
             </span>
           </div>
 
-          {/* Guest Cloud Sync Prompt */}
-          {!session?.user && (
+          {/* Cloud Sync Status */}
+          {session?.user ? (
+            <div className="w-full mt-3 py-2 px-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-[11px] font-bold flex items-center justify-center gap-1.5 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>☁️ Cloud Backup Active</span>
+            </div>
+          ) : (
             <button
               onClick={() => {
                 setIsOpen(false);

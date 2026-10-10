@@ -41,6 +41,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { z } from "zod";
+import { auth } from "@/auth";
 import type { SectionFileMeta } from "@/lib/improvement-detector";
 import {
   detectImprovement,
@@ -62,6 +64,61 @@ import type {
 
 // Re-export types so clients that imported from this file still work
 export type { SectionFileInfo, LessonModule, LessonStructure };
+
+// ─── Zod Schemas for Request Validation ────────────────────────────────────────
+
+const DetectPayloadSchema = z.object({
+  content: z.string().min(1, "Content is required"),
+  topicHint: z.string().optional(),
+});
+
+const ApplyPatchPayloadSchema = z.object({
+  filePath: z.string().min(1, "filePath is required"),
+  startLine: z.number().int().positive("startLine must be positive"),
+  endLine: z.number().int().positive("endLine must be positive"),
+  newBlockSource: z.string(),
+  topic: z.any().optional(),
+  lesson: z.any().optional(),
+  section: z.any().optional(),
+  description: z.string().optional(),
+});
+
+const IdPayloadSchema = z.object({
+  id: z.string().min(1, "ID is required"),
+});
+
+// ─── Security Guard ────────────────────────────────────────────────────────────
+
+async function checkDevToolsAccess(req: NextRequest): Promise<NextResponse | null> {
+  const isDev = process.env.NODE_ENV !== "production";
+  const devToolsExplicitlyEnabled = process.env.ENABLE_DEV_IMPROVE === "true";
+
+  if (!isDev && !devToolsExplicitlyEnabled) {
+    return NextResponse.json(
+      { error: "Content improvement devtools are disabled in production." },
+      { status: 403 }
+    );
+  }
+
+  if (!isDev) {
+    try {
+      const session = (await (auth as any)()) || (await (auth as any)(req));
+      if (!session?.user) {
+        return NextResponse.json(
+          { error: "Authentication required to access content improvement tools." },
+          { status: 401 }
+        );
+      }
+    } catch {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+  }
+
+  return null;
+}
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -409,8 +466,12 @@ function detectWithFileSimilarity(
 // ─── GET handler ──────────────────────────────────────────────────────────────
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = req.nextUrl;
-  const action = searchParams.get("action");
+  const authError = await checkDevToolsAccess(req);
+  if (authError) return authError;
+
+  try {
+    const { searchParams } = req.nextUrl;
+    const action = searchParams.get("action");
 
   // ── NEW: Structure — parse page.tsx to get full lesson structure ──
   if (action === "structure") {
@@ -986,25 +1047,51 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ version: history.version, records });
   }
 
-  return NextResponse.json(
-    { error: `Unknown action: ${action}` },
-    { status: 400 },
-  );
+    return NextResponse.json(
+      { error: `Unknown action: ${action}` },
+      { status: 400 },
+    );
+  } catch (error: any) {
+    console.error("Improvement GET Error:", error);
+    const message =
+      process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : error?.message || "Internal Server Error";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 // ─── POST handler ─────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
-  const { searchParams } = req.nextUrl;
-  const action = searchParams.get("action");
+  const authError = await checkDevToolsAccess(req);
+  if (authError) return authError;
+
+  try {
+    const { searchParams } = req.nextUrl;
+    const action = searchParams.get("action");
 
   // ── Detect: run detection on pasted content ──
   if (action === "detect") {
-    const body = await req.json();
-    const { content, topicHint } = body as {
-      content: string;
-      topicHint?: string;
-    };
+    let rawBody: unknown;
+    try {
+      rawBody = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    }
+
+    const parseResult = DetectPayloadSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          details: parseResult.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const { content, topicHint } = parseResult.data;
 
     const allSections = topicHint
       ? scanSectionFiles(topicHint)
@@ -1090,16 +1177,23 @@ export async function POST(req: NextRequest) {
 
   // ── NEW: Apply localized patch ──
   if (action === "apply-patch") {
-    const body = (await req.json()) as {
-      filePath: string;
-      startLine: number;
-      endLine: number;
-      newBlockSource: string;
-      topic: ImprovementRecord["topic"];
-      lesson: ImprovementRecord["lesson"];
-      section: ImprovementRecord["section"];
-      description: string;
-    };
+    let rawBody: unknown;
+    try {
+      rawBody = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    }
+
+    const parseResult = ApplyPatchPayloadSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          details: parseResult.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
 
     const {
       filePath,
@@ -1110,14 +1204,7 @@ export async function POST(req: NextRequest) {
       lesson,
       section,
       description,
-    } = body;
-
-    if (!filePath || startLine == null || endLine == null || !newBlockSource) {
-      return NextResponse.json(
-        { error: "Missing required patch arguments" },
-        { status: 400 },
-      );
-    }
+    } = parseResult.data;
     if (!isPathSafe(filePath)) {
       return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
@@ -1186,7 +1273,25 @@ export async function POST(req: NextRequest) {
 
   // ── Undo: restore previous content ──
   if (action === "undo") {
-    const { id } = (await req.json()) as { id: string };
+    let rawBody: unknown;
+    try {
+      rawBody = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    }
+
+    const parseResult = IdPayloadSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          details: parseResult.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const { id } = parseResult.data;
     const history = readHistory();
     const record = history.records.find((r) => r.id === id);
 
@@ -1213,7 +1318,25 @@ export async function POST(req: NextRequest) {
 
   // ── Redo: re-apply undone improvement ──
   if (action === "redo") {
-    const { id } = (await req.json()) as { id: string };
+    let rawBody: unknown;
+    try {
+      rawBody = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON payload" }, { status: 400 });
+    }
+
+    const parseResult = IdPayloadSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      return NextResponse.json(
+        {
+          error: "Validation failed",
+          details: parseResult.error.flatten().fieldErrors,
+        },
+        { status: 400 }
+      );
+    }
+
+    const { id } = parseResult.data;
     const history = readHistory();
     const record = history.records.find((r) => r.id === id);
 
@@ -1238,8 +1361,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  return NextResponse.json(
-    { error: `Unknown action: ${action}` },
-    { status: 400 },
-  );
+    return NextResponse.json(
+      { error: `Unknown action: ${action}` },
+      { status: 400 },
+    );
+  } catch (error: any) {
+    console.error("Improvement POST Error:", error);
+    const message =
+      process.env.NODE_ENV === "production"
+        ? "Internal Server Error"
+        : error?.message || "Internal Server Error";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

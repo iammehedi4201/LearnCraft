@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { ImprovementManager } from "@/components/improve/ImprovementManager";
 import { Nav } from "@/components/nav";
 
@@ -9,6 +10,13 @@ export const metadata = {
 };
 
 export default function ImprovePage() {
+  const isDev = process.env.NODE_ENV !== "production";
+  const isDevToolsEnabled = process.env.ENABLE_DEV_IMPROVE === "true";
+
+  if (!isDev && !isDevToolsEnabled) {
+    notFound();
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0d14] text-slate-100">
       <Nav />
