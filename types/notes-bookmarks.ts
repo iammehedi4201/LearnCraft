@@ -8,6 +8,7 @@ export interface UserNote {
   id: string;
   trackKey: string;
   lessonSlug: string;
+  lessonPath?: string;
   sectionId?: string;
   title?: string;
   content: string;

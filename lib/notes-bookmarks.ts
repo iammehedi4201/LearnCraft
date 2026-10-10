@@ -34,13 +34,86 @@ function dispatchBookmarksUpdate(bookmarks: CodeBookmark[]) {
 
 // ─── Local Storage Primitives ────────────────────────────────────────────────
 
+/**
+ * Bridges/imports any legacy annotations or highlights from revision-storage
+ * so that existing notes or study highlights automatically appear in the
+ * unified study notes notebook.
+ */
+export function syncLegacyAnnotationsIntoNotes(currentNotes: UserNote[]): {
+  merged: UserNote[];
+  hasChanges: boolean;
+} {
+  if (typeof window === "undefined") {
+    return { merged: currentNotes, hasChanges: false };
+  }
+
+  try {
+    const rawRevisions = localStorage.getItem("learncraft_revisions_v1");
+    if (!rawRevisions) return { merged: currentNotes, hasChanges: false };
+
+    const revisions = JSON.parse(rawRevisions);
+    if (!Array.isArray(revisions) || revisions.length === 0) {
+      return { merged: currentNotes, hasChanges: false };
+    }
+
+    const existingIds = new Set(currentNotes.map((n) => n.id));
+    const newImported: UserNote[] = [];
+
+    for (const item of revisions) {
+      if (!item || !item.id || existingIds.has(item.id)) continue;
+
+      let content = "";
+      if (item.note && typeof item.note === "string" && item.note.trim()) {
+        content = item.note.trim();
+        if (item.selectedText && typeof item.selectedText === "string" && item.selectedText.trim()) {
+          content += `\n\n> "${item.selectedText.trim()}"`;
+        }
+      } else if (item.selectedText && typeof item.selectedText === "string" && item.selectedText.trim()) {
+        content = `> "${item.selectedText.trim()}"`;
+      }
+
+      if (content) {
+        newImported.push({
+          id: item.id,
+          trackKey: item.topicId || "general",
+          lessonSlug: item.lessonId || "lesson",
+          lessonPath: item.lessonPath,
+          sectionId: item.sectionId,
+          title: item.question || item.lessonTitle || "Study Note",
+          content,
+          createdAt: item.createdAt ? new Date(item.createdAt).getTime() : Date.now(),
+          updatedAt: item.updatedAt ? new Date(item.updatedAt).getTime() : Date.now(),
+        });
+        existingIds.add(item.id);
+      }
+    }
+
+    if (newImported.length > 0) {
+      const merged = [...currentNotes, ...newImported];
+      return { merged, hasChanges: true };
+    }
+  } catch (err) {
+    console.warn("[NotesBookmarks] Legacy annotations bridge notice:", err);
+  }
+
+  return { merged: currentNotes, hasChanges: false };
+}
+
 export function getLocalNotes(): UserNote[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(NOTES_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : Object.values(parsed);
+    let parsed: UserNote[] = [];
+    if (raw) {
+      const data = JSON.parse(raw);
+      parsed = Array.isArray(data) ? data : Object.values(data);
+    }
+
+    const { merged, hasChanges } = syncLegacyAnnotationsIntoNotes(parsed);
+    if (hasChanges) {
+      localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(merged));
+    }
+    return merged;
   } catch {
     return [];
   }
@@ -139,6 +212,35 @@ export function upsertNote(
 
   saveLocalNotes(notes);
 
+  // Sync to revision storage if matching record exists
+  try {
+    if (typeof window !== "undefined") {
+      const rawRevisions = localStorage.getItem("learncraft_revisions_v1");
+      if (rawRevisions) {
+        const revisions = JSON.parse(rawRevisions);
+        if (Array.isArray(revisions)) {
+          let revChanged = false;
+          const updatedRev = revisions.map((r: any) => {
+            if (r.id === id) {
+              revChanged = true;
+              return {
+                ...r,
+                note: updatedNote.content,
+                question: updatedNote.title || r.question,
+                updatedAt: new Date(now).toISOString(),
+              };
+            }
+            return r;
+          });
+          if (revChanged) {
+            localStorage.setItem("learncraft_revisions_v1", JSON.stringify(updatedRev));
+            window.dispatchEvent(new CustomEvent("learncraft:revision-sync"));
+          }
+        }
+      }
+    }
+  } catch {}
+
   // Background cloud push (fire-and-forget with error swallowing)
   pushNoteToCloud(updatedNote).catch(() => {});
 
@@ -149,6 +251,23 @@ export function deleteNote(id: string): void {
   const notes = getLocalNotes();
   const filtered = notes.filter((n) => n.id !== id);
   saveLocalNotes(filtered);
+
+  // Also remove from revision storage if present
+  try {
+    if (typeof window !== "undefined") {
+      const rawRevisions = localStorage.getItem("learncraft_revisions_v1");
+      if (rawRevisions) {
+        const revisions = JSON.parse(rawRevisions);
+        if (Array.isArray(revisions)) {
+          const remaining = revisions.filter((r: any) => r.id !== id);
+          if (remaining.length !== revisions.length) {
+            localStorage.setItem("learncraft_revisions_v1", JSON.stringify(remaining));
+            window.dispatchEvent(new CustomEvent("learncraft:revision-sync"));
+          }
+        }
+      }
+    }
+  } catch {}
 
   // Background server deletion
   fetch(`/api/notes?id=${encodeURIComponent(id)}`, {

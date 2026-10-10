@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   mergeNotesStates,
   mergeBookmarksStates,
+  syncLegacyAnnotationsIntoNotes,
 } from "../notes-bookmarks";
 import type { UserNote, CodeBookmark } from "@/types/notes-bookmarks";
 
@@ -135,5 +136,74 @@ describe("Notes & Bookmarks Synchronization Engine", () => {
     expect(merged[0].id).toBe("bm-3");
     expect(merged[1].id).toBe("bm-1");
     expect(merged[2].id).toBe("bm-2");
+  });
+
+  it("should bridge legacy annotations into UserNotes without duplicates", () => {
+    const mockStorage: Record<string, string> = {
+      learncraft_revisions_v1: JSON.stringify([
+        {
+          id: "sample_rev_01",
+          topicId: "nestjs",
+          topicTitle: "NestJS",
+          lessonId: "nj02-oop-foundations",
+          lessonTitle: "OOP Foundations",
+          lessonPath: "/learn/nestjs/nj02-oop-foundations",
+          question: "What is Encapsulation?",
+          note: "Private fields with public getters.",
+          selectedText: "Encapsulation bundles data and methods.",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          id: "sample_rev_02",
+          topicId: "tanstack",
+          topicTitle: "TanStack Query",
+          lessonId: "tq04-staletime-gctime",
+          lessonTitle: "staleTime vs gcTime",
+          lessonPath: "/learn/tanstack/tq04-staletime-gctime",
+          selectedText: "staleTime defines freshness window.",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ]),
+    };
+
+    // Mock global window and localStorage
+    const originalWindow = global.window;
+    (global as any).window = {
+      localStorage: {
+        getItem: (key: string) => mockStorage[key] || null,
+        setItem: (key: string, val: string) => {
+          mockStorage[key] = val;
+        },
+      },
+      dispatchEvent: () => true,
+    };
+    (global as any).localStorage = (global as any).window.localStorage;
+
+    const currentNotes: UserNote[] = [];
+
+    const result = syncLegacyAnnotationsIntoNotes(currentNotes);
+    expect(result.hasChanges).toBe(true);
+    expect(result.merged).toHaveLength(2);
+
+    const note1 = result.merged.find((n: UserNote) => n.id === "sample_rev_01");
+    expect(note1?.trackKey).toBe("nestjs");
+    expect(note1?.lessonSlug).toBe("nj02-oop-foundations");
+    expect(note1?.title).toBe("What is Encapsulation?");
+    expect(note1?.content).toContain("Private fields with public getters.");
+    expect(note1?.content).toContain('> "Encapsulation bundles data and methods."');
+
+    // Running again with the merged notes should result in 0 new changes
+    const secondPass = syncLegacyAnnotationsIntoNotes(result.merged);
+    expect(secondPass.hasChanges).toBe(false);
+    expect(secondPass.merged).toHaveLength(2);
+
+    if (originalWindow) {
+      (global as any).window = originalWindow;
+    } else {
+      delete (global as any).window;
+      delete (global as any).localStorage;
+    }
   });
 });

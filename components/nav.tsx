@@ -22,6 +22,7 @@ import {
 import { TechIcon } from "@/components/roadmap/TechIcon";
 import { AuthModal, openAuthModal } from "@/components/auth-modal";
 import { StreakXPPill } from "@/components/gamification/StreakXPPill";
+import { getLocalNotes } from "@/lib/notes-bookmarks";
 
 export function Nav() {
   return (
@@ -114,6 +115,26 @@ function NavContent(): JSX.Element {
   } catch {
     // Rendered outside provider
   }
+
+  const [notesCount, setNotesCount] = useState<number>(0);
+
+  useEffect(() => {
+    const updateNotesCount = () => {
+      try {
+        setNotesCount(getLocalNotes().length);
+      } catch {}
+    };
+
+    updateNotesCount();
+
+    window.addEventListener("learncraft-notes-updated", updateNotesCount);
+    window.addEventListener("learncraft:revision-sync", updateNotesCount);
+
+    return () => {
+      window.removeEventListener("learncraft-notes-updated", updateNotesCount);
+      window.removeEventListener("learncraft:revision-sync", updateNotesCount);
+    };
+  }, []);
 
   // Scroll detection
   useEffect(() => {
@@ -461,6 +482,11 @@ function NavContent(): JSX.Element {
                 >
                   <span>📝</span>
                   <span>Notes</span>
+                  {notesCount > 0 && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-[10px] font-mono font-bold">
+                      {notesCount}
+                    </span>
+                  )}
                 </Link>
 
                 <Link
@@ -480,7 +506,7 @@ function NavContent(): JSX.Element {
 
               {/* User Profile Dropdown or Sign In */}
               {session?.user ? (
-                <UserNavMenu totalRevisions={totalRevisions} />
+                <UserNavMenu totalRevisions={totalRevisions} notesCount={notesCount} />
               ) : (
                 <button
                   onClick={openAuthModal}
@@ -575,10 +601,13 @@ function NavContent(): JSX.Element {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white text-xs font-bold"
                 >
-                  <span>My Study Notes</span>
-                  {totalRevisions > 0 && (
+                  <div className="flex items-center gap-2">
+                    <span>📝</span>
+                    <span>My Study Notes</span>
+                  </div>
+                  {notesCount > 0 && (
                     <span className="px-2 py-0.5 rounded-full bg-white/10 text-white text-[10px] font-mono">
-                      {totalRevisions}
+                      {notesCount}
                     </span>
                   )}
                 </Link>
@@ -614,7 +643,13 @@ function NavContent(): JSX.Element {
   );
 }
 
-function UserNavMenu({ totalRevisions }: { totalRevisions: number }) {
+function UserNavMenu({
+  totalRevisions,
+  notesCount,
+}: {
+  totalRevisions: number;
+  notesCount: number;
+}) {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState<"idle" | "syncing" | "synced">("idle");
@@ -735,9 +770,9 @@ function UserNavMenu({ totalRevisions }: { totalRevisions: number }) {
                 <span className="text-purple-400">📝</span>
                 <span>My Study Notes</span>
               </div>
-              {totalRevisions > 0 && (
+              {notesCount > 0 && (
                 <span className="px-2 py-0.5 rounded-full bg-white/10 text-white text-[10px] font-mono font-bold">
-                  {totalRevisions}
+                  {notesCount}
                 </span>
               )}
             </Link>
@@ -751,6 +786,11 @@ function UserNavMenu({ totalRevisions }: { totalRevisions: number }) {
                 <span className="text-purple-400">⚡</span>
                 <span>Quick Revision & Flashcards</span>
               </div>
+              {totalRevisions > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-[10px] font-mono font-bold">
+                  {totalRevisions}
+                </span>
+              )}
             </Link>
 
             <Link
@@ -761,17 +801,6 @@ function UserNavMenu({ totalRevisions }: { totalRevisions: number }) {
               <div className="flex items-center gap-2.5">
                 <span className="text-purple-400">🗺️</span>
                 <span>Skill Roadmaps</span>
-              </div>
-            </Link>
-
-            <Link
-              href="/notes"
-              onClick={() => setIsOpen(false)}
-              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="text-purple-400">📝</span>
-                <span>Study Notes & Bookmarks</span>
               </div>
             </Link>
           </div>
