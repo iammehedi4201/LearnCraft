@@ -731,11 +731,11 @@ export function DataDrivenLessonView({
           {/* Stepper Sidebar */}
           <aside className="w-full lg:w-[300px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-white/[0.08] rounded-2xl bg-[#0E121B] p-4 shadow-xl">
             {/* Header */}
-            <div className="px-2 mb-3 shrink-0 flex items-center justify-between">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em]">
+            <div className="px-2 mb-3 shrink-0 flex items-center justify-between gap-2">
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
                 {lesson.code} Modules
               </p>
-              <span className="text-[10px] font-mono text-purple-300 font-bold bg-purple-500/15 px-2 py-0.5 rounded-full border border-purple-500/25">
+              <span className="shrink-0 whitespace-nowrap text-[10px] font-mono text-purple-300 font-bold bg-purple-500/15 px-2.5 py-0.5 rounded-full border border-purple-500/25 leading-normal">
                 {sections.length} parts
               </span>
             </div>
