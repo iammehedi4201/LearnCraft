@@ -454,6 +454,22 @@ function NavContent(): JSX.Element {
                     </div>
                   )}
                 </div>
+
+                <Link
+                  href="/notes"
+                  className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
+                >
+                  <span>📝</span>
+                  <span>Notes</span>
+                </Link>
+
+                <Link
+                  href="/roadmaps"
+                  className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
+                >
+                  <span>🗺️</span>
+                  <span>Roadmaps</span>
+                </Link>
               </div>
             </div>
 
@@ -745,6 +761,17 @@ function UserNavMenu({ totalRevisions }: { totalRevisions: number }) {
               <div className="flex items-center gap-2.5">
                 <span className="text-purple-400">🗺️</span>
                 <span>Skill Roadmaps</span>
+              </div>
+            </Link>
+
+            <Link
+              href="/notes"
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-purple-400">📝</span>
+                <span>Study Notes & Bookmarks</span>
               </div>
             </Link>
           </div>

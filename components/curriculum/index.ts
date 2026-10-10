@@ -11,3 +11,5 @@ export * from "./curriculum-path";
 export * from "./lesson-content-types";
 export * from "./use-lesson-progress";
 export * from "./DataDrivenLessonView";
+export * from "./LessonNotesDrawer";
+export * from "./CodeBookmarkButton";

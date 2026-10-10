@@ -23,6 +23,8 @@ import {
   LessonSectionItem,
 } from "./lesson-content-types";
 import { recordActivity } from "@/lib/gamification";
+import { LessonNotesDrawer } from "./LessonNotesDrawer";
+import { CodeBookmarkButton } from "./CodeBookmarkButton";
 
 export interface DataDrivenLessonViewProps {
   trackKey: string;
@@ -82,6 +84,19 @@ export function DataDrivenLessonView({
 
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<number | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
+  const [isNotesOpen, setIsNotesOpen] = useState<boolean>(false);
+
+  // Global hotkey: Ctrl+J or Cmd+J opens notes drawer
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "j") {
+        e.preventDefault();
+        setIsNotesOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Reset quiz state when section changes
   useEffect(() => {
@@ -332,8 +347,18 @@ export function DataDrivenLessonView({
                 {content.part4?.good && (
                   <div className="p-5 rounded-2xl bg-emerald-500/[0.03] border border-emerald-500/30 space-y-3 flex flex-col justify-between">
                     <div className="space-y-3">
-                      <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
-                        <span>✅ {content.part4.good.title}</span>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                          <span>✅ {content.part4.good.title}</span>
+                        </div>
+                        <CodeBookmarkButton
+                          trackKey={trackKey}
+                          lessonSlug={lesson.slug}
+                          title={`${lesson.title}: ${content.part4.good.title}`}
+                          code={content.part4.good.code}
+                          language="typescript"
+                          sectionId="part4"
+                        />
                       </div>
                       <pre className="text-xs bg-[#090C14] p-3 rounded-xl border border-emerald-500/20 overflow-x-auto text-slate-300 font-mono leading-relaxed">
                         {content.part4.good.code}
@@ -365,9 +390,21 @@ export function DataDrivenLessonView({
             </div>
 
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-white">
-                {content.part5?.title}
-              </h3>
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-lg font-bold text-white">
+                  {content.part5?.title}
+                </h3>
+                {content.part5?.starterCode && (
+                  <CodeBookmarkButton
+                    trackKey={trackKey}
+                    lessonSlug={lesson.slug}
+                    title={`${lesson.title}: Starter Code Sandbox`}
+                    code={content.part5.starterCode}
+                    language={playgroundRuntime}
+                    sectionId="part5"
+                  />
+                )}
+              </div>
               <p className="text-sm text-slate-300">{content.part5?.intro}</p>
               <Playground
                 key={`${lesson.slug}-${activeSection}`}
@@ -554,7 +591,16 @@ export function DataDrivenLessonView({
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => setIsNotesOpen(true)}
+              className="px-3 py-1 rounded-lg text-[11px] font-bold bg-purple-600/15 hover:bg-purple-600/25 border border-purple-500/30 text-purple-300 hover:text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+              title="Open Notes & Bookmarks Drawer (Ctrl+J)"
+            >
+              <span>📝</span>
+              <span>Notes & Bookmarks</span>
+              <span className="hidden sm:inline text-[10px] opacity-60 font-mono">Ctrl+J</span>
+            </button>
             {(lesson.minutes || lesson.estimatedMinutes) && (
               <span className="text-[11px] font-mono text-slate-400 bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/[0.06]">
                 ⏱️ {lesson.minutes || lesson.estimatedMinutes} min
@@ -692,6 +738,14 @@ export function DataDrivenLessonView({
                 })}
               </div>
 
+              <button
+                onClick={() => setIsNotesOpen(true)}
+                className="w-full py-2 px-3 rounded-xl bg-purple-600/15 hover:bg-purple-600/25 border border-purple-500/30 text-purple-300 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
+              >
+                <span>📝</span>
+                <span>Take Notes & Bookmarks</span>
+              </button>
+
               {!isLessonCompleted && (
                 <button
                   onClick={completeLesson}
@@ -736,6 +790,28 @@ export function DataDrivenLessonView({
           </aside>
         </div>
       </main>
+
+      {/* Floating Notes & Bookmarks Button (Bottom Right) */}
+      <button
+        onClick={() => setIsNotesOpen(true)}
+        title="Open Notes & Bookmarks Drawer (Ctrl+J)"
+        className="fixed bottom-6 right-6 z-40 px-3.5 py-3 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xl shadow-purple-600/30 border border-white/20 flex items-center gap-2 transition-all cursor-pointer hover:scale-105 active:scale-95"
+      >
+        <span className="text-base">📝</span>
+        <span className="text-xs font-bold hidden sm:inline">Notes</span>
+      </button>
+
+      {/* Interactive Notes & Bookmarks Slide-Over Drawer */}
+      <LessonNotesDrawer
+        isOpen={isNotesOpen}
+        onClose={() => setIsNotesOpen(false)}
+        trackKey={trackKey}
+        trackTitle={trackTitle}
+        lessonSlug={lesson.slug}
+        lessonTitle={lesson.title}
+        activeSectionId={activeSection}
+        activeSectionLabel={getSectionLabel(sections[currentIndex], currentIndex)}
+      />
     </InteractiveGrid>
   );
 }
