@@ -910,49 +910,39 @@ export function DataDrivenLessonView({
             </div>
 
             {/* Footer Navigation Bar */}
-            <div className="p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-xl flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
+            <div className="p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-xl flex items-center justify-between gap-4">
+              {/* Left Side: Previous Lesson */}
+              <div>
                 {prevLesson ? (
                   <Link
                     href={`${trackHref}/${prevLesson.slug}`}
-                    className="px-4 py-2 rounded-xl text-xs font-bold border border-white/[0.08] text-slate-300 hover:text-white bg-white/[0.02] hover:bg-white/[0.06] transition-colors flex items-center gap-1.5"
+                    className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-white/[0.08] text-slate-300 hover:text-white bg-white/[0.02] hover:bg-white/[0.06] transition-colors flex items-center gap-2"
                   >
                     <span>←</span>
                     <span>Previous: {prevLesson.code}</span>
                   </Link>
                 ) : (
-                  <span className="text-xs text-slate-600 px-3 py-2">Start of Course</span>
+                  <span className="text-xs font-mono text-slate-500 px-3 py-2">Start of Course</span>
                 )}
+              </div>
 
+              {/* Right Side: Next Lesson (Automatically marks lesson complete when proceeding) */}
+              <div>
                 {nextLesson ? (
                   <Link
                     href={`${trackHref}/${nextLesson.slug}`}
-                    className="px-4 py-2 rounded-xl text-xs font-bold bg-purple-600/20 text-purple-200 border border-purple-500/30 hover:bg-purple-600/30 transition-colors flex items-center gap-1.5 font-mono"
+                    onClick={() => completeLesson()}
+                    className="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600/20 hover:bg-purple-600/35 text-purple-200 hover:text-white border border-purple-500/30 hover:border-purple-400 transition-all flex items-center gap-2 font-mono cursor-pointer"
                   >
                     <span>Next: {nextLesson.code}</span>
                     <span>→</span>
                   </Link>
                 ) : (
-                  <span className="text-xs text-emerald-400 px-3 py-2 font-mono">Course Completed 🎓</span>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setIsNotesOpen(true)}
-                  className="px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600/15 hover:bg-purple-600/25 border border-purple-500/30 text-purple-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
-                >
-                  <span>📝</span>
-                  <span>Notes & Bookmarks</span>
-                  <span className="hidden sm:inline text-[10px] opacity-60 font-mono">Ctrl+J</span>
-                </button>
-
-                {!isLessonCompleted && (
                   <button
-                    onClick={completeLesson}
-                    className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-emerald-300 transition-colors cursor-pointer"
+                    onClick={() => completeLesson()}
+                    className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 transition-colors flex items-center gap-1.5 font-mono cursor-pointer"
                   >
-                    Mark Lesson Complete ✓
+                    <span>Course Completed 🎓</span>
                   </button>
                 )}
               </div>
@@ -961,11 +951,11 @@ export function DataDrivenLessonView({
         </div>
       </div>
 
-      {/* Floating Notes & Bookmarks Button (Positioned cleanly alongside Reading Preferences button) */}
+      {/* Floating Notes & Bookmarks Button (Clean solid style, no gradient) */}
       <button
         onClick={() => setIsNotesOpen(true)}
         title="Open Notes & Bookmarks Drawer (Ctrl+J)"
-        className="fixed bottom-[28px] right-[86px] max-[400px]:bottom-4 max-[400px]:right-[72px] max-[400px]:w-12 max-[400px]:px-0 z-40 h-12 px-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white shadow-xl shadow-purple-600/30 border border-white/20 flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-105 active:scale-95"
+        className="fixed bottom-[28px] right-[86px] max-[400px]:bottom-4 max-[400px]:right-[72px] max-[400px]:w-12 max-[400px]:px-0 z-40 h-12 px-3.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white shadow-xl shadow-purple-950/40 border border-purple-400/20 flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-105 active:scale-95"
       >
         <span className="text-base">📝</span>
         <span className="text-xs font-bold hidden sm:inline">Notes</span>
