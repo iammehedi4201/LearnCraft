@@ -8,3 +8,6 @@ export * from "./lesson-row";
 export * from "./roadmap-toggle";
 export * from "./capstone-card";
 export * from "./curriculum-path";
+export * from "./lesson-content-types";
+export * from "./use-lesson-progress";
+export * from "./DataDrivenLessonView";
