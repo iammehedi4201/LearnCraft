@@ -11,18 +11,13 @@ import {
   isLessonComplete,
   toggleLessonComplete,
 } from "../data/progress-store";
-import {
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle2,
-} from "./icons";
 
 interface LessonNavFooterProps {
   currentSlug: string;
 }
 
 export function LessonNavFooter({ currentSlug }: LessonNavFooterProps) {
-  const [completed, setCompleted] = useState<boolean>(() =>
+  const [_completed, setCompleted] = useState<boolean>(() =>
     isLessonComplete(currentSlug)
   );
 
@@ -58,90 +53,48 @@ export function LessonNavFooter({ currentSlug }: LessonNavFooterProps) {
     };
   }, [currentSlug]);
 
-  const handleToggle = () => {
-    const newState = toggleLessonComplete(currentSlug);
-    setCompleted(newState);
+  const handleNextClick = () => {
+    toggleLessonComplete(currentSlug);
   };
 
   return (
-    <footer className="mt-12 p-6 rounded-2xl bg-[#0E121B] border border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl">
-      {/* Previous Lesson Link */}
-      <div className="w-full sm:w-auto flex-1">
+    <div className="p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-xl flex items-center justify-between gap-4 mt-12">
+      {/* Left Side: Previous Lesson */}
+      <div>
         {prevLesson ? (
           <Link
             href={prevLesson.path}
-            className="group flex items-center gap-3 p-3 rounded-xl bg-[#090C14] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.02] transition-all"
+            className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-white/[0.08] text-slate-300 hover:text-white bg-white/[0.02] hover:bg-white/[0.06] transition-colors flex items-center gap-2"
           >
-            <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:text-purple-400 group-hover:-translate-x-0.5 transition-all" />
-            <div className="min-w-0">
-              <span className="block text-[10px] font-mono uppercase tracking-wider text-slate-400">
-                Previous Lesson
-              </span>
-              <span className="block text-xs font-bold text-white truncate group-hover:text-purple-300 transition-colors">
-                {prevLesson.code}: {prevLesson.name}
-              </span>
-            </div>
+            <span>←</span>
+            <span>Previous: {prevLesson.code}</span>
           </Link>
         ) : (
-          <Link
-            href="/learn/system-design"
-            className="group flex items-center gap-3 p-3 rounded-xl bg-[#090C14] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.02] transition-all"
-          >
-            <ArrowLeft className="w-4 h-4 text-slate-400 group-hover:text-purple-400 group-hover:-translate-x-0.5 transition-all" />
-            <div className="min-w-0">
-              <span className="block text-[10px] font-mono uppercase tracking-wider text-slate-400">
-                Curriculum Hub
-              </span>
-              <span className="block text-xs font-bold text-white truncate group-hover:text-purple-300 transition-colors">
-                System Design Overview
-              </span>
-            </div>
-          </Link>
+          <span className="text-xs font-mono text-slate-500 px-3 py-2">Start of Course</span>
         )}
       </div>
 
-      {/* Completion Toggle Button */}
-      <div className="w-full sm:w-auto shrink-0 flex justify-center">
-        <button
-          onClick={handleToggle}
-          className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-xs transition-all cursor-pointer border ${
-            completed
-              ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25 shadow-md shadow-emerald-500/10"
-              : "bg-purple-600 hover:bg-purple-500 text-white border-purple-400/40 shadow-lg shadow-purple-600/30 active:scale-95"
-          }`}
-        >
-          <CheckCircle2 className="w-4 h-4" />
-          <span>{completed ? "Completed ✓" : "Mark as Completed"}</span>
-        </button>
-      </div>
-
-      {/* Next Lesson Link */}
-      <div className="w-full sm:w-auto flex-1 flex justify-end">
+      {/* Right Side: Next Lesson */}
+      <div>
         {nextLesson ? (
           <Link
             href={nextLesson.path}
-            className="group flex items-center justify-between gap-3 p-3 rounded-xl bg-[#090C14] border border-white/[0.06] hover:border-purple-500/30 hover:bg-white/[0.02] transition-all w-full sm:w-auto text-right"
+            onClick={handleNextClick}
+            className="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600/20 hover:bg-purple-600/35 text-purple-200 hover:text-white border border-purple-500/30 hover:border-purple-400 transition-all flex items-center gap-2 font-mono cursor-pointer"
           >
-            <div className="min-w-0">
-              <span className="block text-[10px] font-mono uppercase tracking-wider text-slate-400">
-                Next Lesson
-              </span>
-              <span className="block text-xs font-bold text-white truncate group-hover:text-purple-300 transition-colors">
-                {nextLesson.code}: {nextLesson.name}
-              </span>
-            </div>
-            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all" />
+            <span>Next: {nextLesson.code}</span>
+            <span>→</span>
           </Link>
         ) : (
           <Link
             href="/learn/system-design/projects/pulsescale-engine"
-            className="group flex items-center gap-3 p-3 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-500 transition-all shadow-md shadow-purple-600/20"
+            onClick={handleNextClick}
+            className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 transition-colors flex items-center gap-1.5 font-mono cursor-pointer"
           >
-            <span>Proceed to Capstone</span>
-            <ArrowRight className="w-4 h-4" />
+            <span>Launch Capstone 🎓</span>
           </Link>
         )}
       </div>
-    </footer>
+    </div>
   );
 }
