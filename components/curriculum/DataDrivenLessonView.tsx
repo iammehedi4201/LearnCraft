@@ -23,7 +23,6 @@ import {
   LessonSectionItem,
 } from "./lesson-content-types";
 import { recordActivity } from "@/lib/gamification";
-import { CodeBookmarkButton } from "./CodeBookmarkButton";
 import { LayoutGrid } from "@/app/learn/nextjs/components/icons";
 
 export interface DataDrivenLessonViewProps {
@@ -180,18 +179,8 @@ export function DataDrivenLessonView({
             {/* PostgreSQL Architecture / Relational Diagram */}
             {content.part1?.diagram && (
               <div className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.08] shadow-lg space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs uppercase tracking-wider font-mono">
-                    <span>📐 Architecture & Topology</span>
-                  </div>
-                  <CodeBookmarkButton
-                    trackKey={trackKey}
-                    lessonSlug={lesson.slug}
-                    title={`${lesson.title}: Architecture Diagram`}
-                    code={content.part1.diagram}
-                    language="text"
-                    sectionId="part1"
-                  />
+                <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs uppercase tracking-wider font-mono">
+                  <span>📐 Architecture & Topology</span>
                 </div>
                 <pre className="p-4 rounded-xl bg-black/60 border border-white/[0.06] font-mono text-xs sm:text-sm text-cyan-300/90 overflow-x-auto leading-relaxed">
                   {content.part1.diagram}
@@ -261,14 +250,6 @@ export function DataDrivenLessonView({
                       <div className="pt-2">
                         <div className="flex items-center justify-between mb-1.5">
                           <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Example</span>
-                          <CodeBookmarkButton
-                            trackKey={trackKey}
-                            lessonSlug={lesson.slug}
-                            title={`${lesson.title}: ${concept.name}`}
-                            code={concept.codeSnippet}
-                            language="sql"
-                            sectionId="part2"
-                          />
                         </div>
                         <pre className="text-xs bg-black/60 p-3 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto leading-relaxed">
                           {concept.codeSnippet}
@@ -383,16 +364,6 @@ export function DataDrivenLessonView({
                       <span className="text-white font-bold text-base">
                         {pt.title}
                       </span>
-                      {pt.codeSnippet && (
-                        <CodeBookmarkButton
-                          trackKey={trackKey}
-                          lessonSlug={lesson.slug}
-                          title={`${lesson.title}: ${pt.title}`}
-                          code={pt.codeSnippet}
-                          language="typescript"
-                          sectionId="part3"
-                        />
-                      )}
                     </div>
                     <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
                       {pt.content}
@@ -478,18 +449,8 @@ export function DataDrivenLessonView({
               {goodComparison && (
                 <div className="p-5 rounded-2xl bg-emerald-500/[0.03] border border-emerald-500/30 space-y-3 flex flex-col justify-between">
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
-                        <span>✅ {goodComparison.title}</span>
-                      </div>
-                      <CodeBookmarkButton
-                        trackKey={trackKey}
-                        lessonSlug={lesson.slug}
-                        title={`${lesson.title}: ${goodComparison.title}`}
-                        code={goodComparison.code}
-                        language={trackKey === "postgresql" ? "sql" : "typescript"}
-                        sectionId="part4"
-                      />
+                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                      <span>✅ {goodComparison.title}</span>
                     </div>
                     <pre className="text-xs bg-[#090C14] p-3 rounded-xl border border-emerald-500/20 overflow-x-auto text-slate-300 font-mono leading-relaxed">
                       {goodComparison.code}
@@ -532,16 +493,6 @@ export function DataDrivenLessonView({
                 <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                   {content.part5?.title || getSectionLabel(sections[currentIndex], currentIndex)}
                 </h2>
-                {content.part5?.starterCode && (
-                  <CodeBookmarkButton
-                    trackKey={trackKey}
-                    lessonSlug={lesson.slug}
-                    title={`${lesson.title}: Starter Code Sandbox`}
-                    code={content.part5.starterCode}
-                    language={playgroundRuntime}
-                    sectionId="part5"
-                  />
-                )}
               </div>
               {content.part5?.intro && (
                 <p className="text-sm text-slate-300 leading-relaxed">{content.part5.intro}</p>

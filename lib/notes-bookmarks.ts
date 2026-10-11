@@ -7,7 +7,18 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import type { UserNote, CodeBookmark } from "@/types/notes-bookmarks";
+import type {
+  UserNote,
+  CodeBookmark,
+  NoteContentType,
+  QAEntry,
+  CodeNoteData,
+  LessonNoteBlock,
+  TextNoteBlock,
+  QABlock,
+  CodeBlock,
+  NoteBlockType,
+} from "@/types/notes-bookmarks";
 
 const NOTES_STORAGE_KEY = "learncraft_notes_v1";
 const BOOKMARKS_STORAGE_KEY = "learncraft_bookmarks_v1";
@@ -99,6 +110,319 @@ export function syncLegacyAnnotationsIntoNotes(currentNotes: UserNote[]): {
   return { merged: currentNotes, hasChanges: false };
 }
 
+// ─── Note Serialization & Normalization ──────────────────────────────────────
+
+export function serializeQAEntriesToMarkdown(entries: QAEntry[]): string {
+  if (!entries || entries.length === 0) return "";
+  return entries
+    .map((e, idx) => {
+      let block = `### ❓ Q${entries.length > 1 ? idx + 1 : ""}: ${e.question.trim()}\n> **Answer:** ${e.answer.trim()}`;
+      if (e.explanation && e.explanation.trim()) {
+        block += `\n\n> 💡 **Explanation:** ${e.explanation.trim()}`;
+      }
+      return block;
+    })
+    .join("\n\n---\n\n");
+}
+
+export function serializeCodeNoteToMarkdown(codeData: CodeNoteData): string {
+  if (!codeData) return "";
+  let out = "";
+  if (codeData.title && codeData.title.trim()) {
+    out += `### 💻 ${codeData.title.trim()}\n\n`;
+  }
+  const lang = codeData.language || "typescript";
+  const code = codeData.code || "";
+  out += `\`\`\`${lang}\n${code}\n\`\`\``;
+  if (codeData.explanation && codeData.explanation.trim()) {
+    out += `\n\n> 💡 **Notes:** ${codeData.explanation.trim()}`;
+  }
+  return out;
+}
+
+/**
+ * Serializes an ordered list of mixed notebook blocks into human-readable Markdown.
+ * Guarantees backward compatibility with legacy full-text search, reading views, and previews.
+ */
+export function serializeNotebookToMarkdown(blocks: LessonNoteBlock[]): string {
+  if (!blocks || blocks.length === 0) return "";
+  const parts: string[] = [];
+
+  for (const block of blocks) {
+    if (!block) continue;
+    if (block.type === "text") {
+      const text = block.content?.trim();
+      if (text) parts.push(text);
+    } else if (block.type === "qa") {
+      const q = block.question?.trim() || "";
+      const a = block.answer?.trim() || "";
+      let qaText = `### ❓ Q: ${q}\n> **Answer:** ${a}`;
+      if (block.explanation && block.explanation.trim()) {
+        qaText += `\n\n> 💡 **Explanation:** ${block.explanation.trim()}`;
+      }
+      if (q || a) parts.push(qaText);
+    } else if (block.type === "code") {
+      const lang = block.language || "typescript";
+      const code = block.code || "";
+      let codeText = "";
+      if (block.title && block.title.trim()) {
+        codeText += `### 💻 ${block.title.trim()}\n\n`;
+      }
+      codeText += `\`\`\`${lang}\n${code}\n\`\`\``;
+      if (block.explanation && block.explanation.trim()) {
+        codeText += `\n\n> 💡 **Notes:** ${block.explanation.trim()}`;
+      }
+      if (code.trim() || block.title?.trim()) parts.push(codeText);
+    }
+  }
+
+  return parts.join("\n\n---\n\n");
+}
+
+/**
+ * Creates default blocks with unique IDs and timestamps
+ */
+export function createDefaultTextBlock(content: string = "", order: number = 0): TextNoteBlock {
+  const now = Date.now();
+  return {
+    id: `blk_text_${now}_${Math.random().toString(36).slice(2, 7)}`,
+    type: "text",
+    order,
+    content,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+export function createDefaultQABlock(
+  question: string = "",
+  answer: string = "",
+  explanation?: string,
+  order: number = 0
+): QABlock {
+  const now = Date.now();
+  return {
+    id: `blk_qa_${now}_${Math.random().toString(36).slice(2, 7)}`,
+    type: "qa",
+    order,
+    question,
+    answer,
+    explanation,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+export function createDefaultCodeBlock(
+  code: string = "",
+  language: string = "typescript",
+  title?: string,
+  explanation?: string,
+  order: number = 0
+): CodeBlock {
+  const now = Date.now();
+  return {
+    id: `blk_code_${now}_${Math.random().toString(36).slice(2, 7)}`,
+    type: "code",
+    order,
+    title,
+    language,
+    code,
+    explanation,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+export function reorderNotebookBlocks(
+  blocks: LessonNoteBlock[],
+  fromIndex: number,
+  toIndex: number
+): LessonNoteBlock[] {
+  if (fromIndex < 0 || fromIndex >= blocks.length || toIndex < 0 || toIndex >= blocks.length) {
+    return blocks;
+  }
+  const result = [...blocks];
+  const [removed] = result.splice(fromIndex, 1);
+  result.splice(toIndex, 0, removed);
+  return result.map((b, idx) => ({ ...b, order: idx }));
+}
+
+export function normalizeUserNote(raw: any): UserNote {
+  if (!raw || typeof raw !== "object") {
+    return {
+      id: `note_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      trackKey: "general",
+      lessonSlug: "lesson",
+      content: "",
+      blocks: [],
+      noteType: "text",
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+  }
+
+  const id = String(raw.id || `note_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`);
+  const trackKey = String(raw.trackKey || "general");
+  const lessonSlug = String(raw.lessonSlug || "lesson");
+  const content = typeof raw.content === "string" ? raw.content : "";
+  const createdAt = Number(raw.createdAt) || Date.now();
+  const updatedAt = Number(raw.updatedAt) || createdAt;
+
+  let noteType: NoteContentType = "text";
+  if (raw.noteType === "qa" || raw.noteType === "code" || raw.noteType === "text") {
+    noteType = raw.noteType;
+  }
+
+  const normalized: UserNote = {
+    id,
+    trackKey,
+    lessonSlug,
+    lessonPath: raw.lessonPath ? String(raw.lessonPath) : undefined,
+    sectionId: raw.sectionId ? String(raw.sectionId) : undefined,
+    title: raw.title ? String(raw.title) : undefined,
+    content,
+    noteType,
+    textDraft: typeof raw.textDraft === "string" ? raw.textDraft : undefined,
+    createdAt,
+    updatedAt,
+  };
+
+  // 1. If blocks already exist, normalize each block
+  if (Array.isArray(raw.blocks) && raw.blocks.length > 0) {
+    const blocks: LessonNoteBlock[] = raw.blocks.map((b: any, index: number) => {
+      const bId = String(b.id || `blk_${Date.now()}_${index}`);
+      const bType: NoteBlockType = (b.type === "qa" || b.type === "code") ? b.type : "text";
+      const bOrder = typeof b.order === "number" ? b.order : index;
+      const bCreatedAt = Number(b.createdAt) || createdAt;
+      const bUpdatedAt = Number(b.updatedAt) || updatedAt;
+
+      if (bType === "qa") {
+        return {
+          id: bId,
+          type: "qa",
+          order: bOrder,
+          question: String(b.question || ""),
+          answer: String(b.answer || ""),
+          explanation: b.explanation ? String(b.explanation) : undefined,
+          createdAt: bCreatedAt,
+          updatedAt: bUpdatedAt,
+        };
+      }
+      if (bType === "code") {
+        return {
+          id: bId,
+          type: "code",
+          order: bOrder,
+          title: b.title ? String(b.title) : undefined,
+          language: String(b.language || "typescript"),
+          code: String(b.code || ""),
+          explanation: b.explanation ? String(b.explanation) : undefined,
+          createdAt: bCreatedAt,
+          updatedAt: bUpdatedAt,
+        };
+      }
+      return {
+        id: bId,
+        type: "text",
+        order: bOrder,
+        content: String(b.content || ""),
+        createdAt: bCreatedAt,
+        updatedAt: bUpdatedAt,
+      };
+    });
+
+    blocks.sort((a, b) => a.order - b.order);
+    if (blocks.length === 1 && blocks[0].type === "text" && content && content !== blocks[0].content) {
+      blocks[0].content = content;
+    }
+    normalized.blocks = blocks;
+    normalized.content = content || serializeNotebookToMarkdown(blocks);
+  } else {
+    // 2. Deterministic, idempotent legacy migration:
+    const migratedBlocks: LessonNoteBlock[] = [];
+    let orderCounter = 0;
+
+    // A. Check for legacy text content (or textDraft)
+    const rawText = (typeof raw.textDraft === "string" && raw.textDraft.trim())
+      ? raw.textDraft.trim()
+      : (typeof raw.content === "string" && raw.noteType !== "qa" && raw.noteType !== "code" && raw.content.trim())
+        ? raw.content.trim()
+        : "";
+
+    if (rawText) {
+      migratedBlocks.push({
+        id: `blk_text_migrated_${id}_0`,
+        type: "text",
+        order: orderCounter++,
+        content: rawText,
+        createdAt,
+        updatedAt,
+      });
+    }
+
+    // B. Check for legacy Q&A entries
+    if (Array.isArray(raw.qaEntries) && raw.qaEntries.length > 0) {
+      raw.qaEntries.forEach((e: any, idx: number) => {
+        if (e && (e.question || e.answer)) {
+          migratedBlocks.push({
+            id: String(e.id || `blk_qa_migrated_${id}_${idx}`),
+            type: "qa",
+            order: orderCounter++,
+            question: String(e.question || ""),
+            answer: String(e.answer || ""),
+            explanation: e.explanation ? String(e.explanation) : undefined,
+            createdAt,
+            updatedAt,
+          });
+        }
+      });
+    }
+
+    // C. Check for legacy Code data
+    if (raw.codeData && typeof raw.codeData === "object" && (raw.codeData.code || raw.codeData.title)) {
+      migratedBlocks.push({
+        id: `blk_code_migrated_${id}_0`,
+        type: "code",
+        order: orderCounter++,
+        title: raw.codeData.title ? String(raw.codeData.title) : undefined,
+        language: String(raw.codeData.language || "typescript"),
+        code: String(raw.codeData.code || ""),
+        explanation: raw.codeData.explanation ? String(raw.codeData.explanation) : undefined,
+        createdAt,
+        updatedAt,
+      });
+    }
+
+    // D. If raw has content that wasn't captured yet (e.g. legacy plain text with noteType not specified)
+    if (migratedBlocks.length === 0 && content.trim()) {
+      migratedBlocks.push({
+        id: `blk_text_migrated_${id}_0`,
+        type: "text",
+        order: orderCounter++,
+        content: content.trim(),
+        createdAt,
+        updatedAt,
+      });
+    }
+
+    normalized.blocks = migratedBlocks;
+    if (migratedBlocks.length > 0) {
+      normalized.content = serializeNotebookToMarkdown(migratedBlocks);
+    }
+  }
+
+  // Preserve legacy fields for backward compatibility
+  if (raw.qaEntries && Array.isArray(raw.qaEntries)) {
+    normalized.qaEntries = raw.qaEntries;
+  }
+  if (raw.codeData && typeof raw.codeData === "object") {
+    normalized.codeData = raw.codeData;
+  }
+
+  return normalized;
+}
+
 export function getLocalNotes(): UserNote[] {
   if (typeof window === "undefined") return [];
   try {
@@ -106,14 +430,16 @@ export function getLocalNotes(): UserNote[] {
     let parsed: UserNote[] = [];
     if (raw) {
       const data = JSON.parse(raw);
-      parsed = Array.isArray(data) ? data : Object.values(data);
+      const list = Array.isArray(data) ? data : Object.values(data);
+      parsed = list.map(normalizeUserNote);
     }
 
     const { merged, hasChanges } = syncLegacyAnnotationsIntoNotes(parsed);
+    const normalizedMerged = merged.map(normalizeUserNote);
     if (hasChanges) {
-      localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(merged));
+      localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(normalizedMerged));
     }
-    return merged;
+    return normalizedMerged;
   } catch {
     return [];
   }
@@ -192,21 +518,78 @@ export function upsertNote(
   const existingIndex = notes.findIndex((n) => n.id === id);
   let updatedNote: UserNote;
 
+  // Derive effective content from unified notebook blocks or structured type
+  if (noteInput.noteType === "code" && noteInput.codeData) {
+    if (Array.isArray(noteInput.blocks) && !noteInput.blocks.some((b) => b.type === "code")) {
+      noteInput.blocks = [
+        ...noteInput.blocks,
+        createDefaultCodeBlock(
+          noteInput.codeData.code,
+          noteInput.codeData.language,
+          noteInput.codeData.title,
+          noteInput.codeData.explanation,
+          noteInput.blocks.length
+        ),
+      ];
+    }
+  }
+
+  let effectiveContent = noteInput.content || "";
+  if (Array.isArray(noteInput.blocks) && noteInput.blocks.length > 0) {
+    effectiveContent = serializeNotebookToMarkdown(noteInput.blocks);
+  } else if (noteInput.noteType === "qa" && Array.isArray(noteInput.qaEntries) && noteInput.qaEntries.length > 0) {
+    effectiveContent = serializeQAEntriesToMarkdown(noteInput.qaEntries);
+  } else if (noteInput.noteType === "code" && noteInput.codeData) {
+    effectiveContent = serializeCodeNoteToMarkdown(noteInput.codeData);
+  }
+
   if (existingIndex >= 0) {
-    updatedNote = {
+    let resolvedBlocks = noteInput.blocks;
+    if (!resolvedBlocks) {
+      if (noteInput.noteType === "code" && noteInput.codeData) {
+        resolvedBlocks = [
+          createDefaultCodeBlock(
+            noteInput.codeData.code,
+            noteInput.codeData.language,
+            noteInput.codeData.title,
+            noteInput.codeData.explanation
+          ),
+        ];
+      } else if (noteInput.noteType === "qa" && Array.isArray(noteInput.qaEntries) && noteInput.qaEntries.length > 0) {
+        resolvedBlocks = noteInput.qaEntries.map((e, idx) => ({
+          id: e.id,
+          type: "qa" as const,
+          order: idx,
+          question: e.question,
+          answer: e.answer,
+          explanation: e.explanation,
+          createdAt: now,
+          updatedAt: now,
+        }));
+      } else if (noteInput.content && (!noteInput.noteType || noteInput.noteType === "text")) {
+        resolvedBlocks = [createDefaultTextBlock(noteInput.content, 0)];
+      } else {
+        resolvedBlocks = notes[existingIndex].blocks;
+      }
+    }
+
+    updatedNote = normalizeUserNote({
       ...notes[existingIndex],
       ...noteInput,
+      blocks: resolvedBlocks,
+      content: effectiveContent,
       id,
       updatedAt: now,
-    };
+    });
     notes[existingIndex] = updatedNote;
   } else {
-    updatedNote = {
+    updatedNote = normalizeUserNote({
       ...noteInput,
+      content: effectiveContent,
       id,
       createdAt: noteInput.createdAt || now,
       updatedAt: now,
-    };
+    });
     notes.unshift(updatedNote);
   }
 

@@ -7,12 +7,9 @@ import {
   getLocalNotes,
   upsertNote,
   deleteNote,
-  getLocalBookmarks,
-  deleteBookmark,
   syncNotesWithCloud,
-  syncBookmarksWithCloud,
 } from "@/lib/notes-bookmarks";
-import type { UserNote, CodeBookmark } from "@/types/notes-bookmarks";
+import type { UserNote } from "@/types/notes-bookmarks";
 import { MarkdownRenderer } from "@/components/revision/MarkdownRenderer";
 
 // ─── Track Configurations & Aesthetics ───────────────────────────────────────
@@ -294,11 +291,9 @@ const SEED_DEMO_NOTE: UserNote = {
 
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function NotesPage(): JSX.Element {
-  const [activeTab, setActiveTab] = useState<"notes" | "bookmarks">("notes");
   const [selectedTrack, setSelectedTrack] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [notes, setNotes] = useState<UserNote[]>([]);
-  const [bookmarks, setBookmarks] = useState<CodeBookmark[]>([]);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Dropdown states
@@ -323,17 +318,15 @@ export default function NotesPage(): JSX.Element {
   // Custom Delete Confirmation Modal
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     id: string;
-    type: "note" | "bookmark";
     title: string;
   } | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const moreDropdownRef = useRef<HTMLDivElement | null>(null);
 
-  // Load notes and bookmarks
+  // Load notes
   useEffect(() => {
     let currentNotes = getLocalNotes();
-    const currentBookmarks = getLocalBookmarks();
 
     // If completely brand new, seed the demo note to match the preview mockup
     if (currentNotes.length === 0) {
@@ -342,24 +335,17 @@ export default function NotesPage(): JSX.Element {
     }
 
     setNotes(currentNotes);
-    setBookmarks(currentBookmarks);
 
     syncNotesWithCloud().then((clNotes) => {
       if (clNotes.length > 0) setNotes(clNotes);
     });
-    syncBookmarksWithCloud().then((clBms) => {
-      if (clBms.length > 0) setBookmarks(clBms);
-    });
 
     const handleNotesUpdate = () => setNotes(getLocalNotes());
-    const handleBmUpdate = () => setBookmarks(getLocalBookmarks());
 
     window.addEventListener("learncraft-notes-updated", handleNotesUpdate);
-    window.addEventListener("learncraft-bookmarks-updated", handleBmUpdate);
 
     return () => {
       window.removeEventListener("learncraft-notes-updated", handleNotesUpdate);
-      window.removeEventListener("learncraft-bookmarks-updated", handleBmUpdate);
     };
   }, []);
 
@@ -460,17 +446,11 @@ export default function NotesPage(): JSX.Element {
 
   const executeDelete = () => {
     if (!deleteConfirmation) return;
-    const { id, type } = deleteConfirmation;
+    const { id } = deleteConfirmation;
 
-    if (type === "note") {
-      deleteNote(id);
-      setNotes((prev) => prev.filter((n) => n.id !== id));
-      if (readingNote?.id === id) setReadingNote(null);
-    } else {
-      deleteBookmark(id);
-      setBookmarks((prev) => prev.filter((b) => b.id !== id));
-    }
-
+    deleteNote(id);
+    setNotes((prev) => prev.filter((n) => n.id !== id));
+    if (readingNote?.id === id) setReadingNote(null);
     setDeleteConfirmation(null);
   };
 
@@ -490,34 +470,17 @@ export default function NotesPage(): JSX.Element {
     });
   }, [notes, selectedTrack, searchQuery]);
 
-  // Filtered Bookmarks
-  const filteredBookmarks = useMemo(() => {
-    const q = searchQuery.toLowerCase().trim();
-    return bookmarks.filter((b) => {
-      const bmTrack = (b.trackKey || "").toLowerCase();
-      const matchesTrack = selectedTrack === "all" || bmTrack === selectedTrack.toLowerCase();
-      const matchesQuery =
-        q === "" ||
-        (b.title && b.title.toLowerCase().includes(q)) ||
-        (b.code && b.code.toLowerCase().includes(q)) ||
-        (b.lessonSlug && b.lessonSlug.toLowerCase().includes(q)) ||
-        (b.trackKey && b.trackKey.toLowerCase().includes(q));
-      return matchesTrack && matchesQuery;
-    });
-  }, [bookmarks, selectedTrack, searchQuery]);
-
   // Count of items per track for badges in dropdown
   const trackItemCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    const items = activeTab === "notes" ? notes : bookmarks;
-    items.forEach((item) => {
+    notes.forEach((item) => {
       const key = (item.trackKey || "").toLowerCase();
       if (key) {
         counts[key] = (counts[key] || 0) + 1;
       }
     });
     return counts;
-  }, [activeTab, notes, bookmarks]);
+  }, [notes]);
 
   // All extra tracks (default MORE_TRACK_KEYS + any dynamic tracks in notes)
   const allAvailableMoreTracks = useMemo(() => {
@@ -526,12 +489,8 @@ export default function NotesPage(): JSX.Element {
       const k = (n.trackKey || "").toLowerCase();
       if (k && !PRIMARY_CHIP_KEYS.includes(k)) keys.add(k);
     });
-    bookmarks.forEach((b) => {
-      const k = (b.trackKey || "").toLowerCase();
-      if (k && !PRIMARY_CHIP_KEYS.includes(k)) keys.add(k);
-    });
     return Array.from(keys);
-  }, [notes, bookmarks]);
+  }, [notes]);
 
   // Filtered tracks in the More popover search
   const filteredMoreTracks = useMemo(() => {
@@ -563,7 +522,7 @@ export default function NotesPage(): JSX.Element {
               Study Notes
             </h1>
             <p className="text-sm text-slate-400 mt-2 font-normal">
-              {`${notes.length} ${notes.length === 1 ? "note" : "notes"} · ${bookmarks.length} saved · everything you're learning, in one place`}
+              {`${notes.length} ${notes.length === 1 ? "note" : "notes"} · everything you're learning, in one place`}
             </p>
           </div>
 
@@ -576,7 +535,7 @@ export default function NotesPage(): JSX.Element {
           </button>
         </div>
 
-        {/* ─── Row 2: Search Bar & Segmented Pill Switcher ─────────────────── */}
+        {/* ─── Row 2: Search Bar & Count ───────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-8">
           {/* Search Input */}
           <div className="relative flex-1">
@@ -588,7 +547,7 @@ export default function NotesPage(): JSX.Element {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search notes, topics, code..."
+              placeholder="Search notes, topics, code... (Press '/' to focus)"
               className="w-full bg-[#0e121d] border border-white/[0.08] focus:border-purple-500/50 focus:outline-none rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-slate-500 transition-colors"
             />
             {searchQuery && (
@@ -602,28 +561,12 @@ export default function NotesPage(): JSX.Element {
             )}
           </div>
 
-          {/* Segmented Pill Container */}
-          <div className="bg-[#0e121d] border border-white/[0.08] rounded-xl p-1 flex items-center gap-1 shrink-0">
-            <button
-              onClick={() => setActiveTab("notes")}
-              className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                activeTab === "notes"
-                  ? "bg-[#2b2247] text-purple-200 shadow-sm"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Notes · {notes.length}
-            </button>
-            <button
-              onClick={() => setActiveTab("bookmarks")}
-              className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                activeTab === "bookmarks"
-                  ? "bg-[#2b2247] text-purple-200 shadow-sm"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Saved · {bookmarks.length}
-            </button>
+          <div className="hidden sm:flex items-center gap-2 px-4 py-3 rounded-xl bg-[#0e121d] border border-white/[0.08] text-xs text-slate-400 shrink-0 font-medium">
+            <span className="w-2 h-2 rounded-full bg-purple-400" />
+            <span>
+              {filteredNotes.length} {filteredNotes.length === 1 ? "note" : "notes"}{" "}
+              {selectedTrack !== "all" || searchQuery ? "found" : "total"}
+            </span>
           </div>
         </div>
 
@@ -778,7 +721,7 @@ export default function NotesPage(): JSX.Element {
                       <div>
                         <span className="text-xs font-semibold text-white">More Topics</span>
                         <span className="block text-[10px] text-slate-400">
-                          {activeTab === "notes" ? "Filter study notes" : "Filter saved snippets"}
+                          Filter study notes
                         </span>
                       </div>
                       <button
@@ -881,9 +824,8 @@ export default function NotesPage(): JSX.Element {
           )}
         </div>
 
-        {/* ─── Row 4: Grid Layout ──────────────────────────────────────────── */}
-        {activeTab === "notes" ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 items-stretch">
+        {/* ─── Row 4: Notes Grid Layout ───────────────────────────────────── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 items-stretch">
             {/* Note Cards */}
             {filteredNotes.map((note) => {
               const meta = getTrackMeta(note.trackKey);
@@ -897,16 +839,32 @@ export default function NotesPage(): JSX.Element {
                   {/* Card Header: Track Badge & Actions */}
                   <div>
                     <div className="flex items-center justify-between gap-2 relative">
-                      {/* Track Badge with colored dot */}
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wider uppercase border ${meta.badgeBg} ${meta.badgeText} ${meta.badgeBorder}`}
-                      >
+                      {/* Track Badge with colored dot & Content Type */}
+                      <div className="flex items-center gap-1.5 flex-wrap">
                         <span
-                          className="w-1.5 h-1.5 rounded-full shrink-0"
-                          style={{ backgroundColor: meta.dotColor }}
-                        />
-                        {meta.key.toUpperCase()}
-                      </span>
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wider uppercase border ${meta.badgeBg} ${meta.badgeText} ${meta.badgeBorder}`}
+                        >
+                          <span
+                            className="w-1.5 h-1.5 rounded-full shrink-0"
+                            style={{ backgroundColor: meta.dotColor }}
+                          />
+                          {meta.key.toUpperCase()}
+                        </span>
+
+                        {note.blocks && note.blocks.length > 0 ? (
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                            📓 {note.blocks.length} {note.blocks.length === 1 ? "BLOCK" : "BLOCKS"}
+                          </span>
+                        ) : note.noteType === "qa" ? (
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                            ❓ Q&A
+                          </span>
+                        ) : note.noteType === "code" ? (
+                          <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                            💻 {note.codeData?.language?.toUpperCase() || "CODE"}
+                          </span>
+                        ) : null}
+                      </div>
 
                       {/* Three dots menu */}
                       <div className="relative" data-note-menu>
@@ -960,10 +918,9 @@ export default function NotesPage(): JSX.Element {
                             <button
                               onClick={() =>
                                 setDeleteConfirmation({
-                                  id: note.id,
-                                  type: "note",
-                                  title: note.title || "Untitled Note",
-                                })
+                                 id: note.id,
+                                 title: note.title || "Untitled Note",
+                               })
                               }
                               className="w-full px-3 py-2 text-left text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 flex items-center gap-2 transition-colors"
                             >
@@ -1028,126 +985,6 @@ export default function NotesPage(): JSX.Element {
               </span>
             </div>
           </div>
-        ) : (
-          /* ─── Bookmarks Tab ────────────────────────────────────────────── */
-          <div className="mt-8">
-            {filteredBookmarks.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
-                {filteredBookmarks.map((bm) => {
-                  const meta = getTrackMeta(bm.trackKey);
-                  const isMenuOpen = activeMenuId === bm.id;
-
-                  return (
-                    <div
-                      key={bm.id}
-                      className="bg-[#0c101a] border border-white/[0.08] hover:border-white/15 rounded-2xl p-6 flex flex-col justify-between transition-all duration-200 relative group min-h-[280px]"
-                    >
-                      <div>
-                        {/* Header Badge */}
-                        <div className="flex items-center justify-between gap-2 relative">
-                          <span
-                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wider uppercase border ${meta.badgeBg} ${meta.badgeText} ${meta.badgeBorder}`}
-                          >
-                            <span
-                              className="w-1.5 h-1.5 rounded-full shrink-0"
-                              style={{ backgroundColor: meta.dotColor }}
-                            />
-                            {meta.key.toUpperCase()}
-                          </span>
-
-                          <div className="relative" data-note-menu>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setActiveMenuId(isMenuOpen ? null : bm.id);
-                              }}
-                              className="text-slate-500 hover:text-white p-1 rounded-md hover:bg-white/[0.05] transition-colors"
-                            >
-                              <IconMoreHorizontal className="w-5 h-5" />
-                            </button>
-
-                            {isMenuOpen && (
-                              <div className="absolute right-0 mt-1 w-40 bg-[#0e121d] border border-white/[0.1] rounded-xl shadow-2xl py-1 z-30">
-                                <button
-                                  onClick={() => handleCopyText(bm.id, bm.code)}
-                                  className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-2 transition-colors"
-                                >
-                                  {copiedId === bm.id ? (
-                                    <>
-                                      <IconCheck className="w-3.5 h-3.5 text-emerald-400" />
-                                      <span className="text-emerald-400">Copied!</span>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <IconCopy className="w-3.5 h-3.5" />
-                                      <span>Copy code</span>
-                                    </>
-                                  )}
-                                </button>
-                                <Link
-                                  href={`/learn/${bm.trackKey}/${bm.lessonSlug}`}
-                                  className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-2 transition-colors"
-                                >
-                                  <IconExternalLink className="w-3.5 h-3.5" />
-                                  <span>Go to lesson</span>
-                                </Link>
-                                <div className="my-1 border-t border-white/[0.06]" />
-                                <button
-                                  onClick={() =>
-                                    setDeleteConfirmation({
-                                      id: bm.id,
-                                      type: "bookmark",
-                                      title: bm.title || "Code Bookmark",
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 text-left text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 flex items-center gap-2 transition-colors"
-                                >
-                                  <IconTrash className="w-3.5 h-3.5" />
-                                  <span>Delete bookmark</span>
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Title */}
-                        <h3 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug my-4">
-                          {bm.title || "Code Bookmark"}
-                        </h3>
-
-                        {/* Monospace Code Preview Box */}
-                        <div className="bg-[#07090e] border border-white/[0.06] rounded-xl p-3 font-mono text-xs text-slate-300 overflow-x-auto max-h-36 mb-4">
-                          <pre>{bm.code}</pre>
-                        </div>
-                      </div>
-
-                      {/* Footer */}
-                      <div className="flex items-center justify-between pt-4 border-t border-white/[0.05]">
-                        <span className="text-xs text-slate-500 font-medium">
-                          {formatDate(bm.createdAt)}
-                        </span>
-                        <Link
-                          href={`/learn/${bm.trackKey}/${bm.lessonSlug}`}
-                          className="text-[#a78bfa] hover:text-[#c4b5fd] text-xs font-semibold inline-flex items-center gap-1 transition-colors"
-                        >
-                          <span>Open Lesson</span>
-                          <span>→</span>
-                        </Link>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-dashed border-white/[0.1] bg-[#0c101a]/50 p-12 text-center max-w-md mx-auto">
-                <p className="text-slate-300 font-medium text-base mb-2">No saved code snippets yet</p>
-                <p className="text-slate-500 text-xs leading-relaxed">
-                  While exploring lessons, click the bookmark icon on any code snippet to pin it to your study board.
-                </p>
-              </div>
-            )}
-          </div>
-        )}
       </main>
 
       {/* ─── Reading / Detail Modal ────────────────────────────────────────── */}
@@ -1155,15 +992,31 @@ export default function NotesPage(): JSX.Element {
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#0e121d] border border-white/[0.1] rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between gap-4">
-              <span
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold tracking-wider uppercase border ${getTrackMeta(readingNote.trackKey).badgeBg} ${getTrackMeta(readingNote.trackKey).badgeText} ${getTrackMeta(readingNote.trackKey).badgeBorder}`}
-              >
+              <div className="flex items-center gap-2">
                 <span
-                  className="w-1.5 h-1.5 rounded-full shrink-0"
-                  style={{ backgroundColor: getTrackMeta(readingNote.trackKey).dotColor }}
-                />
-                {getTrackMeta(readingNote.trackKey).key.toUpperCase()}
-              </span>
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold tracking-wider uppercase border ${getTrackMeta(readingNote.trackKey).badgeBg} ${getTrackMeta(readingNote.trackKey).badgeText} ${getTrackMeta(readingNote.trackKey).badgeBorder}`}
+                >
+                  <span
+                    className="w-1.5 h-1.5 rounded-full shrink-0"
+                    style={{ backgroundColor: getTrackMeta(readingNote.trackKey).dotColor }}
+                  />
+                  {getTrackMeta(readingNote.trackKey).key.toUpperCase()}
+                </span>
+
+                {readingNote.blocks && readingNote.blocks.length > 0 ? (
+                  <span className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                    📓 Notebook ({readingNote.blocks.length} {readingNote.blocks.length === 1 ? "block" : "blocks"})
+                  </span>
+                ) : readingNote.noteType === "qa" ? (
+                  <span className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                    ❓ Q&A Notes
+                  </span>
+                ) : readingNote.noteType === "code" ? (
+                  <span className="px-2.5 py-1 rounded-md text-xs font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                    💻 Code Snippet ({readingNote.codeData?.language?.toUpperCase() || "CODE"})
+                  </span>
+                ) : null}
+              </div>
 
               <button
                 onClick={() => setReadingNote(null)}
@@ -1306,13 +1159,67 @@ export default function NotesPage(): JSX.Element {
               </div>
 
               {modalTab === "edit" ? (
-                <textarea
-                  rows={5}
-                  value={noteContent}
-                  onChange={(e) => setNoteContent(e.target.value)}
-                  placeholder="Private fields (# or private) plus controlled getter/setter methods..."
-                  className="w-full bg-[#131826] border border-white/[0.08] rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 resize-y"
-                />
+                <>
+                  <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const prefix = noteContent.trim() ? "\n\n" : "";
+                        setNoteContent(
+                          noteContent +
+                            prefix +
+                            "### ❓ Question: [Write your question here]\n> **Answer:** [Write your answer here]"
+                        );
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-purple-600/20 text-purple-300 border border-purple-500/30 hover:bg-purple-600/30 transition-colors cursor-pointer"
+                    >
+                      + Q&A Block
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const prefix = noteContent.trim() ? "\n\n" : "";
+                        setNoteContent(
+                          noteContent +
+                            prefix +
+                            "```typescript\n// Code snippet\nconst example = true;\n```"
+                        );
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600/30 transition-colors cursor-pointer"
+                    >
+                      + Code Snippet
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const prefix = noteContent.trim() ? "\n\n" : "";
+                        setNoteContent(noteContent + prefix + "- Point 1\n- Point 2\n- Point 3");
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-white/[0.04] text-slate-300 border border-white/[0.08] hover:bg-white/[0.08] transition-colors cursor-pointer"
+                    >
+                      + List
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const prefix = noteContent.trim() ? "\n\n" : "";
+                        setNoteContent(
+                          noteContent + prefix + "> 💡 **Key Takeaway:** [Core insight here...]"
+                        );
+                      }}
+                      className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-amber-600/20 text-amber-300 border border-amber-500/30 hover:bg-amber-600/30 transition-colors cursor-pointer"
+                    >
+                      + Key Insight
+                    </button>
+                  </div>
+                  <textarea
+                    rows={6}
+                    value={noteContent}
+                    onChange={(e) => setNoteContent(e.target.value)}
+                    placeholder="Write your note here or use the quick buttons above to insert Q&A, Code, or Lists..."
+                    className="w-full bg-[#131826] border border-white/[0.08] rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 resize-y leading-relaxed"
+                  />
+                </>
               ) : (
                 <div className="w-full bg-[#131826] border border-white/[0.08] rounded-xl p-3 min-h-[120px] text-sm text-slate-300 max-h-48 overflow-y-auto">
                   {noteContent.trim() ? (
@@ -1350,7 +1257,7 @@ export default function NotesPage(): JSX.Element {
       {deleteConfirmation && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#0e121d] border border-white/[0.1] rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
-            <h3 className="font-serif text-xl font-bold text-white">Delete Item?</h3>
+            <h3 className="font-serif text-xl font-bold text-white">Delete Note?</h3>
             <p className="text-xs text-slate-400 leading-relaxed">
               Are you sure you want to delete &ldquo;{deleteConfirmation.title}&rdquo;? This action cannot be undone.
             </p>
