@@ -23,7 +23,6 @@ import {
   LessonSectionItem,
 } from "./lesson-content-types";
 import { recordActivity } from "@/lib/gamification";
-import { LessonNotesDrawer } from "./LessonNotesDrawer";
 import { CodeBookmarkButton } from "./CodeBookmarkButton";
 import { LayoutGrid } from "@/app/learn/nextjs/components/icons";
 
@@ -86,19 +85,6 @@ export function DataDrivenLessonView({
 
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<number | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
-  const [isNotesOpen, setIsNotesOpen] = useState<boolean>(false);
-
-  // Global hotkey: Ctrl+J or Cmd+J opens notes drawer
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "j") {
-        e.preventDefault();
-        setIsNotesOpen((prev) => !prev);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
   // Reset quiz state when section changes
   useEffect(() => {
@@ -950,28 +936,6 @@ export function DataDrivenLessonView({
           </main>
         </div>
       </div>
-
-      {/* Floating Notes & Bookmarks Button (Clean solid style, no gradient) */}
-      <button
-        onClick={() => setIsNotesOpen(true)}
-        title="Open Notes & Bookmarks Drawer (Ctrl+J)"
-        className="fixed bottom-[28px] right-[86px] max-[400px]:bottom-4 max-[400px]:right-[72px] max-[400px]:w-12 max-[400px]:px-0 z-40 h-12 px-3.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white shadow-xl shadow-purple-950/40 border border-purple-400/20 flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-105 active:scale-95"
-      >
-        <span className="text-base">📝</span>
-        <span className="text-xs font-bold hidden sm:inline">Notes</span>
-      </button>
-
-      {/* Interactive Notes & Bookmarks Slide-Over Drawer */}
-      <LessonNotesDrawer
-        isOpen={isNotesOpen}
-        onClose={() => setIsNotesOpen(false)}
-        trackKey={trackKey}
-        trackTitle={trackTitle}
-        lessonSlug={lesson.slug}
-        lessonTitle={lesson.title}
-        activeSectionId={activeSection}
-        activeSectionLabel={getSectionLabel(sections[currentIndex], currentIndex)}
-      />
     </InteractiveGrid>
   );
 }

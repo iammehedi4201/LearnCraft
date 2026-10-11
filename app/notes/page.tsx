@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { Nav } from "@/components/nav";
-import { InteractiveGrid } from "@/components/interactive-grid";
 import {
   getLocalNotes,
   upsertNote,
@@ -21,11 +20,10 @@ interface TrackMeta {
   key: string;
   label: string;
   color: string;
+  dotColor: string;
   badgeBg: string;
   badgeText: string;
   badgeBorder: string;
-  dotBg: string;
-  accentGradient: string;
 }
 
 const TRACK_CONFIG: Record<string, TrackMeta> = {
@@ -33,141 +31,127 @@ const TRACK_CONFIG: Record<string, TrackMeta> = {
     key: "react",
     label: "React",
     color: "#06B6D4",
-    badgeBg: "bg-cyan-500/10",
-    badgeText: "text-cyan-400",
-    badgeBorder: "border-cyan-500/20",
-    dotBg: "bg-cyan-400",
-    accentGradient: "from-cyan-500/20 via-transparent to-transparent",
+    dotColor: "#06B6D4",
+    badgeBg: "bg-[#082a36]",
+    badgeText: "text-[#38bdf8]",
+    badgeBorder: "border-[#38bdf8]/25",
   },
   nodejs: {
     key: "nodejs",
     label: "Node.js",
-    color: "#10B981",
-    badgeBg: "bg-emerald-500/10",
-    badgeText: "text-emerald-400",
-    badgeBorder: "border-emerald-500/20",
-    dotBg: "bg-emerald-400",
-    accentGradient: "from-emerald-500/20 via-transparent to-transparent",
+    color: "#22C55E",
+    dotColor: "#22C55E",
+    badgeBg: "bg-[#0d2a1f]",
+    badgeText: "text-[#34d399]",
+    badgeBorder: "border-[#34d399]/25",
   },
   typescript: {
     key: "typescript",
     label: "TypeScript",
     color: "#3B82F6",
-    badgeBg: "bg-blue-500/10",
-    badgeText: "text-blue-400",
-    badgeBorder: "border-blue-500/20",
-    dotBg: "bg-blue-400",
-    accentGradient: "from-blue-500/20 via-transparent to-transparent",
+    dotColor: "#3B82F6",
+    badgeBg: "bg-[#0f2442]",
+    badgeText: "text-[#60a5fa]",
+    badgeBorder: "border-[#60a5fa]/25",
   },
   nestjs: {
     key: "nestjs",
     label: "NestJS",
     color: "#F43F5E",
-    badgeBg: "bg-rose-500/10",
-    badgeText: "text-rose-400",
-    badgeBorder: "border-rose-500/20",
-    dotBg: "bg-rose-400",
-    accentGradient: "from-rose-500/20 via-transparent to-transparent",
+    dotColor: "#FF6384",
+    badgeBg: "bg-[#301522]",
+    badgeText: "text-[#ff6384]",
+    badgeBorder: "border-[#ff6384]/25",
   },
   nextjs: {
     key: "nextjs",
     label: "Next.js",
     color: "#94A3B8",
-    badgeBg: "bg-slate-200/10",
+    dotColor: "#CBD5E1",
+    badgeBg: "bg-[#1e2430]",
     badgeText: "text-slate-200",
-    badgeBorder: "border-slate-200/20",
-    dotBg: "bg-slate-300",
-    accentGradient: "from-slate-400/20 via-transparent to-transparent",
+    badgeBorder: "border-slate-500/25",
   },
-  tanstack: {
-    key: "tanstack",
-    label: "TanStack Query",
-    color: "#F97316",
-    badgeBg: "bg-orange-500/10",
-    badgeText: "text-orange-400",
-    badgeBorder: "border-orange-500/20",
-    dotBg: "bg-orange-400",
-    accentGradient: "from-orange-500/20 via-transparent to-transparent",
-  },
-  postgresql: {
-    key: "postgresql",
-    label: "PostgreSQL",
-    color: "#38BDF8",
-    badgeBg: "bg-sky-500/10",
-    badgeText: "text-sky-400",
-    badgeBorder: "border-sky-500/20",
-    dotBg: "bg-sky-400",
-    accentGradient: "from-sky-500/20 via-transparent to-transparent",
-  },
-  prisma: {
-    key: "prisma",
-    label: "Prisma",
-    color: "#14B8A6",
-    badgeBg: "bg-teal-500/10",
-    badgeText: "text-teal-400",
-    badgeBorder: "border-teal-500/20",
-    dotBg: "bg-teal-400",
-    accentGradient: "from-teal-500/20 via-transparent to-transparent",
-  },
-  redux: {
-    key: "redux",
-    label: "Redux",
+  oop: {
+    key: "oop",
+    label: "OOP",
     color: "#A855F7",
-    badgeBg: "bg-purple-500/10",
-    badgeText: "text-purple-400",
-    badgeBorder: "border-purple-500/20",
-    dotBg: "bg-purple-400",
-    accentGradient: "from-purple-500/20 via-transparent to-transparent",
-  },
-  mongodb: {
-    key: "mongodb",
-    label: "MongoDB",
-    color: "#22C55E",
-    badgeBg: "bg-green-500/10",
-    badgeText: "text-green-400",
-    badgeBorder: "border-green-500/20",
-    dotBg: "bg-green-400",
-    accentGradient: "from-green-500/20 via-transparent to-transparent",
+    dotColor: "#C084FC",
+    badgeBg: "bg-[#25163b]",
+    badgeText: "text-[#c084fc]",
+    badgeBorder: "border-[#c084fc]/25",
   },
   "system-design": {
     key: "system-design",
     label: "System Design",
     color: "#F59E0B",
-    badgeBg: "bg-amber-500/10",
-    badgeText: "text-amber-400",
-    badgeBorder: "border-amber-500/20",
-    dotBg: "bg-amber-400",
-    accentGradient: "from-amber-500/20 via-transparent to-transparent",
-  },
-  oop: {
-    key: "oop",
-    label: "OOP",
-    color: "#8B5CF6",
-    badgeBg: "bg-violet-500/10",
-    badgeText: "text-violet-400",
-    badgeBorder: "border-violet-500/20",
-    dotBg: "bg-violet-400",
-    accentGradient: "from-violet-500/20 via-transparent to-transparent",
-  },
-  express: {
-    key: "express",
-    label: "Express",
-    color: "#64748B",
-    badgeBg: "bg-slate-500/10",
-    badgeText: "text-slate-300",
-    badgeBorder: "border-slate-500/20",
-    dotBg: "bg-slate-400",
-    accentGradient: "from-slate-500/20 via-transparent to-transparent",
+    dotColor: "#FBBF24",
+    badgeBg: "bg-[#2d210b]",
+    badgeText: "text-[#fbbf24]",
+    badgeBorder: "border-[#fbbf24]/25",
   },
   javascript: {
     key: "javascript",
     label: "JavaScript",
     color: "#EAB308",
-    badgeBg: "bg-yellow-500/10",
-    badgeText: "text-yellow-300",
-    badgeBorder: "border-yellow-500/20",
-    dotBg: "bg-yellow-400",
-    accentGradient: "from-yellow-500/20 via-transparent to-transparent",
+    dotColor: "#FDE047",
+    badgeBg: "bg-[#2e270b]",
+    badgeText: "text-[#fde047]",
+    badgeBorder: "border-[#fde047]/25",
+  },
+  express: {
+    key: "express",
+    label: "Express",
+    color: "#64748B",
+    dotColor: "#94A3B8",
+    badgeBg: "bg-[#1c222c]",
+    badgeText: "text-[#94a3b8]",
+    badgeBorder: "border-[#94a3b8]/25",
+  },
+  postgresql: {
+    key: "postgresql",
+    label: "PostgreSQL",
+    color: "#38BDF8",
+    dotColor: "#38BDF8",
+    badgeBg: "bg-[#0c2338]",
+    badgeText: "text-[#38bdf8]",
+    badgeBorder: "border-[#38bdf8]/25",
+  },
+  mongodb: {
+    key: "mongodb",
+    label: "MongoDB",
+    color: "#22C55E",
+    dotColor: "#4ADE80",
+    badgeBg: "bg-[#0b291d]",
+    badgeText: "text-[#4ade80]",
+    badgeBorder: "border-[#4ade80]/25",
+  },
+  prisma: {
+    key: "prisma",
+    label: "Prisma",
+    color: "#14B8A6",
+    dotColor: "#2DD4BF",
+    badgeBg: "bg-[#0b2927]",
+    badgeText: "text-[#2dd4bf]",
+    badgeBorder: "border-[#2dd4bf]/25",
+  },
+  redux: {
+    key: "redux",
+    label: "Redux",
+    color: "#A855F7",
+    dotColor: "#C084FC",
+    badgeBg: "bg-[#271838]",
+    badgeText: "text-[#c084fc]",
+    badgeBorder: "border-[#c084fc]/25",
+  },
+  tanstack: {
+    key: "tanstack",
+    label: "TanStack",
+    color: "#F97316",
+    dotColor: "#FB923C",
+    badgeBg: "bg-[#2d1b0f]",
+    badgeText: "text-[#fb923c]",
+    badgeBorder: "border-[#fb923c]/25",
   },
 };
 
@@ -175,11 +159,10 @@ const DEFAULT_TRACK_META: TrackMeta = {
   key: "general",
   label: "General",
   color: "#A855F7",
-  badgeBg: "bg-purple-500/10",
+  dotColor: "#C084FC",
+  badgeBg: "bg-[#25163b]",
   badgeText: "text-purple-300",
-  badgeBorder: "border-purple-500/20",
-  dotBg: "bg-purple-400",
-  accentGradient: "from-purple-500/20 via-transparent to-transparent",
+  badgeBorder: "border-purple-500/25",
 };
 
 function getTrackMeta(trackKey?: string): TrackMeta {
@@ -190,13 +173,37 @@ function getTrackMeta(trackKey?: string): TrackMeta {
       key: normalized,
       label: normalized.charAt(0).toUpperCase() + normalized.slice(1),
       color: "#818CF8",
-      badgeBg: "bg-indigo-500/10",
+      dotColor: "#818CF8",
+      badgeBg: "bg-indigo-500/15",
       badgeText: "text-indigo-300",
-      badgeBorder: "border-indigo-500/20",
-      dotBg: "bg-indigo-400",
-      accentGradient: "from-indigo-500/20 via-transparent to-transparent",
+      badgeBorder: "border-indigo-500/25",
     }
   );
+}
+
+const PRIMARY_CHIP_KEYS = ["react", "nodejs", "typescript", "nestjs"];
+const MORE_TRACK_KEYS = [
+  "nextjs",
+  "oop",
+  "system-design",
+  "javascript",
+  "express",
+  "postgresql",
+  "mongodb",
+  "prisma",
+  "redux",
+  "tanstack",
+];
+
+// Helper to format date like "Sep 27, 2026"
+function formatDate(timestamp?: number): string {
+  if (!timestamp) return "Recently";
+  const date = new Date(timestamp);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // ─── Inline SVG Icons ────────────────────────────────────────────────────────
@@ -209,99 +216,12 @@ function IconSearch({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
-function IconNote({ className = "w-4 h-4" }: { className?: string }) {
+function IconMoreHorizontal({ className = "w-4 h-4" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-      <polyline points="14 2 14 8 20 8" />
-      <line x1="16" y1="13" x2="8" y2="13" />
-      <line x1="16" y1="17" x2="8" y2="17" />
-      <polyline points="10 9 9 9 8 9" />
-    </svg>
-  );
-}
-
-function IconBookmark({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="m19 21-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-    </svg>
-  );
-}
-
-function IconCopy({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-    </svg>
-  );
-}
-
-function IconCheck({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
-
-function IconEdit({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-    </svg>
-  );
-}
-
-function IconTrash({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-    </svg>
-  );
-}
-
-function IconArrowRight({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <line x1="5" y1="12" x2="19" y2="12" />
-      <polyline points="12 5 19 12 12 19" />
-    </svg>
-  );
-}
-
-function IconPlus({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  );
-}
-
-function IconGrid({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <rect x="3" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="14" width="7" height="7" rx="1.5" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" />
-    </svg>
-  );
-}
-
-function IconList({ className = "w-4 h-4" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <line x1="8" y1="6" x2="21" y2="6" />
-      <line x1="8" y1="12" x2="21" y2="12" />
-      <line x1="8" y1="18" x2="21" y2="18" />
-      <line x1="3" y1="6" x2="3.01" y2="6" />
-      <line x1="3" y1="12" x2="3.01" y2="12" />
-      <line x1="3" y1="18" x2="3.01" y2="18" />
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <circle cx="5" cy="12" r="1.75" />
+      <circle cx="12" cy="12" r="1.75" />
+      <circle cx="19" cy="12" r="1.75" />
     </svg>
   );
 }
@@ -315,39 +235,92 @@ function IconClose({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
-function IconSparkles({ className = "w-4 h-4" }: { className?: string }) {
+function IconCopy({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z" />
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
     </svg>
   );
 }
 
+function IconCheck({ className = "w-3.5 h-3.5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+function IconEdit({ className = "w-3.5 h-3.5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+    </svg>
+  );
+}
+
+function IconTrash({ className = "w-3.5 h-3.5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <polyline points="3 6 5 6 21 6" />
+      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+    </svg>
+  );
+}
+
+function IconExternalLink({ className = "w-3.5 h-3.5" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+      <polyline points="15 3 21 3 21 9" />
+      <line x1="10" y1="14" x2="21" y2="3" />
+    </svg>
+  );
+}
+
+// ─── Default Sample Note for Fresh States ────────────────────────────────────
+const SEED_DEMO_NOTE: UserNote = {
+  id: "demo-encapsulation-oop",
+  trackKey: "nestjs",
+  lessonSlug: "what-is-encapsulation",
+  lessonPath: "/learn/nestjs",
+  title: "What is Encapsulation in Object-Oriented Programming?",
+  content: "Private fields (# or private) plus controlled getter/setter methods. Encapsulation protects an object's internal state from unauthorized external manipulation while exposing clean public interfaces.",
+  createdAt: 1790467200000,
+  updatedAt: 1790467200000,
+};
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function NotesPage(): JSX.Element {
   const [activeTab, setActiveTab] = useState<"notes" | "bookmarks">("notes");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [sortBy, setSortBy] = useState<"recent" | "oldest" | "title" | "track">("recent");
   const [selectedTrack, setSelectedTrack] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [notes, setNotes] = useState<UserNote[]>([]);
   const [bookmarks, setBookmarks] = useState<CodeBookmark[]>([]);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
-  // Expanded notes state (for long card text toggle)
-  const [expandedNotes, setExpandedNotes] = useState<Record<string, boolean>>({});
+  // Dropdown states
+  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const [moreDropdownOpen, setMoreDropdownOpen] = useState<boolean>(false);
+  const [moreSearchQuery, setMoreSearchQuery] = useState<string>("");
+  const [showAllChipsInline, setShowAllChipsInline] = useState<boolean>(false);
 
-  // Note Dialog State (Create or Edit)
+  // Full Reading Modal
+  const [readingNote, setReadingNote] = useState<UserNote | null>(null);
+
+  // Create / Edit Modal State
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
   const [activeEditingId, setActiveEditingId] = useState<string | null>(null);
-  const [noteTrack, setNoteTrack] = useState<string>("react");
+  const [noteTrack, setNoteTrack] = useState<string>("nestjs");
   const [noteTitle, setNoteTitle] = useState<string>("");
   const [noteContent, setNoteContent] = useState<string>("");
   const [noteSlug, setNoteSlug] = useState<string>("");
   const [modalTab, setModalTab] = useState<"edit" | "preview">("edit");
 
-  // Custom Delete Confirmation State
+  // Custom Delete Confirmation Modal
   const [deleteConfirmation, setDeleteConfirmation] = useState<{
     id: string;
     type: "note" | "bookmark";
@@ -355,32 +328,57 @@ export default function NotesPage(): JSX.Element {
   } | null>(null);
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+  const moreDropdownRef = useRef<HTMLDivElement | null>(null);
 
+  // Load notes and bookmarks
   useEffect(() => {
-    // Initial local read (bridges legacy annotations)
-    setNotes(getLocalNotes());
-    setBookmarks(getLocalBookmarks());
+    let currentNotes = getLocalNotes();
+    const currentBookmarks = getLocalBookmarks();
 
-    // Cloud sync
-    syncNotesWithCloud().then(setNotes);
-    syncBookmarksWithCloud().then(setBookmarks);
+    // If completely brand new, seed the demo note to match the preview mockup
+    if (currentNotes.length === 0) {
+      upsertNote(SEED_DEMO_NOTE);
+      currentNotes = [SEED_DEMO_NOTE];
+    }
+
+    setNotes(currentNotes);
+    setBookmarks(currentBookmarks);
+
+    syncNotesWithCloud().then((clNotes) => {
+      if (clNotes.length > 0) setNotes(clNotes);
+    });
+    syncBookmarksWithCloud().then((clBms) => {
+      if (clBms.length > 0) setBookmarks(clBms);
+    });
 
     const handleNotesUpdate = () => setNotes(getLocalNotes());
     const handleBmUpdate = () => setBookmarks(getLocalBookmarks());
-    const handleRevSync = () => setNotes(getLocalNotes());
 
     window.addEventListener("learncraft-notes-updated", handleNotesUpdate);
     window.addEventListener("learncraft-bookmarks-updated", handleBmUpdate);
-    window.addEventListener("learncraft:revision-sync", handleRevSync);
 
     return () => {
       window.removeEventListener("learncraft-notes-updated", handleNotesUpdate);
       window.removeEventListener("learncraft-bookmarks-updated", handleBmUpdate);
-      window.removeEventListener("learncraft:revision-sync", handleRevSync);
     };
   }, []);
 
-  // Shortcut for focusing search (/)
+  // Close menus on outside click
+  useEffect(() => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-note-menu]")) {
+        setActiveMenuId(null);
+      }
+      if (moreDropdownRef.current && !moreDropdownRef.current.contains(target)) {
+        setMoreDropdownOpen(false);
+      }
+    };
+    window.addEventListener("click", handleGlobalClick);
+    return () => window.removeEventListener("click", handleGlobalClick);
+  }, []);
+
+  // Keyboard shortcut '/' to search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
@@ -401,30 +399,32 @@ export default function NotesPage(): JSX.Element {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2200);
+      setTimeout(() => setCopiedId(null), 2000);
     } catch {}
   };
 
   const handleOpenCreateNote = () => {
     setDialogMode("create");
     setActiveEditingId(null);
-    setNoteTrack(selectedTrack !== "all" ? selectedTrack : "react");
+    setNoteTrack(selectedTrack !== "all" ? selectedTrack : "nestjs");
     setNoteTitle("");
     setNoteContent("");
     setNoteSlug("");
     setModalTab("edit");
     setDialogOpen(true);
+    setActiveMenuId(null);
   };
 
   const handleOpenEditNote = (note: UserNote) => {
     setDialogMode("edit");
     setActiveEditingId(note.id);
-    setNoteTrack(note.trackKey || "react");
+    setNoteTrack(note.trackKey || "nestjs");
     setNoteTitle(note.title || "");
     setNoteContent(note.content || "");
     setNoteSlug(note.lessonSlug || "");
     setModalTab("edit");
     setDialogOpen(true);
+    setActiveMenuId(null);
   };
 
   const handleSaveNoteDialog = () => {
@@ -440,11 +440,14 @@ export default function NotesPage(): JSX.Element {
           content: noteContent.trim(),
         });
         setNotes((prev) => prev.map((n) => (n.id === updated.id ? updated : n)));
+        if (readingNote?.id === updated.id) {
+          setReadingNote(updated);
+        }
       }
     } else {
       const newNote = upsertNote({
         trackKey: noteTrack,
-        lessonSlug: noteSlug.trim() || "general-notebook",
+        lessonSlug: noteSlug.trim() || "study-note",
         lessonPath: `/learn/${noteTrack}`,
         title: noteTitle.trim() || undefined,
         content: noteContent.trim(),
@@ -455,10 +458,6 @@ export default function NotesPage(): JSX.Element {
     setDialogOpen(false);
   };
 
-  const triggerConfirmDelete = (id: string, type: "note" | "bookmark", title: string) => {
-    setDeleteConfirmation({ id, type, title });
-  };
-
   const executeDelete = () => {
     if (!deleteConfirmation) return;
     const { id, type } = deleteConfirmation;
@@ -466,6 +465,7 @@ export default function NotesPage(): JSX.Element {
     if (type === "note") {
       deleteNote(id);
       setNotes((prev) => prev.filter((n) => n.id !== id));
+      if (readingNote?.id === id) setReadingNote(null);
     } else {
       deleteBookmark(id);
       setBookmarks((prev) => prev.filter((b) => b.id !== id));
@@ -474,40 +474,10 @@ export default function NotesPage(): JSX.Element {
     setDeleteConfirmation(null);
   };
 
-  const toggleExpandNote = (id: string) => {
-    setExpandedNotes((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  // Available tracks with counts
-  const trackCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    const items = activeTab === "notes" ? notes : bookmarks;
-    items.forEach((item) => {
-      const key = (item.trackKey || "general").toLowerCase();
-      counts[key] = (counts[key] || 0) + 1;
-    });
-    return counts;
-  }, [activeTab, notes, bookmarks]);
-
-  const availableTracks = useMemo(() => {
-    const baseKeys = Object.keys(TRACK_CONFIG);
-    const existingKeys = new Set(baseKeys);
-
-    // Add any dynamic tracks from notes
-    notes.forEach((n) => {
-      const key = (n.trackKey || "").toLowerCase();
-      if (key && !existingKeys.has(key)) {
-        existingKeys.add(key);
-      }
-    });
-
-    return Array.from(existingKeys).map((key) => getTrackMeta(key));
-  }, [notes]);
-
-  // Filtered & Sorted Notes
+  // Filtered Notes
   const filteredNotes = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
-    let result = notes.filter((n) => {
+    return notes.filter((n) => {
       const noteTrack = (n.trackKey || "").toLowerCase();
       const matchesTrack = selectedTrack === "all" || noteTrack === selectedTrack.toLowerCase();
       const matchesQuery =
@@ -518,20 +488,12 @@ export default function NotesPage(): JSX.Element {
         (n.trackKey && n.trackKey.toLowerCase().includes(q));
       return matchesTrack && matchesQuery;
     });
+  }, [notes, selectedTrack, searchQuery]);
 
-    return result.sort((a, b) => {
-      if (sortBy === "recent") return (b.updatedAt || 0) - (a.updatedAt || 0);
-      if (sortBy === "oldest") return (a.updatedAt || 0) - (b.updatedAt || 0);
-      if (sortBy === "title") return (a.title || "").localeCompare(b.title || "");
-      if (sortBy === "track") return (a.trackKey || "").localeCompare(b.trackKey || "");
-      return 0;
-    });
-  }, [notes, selectedTrack, searchQuery, sortBy]);
-
-  // Filtered & Sorted Bookmarks
+  // Filtered Bookmarks
   const filteredBookmarks = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
-    let result = bookmarks.filter((b) => {
+    return bookmarks.filter((b) => {
       const bmTrack = (b.trackKey || "").toLowerCase();
       const matchesTrack = selectedTrack === "all" || bmTrack === selectedTrack.toLowerCase();
       const matchesQuery =
@@ -542,199 +504,97 @@ export default function NotesPage(): JSX.Element {
         (b.trackKey && b.trackKey.toLowerCase().includes(q));
       return matchesTrack && matchesQuery;
     });
+  }, [bookmarks, selectedTrack, searchQuery]);
 
-    return result.sort((a, b) => {
-      if (sortBy === "recent") return (b.createdAt || 0) - (a.createdAt || 0);
-      if (sortBy === "oldest") return (a.createdAt || 0) - (b.createdAt || 0);
-      if (sortBy === "title") return (a.title || "").localeCompare(b.title || "");
-      if (sortBy === "track") return (a.trackKey || "").localeCompare(b.trackKey || "");
-      return 0;
+  // Count of items per track for badges in dropdown
+  const trackItemCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    const items = activeTab === "notes" ? notes : bookmarks;
+    items.forEach((item) => {
+      const key = (item.trackKey || "").toLowerCase();
+      if (key) {
+        counts[key] = (counts[key] || 0) + 1;
+      }
     });
-  }, [bookmarks, selectedTrack, searchQuery, sortBy]);
+    return counts;
+  }, [activeTab, notes, bookmarks]);
 
-  const uniqueTracksStudied = useMemo(() => {
-    const set = new Set<string>();
-    notes.forEach((n) => n.trackKey && set.add(n.trackKey.toLowerCase()));
-    bookmarks.forEach((b) => b.trackKey && set.add(b.trackKey.toLowerCase()));
-    return set.size;
+  // All extra tracks (default MORE_TRACK_KEYS + any dynamic tracks in notes)
+  const allAvailableMoreTracks = useMemo(() => {
+    const keys = new Set(MORE_TRACK_KEYS);
+    notes.forEach((n) => {
+      const k = (n.trackKey || "").toLowerCase();
+      if (k && !PRIMARY_CHIP_KEYS.includes(k)) keys.add(k);
+    });
+    bookmarks.forEach((b) => {
+      const k = (b.trackKey || "").toLowerCase();
+      if (k && !PRIMARY_CHIP_KEYS.includes(k)) keys.add(k);
+    });
+    return Array.from(keys);
   }, [notes, bookmarks]);
 
+  // Filtered tracks in the More popover search
+  const filteredMoreTracks = useMemo(() => {
+    if (!moreSearchQuery.trim()) return allAvailableMoreTracks;
+    const q = moreSearchQuery.toLowerCase().trim();
+    return allAvailableMoreTracks.filter((k) => {
+      const meta = TRACK_CONFIG[k] || getTrackMeta(k);
+      return meta.label.toLowerCase().includes(q) || meta.key.toLowerCase().includes(q);
+    });
+  }, [allAvailableMoreTracks, moreSearchQuery]);
+
+  const isMoreSelected = allAvailableMoreTracks.includes(selectedTrack.toLowerCase());
+
   return (
-    <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 relative selection:bg-purple-500/30 selection:text-white">
+    <div
+      className="min-h-screen bg-[#07090e] text-slate-100 relative selection:bg-purple-500/30 selection:text-white pb-24"
+      style={{
+        backgroundImage: `radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px)`,
+        backgroundSize: "28px 28px",
+      }}
+    >
       <Nav />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10 space-y-6">
-        {/* ─── Hero Header & Stats ────────────────────────────────────────── */}
-        <div className="relative rounded-3xl bg-gradient-to-b from-white/[0.04] to-transparent border border-white/[0.06] p-6 sm:p-8 backdrop-blur-xl shadow-2xl">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-3 max-w-2xl">
-              <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-purple-300 bg-purple-500/15 px-3 py-1 rounded-full border border-purple-500/25">
-                <IconSparkles className="w-3 h-3 text-purple-400" />
-                <span>Developer Knowledge Hub</span>
-              </div>
-
-              <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight font-display text-white">
-                Study Notes & Code Bookmarks
-              </h1>
-
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                Your centralized interview notebook across 14+ technical domains. Review your architectural takeaways,
-                annotations, and key code patterns.
-              </p>
-            </div>
-
-            {/* Quick Stats & Primary Action */}
-            <div className="flex flex-col sm:flex-row items-stretch md:items-center gap-3">
-              <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-[#0B0F19]/90 border border-white/[0.08] text-xs font-mono">
-                <div className="px-3 py-1.5 rounded-xl bg-purple-500/10 text-purple-300 border border-purple-500/20 flex items-center gap-2">
-                  <IconNote className="w-3.5 h-3.5 text-purple-400" />
-                  <span className="font-bold">{notes.length}</span>
-                  <span className="text-[10px] text-purple-300/80">Notes</span>
-                </div>
-                <div className="px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-300 border border-amber-500/20 flex items-center gap-2">
-                  <IconBookmark className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="font-bold">{bookmarks.length}</span>
-                  <span className="text-[10px] text-amber-300/80">Saved</span>
-                </div>
-                {uniqueTracksStudied > 0 && (
-                  <div className="px-3 py-1.5 rounded-xl bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 hidden sm:flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-                    <span className="font-bold">{uniqueTracksStudied}</span>
-                    <span className="text-[10px] text-cyan-300/80">Tracks</span>
-                  </div>
-                )}
-              </div>
-
-              <button
-                type="button"
-                onClick={handleOpenCreateNote}
-                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-lg shadow-purple-600/25 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
-              >
-                <IconPlus className="w-4 h-4 stroke-[2.5]" />
-                <span>New Note</span>
-              </button>
-            </div>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        {/* ─── Top Header ─────────────────────────────────────────────────── */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-10 sm:pt-14 pb-2">
+          <div>
+            <h1 className="font-serif text-4xl sm:text-5xl font-bold tracking-tight text-white leading-tight">
+              Study Notes
+            </h1>
+            <p className="text-sm text-slate-400 mt-2 font-normal">
+              {`${notes.length} ${notes.length === 1 ? "note" : "notes"} · ${bookmarks.length} saved · everything you're learning, in one place`}
+            </p>
           </div>
+
+          <button
+            onClick={handleOpenCreateNote}
+            className="self-start sm:self-center inline-flex items-center gap-1.5 px-6 py-2.5 rounded-2xl bg-[#a78bfa] hover:bg-[#b89dfe] text-slate-950 font-bold text-sm shadow-[0_4px_25px_rgba(167,139,250,0.35)] hover:shadow-[0_4px_30px_rgba(167,139,250,0.5)] transition-all cursor-pointer"
+          >
+            <span className="text-base leading-none font-extrabold">+</span>
+            <span>New note</span>
+          </button>
         </div>
 
-        {/* ─── Modern Toolbar & Filter Controls ─────────────────────────── */}
-        <div className="space-y-3">
-          {/* Top Bar: Tabs + View Mode + Sorting */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-[#0B0F19]/80 border border-white/[0.07] p-2.5 rounded-2xl backdrop-blur-md">
-            {/* Segmented Tabs */}
-            <div className="flex items-center p-1 bg-[#07090E] rounded-xl border border-white/[0.06]">
-              <button
-                type="button"
-                onClick={() => setActiveTab("notes")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
-                  activeTab === "notes"
-                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <IconNote className="w-3.5 h-3.5" />
-                <span>Notes</span>
-                <span
-                  className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                    activeTab === "notes"
-                      ? "bg-purple-800 text-purple-200"
-                      : "bg-white/[0.06] text-slate-400"
-                  }`}
-                >
-                  {filteredNotes.length}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setActiveTab("bookmarks")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
-                  activeTab === "bookmarks"
-                    ? "bg-amber-600 text-white shadow-md shadow-amber-600/30"
-                    : "text-slate-400 hover:text-white"
-                }`}
-              >
-                <IconBookmark className="w-3.5 h-3.5" />
-                <span>Bookmarks</span>
-                <span
-                  className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                    activeTab === "bookmarks"
-                      ? "bg-amber-800 text-amber-200"
-                      : "bg-white/[0.06] text-slate-400"
-                  }`}
-                >
-                  {filteredBookmarks.length}
-                </span>
-              </button>
+        {/* ─── Row 2: Search Bar & Segmented Pill Switcher ─────────────────── */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-8">
+          {/* Search Input */}
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+              <IconSearch className="w-4 h-4" />
             </div>
-
-            {/* Right Tools: View Mode Toggle & Sort Dropdown */}
-            <div className="flex items-center justify-between sm:justify-end gap-2">
-              {/* Sort Dropdown */}
-              <div className="relative">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-[#07090E] border border-white/[0.08] hover:border-white/[0.15] text-slate-300 text-xs rounded-xl px-3 py-2 pr-7 outline-none transition-colors appearance-none cursor-pointer"
-                >
-                  <option value="recent">Recently Updated</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="title">Title (A-Z)</option>
-                  <option value="track">By Track</option>
-                </select>
-                <div className="pointer-events-none absolute right-2.5 top-2.5 text-slate-500 text-[10px]">
-                  ▼
-                </div>
-              </div>
-
-              {/* View Switcher (Grid vs List) */}
-              <div className="flex items-center p-1 bg-[#07090E] rounded-xl border border-white/[0.06]">
-                <button
-                  type="button"
-                  onClick={() => setViewMode("grid")}
-                  title="Grid View"
-                  className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                    viewMode === "grid"
-                      ? "bg-white/[0.12] text-white"
-                      : "text-slate-500 hover:text-slate-300"
-                  }`}
-                >
-                  <IconGrid className="w-4 h-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("list")}
-                  title="List View"
-                  className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                    viewMode === "list"
-                      ? "bg-white/[0.12] text-white"
-                      : "text-slate-500 hover:text-slate-300"
-                  }`}
-                >
-                  <IconList className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Search Bar Input */}
-          <div className="relative">
             <input
               ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search concepts, notes, syntax, or tags... (Press / to focus)"
-              className="w-full pl-10 pr-10 py-3 rounded-2xl bg-[#0B0F19]/90 border border-white/[0.08] focus:border-purple-500/60 focus:ring-1 focus:ring-purple-500/20 text-xs sm:text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none transition-all shadow-lg"
+              placeholder="Search notes, topics, code..."
+              className="w-full bg-[#0e121d] border border-white/[0.08] focus:border-purple-500/50 focus:outline-none rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-slate-500 transition-colors"
             />
-            <span className="absolute left-3.5 top-3.5 text-slate-500">
-              <IconSearch className="w-4 h-4" />
-            </span>
             {searchQuery && (
               <button
-                type="button"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-3.5 top-3.5 text-slate-500 hover:text-slate-200 transition-colors cursor-pointer"
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white"
                 title="Clear search"
               >
                 <IconClose className="w-4 h-4" />
@@ -742,766 +602,768 @@ export default function NotesPage(): JSX.Element {
             )}
           </div>
 
-          {/* Track Filter Pills Row */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 pt-0.5 scrollbar-none">
+          {/* Segmented Pill Container */}
+          <div className="bg-[#0e121d] border border-white/[0.08] rounded-xl p-1 flex items-center gap-1 shrink-0">
             <button
-              type="button"
-              onClick={() => setSelectedTrack("all")}
-              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                selectedTrack === "all"
-                  ? "bg-purple-500/20 text-purple-200 border border-purple-500/40 font-bold shadow-sm"
-                  : "bg-white/[0.03] text-slate-400 hover:text-slate-200 hover:bg-white/[0.06] border border-white/[0.06]"
+              onClick={() => setActiveTab("notes")}
+              className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
+                activeTab === "notes"
+                  ? "bg-[#2b2247] text-purple-200 shadow-sm"
+                  : "text-slate-400 hover:text-white"
               }`}
             >
-              <span>All Tracks</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded-md bg-white/[0.06] text-slate-400">
-                {activeTab === "notes" ? notes.length : bookmarks.length}
-              </span>
+              Notes · {notes.length}
             </button>
+            <button
+              onClick={() => setActiveTab("bookmarks")}
+              className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
+                activeTab === "bookmarks"
+                  ? "bg-[#2b2247] text-purple-200 shadow-sm"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Saved · {bookmarks.length}
+            </button>
+          </div>
+        </div>
 
-            {availableTracks.map((t) => {
-              const isSelected = selectedTrack.toLowerCase() === t.key.toLowerCase();
-              const count = trackCounts[t.key] || 0;
+        {/* ─── Row 3: Filter Chips ─────────────────────────────────────────── */}
+        <div className="flex flex-wrap items-center gap-2 py-2 mt-5 relative z-30">
+          {/* All Chip */}
+          <button
+            onClick={() => setSelectedTrack("all")}
+            className={`px-4 py-1.5 rounded-full text-xs font-medium transition-colors shrink-0 ${
+              selectedTrack === "all"
+                ? "bg-[#231b3b] border border-purple-500/60 text-white shadow-sm shadow-purple-900/30"
+                : "bg-[#0e121d] border border-white/[0.08] text-slate-400 hover:text-white hover:border-white/20"
+            }`}
+          >
+            All
+          </button>
 
-              return (
+          {/* If inline mode is enabled, show ALL tracks directly */}
+          {showAllChipsInline ? (
+            <>
+              {/* Primary Tracks */}
+              {PRIMARY_CHIP_KEYS.map((key) => {
+                const meta = TRACK_CONFIG[key] || getTrackMeta(key);
+                const isSelected = selectedTrack === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedTrack(key)}
+                    className={`px-4 py-1.5 rounded-full text-xs flex items-center gap-2 transition-colors shrink-0 ${
+                      isSelected
+                        ? "bg-[#231b3b] border border-purple-500/60 text-white font-medium shadow-sm shadow-purple-900/30"
+                        : "bg-[#0e121d] border border-white/[0.08] text-slate-300 hover:text-white hover:border-white/20"
+                    }`}
+                  >
+                    <span
+                      className="w-2 h-2 rounded-full shrink-0"
+                      style={{ backgroundColor: meta.dotColor }}
+                    />
+                    <span>{meta.label}</span>
+                  </button>
+                );
+              })}
+
+              {/* All Additional Tracks */}
+              {allAvailableMoreTracks.map((key) => {
+                const meta = TRACK_CONFIG[key] || getTrackMeta(key);
+                const isSelected = selectedTrack === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedTrack(key)}
+                    className={`px-4 py-1.5 rounded-full text-xs flex items-center gap-2 transition-colors shrink-0 ${
+                      isSelected
+                        ? "bg-[#231b3b] border border-purple-500/60 text-white font-medium shadow-sm shadow-purple-900/30"
+                        : "bg-[#0e121d] border border-white/[0.08] text-slate-300 hover:text-white hover:border-white/20"
+                    }`}
+                  >
+                    <span
+                      className="w-2 h-2 rounded-full shrink-0"
+                      style={{ backgroundColor: meta.dotColor }}
+                    />
+                    <span>{meta.label}</span>
+                  </button>
+                );
+              })}
+
+              {/* Collapse Button */}
+              <button
+                onClick={() => setShowAllChipsInline(false)}
+                className="px-3.5 py-1.5 rounded-full text-xs flex items-center gap-1.5 text-purple-300 bg-purple-500/10 border border-purple-500/25 hover:bg-purple-500/20 transition-colors shrink-0 font-medium"
+              >
+                <span>Show less</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-3 h-3">
+                  <polyline points="18 15 12 9 6 15" />
+                </svg>
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Primary Track Chips */}
+              {PRIMARY_CHIP_KEYS.map((key) => {
+                const meta = TRACK_CONFIG[key] || getTrackMeta(key);
+                const isSelected = selectedTrack === key;
+                return (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedTrack(key)}
+                    className={`px-4 py-1.5 rounded-full text-xs flex items-center gap-2 transition-colors shrink-0 ${
+                      isSelected
+                        ? "bg-[#231b3b] border border-purple-500/60 text-white font-medium shadow-sm shadow-purple-900/30"
+                        : "bg-[#0e121d] border border-white/[0.08] text-slate-300 hover:text-white hover:border-white/20"
+                    }`}
+                  >
+                    <span
+                      className="w-2 h-2 rounded-full shrink-0"
+                      style={{ backgroundColor: meta.dotColor }}
+                    />
+                    <span>{meta.label}</span>
+                  </button>
+                );
+              })}
+
+              {/* Active Chip from More (if selected) */}
+              {isMoreSelected && (
                 <button
-                  key={t.key}
-                  type="button"
-                  onClick={() => setSelectedTrack(t.key)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
-                    isSelected
-                      ? `${t.badgeBg} ${t.badgeText} border ${t.badgeBorder} font-bold shadow-sm`
-                      : "bg-white/[0.02] text-slate-400 hover:text-slate-200 hover:bg-white/[0.05] border border-white/[0.05]"
+                  onClick={() => setSelectedTrack("all")}
+                  className="px-4 py-1.5 rounded-full text-xs flex items-center gap-2 bg-[#231b3b] border border-purple-500/60 text-white font-medium shadow-sm shadow-purple-900/30 shrink-0"
+                  title="Click to remove filter"
+                >
+                  <span
+                    className="w-2 h-2 rounded-full shrink-0"
+                    style={{ backgroundColor: (TRACK_CONFIG[selectedTrack] || getTrackMeta(selectedTrack)).dotColor }}
+                  />
+                  <span>{(TRACK_CONFIG[selectedTrack] || getTrackMeta(selectedTrack)).label}</span>
+                  <span className="text-slate-400 hover:text-white ml-0.5 font-bold">×</span>
+                </button>
+              )}
+
+              {/* More ▾ Dropdown Trigger & Popover */}
+              <div className="relative shrink-0" ref={moreDropdownRef}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMoreDropdownOpen(!moreDropdownOpen);
+                  }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs flex items-center gap-1.5 transition-colors cursor-pointer ${
+                    moreDropdownOpen || isMoreSelected
+                      ? "bg-[#231b3b] border border-purple-500/60 text-white font-medium"
+                      : "bg-[#0e121d] border border-white/[0.08] text-slate-400 hover:text-white hover:border-white/20"
                   }`}
                 >
-                  <span className={`w-2 h-2 rounded-full ${t.dotBg}`} />
-                  <span>{t.label}</span>
-                  {count > 0 && (
-                    <span
-                      className={`text-[10px] px-1.5 py-0.2 rounded-md ${
-                        isSelected ? "bg-white/10" : "bg-white/[0.04] text-slate-400"
-                      }`}
-                    >
-                      {count}
-                    </span>
-                  )}
+                  <span>More</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className={`w-3 h-3 transition-transform ${moreDropdownOpen ? "rotate-180" : ""}`}
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
                 </button>
-              );
-            })}
-          </div>
 
-          {/* Active Filter Summary Bar (if searching or track selected) */}
-          {(searchQuery || selectedTrack !== "all") && (
-            <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">
-              <span className="flex items-center gap-1.5">
-                <span>Filter applied:</span>
-                {selectedTrack !== "all" && (
-                  <span className="font-bold uppercase tracking-wider">{selectedTrack}</span>
-                )}
-                {searchQuery && (
-                  <span>
-                    matching &ldquo;<span className="text-white font-medium">{searchQuery}</span>&rdquo;
-                  </span>
-                )}
-                <span className="text-purple-400 font-mono">
-                  ({activeTab === "notes" ? filteredNotes.length : filteredBookmarks.length} found)
-                </span>
-              </span>
+                {/* Floating Popover (NOT clipped because parent is overflow-visible) */}
+                {moreDropdownOpen && (
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute left-0 mt-2 w-72 bg-[#0d111c] border border-white/[0.12] rounded-2xl shadow-2xl p-2.5 z-50 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150"
+                  >
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-2 pt-1 pb-2 border-b border-white/[0.06]">
+                      <div>
+                        <span className="text-xs font-semibold text-white">More Topics</span>
+                        <span className="block text-[10px] text-slate-400">
+                          {activeTab === "notes" ? "Filter study notes" : "Filter saved snippets"}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setShowAllChipsInline(true);
+                          setMoreDropdownOpen(false);
+                        }}
+                        className="text-[10px] text-purple-400 hover:text-purple-300 font-medium px-2 py-1 rounded-md hover:bg-purple-500/10 transition-colors"
+                      >
+                        Expand all ↗
+                      </button>
+                    </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedTrack("all");
-                }}
-                className="text-[11px] font-bold text-purple-300 hover:text-white underline underline-offset-2 cursor-pointer"
-              >
-                Clear Filters
-              </button>
-            </div>
+                    {/* Search inside More */}
+                    <div className="relative my-2 px-1">
+                      <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none text-slate-500">
+                        <IconSearch className="w-3.5 h-3.5" />
+                      </div>
+                      <input
+                        type="text"
+                        value={moreSearchQuery}
+                        onChange={(e) => setMoreSearchQuery(e.target.value)}
+                        placeholder="Search topics..."
+                        className="w-full bg-[#131826] border border-white/[0.08] focus:border-purple-500/50 focus:outline-none rounded-xl pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500"
+                        autoFocus
+                      />
+                      {moreSearchQuery && (
+                        <button
+                          onClick={() => setMoreSearchQuery("")}
+                          className="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-white"
+                        >
+                          <IconClose className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Topic List */}
+                    <div className="max-h-60 overflow-y-auto space-y-0.5 pr-1">
+                      {filteredMoreTracks.map((key) => {
+                        const meta = TRACK_CONFIG[key] || getTrackMeta(key);
+                        const isSelected = selectedTrack === key;
+                        const count = trackItemCounts[key] || 0;
+                        return (
+                          <button
+                            key={key}
+                            onClick={() => {
+                              setSelectedTrack(isSelected ? "all" : key);
+                              setMoreDropdownOpen(false);
+                            }}
+                            className={`w-full px-2.5 py-2 rounded-xl text-left text-xs flex items-center justify-between gap-2 transition-all ${
+                              isSelected
+                                ? "bg-purple-500/20 text-purple-200 border border-purple-500/30 font-medium"
+                                : "text-slate-300 hover:text-white hover:bg-white/[0.06]"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="w-2 h-2 rounded-full shrink-0"
+                                style={{ backgroundColor: meta.dotColor }}
+                              />
+                              <span>{meta.label}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              {count > 0 && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/[0.08] text-slate-400 font-mono">
+                                  {count}
+                                </span>
+                              )}
+                              {isSelected && <IconCheck className="w-3.5 h-3.5 text-purple-400" />}
+                            </div>
+                          </button>
+                        );
+                      })}
+
+                      {filteredMoreTracks.length === 0 && (
+                        <div className="py-4 text-center text-xs text-slate-500">
+                          No topics found matching &ldquo;{moreSearchQuery}&rdquo;
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Reset Button (if a More track is active) */}
+                    {isMoreSelected && (
+                      <div className="pt-2 mt-1 border-t border-white/[0.06] px-1">
+                        <button
+                          onClick={() => {
+                            setSelectedTrack("all");
+                            setMoreDropdownOpen(false);
+                          }}
+                          className="w-full py-1 text-center text-[11px] text-slate-400 hover:text-rose-400 transition-colors"
+                        >
+                          Reset to All Topics
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </div>
 
-        {/* ─── Content Display (Notes vs Bookmarks) ────────────────────────── */}
+        {/* ─── Row 4: Grid Layout ──────────────────────────────────────────── */}
         {activeTab === "notes" ? (
-          <div>
-            {filteredNotes.length === 0 ? (
-              /* Notes Empty State */
-              <div className="p-12 sm:p-16 text-center rounded-3xl bg-[#0B0F19]/80 border border-white/[0.08] space-y-4 max-w-xl mx-auto shadow-xl">
-                <div className="w-14 h-14 mx-auto rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shadow-inner">
-                  <IconNote className="w-7 h-7 stroke-[1.8]" />
-                </div>
-                <div className="space-y-1.5">
-                  <h3 className="text-base sm:text-lg font-bold text-white">
-                    {searchQuery || selectedTrack !== "all" ? "No Matching Notes" : "No Study Notes Yet"}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                    {searchQuery || selectedTrack !== "all"
-                      ? "No notes matched your search query or track filter. Try clearing filters to see all notes."
-                      : "Capture architectural insights, interview takeaways, and key principles. Write a new note here or press Ctrl+J while browsing lessons."}
-                  </p>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8 items-stretch">
+            {/* Note Cards */}
+            {filteredNotes.map((note) => {
+              const meta = getTrackMeta(note.trackKey);
+              const isMenuOpen = activeMenuId === note.id;
 
-                <div className="pt-2 flex items-center justify-center gap-3">
-                  {searchQuery || selectedTrack !== "all" ? (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSearchQuery("");
-                        setSelectedTrack("all");
-                      }}
-                      className="px-4 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-white text-xs font-bold transition-all border border-white/[0.1] cursor-pointer"
-                    >
-                      Clear Filters
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        type="button"
-                        onClick={handleOpenCreateNote}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+              return (
+                <div
+                  key={note.id}
+                  className="bg-[#0c101a] border border-white/[0.08] hover:border-white/15 rounded-2xl p-6 flex flex-col justify-between transition-all duration-200 relative group min-h-[280px]"
+                >
+                  {/* Card Header: Track Badge & Actions */}
+                  <div>
+                    <div className="flex items-center justify-between gap-2 relative">
+                      {/* Track Badge with colored dot */}
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wider uppercase border ${meta.badgeBg} ${meta.badgeText} ${meta.badgeBorder}`}
                       >
-                        <IconPlus className="w-3.5 h-3.5" />
-                        <span>Write First Note</span>
-                      </button>
-                      <Link
-                        href="/learn/react"
-                        className="px-4 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-slate-300 hover:text-white text-xs font-bold transition-all border border-white/[0.08] cursor-pointer"
-                      >
-                        Browse Lessons
-                      </Link>
-                    </>
-                  )}
-                </div>
-              </div>
-            ) : viewMode === "grid" ? (
-              /* Notes Grid View */
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {filteredNotes.map((note) => {
-                  const meta = getTrackMeta(note.trackKey);
-                  const lessonHref =
-                    note.lessonPath ||
-                    (note.lessonSlug?.startsWith("/")
-                      ? note.lessonSlug
-                      : `/learn/${note.trackKey}/${note.lessonSlug}`);
-                  const wordCount = note.content.split(/\s+/).filter(Boolean).length;
-                  const readTimeMin = Math.max(1, Math.round(wordCount / 120));
-                  const isExpanded = expandedNotes[note.id];
-                  const isLong = note.content.length > 280;
+                        <span
+                          className="w-1.5 h-1.5 rounded-full shrink-0"
+                          style={{ backgroundColor: meta.dotColor }}
+                        />
+                        {meta.key.toUpperCase()}
+                      </span>
 
-                  return (
-                    <div
-                      key={note.id}
-                      className="group relative rounded-2xl bg-[#0B0F19]/90 border border-white/[0.07] hover:border-white/[0.18] transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-purple-500/5 p-5 space-y-4"
-                    >
-                      {/* Top Track Glow Accent */}
-                      <div
-                        className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${meta.accentGradient}`}
-                      />
+                      {/* Three dots menu */}
+                      <div className="relative" data-note-menu>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setActiveMenuId(isMenuOpen ? null : note.id);
+                          }}
+                          className="text-slate-500 hover:text-white p-1 rounded-md hover:bg-white/[0.05] transition-colors"
+                          title="Options"
+                        >
+                          <IconMoreHorizontal className="w-5 h-5" />
+                        </button>
 
-                      <div className="space-y-3">
-                        {/* Card Header: Track Badge, Date, Action Cluster */}
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <span
-                              className={`text-[10px] font-mono uppercase font-bold px-2.5 py-0.5 rounded-lg border flex items-center gap-1.5 ${meta.badgeBg} ${meta.badgeText} ${meta.badgeBorder}`}
-                            >
-                              <span className={`w-1.5 h-1.5 rounded-full ${meta.dotBg}`} />
-                              <span>{meta.label}</span>
-                            </span>
-                            <span className="text-[10px] font-mono text-slate-500">
-                              {new Date(note.updatedAt).toLocaleDateString(undefined, {
-                                month: "short",
-                                day: "numeric",
-                                year: "numeric",
-                              })}
-                            </span>
-                          </div>
-
-                          {/* Quick Action Icons */}
-                          <div className="flex items-center gap-1">
+                        {/* Dropdown Menu */}
+                        {isMenuOpen && (
+                          <div className="absolute right-0 mt-1 w-40 bg-[#0e121d] border border-white/[0.1] rounded-xl shadow-2xl py-1 z-30">
                             <button
-                              type="button"
-                              onClick={() => handleCopyText(note.id, note.content)}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08] transition-all cursor-pointer"
-                              title="Copy Note Text"
-                            >
-                              {copiedId === note.id ? (
-                                <IconCheck className="w-3.5 h-3.5 text-emerald-400" />
-                              ) : (
-                                <IconCopy className="w-3.5 h-3.5" />
-                              )}
-                            </button>
-
-                            <button
-                              type="button"
                               onClick={() => handleOpenEditNote(note)}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-all cursor-pointer"
-                              title="Edit Note"
+                              className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-2 transition-colors"
                             >
                               <IconEdit className="w-3.5 h-3.5" />
+                              <span>Edit note</span>
                             </button>
-
                             <button
-                              type="button"
+                              onClick={() => handleCopyText(note.id, `${note.title || ""}\n\n${note.content}`)}
+                              className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-2 transition-colors"
+                            >
+                              {copiedId === note.id ? (
+                                <>
+                                  <IconCheck className="w-3.5 h-3.5 text-emerald-400" />
+                                  <span className="text-emerald-400">Copied!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <IconCopy className="w-3.5 h-3.5" />
+                                  <span>Copy note</span>
+                                </>
+                              )}
+                            </button>
+                            {note.lessonPath && (
+                              <Link
+                                href={note.lessonPath}
+                                className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-2 transition-colors"
+                              >
+                                <IconExternalLink className="w-3.5 h-3.5" />
+                                <span>Go to lesson</span>
+                              </Link>
+                            )}
+                            <div className="my-1 border-t border-white/[0.06]" />
+                            <button
                               onClick={() =>
-                                triggerConfirmDelete(
-                                  note.id,
-                                  "note",
-                                  note.title || `Lesson ${note.lessonSlug}`
-                                )
+                                setDeleteConfirmation({
+                                  id: note.id,
+                                  type: "note",
+                                  title: note.title || "Untitled Note",
+                                })
                               }
-                              className="p-1.5 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
-                              title="Delete Note"
+                              className="w-full px-3 py-2 text-left text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 flex items-center gap-2 transition-colors"
                             >
                               <IconTrash className="w-3.5 h-3.5" />
+                              <span>Delete note</span>
                             </button>
                           </div>
-                        </div>
-
-                        {/* Title */}
-                        <h4 className="text-sm font-bold text-white group-hover:text-purple-200 transition-colors leading-snug">
-                          {note.title || `Concept Note: ${note.lessonSlug || "General"}`}
-                        </h4>
-
-                        {/* Note Body (Markdown rendered) */}
-                        <div
-                          className={`text-xs text-slate-300 leading-relaxed font-sans overflow-hidden transition-all duration-300 ${
-                            isLong && !isExpanded ? "max-h-40 relative" : ""
-                          }`}
-                        >
-                          <MarkdownRenderer content={note.content} />
-                          {isLong && !isExpanded && (
-                            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#0B0F19] to-transparent pointer-events-none" />
-                          )}
-                        </div>
-
-                        {/* Expand / Collapse toggle for long notes */}
-                        {isLong && (
-                          <button
-                            type="button"
-                            onClick={() => toggleExpandNote(note.id)}
-                            className="text-[11px] font-mono text-purple-400 hover:text-purple-300 font-medium transition-colors cursor-pointer"
-                          >
-                            {isExpanded ? "↑ Show less" : "↓ Show full note"}
-                          </button>
                         )}
                       </div>
-
-                      {/* Card Footer: Open Lesson & Reading Stats */}
-                      <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs mt-2">
-                        <Link
-                          href={lessonHref}
-                          className="text-purple-400 hover:text-purple-300 font-mono text-[11px] font-bold inline-flex items-center gap-1.5 group/link transition-colors"
-                        >
-                          <span>Open Lesson</span>
-                          <span className="transform transition-transform group-hover/link:translate-x-1">
-                            &rarr;
-                          </span>
-                        </Link>
-
-                        <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono">
-                          <span>{wordCount} words</span>
-                          <span>•</span>
-                          <span>{readTimeMin}m read</span>
-                        </div>
-                      </div>
                     </div>
-                  );
-                })}
-              </div>
-            ) : (
-              /* Notes Compact List View */
-              <div className="space-y-2">
-                {filteredNotes.map((note) => {
-                  const meta = getTrackMeta(note.trackKey);
-                  const lessonHref =
-                    note.lessonPath ||
-                    (note.lessonSlug?.startsWith("/")
-                      ? note.lessonSlug
-                      : `/learn/${note.trackKey}/${note.lessonSlug}`);
-                  const wordCount = note.content.split(/\s+/).filter(Boolean).length;
 
-                  return (
-                    <div
-                      key={note.id}
-                      className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#0B0F19]/80 border border-white/[0.06] hover:border-purple-500/30 hover:bg-[#0E121B] transition-all shadow-sm"
+                    {/* Note Title (Serif editorial font as in image) */}
+                    <h3
+                      onClick={() => setReadingNote(note)}
+                      className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug my-4 group-hover:text-purple-100 transition-colors cursor-pointer"
                     >
-                      <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-                        <span
-                          className={`shrink-0 text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded border flex items-center gap-1 ${meta.badgeBg} ${meta.badgeText} ${meta.badgeBorder}`}
-                        >
-                          <span className={`w-1.5 h-1.5 rounded-full ${meta.dotBg}`} />
-                          <span>{meta.label}</span>
-                        </span>
+                      {note.title || "Untitled Note"}
+                    </h3>
 
-                        <div className="min-w-0 flex-1">
-                          <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-purple-200 truncate">
-                            {note.title || `Note: ${note.lessonSlug}`}
-                          </h4>
-                          <p className="text-[11px] text-slate-400 truncate max-w-xl">
-                            {note.content.replace(/[#*`>]/g, "").trim()}
-                          </p>
-                        </div>
-                      </div>
+                    {/* Snippet / Content Preview */}
+                    <p className="text-slate-400 text-sm leading-relaxed mb-6 line-clamp-3">
+                      {note.content}
+                    </p>
+                  </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-white/[0.05]">
-                        <div className="text-[10px] font-mono text-slate-500 flex items-center gap-2">
-                          <span>{wordCount} words</span>
-                          <span>•</span>
-                          <span>
-                            {new Date(note.updatedAt).toLocaleDateString(undefined, {
-                              month: "numeric",
-                              day: "numeric",
-                            })}
-                          </span>
-                        </div>
+                  {/* Card Footer: Date & Read Link */}
+                  <div className="flex items-center justify-between pt-4 border-t border-white/[0.05]">
+                    <span className="text-xs text-slate-500 font-medium">
+                      {formatDate(note.updatedAt || note.createdAt)}
+                    </span>
+                    <button
+                      onClick={() => setReadingNote(note)}
+                      className="text-[#a78bfa] hover:text-[#c4b5fd] text-xs font-semibold inline-flex items-center gap-1 transition-colors cursor-pointer"
+                    >
+                      <span>Read</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
 
-                        <div className="flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => handleCopyText(note.id, note.content)}
-                            className="p-1 rounded text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
-                            title="Copy Note"
-                          >
-                            {copiedId === note.id ? (
-                              <IconCheck className="w-3.5 h-3.5 text-emerald-400" />
-                            ) : (
-                              <IconCopy className="w-3.5 h-3.5" />
-                            )}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleOpenEditNote(note)}
-                            className="p-1 rounded text-slate-400 hover:text-purple-300 hover:bg-purple-500/10 transition-colors cursor-pointer"
-                            title="Edit Note"
-                          >
-                            <IconEdit className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              triggerConfirmDelete(
-                                note.id,
-                                "note",
-                                note.title || `Lesson ${note.lessonSlug}`
-                              )
-                            }
-                            className="p-1 rounded text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
-                            title="Delete Note"
-                          >
-                            <IconTrash className="w-3.5 h-3.5" />
-                          </button>
-                          <Link
-                            href={lessonHref}
-                            className="p-1 rounded text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 transition-colors"
-                            title="Open Lesson"
-                          >
-                            <IconArrowRight className="w-3.5 h-3.5" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+            {/* "Add a note" Dashed Card (directly in grid as in mockup) */}
+            <div
+              onClick={handleOpenCreateNote}
+              className="rounded-2xl border border-dashed border-white/[0.12] hover:border-purple-500/50 bg-white/[0.01] hover:bg-purple-500/[0.02] flex flex-col items-center justify-center min-h-[280px] p-6 text-center cursor-pointer transition-all duration-200 group"
+            >
+              <div className="w-12 h-12 rounded-full bg-[#241c3a] group-hover:bg-[#322352] text-[#c084fc] flex items-center justify-center mb-3 transition-colors shadow-sm">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  className="w-5 h-5"
+                >
+                  <line x1="12" y1="5" x2="12" y2="19" />
+                  <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
               </div>
-            )}
+              <span className="text-sm font-medium text-slate-300 group-hover:text-white transition-colors">
+                Add a note
+              </span>
+            </div>
           </div>
         ) : (
-          /* ─── Bookmarks Content ───────────────────────────────────────── */
-          <div>
-            {filteredBookmarks.length === 0 ? (
-              /* Bookmarks Empty State */
-              <div className="p-12 sm:p-16 text-center rounded-3xl bg-[#0B0F19]/80 border border-white/[0.08] space-y-4 max-w-xl mx-auto shadow-xl">
-                <div className="w-14 h-14 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shadow-inner">
-                  <IconBookmark className="w-7 h-7 stroke-[1.8]" />
-                </div>
-                <div className="space-y-1.5">
-                  <h3 className="text-base sm:text-lg font-bold text-white">
-                    {searchQuery || selectedTrack !== "all"
-                      ? "No Matching Bookmarks"
-                      : "No Bookmarked Snippets"}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                    {searchQuery || selectedTrack !== "all"
-                      ? "No code bookmarks match your current filters. Try resetting search or track."
-                      : "Bookmark critical code examples, patterns, and boilerplate from curriculum lessons to review them all in one place before technical interviews."}
-                  </p>
-                </div>
-
-                <div className="pt-2">
-                  <Link
-                    href="/learn/react"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition-all shadow-md cursor-pointer"
-                  >
-                    <span>Browse Lessons & Save Code</span>
-                    <span>&rarr;</span>
-                  </Link>
-                </div>
-              </div>
-            ) : viewMode === "grid" ? (
-              /* Bookmarks Grid View */
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          /* ─── Bookmarks Tab ────────────────────────────────────────────── */
+          <div className="mt-8">
+            {filteredBookmarks.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
                 {filteredBookmarks.map((bm) => {
                   const meta = getTrackMeta(bm.trackKey);
+                  const isMenuOpen = activeMenuId === bm.id;
 
                   return (
                     <div
                       key={bm.id}
-                      className="group relative rounded-2xl bg-[#0B0F19]/90 border border-white/[0.07] hover:border-amber-500/30 transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-lg p-5 space-y-3"
+                      className="bg-[#0c101a] border border-white/[0.08] hover:border-white/15 rounded-2xl p-6 flex flex-col justify-between transition-all duration-200 relative group min-h-[280px]"
                     >
-                      <div className="space-y-3">
-                        {/* Header */}
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
+                      <div>
+                        {/* Header Badge */}
+                        <div className="flex items-center justify-between gap-2 relative">
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold tracking-wider uppercase border ${meta.badgeBg} ${meta.badgeText} ${meta.badgeBorder}`}
+                          >
                             <span
-                              className={`text-[10px] font-mono uppercase font-bold px-2.5 py-0.5 rounded-lg border flex items-center gap-1.5 ${meta.badgeBg} ${meta.badgeText} ${meta.badgeBorder}`}
-                            >
-                              <span className={`w-1.5 h-1.5 rounded-full ${meta.dotBg}`} />
-                              <span>{meta.label}</span>
-                            </span>
-                            <span className="text-[10px] font-mono text-slate-500">
-                              {bm.language || "typescript"}
-                            </span>
-                          </div>
+                              className="w-1.5 h-1.5 rounded-full shrink-0"
+                              style={{ backgroundColor: meta.dotColor }}
+                            />
+                            {meta.key.toUpperCase()}
+                          </span>
 
-                          <div className="flex items-center gap-1.5">
+                          <div className="relative" data-note-menu>
                             <button
-                              type="button"
-                              onClick={() => handleCopyText(bm.id, bm.code)}
-                              className="px-2.5 py-1 rounded-lg text-[11px] font-mono bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 flex items-center gap-1.5 transition-all cursor-pointer"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setActiveMenuId(isMenuOpen ? null : bm.id);
+                              }}
+                              className="text-slate-500 hover:text-white p-1 rounded-md hover:bg-white/[0.05] transition-colors"
                             >
-                              {copiedId === bm.id ? (
-                                <>
-                                  <IconCheck className="w-3 h-3 text-emerald-400" />
-                                  <span className="text-emerald-400">Copied</span>
-                                </>
-                              ) : (
-                                <>
-                                  <IconCopy className="w-3 h-3" />
-                                  <span>Copy</span>
-                                </>
-                              )}
+                              <IconMoreHorizontal className="w-5 h-5" />
                             </button>
 
-                            <button
-                              type="button"
-                              onClick={() =>
-                                triggerConfirmDelete(bm.id, "bookmark", bm.title || "Snippet")
-                              }
-                              className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
-                              title="Delete Bookmark"
-                            >
-                              <IconTrash className="w-3.5 h-3.5" />
-                            </button>
+                            {isMenuOpen && (
+                              <div className="absolute right-0 mt-1 w-40 bg-[#0e121d] border border-white/[0.1] rounded-xl shadow-2xl py-1 z-30">
+                                <button
+                                  onClick={() => handleCopyText(bm.id, bm.code)}
+                                  className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-2 transition-colors"
+                                >
+                                  {copiedId === bm.id ? (
+                                    <>
+                                      <IconCheck className="w-3.5 h-3.5 text-emerald-400" />
+                                      <span className="text-emerald-400">Copied!</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <IconCopy className="w-3.5 h-3.5" />
+                                      <span>Copy code</span>
+                                    </>
+                                  )}
+                                </button>
+                                <Link
+                                  href={`/learn/${bm.trackKey}/${bm.lessonSlug}`}
+                                  className="w-full px-3 py-2 text-left text-xs text-slate-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-2 transition-colors"
+                                >
+                                  <IconExternalLink className="w-3.5 h-3.5" />
+                                  <span>Go to lesson</span>
+                                </Link>
+                                <div className="my-1 border-t border-white/[0.06]" />
+                                <button
+                                  onClick={() =>
+                                    setDeleteConfirmation({
+                                      id: bm.id,
+                                      type: "bookmark",
+                                      title: bm.title || "Code Bookmark",
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 text-left text-xs text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 flex items-center gap-2 transition-colors"
+                                >
+                                  <IconTrash className="w-3.5 h-3.5" />
+                                  <span>Delete bookmark</span>
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
 
                         {/* Title */}
-                        <h4 className="text-sm font-bold text-white group-hover:text-amber-200 transition-colors">
-                          {bm.title}
-                        </h4>
+                        <h3 className="font-serif text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug my-4">
+                          {bm.title || "Code Bookmark"}
+                        </h3>
 
-                        {/* Code Frame with macOS style dots */}
-                        <div className="rounded-xl overflow-hidden bg-[#07090E] border border-white/[0.08] shadow-inner">
-                          <div className="flex items-center justify-between px-3 py-1.5 bg-[#0D111A] border-b border-white/[0.06] text-[10px] font-mono text-slate-500">
-                            <div className="flex items-center gap-1.5">
-                              <span className="w-2 h-2 rounded-full bg-rose-500/70" />
-                              <span className="w-2 h-2 rounded-full bg-amber-500/70" />
-                              <span className="w-2 h-2 rounded-full bg-emerald-500/70" />
-                            </div>
-                            <span>{bm.language || "code"}</span>
-                          </div>
-                          <pre className="p-3 text-xs font-mono text-slate-200 overflow-x-auto max-h-48 leading-relaxed scrollbar-thin">
-                            {bm.code}
-                          </pre>
+                        {/* Monospace Code Preview Box */}
+                        <div className="bg-[#07090e] border border-white/[0.06] rounded-xl p-3 font-mono text-xs text-slate-300 overflow-x-auto max-h-36 mb-4">
+                          <pre>{bm.code}</pre>
                         </div>
                       </div>
 
                       {/* Footer */}
-                      <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-xs mt-2">
+                      <div className="flex items-center justify-between pt-4 border-t border-white/[0.05]">
+                        <span className="text-xs text-slate-500 font-medium">
+                          {formatDate(bm.createdAt)}
+                        </span>
                         <Link
                           href={`/learn/${bm.trackKey}/${bm.lessonSlug}`}
-                          className="text-amber-400 hover:text-amber-300 font-mono text-[11px] font-bold inline-flex items-center gap-1.5 transition-colors group/link"
+                          className="text-[#a78bfa] hover:text-[#c4b5fd] text-xs font-semibold inline-flex items-center gap-1 transition-colors"
                         >
                           <span>Open Lesson</span>
-                          <span className="transform transition-transform group-hover/link:translate-x-1">
-                            &rarr;
-                          </span>
+                          <span>→</span>
                         </Link>
-                        <span className="text-[10px] text-slate-500 font-mono">
-                          {bm.code.split("\n").length} lines
-                        </span>
                       </div>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              /* Bookmarks List View */
-              <div className="space-y-2">
-                {filteredBookmarks.map((bm) => {
-                  const meta = getTrackMeta(bm.trackKey);
-
-                  return (
-                    <div
-                      key={bm.id}
-                      className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#0B0F19]/80 border border-white/[0.06] hover:border-amber-500/30 hover:bg-[#0E121B] transition-all shadow-sm"
-                    >
-                      <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-                        <span
-                          className={`shrink-0 text-[10px] font-mono uppercase font-bold px-2 py-0.5 rounded border flex items-center gap-1 ${meta.badgeBg} ${meta.badgeText} ${meta.badgeBorder}`}
-                        >
-                          <span className={`w-1.5 h-1.5 rounded-full ${meta.dotBg}`} />
-                          <span>{meta.label}</span>
-                        </span>
-
-                        <div className="min-w-0 flex-1">
-                          <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-200 truncate">
-                            {bm.title}
-                          </h4>
-                          <p className="text-[11px] font-mono text-slate-400 truncate max-w-xl">
-                            {bm.code.split("\n")[0]}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-white/[0.05]">
-                        <span className="text-[10px] font-mono text-slate-500">
-                          {bm.code.split("\n").length} lines • {bm.language || "ts"}
-                        </span>
-
-                        <div className="flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => handleCopyText(bm.id, bm.code)}
-                            className="p-1 rounded text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
-                            title="Copy Code"
-                          >
-                            {copiedId === bm.id ? (
-                              <IconCheck className="w-3.5 h-3.5 text-emerald-400" />
-                            ) : (
-                              <IconCopy className="w-3.5 h-3.5" />
-                            )}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              triggerConfirmDelete(bm.id, "bookmark", bm.title || "Snippet")
-                            }
-                            className="p-1 rounded text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
-                            title="Delete Bookmark"
-                          >
-                            <IconTrash className="w-3.5 h-3.5" />
-                          </button>
-                          <Link
-                            href={`/learn/${bm.trackKey}/${bm.lessonSlug}`}
-                            className="p-1 rounded text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 transition-colors"
-                            title="Open Lesson"
-                          >
-                            <IconArrowRight className="w-3.5 h-3.5" />
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="rounded-2xl border border-dashed border-white/[0.1] bg-[#0c101a]/50 p-12 text-center max-w-md mx-auto">
+                <p className="text-slate-300 font-medium text-base mb-2">No saved code snippets yet</p>
+                <p className="text-slate-500 text-xs leading-relaxed">
+                  While exploring lessons, click the bookmark icon on any code snippet to pin it to your study board.
+                </p>
               </div>
             )}
           </div>
         )}
       </main>
 
-      {/* ─── Create & Edit Study Note Modal ──────────────────────────────── */}
-      {dialogOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-2xl bg-[#0B0F19] border border-white/[0.12] rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-white/[0.08] flex items-center justify-between bg-[#0E121B]">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-purple-500/15 border border-purple-500/25 flex items-center justify-center text-purple-400">
-                  <IconNote className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-bold text-white">
-                    {dialogMode === "create" ? "Write Study Note" : "Edit Study Note"}
-                  </h3>
-                  <p className="text-[11px] text-slate-400">
-                    Supports Markdown, code blocks, lists, and quotes
-                  </p>
-                </div>
-              </div>
+      {/* ─── Reading / Detail Modal ────────────────────────────────────────── */}
+      {readingNote && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0e121d] border border-white/[0.1] rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between gap-4">
+              <span
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold tracking-wider uppercase border ${getTrackMeta(readingNote.trackKey).badgeBg} ${getTrackMeta(readingNote.trackKey).badgeText} ${getTrackMeta(readingNote.trackKey).badgeBorder}`}
+              >
+                <span
+                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                  style={{ backgroundColor: getTrackMeta(readingNote.trackKey).dotColor }}
+                />
+                {getTrackMeta(readingNote.trackKey).key.toUpperCase()}
+              </span>
 
               <button
-                type="button"
-                onClick={() => setDialogOpen(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.08] transition-colors cursor-pointer"
+                onClick={() => setReadingNote(null)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/[0.08] transition-colors"
               >
-                <IconClose className="w-4 h-4" />
+                <IconClose className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-6 space-y-4 overflow-y-auto flex-1">
-              {/* Track Selection & Slug */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[11px] font-mono uppercase text-slate-400 block mb-1">
-                    Learning Track
-                  </label>
-                  <select
-                    value={noteTrack}
-                    onChange={(e) => setNoteTrack(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-[#07090E] border border-white/[0.08] focus:border-purple-500 text-xs sm:text-sm text-white outline-none cursor-pointer"
-                  >
-                    {availableTracks.map((t) => (
-                      <option key={t.key} value={t.key}>
-                        {t.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-mono uppercase text-slate-400 block mb-1">
-                    Lesson Tag / Topic Slug (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    value={noteSlug}
-                    onChange={(e) => setNoteSlug(e.target.value)}
-                    placeholder="e.g. encapsulation or closures"
-                    className="w-full px-3 py-2 rounded-xl bg-[#07090E] border border-white/[0.08] focus:border-purple-500 text-xs sm:text-sm text-white outline-none font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* Title */}
-              <div>
-                <label className="text-[11px] font-mono uppercase text-slate-400 block mb-1">
-                  Note Title / Concept Question
-                </label>
-                <input
-                  type="text"
-                  value={noteTitle}
-                  onChange={(e) => setNoteTitle(e.target.value)}
-                  placeholder="e.g. What is Encapsulation in OOP?"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#07090E] border border-white/[0.08] focus:border-purple-500 text-xs sm:text-sm text-white outline-none"
-                />
-              </div>
-
-              {/* Content with Editor vs Preview Tabs */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-[11px] font-mono uppercase text-slate-400">
-                    Content & Explanation
-                  </label>
-                  <div className="flex items-center gap-1 bg-[#07090E] p-0.5 rounded-lg border border-white/[0.06]">
-                    <button
-                      type="button"
-                      onClick={() => setModalTab("edit")}
-                      className={`px-2.5 py-0.5 rounded text-[10px] font-mono transition-colors cursor-pointer ${
-                        modalTab === "edit"
-                          ? "bg-purple-600 text-white font-bold"
-                          : "text-slate-400 hover:text-white"
-                      }`}
-                    >
-                      Write
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setModalTab("preview")}
-                      className={`px-2.5 py-0.5 rounded text-[10px] font-mono transition-colors cursor-pointer ${
-                        modalTab === "preview"
-                          ? "bg-purple-600 text-white font-bold"
-                          : "text-slate-400 hover:text-white"
-                      }`}
-                    >
-                      Preview
-                    </button>
-                  </div>
-                </div>
-
-                {modalTab === "edit" ? (
-                  <textarea
-                    rows={8}
-                    value={noteContent}
-                    onChange={(e) => setNoteContent(e.target.value)}
-                    placeholder="Write your explanation or revision notes here... Markdown formatting like `inline code`, > quotes, or **bold** is supported."
-                    className="w-full px-3.5 py-3 rounded-xl bg-[#07090E] border border-white/[0.08] focus:border-purple-500 text-xs sm:text-sm text-slate-200 outline-none resize-none font-mono leading-relaxed"
-                  />
-                ) : (
-                  <div className="p-4 rounded-xl bg-[#07090E] border border-white/[0.08] min-h-[12rem] max-h-64 overflow-y-auto text-xs text-slate-200">
-                    {noteContent.trim() ? (
-                      <MarkdownRenderer content={noteContent} />
-                    ) : (
-                      <span className="text-slate-500 italic">No content to preview yet.</span>
-                    )}
-                  </div>
-                )}
-              </div>
+            <div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white tracking-tight leading-snug">
+                {readingNote.title || "Untitled Note"}
+              </h2>
+              <p className="text-xs text-slate-500 mt-2 font-medium">
+                Last updated {formatDate(readingNote.updatedAt || readingNote.createdAt)}
+              </p>
             </div>
 
-            {/* Modal Footer */}
-            <div className="px-6 py-3.5 bg-[#0E121B] border-t border-white/[0.08] flex items-center justify-between">
-              <span className="text-[10px] font-mono text-slate-500">
-                {noteContent.split(/\s+/).filter(Boolean).length} words
-              </span>
+            <div className="prose prose-invert max-w-none text-slate-300 text-sm leading-relaxed border-t border-white/[0.08] pt-4">
+              <MarkdownRenderer content={readingNote.content} />
+            </div>
 
+            <div className="flex items-center justify-between pt-4 border-t border-white/[0.08]">
               <div className="flex items-center gap-2">
                 <button
-                  type="button"
-                  onClick={() => setDialogOpen(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-white/[0.04] border border-white/[0.08] transition-all cursor-pointer"
+                  onClick={() => handleCopyText(readingNote.id, `${readingNote.title || ""}\n\n${readingNote.content}`)}
+                  className="px-3.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors"
                 >
-                  Cancel
+                  {copiedId === readingNote.id ? (
+                    <>
+                      <IconCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <IconCopy className="w-3.5 h-3.5" />
+                      <span>Copy</span>
+                    </>
+                  )}
                 </button>
                 <button
-                  type="button"
-                  disabled={!noteContent.trim()}
-                  onClick={handleSaveNoteDialog}
-                  className="px-5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 transition-all shadow-md shadow-purple-600/30 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => {
+                    handleOpenEditNote(readingNote);
+                  }}
+                  className="px-3.5 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-xs font-medium text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors"
                 >
-                  {dialogMode === "create" ? "Create Note" : "Save Changes"}
+                  <IconEdit className="w-3.5 h-3.5" />
+                  <span>Edit</span>
                 </button>
               </div>
+
+              {readingNote.lessonPath && (
+                <Link
+                  href={readingNote.lessonPath}
+                  className="text-xs text-[#a78bfa] hover:text-[#c4b5fd] font-semibold flex items-center gap-1"
+                >
+                  <span>Go to Lesson</span>
+                  <span>→</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>
       )}
 
-      {/* ─── Custom Non-Blocking Delete Confirmation Dialog ───────────────── */}
-      {deleteConfirmation && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-150">
-          <div className="w-full max-w-md bg-[#0E121B] border border-white/[0.1] rounded-2xl shadow-2xl p-6 space-y-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
-                <IconTrash className="w-5 h-5" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-sm sm:text-base font-bold text-white">
-                  Delete {deleteConfirmation.type === "note" ? "Study Note" : "Code Bookmark"}?
-                </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Are you sure you want to delete &ldquo;
-                  <span className="text-white font-medium">{deleteConfirmation.title}</span>&rdquo;?
-                  This action cannot be undone.
-                </p>
-              </div>
+      {/* ─── Create / Edit Note Modal ──────────────────────────────────────── */}
+      {dialogOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0e121d] border border-white/[0.1] rounded-2xl max-w-xl w-full p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between">
+              <h2 className="font-serif text-2xl font-bold text-white">
+                {dialogMode === "create" ? "Add Study Note" : "Edit Study Note"}
+              </h2>
+              <button
+                onClick={() => setDialogOpen(false)}
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/[0.08]"
+              >
+                <IconClose className="w-5 h-5" />
+              </button>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/[0.06]">
+            {/* Track Select */}
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                Topic / Tech Track
+              </label>
+              <select
+                value={noteTrack}
+                onChange={(e) => setNoteTrack(e.target.value)}
+                className="w-full bg-[#131826] border border-white/[0.08] rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500/50"
+              >
+                {Object.keys(TRACK_CONFIG).map((k) => (
+                  <option key={k} value={k}>
+                    {TRACK_CONFIG[k].label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Title Input */}
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1.5">
+                Note Title
+              </label>
+              <input
+                type="text"
+                value={noteTitle}
+                onChange={(e) => setNoteTitle(e.target.value)}
+                placeholder="e.g. What is Encapsulation in Object-Oriented Programming?"
+                className="w-full bg-[#131826] border border-white/[0.08] rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50"
+              />
+            </div>
+
+            {/* Write / Preview Tab switcher */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="text-xs font-medium text-slate-400">
+                  Note Content (Markdown supported)
+                </label>
+                <div className="flex items-center gap-1 bg-[#131826] p-0.5 rounded-lg border border-white/[0.06]">
+                  <button
+                    type="button"
+                    onClick={() => setModalTab("edit")}
+                    className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors ${
+                      modalTab === "edit" ? "bg-purple-500/20 text-purple-300" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    Write
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModalTab("preview")}
+                    className={`px-2.5 py-1 text-[11px] font-medium rounded-md transition-colors ${
+                      modalTab === "preview" ? "bg-purple-500/20 text-purple-300" : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    Preview
+                  </button>
+                </div>
+              </div>
+
+              {modalTab === "edit" ? (
+                <textarea
+                  rows={5}
+                  value={noteContent}
+                  onChange={(e) => setNoteContent(e.target.value)}
+                  placeholder="Private fields (# or private) plus controlled getter/setter methods..."
+                  className="w-full bg-[#131826] border border-white/[0.08] rounded-xl p-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-purple-500/50 resize-y"
+                />
+              ) : (
+                <div className="w-full bg-[#131826] border border-white/[0.08] rounded-xl p-3 min-h-[120px] text-sm text-slate-300 max-h-48 overflow-y-auto">
+                  {noteContent.trim() ? (
+                    <MarkdownRenderer content={noteContent} />
+                  ) : (
+                    <span className="text-slate-500 italic">No content to preview</span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/[0.08]">
               <button
                 type="button"
-                onClick={() => setDeleteConfirmation(null)}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white bg-white/[0.03] border border-white/[0.06] transition-colors cursor-pointer"
+                onClick={() => setDialogOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="button"
+                onClick={handleSaveNoteDialog}
+                disabled={!noteContent.trim()}
+                className="px-5 py-2 rounded-xl bg-[#a78bfa] hover:bg-[#b89dfe] disabled:opacity-50 text-slate-950 font-bold text-xs transition-colors shadow-sm"
+              >
+                {dialogMode === "create" ? "Create Note" : "Save Changes"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── Delete Confirmation Modal ─────────────────────────────────────── */}
+      {deleteConfirmation && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[#0e121d] border border-white/[0.1] rounded-2xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+            <h3 className="font-serif text-xl font-bold text-white">Delete Item?</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Are you sure you want to delete &ldquo;{deleteConfirmation.title}&rdquo;? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                onClick={() => setDeleteConfirmation(null)}
+                className="px-3.5 py-1.5 rounded-xl text-xs font-medium text-slate-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
                 onClick={executeDelete}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-rose-600 hover:bg-rose-500 transition-colors shadow-lg shadow-rose-600/30 cursor-pointer"
+                className="px-4 py-1.5 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs transition-colors"
               >
                 Delete
               </button>
@@ -1509,6 +1371,6 @@ export default function NotesPage(): JSX.Element {
           </div>
         </div>
       )}
-    </InteractiveGrid>
+    </div>
   );
 }

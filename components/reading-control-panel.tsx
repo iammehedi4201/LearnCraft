@@ -1,6 +1,26 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { usePathname } from "next/navigation";
+import { LessonNotesDrawer } from "@/components/curriculum/LessonNotesDrawer";
+import { getNoteForLesson } from "@/lib/notes-bookmarks";
+
+const TRACK_TITLES: Record<string, string> = {
+  react: "React",
+  nextjs: "Next.js",
+  nestjs: "NestJS",
+  nodejs: "Node.js",
+  typescript: "TypeScript",
+  javascript: "JavaScript",
+  oop: "OOP",
+  "system-design": "System Design",
+  redux: "Redux",
+  prisma: "Prisma",
+  postgresql: "PostgreSQL",
+  express: "Express",
+  mongodb: "MongoDB",
+  tanstack: "TanStack Query",
+};
 
 // ─── Types ───────────────────────────────────────────────────────────
 type ReadingTheme = "light" | "dark";
@@ -210,10 +230,67 @@ function CloseIcon() {
 
 // ─── Component ──────────────────────────────────────────────────────
 export function ReadingControlPanel() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [settings, setSettings] = useState<ReadingSettings>(DEFAULT_SETTINGS);
   const [mounted, setMounted] = useState(false);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [hasNotes, setHasNotes] = useState(false);
+  const [detectedTitle, setDetectedTitle] = useState("");
   const panelRef = useRef<HTMLDivElement>(null);
+
+  const segments = useMemo(() => (pathname ? pathname.split("/").filter(Boolean) : []), [pathname]);
+  const isLessonPage = segments[0] === "learn" && segments.length >= 3;
+  const trackKey = isLessonPage ? segments[1] : "";
+  const trackTitle = TRACK_TITLES[trackKey] || (trackKey ? trackKey.toUpperCase() : "Lesson");
+  const lessonSlug = isLessonPage ? segments.slice(2).join("-") : "";
+
+  // Global hotkey: Ctrl+J or Cmd+J opens notes drawer on any lesson
+  useEffect(() => {
+    if (!isLessonPage) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "j") {
+        e.preventDefault();
+        setIsNotesOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isLessonPage]);
+
+  // Listen for custom event to open notes
+  useEffect(() => {
+    const handleOpenNotes = () => setIsNotesOpen(true);
+    window.addEventListener("learncraft:open-notes", handleOpenNotes);
+    return () => window.removeEventListener("learncraft:open-notes", handleOpenNotes);
+  }, []);
+
+  // Check if current lesson already has notes, and grab H1 heading
+  useEffect(() => {
+    if (!isLessonPage || !trackKey || !lessonSlug) {
+      setHasNotes(false);
+      return;
+    }
+    const checkNotes = () => {
+      const note = getNoteForLesson(trackKey, lessonSlug);
+      setHasNotes(Boolean(note && note.content?.trim()));
+    };
+    checkNotes();
+
+    const timer = setTimeout(() => {
+      const h1 = document.querySelector("h1");
+      if (h1 && h1.textContent) {
+        setDetectedTitle(h1.textContent.trim());
+      }
+    }, 150);
+
+    const handleNotesUpdate = () => checkNotes();
+    window.addEventListener("learncraft-notes-updated", handleNotesUpdate);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("learncraft-notes-updated", handleNotesUpdate);
+    };
+  }, [isLessonPage, trackKey, lessonSlug, pathname]);
 
   // Load settings from localStorage on mount
   useEffect(() => {
@@ -287,20 +364,72 @@ export function ReadingControlPanel() {
       className="rcp-root font-sans text-ds-text-strong selection:bg-ds-feature-light/20"
       id="reading-control-panel"
     >
-      {/* ── Floating Trigger Button ── */}
+      {/* ── Notes Button (Consistent across all lessons in LearnCraft) ── */}
+      {isLessonPage && (
+        <button
+          id="lesson-notes-trigger"
+          onClick={() => setIsNotesOpen((prev) => !prev)}
+          title="Study Notes & Bookmarks (Ctrl+J)"
+          className={`relative h-11 px-3.5 sm:px-4 rounded-2xl border cursor-pointer flex items-center gap-2.5 transition-all duration-300 active:scale-95 shadow-lg group backdrop-blur-xl ${
+            isNotesOpen
+              ? "bg-[#251b3b] border-purple-500/70 text-purple-200 shadow-[0_0_25px_rgba(168,85,247,0.4)]"
+              : "bg-[#0e121b]/90 hover:bg-[#161c2a] border-white/[0.1] hover:border-purple-500/40 text-slate-200 hover:text-white shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(168,85,247,0.25)]"
+          }`}
+        >
+          <div
+            className={`w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${
+              isNotesOpen
+                ? "bg-purple-500/30 text-purple-300"
+                : "bg-purple-500/15 group-hover:bg-purple-500/25 text-purple-400 group-hover:text-purple-300"
+            }`}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-3.5 h-3.5"
+            >
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+            </svg>
+          </div>
+
+          <span className="text-xs font-bold tracking-tight">Notes</span>
+
+          {hasNotes && (
+            <span
+              className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_#c084fc] animate-pulse"
+              title="Notes saved for this lesson"
+            />
+          )}
+
+          <kbd className="hidden lg:inline-flex text-[9px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-slate-400 border border-white/[0.08] transition-colors group-hover:text-slate-300">
+            Ctrl+J
+          </kbd>
+        </button>
+      )}
+
+      {/* ── Redesigned Settings Trigger Button ── */}
       <button
         id="rcp-trigger"
         onClick={() => setIsOpen(!isOpen)}
-        className={`relative w-12 h-12 rounded-xl border-none cursor-pointer flex items-center justify-center transition-all duration-300 active:scale-95 shadow-md hover:shadow-lg hover:scale-105 group rcp-pulse-animation ${
+        className={`relative w-11 h-11 rounded-2xl border cursor-pointer flex items-center justify-center transition-all duration-300 active:scale-95 shadow-lg group backdrop-blur-xl ${
           isOpen
-            ? "bg-ds-error-base hover:bg-ds-error-dark text-ds-static-white shadow-ds-error-base/20"
-            : "bg-ds-feature-base hover:bg-ds-feature-dark text-ds-static-white shadow-ds-feature-base/20"
+            ? "bg-rose-500/20 border-rose-500/50 text-rose-300 shadow-[0_0_25px_rgba(244,63,94,0.4)]"
+            : "bg-[#0e121b]/90 hover:bg-[#161c2a] border-white/[0.1] hover:border-white/20 text-slate-200 hover:text-white shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.1)]"
         }`}
         aria-label="Reading preferences"
         aria-expanded={isOpen}
         title="Reading preferences"
       >
-        <span className={`flex items-center justify-center transition-transform duration-350 ${isOpen ? "rotate-0" : "group-hover:rotate-45"}`}>
+        <span
+          className={`flex items-center justify-center transition-transform duration-300 ${
+            isOpen ? "rotate-90 text-rose-300" : "group-hover:rotate-45 text-slate-300 group-hover:text-white"
+          }`}
+        >
           {isOpen ? <CloseIcon /> : <GearIcon />}
         </span>
       </button>
@@ -527,6 +656,18 @@ export function ReadingControlPanel() {
           </button>
         </div>
       </div>
+
+      {/* ── Lesson Notes & Bookmarks Drawer ── */}
+      {isLessonPage && (
+        <LessonNotesDrawer
+          isOpen={isNotesOpen}
+          onClose={() => setIsNotesOpen(false)}
+          trackKey={trackKey}
+          trackTitle={trackTitle}
+          lessonSlug={lessonSlug}
+          lessonTitle={detectedTitle || lessonSlug}
+        />
+      )}
     </div>
   );
 }
