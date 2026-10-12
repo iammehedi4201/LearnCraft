@@ -36,9 +36,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         const savedTheme = localStorage.getItem("theme") as Theme;
         if (savedTheme && ["light", "dark"].includes(savedTheme)) {
             setThemeState(savedTheme);
+            document.documentElement.classList.remove("light", "dark", "sepia");
             document.documentElement.classList.add(savedTheme);
         } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
             setThemeState("dark");
+            document.documentElement.classList.remove("light", "dark", "sepia");
             document.documentElement.classList.add("dark");
         }
     }, []);
@@ -60,6 +62,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme);
         localStorage.setItem("theme", newTheme);
+        try {
+            const readingSettings = localStorage.getItem(READING_SETTINGS_KEY);
+            if (readingSettings) {
+                const parsed = JSON.parse(readingSettings);
+                parsed.theme = newTheme;
+                localStorage.setItem(READING_SETTINGS_KEY, JSON.stringify(parsed));
+            }
+        } catch { /* ignore */ }
         document.documentElement.classList.remove("light", "dark", "sepia");
         document.documentElement.classList.add(newTheme);
     };

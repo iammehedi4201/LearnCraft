@@ -39,7 +39,41 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="scroll-smooth">
+    <html lang="en" suppressHydrationWarning className="dark scroll-smooth">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+(function() {
+  try {
+    var readingKey = "learncraft-reading-settings";
+    var themeKey = "theme";
+    var theme = "dark";
+    var savedReading = localStorage.getItem(readingKey);
+    if (savedReading) {
+      try {
+        var parsed = JSON.parse(savedReading);
+        if (parsed && parsed.theme && (parsed.theme === "light" || parsed.theme === "dark" || parsed.theme === "sepia")) {
+          theme = parsed.theme;
+        }
+      } catch (e) {}
+    } else {
+      var savedTheme = localStorage.getItem(themeKey);
+      if (savedTheme && (savedTheme === "light" || savedTheme === "dark" || savedTheme === "sepia")) {
+        theme = savedTheme;
+      }
+    }
+    var root = document.documentElement;
+    root.classList.remove("light", "dark", "sepia");
+    root.classList.add(theme);
+  } catch (e) {
+    document.documentElement.classList.add("dark");
+  }
+})();
+`,
+          }}
+        />
+      </head>
       <body
         suppressHydrationWarning
         className={`${manrope.variable} ${inter.variable} ${rajdhani.variable} min-h-screen`}

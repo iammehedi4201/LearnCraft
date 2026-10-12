@@ -302,7 +302,12 @@ export function ReadingControlPanel() {
         setSettings(merged);
         applySettings(merged);
       } else {
-        applySettings(DEFAULT_SETTINGS);
+        const legacyTheme = localStorage.getItem("theme") as ReadingTheme | null;
+        const initial = legacyTheme && ["light", "dark", "sepia"].includes(legacyTheme)
+          ? { ...DEFAULT_SETTINGS, theme: legacyTheme }
+          : DEFAULT_SETTINGS;
+        setSettings(initial);
+        applySettings(initial);
       }
     } catch {
       applySettings(DEFAULT_SETTINGS);
@@ -314,6 +319,9 @@ export function ReadingControlPanel() {
   useEffect(() => {
     if (!mounted) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    try {
+      localStorage.setItem("theme", settings.theme);
+    } catch {}
     applySettings(settings);
   }, [settings, mounted]);
 
