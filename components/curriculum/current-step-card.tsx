@@ -29,12 +29,6 @@ export const CurrentStepCard: React.FC<CurrentStepCardProps> = ({
       aria-label="Current Recommended Step"
       className={`w-full rounded-[16px] bg-[#171428] border border-[#7c3aed]/40 p-6 sm:p-7 shadow-2xl shadow-purple-950/20 relative overflow-hidden transition-all duration-200 motion-reduce:transition-none ${className}`}
     >
-      {/* Subtle purple gradient background highlight */}
-      <div
-        className="absolute top-0 right-0 w-80 h-80 bg-[#7c3aed]/10 rounded-full blur-3xl pointer-events-none -mr-16 -mt-16"
-        aria-hidden="true"
-      />
-
       <div className="relative z-10 space-y-4">
         {/* Top Meta Line: Chip & Minutes */}
         <div className="flex items-center justify-between gap-3 flex-wrap">
