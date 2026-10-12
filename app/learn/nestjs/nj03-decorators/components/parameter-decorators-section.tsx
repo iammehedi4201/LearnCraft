@@ -31,7 +31,7 @@ export function ParameterDecoratorsSection() {
           <h4 className="font-bold text-sm text-ds-text-strong mb-2">
             The 3 Parameters of a Parameter Decorator:
           </h4>
-          <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-3.5 rounded-xl text-xs font-mono border border-ds-stroke-soft">
+          <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-[#F1F5F9] p-3.5 rounded-xl text-xs font-mono border border-ds-stroke-soft">
 {`function MyParamDecorator(
   target: any,                      // 1. Class prototype (or constructor)
   propertyKey: string | undefined,  // 2. Method name (undefined if in constructor)

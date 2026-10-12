@@ -26,7 +26,7 @@ export function ProjectTourSection() {
           color="primary"
         />
 
-        <div className="mb-8 p-5 bg-[#0B0E17] dark:bg-[#07090E] rounded-2xl border border-ds-stroke-soft font-mono text-xs text-[#F1F5F9] leading-relaxed shadow-inner">
+        <div className="mb-8 p-5 bg-[#0B0E17] dark:bg-[#0E121B] rounded-2xl border border-ds-stroke-soft font-mono text-xs text-[#F1F5F9] leading-relaxed shadow-inner">
           <p className="text-ds-feature-base font-bold mb-2">📁 my-first-api/</p>
           <p>├── 📁 <span className="text-ds-info-base font-bold">src/</span> <span className="text-ds-text-soft"># All your application code lives here</span></p>
           <p>│   ├── 📄 <strong className="text-ds-feature-dark">main.ts</strong> <span className="text-ds-text-soft"># The entry point (Starts the server)</span></p>

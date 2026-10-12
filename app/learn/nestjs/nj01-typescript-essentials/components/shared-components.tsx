@@ -370,7 +370,7 @@ export function PredictOutputBox({
           Predict the TypeScript Behavior
         </h5>
       </div>
-      <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-4 rounded-xl overflow-x-auto text-xs font-mono border border-ds-stroke-soft mb-3 whitespace-pre-wrap leading-relaxed shadow-inner">
+      <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-[#F1F5F9] p-4 rounded-xl overflow-x-auto text-xs font-mono border border-ds-stroke-soft mb-3 whitespace-pre-wrap leading-relaxed shadow-inner">
         {code}
       </pre>
       <button

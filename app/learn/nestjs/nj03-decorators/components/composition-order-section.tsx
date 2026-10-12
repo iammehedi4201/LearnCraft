@@ -43,7 +43,7 @@ export function CompositionOrderSection() {
           <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
             <h5 className="font-bold text-xs uppercase tracking-wider text-ds-info-dark mb-2">Phase 1: Factory Evaluation (Top → Down)</h5>
             <p className="text-xs text-ds-text-sub mb-3">Outer factory functions execute down the page to prepare their settings.</p>
-            <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-3 rounded-lg text-xs font-mono">
+            <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-[#F1F5F9] p-3 rounded-lg text-xs font-mono">
 {`@First()   // 1st factory evaluated
 @Second()  // 2nd factory evaluated
 @Third()   // 3rd factory evaluated
@@ -54,7 +54,7 @@ class Target {}`}
           <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
             <h5 className="font-bold text-xs uppercase tracking-wider text-ds-success-dark mb-2">Phase 2: Decorator Application (Bottom → Up)</h5>
             <p className="text-xs text-ds-text-sub mb-3">The actual decorators wrap the target starting from the one closest to it!</p>
-            <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-3 rounded-lg text-xs font-mono">
+            <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-[#F1F5F9] p-3 rounded-lg text-xs font-mono">
 {`@First()   // 3rd applied (outer jacket)
 @Second()  // 2nd applied
 @Third()   // 1st applied (inner shirt)

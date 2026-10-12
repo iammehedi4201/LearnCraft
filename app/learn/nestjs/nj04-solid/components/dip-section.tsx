@@ -171,7 +171,7 @@ console.log("🧪 Recorded:", recorder.messages);`}
           <p className="text-sm text-ds-text-sub leading-relaxed mb-3">
             TypeScript interfaces disappear after compilation, so NestJS cannot use <code>MessageSender</code> itself as a runtime lookup key. Give the abstraction a token and connect that token to an implementation in a module:
           </p>
-          <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-4 rounded-xl overflow-x-auto text-xs font-mono border border-ds-stroke-soft mb-3 whitespace-pre leading-relaxed">
+          <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-[#F1F5F9] p-4 rounded-xl overflow-x-auto text-xs font-mono border border-ds-stroke-soft mb-3 whitespace-pre leading-relaxed">
 {`import { Inject, Injectable, Module } from "@nestjs/common";
 
 export interface MessageSender {

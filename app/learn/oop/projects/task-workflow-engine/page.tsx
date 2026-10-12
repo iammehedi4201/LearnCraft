@@ -134,7 +134,7 @@ console.log("Final Status:", task.status, "| Success:", success);
 
 export default function OOPCapstonePage(): JSX.Element {
   return (
-    <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
       <Nav />
 
       {/* Breadcrumb Bar */}

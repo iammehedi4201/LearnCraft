@@ -31,7 +31,7 @@ export function MethodDecoratorsSection() {
           <h4 className="font-bold text-sm text-ds-text-strong mb-2">
             The 3 Parameters of a Method Decorator:
           </h4>
-          <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-3.5 rounded-xl text-xs font-mono border border-ds-stroke-soft">
+          <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-[#F1F5F9] p-3.5 rounded-xl text-xs font-mono border border-ds-stroke-soft">
 {`function MyMethodDecorator(
   target: any,                       // 1. The class prototype (holding the method)
   propertyKey: string,               // 2. The method name as text (e.g. "greet")

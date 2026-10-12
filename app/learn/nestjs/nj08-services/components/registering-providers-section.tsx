@@ -65,7 +65,7 @@ export class UsersModule {}`}
           <p className="text-xs text-ds-text-strong leading-relaxed mb-2">
             If you inject <code>UsersService</code> in your controller but forget to add it to <code>providers: [UsersService]</code>, NestJS will throw this error when your server starts:
           </p>
-          <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-ds-error-base p-3 rounded-xl text-xs font-mono border border-ds-stroke-soft overflow-x-auto whitespace-pre-wrap">
+          <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-ds-error-base p-3 rounded-xl text-xs font-mono border border-ds-stroke-soft overflow-x-auto whitespace-pre-wrap">
             Error: Nest can&apos;t resolve dependencies of the UsersController (?).
             Please make sure that the argument UsersService at index [0] is available in the UsersModule context.
           </pre>

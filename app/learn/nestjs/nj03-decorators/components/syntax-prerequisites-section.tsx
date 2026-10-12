@@ -37,7 +37,7 @@ export function SyntaxPrerequisitesSection() {
           <p className="text-sm text-ds-text-sub leading-relaxed mb-3">
             NestJS uses the standard TypeScript decorator format. Open your <code>tsconfig.json</code> file and ensure these two lines are inside <code>compilerOptions</code>:
           </p>
-          <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-4 rounded-xl text-xs font-mono border border-ds-stroke-soft">
+          <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-[#F1F5F9] p-4 rounded-xl text-xs font-mono border border-ds-stroke-soft">
 {`{
   "compilerOptions": {
     "target": "ES2021",

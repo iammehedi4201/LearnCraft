@@ -45,7 +45,7 @@ Think of it like this: the decorator receives access to the entire class, so it 
           <h4 className="font-bold text-sm text-ds-text-strong mb-2">
             The Shape of a Class Decorator:
           </h4>
-          <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-[#F1F5F9] p-3.5 rounded-xl text-xs font-mono border border-ds-stroke-soft">
+          <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-[#F1F5F9] p-3.5 rounded-xl text-xs font-mono border border-ds-stroke-soft">
 {`function MyClassDecorator(
   constructor: Function // The class constructor function itself
 ) {

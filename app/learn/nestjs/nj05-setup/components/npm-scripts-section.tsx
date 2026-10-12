@@ -62,7 +62,7 @@ export function NpmScriptsSection() {
           <p className="text-xs text-ds-text-strong leading-relaxed">
             When you run <code>npm run build</code>, NestJS reads all <code>.ts</code> files in <code>src/</code> and generates plain <code>.js</code> files inside a new folder called <code>dist/</code>.
           </p>
-          <div className="mt-3 p-3 bg-[#0B0E17] dark:bg-[#07090E] rounded-xl font-mono text-xs text-[#F1F5F9] border border-ds-stroke-soft">
+          <div className="mt-3 p-3 bg-[#0B0E17] dark:bg-[#0E121B] rounded-xl font-mono text-xs text-[#F1F5F9] border border-ds-stroke-soft">
             <p>src/main.ts <span className="text-ds-feature-base">──(compiles to)──▶</span> dist/main.js</p>
             <p>src/app.module.ts <span className="text-ds-feature-base">──(compiles to)──▶</span> dist/app.module.js</p>
           </div>

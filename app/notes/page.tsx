@@ -506,7 +506,7 @@ export default function NotesPage(): JSX.Element {
 
   return (
     <div
-      className="min-h-screen bg-[#07090e] text-slate-100 relative selection:bg-purple-500/30 selection:text-white pb-24"
+      className="min-h-screen bg-ds-bg-weak text-slate-100 relative selection:bg-purple-500/30 selection:text-white pb-24"
       style={{
         backgroundImage: `radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px)`,
         backgroundSize: "28px 28px",

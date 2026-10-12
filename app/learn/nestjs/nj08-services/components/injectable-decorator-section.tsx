@@ -70,7 +70,7 @@ export class UsersService {
           When TypeScript compiles a class with <code>@Injectable()</code>, it saves metadata about the constructor arguments. This allows NestJS&apos;s Dependency Injection container to look at:
         </p>
 
-        <div className="p-3 bg-[#0B0E17] dark:bg-[#07090E] rounded-xl font-mono text-xs text-[#F1F5F9] border border-ds-stroke-soft mb-6">
+        <div className="p-3 bg-[#0B0E17] dark:bg-[#0E121B] rounded-xl font-mono text-xs text-[#F1F5F9] border border-ds-stroke-soft mb-6">
           constructor(private readonly usersService: UsersService)
         </div>
 

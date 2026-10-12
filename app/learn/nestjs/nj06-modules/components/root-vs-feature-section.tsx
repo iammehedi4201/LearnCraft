@@ -36,7 +36,7 @@ export function RootVsFeatureSection() {
           </p>
         </AnalogyBox>
 
-        <div className="mb-8 p-5 bg-[#0B0E17] dark:bg-[#07090E] rounded-2xl border border-ds-stroke-soft font-mono text-xs text-[#F1F5F9] leading-relaxed shadow-inner">
+        <div className="mb-8 p-5 bg-[#0B0E17] dark:bg-[#0E121B] rounded-2xl border border-ds-stroke-soft font-mono text-xs text-[#F1F5F9] leading-relaxed shadow-inner">
           <p className="text-ds-feature-base font-bold mb-2">🌳 AppModule (Root)</p>
           <p>├── 📦 <span className="text-ds-info-base font-bold">UsersModule</span> <span className="text-ds-text-soft">(Handles users & profiles)</span></p>
           <p>├── 📦 <span className="text-ds-success-base font-bold">ProductsModule</span> <span className="text-ds-text-soft">(Handles catalog & inventory)</span></p>

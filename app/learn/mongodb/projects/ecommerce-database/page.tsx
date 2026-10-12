@@ -153,7 +153,7 @@ export default function MongoDBCapstonePage() {
   ];
 
   return (
-    <InteractiveGrid className="min-h-screen bg-[#07090E] text-slate-100 selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-slate-100 selection:bg-purple-500/20 selection:text-purple-200 overflow-x-hidden transition-colors duration-300">
       <Nav />
 
       <main className="max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 space-y-10">

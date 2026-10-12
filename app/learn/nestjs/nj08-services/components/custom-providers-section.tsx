@@ -35,7 +35,7 @@ export function CustomProvidersSection() {
           <p className="text-xs text-ds-text-sub leading-relaxed mb-3">
             When you write <code>providers: [UsersService]</code>, NestJS expands it behind the scenes to:
           </p>
-          <div className="p-3 bg-[#0B0E17] dark:bg-[#07090E] rounded-xl font-mono text-xs text-[#F1F5F9] border border-ds-stroke-soft">
+          <div className="p-3 bg-[#0B0E17] dark:bg-[#0E121B] rounded-xl font-mono text-xs text-[#F1F5F9] border border-ds-stroke-soft">
             {`{ provide: UsersService, useClass: UsersService }`}
           </div>
         </WhyBox>

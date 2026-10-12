@@ -33,7 +33,7 @@ export function WhitelistSecuritySection() {
           <p className="text-xs text-ds-text-strong leading-relaxed mb-2">
             Suppose your signup form only asks for <code>name</code> and <code>email</code>. A malicious user sends this raw JSON:
           </p>
-          <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-ds-error-base p-3 rounded-xl font-mono text-xs border border-ds-stroke-soft">
+          <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-ds-error-base p-3 rounded-xl font-mono text-xs border border-ds-stroke-soft">
 {`{
   "name": "Hacker",
   "email": "hacker@darkweb.org",

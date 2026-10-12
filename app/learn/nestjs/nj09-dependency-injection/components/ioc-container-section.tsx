@@ -63,7 +63,7 @@ export function IocContainerSection() {
           color="sky"
         />
 
-        <div className="p-5 rounded-2xl bg-[#0B0E17] dark:bg-[#07090E] border border-ds-stroke-soft font-mono text-xs text-[#F1F5F9] mb-6 leading-relaxed">
+        <div className="p-5 rounded-2xl bg-[#0B0E17] dark:bg-[#0E121B] border border-ds-stroke-soft font-mono text-xs text-[#F1F5F9] mb-6 leading-relaxed">
           <div className="text-ds-feature-light font-bold mb-2">📦 Dependency Resolution Order:</div>
           <div>1. [Leaf] DatabaseService (has no dependencies) → Created first ✅</div>
           <div>2. [Mid]  UsersService (needs DatabaseService) → Injected with DatabaseService ✅</div>

@@ -52,7 +52,7 @@ bootstrap();`}
           <p className="text-xs text-ds-text-sub leading-relaxed mb-3">
             If a client sends invalid data, NestJS immediately intercepts the request and responds with a standard <strong>400 Bad Request</strong> JSON body before your controller even executes:
           </p>
-          <pre className="bg-[#0B0E17] dark:bg-[#07090E] text-ds-error-base p-3.5 rounded-xl font-mono text-xs border border-ds-stroke-soft whitespace-pre-wrap leading-relaxed">
+          <pre className="bg-[#0B0E17] dark:bg-[#0E121B] text-ds-error-base p-3.5 rounded-xl font-mono text-xs border border-ds-stroke-soft whitespace-pre-wrap leading-relaxed">
 {`{
   "statusCode": 400,
   "message": [
