@@ -1,34 +1,47 @@
-# ⚡ LearnCraft — Next-Gen Web Engineering Platform
-
 <div align="center">
 
-<img src="./public/logo.png" width="84" alt="LearnCraft Logo" style="border-radius: 18px; margin-bottom: 8px;" />
+  <a href="https://github.com/iammehedi4201/LearnCraft">
+    <img src="./public/logo.png" width="78" height="78" alt="LearnCraft Logo" style="border-radius: 18px;" />
+  </a>
 
-### Master Modern Software Engineering & System Design
+  # LearnCraft
 
-**Production-grade engineering education platform featuring 12 technology tracks, zero-latency local-first synchronization, SuperMemo SM-2 spaced repetition interview drills, and hands-on architectural lessons.**
+  <p align="center">
+    <b>Next-Gen Web Engineering Platform &bull; System Design Mastery</b>
+  </p>
 
-<p align="center">
-  <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16.2-black?style=for-the-badge&logo=next.js" alt="Next.js" /></a>
-  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-18.3-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" /></a>
-  <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" /></a>
-  <a href="https://tanstack.com/query"><img src="https://img.shields.io/badge/TanStack_Query-v5-FF4154?style=for-the-badge&logo=reactquery&logoColor=white" alt="TanStack Query" /></a>
-  <a href="https://www.prisma.io"><img src="https://img.shields.io/badge/Prisma_ORM-5.10-2D3748?style=for-the-badge&logo=prisma&logoColor=white" alt="Prisma" /></a>
-  <a href="https://neon.tech"><img src="https://img.shields.io/badge/Neon_PostgreSQL-Serverless-00E599?style=for-the-badge&logo=postgresql&logoColor=white" alt="Neon Postgres" /></a>
-  <a href="https://vitest.dev"><img src="https://img.shields.io/badge/Tests-138%2F138%20Passing-10B981?style=for-the-badge&logo=vitest&logoColor=white" alt="Tests Passing" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License MIT" /></a>
-</p>
+  <p align="center" style="max-width: 680px; margin: 0 auto; line-height: 1.6;">
+    Production-grade engineering education platform featuring 12 technology tracks, zero-latency local-first synchronization, SuperMemo SM-2 spaced repetition interview drills, and hands-on architectural lessons.
+  </p>
 
-<p align="center">
-  <a href="#-live-platform-tour"><b>🎬 Live Demo</b></a> •
-  <a href="#-key-features"><b>✨ Key Features</b></a> •
-  <a href="#-visual-platform-tour"><b>📸 Interface Tour</b></a> •
-  <a href="#-curriculum-tracks"><b>📚 Curriculum</b></a> •
-  <a href="#️-system-architecture"><b>🏗️ Architecture</b></a> •
-  <a href="#-performance-engineering"><b>⚡ Performance</b></a> •
-  <a href="#-getting-started"><b>🚀 Quickstart</b></a> •
-  <a href="#-testing--verification"><b>🧪 Testing</b></a>
-</p>
+  <!-- Technology Stack Badges -->
+  <p align="center">
+    <a href="https://nextjs.org"><img src="https://img.shields.io/badge/Next.js-16.2-18181b?style=flat-square&logo=next.js&logoColor=white&labelColor=09090b" alt="Next.js" /></a>
+    <a href="https://react.dev"><img src="https://img.shields.io/badge/React-18.3-18181b?style=flat-square&logo=react&logoColor=61dafb&labelColor=09090b" alt="React" /></a>
+    <a href="https://www.typescriptlang.org"><img src="https://img.shields.io/badge/TypeScript-5.0-18181b?style=flat-square&logo=typescript&logoColor=3178c6&labelColor=09090b" alt="TypeScript" /></a>
+    <a href="https://tanstack.com/query"><img src="https://img.shields.io/badge/TanStack_Query-v5-18181b?style=flat-square&logo=reactquery&logoColor=ff4154&labelColor=09090b" alt="TanStack Query" /></a>
+    <a href="https://www.prisma.io"><img src="https://img.shields.io/badge/Prisma_ORM-5.10-18181b?style=flat-square&logo=prisma&logoColor=white&labelColor=09090b" alt="Prisma ORM" /></a>
+    <a href="https://neon.tech"><img src="https://img.shields.io/badge/Neon_PostgreSQL-Serverless-18181b?style=flat-square&logo=postgresql&logoColor=00e599&labelColor=09090b" alt="Neon PostgreSQL" /></a>
+  </p>
+
+  <!-- Verification & Licensing Badges -->
+  <p align="center">
+    <a href="https://vitest.dev"><img src="https://img.shields.io/badge/Tests-138%2F138%20Passing-064e3b?style=flat-square&logo=vitest&logoColor=34d399&labelColor=022c22" alt="Vitest Tests 138/138 Passing" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-1e293b?style=flat-square&labelColor=0f172a" alt="MIT License" /></a>
+  </p>
+
+  <!-- Quick Navigation -->
+  <p align="center">
+    <a href="#-live-platform-tour"><b>🎬 Live Demo</b></a> &nbsp;&bull;&nbsp;
+    <a href="#-key-features"><b>✨ Key Features</b></a> &nbsp;&bull;&nbsp;
+    <a href="#-visual-platform-tour"><b>📸 Interface Tour</b></a> &nbsp;&bull;&nbsp;
+    <a href="#-curriculum-tracks"><b>📚 Curriculum</b></a>
+    <br />
+    <a href="#️-system-architecture"><b>🏗️ Architecture</b></a> &nbsp;&bull;&nbsp;
+    <a href="#-performance-engineering"><b>⚡ Performance</b></a> &nbsp;&bull;&nbsp;
+    <a href="#-getting-started"><b>🚀 Quickstart</b></a> &nbsp;&bull;&nbsp;
+    <a href="#-testing--verification"><b>🧪 Testing</b></a>
+  </p>
 
 </div>
 
