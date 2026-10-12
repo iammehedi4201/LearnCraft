@@ -139,8 +139,8 @@ export function Flashcard({
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-4">
       {/* Question Card Container */}
       <div className="relative rounded-2xl bg-neutral-900/90 border border-white/[0.08] shadow-2xl backdrop-blur-xl overflow-hidden transition-all duration-300 hover:border-purple-500/30">
-        {/* Subtle Top Gradient Accent */}
-        <div className="h-1 w-full bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-500" />
+        {/* Subtle Top Border Accent */}
+        <div className="h-0.5 w-full bg-purple-500/40" />
 
         {/* Card Header */}
         <div className="p-5 sm:p-6 pb-4 border-b border-white/[0.06] flex flex-wrap items-center justify-between gap-3">
@@ -224,7 +224,7 @@ export function Flashcard({
 
         {/* Reveal Toggle Banner */}
         {!isRevealed ? (
-          <div className="p-5 sm:p-6 bg-gradient-to-b from-white/[0.01] to-white/[0.04] border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="p-5 sm:p-6 bg-white/[0.02] border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-xs text-neutral-400 flex items-center gap-2">
               <kbd className="px-2 py-1 rounded bg-white/[0.08] border border-white/[0.1] text-neutral-300 font-mono text-[11px]">
                 Space
@@ -233,7 +233,7 @@ export function Flashcard({
             </div>
             <button
               onClick={() => setIsRevealed(true)}
-              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-sm shadow-lg shadow-purple-500/20 hover:shadow-purple-500/35 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
+              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-sm shadow-lg shadow-purple-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.98]"
             >
               <span>Reveal Model Answer</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

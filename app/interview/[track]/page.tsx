@@ -11,6 +11,7 @@ import {
 } from "@/lib/interview-progress";
 import { InterviewQuestion, QuestionProgress, InterviewGrade } from "@/types/interview";
 import { Flashcard } from "@/components/interview/Flashcard";
+import { TechIcon } from "@/components/roadmap/TechIcon";
 
 interface PracticePageProps {
   params: Promise<{ track: string }>;
@@ -155,7 +156,9 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
         <div className="p-4 sm:p-5 rounded-2xl bg-neutral-900/60 border border-white/[0.06] backdrop-blur-md space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <span className="text-2xl">{meta.icon}</span>
+              <div className="w-8 h-8 rounded-lg bg-white/[0.05] border border-white/[0.08] flex items-center justify-center p-1.5 flex-shrink-0 shadow-sm">
+                <TechIcon slug={trackKey} className="w-5 h-5" />
+              </div>
               <div>
                 <h1 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                   <span>{meta.title} Interview Practice</span>
@@ -177,7 +180,7 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
           {/* Visual Progress Bar */}
           <div className="h-1.5 w-full rounded-full bg-white/[0.06] overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-purple-500 via-indigo-500 to-emerald-400 transition-all duration-300"
+              className="h-full rounded-full bg-purple-500 transition-all duration-300"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -195,7 +198,7 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
         ) : (
           /* Session Completion Screen */
           <div className="p-8 sm:p-12 rounded-3xl bg-neutral-900/90 border border-white/[0.08] shadow-2xl backdrop-blur-xl text-center space-y-6 animate-fadeIn">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-500 to-emerald-400 flex items-center justify-center text-3xl mx-auto shadow-xl shadow-purple-500/20">
+            <div className="w-16 h-16 rounded-2xl bg-purple-600 flex items-center justify-center text-3xl mx-auto shadow-xl shadow-purple-600/20">
               🎉
             </div>
 

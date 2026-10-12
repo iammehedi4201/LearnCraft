@@ -71,7 +71,7 @@ export default function InterviewHubPage() {
 
           <Link
             href="/interview/mock"
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-purple-600/25 transition-all cursor-pointer active:scale-95"
+            className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-purple-600/20 transition-all cursor-pointer active:scale-95"
           >
             <span>🎲 Timed Mock Interview</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -81,10 +81,9 @@ export default function InterviewHubPage() {
         </div>
 
         {/* Hero Header */}
-        <div className="relative rounded-3xl bg-gradient-to-br from-purple-950/40 via-neutral-900/80 to-indigo-950/30 border border-white/[0.08] p-6 sm:p-10 overflow-hidden backdrop-blur-xl">
-          {/* Subtle Ambient Backlights */}
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative rounded-3xl bg-neutral-900/80 border border-white/[0.08] p-6 sm:p-10 overflow-hidden backdrop-blur-xl">
+          {/* Subtle Ambient Backlight */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-semibold">
@@ -94,7 +93,7 @@ export default function InterviewHubPage() {
 
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
               Master Technical Interviews{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-400">
+              <span className="text-purple-400">
                 Topic by Topic
               </span>
             </h1>

@@ -14,6 +14,7 @@ import {
 } from "@/types/interview";
 import { Flashcard } from "@/components/interview/Flashcard";
 import { Scorecard } from "@/components/interview/Scorecard";
+import { TechIcon } from "@/components/roadmap/TechIcon";
 
 type MockPhase = "config" | "active" | "summary";
 
@@ -251,7 +252,9 @@ export default function MockInterviewPage() {
                           : "bg-white/[0.02] border-white/[0.06] text-neutral-400 hover:text-white hover:bg-white/[0.05]"
                       }`}
                     >
-                      <span className="text-lg">{track.icon}</span>
+                      <div className="w-7 h-7 rounded-lg bg-white/[0.05] border border-white/[0.08] flex items-center justify-center p-1 flex-shrink-0">
+                        <TechIcon slug={track.trackKey} className="w-4 h-4" />
+                      </div>
                       <div className="min-w-0">
                         <span className="block text-xs font-bold truncate">{track.title}</span>
                         <span className="block text-[10px] text-neutral-400">
@@ -324,7 +327,7 @@ export default function MockInterviewPage() {
               <button
                 disabled={selectedTracks.length === 0}
                 onClick={startMockInterview}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-purple-600/25 transition-all cursor-pointer active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-purple-600/20 transition-all cursor-pointer active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <span>🚀 Begin Mock Interview ({questionCount} Questions)</span>
               </button>
