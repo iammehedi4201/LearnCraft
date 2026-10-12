@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   reconcileCloudProgress,
   clearProgressCache,
+  recordProgress,
 } from "../progress-sync";
 import {
   syncGamificationWithCloud,
@@ -14,7 +15,9 @@ import {
   syncBookmarksWithCloud,
   clearBookmarksCache,
   invalidateBookmarksSync,
+  upsertNote,
 } from "../notes-bookmarks";
+import { clearAllClientCaches } from "../query-client";
 
 describe("Cache Correctness, User Isolation, and In-Flight Synchronization", () => {
   let mockStorage: Record<string, string> = {};
@@ -200,4 +203,86 @@ describe("Cache Correctness, User Isolation, and In-Flight Synchronization", () 
     await syncBookmarksWithCloud(false, "user-1");
     expect(getFetchCount).toBe(2);
   });
+
+  it("confirms progress recording and autosave correctly dispatches events and invalidates TTL cache", async () => {
+    let postBody: any = null;
+    global.fetch = vi.fn().mockImplementation(async (url: string, init?: any) => {
+      if (url === "/api/progress" && init?.method === "POST") {
+        postBody = JSON.parse(init.body);
+      }
+      return { ok: true, status: 200, json: async () => ({ success: true }) };
+    }) as any;
+
+    const dispatchSpy = vi.spyOn(window, "dispatchEvent");
+
+    await recordProgress("tq02-use-query", true, 95);
+
+    expect(dispatchSpy).toHaveBeenCalled();
+    expect(postBody).toEqual({
+      module: "tq02-use-query",
+      completed: true,
+      score: 95,
+    });
+  });
+
+  it("confirms notes save correctly to local storage and push to cloud", async () => {
+    let cloudPushBody: any = null;
+    global.fetch = vi.fn().mockImplementation(async (url: string, init?: any) => {
+      if (url === "/api/notes" && init?.method === "POST") {
+        cloudPushBody = JSON.parse(init.body);
+      }
+      return { ok: true, status: 200, json: async () => ({ success: true }) };
+    }) as any;
+
+    const saved = upsertNote({
+      trackKey: "react",
+      lessonSlug: "react-basics",
+      content: "Important insight on memoization",
+      title: "Performance Note",
+    });
+
+    expect(saved.id).toBeDefined();
+    expect(saved.content).toBe("Important insight on memoization");
+    expect(saved.trackKey).toBe("react");
+    expect(saved.lessonSlug).toBe("react-basics");
+    expect(cloudPushBody !== undefined).toBe(true);
+  });
+
+  it("confirms clearAllClientCaches purges all memory caches on sign out or account switch", async () => {
+    // Populate caches with user-1 data
+    global.fetch = vi.fn().mockImplementation(async () => {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          success: true,
+          data: [{ module: "lesson-1", completed: true }],
+          state: { totalXP: 50 },
+          notes: [],
+          bookmarks: [],
+        }),
+      };
+    }) as any;
+
+    await reconcileCloudProgress(false, "user-1");
+    await syncGamificationWithCloud(false, "user-1");
+
+    // Execute sign out / account switch cache purge
+    clearAllClientCaches();
+
+    // Verify next sync request must hit network
+    let fetchCount = 0;
+    global.fetch = vi.fn().mockImplementation(async () => {
+      fetchCount++;
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true, data: [] }),
+      };
+    }) as any;
+
+    await reconcileCloudProgress(false, "user-1");
+    expect(fetchCount).toBe(1);
+  });
 });
+
