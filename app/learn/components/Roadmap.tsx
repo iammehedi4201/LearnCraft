@@ -202,21 +202,21 @@ export function Roadmap({
         {/* ═══════════════════════════════════════════════════════════════
             LEARNER PROGRESS TRACKER
            ═══════════════════════════════════════════════════════════════ */}
-        <div className="w-full mb-12 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-purple-950/20 via-white/[0.02] to-purple-950/20 border border-purple-500/20 backdrop-blur-sm">
+        <div className="w-full mb-12 p-4 sm:p-6 rounded-2xl bg-[#0E121B] border border-white/10">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-6 h-6 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-300">
+              <div className="w-6 h-6 rounded-lg bg-white/[0.06] flex items-center justify-center text-purple-400 border border-white/5">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
               </div>
               <span className="text-sm font-semibold text-white">
-                Your progress — <span className="text-purple-300 font-bold">{completedCount}</span> of {steps.length} steps completed
+                Your progress — <span className="text-purple-400 font-bold">{completedCount}</span> of {steps.length} steps completed
               </span>
             </div>
 
             <div className="flex items-center gap-3 self-end sm:self-auto">
-              <span className="text-xs font-mono font-bold text-purple-300 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">
+              <span className="text-xs font-mono font-medium text-slate-300 bg-white/[0.05] px-2.5 py-1 rounded-full border border-white/10">
                 {progressPercent}% Complete
               </span>
               {completedCount > 0 && (
@@ -237,7 +237,7 @@ export function Roadmap({
           {/* Visual Progress Bar */}
           <div className="w-full h-2.5 bg-white/[0.06] rounded-full overflow-hidden p-0.5 border border-white/5">
             <div
-              className="h-full bg-gradient-to-r from-purple-600 via-purple-500 to-emerald-400 rounded-full transition-all duration-500 ease-out shadow-sm"
+              className="h-full bg-purple-600 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -391,20 +391,20 @@ export function Roadmap({
 
                       {/* Decision Point (When choices exist, explicitly state learner needs only ONE) */}
                       {step.decisionPoint && (
-                        <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/30 border border-purple-500/30">
+                        <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/10">
                           <div className="mb-3">
                             <div className="flex items-center gap-2">
-                              <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-purple-300">
+                              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-purple-400">
                                 ⚖️ Decision Point
                               </span>
-                              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 border border-purple-500/30">
+                              <span className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md bg-white/[0.06] text-slate-300 border border-white/10">
                                 Pick Only One
                               </span>
                             </div>
-                            <h4 className="text-base font-bold text-white mt-1">
+                            <h4 className="text-base font-bold text-white mt-1.5">
                               {step.decisionPoint.title}
                             </h4>
-                            <p className="text-xs text-purple-200/80 mt-0.5 italic">
+                            <p className="text-xs text-slate-400 mt-1 italic leading-relaxed">
                               &ldquo;{step.decisionPoint.explanation}&rdquo;
                             </p>
                           </div>
@@ -415,37 +415,37 @@ export function Roadmap({
                                 key={opt.name}
                                 className={`p-4 rounded-xl border transition-all ${
                                   opt.isRecommended
-                                    ? "bg-purple-900/30 border-purple-500/50 shadow-md shadow-purple-950/40 ring-1 ring-purple-500/30"
-                                    : "bg-white/[0.02] border-white/10"
+                                    ? "bg-purple-500/[0.04] border-purple-500/30 hover:border-purple-500/40"
+                                    : "bg-white/[0.02] border-white/[0.08] hover:border-white/15"
                                 }`}
                               >
                                 <div className="flex items-center justify-between gap-2 mb-2">
                                   <div className="flex items-center gap-2">
                                     <TechIcon slug={opt.slug || opt.name} className="w-5 h-5" />
-                                    <span className="text-sm font-bold text-white">
+                                    <span className="text-sm font-semibold text-white">
                                       {opt.name}
                                     </span>
                                   </div>
 
                                   {opt.isRecommended ? (
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-medium bg-emerald-500/10 text-emerald-400/90 border border-emerald-500/20">
                                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                       </svg>
                                       Recommended
                                     </span>
                                   ) : (
-                                    <span className="text-[10px] font-medium text-gray-400 px-2 py-0.5 rounded bg-white/[0.05]">
+                                    <span className="text-[10px] font-medium text-slate-400 px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/5">
                                       Alternative
                                     </span>
                                   )}
                                 </div>
 
-                                <p className="text-[11px] text-gray-400 leading-relaxed mb-2">
+                                <p className="text-xs text-slate-400 leading-relaxed mb-2.5">
                                   {opt.desc}
                                 </p>
 
-                                <span className="text-[10px] font-semibold text-gray-400">
+                                <span className="text-[11px] font-medium text-slate-500">
                                   {opt.tag}
                                 </span>
                               </div>
