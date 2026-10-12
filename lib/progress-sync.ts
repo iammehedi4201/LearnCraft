@@ -79,6 +79,14 @@ export function getLocalProgressList(): ModuleProgress[] {
   return results;
 }
 
+let cachedCloudItems: ModuleProgress[] | null = null;
+let lastReconcileTimestamp = 0;
+const RECONCILE_CACHE_TTL_MS = 60 * 1000; // 60 seconds TTL
+let reconcileInFlightPromise: Promise<{
+  syncedCount: number;
+  cloudItems: ModuleProgress[];
+}> | null = null;
+
 /**
  * Save progress directly to Neon PostgreSQL database
  */
@@ -89,6 +97,9 @@ export async function recordProgress(
   _isAuthenticated: boolean = true
 ): Promise<void> {
   if (typeof window === "undefined") return;
+
+  // Invalidate progress reconcile cache on mutation so next fetch gets fresh state
+  lastReconcileTimestamp = 0;
 
   // Dispatch custom event for multi-component reactive updates
   window.dispatchEvent(
@@ -111,44 +122,65 @@ export async function recordProgress(
 
 /**
  * Fetch authoritative progress directly from Neon PostgreSQL
+ * Optimized with in-flight deduplication and 60s in-memory TTL cache to eliminate redundant network hits during page navigation.
  */
-export async function reconcileCloudProgress(): Promise<{
+export async function reconcileCloudProgress(force: boolean = false): Promise<{
   syncedCount: number;
   cloudItems: ModuleProgress[];
 }> {
   if (typeof window === "undefined") return { syncedCount: 0, cloudItems: [] };
 
-  try {
-    const res = await fetch("/api/progress", { cache: "no-store" });
-    if (!res.ok) {
-      return { syncedCount: 0, cloudItems: [] };
-    }
-
-    const { data } = await res.json();
-    if (!Array.isArray(data)) {
-      return { syncedCount: 0, cloudItems: [] };
-    }
-
-    const completedSlugs = data
-      .filter((d: { completed: boolean }) => d.completed)
-      .map((d: { module: string }) => d.module);
-
-    window.dispatchEvent(
-      new CustomEvent("learncraft-progress-updated", {
-        detail: { completedLessons: completedSlugs },
-      })
-    );
-
-    window.dispatchEvent(
-      new CustomEvent(SYNC_EVENT_NAME, {
-        detail: { action: "reconciled", count: data.length },
-      })
-    );
-
-    return { syncedCount: data.length, cloudItems: data };
-  } catch (err) {
-    console.error("[ProgressSync] Error reconciling progress with DB:", err);
-    return { syncedCount: 0, cloudItems: [] };
+  const now = Date.now();
+  // Return cached result if fresh and not explicitly forced
+  if (!force && cachedCloudItems !== null && now - lastReconcileTimestamp < RECONCILE_CACHE_TTL_MS) {
+    return { syncedCount: cachedCloudItems.length, cloudItems: cachedCloudItems };
   }
+
+  // Deduplicate concurrent requests
+  if (reconcileInFlightPromise) {
+    return reconcileInFlightPromise;
+  }
+
+  reconcileInFlightPromise = (async () => {
+    try {
+      const res = await fetch("/api/progress", { cache: "no-store" });
+      if (!res.ok) {
+        return { syncedCount: cachedCloudItems?.length || 0, cloudItems: cachedCloudItems || [] };
+      }
+
+      const { data } = await res.json();
+      if (!Array.isArray(data)) {
+        return { syncedCount: cachedCloudItems?.length || 0, cloudItems: cachedCloudItems || [] };
+      }
+
+      cachedCloudItems = data;
+      lastReconcileTimestamp = Date.now();
+
+      const completedSlugs = data
+        .filter((d: { completed: boolean }) => d.completed)
+        .map((d: { module: string }) => d.module);
+
+      window.dispatchEvent(
+        new CustomEvent("learncraft-progress-updated", {
+          detail: { completedLessons: completedSlugs },
+        })
+      );
+
+      window.dispatchEvent(
+        new CustomEvent(SYNC_EVENT_NAME, {
+          detail: { action: "reconciled", count: data.length },
+        })
+      );
+
+      return { syncedCount: data.length, cloudItems: data };
+    } catch (err) {
+      console.error("[ProgressSync] Error reconciling progress with DB:", err);
+      return { syncedCount: cachedCloudItems?.length || 0, cloudItems: cachedCloudItems || [] };
+    } finally {
+      reconcileInFlightPromise = null;
+    }
+  })();
+
+  return reconcileInFlightPromise;
 }
 

@@ -404,41 +404,66 @@ export function pushGamificationToCloud(): void {
   }, 1000);
 }
 
+let cachedGamificationState: UserGamificationState | null = null;
+let lastGamificationSyncTime = 0;
+const GAMIFICATION_SYNC_TTL_MS = 60 * 1000; // 60 seconds
+let gamificationSyncInFlightPromise: Promise<UserGamificationState> | null = null;
+
 /**
  * Reconcile local gamification state with PostgreSQL cloud state
+ * Optimized with in-flight deduplication and 60s in-memory TTL cache to eliminate redundant network hits during page navigation.
  */
-export async function syncGamificationWithCloud(): Promise<UserGamificationState> {
+export async function syncGamificationWithCloud(force: boolean = false): Promise<UserGamificationState> {
   const localState = getGamificationState();
   if (typeof window === "undefined") return localState;
 
-  try {
-    const res = await fetch("/api/gamification", { cache: "no-store" });
-    if (!res.ok) return localState;
-
-    const data = await res.json();
-    if (!data.success) return localState;
-
-    if (!data.state) {
-      // Cloud is empty, push local state to initialize
-      pushGamificationToCloud();
-      return localState;
-    }
-
-    const merged = mergeGamificationStates(localState, data.state);
-    saveGamificationState(merged);
-
-    // If local state had more XP or progress, push merged back to cloud
-    if (
-      (localState.totalXP || 0) > (data.state.totalXP || 0) ||
-      (localState.currentStreak || 1) > (data.state.currentStreak || 1)
-    ) {
-      pushGamificationToCloud();
-    }
-
-    return merged;
-  } catch (err) {
-    console.warn("[Gamification] Error reconciling with cloud:", err);
-    return localState;
+  const now = Date.now();
+  if (!force && cachedGamificationState !== null && now - lastGamificationSyncTime < GAMIFICATION_SYNC_TTL_MS) {
+    return cachedGamificationState;
   }
+
+  if (gamificationSyncInFlightPromise) {
+    return gamificationSyncInFlightPromise;
+  }
+
+  gamificationSyncInFlightPromise = (async () => {
+    try {
+      const res = await fetch("/api/gamification", { cache: "no-store" });
+      if (!res.ok) return localState;
+
+      const data = await res.json();
+      if (!data.success) return localState;
+
+      if (!data.state) {
+        // Cloud is empty, push local state to initialize
+        pushGamificationToCloud();
+        cachedGamificationState = localState;
+        lastGamificationSyncTime = Date.now();
+        return localState;
+      }
+
+      const merged = mergeGamificationStates(localState, data.state);
+      saveGamificationState(merged);
+      cachedGamificationState = merged;
+      lastGamificationSyncTime = Date.now();
+
+      // If local state had more XP or progress, push merged back to cloud
+      if (
+        (localState.totalXP || 0) > (data.state.totalXP || 0) ||
+        (localState.currentStreak || 1) > (data.state.currentStreak || 1)
+      ) {
+        pushGamificationToCloud();
+      }
+
+      return merged;
+    } catch (err) {
+      console.warn("[Gamification] Error reconciling with cloud:", err);
+      return localState;
+    } finally {
+      gamificationSyncInFlightPromise = null;
+    }
+  })();
+
+  return gamificationSyncInFlightPromise;
 }
 

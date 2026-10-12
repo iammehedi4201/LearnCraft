@@ -20,10 +20,11 @@ import { QueryClient, DefaultOptions } from "@tanstack/react-query";
 
 const queryConfig: DefaultOptions = {
   queries: {
-    staleTime: 0, // Data is fresh only once initially fetched
-    gcTime: 1000 * 60 * 5, // Keep unused queries in cache for 5 minutes
+    staleTime: 1000 * 60 * 2, // Data remains fresh for 2 minutes — instant navigation from cache
+    gcTime: 1000 * 60 * 10, // Keep unused queries in cache for 10 minutes
     retry: 1, // Retry failed requests once
-    refetchOnWindowFocus: true, // Refetch when user returns to window
+    refetchOnWindowFocus: false, // Prevent distracting network requests on window/tab switch
+    refetchOnReconnect: true, // Auto-refetch when user regains internet connectivity
   },
   mutations: {
     retry: 1,

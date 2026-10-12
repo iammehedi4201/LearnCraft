@@ -831,47 +831,91 @@ async function pushBookmarkToCloud(bookmark: CodeBookmark): Promise<void> {
   } catch {}
 }
 
-export async function syncNotesWithCloud(): Promise<UserNote[]> {
-  try {
-    const res = await fetch("/api/notes", { method: "GET" });
-    if (!res.ok) return getLocalNotes();
+let lastNotesSyncTime = 0;
+let notesSyncInFlight: Promise<UserNote[]> | null = null;
+const NOTES_SYNC_TTL_MS = 60 * 1000;
 
-    const data = await res.json();
-    if (data.success && Array.isArray(data.notes)) {
-      const merged = mergeNotesStates(getLocalNotes(), data.notes);
-      saveLocalNotes(merged);
+export async function syncNotesWithCloud(force: boolean = false): Promise<UserNote[]> {
+  const localNotes = getLocalNotes();
+  const now = Date.now();
+  if (!force && now - lastNotesSyncTime < NOTES_SYNC_TTL_MS) {
+    return localNotes;
+  }
 
-      // Re-push merged state to ensure cloud is up to date
-      fetch("/api/notes/batch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ notes: merged }),
-      }).catch(() => {});
+  if (notesSyncInFlight) {
+    return notesSyncInFlight;
+  }
 
-      return merged;
+  notesSyncInFlight = (async () => {
+    try {
+      const res = await fetch("/api/notes", { method: "GET" });
+      if (!res.ok) return getLocalNotes();
+
+      const data = await res.json();
+      if (data.success && Array.isArray(data.notes)) {
+        const merged = mergeNotesStates(getLocalNotes(), data.notes);
+        saveLocalNotes(merged);
+        lastNotesSyncTime = Date.now();
+
+        // Re-push merged state to ensure cloud is up to date
+        fetch("/api/notes/batch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ notes: merged }),
+        }).catch(() => {});
+
+        return merged;
+      }
+    } catch {}
+    finally {
+      notesSyncInFlight = null;
     }
-  } catch {}
-  return getLocalNotes();
+    return getLocalNotes();
+  })();
+
+  return notesSyncInFlight;
 }
 
-export async function syncBookmarksWithCloud(): Promise<CodeBookmark[]> {
-  try {
-    const res = await fetch("/api/bookmarks", { method: "GET" });
-    if (!res.ok) return getLocalBookmarks();
+let lastBookmarksSyncTime = 0;
+let bookmarksSyncInFlight: Promise<CodeBookmark[]> | null = null;
+const BOOKMARKS_SYNC_TTL_MS = 60 * 1000;
 
-    const data = await res.json();
-    if (data.success && Array.isArray(data.bookmarks)) {
-      const merged = mergeBookmarksStates(getLocalBookmarks(), data.bookmarks);
-      saveLocalBookmarks(merged);
+export async function syncBookmarksWithCloud(force: boolean = false): Promise<CodeBookmark[]> {
+  const localBookmarks = getLocalBookmarks();
+  const now = Date.now();
+  if (!force && now - lastBookmarksSyncTime < BOOKMARKS_SYNC_TTL_MS) {
+    return localBookmarks;
+  }
 
-      fetch("/api/bookmarks/batch", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ bookmarks: merged }),
-      }).catch(() => {});
+  if (bookmarksSyncInFlight) {
+    return bookmarksSyncInFlight;
+  }
 
-      return merged;
+  bookmarksSyncInFlight = (async () => {
+    try {
+      const res = await fetch("/api/bookmarks", { method: "GET" });
+      if (!res.ok) return getLocalBookmarks();
+
+      const data = await res.json();
+      if (data.success && Array.isArray(data.bookmarks)) {
+        const merged = mergeBookmarksStates(getLocalBookmarks(), data.bookmarks);
+        saveLocalBookmarks(merged);
+        lastBookmarksSyncTime = Date.now();
+
+        fetch("/api/bookmarks/batch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ bookmarks: merged }),
+        }).catch(() => {});
+
+        return merged;
+      }
+    } catch {}
+    finally {
+      bookmarksSyncInFlight = null;
     }
-  } catch {}
-  return getLocalBookmarks();
+    return getLocalBookmarks();
+  })();
+
+  return bookmarksSyncInFlight;
 }

@@ -245,6 +245,7 @@ function NavContent(): JSX.Element {
               {/* Logo */}
               <Link
                 href="/learn"
+                prefetch={true}
                 className="group flex items-center gap-2.5 font-black tracking-tight text-ds-text-strong"
               >
                 <div className="relative h-8 w-8 overflow-hidden rounded-xl border border-ds-stroke-soft shadow-sm group-hover:scale-105 transition-all duration-300">
@@ -399,6 +400,7 @@ function NavContent(): JSX.Element {
                                 <Link
                                   key={skill.slug}
                                   href={skill.learnPath}
+                                  prefetch={true}
                                   onClick={() => setIsMenuOpen(false)}
                                   className="group flex items-start gap-3 p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.06] transition-all"
                                 >
@@ -457,6 +459,7 @@ function NavContent(): JSX.Element {
                         </span>
                         <Link
                           href="/roadmaps#skill-roadmaps"
+                          prefetch={true}
                           onClick={() => setIsMenuOpen(false)}
                           className="font-bold text-purple-300 hover:text-purple-200 flex items-center gap-1 transition-colors group"
                         >
@@ -478,6 +481,7 @@ function NavContent(): JSX.Element {
 
                 <Link
                   href="/notes"
+                  prefetch={true}
                   className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
                 >
                   <span>📝</span>
@@ -491,6 +495,7 @@ function NavContent(): JSX.Element {
 
                 <Link
                   href="/interview"
+                  prefetch={true}
                   className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
                 >
                   <span>🎯</span>
@@ -499,6 +504,7 @@ function NavContent(): JSX.Element {
 
                 <Link
                   href="/roadmaps"
+                  prefetch={true}
                   className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
                 >
                   <span>🗺️</span>
@@ -606,6 +612,7 @@ function NavContent(): JSX.Element {
               <div className="pt-2 border-t border-white/[0.06] flex flex-col gap-2">
                 <Link
                   href="/notes"
+                  prefetch={true}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white text-xs font-bold"
                 >
@@ -622,6 +629,7 @@ function NavContent(): JSX.Element {
 
                 <Link
                   href="/interview"
+                  prefetch={true}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white text-xs font-bold"
                 >
@@ -634,6 +642,7 @@ function NavContent(): JSX.Element {
 
                 <Link
                   href="/revision"
+                  prefetch={true}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-xl bg-ds-feature-base text-ds-static-white text-xs font-bold"
                 >
@@ -641,6 +650,7 @@ function NavContent(): JSX.Element {
                 </Link>
                 <Link
                   href="/roadmaps"
+                  prefetch={true}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white text-xs font-bold"
                 >
@@ -783,6 +793,7 @@ function UserNavMenu({
           <div className="space-y-0.5">
             <Link
               href="/notes"
+              prefetch={true}
               onClick={() => setIsOpen(false)}
               className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
             >
@@ -799,6 +810,7 @@ function UserNavMenu({
 
             <Link
               href="/revision"
+              prefetch={true}
               onClick={() => setIsOpen(false)}
               className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
             >
@@ -815,6 +827,7 @@ function UserNavMenu({
 
             <Link
               href="/interview"
+              prefetch={true}
               onClick={() => setIsOpen(false)}
               className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
             >
@@ -826,6 +839,7 @@ function UserNavMenu({
 
             <Link
               href="/roadmaps"
+              prefetch={true}
               onClick={() => setIsOpen(false)}
               className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
             >

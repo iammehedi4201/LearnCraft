@@ -35,9 +35,11 @@ function LessonAnnotationLayerContent(): JSX.Element | null {
   useEffect(() => {
     if (typeof window === "undefined" || !pathname) return;
 
-    // Do not highlight on revision hub or design system pages
-    if (pathname === "/revision" || pathname.startsWith("/design-system"))
-      return;
+    // Annotations only exist inside lesson pages (/learn/:topic/:lessonSlug)
+    const isLessonPage =
+      pathname.startsWith("/learn/") &&
+      pathname.split("/").filter(Boolean).length >= 3;
+    if (!isLessonPage) return;
 
     // Helper: remove existing applied marks
     const cleanupExistingMarks = () => {
