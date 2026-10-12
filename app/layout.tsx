@@ -9,6 +9,7 @@ import { RevisionProvider } from "@/context/revision-context";
 import { SessionProvider } from "next-auth/react";
 import { Suspense } from "react";
 import { GlobalOverlays } from "@/components/global-overlays";
+import { WebVitals } from "@/components/web-vitals";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -51,6 +52,7 @@ export default function RootLayout({
                   {children}
                 </Suspense>
                 <GlobalOverlays />
+                <WebVitals />
               </RevisionProvider>
             </ThemeProvider>
           </QueryProvider>

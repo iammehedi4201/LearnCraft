@@ -80,12 +80,23 @@ export function getLocalProgressList(): ModuleProgress[] {
 }
 
 let cachedCloudItems: ModuleProgress[] | null = null;
+let cachedProgressUserId: string | null = null;
 let lastReconcileTimestamp = 0;
 const RECONCILE_CACHE_TTL_MS = 60 * 1000; // 60 seconds TTL
 let reconcileInFlightPromise: Promise<{
   syncedCount: number;
   cloudItems: ModuleProgress[];
 }> | null = null;
+
+/**
+ * Clear cached progress data completely (called on sign out or user switch)
+ */
+export function clearProgressCache(): void {
+  cachedCloudItems = null;
+  cachedProgressUserId = null;
+  lastReconcileTimestamp = 0;
+  reconcileInFlightPromise = null;
+}
 
 /**
  * Save progress directly to Neon PostgreSQL database
@@ -122,13 +133,21 @@ export async function recordProgress(
 
 /**
  * Fetch authoritative progress directly from Neon PostgreSQL
- * Optimized with in-flight deduplication and 60s in-memory TTL cache to eliminate redundant network hits during page navigation.
+ * Optimized with in-flight deduplication, 60s in-memory TTL cache, and strict user-scoping.
  */
-export async function reconcileCloudProgress(force: boolean = false): Promise<{
+export async function reconcileCloudProgress(
+  force: boolean = false,
+  userId?: string | null
+): Promise<{
   syncedCount: number;
   cloudItems: ModuleProgress[];
 }> {
   if (typeof window === "undefined") return { syncedCount: 0, cloudItems: [] };
+
+  // Invalidate cache if user context changed from a previous user (prevents cross-user data leakage)
+  if (userId !== undefined && cachedProgressUserId !== null && userId !== cachedProgressUserId) {
+    clearProgressCache();
+  }
 
   const now = Date.now();
   // Return cached result if fresh and not explicitly forced
@@ -144,6 +163,11 @@ export async function reconcileCloudProgress(force: boolean = false): Promise<{
   reconcileInFlightPromise = (async () => {
     try {
       const res = await fetch("/api/progress", { cache: "no-store" });
+      if (res.status === 401) {
+        // Logged out / unauthenticated - clear any cached cloud items safely
+        clearProgressCache();
+        return { syncedCount: 0, cloudItems: [] };
+      }
       if (!res.ok) {
         return { syncedCount: cachedCloudItems?.length || 0, cloudItems: cachedCloudItems || [] };
       }
@@ -154,6 +178,7 @@ export async function reconcileCloudProgress(force: boolean = false): Promise<{
       }
 
       cachedCloudItems = data;
+      cachedProgressUserId = userId ?? null;
       lastReconcileTimestamp = Date.now();
 
       const completedSlugs = data

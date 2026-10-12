@@ -30,6 +30,9 @@ async function getStoredBookmarks(userId: string): Promise<CodeBookmark[]> {
           module: "__user_bookmarks__",
         },
       },
+      select: {
+        completedModules: true,
+      },
     });
 
     if (!record || !record.completedModules || record.completedModules.length === 0) {

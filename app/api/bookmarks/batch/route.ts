@@ -47,6 +47,9 @@ export async function POST(req: NextRequest) {
           module: "__user_bookmarks__",
         },
       },
+      select: {
+        completedModules: true,
+      },
     });
 
     let currentBookmarks: CodeBookmark[] = [];

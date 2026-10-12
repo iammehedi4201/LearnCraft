@@ -502,17 +502,22 @@ interface MarkdownRendererProps {
   compact?: boolean;
 }
 
-export function MarkdownRenderer({
+function MarkdownRendererInner({
   content,
   className = "",
   compact = false,
 }: MarkdownRendererProps): JSX.Element {
-  const source = compact
-    ? content.replace(/\n{3,}/g, "\n\n").trim()
-    : content.trim();
+  const source = React.useMemo(() => {
+    return compact
+      ? content.replace(/\n{3,}/g, "\n\n").trim()
+      : content.trim();
+  }, [content, compact]);
 
-  const tokens = tokenize(source);
-  const nodes = tokens.map((token, i) => renderToken(token, i, compact));
+  const tokens = React.useMemo(() => tokenize(source), [source]);
+  const nodes = React.useMemo(
+    () => tokens.map((token, i) => renderToken(token, i, compact)),
+    [tokens, compact]
+  );
 
   return (
     <div className={`markdown-content flex flex-col gap-2 ${className}`}>
@@ -520,3 +525,5 @@ export function MarkdownRenderer({
     </div>
   );
 }
+
+export const MarkdownRenderer = React.memo(MarkdownRendererInner);

@@ -28,6 +28,9 @@ async function getStoredNotes(userId: string): Promise<UserNote[]> {
           module: "__user_notes__",
         },
       },
+      select: {
+        completedModules: true,
+      },
     });
 
     if (!record || !record.completedModules || record.completedModules.length === 0) {

@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { getInterviewTracks, InterviewTrackInfo, getQuestionsByTrack } from "@/lib/interview-questions";
+import { getInterviewTracks, InterviewTrackInfo } from "@/lib/interview-questions";
 import {
   getTrackStats,
   getOverallInterviewStats,
   INTERVIEW_SYNC_EVENT,
 } from "@/lib/interview-progress";
-import { OverallInterviewStats } from "@/types/interview";
+import { OverallInterviewStats, TrackInterviewStats } from "@/types/interview";
 import { TopicCard } from "@/components/interview/TopicCard";
 
 export default function InterviewHubPage() {
@@ -21,6 +21,7 @@ export default function InterviewHubPage() {
     overallPercentMastered: 0,
     totalTracks: 0,
   });
+  const [trackStatsMap, setTrackStatsMap] = useState<Record<string, TrackInterviewStats>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [filterDueOnly, setFilterDueOnly] = useState(false);
 
@@ -28,6 +29,16 @@ export default function InterviewHubPage() {
     const allTracks = getInterviewTracks();
     setTracks(allTracks);
     setStats(getOverallInterviewStats());
+
+    // Precalculate all track statistics once to eliminate continuous localStorage reads and array allocations on every search keystroke
+    const statsMap: Record<string, TrackInterviewStats> = {};
+    for (const track of allTracks) {
+      const mockQs = Array(track.questionCount)
+        .fill(null)
+        .map((_, i) => ({ id: `${track.trackKey}-q${i}` } as any));
+      statsMap[track.trackKey] = getTrackStats(track.trackKey, mockQs);
+    }
+    setTrackStatsMap(statsMap);
   };
 
   useEffect(() => {
@@ -38,23 +49,26 @@ export default function InterviewHubPage() {
     return () => window.removeEventListener(INTERVIEW_SYNC_EVENT, handleSync);
   }, []);
 
-  // Filter tracks
-  const filteredTracks = tracks.filter((track) => {
-    const matchesSearch =
-      track.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      track.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      track.categories.some((c) => c.toLowerCase().includes(searchQuery.toLowerCase()));
+  // Filter tracks with zero re-computations of localStorage SM-2 stats
+  const filteredTracks = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return tracks.filter((track) => {
+      const matchesSearch =
+        !query ||
+        track.title.toLowerCase().includes(query) ||
+        track.description.toLowerCase().includes(query) ||
+        track.categories.some((c) => c.toLowerCase().includes(query));
 
-    if (!matchesSearch) return false;
+      if (!matchesSearch) return false;
 
-    if (filterDueOnly) {
-      const qs = getQuestionsByTrack(track.trackKey);
-      const s = getTrackStats(track.trackKey, qs);
-      return s.dueForReview > 0;
-    }
+      if (filterDueOnly) {
+        const s = trackStatsMap[track.trackKey];
+        return (s?.dueForReview ?? 0) > 0;
+      }
 
-    return true;
-  });
+      return true;
+    });
+  }, [tracks, searchQuery, filterDueOnly, trackStatsMap]);
 
   return (
     <div className="min-h-screen bg-[#08090C] text-neutral-100 py-8 px-4 sm:px-6 lg:px-8">
@@ -204,11 +218,16 @@ export default function InterviewHubPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredTracks.map((track) => {
-              // Get track stats with mock questions count
-              const mockQs = Array(track.questionCount)
-                .fill(null)
-                .map((_, i) => ({ id: `${track.trackKey}-q${i}` } as any));
-              const trackStats = getTrackStats(track.trackKey, mockQs);
+              const trackStats = trackStatsMap[track.trackKey] || {
+                trackKey: track.trackKey,
+                totalQuestions: track.questionCount,
+                questionsReviewed: 0,
+                masteredCount: 0,
+                dueForReview: track.questionCount,
+                unreviewedCount: track.questionCount,
+                percentMastered: 0,
+                averageEasiness: 2.5,
+              };
 
               return (
                 <TopicCard

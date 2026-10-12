@@ -624,6 +624,9 @@ export function upsertNote(
     }
   } catch {}
 
+  // Invalidate notes sync cache so next fetch gets fresh state
+  invalidateNotesSync();
+
   // Background cloud push (fire-and-forget with error swallowing)
   pushNoteToCloud(updatedNote).catch(() => {});
 
@@ -631,6 +634,7 @@ export function upsertNote(
 }
 
 export function deleteNote(id: string): void {
+  invalidateNotesSync();
   const notes = getLocalNotes();
   const filtered = notes.filter((n) => n.id !== id);
   saveLocalNotes(filtered);
@@ -703,6 +707,7 @@ export function addBookmark(
   }
 
   saveLocalBookmarks(bookmarks);
+  invalidateBookmarksSync();
 
   // Background cloud push
   pushBookmarkToCloud(newBookmark).catch(() => {});
@@ -711,6 +716,7 @@ export function addBookmark(
 }
 
 export function deleteBookmark(id: string): void {
+  invalidateBookmarksSync();
   const bookmarks = getLocalBookmarks();
   const filtered = bookmarks.filter((b) => b.id !== id);
   saveLocalBookmarks(filtered);
@@ -832,11 +838,32 @@ async function pushBookmarkToCloud(bookmark: CodeBookmark): Promise<void> {
 }
 
 let lastNotesSyncTime = 0;
+let cachedNotesUserId: string | null = null;
 let notesSyncInFlight: Promise<UserNote[]> | null = null;
 const NOTES_SYNC_TTL_MS = 60 * 1000;
 
-export async function syncNotesWithCloud(force: boolean = false): Promise<UserNote[]> {
+export function clearNotesCache(): void {
+  lastNotesSyncTime = 0;
+  cachedNotesUserId = null;
+  notesSyncInFlight = null;
+}
+
+export function invalidateNotesSync(): void {
+  lastNotesSyncTime = 0;
+}
+
+export async function syncNotesWithCloud(
+  force: boolean = false,
+  userId?: string | null
+): Promise<UserNote[]> {
   const localNotes = getLocalNotes();
+  if (typeof window === "undefined") return localNotes;
+
+  // Invalidate cache if user context changed from a previous user (prevents cross-user data leakage)
+  if (userId !== undefined && cachedNotesUserId !== null && userId !== cachedNotesUserId) {
+    clearNotesCache();
+  }
+
   const now = Date.now();
   if (!force && now - lastNotesSyncTime < NOTES_SYNC_TTL_MS) {
     return localNotes;
@@ -849,6 +876,10 @@ export async function syncNotesWithCloud(force: boolean = false): Promise<UserNo
   notesSyncInFlight = (async () => {
     try {
       const res = await fetch("/api/notes", { method: "GET" });
+      if (res.status === 401) {
+        clearNotesCache();
+        return getLocalNotes();
+      }
       if (!res.ok) return getLocalNotes();
 
       const data = await res.json();
@@ -856,6 +887,7 @@ export async function syncNotesWithCloud(force: boolean = false): Promise<UserNo
         const merged = mergeNotesStates(getLocalNotes(), data.notes);
         saveLocalNotes(merged);
         lastNotesSyncTime = Date.now();
+        cachedNotesUserId = userId ?? null;
 
         // Re-push merged state to ensure cloud is up to date
         fetch("/api/notes/batch", {
@@ -877,11 +909,32 @@ export async function syncNotesWithCloud(force: boolean = false): Promise<UserNo
 }
 
 let lastBookmarksSyncTime = 0;
+let cachedBookmarksUserId: string | null = null;
 let bookmarksSyncInFlight: Promise<CodeBookmark[]> | null = null;
 const BOOKMARKS_SYNC_TTL_MS = 60 * 1000;
 
-export async function syncBookmarksWithCloud(force: boolean = false): Promise<CodeBookmark[]> {
+export function clearBookmarksCache(): void {
+  lastBookmarksSyncTime = 0;
+  cachedBookmarksUserId = null;
+  bookmarksSyncInFlight = null;
+}
+
+export function invalidateBookmarksSync(): void {
+  lastBookmarksSyncTime = 0;
+}
+
+export async function syncBookmarksWithCloud(
+  force: boolean = false,
+  userId?: string | null
+): Promise<CodeBookmark[]> {
   const localBookmarks = getLocalBookmarks();
+  if (typeof window === "undefined") return localBookmarks;
+
+  // Invalidate cache if user context changed from a previous user (prevents cross-user data leakage)
+  if (userId !== undefined && cachedBookmarksUserId !== null && userId !== cachedBookmarksUserId) {
+    clearBookmarksCache();
+  }
+
   const now = Date.now();
   if (!force && now - lastBookmarksSyncTime < BOOKMARKS_SYNC_TTL_MS) {
     return localBookmarks;
@@ -894,6 +947,10 @@ export async function syncBookmarksWithCloud(force: boolean = false): Promise<Co
   bookmarksSyncInFlight = (async () => {
     try {
       const res = await fetch("/api/bookmarks", { method: "GET" });
+      if (res.status === 401) {
+        clearBookmarksCache();
+        return getLocalBookmarks();
+      }
       if (!res.ok) return getLocalBookmarks();
 
       const data = await res.json();
@@ -901,6 +958,7 @@ export async function syncBookmarksWithCloud(force: boolean = false): Promise<Co
         const merged = mergeBookmarksStates(getLocalBookmarks(), data.bookmarks);
         saveLocalBookmarks(merged);
         lastBookmarksSyncTime = Date.now();
+        cachedBookmarksUserId = userId ?? null;
 
         fetch("/api/bookmarks/batch", {
           method: "POST",

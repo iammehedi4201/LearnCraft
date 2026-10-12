@@ -405,17 +405,36 @@ export function pushGamificationToCloud(): void {
 }
 
 let cachedGamificationState: UserGamificationState | null = null;
+let cachedGamificationUserId: string | null = null;
 let lastGamificationSyncTime = 0;
 const GAMIFICATION_SYNC_TTL_MS = 60 * 1000; // 60 seconds
 let gamificationSyncInFlightPromise: Promise<UserGamificationState> | null = null;
 
 /**
- * Reconcile local gamification state with PostgreSQL cloud state
- * Optimized with in-flight deduplication and 60s in-memory TTL cache to eliminate redundant network hits during page navigation.
+ * Clear cached gamification state completely (called on sign out or user switch)
  */
-export async function syncGamificationWithCloud(force: boolean = false): Promise<UserGamificationState> {
+export function clearGamificationCache(): void {
+  cachedGamificationState = null;
+  cachedGamificationUserId = null;
+  lastGamificationSyncTime = 0;
+  gamificationSyncInFlightPromise = null;
+}
+
+/**
+ * Reconcile local gamification state with PostgreSQL cloud state
+ * Optimized with in-flight deduplication, 60s in-memory TTL cache, and strict user-scoping.
+ */
+export async function syncGamificationWithCloud(
+  force: boolean = false,
+  userId?: string | null
+): Promise<UserGamificationState> {
   const localState = getGamificationState();
   if (typeof window === "undefined") return localState;
+
+  // Invalidate cache if user context changed from a previous user (prevents cross-user data leakage)
+  if (userId !== undefined && cachedGamificationUserId !== null && userId !== cachedGamificationUserId) {
+    clearGamificationCache();
+  }
 
   const now = Date.now();
   if (!force && cachedGamificationState !== null && now - lastGamificationSyncTime < GAMIFICATION_SYNC_TTL_MS) {
@@ -429,6 +448,10 @@ export async function syncGamificationWithCloud(force: boolean = false): Promise
   gamificationSyncInFlightPromise = (async () => {
     try {
       const res = await fetch("/api/gamification", { cache: "no-store" });
+      if (res.status === 401) {
+        clearGamificationCache();
+        return localState;
+      }
       if (!res.ok) return localState;
 
       const data = await res.json();
@@ -438,6 +461,7 @@ export async function syncGamificationWithCloud(force: boolean = false): Promise
         // Cloud is empty, push local state to initialize
         pushGamificationToCloud();
         cachedGamificationState = localState;
+        cachedGamificationUserId = userId ?? null;
         lastGamificationSyncTime = Date.now();
         return localState;
       }
@@ -445,6 +469,7 @@ export async function syncGamificationWithCloud(force: boolean = false): Promise
       const merged = mergeGamificationStates(localState, data.state);
       saveGamificationState(merged);
       cachedGamificationState = merged;
+      cachedGamificationUserId = userId ?? null;
       lastGamificationSyncTime = Date.now();
 
       // If local state had more XP or progress, push merged back to cloud

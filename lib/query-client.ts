@@ -34,3 +34,24 @@ const queryConfig: DefaultOptions = {
 export const queryClient = new QueryClient({
   defaultOptions: queryConfig,
 });
+
+/**
+ * Completely purges all client-side memory caches (QueryClient, Progress, Gamification, Notes, Bookmarks).
+ * Must be executed upon sign-out, session expiration, or account switching to prevent cross-user data leakage.
+ */
+export function clearAllClientCaches(): void {
+  try {
+    queryClient.clear();
+  } catch {}
+
+  // Dynamic import or direct call to avoid circular dependency in tests
+  if (typeof window !== "undefined") {
+    import("./progress-sync").then((m) => m.clearProgressCache()).catch(() => {});
+    import("./gamification").then((m) => m.clearGamificationCache()).catch(() => {});
+    import("./notes-bookmarks").then((m) => {
+      m.clearNotesCache();
+      m.clearBookmarksCache();
+    }).catch(() => {});
+  }
+}
+

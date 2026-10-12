@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getAuthenticatedUserId } from "@/lib/auth-helper";
 
 const ProgressPayloadSchema = z.object({
   module: z.string().trim().min(1, "Module ID is required").max(100),
@@ -13,40 +13,6 @@ const ProgressPayloadSchema = z.object({
   totalModules: z.number().int().nonnegative().optional(),
 });
 
-async function getAuthenticatedUserId(req: NextRequest): Promise<string | null> {
-  // 1. Check database sessionToken directly from cookies (NextAuth Prisma adapter strategy)
-  const token =
-    req.cookies.get("authjs.session-token")?.value ||
-    req.cookies.get("__Secure-authjs.session-token")?.value ||
-    req.cookies.get("next-auth.session-token")?.value ||
-    req.cookies.get("__Secure-next-auth.session-token")?.value;
-
-  if (token) {
-    const dbSession = await prisma.session.findUnique({
-      where: { sessionToken: token },
-      select: { userId: true, expires: true },
-    });
-    if (dbSession && dbSession.expires > new Date()) {
-      return dbSession.userId;
-    }
-  }
-
-  // 2. NextAuth session fallback
-  try {
-    const session = (await (auth as any)()) || (await (auth as any)(req));
-    if (session?.user?.id) return session.user.id;
-    if (session?.user?.email) {
-      const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        select: { id: true },
-      });
-      if (user?.id) return user.id;
-    }
-  } catch {}
-
-  return null;
-}
-
 export async function GET(req: NextRequest) {
   try {
     const userId = await getAuthenticatedUserId(req);
@@ -55,8 +21,22 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Exclude internal JSON serialization storage records and only select fields needed for curriculum tracking
     const progress = await prisma.progress.findMany({
-      where: { userId },
+      where: {
+        userId,
+        module: {
+          notIn: ["__user_notes__", "__user_bookmarks__", "__gamification__"],
+        },
+      },
+      select: {
+        module: true,
+        completed: true,
+        score: true,
+        activeModule: true,
+        updatedAt: true,
+      },
+      orderBy: { updatedAt: "desc" },
     });
 
     return NextResponse.json({ success: true, data: progress });
@@ -112,6 +92,12 @@ export async function POST(req: NextRequest) {
           userId,
           module,
         },
+      },
+      select: {
+        completed: true,
+        score: true,
+        activeModule: true,
+        completedModules: true,
       },
     });
 
@@ -175,6 +161,13 @@ export async function POST(req: NextRequest) {
         score: calculatedScore,
         activeModule: activeModule ?? null,
         completedModules: mergedCompletedModules,
+      },
+      select: {
+        module: true,
+        completed: true,
+        score: true,
+        activeModule: true,
+        updatedAt: true,
       },
     });
 

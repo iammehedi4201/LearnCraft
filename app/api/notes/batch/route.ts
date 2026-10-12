@@ -45,6 +45,9 @@ export async function POST(req: NextRequest) {
           module: "__user_notes__",
         },
       },
+      select: {
+        completedModules: true,
+      },
     });
 
     let currentNotes: UserNote[] = [];

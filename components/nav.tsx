@@ -14,6 +14,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { reconcileCloudProgress } from "@/lib/progress-sync";
+import { clearAllClientCaches } from "@/lib/query-client";
 import { useRevision } from "@/context/revision-context";
 import {
   SKILL_ROADMAPS,
@@ -856,6 +857,7 @@ function UserNavMenu({
           <button
             onClick={() => {
               setIsOpen(false);
+              clearAllClientCaches();
               signOut();
             }}
             className="w-full flex items-center gap-2 p-2 rounded-xl text-xs font-semibold text-rose-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors cursor-pointer"
@@ -906,6 +908,7 @@ function MobileAuthButton({ onAction }: { onAction?: () => void }) {
         </div>
         <button
           onClick={() => {
+            clearAllClientCaches();
             signOut();
             onAction?.();
           }}
