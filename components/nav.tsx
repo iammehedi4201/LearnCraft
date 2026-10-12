@@ -490,6 +490,14 @@ function NavContent(): JSX.Element {
                 </Link>
 
                 <Link
+                  href="/interview"
+                  className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
+                >
+                  <span>🎯</span>
+                  <span>Interview</span>
+                </Link>
+
+                <Link
                   href="/roadmaps"
                   className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
                 >
@@ -610,6 +618,18 @@ function NavContent(): JSX.Element {
                       {notesCount}
                     </span>
                   )}
+                </Link>
+
+                <Link
+                  href="/interview"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white text-xs font-bold"
+                >
+                  <div className="flex items-center gap-2">
+                    <span>🎯</span>
+                    <span>Interview Preparation</span>
+                  </div>
+                  <span className="text-purple-400">→</span>
                 </Link>
 
                 <Link
@@ -791,6 +811,17 @@ function UserNavMenu({
                   {totalRevisions}
                 </span>
               )}
+            </Link>
+
+            <Link
+              href="/interview"
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-purple-400">🎯</span>
+                <span>Interview Preparation</span>
+              </div>
             </Link>
 
             <Link

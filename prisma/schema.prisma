@@ -95,3 +95,33 @@ model Progress {
 
   @@unique([userId, module])
 }
+
+model InterviewQuestionRecord {
+  id              String   @id @default(cuid())
+  questionId      String   @unique // e.g. "react-q01" or "ai-react-draft-123"
+  trackKey        String   // e.g. "react", "nodejs", "postgresql"
+  topic           String?
+  subtopic        String?
+  category        String   @default("conceptual")
+  type            String   @default("conceptual") // "conceptual" | "coding" | "system-design"
+  difficulty      String   // "beginner" | "intermediate" | "advanced" | "easy" | "medium" | "hard"
+  question        String
+  answer          String
+  explanation     String?
+  example         String?
+  codeSnippet     String?
+  expectedOutput  String?
+  followUps       String[] @default([])
+  keyPoints       String[] @default([])
+  tags            String[] @default([])
+  source          String   @default("curated") // "curated" | "ai" | "community"
+  status          String   @default("APPROVED") // "DRAFT" | "APPROVED" | "REJECTED"
+  rejectionReason String?
+  adminNotes      String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([trackKey, status])
+  @@index([difficulty])
+  @@map("interview_questions")
+}
