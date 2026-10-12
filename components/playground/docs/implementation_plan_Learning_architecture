@@ -1,0 +1,498 @@
+# LearnCraft Architecture Overhaul — Implementation Plan
+
+Based on the [Architecture Analysis](file:///C:/Users/Mehedi%20Hasan/.gemini/antigravity-ide/brain/c7bba08d-d277-40be-95cd-9ddf8ee5b19d/learncraft_architecture_analysis.md), this plan transforms LearnCraft from a "look how much content we have" platform into a "here is your clear next step" experience.
+
+---
+
+## What This Plan Changes (Big Picture)
+
+```mermaid
+graph LR
+    A["Current: 32 lessons dumped<br/>on one page"] --> B["New: Focused journey<br/>showing one step at a time"]
+    C["Current: 17 locked sidebar<br/>steps per lesson"] --> D["New: 4-6 unlocked<br/>concept sections"]
+    E["Current: '12/32 complete'<br/>progress"] --> F["New: 'You can now<br/>build a REST API'<br/>milestones"]
+```
+
+> [!IMPORTANT]
+> **No educational content is removed.** Every existing explanation, exercise, and project is preserved. This plan changes *how* content is presented, not *what* content exists. All lesson text and code examples will also follow a **plain-language, easy-words standard** — simple sentences, real-world analogies, and beginner-friendly code comments.
+
+---
+
+## Scope & Constraints
+
+- **Framework**: Next.js 16 (App Router), React 18, Tailwind CSS 3.4
+- **State**: localStorage for progress (no backend yet)
+- **Built lessons**: NJ-01 (flat scroll layout), NJ-02/03/04 (stepper-sidebar pattern)
+- **Existing registries**: [`topic-registry.ts`](file:///f:/My%20Projects/LearnCraft/lib/topic-registry.ts) — lesson metadata for NestJS, Next.js, TanStack Query
+
+---
+
+## Open Questions (Need Your Input)
+
+> [!IMPORTANT]
+> 1. **Goal selector placement**: Should the "What is your goal?" question appear as an inline card on the landing page (recommended) or as a modal popup on first visit?
+> 2. **Skip mechanism**: For "I already know this" — start with a simple confirmation dialog now and add quiz-based checks later?
+> 3. **NJ-01 migration**: NJ-01 currently uses a different layout (all sections stacked vertically, no sidebar). Should we migrate it to the new unified lesson shell in this phase?
+
+---
+
+## The 7 Components
+
+### Dependency Order
+
+```mermaid
+graph TD
+    C1["1. Curriculum Data Layer"] --> C2["2. Progress Engine"]
+    C1 --> C3["3. Landing Page Redesign"]
+    C2 --> C3
+    C2 --> C4["4. Lesson Shell Redesign"]
+    C4 --> C5["5. Milestone Celebrations"]
+    C2 --> C6["6. Skip Flow"]
+    C4 --> C6
+    C3 --> C7["7. Returning Learner"]
+    style C1 fill:#e8f5e9
+    style C2 fill:#e8f5e9
+    style C3 fill:#e8f5e9
+    style C4 fill:#e8f5e9
+    style C5 fill:#fff3e0
+    style C6 fill:#fff3e0
+    style C7 fill:#fff3e0
+```
+
+**Phase 1 (Core — must build first):** Components 1 → 2 → 3 → 4
+**Phase 2 (Enhancements):** Components 5, 6, 7
+
+---
+
+### Component 1: Curriculum Data Layer
+
+**Problem it solves:** Right now, all lesson data (names, descriptions, phase assignments, theme colors) is hardcoded inside [`app/learn/nestjs/page.tsx`](file:///f:/My%20Projects/LearnCraft/app/learn/nestjs/page.tsx#L37-L408) as a 370-line `PHASES` constant. Other files like [`topic-registry.ts`](file:///f:/My%20Projects/LearnCraft/lib/topic-registry.ts) maintain a *separate* copy of lesson names and paths. These two sources already disagree (e.g., the registry says `nj11-pipes` but the filesystem has `nj11-request-lifecycle`).
+
+**What we build:** One shared file that every other component reads from.
+
+#### [NEW] `lib/curriculum.ts`
+
+**Types it defines:**
+
+```typescript
+// How important is this lesson?
+export type ContentTier = 'core' | 'build' | 'professional' | 'reference';
+
+// What does the learner want to achieve?
+export type LearnerGoal = 'basics' | 'build-api' | 'job-ready' | 'experienced';
+
+// One lesson
+export interface LessonMeta {
+  code: string;             // "NJ-07"
+  slug: string;             // "nj07-controllers"
+  title: string;            // "Controllers & Routing"
+  subtitle: string;         // "Handle incoming HTTP requests"
+  tier: ContentTier;        // "core"
+  estimatedMinutes: number; // 25
+  prerequisites: string[];  // ["TypeScript classes", "Decorators"]
+  stageId: string;          // "create-first-api"
+}
+
+// A group of lessons forming one chapter
+export interface StageMeta {
+  id: string;               // "create-first-api"
+  order: number;            // 2
+  title: string;            // "Create Your First API"
+  subtitle: string;         // "Modules, Controllers, Services, DI, and DTOs"
+  milestone: MilestoneMeta;
+  lessons: LessonMeta[];
+}
+
+// What the learner achieves after a stage
+export interface MilestoneMeta {
+  title: string;            // "You can now build a working NestJS REST API"
+  skills: string[];         // ["Create modules", "Handle HTTP requests", ...]
+}
+
+// The entire learning path
+export interface LearningPathMeta {
+  id: string;               // "nestjs"
+  title: string;            // "Learn NestJS"
+  promise: string;          // "Build your first backend API — step by step."
+  outcomes: string[];       // ["Build REST APIs", "Connect to a database", ...]
+  stages: StageMeta[];
+}
+```
+
+**NestJS stages — current names vs. new names:**
+
+| # | Current Name | New Name (Outcome-Based) | Technical Subtitle |
+|---|---|---|---|
+| 1 | "TypeScript & OOP Prerequisites" | **Build Your Foundation** | TypeScript, OOP, Decorators, SOLID |
+| 2 | "NestJS Core Architecture" | **Create Your First API** | Modules, Controllers, Services, DI, DTOs |
+| 3 | "Request Pipeline & Execution Lifecycle" | **Control How Requests Work** | Pipes, Guards, Interceptors, Filters, Middleware |
+| 4 | "Authentication & Security Hardening" | **Secure Your Application** | JWT Auth, RBAC, Rate Limiting, Custom Decorators |
+| 5 | "Database Layer (Prisma & PostgreSQL)" | **Add a Real Database** | Prisma setup, Relations, Migrations, Pagination |
+| 6 | "Production Engineering & DevOps" | **Ship Your Application** | Config, Logging, Testing, Swagger, Docker, Deploy |
+
+**Milestones — what the learner hears after each stage:**
+
+| Stage | Milestone Message |
+|---|---|
+| 1 | "You can read and write the TypeScript patterns NestJS uses." |
+| 2 | "You can build a working NestJS REST API." 🎉 |
+| 3 | "You can add validation, guards, and error handling to any endpoint." |
+| 4 | "You can implement login, protect routes, and limit requests." |
+| 5 | "You can store, retrieve, and paginate real data." |
+| 6 | "You can test, document, and deploy a production NestJS app." 🚀 |
+
+**Lesson tier classification (all 32 lessons):**
+
+| Tier | What It Means | Lessons |
+|---|---|---|
+| **CORE** | You cannot build anything without these | NJ-01, NJ-02, NJ-03, NJ-05, NJ-06, NJ-07, NJ-08, NJ-09, NJ-10, NJ-11, NJ-12 |
+| **BUILD** | You need these to build a real app | NJ-04, NJ-13, NJ-17, NJ-18, NJ-19, NJ-20, NJ-21, NJ-22, NJ-23, NJ-29 |
+| **PROFESSIONAL** | You need these for a job or production app | NJ-14, NJ-15, NJ-16, NJ-24, NJ-25, NJ-26, NJ-27, NJ-28, NJ-31, NJ-32 |
+| **REFERENCE** | Look these up when you need them | NJ-30 |
+
+**Utility functions:**
+- `getLearningPath(id)` — get full path data
+- `getNextLesson(pathId, currentSlug)` — what comes after this lesson?
+- `getStageForLesson(pathId, slug)` — which stage does this lesson belong to?
+- `getLessonsForGoal(pathId, goal)` — which lessons should this learner see?
+
+---
+
+#### [MODIFY] `lib/topic-registry.ts`
+
+Sync `KNOWN_LESSONS` paths with the actual filesystem. Long-term, this file should import from `curriculum.ts` instead of maintaining a parallel map.
+
+---
+
+### Component 2: Progress & Milestone Engine
+
+**Problem it solves:** Currently, each lesson stores its own progress under a separate localStorage key (e.g., `learncraft_progress_nj02-oop-foundations`). There is no cross-lesson awareness — the landing page doesn't know which lessons are complete, and no milestones are tracked.
+
+#### [NEW] `lib/progress.ts`
+
+**Stores one object per learning path:**
+
+```typescript
+export interface PathProgress {
+  pathId: string;
+  goal: LearnerGoal | null;                     // what the learner chose
+  completedLessons: string[];                    // ["nj01-typescript-essentials", ...]
+  completedStages: string[];                     // ["build-foundation", ...]
+  skippedLessons: string[];                      // "I already know this"
+  currentLessonSlug: string | null;              // where they left off
+  lessonSectionProgress: Record<string, string[]>; // per-lesson section tracking
+}
+```
+
+**localStorage key:** `learncraft_path_nestjs` (one key per path, not per lesson)
+
+**Functions:**
+- `getProgress(pathId)` — read current state
+- `markLessonComplete(pathId, slug)` — mark done, auto-detect stage completion
+- `markLessonSkipped(pathId, slug)` — "I already know this"
+- `setGoal(pathId, goal)` — store selected goal
+- `getCurrentMilestone(pathId)` — last completed stage's milestone
+- `getNextMilestone(pathId)` — what the learner is working toward
+- `migrateLegacyProgress()` — detect old `learncraft_progress_nj*` keys, merge into new format, delete old keys
+
+#### [NEW] `context/progress-context.tsx`
+
+React context + `useProgress(pathId)` hook so all components can read/write progress without prop-drilling. Wraps the layout so it's available everywhere inside `/learn/nestjs/`.
+
+---
+
+### Component 3: Landing Page Redesign
+
+**Problem it solves:** The current [`nestjs/page.tsx`](file:///f:/My%20Projects/LearnCraft/app/learn/nestjs/page.tsx) immediately shows all 32 lesson cards, "6 Phases", "10/32 Ready", and code-range labels like "NJ-01 to NJ-04". A beginner sees all of this and thinks: *"This is too much. Do I really need to learn all of this?"*
+
+#### [MODIFY] `app/learn/nestjs/page.tsx`
+
+**Current:** 821-line monolithic file with hardcoded data and all UI in one component.
+
+**New:** Thin layout file composing focused subcomponents:
+
+```tsx
+export default function NestJSLearningPath() {
+  const { progress } = useProgress("nestjs");
+  const isReturning = progress.completedLessons.length > 0;
+
+  return (
+    <>
+      <Nav />
+      <main>
+        {isReturning ? <WelcomeBackHero /> : <HeroSection />}
+        {!isReturning && <GoalSelector />}
+        <JourneyView />
+        <FullRoadmap />    {/* collapsed by default, expandable */}
+      </main>
+      <Footer />
+    </>
+  );
+}
+```
+
+#### [NEW] `app/learn/nestjs/components/hero-section.tsx`
+
+**What a new learner sees (instead of "32 lessons / 6 phases"):**
+
+```
+Learn NestJS
+Build your first backend API — step by step.
+
+After this path, you will be able to:
+  ✓ Build a working REST API
+  ✓ Connect your app to a real database
+  ✓ Add login and protected routes
+  ✓ Deploy your application
+
+[Start Learning →]     [I already know some of this]
+```
+
+**What is removed from the hero:**
+- "32 progressive lessons" → hidden
+- "10/32 Ready" → hidden
+- "6 Phases" → hidden
+- "Zero to Production Mastery" badge → hidden
+- "32 Lessons / Prisma ORM / Interview Ready" metrics → hidden
+
+#### [NEW] `app/learn/nestjs/components/goal-selector.tsx`
+
+Four option cards. Learner picks one:
+
+| Option | What It Highlights |
+|---|---|
+| "Understand the basics" | CORE lessons only |
+| "Build my first API" | CORE + BUILD lessons |
+| "Become job-ready" | CORE + BUILD + PROFESSIONAL |
+| "I already know some of this" | Shows Full Roadmap + skip buttons |
+
+Selection is stored in progress context and affects Journey View filtering.
+
+#### [NEW] `app/learn/nestjs/components/journey-view.tsx`
+
+**Default view for beginners.** Shows:
+- Current stage name + subtitle
+- Lessons in current stage as a vertical list (✅ done / ⬤ active / ○ upcoming)
+- Tier badge on each lesson (CORE / BUILD / PRO)
+- Estimated time per lesson
+- "I already know this" link on prerequisite lessons
+- Next milestone preview: *"After this stage: You can build a working REST API"*
+
+**Does NOT show:** future stages, total lesson count, code ranges, search bar, filter pills.
+
+#### [NEW] `app/learn/nestjs/components/full-roadmap.tsx`
+
+**Available via "View full roadmap" toggle.** Shows:
+- All 6 stages as collapsible accordions
+- Each stage header: outcome title, subtitle, lesson count, completion status
+- Expand to see individual lessons with tier badges, time, completion state
+- Search box + tier filter (All / Core / Build / Professional)
+
+#### Items removed from the page:
+- `PHASES` constant (data moves to `curriculum.ts`)
+- Phase filter pill bar (search moves to Full Roadmap only)
+- "32 Interactive Modules" metrics grid
+- "Architecture Paradigm" spotlight section (moves into relevant lesson)
+
+---
+
+### Component 4: Unified Lesson Shell
+
+**Problem it solves:** Currently, every lesson page duplicates ~200 lines of sidebar/stepper/progress code. NJ-02 has 17 locked steps, NJ-03 has 21 locked steps, NJ-04 has 15. The sidebar labels teaching tools ("Beginner Mistakes", "Concept Tables") as equal-weight curriculum items. All steps after the current one are hard-locked.
+
+#### [NEW] `app/learn/nestjs/components/lesson-shell.tsx`
+
+**A reusable wrapper that every lesson uses:**
+
+```tsx
+interface LessonSection {
+  id: string;
+  label: string;
+  type: 'concept' | 'practice' | 'summary';
+  component: React.ComponentType;
+}
+
+interface LessonShellProps {
+  pathId: string;
+  lessonSlug: string;
+  title: string;
+  goals: string[];       // "What you will understand"
+  abilities: string[];   // "What you will be able to do"
+  sections: LessonSection[];
+}
+```
+
+**Key changes from the current stepper:**
+
+| What | Current | New |
+|---|---|---|
+| Sidebar header | "Modules" | "Sections" |
+| Visible steps | 15–21 | 3–6 concepts + Practice + Summary |
+| Locking | Hard-locked (can't click ahead) | All sections freely clickable |
+| Teaching tools | Separate sidebar entries | Collapsible inside concept sections |
+| Progress label | "{n} of {total} modules" | Simple progress bar, no label |
+| Lesson header | None | "What you will understand" + "What you will build" |
+| End of lesson | Nothing | Skill statement + next lesson card + Continue button |
+| Breadcrumb | None | Learn NestJS → Stage Name → Lesson Name |
+
+**The lesson shell provides:**
+- Breadcrumb navigation
+- Lesson header with goals and abilities
+- Unlocked sidebar with 3–6 sections
+- Progress bar (within this lesson only)
+- "Previous lesson" / "Next lesson" navigation (reads from `curriculum.ts`)
+- Lesson-complete celebration with milestone text
+
+#### [MODIFY] `app/learn/nestjs/nj02-oop-foundations/page.tsx`
+
+**Migrate from 17 locked steps → 6 unlocked concept sections:**
+
+| New Section | What It Contains |
+|---|---|
+| 1. Classes & Objects | Understanding OOP + Creating Objects + (collapsible: OOP vs Procedural) |
+| 2. Constructors & Methods | Constructor + Methods |
+| 3. The Four OOP Principles | Four Principles + Important Concepts + (collapsible: Composition) |
+| 4. OOP in Practice | Real-World Examples + OOP in Projects + (collapsible: Beginner Mistakes, Think in OOP) |
+| 5. Practice | Learning Checks + Coding Exercises + Final Project |
+| 6. Summary & Next Steps | Concept Tables as reference + (collapsible: Express vs NestJS) + milestone + next lesson |
+
+**No content files are deleted.** The existing component files (`classes-objects-section.tsx`, `constructor-section.tsx`, etc.) are imported into the new merged sections.
+
+#### [MODIFY] `app/learn/nestjs/nj03-decorators/page.tsx`
+
+21 steps → ~6 sections. Core decorator types (class, method, property, parameter) become concepts. Factories, composition, metadata, modern-vs-legacy become collapsible deep dives.
+
+#### [MODIFY] `app/learn/nestjs/nj04-solid/page.tsx`
+
+15 steps → ~7 sections. Each SOLID principle is one concept section. "How NestJS Uses SOLID", "Real-World Payment System" become collapsible content within the relevant principle.
+
+#### [MODIFY] `app/learn/nestjs/nj01-typescript-essentials/page.tsx`
+
+Migrate from flat scroll layout into `<LessonShell>` for consistency. 8 inline sections → ~5 concept sections + practice + summary.
+
+---
+
+### Component 5: Milestone Celebration UI
+
+#### [NEW] `components/milestone-celebration.tsx`
+
+A celebratory banner/modal that appears when a learner completes the final lesson of a stage:
+
+```
+🎉 Milestone Reached!
+
+You can now build a working NestJS REST API.
+
+Skills you've gained:
+  ✓ Create NestJS modules
+  ✓ Handle HTTP requests with controllers
+  ✓ Write services with business logic
+  ✓ Use dependency injection
+  ✓ Validate incoming data with DTOs
+
+Next: Control How Requests Work
+  → Request Lifecycle Overview · 20 min
+
+[Continue →]
+```
+
+Triggered automatically when `markLessonComplete` detects all lessons in a stage are done.
+
+---
+
+### Component 6: "I Already Know This" Skip Flow
+
+#### [NEW] `components/skip-check.tsx`
+
+When a learner clicks "I already know this" on a lesson, a confirmation dialog appears:
+
+```
+Skip "OOP Foundations"?
+
+This lesson covers:
+  • TypeScript classes and objects
+  • Properties and methods
+  • Encapsulation, inheritance, polymorphism, abstraction
+
+If you're confident you understand these, skip ahead.
+
+[Skip this lesson]     [Start the lesson anyway]
+```
+
+Clicking "Skip" marks the lesson as `skippedLessons` in progress, awards credit, advances to the next lesson.
+
+**Future enhancement:** Replace the confirmation with a 3–5 question quiz that validates understanding before allowing skip.
+
+#### [NEW] `components/stage-skip-check.tsx`
+
+Same concept but for an entire stage. Critical for Stage 1 where experienced TypeScript developers can skip all prerequisites at once.
+
+---
+
+### Component 7: Returning Learner Experience
+
+#### [NEW] `app/learn/nestjs/components/welcome-back-hero.tsx`
+
+When a learner returns with existing progress, the hero changes:
+
+```
+Welcome back.
+
+✅ You can now build a basic NestJS REST API.
+
+Continue: Secure Your Application
+  → Custom Decorators · 20 min
+
+[Continue →]          [View full roadmap]
+```
+
+No goal selector shown (already set). No lesson count. Just: what you achieved + what's next.
+
+---
+
+## Easy-Words Content Standard
+
+> [!TIP]
+> Every explanation, UI label, and code example across all components must follow these rules:
+
+| Rule | Example |
+|---|---|
+| **Use short sentences** | "A class is a blueprint. It tells the computer how to create objects." |
+| **Explain technical terms immediately** | "This is called *dependency injection* — it means NestJS automatically gives your class the tools it needs." |
+| **Use real-world analogies** | "Think of a guard like a security person at a door. They check if you're allowed in before letting you pass." |
+| **Use realistic code names** | `User`, `Product`, `OrderService` — not `foo`, `bar`, `MyClass` |
+| **Add comments to beginner code** | `// This decorator tells NestJS this class handles web requests` |
+| **Keep UI text friendly** | "You can now build a REST API" — not "Module completion ratio: 31.25%" |
+
+---
+
+## Verification Plan
+
+### Landing Page
+- [ ] New learner sees goal-first hero with outcomes, NOT "32 lessons / 6 phases"
+- [ ] Goal selector works and persists across page refreshes
+- [ ] Journey View shows only current stage by default
+- [ ] "View full roadmap" expands to show all stages
+- [ ] Tier badges appear on lesson cards
+- [ ] Returning learner sees "Welcome back" hero with continue CTA
+
+### Lesson Pages
+- [ ] Lesson shell shows 3–6 concept sections, NOT 15–21 locked steps
+- [ ] All sections are clickable without hard-locking
+- [ ] Sidebar says "Sections", not "Modules"
+- [ ] Teaching tools are collapsible inside concept sections
+- [ ] Summary section shows skill statement + next lesson link
+- [ ] Previous/Next lesson navigation works correctly
+
+### Progress System
+- [ ] Completing a lesson updates progress on both lesson page and landing page
+- [ ] Completing the final lesson of a stage triggers milestone celebration
+- [ ] "I already know this" marks lesson as skipped and advances
+- [ ] Progress persists across browser refresh
+- [ ] Old localStorage keys are migrated on first load
+
+### General
+- [ ] All existing lesson content is preserved
+- [ ] All existing URLs continue to work
+- [ ] Mobile responsive
+- [ ] Explanations and code use plain, simple language

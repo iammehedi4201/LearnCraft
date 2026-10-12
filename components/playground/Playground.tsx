@@ -29,6 +29,15 @@ import { PlaygroundTests } from "./PlaygroundTests";
 import { PlaygroundHints } from "./PlaygroundHints";
 import { PlaygroundFullscreen } from "./PlaygroundFullscreen";
 import { PlaygroundExamplePanel } from "./PlaygroundExamplePanel";
+import { PlaygroundHistoryModal } from "./PlaygroundHistoryModal";
+import { CodeChallengeBanner } from "./CodeChallengeBanner";
+import {
+  savePlaygroundSnapshot,
+  getPlaygroundSnapshots,
+  type PlaygroundSnapshot,
+} from "@/lib/playground-history";
+import { recordActivity } from "@/lib/gamification";
+import { EnhancedCodeBlock } from "../enhanced-code-display";
 import "./playground.css";
 
 export function Playground({
@@ -38,6 +47,7 @@ export function Playground({
   exercise,
   className = "",
   height = "240px",
+  onSuccess,
 }: PlaygroundProps) {
   const exampleCode = exercise?.starterCode ?? starterCode ?? "";
 
@@ -48,14 +58,43 @@ export function Playground({
   const [error, setError] = useState<PlaygroundError | undefined>();
   const [isRunning, setIsRunning] = useState(false);
   const [duration, setDuration] = useState<number | undefined>();
-  const [testResults, setTestResults] = useState<ValidationResult | undefined>();
+  const [testResults, setTestResults] = useState<
+    ValidationResult | undefined
+  >();
   const [showHints, setShowHints] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
 
+  // ─── History & Snapshots State ───
+  const contextKey = exercise?.id || `${runtimeType}_${language || "code"}`;
+  const [snapshots, setSnapshots] = useState<PlaygroundSnapshot[]>([]);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+
+  const reloadSnapshots = useCallback(() => {
+    setSnapshots(getPlaygroundSnapshots(contextKey));
+  }, [contextKey]);
+
+  useEffect(() => {
+    reloadSnapshots();
+  }, [reloadSnapshots]);
+  
+  // ─── Improve Mode State ───
+  const [isImproveMode, setIsImproveMode] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("improveMode") === "true") {
+        setIsImproveMode(true);
+      }
+    }
+  }, []);
+
   // ─── Expanded Mode Layout (3-pane: Example | Practice | Output) ───
-  const [expandedLayoutMode, setExpandedLayoutMode] = useState<"3-pane" | "2-pane">("3-pane");
+  const [expandedLayoutMode, setExpandedLayoutMode] = useState<
+    "3-pane" | "2-pane"
+  >("3-pane");
   const [ratio1, setRatio1] = useState(32); // Example panel %
   const [ratio2, setRatio2] = useState(38); // Practice panel %
   // Output panel % = 100 - ratio1 - ratio2 (30%)
@@ -124,7 +163,8 @@ export function Playground({
       setOutput([
         {
           type: "info",
-          content: "💡 Practice workspace is empty. Type your code or click '⚡ Copy to Practice' on the Example panel to get started!",
+          content:
+            "💡 Practice workspace is empty. Type your code or click '⚡ Copy to Practice' on the Example panel to get started!",
           timestamp: Date.now(),
         },
       ]);
@@ -149,16 +189,36 @@ export function Playground({
       setOutput(result.output);
       setError(result.error);
       setDuration(result.duration);
+
+      // Save execution snapshot to history
+      savePlaygroundSnapshot(
+        contextKey,
+        codeToRun,
+        result.error ? "error" : "success"
+      );
+      reloadSnapshots();
     } catch (e) {
       setError({
-        message: e instanceof Error ? e.message : "An unexpected error occurred.",
+        message:
+          e instanceof Error ? e.message : "An unexpected error occurred.",
         technicalMessage: String(e),
         suggestion: "Try refreshing the page if this persists.",
       });
     } finally {
       setIsRunning(false);
     }
-  }, [code, practiceCode, isFullscreen, expandedLayoutMode, runtimeType, isRunning, getRuntime, displayLanguage]);
+  }, [
+    code,
+    practiceCode,
+    isFullscreen,
+    expandedLayoutMode,
+    runtimeType,
+    isRunning,
+    getRuntime,
+    displayLanguage,
+    contextKey,
+    reloadSnapshots,
+  ]);
 
   const handleCheck = useCallback(async () => {
     if (isRunning || !exercise) return;
@@ -170,7 +230,8 @@ export function Playground({
       setOutput([
         {
           type: "info",
-          content: "💡 Practice workspace is empty. Type your solution to solve the exercise!",
+          content:
+            "💡 Practice workspace is empty. Type your solution to solve the exercise!",
           timestamp: Date.now(),
         },
       ]);
@@ -196,13 +257,36 @@ export function Playground({
         const result = await rt.validate(
           { code: codeToCheck, language: runtimeType },
           tests,
-          hiddenTests
+          hiddenTests,
         );
         setTestResults(result);
 
-        const runResult = await rt.run({ code: codeToCheck, language: runtimeType });
+        const runResult = await rt.run({
+          code: codeToCheck,
+          language: runtimeType,
+        });
         setOutput(runResult.output);
         setDuration(runResult.duration);
+
+        // Save tested snapshot
+        savePlaygroundSnapshot(
+          contextKey,
+          codeToCheck,
+          result.passed ? "tested" : "error"
+        );
+        reloadSnapshots();
+
+        // Award XP on successful challenge completion
+        if (result.passed) {
+          recordActivity(
+            "exercise_pass",
+            `Passed code challenge: ${exercise.title}`,
+            { exerciseId: exercise.id }
+          );
+          if (onSuccess) {
+            onSuccess(result);
+          }
+        }
       } else {
         await handleRun();
       }
@@ -214,7 +298,19 @@ export function Playground({
     } finally {
       setIsRunning(false);
     }
-  }, [code, practiceCode, isFullscreen, expandedLayoutMode, runtimeType, isRunning, exercise, getRuntime, handleRun]);
+  }, [
+    code,
+    practiceCode,
+    isFullscreen,
+    expandedLayoutMode,
+    runtimeType,
+    isRunning,
+    exercise,
+    getRuntime,
+    handleRun,
+    contextKey,
+    reloadSnapshots,
+  ]);
 
   const handleReset = useCallback(() => {
     if (isFullscreen && expandedLayoutMode === "3-pane") {
@@ -231,7 +327,7 @@ export function Playground({
 
   const handleCopy = useCallback(async () => {
     const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
-    const textToCopy = is3Pane ? (practiceCode || exampleCode) : code;
+    const textToCopy = is3Pane ? practiceCode || exampleCode : code;
     try {
       await navigator.clipboard.writeText(textToCopy);
       setShowCopyToast(true);
@@ -255,13 +351,28 @@ export function Playground({
     setHintsUsed((prev) => Math.min(prev + 1, exercise.hints!.length));
   }, [exercise]);
 
-  const handleApplySolution = useCallback((solution: string) => {
-    if (isFullscreen && expandedLayoutMode === "3-pane") {
-      setPracticeCode(solution);
-    } else {
-      setCode(solution);
-    }
-  }, [isFullscreen, expandedLayoutMode]);
+  const handleApplySolution = useCallback(
+    (solution: string) => {
+      if (isFullscreen && expandedLayoutMode === "3-pane") {
+        setPracticeCode(solution);
+      } else {
+        setCode(solution);
+      }
+    },
+    [isFullscreen, expandedLayoutMode],
+  );
+
+  const handleRestoreFromHistory = useCallback(
+    (restoredCode: string) => {
+      const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
+      if (is3Pane) {
+        setPracticeCode(restoredCode);
+      } else {
+        setCode(restoredCode);
+      }
+    },
+    [isFullscreen, expandedLayoutMode]
+  );
 
   const handleFullscreen = useCallback(() => {
     setIsFullscreen((prev) => !prev);
@@ -321,7 +432,7 @@ export function Playground({
       e.preventDefault();
       startResizing();
     },
-    [startResizing]
+    [startResizing],
   );
 
   const handleTouchStart = useCallback(
@@ -330,7 +441,7 @@ export function Playground({
         startResizing();
       }
     },
-    [startResizing]
+    [startResizing],
   );
 
   // ─── 3-Pane Resizer Drag Handlers (Expanded Mode) ───
@@ -353,7 +464,10 @@ export function Playground({
           setRatio1(newRatio1);
         } else {
           // Dragging Resizer 2 (between Practice and Output)
-          const newRatio2 = Math.min(100 - ratio1 - 15, Math.max(20, percentage - ratio1));
+          const newRatio2 = Math.min(
+            100 - ratio1 - 15,
+            Math.max(20, percentage - ratio1),
+          );
           setRatio2(newRatio2);
         }
       };
@@ -368,7 +482,10 @@ export function Playground({
           const newRatio1 = Math.min(50, Math.max(15, percentage));
           setRatio1(newRatio1);
         } else {
-          const newRatio2 = Math.min(100 - ratio1 - 15, Math.max(20, percentage - ratio1));
+          const newRatio2 = Math.min(
+            100 - ratio1 - 15,
+            Math.max(20, percentage - ratio1),
+          );
           setRatio2(newRatio2);
         }
       };
@@ -386,10 +503,12 @@ export function Playground({
 
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", stopResizing);
-      document.addEventListener("touchmove", handleTouchMove, { passive: true });
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: true,
+      });
       document.addEventListener("touchend", stopResizing);
     },
-    [ratio1]
+    [ratio1],
   );
 
   // ─── Keyboard shortcuts ───
@@ -413,15 +532,47 @@ export function Playground({
 
   // ─── Render ───
 
+  if (isImproveMode) {
+    return (
+      <div className={`playground-container relative group overflow-hidden ${className}`} data-improve-block="playground">
+        <EnhancedCodeBlock code={exampleCode} language={displayLanguage} />
+        
+        {/* Overlay capture target for selection */}
+        <div 
+          data-improve-select-btn
+          className="absolute inset-0 bg-slate-900/0 hover:bg-slate-900/40 backdrop-blur-0 hover:backdrop-blur-[2px] transition-all flex items-center justify-center cursor-pointer opacity-0 hover:opacity-100 rounded-xl z-50"
+        >
+          <span className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg font-bold shadow-xl shadow-indigo-900/50 flex items-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Select Example to Improve
+          </span>
+        </div>
+      </div>
+    );
+  }
+
   const hasExercise = !!exercise;
   const hasHints = !!exercise?.hints?.length;
   const totalHints = exercise?.hints?.length ?? 0;
   const is3PaneMode = isFullscreen && expandedLayoutMode === "3-pane";
 
+  // ─── Dynamic Auto-Expanding Height based on code line count ───
+  const activeCode = is3PaneMode ? practiceCode : code;
+  const lineCount = Math.max(
+    (activeCode || "").split("\n").length,
+    (starterCode || exercise?.starterCode || "").split("\n").length,
+    6,
+  );
+  const parsedBaseHeight = parseInt(height || "200", 10) || 200;
+  const dynamicBodyHeight = `${Math.max(lineCount * 24 + 44, parsedBaseHeight)}px`;
+
   const playgroundContent = (
     <div
       className={`playground ${className} ${isFullscreen ? "playground--fullscreen" : ""}`}
-      style={isFullscreen ? undefined : { minHeight: height }}
+      style={isFullscreen ? undefined : { minHeight: dynamicBodyHeight }}
     >
       {/* Header */}
       <div className="playground-header">
@@ -473,7 +624,9 @@ export function Playground({
       {exercise && !is3PaneMode && (
         <div className="playground-exercise-instructions">
           <div className="playground-exercise-title">{exercise.title}</div>
-          <div className="playground-exercise-text">{exercise.instructions}</div>
+          <div className="playground-exercise-text">
+            {exercise.instructions}
+          </div>
         </div>
       )}
 
@@ -481,7 +634,11 @@ export function Playground({
       <div
         ref={bodyRef}
         className={`playground-body ${is3PaneMode ? "playground-3pane-body" : ""}`}
-        style={isFullscreen ? { flex: 1, minHeight: 0 } : { height: height || "360px", minHeight: "240px" }}
+        style={
+          isFullscreen
+            ? { flex: 1, minHeight: 0 }
+            : { height: dynamicBodyHeight, minHeight: "200px" }
+        }
       >
         {is3PaneMode ? (
           /* ══════════════════════════════════════════════ */
@@ -545,7 +702,9 @@ export function Playground({
               <div className="playground-panel-header playground-practice-header">
                 <div className="playground-panel-header-left">
                   <span className="playground-panel-icon">⚡</span>
-                  <span className="playground-panel-title">Practice Workspace</span>
+                  <span className="playground-panel-title">
+                    Practice Workspace
+                  </span>
                   <span className="playground-panel-badge playground-panel-badge--editable">
                     Editable
                   </span>
@@ -565,7 +724,7 @@ export function Playground({
                 value={practiceCode}
                 onChange={setPracticeCode}
                 language={displayLanguage}
-                minHeight={height}
+                minHeight={dynamicBodyHeight}
                 isFullscreen={isFullscreen}
                 errorLine={error?.line}
                 onFormat={handleFormat}
@@ -644,7 +803,7 @@ export function Playground({
                 value={code}
                 onChange={setCode}
                 language={displayLanguage}
-                minHeight={height}
+                minHeight={dynamicBodyHeight}
                 isFullscreen={isFullscreen}
                 errorLine={error?.line}
                 onFormat={handleFormat}
@@ -688,7 +847,10 @@ export function Playground({
             {/* Console Output Panel */}
             <div
               className="playground-output-panel"
-              style={{ flex: `0 0 ${100 - splitRatio}%`, width: `${100 - splitRatio}%` }}
+              style={{
+                flex: `0 0 ${100 - splitRatio}%`,
+                width: `${100 - splitRatio}%`,
+              }}
             >
               <PlaygroundOutput
                 lines={output}
@@ -704,6 +866,17 @@ export function Playground({
           </>
         )}
       </div>
+
+      {/* Code Challenge Result Banner */}
+      {testResults && (
+        <div className="px-4 py-2 bg-black/20">
+          <CodeChallengeBanner
+            testResults={testResults}
+            onShowNextHint={handleHint}
+            hintsAvailable={hasHints && hintsUsed < totalHints}
+          />
+        </div>
+      )}
 
       {/* Test Results */}
       {testResults && <PlaygroundTests results={testResults} />}
@@ -721,6 +894,8 @@ export function Playground({
       <PlaygroundToolbar
         onRun={handleRun}
         onFormat={handleFormat}
+        onHistory={() => setIsHistoryOpen(true)}
+        snapshotsCount={snapshots.length}
         isWordWrap={isWordWrap}
         onToggleWordWrap={handleToggleWordWrap}
         onCheck={hasExercise ? handleCheck : undefined}
@@ -735,19 +910,61 @@ export function Playground({
         totalHints={totalHints}
         showCopyToast={showCopyToast}
       />
+
+      {/* History Snapshots Modal */}
+      <PlaygroundHistoryModal
+        isOpen={isHistoryOpen}
+        contextKey={contextKey}
+        snapshots={snapshots}
+        onClose={() => setIsHistoryOpen(false)}
+        onRestore={handleRestoreFromHistory}
+        onSnapshotsUpdated={reloadSnapshots}
+      />
     </div>
   );
 
-  return (
+  const finalRender = (
     <>
       {/* Normal view */}
       {!isFullscreen && playgroundContent}
 
       {/* Fullscreen overlay */}
-      <PlaygroundFullscreen isOpen={isFullscreen} onClose={() => setIsFullscreen(false)}>
+      <PlaygroundFullscreen
+        isOpen={isFullscreen}
+        onClose={() => setIsFullscreen(false)}
+      >
         {playgroundContent}
       </PlaygroundFullscreen>
     </>
   );
-}
 
+  if (isImproveMode && !isFullscreen) {
+    return (
+      <div 
+        data-improve-block="playground" 
+        className="relative group/playground rounded-xl border-2 border-transparent hover:border-indigo-500/50 transition-colors p-1 -m-1"
+      >
+        <div className="absolute -top-7 right-2 opacity-0 group-hover/playground:opacity-100 transition-opacity z-50">
+           <button 
+             data-improve-select-btn="true"
+             className="px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-bold rounded-t-md shadow-lg flex items-center gap-1.5 cursor-pointer"
+           >
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+             </svg>
+             Select for Improvement
+           </button>
+        </div>
+        <div className="absolute -top-6 left-2 opacity-0 group-hover/playground:opacity-100 transition-opacity z-50">
+           <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400 bg-slate-900/90 px-2 py-0.5 rounded-t-md">
+             Code Example
+           </span>
+        </div>
+        {finalRender}
+      </div>
+    );
+  }
+
+  return finalRender;
+}

@@ -16,7 +16,7 @@ import {
 
 export function FinalProjectSection() {
   return (
-    <SectionContainer number={20} title="Final Project: Mini NestJS Framework">
+    <SectionContainer number={21} title="Final Project: Mini NestJS Framework">
       <div className="mb-10 p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
         <p className="text-sm text-ds-text-sub leading-relaxed">
           In this capstone project, you will assemble everything you learned into a <strong>working mini NestJS-style backend framework</strong>. You will build custom decorators (<code>@Controller</code>, <code>@Get</code>, <code>@Post</code>, <code>@Body</code>, <code>@Param</code>, <code>@Roles</code>) and a <code>bootstrapController()</code> router engine that dispatches HTTP requests!

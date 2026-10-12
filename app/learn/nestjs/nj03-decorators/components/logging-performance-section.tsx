@@ -16,7 +16,7 @@ import {
 
 export function LoggingPerformanceSection() {
   return (
-    <SectionContainer number={8} title="Real-World Pattern: Logging & Performance">
+    <SectionContainer number={10} title="Real-World Pattern: Logging & Performance">
       {/* ── 8.1 Building a Synchronous @Log Decorator ── */}
       <div className="mb-16">
         <TopicHeader

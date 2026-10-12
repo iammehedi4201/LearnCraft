@@ -17,7 +17,7 @@ import {
 
 export function ModernVsLegacySection() {
   return (
-    <SectionContainer number={14} title="Modern vs Legacy Decorators">
+    <SectionContainer number={19} title="Modern vs Legacy Decorators">
       {/* ── 14.1 Two Decorator Standards ── */}
       <div className="mb-16">
         <TopicHeader

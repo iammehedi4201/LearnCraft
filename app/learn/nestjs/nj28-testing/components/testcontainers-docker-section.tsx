@@ -10,52 +10,62 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 8 — REAL DATABASE TESTING WITH TESTCONTAINERS
+// MODULE 8 — TESTING PIPES, GUARDS & INTERCEPTORS
 // ═══════════════════════════════════════════════════════════
 
 export function TestcontainersDockerSection() {
   return (
-    <SectionContainer number={8} title="Real Database Testing with Testcontainers">
-      {/* ── 8.1 Testcontainers ── */}
+    <SectionContainer number={8} title="Testing Request Pipeline: Pipes, Guards &amp; Interceptors">
+      {/* ── 8.1 Pipeline Testing ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Ephemeral Docker Databases for CI/CD"
-          description="Spin up a real PostgreSQL Docker container on the fly during Jest integration tests."
+          number={8}
+          title="Unit Testing Guards &amp; Pipes with Mock ExecutionContext"
+          description="How to test authorization guards, input transformation pipes, and interceptors in total isolation."
           color="amber"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>🐳</span> The Testcontainers Pattern
+            <span>🛡️</span> Mocking ExecutionContext for AuthGuard
           </h4>
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            Guards rely on NestJS's <code>ExecutionContext</code> to inspect incoming requests. Create a mock execution context to test guard decisions in unit tests:
+          </p>
           <EnhancedCodeBlock
-            code={`# npm install @testcontainers/postgresql --save-dev
+            code={`import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { RolesGuard } from './roles.guard';
+import { Reflector } from '@nestjs/core';
 
-import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
-import { execSync } from 'child_process';
+describe('RolesGuard Unit Tests', () => {
+  let guard: RolesGuard;
+  let reflector: Reflector;
 
-describe('Integration with Real PostgreSQL Container', () => {
-  let container: StartedPostgreSqlContainer;
-
-  beforeAll(async () => {
-    // 1. Spin up ephemeral PostgreSQL container in Docker:
-    container = await new PostgreSqlContainer('postgres:16-alpine').start();
-    const dbUrl = container.getConnectionUri();
-
-    process.env.DATABASE_URL = dbUrl;
-
-    // 2. Run Prisma migrations on the ephemeral container:
-    execSync('npx prisma migrate deploy', { env: process.env });
-  }, 30000); // 30s timeout for Docker spin-up
-
-  afterAll(async () => {
-    // 3. Destroy container cleanly:
-    await container.stop();
+  beforeEach(() => {
+    reflector = new Reflector();
+    guard = new RolesGuard(reflector);
   });
 
-  it('runs true PostgreSQL queries with real constraints', async () => {
-    // True database testing!
+  function createMockContext(user: any, requiredRoles: string[]): ExecutionContext {
+    jest.spyOn(reflector, 'get').mockReturnValue(requiredRoles);
+
+    return {
+      switchToHttp: () => ({
+        getRequest: () => ({ user }),
+      }),
+      getHandler: () => ({}),
+      getClass: () => ({}),
+    } as unknown as ExecutionContext;
+  }
+
+  it('allows access when user possesses required role', () => {
+    const context = createMockContext({ roles: ['ADMIN'] }, ['ADMIN']);
+    expect(guard.canActivate(context)).toBe(true);
+  });
+
+  it('denies access when user lacks required role', () => {
+    const context = createMockContext({ roles: ['USER'] }, ['ADMIN']);
+    expect(guard.canActivate(context)).toBe(false);
   });
 });`}
             language="typescript"
@@ -63,8 +73,8 @@ describe('Integration with Real PostgreSQL Container', () => {
         </WhyBox>
 
         <QuickCheck
-          question="What is the benefit of Testcontainers over mocking Prisma in integration tests?"
-          answer="Testcontainers runs tests against a real PostgreSQL engine, verifying true SQL syntax, foreign key constraints, triggers, and transactions that mocks cannot accurately simulate."
+          question="Why is testing guards with a mock ExecutionContext faster than testing via Supertest HTTP requests?"
+          answer="Unit testing the guard directly executes purely in Node.js memory in < 1 millisecond, without spinning up an HTTP server or parsing network headers."
         />
       </div>
 

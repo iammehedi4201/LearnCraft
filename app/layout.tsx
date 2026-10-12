@@ -5,12 +5,11 @@ import "@/components/reading-control-panel.css";
 import "@/components/playground/playground.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { QueryProvider } from "@/components/query-provider";
-import { ReadingControlPanel } from "@/components/reading-control-panel";
 import { RevisionProvider } from "@/context/revision-context";
-import { SelectionToolbar } from "@/components/revision/SelectionToolbar";
-import { NoteDialog } from "@/components/revision/NoteDialog";
-import { ExistingHighlightPopover } from "@/components/revision/ExistingHighlightPopover";
-import { LessonAnnotationLayer } from "@/components/revision/LessonAnnotationLayer";
+import { SessionProvider } from "next-auth/react";
+import { Suspense } from "react";
+import { GlobalOverlays } from "@/components/global-overlays";
+import { WebVitals } from "@/components/web-vitals";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -45,18 +44,19 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${manrope.variable} ${inter.variable} ${rajdhani.variable} min-h-screen`}
       >
-        <QueryProvider>
-          <ThemeProvider>
-            <RevisionProvider>
-              {children}
-              <ReadingControlPanel />
-              <SelectionToolbar />
-              <NoteDialog />
-              <ExistingHighlightPopover />
-              <LessonAnnotationLayer />
-            </RevisionProvider>
-          </ThemeProvider>
-        </QueryProvider>
+        <SessionProvider>
+          <QueryProvider>
+            <ThemeProvider>
+              <RevisionProvider>
+                <Suspense fallback={null}>
+                  {children}
+                </Suspense>
+                <GlobalOverlays />
+                <WebVitals />
+              </RevisionProvider>
+            </ThemeProvider>
+          </QueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );

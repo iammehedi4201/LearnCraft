@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 📖 🚀</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-29 Completed!
+          Module NJ-27 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You have mastered OpenAPI specifications, interactive Swagger UI, and automated SDK generation! Next, learn how to handle streaming multipart file uploads and direct-to-S3 pre-signed URLs in NJ-30!
+          You have mastered OpenAPI specifications, interactive Swagger UI, and automated SDK generation! Next, equip your API with high-performance production JSON logging in NJ-28!
         </p>
 
         <Link
-          href="/learn/nestjs/nj30-file-uploads"
+          href="/learn/nestjs/nj27-logging"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-30: File Uploads &amp; AWS S3 →
+          Proceed to NJ-28: Structured Logging with Pino →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the next topic in Phase 06?"
-        answer="NJ-30: File Uploads & AWS S3 Storage (@nestjs/platform-express Multer, FileInterceptor, MaxFileSizeValidator, FileTypeValidator, and AWS SDK S3 Pre-Signed Upload URLs)."
+        question="What is the next topic after Swagger?"
+        answer="NJ-28: Structured Logging with Pino (nestjs-pino, JSON log formats, correlation request IDs, and production log aggregation)."
       />
     </SectionContainer>
   );

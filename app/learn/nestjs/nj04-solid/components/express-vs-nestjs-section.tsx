@@ -45,13 +45,26 @@ export function ExpressVsNestjsSection() {
               Express gives you flexibility. You decide how to structure your application. You can follow SOLID, but Express does not force or strongly guide you toward it.
             </p>
             <EnhancedCodeBlock
-              code={`// Express: Free-form functions
-app.post("/users", async (req, res) => {
-  // You decide how to organize this
+              code={`import express, { type Request, type Response } from "express";
+
+type CreateUserInput = { name: string; email: string };
+type User = CreateUserInput & { id: string };
+
+const app = express();
+
+async function saveUser(input: CreateUserInput): Promise<User> {
+  return { ...input, id: "user-1" };
+}
+
+// Express with explicit TypeScript request and response types
+app.post("/users", async (
+  req: Request<Record<string, never>, User, CreateUserInput>,
+  res: Response<User>
+): Promise<void> => {
   const user = await saveUser(req.body);
   res.json(user);
 });`}
-              language="javascript"
+              language="typescript"
             />
           </div>
 
@@ -71,13 +84,33 @@ app.post("/users", async (req, res) => {
               <li>Decorators</li>
             </ul>
             <EnhancedCodeBlock
-              code={`// NestJS: Structured classes
+              code={`import {
+  Body,
+  Controller,
+  Injectable,
+  Post
+} from "@nestjs/common";
+
+class CreateUserDto {
+  name!: string;
+  email!: string;
+}
+
+type User = CreateUserDto & { id: string };
+
+@Injectable()
+class UsersService {
+  async create(input: CreateUserDto): Promise<User> {
+    return { ...input, id: "user-1" };
+  }
+}
+
 @Controller("users")
 export class UsersController {
-  constructor(private usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() body: any) {
+  create(@Body() body: CreateUserDto): Promise<User> {
     return this.usersService.create(body);
   }
 }`}
@@ -86,12 +119,21 @@ export class UsersController {
           </div>
         </div>
 
+        <WhyBox>
+          <p className="text-sm font-bold text-ds-feature-dark mb-1">
+            What the NestJS decorators do:
+          </p>
+          <p className="text-xs text-ds-text-sub leading-relaxed">
+            <code>@Controller(&quot;users&quot;)</code> sets the route prefix, <code>@Post()</code> maps the method to an HTTP POST request, and <code>@Body()</code> asks NestJS to pass the parsed request body into that parameter. <code>CreateUserDto</code> gives the value a TypeScript shape; runtime validation is added separately with validation decorators and a pipe.
+          </p>
+        </WhyBox>
+
         <ComparisonTable
           headers={["Feature", "Express.js", "NestJS"]}
           rows={[
-            ["Structure", "You decide the folder structure", "Enforced Modules, Controllers, Services"],
-            ["SOLID Support", "Possible, but you must organize it manually", "Built into the framework by default"],
-            ["Dependency Injection", "Not built-in", "Built-in and automatic"],
+            ["Structure", "You choose the project conventions", "Provides conventions for modules, controllers, and providers"],
+            ["SOLID Support", "Possible through your own design", "Offers helpful building blocks; your design choices still matter"],
+            ["Dependency Injection", "Not built-in", "Built-in container; registered providers are resolved automatically"],
           ]}
         />
       </div>

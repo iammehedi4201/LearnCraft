@@ -8,7 +8,7 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 11 — TOP 5 INTERVIEW QUESTIONS (PRISMA RELATIONS)
+// MODULE 11 — TOP 5 INTERVIEW QUESTIONS (DOMAIN MODELING)
 // ═══════════════════════════════════════════════════════════
 
 export function InterviewQaSection() {
@@ -16,35 +16,35 @@ export function InterviewQaSection() {
 
   const qas = [
     {
-      q: "Q1: Explain how 1-to-Many relationships are defined and queried in Prisma.",
-      a: "On the parent model (User), define an array field (posts Post[]). On the child model (Post), define the foreign key column (authorId Int) and the relation attribute (author User @relation(fields: [authorId], references: [id])).\n\nTo query related records, use include: { posts: true } in findUnique/findMany.",
+      q: "Q1: What is the architectural difference between a DTO, a Domain Entity, and a Value Object in NestJS?",
+      a: "• DTO (Data Transfer Object): Validates and structures incoming HTTP payloads across network boundaries (class-validator).\n• Domain Entity: Has unique identity (ID), encapsulates business logic, and manages mutable lifecycle state.\n• Value Object: Immutable object without identity, defined purely by its values (e.g. Money, EmailAddress).",
     },
     {
-      q: "Q2: When should you use an Implicit vs Explicit Many-to-Many relationship in Prisma?",
-      a: "Use Implicit (Post[] and Tag[]) when you only need to link two models together without storing extra fields.\n\nUse Explicit (UsersOnTeams join model) when the relationship itself requires custom metadata columns (such as assignedAt, role, or orderIndex).",
+      q: "Q2: Why is an Anemic Domain Model considered an anti-pattern in enterprise NestJS systems?",
+      a: "An Anemic model contains only public properties with zero business logic, forcing controllers and services to duplicate validation rules, state transitions, and calculations throughout the codebase rather than co-locating them with the data they govern.",
     },
     {
-      q: "Q3: What are Prisma Nested Writes and why are they advantageous?",
-      a: "Nested writes (create, connect, connectOrCreate, disconnect) allow you to mutate multiple related tables in a single atomic database query, ensuring full transactional consistency without manual transaction boilerplate.",
+      q: "Q3: How do you prevent circular JSON serialization crashes when domain entities reference each other?",
+      a: "Instead of embedding circular object references, entities should store ID references (e.g., authorId: string, tagIds: Set<string>). When full nested representations are required for the client, map the data into a dedicated response DTO.",
     },
     {
-      q: "Q4: How does onDelete: Cascade work and when should it be avoided?",
-      a: "onDelete: Cascade instructs the database to automatically delete all child records when a parent record is deleted (e.g. deleting a user deletes their profile). It should be avoided on critical financial records, invoices, or audit logs where data retention is legally required.",
+      q: "Q4: What is an Aggregate Root and how does it protect business consistency boundaries?",
+      a: "An Aggregate Root is the primary domain entity that acts as the single gateway for modifying a cluster of related child entities. External callers cannot directly mutate child entities; all modifications pass through root methods (e.g., Order.addItem), ensuring all invariants are respected.",
     },
     {
-      q: "Q5: How does Prisma handle N+1 query problems when fetching relational data?",
-      a: "When you use include: { relation: true }, Prisma's query engine batches the requests into an optimized SQL query (or IN (...) query) instead of executing separate round-trips for each row.",
+      q: "Q5: How do you safely strip sensitive properties (e.g. passwordHash) from entity responses in NestJS?",
+      a: "Decorate the sensitive property with @Exclude() from class-transformer and apply ClassSerializerInterceptor at the controller or global level, or explicitly map the entity to a SanitizedUserDto before returning.",
     },
   ];
 
   return (
-    <SectionContainer number={11} title="Top 5 Interview Questions on Prisma Relations">
+    <SectionContainer number={11} title="Top 5 Interview Questions on Domain Modeling">
       {/* ── 11.1 Interview Q&As ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Senior-Level Interview Questions"
-          description="Master these frequently asked questions on relational modeling, foreign keys, and nested writes."
+          number={11}
+          title="Senior-Level Architecture Questions"
+          description="Master these frequently asked questions on domain entities, aggregate roots, and encapsulation in NestJS."
           color="amber"
         />
 

@@ -11,10 +11,16 @@
 
 import { useRef } from "react";
 import { useRevision } from "@/context/revision-context";
+import { usePathname } from "next/navigation";
 
 export function SelectionToolbar(): JSX.Element | null {
   const { activeSelection, openNoteDialog, clearSelection } = useRevision();
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+
+  // Do not show the note-taking toolbar on the content improvement admin page
+  // (text selection there is used for content block selection, not notes)
+  if (pathname?.startsWith("/improve")) return null;
 
   if (!activeSelection) return null;
 
@@ -80,7 +86,13 @@ export function SelectionToolbar(): JSX.Element | null {
         className="p-1.5 rounded-xl text-ds-text-soft hover:text-ds-text-strong hover:bg-ds-bg-weak transition-colors"
         title="Dismiss"
       >
-        <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+        <svg
+          className="w-3.5 h-3.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+        >
           <line x1="18" y1="6" x2="6" y2="18" />
           <line x1="6" y1="6" x2="18" y2="18" />
         </svg>

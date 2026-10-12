@@ -11,7 +11,7 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRevision } from "@/context/revision-context";
 import { AnnotationItem, HighlightColor } from "@/types/revision";
@@ -24,7 +24,7 @@ const COLOR_CLASSES: Record<HighlightColor, string> = {
   info: "border-b-2 border-dashed border-ds-info-base hover:border-solid",
 };
 
-export function LessonAnnotationLayer(): JSX.Element | null {
+function LessonAnnotationLayerContent(): JSX.Element | null {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { currentLessonAnnotations, openExistingHighlightPopover } =
@@ -35,9 +35,11 @@ export function LessonAnnotationLayer(): JSX.Element | null {
   useEffect(() => {
     if (typeof window === "undefined" || !pathname) return;
 
-    // Do not highlight on revision hub or design system pages
-    if (pathname === "/revision" || pathname.startsWith("/design-system"))
-      return;
+    // Annotations only exist inside lesson pages (/learn/:topic/:lessonSlug)
+    const isLessonPage =
+      pathname.startsWith("/learn/") &&
+      pathname.split("/").filter(Boolean).length >= 3;
+    if (!isLessonPage) return;
 
     // Helper: remove existing applied marks
     const cleanupExistingMarks = () => {
@@ -215,4 +217,12 @@ export function LessonAnnotationLayer(): JSX.Element | null {
   ]);
 
   return null;
+}
+
+export function LessonAnnotationLayer(): JSX.Element {
+  return (
+    <Suspense fallback={null}>
+      <LessonAnnotationLayerContent />
+    </Suspense>
+  );
 }

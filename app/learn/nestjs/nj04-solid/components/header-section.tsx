@@ -9,6 +9,7 @@ import {
   AnalogyBox,
   WhyBox,
   SummaryBox,
+  InfoCallout,
   Divider,
 } from "./shared-components";
 
@@ -24,7 +25,7 @@ export function HeaderSection() {
         <TopicHeader
           number={1}
           title="What is SOLID?"
-          description="SOLID is a list of 5 simple rules for writing clean code. Each letter in the word SOLID stands for one rule."
+          description="SOLID is a group of five design guidelines. Each letter describes a different way to keep changing TypeScript code easier to understand, test, and extend."
           color="primary"
         />
 
@@ -36,14 +37,14 @@ export function HeaderSection() {
             When you write code, it is easy to put everything in one big file. At first, it works. But soon, the code becomes a huge mess. When you try to fix one thing, you accidentally break something else!
           </p>
           <p className="text-sm text-ds-text-strong leading-relaxed font-bold">
-            SOLID helps you write code that is:
+            SOLID can help you write code that is:
           </p>
           <ul className="list-disc pl-5 mt-2 space-y-1 text-xs text-ds-text-sub">
-            <li><strong>Easy to understand</strong> — Anyone can read your code and know what it does.</li>
-            <li><strong>Easy to change</strong> — You can add new features without breaking old features.</li>
+            <li><strong>Easier to understand</strong> — Responsibilities and relationships are clearer.</li>
+            <li><strong>Safer to change</strong> — New features are less likely to affect unrelated code.</li>
             <li><strong>Easy to test</strong> — You can test small parts one by one.</li>
-            <li><strong>Easy to maintain</strong> — Finding and fixing bugs is simple and fast.</li>
-            <li><strong>Easy to scale</strong> — Your project can grow big without turning into a mess.</li>
+            <li><strong>Easier to maintain</strong> — Bugs and changes have more obvious places to go.</li>
+            <li><strong>Easier to grow</strong> — The design can gain new behavior without one class owning everything.</li>
           </ul>
         </WhyBox>
 
@@ -55,9 +56,15 @@ export function HeaderSection() {
             If that one person gets sick, or if the food recipe changes, the <strong>whole restaurant stops working</strong>!
           </p>
           <p className="mt-2 font-bold text-ds-info-dark">
-            In a good restaurant, everyone has one clear job: Chef cooks, Dishwasher washes dishes, Waiter serves food. SOLID does the exact same thing for your code.
+            In a good restaurant, related work has a clear owner: the chef cooks, the dishwasher cleans, and the waiter serves. SOLID helps us make similarly clear boundaries in code.
           </p>
         </AnalogyBox>
+
+        <InfoCallout emoji="🧭" title="Guidelines, Not Automatic Rules">
+          <p>
+            SOLID does <strong>not</strong> mean “make a class for every line of code.” Start with the simplest design that is clear. Split or abstract code when it has different reasons to change, is hard to test, or needs interchangeable behavior.
+          </p>
+        </InfoCallout>
       </div>
 
       <Divider />
@@ -85,7 +92,7 @@ export function HeaderSection() {
               <span className="h-8 w-8 rounded-xl bg-ds-info-base text-ds-static-white flex items-center justify-center font-black text-sm">O</span>
               <h5 className="font-bold text-sm text-ds-text-strong">Open / Closed</h5>
             </div>
-            <p className="text-xs text-ds-text-sub leading-relaxed"><strong>Add new features</strong> without changing old working code.</p>
+            <p className="text-xs text-ds-text-sub leading-relaxed"><strong>Extend behavior</strong> without repeatedly editing stable code.</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
@@ -93,7 +100,7 @@ export function HeaderSection() {
               <span className="h-8 w-8 rounded-xl bg-ds-success-base text-ds-static-white flex items-center justify-center font-black text-sm">L</span>
               <h5 className="font-bold text-sm text-ds-text-strong">Liskov Substitution</h5>
             </div>
-            <p className="text-xs text-ds-text-sub leading-relaxed">A child class must <strong>behave properly</strong> like its parent.</p>
+            <p className="text-xs text-ds-text-sub leading-relaxed">A subtype must keep the <strong>behavioral promises</strong> of its type.</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
@@ -109,46 +116,56 @@ export function HeaderSection() {
               <span className="h-8 w-8 rounded-xl bg-ds-error-base text-ds-static-white flex items-center justify-center font-black text-sm">D</span>
               <h5 className="font-bold text-sm text-ds-text-strong">Dependency Inversion</h5>
             </div>
-            <p className="text-xs text-ds-text-sub leading-relaxed">Don&apos;t create tools inside your class. <strong>Receive tools from outside</strong> (Dependency Injection).</p>
+            <p className="text-xs text-ds-text-sub leading-relaxed">Business logic should depend on <strong>contracts</strong>, not one hard-coded tool.</p>
           </div>
         </div>
+
+        <InfoCallout emoji="🔷" title="Our TypeScript Path">
+          <p>
+            We will begin with plain classes and interfaces, then combine the principles in larger examples, and finally connect them to NestJS. TypeScript interfaces help describe contracts, but they disappear when the code runs; that detail becomes important when we reach NestJS injection tokens.
+          </p>
+        </InfoCallout>
 
         <div className="mb-8">
           <SectionHeading>🚀 Try It Yourself: Simple Example</SectionHeading>
           <Playground
             runtime="typescript"
             language="TypeScript"
-            starterCode={`// Look at how simple separated code is:
+            starterCode={`// A small first example with explicit TypeScript types:
+type Learner = {
+  name: string;
+};
 
 class WelcomeMessage {
-  getMessage(name: string) {
-    return "Hello, " + name + "! Welcome to SOLID principles. 🚀";
+  createFor(learner: Learner): string {
+    return "Hello, " + learner.name + "! Welcome to SOLID. 🚀";
   }
 }
 
 class ScreenPrinter {
-  show(text: string) {
+  show(text: string): void {
     console.log(text);
   }
 }
 
-// Each class does one simple job:
+// For this lesson, each class has one clear responsibility.
 const greeter = new WelcomeMessage();
 const printer = new ScreenPrinter();
 
-const message = greeter.getMessage("Learner");
+const learner: Learner = { name: "Learner" };
+const message = greeter.createFor(learner);
 printer.show(message);`}
             height="320px"
           />
         </div>
 
         <SummaryBox>
-          SOLID is simply a way to keep your code neat, tidy, and easy to change in the future.
+          SOLID gives you five questions to ask about a design. Use the principles to reduce unnecessary coupling and make likely changes easier—not to add abstractions everywhere.
         </SummaryBox>
 
         <QuickCheck
           question="Why do we use SOLID principles?"
-          answer="To keep our code clean, easy to read, easy to test, and easy to change without breaking existing features."
+          answer="To make responsibilities and dependencies clearer so code is easier to understand, test, and change with less risk. SOLID guides design; it does not guarantee bug-free code."
         />
       </div>
     </SectionContainer>

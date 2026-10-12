@@ -10,46 +10,59 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 8 — VISUAL DATA MANAGEMENT WITH PRISMA STUDIO
+// MODULE 8 — STATE INTROSPECTION & DIAGNOSTICS ENDPOINTS
 // ═══════════════════════════════════════════════════════════
 
 export function PrismaStudioSection() {
   return (
-    <SectionContainer number={8} title="Visual Data Inspection with Prisma Studio">
-      {/* ── 8.1 Prisma Studio ── */}
+    <SectionContainer number={8} title="Inspecting In-Memory Seed State & Diagnostics">
+      {/* ── 8.1 State Diagnostics ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="The Built-In Visual Database GUI"
-          description="View, filter, sort, and edit database records directly in your browser."
+          number={8}
+          title="Verifying Initialized State via Admin Endpoints"
+          description="How to expose development-only diagnostics to inspect repository state, counts, and cache health."
           color="primary"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>🖥️</span> Launching Prisma Studio
+            <span>🖥️</span> Development State Introspection
           </h4>
-          <EnhancedCodeBlock
-            code={`# Run in your terminal:
-npx prisma studio
-
-# Output:
-# Prisma Studio is up on http://localhost:5555`}
-            language="bash"
-          />
-          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mt-3">
-            Prisma Studio allows developers to:
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            When running in-memory or decoupled repository patterns, you can create a lightweight development controller to inspect seeded counts:
           </p>
-          <ul className="list-disc pl-5 space-y-1 text-xs text-ds-text-sub">
-            <li>Visually browse all tables and columns without installing third-party SQL clients like pgAdmin or DBeaver.</li>
-            <li>Double-click any cell to edit data and save changes directly.</li>
-            <li>Click relational foreign key buttons to jump straight to the related parent/child records.</li>
-          </ul>
+          <EnhancedCodeBlock
+            code={`@Controller('dev/state')
+export class DevStateController {
+  constructor(
+    private readonly usersRepo: UsersRepository,
+    private readonly configService: ConfigService,
+  ) {}
+
+  @Get('summary')
+  async getSummary() {
+    // Only permit access in non-production environments:
+    if (this.configService.get('NODE_ENV') === 'production') {
+      throw new ForbiddenException('State inspection disabled in production');
+    }
+
+    const allUsers = await this.usersRepo.findAll();
+    return {
+      status: 'HEALTHY',
+      seededUsersCount: allUsers.length,
+      sampleUsers: allUsers.slice(0, 3).map(u => ({ id: u.id, email: u.email })),
+      timestamp: new Date().toISOString(),
+    };
+  }
+}`}
+            language="typescript"
+          />
         </WhyBox>
 
         <QuickCheck
-          question="What default port does Prisma Studio run on when launched with 'npx prisma studio'?"
-          answer="Port 5555 (http://localhost:5555)."
+          question="Why should dev diagnostics and state inspection endpoints be disabled in production?"
+          answer="They can leak sensitive system metrics, memory statistics, and internal user details to unauthorized external callers."
         />
       </div>
 

@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 📝 ⚡</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-27 Completed!
+          Module NJ-28 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You have mastered structured JSON logging, distributed correlation IDs, and log redaction! Next, learn how to build enterprise test suites with Jest, Supertest, and Testcontainers in NJ-28!
+          You have mastered structured JSON logging, distributed correlation IDs, and log redaction! Next, learn how to accelerate database reads by 100x using Redis in-memory caching in NJ-29!
         </p>
 
         <Link
-          href="/learn/nestjs/nj28-testing"
+          href="/learn/nestjs/nj31-caching"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-28: Unit, Integration &amp; E2E Testing →
+          Proceed to NJ-29: Caching &amp; Redis Integration →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the next topic in Phase 06?"
-        answer="NJ-28: Unit, Integration & E2E Testing (Jest, Test.createTestingModule, mocking PrismaService, and Supertest HTTP endpoint testing)."
+        question="What is the next topic after Logging?"
+        answer="NJ-29: Caching & Redis Integration (@nestjs/cache-manager, cache-manager-redis-yet, CacheInterceptor, and Redis cache invalidation)."
       />
     </SectionContainer>
   );

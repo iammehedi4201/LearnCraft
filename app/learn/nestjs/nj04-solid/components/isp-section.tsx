@@ -11,6 +11,7 @@ import {
   ComparisonTable,
   MistakeBox,
   EasyRuleCard,
+  InfoCallout,
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
@@ -25,7 +26,7 @@ export function IspSection() {
         <TopicHeader
           number={1}
           title="What Does It Mean?"
-          description="Don't force a class to use methods it does not need."
+          description="Clients should depend only on the small part of a contract they actually use."
           color="primary"
         />
 
@@ -34,11 +35,17 @@ export function IspSection() {
             <span>📖</span> In Simple Words
           </h4>
           <p className="text-sm text-ds-text-sub leading-relaxed">
-            Do not make one giant interface with 20 methods. Instead, make <strong>many small interfaces</strong>. A class should only have to implement the methods it actually cares about.
+            Avoid one large interface that mixes unrelated capabilities. Prefer focused interfaces shaped around what a caller needs, so implementations are not forced to provide meaningless methods.
           </p>
         </WhyBox>
 
-        <EasyRuleCard rule="Give a class only the methods it actually needs." />
+        <EasyRuleCard rule="Prefer small, client-focused contracts over one oversized interface." />
+
+        <InfoCallout emoji="🔷" title="TypeScript Uses Structural Typing">
+          <p>
+            A class does not always need the <code>implements</code> keyword. If an object has the required shape, TypeScript can use it as that interface. Writing <code>implements</code> is still useful because it checks your intention close to the class.
+          </p>
+        </InfoCallout>
       </div>
 
       <Divider />
@@ -54,19 +61,19 @@ export function IspSection() {
 
         <MistakeBox
           title="Forcing a Coder to Design and Manage"
-          description="A Programmer who is hired to write code is forced by the Worker interface to write empty dummy methods for design() and manage()!"
-          wrong={`interface Worker {
+          description="A programmer who is hired to write code is forced by the WorkCapabilities interface to write empty dummy methods for design() and manage()!"
+          wrong={`interface WorkCapabilities {
   code(): void;
   design(): void;
   manage(): void;
 }
 
-class Developer implements Worker {
-  code() { console.log("Writing code"); }
+class Developer implements WorkCapabilities {
+  code(): void { console.log("Writing code"); }
 
   // ❌ Forced to write methods they don't need!
-  design() { throw new Error("I cannot design!"); }
-  manage() { throw new Error("I cannot manage!"); }
+  design(): void { throw new Error("I cannot design!"); }
+  manage(): void { throw new Error("I cannot manage!"); }
 }`}
           right={`// 1. Split into small, focused interfaces:
 interface Developer {
@@ -83,7 +90,7 @@ interface Manager {
 
 // 2. A developer only implements Developer:
 class WebDeveloper implements Developer {
-  code() { console.log("Writing code"); }
+  code(): void { console.log("Writing code"); }
 }`}
         />
 
@@ -103,15 +110,15 @@ interface Designer {
 
 // Programmer only writes code:
 class BackendProgrammer implements Coder {
-  writeCode() {
+  writeCode(): void {
     console.log("💻 Writing clean NestJS API endpoints...");
   }
 }
 
 // Fullstack dev can implement both:
 class FullstackProgrammer implements Coder, Designer {
-  writeCode() { console.log("💻 Writing APIs..."); }
-  drawDesign() { console.log("🎨 Designing website layout..."); }
+  writeCode(): void { console.log("💻 Writing APIs..."); }
+  drawDesign(): void { console.log("🎨 Designing website layout..."); }
 }
 
 const coder = new BackendProgrammer();
@@ -129,7 +136,7 @@ fullstack.drawDesign();`}
             <span>✨</span> Why Is This Better?
           </h4>
           <p className="text-xs text-ds-text-sub leading-relaxed">
-            Smaller interfaces are much easier to use. You never have to write empty &quot;throw error&quot; dummy methods just to make TypeScript happy.
+            Each caller can request only the capability it uses, and each class can honestly implement the contracts it supports. That removes empty stubs and surprise “not supported” errors.
           </p>
         </WhyBox>
       </div>
@@ -141,12 +148,12 @@ fullstack.drawDesign();`}
         <TopicHeader
           number={3}
           title="NestJS Connection"
-          description="How NestJS uses small interfaces everywhere."
+          description="Examples of focused interfaces NestJS provides."
           color="emerald"
         />
 
         <p className="text-sm text-ds-text-sub leading-relaxed mb-4">
-          NestJS gives you small, focused interfaces for every task:
+          NestJS provides several small, focused interfaces:
         </p>
 
         <ComparisonTable
@@ -154,14 +161,20 @@ fullstack.drawDesign();`}
           rows={[
             ["OnModuleInit", "Only onModuleInit()", "Run setup when the module starts"],
             ["OnModuleDestroy", "Only onModuleDestroy()", "Clean up when the module stops"],
-            ["CanActivate", "Only canActivate()", "Check if user is logged in"],
+            ["CanActivate", "Only canActivate()", "Decide whether a request may continue"],
             ["NestMiddleware", "Only use()", "Handle incoming HTTP middleware"],
           ]}
         />
 
+        <InfoCallout emoji="🧠" title="Compile-Time Contracts">
+          <p>
+            These NestJS interfaces help TypeScript check method shapes while you develop. Like other TypeScript interfaces, they do not exist at runtime and do not register the class with NestJS.
+          </p>
+        </InfoCallout>
+
         <QuickCheck
           question="What is the easy rule for the Interface Segregation Principle (I)?"
-          answer="Give a class only the methods it actually needs."
+          answer="Keep contracts small and focused on the needs of their clients, so implementations do not depend on or fake unrelated capabilities."
         />
       </div>
     </SectionContainer>

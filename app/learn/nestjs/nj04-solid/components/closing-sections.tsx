@@ -45,7 +45,7 @@ export function ClosingSections() {
             <span className="h-10 w-10 rounded-xl bg-ds-success-base text-ds-static-white flex items-center justify-center font-black text-lg shrink-0">L</span>
             <div>
               <h5 className="font-bold text-xs uppercase tracking-wider text-ds-success-dark">Liskov Substitution</h5>
-              <p className="text-sm font-semibold text-ds-text-strong mt-0.5">&quot;Child classes should properly behave like their parent.&quot;</p>
+              <p className="text-sm font-semibold text-ds-text-strong mt-0.5">&quot;Every implementation keeps the contract&apos;s promises.&quot;</p>
             </div>
           </div>
 
@@ -53,7 +53,7 @@ export function ClosingSections() {
             <span className="h-10 w-10 rounded-xl bg-ds-warning-base text-ds-static-white flex items-center justify-center font-black text-lg shrink-0">I</span>
             <div>
               <h5 className="font-bold text-xs uppercase tracking-wider text-ds-warning-dark">Interface Segregation</h5>
-              <p className="text-sm font-semibold text-ds-text-strong mt-0.5">&quot;Don&apos;t force classes to implement things they don&apos;t need.&quot;</p>
+              <p className="text-sm font-semibold text-ds-text-strong mt-0.5">&quot;Prefer small contracts shaped around client needs.&quot;</p>
             </div>
           </div>
 
@@ -61,7 +61,7 @@ export function ClosingSections() {
             <span className="h-10 w-10 rounded-xl bg-ds-error-base text-ds-static-white flex items-center justify-center font-black text-lg shrink-0">D</span>
             <div>
               <h5 className="font-bold text-xs uppercase tracking-wider text-ds-error-dark">Dependency Inversion</h5>
-              <p className="text-sm font-semibold text-ds-text-strong mt-0.5">&quot;Depend on abstractions and inject dependencies instead of creating them directly.&quot;</p>
+              <p className="text-sm font-semibold text-ds-text-strong mt-0.5">&quot;Business rules depend on contracts; wiring chooses the tools.&quot;</p>
             </div>
           </div>
         </div>
@@ -84,22 +84,31 @@ export function ClosingSections() {
       {/* ── Next Step Card ── */}
       <div className="p-6 bg-ds-success-lighter border border-ds-success-base rounded-2xl">
         <h4 className="font-bold text-base mb-2 text-ds-success-dark flex items-center gap-2">
-          <span>🚀</span> Ready to Start Building!
+          <span>🚀</span> Stage 1 Foundations Complete!
         </h4>
-        <p className="text-sm text-ds-text-strong leading-relaxed mb-4">
-          Now that you understand OOP, Decorators, and SOLID Principles, you are fully prepared to build real NestJS applications!
+        <p className="text-sm text-ds-text-strong leading-relaxed mb-5">
+          Now that you understand TypeScript, OOP, Decorators, and SOLID Principles, you can test your knowledge in the hands-on Capstone project or jump right into NestJS scaffolding.
         </p>
-        <Link
-          href="/learn/nestjs/nj05-setup"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-sm shadow-ds-feature-base/15"
-        >
-          Proceed to NJ-05: NestJS Setup & Installation →
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/learn/nestjs/projects/stage-1-task-manager"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-white bg-purple-600 hover:bg-purple-700 transition-all shadow-sm"
+          >
+            <span>🛠️ Build Stage 1 Capstone: CLI Task Manager</span>
+            <span className="text-[10px] bg-purple-800/80 px-2 py-0.5 rounded-md font-mono">+100 XP</span>
+          </Link>
+          <Link
+            href="/learn/nestjs/nj05-setup"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-sm shadow-ds-feature-base/15"
+          >
+            <span>Proceed to NJ-05: NestJS Setup & Installation →</span>
+          </Link>
+        </div>
       </div>
 
       <QuickCheck
-        question="Which SOLID principle is most important for understanding NestJS Dependency Injection?"
-        answer="The Dependency Inversion Principle (D) — because NestJS automatically creates your service dependencies and injects them into your constructors."
+        question="How are the Dependency Inversion Principle and NestJS dependency injection related?"
+        answer="DIP is the design principle: high-level code should depend on abstractions. NestJS's DI container can supply the registered implementation, but using DI alone does not guarantee DIP. For a TypeScript interface, use a runtime token such as a symbol with @Inject(token)."
       />
     </SectionContainer>
   );

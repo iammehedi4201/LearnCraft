@@ -1,568 +1,616 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+/**
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * GUIDED ROADMAP JOURNEY — REDESIGNED FOR BEGINNER CLARITY
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * Replaces information overload with a calm, progressive disclosure journey:
+ * 1. Compact Header with role switcher, friendly metadata (time, level, steps).
+ * 2. Visual Progress Bar showing learner's current milestone status.
+ * 3. Collapsed Steps showing ONLY 6 essential items (number, title, outcome,
+ *    time estimate, status badge, expand trigger). Zero clutter.
+ * 4. Progressive Disclosure: Expanding reveals "What you'll learn",
+ *    decision points ("Choose ONE — You only need one"), and course links.
+ * 5. Distinct Advanced Topics section with visually lower priority.
+ * 6. Motivational Bottom CTA ("Ready to start building? Start with Step 1").
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ */
 
-interface RoadmapStep {
-  step: string;
-  phase: string;
-  title: string;
-  badge: string;
-  badgeColor: string;
-  desc: string;
-  keySkills: string[];
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { TechIcon, RoleIcon } from "@/components/roadmap/TechIcon";
+import {
+  JOURNEY_ROADMAPS,
+  type JourneyRole,
+} from "@/lib/roadmap-journey-data";
+
+interface RoadmapProps {
+  initialRole?: JourneyRole;
+  showSwitcher?: boolean;
 }
 
-const roadmapSteps: RoadmapStep[] = [
-  {
-    step: "01",
-    phase: "Phase 1",
-    title: "Foundations & Architecture Mental Models",
-    badge: "Core Basics",
-    badgeColor: "bg-ds-feature-lighter text-ds-feature-dark",
-    desc: "Understand the core mental models of modern full-stack web applications: Client vs Server execution environments, strict TypeScript type safety, and component lifecycle.",
-    keySkills: ["TypeScript Strict Mode", "Server Component Boundaries", "Module Patterns"],
-  },
-  {
-    step: "02",
-    phase: "Phase 2",
-    title: "Full-Stack Rendering & Edge Caching",
-    badge: "Next.js Mastery",
-    badgeColor: "bg-ds-info-lighter text-ds-info-dark",
-    desc: "Master Server Actions, granular caching layers, streaming with Suspense, ISR revalidation, and deploying edge middleware.",
-    keySkills: ["Server Actions", "Streaming & Suspense", "Granular ISR", "Edge Middleware"],
-  },
-  {
-    step: "03",
-    phase: "Phase 3",
-    title: "Asynchronous State & Optimistic UI",
-    badge: "TanStack Query",
-    badgeColor: "bg-ds-success-lighter text-ds-success-dark",
-    desc: "Eliminate race conditions and UI lag with deterministic query keys, mutation rollback handlers, infinite virtualization, and server state hydration.",
-    keySkills: ["Optimistic UI Rollbacks", "Deterministic Invalidation", "Infinite Pagination"],
-  },
-  {
-    step: "04",
-    phase: "Phase 4",
-    title: "Enterprise Backend & Microservices",
-    badge: "NestJS Elite",
-    badgeColor: "bg-ds-error-lighter text-ds-error-dark",
-    desc: "Architect scalable backend services using Dependency Injection, Guards, Interceptors, WebSockets, Message Queues, and Microservice transports.",
-    keySkills: ["Inversion of Control (DI)", "Guards & JWT", "Microservices & Message Brokers"],
-  },
-];
-
-interface CardCoord {
-  cardX: number;
-  cardY: number;
-  isEven: boolean;
-}
-
-export function Roadmap() {
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const pathRef = useRef<SVGPathElement | null>(null);
-  const trailPathRef = useRef<SVGPathElement | null>(null);
-
-  const [activeStep, setActiveStep] = useState<number>(0);
-  const [pathData, setPathData] = useState<string>("");
-  const [containerSize, setContainerSize] = useState<{ width: number; height: number }>({ width: 0, height: 0 });
-  const [cardCoords, setCardCoords] = useState<CardCoord[]>([]);
-  const [rocketState, setRocketState] = useState<{
-    x: number;
-    y: number;
-    angle: number;
-    visible: boolean;
-  }>({
-    x: 0,
-    y: 0,
-    angle: 90,
-    visible: false,
+export function Roadmap({
+  initialRole = "backend",
+  showSwitcher = true,
+}: RoadmapProps) {
+  const [selectedRole, setSelectedRole] = useState<JourneyRole>(initialRole);
+  const [expandedStepId, setExpandedStepId] = useState<string | null>("be-step-1");
+  const [completedSteps, setCompletedSteps] = useState<Record<string, boolean>>({
+    "be-step-1": true,
+    "fe-step-1": true,
+    "fs-step-1": true,
   });
 
-  const currentProgressRef = useRef<number>(0);
-  const targetProgressRef = useRef<number>(0);
-  const currentAngleRef = useRef<number>(90);
-  const rafIdRef = useRef<number | null>(null);
+  const stepRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // Recalculate dynamic SVG path starting under Card 1 and ending under Card 4
-  const recalculatePath = useCallback(() => {
-    if (!containerRef.current) return;
-    const containerRect = containerRef.current.getBoundingClientRect();
-    const width = containerRect.width;
-    const height = containerRect.height;
-    if (width === 0 || height === 0) return;
+  // Sync role if prop changes
+  useEffect(() => {
+    setSelectedRole(initialRole);
+  }, [initialRole]);
 
-    const mobile = window.innerWidth < 640;
-    setContainerSize({ width, height });
-
-    const coords: CardCoord[] = [];
-
-    stepRefs.current.forEach((stepEl, idx) => {
-      if (!stepEl) return;
-      const cardEl = cardRefs.current[idx];
-
-      let cardX = idx % 2 === 0 ? width * 0.25 : width * 0.75;
-      let cardY = (height / roadmapSteps.length) * (idx + 0.5);
-
-      if (cardEl) {
-        const cr = cardEl.getBoundingClientRect();
-        cardX = cr.left - containerRect.left + cr.width / 2;
-        cardY = cr.top - containerRect.top + cr.height / 2;
+  // Load completed steps from localStorage for persistent learner experience
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("learncraft_roadmap_progress");
+      if (saved) {
+        setCompletedSteps(JSON.parse(saved));
       }
-
-      coords.push({
-        cardX,
-        cardY,
-        isEven: idx % 2 === 0,
-      });
-    });
-
-    setCardCoords(coords);
-
-    if (coords.length < 2) return;
-
-    if (mobile) {
-      // Mobile: Straight vertical path along the cards
-      const startX = coords[0].cardX;
-      const startY = coords[0].cardY;
-      const endY = coords[coords.length - 1].cardY;
-      setPathData(`M ${startX} ${startY} L ${startX} ${endY}`);
-      return;
+    } catch {
+      // Ignore local storage read errors
     }
-
-    // Desktop: Path starts under First Card (Card 0) and finishes under Last Card (Card 3)
-    const R = 24; // Corner curve radius
-    const centerX = width / 2;
-
-    const x0 = coords[0].cardX;
-    const y0 = coords[0].cardY;
-
-    const x1 = coords[1].cardX;
-    const y1 = coords[1].cardY;
-
-    const x2 = coords[2].cardX;
-    const y2 = coords[2].cardY;
-
-    const x3 = coords[3].cardX;
-    const y3 = coords[3].cardY;
-
-    const yMid01 = (y0 + y1) / 2;
-    const yMid12 = (y1 + y2) / 2;
-    const yMid23 = (y2 + y3) / 2;
-
-    // Start under Card 0 -> exit to center -> go down along center spine -> cross to Card 1
-    // -> through Card 1 -> cross to Card 2 -> through Card 2 -> cross to Card 3 -> finish under Card 3
-    let d = `M ${x0} ${y0}`;
-
-    // Segment 1: From under Card 0, head Right towards center, turn Down at center spine
-    d += ` L ${centerX - R} ${y0}`;
-    d += ` Q ${centerX} ${y0} ${centerX} ${y0 + R}`;
-    d += ` L ${centerX} ${yMid01 - R}`;
-
-    // Segment 2: Turn Right at yMid01 towards Card 1, turn Down into Card 1
-    d += ` Q ${centerX} ${yMid01} ${centerX + R} ${yMid01}`;
-    d += ` L ${x1 - R} ${yMid01}`;
-    d += ` Q ${x1} ${yMid01} ${x1} ${yMid01 + R}`;
-
-    // Segment 3: Travel through Card 1, turn Left at yMid12 towards Card 2
-    d += ` L ${x1} ${yMid12 - R}`;
-    d += ` Q ${x1} ${yMid12} ${x1 - R} ${yMid12}`;
-    d += ` L ${x2 + R} ${yMid12}`;
-    d += ` Q ${x2} ${yMid12} ${x2} ${yMid12 + R}`;
-
-    // Segment 4: Travel through Card 2, turn Right at yMid23 towards Card 3
-    d += ` L ${x2} ${yMid23 - R}`;
-    d += ` Q ${x2} ${yMid23} ${x2 + R} ${yMid23}`;
-    d += ` L ${x3 - R} ${yMid23}`;
-    d += ` Q ${x3} ${yMid23} ${x3} ${yMid23 + R}`;
-
-    // Segment 5: Finish directly under Card 3
-    d += ` L ${x3} ${y3}`;
-
-    setPathData(d);
   }, []);
 
-  // Set up resize observer and window resize listener
-  useEffect(() => {
-    recalculatePath();
-
-    const resizeObserver = new ResizeObserver(() => {
-      recalculatePath();
-    });
-
-    if (containerRef.current) {
-      resizeObserver.observe(containerRef.current);
+  const saveCompletedSteps = (updated: Record<string, boolean>) => {
+    setCompletedSteps(updated);
+    try {
+      localStorage.setItem("learncraft_roadmap_progress", JSON.stringify(updated));
+    } catch {
+      // Ignore local storage write errors
     }
+  };
 
-    window.addEventListener("resize", recalculatePath);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", recalculatePath);
+  const toggleStepCompleted = (stepId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated = {
+      ...completedSteps,
+      [stepId]: !completedSteps[stepId],
     };
-  }, [recalculatePath]);
+    saveCompletedSteps(updated);
+  };
 
-  // Scroll tracking and animation loop
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!containerRef.current) return;
-      const rect = containerRef.current.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
+  const currentRoadmap = JOURNEY_ROADMAPS[selectedRole];
+  const steps = currentRoadmap.steps;
 
-      // Calculate progress across timeline section
-      const enterOffset = windowHeight * 0.7;
-      const exitOffset = windowHeight * 0.3;
-      const totalScrollDistance = rect.height + enterOffset - exitOffset;
-      const currentScroll = enterOffset - rect.top;
+  // When role changes, expand the first step of that roadmap if not set
+  const handleRoleChange = (role: JourneyRole) => {
+    setSelectedRole(role);
+    const firstStep = JOURNEY_ROADMAPS[role].steps[0];
+    if (firstStep) {
+      setExpandedStepId(firstStep.id);
+    }
+  };
 
-      let progress = currentScroll / totalScrollDistance;
-      progress = Math.max(0, Math.min(1, progress));
-      targetProgressRef.current = progress;
-    };
+  // Calculate progress
+  const completedCount = steps.filter((s) => completedSteps[s.id]).length;
+  const progressPercent = Math.round((completedCount / steps.length) * 100);
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
+  // Determine current active step (first uncompleted step, or step 1)
+  const currentStepId = steps.find((s) => !completedSteps[s.id])?.id || steps[0]?.id;
 
-    // Smooth animation tick loop
-    const animate = () => {
-      const pathEl = pathRef.current;
-      if (!pathEl || pathEl.getTotalLength() === 0) {
-        rafIdRef.current = requestAnimationFrame(animate);
-        return;
+  const handleToggleExpand = (stepId: string) => {
+    setExpandedStepId((prev) => (prev === stepId ? null : stepId));
+  };
+
+  const handleStartStepOne = () => {
+    const firstStep = steps[0];
+    if (firstStep) {
+      setExpandedStepId(firstStep.id);
+      const element = stepRefs.current[firstStep.id];
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
       }
-
-      const totalLength = pathEl.getTotalLength();
-
-      // Exponential decay smoothing (lerp)
-      const lerpFactor = 0.12;
-      const diff = targetProgressRef.current - currentProgressRef.current;
-      currentProgressRef.current += diff * lerpFactor;
-
-      const currentDist = currentProgressRef.current * totalLength;
-      const pt = pathEl.getPointAtLength(currentDist);
-
-      // Tangent angle calculation for smooth turns
-      const delta = 2;
-      const ptBefore = pathEl.getPointAtLength(Math.max(0, currentDist - delta));
-      const ptAfter = pathEl.getPointAtLength(Math.min(totalLength, currentDist + delta));
-      const dx = ptAfter.x - ptBefore.x;
-      const dy = ptAfter.y - ptBefore.y;
-
-      let targetAngle = 90;
-      if (Math.hypot(dx, dy) > 0.001) {
-        // Rocket icon naturally points UP in 0 deg; calculate angle relative to travel vector
-        targetAngle = (Math.atan2(dy, dx) * 180) / Math.PI + 90;
-      }
-
-      // Smooth angle interpolation without 360-degree flip
-      const angleDiff = ((((targetAngle - currentAngleRef.current) % 360) + 540) % 360) - 180;
-      currentAngleRef.current += angleDiff * 0.22;
-
-      setRocketState({
-        x: pt.x,
-        y: pt.y,
-        angle: currentAngleRef.current,
-        visible: true,
-      });
-
-      // Update trail stroke-dashoffset to highlight traversed path
-      if (trailPathRef.current) {
-        trailPathRef.current.style.strokeDasharray = `${currentDist} ${totalLength}`;
-      }
-
-      // Synchronize active card based on rocket Y position relative to step cards
-      if (cardCoords.length > 0) {
-        let currentStepIndex = 0;
-        for (let i = 0; i < cardCoords.length; i++) {
-          const prevMid = i === 0 ? 0 : (cardCoords[i - 1].cardY + cardCoords[i].cardY) / 2;
-          const nextMid =
-            i === cardCoords.length - 1 ? Infinity : (cardCoords[i].cardY + cardCoords[i + 1].cardY) / 2;
-
-          if (pt.y >= prevMid && pt.y < nextMid) {
-            currentStepIndex = i;
-            break;
-          }
-        }
-        setActiveStep(currentStepIndex);
-      }
-
-      rafIdRef.current = requestAnimationFrame(animate);
-    };
-
-    rafIdRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      if (rafIdRef.current) {
-        cancelAnimationFrame(rafIdRef.current);
-      }
-    };
-  }, [cardCoords]);
+    }
+  };
 
   return (
-    <section className="py-16 relative">
-      {/* Section Header */}
-      <div className="max-w-3xl mx-auto text-center mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-ds-feature-lighter mb-4">
-          <span className="text-xs font-bold tracking-wider text-ds-feature-dark uppercase">
-            Architect Roadmap
-          </span>
-        </div>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-ds-text-strong font-display">
-          The Proven Path to Senior Web Engineering
-        </h2>
-        <p className="text-sm sm:text-base text-ds-text-sub mt-3 leading-relaxed max-w-xl mx-auto">
-          A structured sequence designed to take you from foundational understanding to full-stack architectural mastery.
-        </p>
-      </div>
+    <section id="roadmap-preview" className="pt-16 pb-20 lg:pt-24 lg:pb-28 relative">
+      <div className="container mx-auto px-4 sm:px-6 max-w-6xl">
+        {/* ═══════════════════════════════════════════════════════════════
+            PAGE HEADER & ROLE SWITCHER
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="max-w-4xl mx-auto text-center mb-12">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/10 text-purple-300 border border-purple-500/20 text-xs font-bold uppercase tracking-wider mb-4">
+            <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+            Guided Learning Journey
+          </div>
 
-      {/* Timeline Grid Container */}
-      <div ref={containerRef} className="relative max-w-4xl mx-auto px-4 sm:px-0">
-        {/* Dynamic SVG Motion Path & Dashed Timeline (z-0 behind cards) */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible"
-          width={containerSize.width || "100%"}
-          height={containerSize.height || "100%"}
-        >
-          <defs>
-            {/* Traversed glow gradient */}
-            <linearGradient id="rocketTrailGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="var(--state-feature-base)" stopOpacity="0.3" />
-              <stop offset="70%" stopColor="var(--state-feature-base)" stopOpacity="0.8" />
-              <stop offset="100%" stopColor="var(--state-verified-base)" stopOpacity="1" />
-            </linearGradient>
+          {/* Title */}
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+            {currentRoadmap.title}
+          </h2>
 
-            {/* Subtle glow filter */}
-            <filter id="rocketGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
-              <feMerge>
-                <feMergeNode in="blur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
+          {/* Single clean outcome subtitle */}
+          <p className="text-base sm:text-lg text-gray-300 mt-3 leading-relaxed max-w-3xl mx-auto font-normal">
+            {currentRoadmap.subtitle}
+          </p>
 
-          {pathData && (
-            <>
-              {/* Base Dashed Timeline Path */}
-              <path
-                ref={pathRef}
-                d={pathData}
-                fill="none"
-                stroke="var(--stroke-soft-200)"
-                strokeWidth={2.5}
-                strokeDasharray="6 6"
-                strokeLinecap="round"
-                className="transition-colors duration-300"
-              />
+          {/* Compact Metadata Chips */}
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 mt-5">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 text-xs font-semibold">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              {currentRoadmap.experienceLevel}
+            </span>
 
-              {/* Traversed Active Path Highlight */}
-              <path
-                ref={trailPathRef}
-                d={pathData}
-                fill="none"
-                stroke="url(#rocketTrailGradient)"
-                strokeWidth={2.5}
-                strokeDasharray="0 10000"
-                strokeLinecap="round"
-                filter="url(#rocketGlow)"
-              />
-            </>
-          )}
-        </svg>
-
-        {/* Scroll-Driven Flying Vector Rocket (z-0 under cards, emerges in open track between cards) */}
-        {rocketState.visible && pathData && (
-          <div
-            className="absolute top-0 left-0 pointer-events-none z-0 transition-opacity duration-300 will-change-transform"
-            style={{
-              transform: `translate3d(${rocketState.x}px, ${rocketState.y}px, 0) translate(-50%, -50%) rotate(${rocketState.angle}deg)`,
-            }}
-          >
-            {/* Booster Aura Glow */}
-            <div className="absolute -inset-2 rounded-full bg-ds-feature-base/25 blur-md -z-10 animate-pulse" />
-
-            {/* Vector Rocket Graphic */}
-            <div className="relative w-8 h-8 flex items-center justify-center filter drop-shadow-md">
-              <svg
-                viewBox="0 0 32 32"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-full h-full overflow-visible"
-              >
-                {/* Engine Thruster Flame (Trailing at bottom) */}
-                <g className="animate-pulse origin-top">
-                  <path
-                    d="M13 24 L16 31 L19 24 Z"
-                    fill="var(--state-warning-base)"
-                    opacity="0.9"
-                  />
-                  <path
-                    d="M14 24 L16 29 L18 24 Z"
-                    fill="var(--state-feature-lighter)"
-                  />
-                </g>
-
-                {/* Left Fin */}
-                <path
-                  d="M10 18 L5 23 C5 23 6 25 9 24 L11 20 Z"
-                  fill="var(--state-feature-dark)"
-                  stroke="var(--state-feature-base)"
-                  strokeWidth="1"
-                  strokeLinejoin="round"
-                />
-
-                {/* Right Fin */}
-                <path
-                  d="M22 18 L27 23 C27 23 26 25 23 24 L21 20 Z"
-                  fill="var(--state-feature-dark)"
-                  stroke="var(--state-feature-base)"
-                  strokeWidth="1"
-                  strokeLinejoin="round"
-                />
-
-                {/* Rocket Fuselage */}
-                <path
-                  d="M16 2 C12 7 11 16 11 23 C11 24 12 24.5 13 24.5 L19 24.5 C20 24.5 21 24 21 23 C21 16 20 7 16 2 Z"
-                  fill="var(--bg-white-0)"
-                  stroke="var(--state-feature-base)"
-                  strokeWidth="1.5"
-                  strokeLinejoin="round"
-                />
-
-                {/* Rocket Nose Cone Cap */}
-                <path
-                  d="M16 2 C14.5 5 13.8 8.5 13.5 11 L18.5 11 C18.2 8.5 17.5 5 16 2 Z"
-                  fill="var(--state-feature-base)"
-                />
-
-                {/* Cockpit Glass Porthole */}
-                <circle
-                  cx="16"
-                  cy="15"
-                  r="2.8"
-                  fill="var(--state-verified-base)"
-                  stroke="var(--state-feature-base)"
-                  strokeWidth="1"
-                />
-                <circle
-                  cx="15.2"
-                  cy="14.2"
-                  r="0.9"
-                  fill="var(--static-white)"
-                  opacity="0.9"
-                />
-
-                {/* Exhaust Nozzle */}
-                <rect
-                  x="13.5"
-                  y="24"
-                  width="5"
-                  height="1.5"
-                  rx="0.5"
-                  fill="var(--stroke-strong-950)"
-                />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] text-gray-300 border border-white/10 text-xs font-medium">
+              <svg className="w-3.5 h-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
+              {currentRoadmap.durationEstimate}
+            </span>
+
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] text-gray-300 border border-white/10 text-xs font-medium">
+              <svg className="w-3.5 h-3.5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              {currentRoadmap.totalCoreSteps} core steps
+            </span>
+          </div>
+
+          {/* Roadmap Switcher */}
+          {showSwitcher && (
+            <div className="inline-flex flex-wrap items-center justify-center p-1.5 rounded-2xl bg-white/[0.03] border border-white/10 mt-8 gap-1.5 shadow-lg shadow-black/20">
+              <button
+                onClick={() => handleRoleChange("backend")}
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                  selectedRole === "backend"
+                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30 scale-[1.02]"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.04]"
+                }`}
+              >
+                <RoleIcon role="backend" className="w-4 h-4 text-purple-200" />
+                <span>Backend Engineering</span>
+              </button>
+
+              <button
+                onClick={() => handleRoleChange("frontend")}
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                  selectedRole === "frontend"
+                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30 scale-[1.02]"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.04]"
+                }`}
+              >
+                <RoleIcon role="frontend" className="w-4 h-4 text-purple-200" />
+                <span>Frontend Engineering</span>
+              </button>
+
+              <button
+                onClick={() => handleRoleChange("fullstack")}
+                className={`flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                  selectedRole === "fullstack"
+                    ? "bg-purple-600 text-white shadow-md shadow-purple-600/30 scale-[1.02]"
+                    : "text-gray-400 hover:text-white hover:bg-white/[0.04]"
+                }`}
+              >
+                <RoleIcon role="fullstack" className="w-4 h-4 text-purple-200" />
+                <span>Full-Stack Engineering</span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            LEARNER PROGRESS TRACKER
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="w-full mb-12 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-purple-950/20 via-white/[0.02] to-purple-950/20 border border-purple-500/20 backdrop-blur-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-6 h-6 rounded-lg bg-purple-500/20 flex items-center justify-center text-purple-300">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <span className="text-sm font-semibold text-white">
+                Your progress — <span className="text-purple-300 font-bold">{completedCount}</span> of {steps.length} steps completed
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 self-end sm:self-auto">
+              <span className="text-xs font-mono font-bold text-purple-300 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">
+                {progressPercent}% Complete
+              </span>
+              {completedCount > 0 && (
+                <button
+                  onClick={() => {
+                    const updated = { ...completedSteps };
+                    steps.forEach((s) => delete updated[s.id]);
+                    saveCompletedSteps(updated);
+                  }}
+                  className="text-[11px] text-gray-400 hover:text-gray-200 transition-colors underline"
+                >
+                  Reset
+                </button>
+              )}
             </div>
           </div>
-        )}
 
-        {/* Timeline Steps & Cards (z-10 above dashed path & rocket) */}
-        <div className="space-y-8 sm:space-y-14 relative z-10">
-          {roadmapSteps.map((step, idx) => {
-            const isEven = idx % 2 === 0;
-            const isActive = activeStep === idx;
+          {/* Visual Progress Bar */}
+          <div className="w-full h-2.5 bg-white/[0.06] rounded-full overflow-hidden p-0.5 border border-white/5">
+            <div
+              className="h-full bg-gradient-to-r from-purple-600 via-purple-500 to-emerald-400 rounded-full transition-all duration-500 ease-out shadow-sm"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            CORE ROADMAP JOURNEY (Vertical Step-by-Step Flow)
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="w-full space-y-4">
+          {steps.map((step, idx) => {
+            const isExpanded = expandedStepId === step.id;
+            const isCompleted = !!completedSteps[step.id];
+            const isCurrent = step.id === currentStepId && !isCompleted;
+            const isLast = idx === steps.length - 1;
 
             return (
               <div
-                key={step.step}
+                key={step.id}
                 ref={(el) => {
-                  stepRefs.current[idx] = el;
+                  stepRefs.current[step.id] = el;
                 }}
-                className={`relative flex flex-col sm:flex-row items-start sm:items-center ${
-                  isEven ? "sm:justify-start" : "sm:justify-end"
-                }`}
+                className="relative"
               >
-                {/* Content Card with Smooth Active Transition (z-10 opaque card body covers rocket when inside) */}
+                {/* ─────────────────────────────────────────────────────────
+                    CARD (Collapsed or Expanded)
+                   ───────────────────────────────────────────────────────── */}
                 <div
-                  ref={(el) => {
-                    cardRefs.current[idx] = el;
-                  }}
-                  className="w-full sm:w-[calc(50%-1.5rem)] relative z-10"
+                  className={`rounded-2xl transition-all duration-300 border ${
+                    isExpanded
+                      ? "bg-[#0E121B] border-purple-500/40 shadow-xl shadow-purple-950/30 ring-1 ring-purple-500/20"
+                      : isCompleted
+                      ? "bg-white/[0.015] border-emerald-500/25 hover:border-emerald-500/40 hover:bg-white/[0.03]"
+                      : isCurrent
+                      ? "bg-gradient-to-b from-purple-950/20 to-white/[0.02] border-purple-500/50 shadow-lg shadow-purple-950/20"
+                      : "bg-white/[0.015] border-white/10 hover:border-white/20 hover:bg-white/[0.03]"
+                  }`}
                 >
+                  {/* Collapsed Step Header (Always Visible) */}
                   <div
-                    className={`p-6 lg:p-7 rounded-2xl bg-ds-bg-white border transition-all duration-500 group relative ${
-                      isActive
-                        ? "border-ds-feature-base shadow-xl shadow-ds-feature-base/15 ring-1 ring-ds-feature-base/30 scale-[1.02] -translate-y-1"
-                        : "border-ds-stroke-soft shadow-sm opacity-90 hover:opacity-100 hover:border-ds-feature-base/40"
-                    }`}
+                    onClick={() => handleToggleExpand(step.id)}
+                    className="p-5 sm:p-6 cursor-pointer select-none flex flex-col sm:flex-row sm:items-center justify-between gap-4"
                   >
-                    {/* Header: Phase & Badges */}
-                    <div className="flex items-center justify-between gap-3 mb-3">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-[10px] font-bold uppercase tracking-widest transition-colors duration-300 ${
-                            isActive
-                              ? "text-ds-feature-base font-extrabold"
-                              : "text-ds-text-soft"
-                          }`}
-                        >
-                          {step.phase}
-                        </span>
-
-                        {/* Active Phase Live Indicator */}
-                        {isActive && (
-                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-ds-feature-lighter text-ds-feature-dark text-[10px] font-bold animate-fadeIn">
-                            <span className="w-1.5 h-1.5 rounded-full bg-ds-feature-base animate-ping" />
-                            Active Focus
-                          </span>
+                    <div className="flex items-start sm:items-center gap-4 min-w-0">
+                      {/* 1. Prominent Step Number */}
+                      <div
+                        className={`flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-mono font-black text-lg transition-all ${
+                          isCompleted
+                            ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+                            : isCurrent
+                            ? "bg-purple-600 text-white shadow-md shadow-purple-600/30"
+                            : "bg-white/[0.05] text-gray-300 border border-white/10"
+                        }`}
+                      >
+                        {isCompleted ? (
+                          <svg className="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        ) : (
+                          step.number
                         )}
                       </div>
 
-                      <span
-                        className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full ${step.badgeColor}`}
-                      >
-                        {step.badge}
-                      </span>
+                      {/* 2. Short Title + 3. Outcome Sentence */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                            {step.title}
+                          </h3>
+                        </div>
+
+                        {/* One simple sentence explaining the outcome */}
+                        <p className="text-sm text-gray-400 line-clamp-2 leading-relaxed">
+                          {step.outcome}
+                        </p>
+                      </div>
                     </div>
 
-                    {/* Step Title */}
-                    <h3
-                      className={`text-lg font-bold transition-colors duration-300 mb-2 ${
-                        isActive
-                          ? "text-ds-feature-base"
-                          : "text-ds-text-strong group-hover:text-ds-feature-base"
-                      }`}
-                    >
-                      {step.title}
-                    </h3>
+                    {/* Right side: 4. Duration, 5. Status, 6. Expand Button */}
+                    <div className="flex items-center justify-between sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/5 sm:shrink-0">
+                      {/* Duration */}
+                      <span className="text-xs font-medium text-gray-400 bg-white/[0.04] px-2.5 py-1 rounded-lg border border-white/5">
+                        {step.duration}
+                      </span>
 
-                    {/* Step Description */}
-                    <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-4">
-                      {step.desc}
-                    </p>
-
-                    {/* Skill Chips */}
-                    <div className="flex flex-wrap gap-1.5 pt-3 border-t border-ds-stroke-soft">
-                      {step.keySkills.map((skill) => (
-                        <span
-                          key={skill}
-                          className={`px-2 py-0.5 text-[10px] font-medium rounded-md transition-colors duration-300 ${
-                            isActive
-                              ? "bg-ds-feature-lighter text-ds-feature-dark font-semibold"
-                              : "bg-ds-bg-weak text-ds-text-sub"
-                          }`}
-                        >
-                          {skill}
+                      {/* Status Indicator */}
+                      {isCompleted ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          <span>Done</span>
                         </span>
-                      ))}
+                      ) : isCurrent ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                          <span>In Progress</span>
+                        </span>
+                      ) : (
+                        <span className="text-xs font-medium text-gray-400 px-2.5 py-1 rounded-full bg-white/[0.04]">
+                          Upcoming
+                        </span>
+                      )}
+
+                      {/* Clear CTA / Expand Control */}
+                      <button
+                        type="button"
+                        aria-label={isExpanded ? "Collapse step details" : "Expand step details"}
+                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                          isExpanded
+                            ? "bg-purple-600/20 text-purple-300 border border-purple-500/30"
+                            : "bg-white/[0.05] text-gray-400 hover:text-white hover:bg-white/[0.08]"
+                        }`}
+                      >
+                        <svg
+                          className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
+
+                  {/* ─────────────────────────────────────────────────────────
+                      PROGRESSIVE DISCLOSURE (Expanded Content)
+                     ───────────────────────────────────────────────────────── */}
+                  {isExpanded && (
+                    <div className="px-5 sm:px-6 pb-6 pt-2 border-t border-white/10 space-y-6 animate-fadeIn">
+                      {/* What you'll learn */}
+                      <div className="pt-2">
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-xs font-black uppercase tracking-wider text-purple-400">
+                            What you&apos;ll learn
+                          </span>
+                        </div>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          {step.whatYoullLearn.map((item, topicIdx) => (
+                            <li
+                              key={topicIdx}
+                              className="flex items-start gap-2.5 text-xs sm:text-sm text-gray-300 leading-relaxed bg-white/[0.02] p-2.5 rounded-xl border border-white/5"
+                            >
+                              <span className="flex-shrink-0 w-4 h-4 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-bold mt-0.5">
+                                •
+                              </span>
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Decision Point (When choices exist, explicitly state learner needs only ONE) */}
+                      {step.decisionPoint && (
+                        <div className="p-4 sm:p-5 rounded-2xl bg-purple-950/30 border border-purple-500/30">
+                          <div className="mb-3">
+                            <div className="flex items-center gap-2">
+                              <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-purple-300">
+                                ⚖️ Decision Point
+                              </span>
+                              <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 border border-purple-500/30">
+                                Pick Only One
+                              </span>
+                            </div>
+                            <h4 className="text-base font-bold text-white mt-1">
+                              {step.decisionPoint.title}
+                            </h4>
+                            <p className="text-xs text-purple-200/80 mt-0.5 italic">
+                              &ldquo;{step.decisionPoint.explanation}&rdquo;
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                            {step.decisionPoint.options.map((opt) => (
+                              <div
+                                key={opt.name}
+                                className={`p-4 rounded-xl border transition-all ${
+                                  opt.isRecommended
+                                    ? "bg-purple-900/30 border-purple-500/50 shadow-md shadow-purple-950/40 ring-1 ring-purple-500/30"
+                                    : "bg-white/[0.02] border-white/10"
+                                }`}
+                              >
+                                <div className="flex items-center justify-between gap-2 mb-2">
+                                  <div className="flex items-center gap-2">
+                                    <TechIcon slug={opt.slug || opt.name} className="w-5 h-5" />
+                                    <span className="text-sm font-bold text-white">
+                                      {opt.name}
+                                    </span>
+                                  </div>
+
+                                  {opt.isRecommended ? (
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                      </svg>
+                                      Recommended
+                                    </span>
+                                  ) : (
+                                    <span className="text-[10px] font-medium text-gray-400 px-2 py-0.5 rounded bg-white/[0.05]">
+                                      Alternative
+                                    </span>
+                                  )}
+                                </div>
+
+                                <p className="text-[11px] text-gray-400 leading-relaxed mb-2">
+                                  {opt.desc}
+                                </p>
+
+                                <span className="text-[10px] font-semibold text-gray-400">
+                                  {opt.tag}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Course Link and Completion Toggle */}
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-white/10">
+                        {step.courseLink ? (
+                          <Link
+                            href={`/roadmaps/${step.courseLink.slug}`}
+                            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs sm:text-sm font-bold transition-all shadow-md shadow-purple-600/20"
+                          >
+                            <span>Explore {step.courseLink.title}</span>
+                            <span className="px-1.5 py-0.5 rounded bg-purple-700/50 text-[10px]">
+                              {step.courseLink.lessons} Lessons
+                            </span>
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                          </Link>
+                        ) : (
+                          <div className="text-xs text-gray-400 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                            <span>Core Milestone in the curriculum</span>
+                          </div>
+                        )}
+
+                        <button
+                          type="button"
+                          onClick={(e) => toggleStepCompleted(step.id, e)}
+                          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                            isCompleted
+                              ? "bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/20"
+                              : "bg-white/[0.05] text-gray-300 border border-white/10 hover:bg-white/[0.1] hover:text-white"
+                          }`}
+                        >
+                          {isCompleted ? (
+                            <>
+                              <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span>Completed • Click to Undo</span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="w-2 h-2 rounded-full border border-gray-400" />
+                              <span>Mark Step as Completed</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
+
+                {/* Vertical Connector Arrow between Steps */}
+                {!isLast && (
+                  <div className="flex justify-center py-2 relative z-0">
+                    <div className="flex flex-col items-center">
+                      <div className="w-0.5 h-3 bg-white/10" />
+                      <svg
+                        className="w-4 h-4 text-purple-400/60 -mt-0.5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            ADVANCED TOPICS SECTION (Separated, Visually Lower Priority)
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="w-full mt-16 pt-10 border-t border-white/10">
+          <div className="text-center sm:text-left mb-6">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] text-gray-400 text-xs font-semibold border border-white/10 mb-2">
+              <span>🚀 Beyond the Core Journey</span>
+            </div>
+            <h3 className="text-2xl font-bold text-white tracking-tight">
+              {currentRoadmap.advancedTopicsTitle}
+            </h3>
+            <p className="text-sm text-gray-400 mt-1 max-w-xl">
+              {currentRoadmap.advancedTopicsSubtitle}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {currentRoadmap.advancedTopics.map((adv) => (
+              <div
+                key={adv.id}
+                className="p-5 rounded-2xl bg-white/[0.015] border border-white/10 hover:border-white/20 transition-all group"
+              >
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className="w-7 h-7 rounded-lg bg-white/[0.04] border border-white/10 flex items-center justify-center text-gray-400 group-hover:text-purple-300 transition-colors">
+                    <TechIcon slug={adv.iconSlug || adv.title} className="w-4 h-4" />
+                  </div>
+                  <h4 className="text-base font-bold text-white group-hover:text-purple-300 transition-colors">
+                    {adv.title}
+                  </h4>
+                </div>
+
+                <p className="text-xs text-gray-400 leading-relaxed mb-3">
+                  {adv.description}
+                </p>
+
+                <div className="flex flex-wrap gap-1.5">
+                  {adv.topics.map((t) => (
+                    <span
+                      key={t}
+                      className="px-2 py-0.5 rounded text-[10px] font-medium bg-white/[0.03] text-gray-400 border border-white/5"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════
+            BOTTOM MOTIVATIONAL CTA
+           ═══════════════════════════════════════════════════════════════ */}
+        <div className="w-full mt-16 p-8 sm:p-10 rounded-3xl bg-gradient-to-b from-purple-950/30 via-white/[0.02] to-white/[0.01] border border-purple-500/25 text-center shadow-xl shadow-purple-950/20">
+          <div className="w-12 h-12 rounded-2xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-300 mx-auto mb-4">
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+
+          <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            Ready to start building?
+          </h3>
+          <p className="text-sm sm:text-base text-gray-300 max-w-lg mx-auto mt-2 mb-8 leading-relaxed">
+            You don&apos;t need to learn everything at once. Start with Step 1 and progress one skill at a time.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <button
+              onClick={handleStartStepOne}
+              className="px-6 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm transition-all hover:scale-105 shadow-lg shadow-purple-600/30 flex items-center gap-2"
+            >
+              <span>Start Step 1</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+
+            <Link
+              href="/roadmaps"
+              className="px-6 py-3.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.08] text-gray-300 hover:text-white font-bold text-sm transition-colors border border-white/10"
+            >
+              View Full Curriculum
+            </Link>
+          </div>
         </div>
       </div>
     </section>

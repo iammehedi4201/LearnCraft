@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 
 interface QuickCheckProps {
   question: string;
@@ -10,6 +10,7 @@ interface QuickCheckProps {
 
 export function QuickCheck({ question, code, answer }: QuickCheckProps) {
   const [show, setShow] = useState(false);
+  const answerId = useId();
 
   return (
     <div className="mt-6 p-5 bg-ds-bg-weak rounded-2xl border border-ds-stroke-soft shadow-sm">
@@ -28,13 +29,16 @@ export function QuickCheck({ question, code, answer }: QuickCheckProps) {
         </pre>
       )}
       <button
+        type="button"
         onClick={() => setShow(!show)}
-        className="text-xs font-bold text-ds-feature-base hover:text-ds-feature-dark flex items-center gap-1 transition-colors"
+        aria-expanded={show}
+        aria-controls={answerId}
+        className="min-h-10 px-2 -ml-2 text-xs font-bold text-ds-feature-base hover:text-ds-feature-dark flex items-center gap-1 transition-colors"
       >
         {show ? "Hide Answer ▲" : "Show Answer ▼"}
       </button>
       {show && (
-        <div className="mt-3 p-3.5 bg-ds-bg-white rounded-xl border border-ds-stroke-soft text-sm text-ds-text-strong animate-in fade-in slide-in-from-top-2 duration-200">
+        <div id={answerId} className="mt-3 p-3.5 bg-ds-bg-white rounded-xl border border-ds-stroke-soft text-sm text-ds-text-strong">
           <p className="text-xs font-medium leading-relaxed whitespace-pre-wrap">{answer}</p>
         </div>
       )}

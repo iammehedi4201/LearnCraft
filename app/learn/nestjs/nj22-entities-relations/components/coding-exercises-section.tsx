@@ -8,66 +8,73 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 13 — CODING EXERCISES (HANDS-ON RELATIONS)
+// MODULE 13 — CODING EXERCISES (DOMAIN ENTITIES & INVARIANTS)
 // ═══════════════════════════════════════════════════════════
 
 export function CodingExercisesSection() {
   return (
-    <SectionContainer number={13} title="Coding Exercises: Relational Queries">
+    <SectionContainer number={13} title="Coding Exercises: Domain Entities & Invariants">
       <div className="mb-10 p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
         <p className="text-sm text-ds-text-sub leading-relaxed">
-          Put your relational data skills into practice! Complete the exercises below and click <strong>Check</strong> to verify your solutions.
+          Put your domain modeling skills into practice! Implement rich business entities with invariants and test your code directly.
         </p>
       </div>
 
-      {/* ── Exercise 1: Relational Join Simulation ── */}
+      {/* ── Exercise 1: Rich Entity Methods ── */}
       <div className="mb-16">
-        <SectionHeading>🟢 Beginner Exercise: Eager-Load Relation Joiner</SectionHeading>
+        <SectionHeading>🟢 Beginner Exercise: Encapsulated Account Entity</SectionHeading>
 
         <div className="mb-8">
           <Playground
             runtime="typescript"
             language="TypeScript"
             exercise={{
-              id: "relations-ex-01",
-              title: "1. Build Relational Include Resolver",
-              instructions: `Implement 'joinUserPosts(users: any[], posts: any[])':
-Returns a new array of users where each user has a 'posts' array containing all posts where post.authorId === user.id.`,
-              starterCode: `function joinUserPosts(users: any[], posts: any[]) {
+              id: "entities-ex-01",
+              title: "1. Build an Account Entity with Invariants",
+              instructions: `Implement 'AccountEntity':
+1. Constructor accepts '(id: string, initialBalance: number)'. Throws error if initialBalance < 0.
+2. Getter 'balance' returns current balance.
+3. Method 'deposit(amount: number)': Throws error if amount <= 0, adds to balance.
+4. Method 'withdraw(amount: number)': Throws error if amount <= 0 or amount > balance, subtracts from balance.`,
+              starterCode: `class AccountEntity {
   // Your code here:
 }
 
-const mockUsers = [{ id: 1, name: "Alice" }, { id: 2, name: "Bob" }];
-const mockPosts = [
-  { id: 101, title: "Post 1", authorId: 1 },
-  { id: 102, title: "Post 2", authorId: 1 },
-  { id: 103, title: "Post 3", authorId: 2 }
-];
-console.log("Joined:", JSON.stringify(joinUserPosts(mockUsers, mockPosts), null, 2));`,
-              solutionCode: `function joinUserPosts(users: any[], posts: any[]) {
-  return users.map((u) => {
-    return {
-      ...u,
-      posts: posts.filter((p) => p.authorId === u.id),
-    };
-  });
+const acc = new AccountEntity("acc-1", 100);
+acc.deposit(50);
+acc.withdraw(30);
+console.log("Final balance:", acc.balance); // Should be 120`,
+              solutionCode: `class AccountEntity {
+  private _balance: number;
+
+  constructor(public readonly id: string, initialBalance: number) {
+    if (initialBalance < 0) throw new Error("Initial balance cannot be negative");
+    this._balance = initialBalance;
+  }
+
+  get balance(): number {
+    return this._balance;
+  }
+
+  deposit(amount: number): void {
+    if (amount <= 0) throw new Error("Deposit amount must be positive");
+    this._balance += amount;
+  }
+
+  withdraw(amount: number): void {
+    if (amount <= 0) throw new Error("Withdrawal amount must be positive");
+    if (amount > this._balance) throw new Error("Insufficient funds");
+    this._balance -= amount;
+  }
 }
 
-const mockUsers = [{ id: 1, name: "Alice" }, { id: 2, name: "Bob" }];
-const mockPosts = [
-  { id: 101, title: "Post 1", authorId: 1 },
-  { id: 102, title: "Post 2", authorId: 1 },
-  { id: 103, title: "Post 3", authorId: 2 }
-];
-console.log("Joined:", JSON.stringify(joinUserPosts(mockUsers, mockPosts), null, 2));`,
+const acc = new AccountEntity("acc-1", 100);
+acc.deposit(50);
+acc.withdraw(30);
+console.log("Final balance:", acc.balance);`,
               hints: [
-                "Map over users and attach posts: posts.filter((p) => p.authorId === u.id).",
-              ],
-              tests: [
-                {
-                  name: "Eager loads related posts onto users",
-                  code: `const r = joinUserPosts([{ id: 1 }], [{ id: 10, authorId: 1 }]); if (!r || !r[0].posts || r[0].posts.length !== 1) throw new Error("Join failed");`,
-                },
+                "Store balance in a private field '_balance' and expose via 'get balance()'.",
+                "Check for positive amounts before adding or subtracting.",
               ],
               difficulty: "beginner",
             }}
@@ -77,54 +84,61 @@ console.log("Joined:", JSON.stringify(joinUserPosts(mockUsers, mockPosts), null,
 
       <Divider />
 
-      {/* ── Exercise 2: Cascade Delete Simulation ── */}
+      {/* ── Exercise 2: Aggregate Root with Children ── */}
       <div className="mb-16">
-        <SectionHeading>🟡 Intermediate Exercise: Cascade Delete Simulator</SectionHeading>
+        <SectionHeading>🟡 Intermediate Exercise: Order Aggregate Root</SectionHeading>
 
         <div className="mb-8">
           <Playground
             runtime="typescript"
             language="TypeScript"
             exercise={{
-              id: "relations-ex-02",
-              title: "2. Build Cascade Delete Simulator",
-              instructions: `Implement 'cascadeDeleteUser(userId: number, state: { users: any[], posts: any[], profiles: any[] })':
-1. Removes user with userId from state.users.
-2. Removes all posts where post.authorId === userId from state.posts.
-3. Removes profile where profile.userId === userId from state.profiles.
-4. Returns the updated state.`,
-              starterCode: `function cascadeDeleteUser(userId: number, state: { users: any[], posts: any[], profiles: any[] }) {
+              id: "entities-ex-02",
+              title: "2. Build Order Aggregate with Item Collection",
+              instructions: `Implement 'OrderAggregate':
+1. Constructor accepts '(id: string, customerId: string)'.
+2. Private array '_items' storing items of shape '{ productId: string, qty: number, price: number }'.
+3. Method 'addItem(productId: string, qty: number, price: number)': Throws error if qty <= 0, otherwise pushes item.
+4. Getter 'itemCount': Returns total quantity across all items.
+5. Getter 'total': Returns sum of (qty * price) across all items.`,
+              starterCode: `class OrderAggregate {
   // Your code here:
 }
 
-const db = {
-  users: [{ id: 1 }, { id: 2 }],
-  posts: [{ id: 10, authorId: 1 }, { id: 20, authorId: 2 }],
-  profiles: [{ id: 100, userId: 1 }]
-};
-console.log("After delete:", cascadeDeleteUser(1, db));`,
-              solutionCode: `function cascadeDeleteUser(userId: number, state: { users: any[], posts: any[], profiles: any[] }) {
-  return {
-    users: state.users.filter((u) => u.id !== userId),
-    posts: state.posts.filter((p) => p.authorId !== userId),
-    profiles: state.profiles.filter((pr) => pr.userId !== userId),
-  };
+const order = new OrderAggregate("ord-1", "cust-99");
+order.addItem("prod-a", 2, 50);
+order.addItem("prod-b", 1, 100);
+console.log("Count:", order.itemCount); // Should be 3
+console.log("Total:", order.total);     // Should be 200`,
+              solutionCode: `class OrderAggregate {
+  private readonly _items: Array<{ productId: string; qty: number; price: number }> = [];
+
+  constructor(
+    public readonly id: string,
+    public readonly customerId: string,
+  ) {}
+
+  addItem(productId: string, qty: number, price: number): void {
+    if (qty <= 0) throw new Error("Quantity must be positive");
+    this._items.push({ productId, qty, price });
+  }
+
+  get itemCount(): number {
+    return this._items.reduce((sum, item) => sum + item.qty, 0);
+  }
+
+  get total(): number {
+    return this._items.reduce((sum, item) => sum + item.qty * item.price, 0);
+  }
 }
 
-const db = {
-  users: [{ id: 1 }, { id: 2 }],
-  posts: [{ id: 10, authorId: 1 }, { id: 20, authorId: 2 }],
-  profiles: [{ id: 100, userId: 1 }]
-};
-console.log("After delete:", cascadeDeleteUser(1, db));`,
+const order = new OrderAggregate("ord-1", "cust-99");
+order.addItem("prod-a", 2, 50);
+order.addItem("prod-b", 1, 100);
+console.log("Count:", order.itemCount);
+console.log("Total:", order.total);`,
               hints: [
-                "Filter users, posts, and profiles by removing items matching userId.",
-              ],
-              tests: [
-                {
-                  name: "Deletes parent and cascades to child posts and profiles",
-                  code: `const r = cascadeDeleteUser(1, { users: [{ id: 1 }], posts: [{ authorId: 1 }], profiles: [{ userId: 1 }] }); if (r.users.length !== 0 || r.posts.length !== 0 || r.profiles.length !== 0) throw new Error("Cascade delete failed");`,
-                },
+                "Use Array.reduce to compute total and itemCount over this._items.",
               ],
               difficulty: "intermediate",
             }}

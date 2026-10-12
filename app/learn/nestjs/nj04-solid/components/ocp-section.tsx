@@ -11,6 +11,7 @@ import {
   Divider,
   MistakeBox,
   EasyRuleCard,
+  InfoCallout,
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
@@ -25,7 +26,7 @@ export function OcpSection() {
         <TopicHeader
           number={1}
           title="What Does It Mean?"
-          description="Code should be open for adding new behavior, but closed for constantly changing existing code."
+          description="A useful design lets you extend expected behavior without repeatedly rewriting stable code."
           color="primary"
         />
 
@@ -34,7 +35,7 @@ export function OcpSection() {
             <span>📖</span> In Simple Words
           </h4>
           <p className="text-sm text-ds-text-sub leading-relaxed">
-            When you want to add a new feature, you should be able to write <strong>new code</strong> without going back to change and possibly break your <strong>old working code</strong>.
+            When a kind of change is expected—such as adding payment methods—put a stable contract in front of it. New implementations can then be added with fewer changes to the code that uses them.
           </p>
         </WhyBox>
 
@@ -47,7 +48,13 @@ export function OcpSection() {
           </p>
         </AnalogyBox>
 
-        <EasyRuleCard rule="Add new behavior without breaking old code." />
+        <EasyRuleCard rule="Design extension points for the kinds of change you actually expect." />
+
+        <InfoCallout emoji="🧩" title="Closed Does Not Mean Frozen Forever">
+          <p>
+            Existing code can still be edited for bug fixes or changed requirements. OCP asks us to avoid reopening the same decision-making code every time a predictable variant is added. A short <code>if</code> or <code>switch</code> for a truly fixed set of cases can still be the clearest choice.
+          </p>
+        </InfoCallout>
       </div>
 
       <Divider />
@@ -86,16 +93,16 @@ interface PaymentMethod {
 
 // 2. Each payment method is its own class
 class CardPayment implements PaymentMethod {
-  pay(amount: number) { console.log("Paid $" + amount + " with Card"); }
+  pay(amount: number): void { console.log("Paid $" + amount + " with Card"); }
 }
 
 class BkashPayment implements PaymentMethod {
-  pay(amount: number) { console.log("Paid $" + amount + " with bKash"); }
+  pay(amount: number): void { console.log("Paid $" + amount + " with bKash"); }
 }
 
-// 3. To add Nagad: Just create a new class! Old code is untouched:
+// 3. Add Nagad as a new class; existing payment classes stay unchanged:
 class NagadPayment implements PaymentMethod {
-  pay(amount: number) { console.log("Paid $" + amount + " with Nagad"); }
+  pay(amount: number): void { console.log("Paid $" + amount + " with Nagad"); }
 }`}
         />
 
@@ -111,28 +118,28 @@ interface PaymentMethod {
 
 // Payment 1: Card
 class CardPayment implements PaymentMethod {
-  pay(amount: number) {
+  pay(amount: number): void {
     console.log("💳 Paid $" + amount + " using Credit Card.");
   }
 }
 
 // Payment 2: bKash
 class BkashPayment implements PaymentMethod {
-  pay(amount: number) {
+  pay(amount: number): void {
     console.log("📱 Paid $" + amount + " using bKash.");
   }
 }
 
 // Payment 3: Brand new method! Notice how easy this is to add:
 class NagadPayment implements PaymentMethod {
-  pay(amount: number) {
+  pay(amount: number): void {
     console.log("⚡ Paid $" + amount + " using Nagad.");
   }
 }
 
-// The Checkout service never needs to change:
+// CheckoutService does not change when another PaymentMethod is added:
 class CheckoutService {
-  process(payment: PaymentMethod, amount: number) {
+  process(payment: PaymentMethod, amount: number): void {
     payment.pay(amount);
   }
 }
@@ -150,7 +157,7 @@ checkout.process(new NagadPayment(), 35);`}
             <span>✨</span> Why Is This Better?
           </h4>
           <p className="text-xs text-ds-text-sub leading-relaxed">
-            When you need to add 5 new payment methods in the future, you do not have to touch <code>CheckoutService</code> at all. You just write new classes. Your old code stays 100% safe.
+            If another payment method follows the same contract, you can add its class without changing <code>CheckoutService</code>. That reduces the chance of causing a regression in existing payment paths, although tests are still important.
           </p>
         </WhyBox>
       </div>
@@ -167,17 +174,17 @@ checkout.process(new NagadPayment(), 35);`}
         />
 
         <p className="text-sm text-ds-text-sub leading-relaxed mb-3">
-          In NestJS, you can add new <strong>Providers</strong> and <strong>Strategies</strong> without changing existing controllers:
+          In NestJS, providers and strategy classes can act as extension points. Each strategy follows a shared contract, while a controller can keep delegating to the same service:
         </p>
         <ul className="list-disc pl-5 space-y-1.5 text-xs text-ds-text-strong mb-6">
           <li>You can add a <code>JwtStrategy</code> for login tokens.</li>
           <li>You can add a <code>GoogleStrategy</code> for Google login.</li>
-          <li>The main auth guard stays completely unchanged!</li>
+          <li>Code that consumes the shared strategy contract often does not need to change.</li>
         </ul>
 
         <QuickCheck
           question="What is the easy rule for the Open/Closed Principle (O)?"
-          answer="Add new behavior without breaking old code."
+          answer="Create stable extension points for expected variations, so a new implementation can usually be added without rewriting the code that consumes the contract."
         />
       </div>
     </SectionContainer>

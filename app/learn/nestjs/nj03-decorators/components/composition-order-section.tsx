@@ -17,7 +17,7 @@ import {
 
 export function CompositionOrderSection() {
   return (
-    <SectionContainer number={12} title="Decorator Composition & Order">
+    <SectionContainer number={17} title="Decorator Composition & Order">
       {/* ── 12.1 Evaluation vs Application Order ── */}
       <div className="mb-16">
         <TopicHeader

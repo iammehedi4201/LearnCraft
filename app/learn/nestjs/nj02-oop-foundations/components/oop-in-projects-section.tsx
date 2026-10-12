@@ -6,7 +6,7 @@ import { SectionContainer, TopicHeader, SectionHeading, AnalogyBox, Divider, Sum
 
 export function OopInProjectsSection() {
   return (
-    <SectionContainer number={10} title="OOP in Real Projects">
+    <SectionContainer number={13} title="OOP in Real Projects">
 
       <div className="mb-16">
         <TopicHeader number={1} title="How OOP Appears in Backend APIs" description="In real Node.js/NestJS projects, developers organize code into layers. Each layer is a class with a specific job." color="primary" />

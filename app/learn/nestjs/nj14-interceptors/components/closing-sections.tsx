@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 🔄 ⚡</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-14 Completed!
+          Module NJ-26 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You now know how to intercept, benchmark, cache, and transform API responses using NestJS Interceptors. Next, learn how Exception Filters catch and format all server errors uniformly!
+          You now know how to intercept, benchmark, cache, and transform API responses using NestJS Interceptors and RxJS. Next, automatically document and visualize all your endpoints with Swagger &amp; OpenAPI in NJ-27!
         </p>
 
         <Link
-          href="/learn/nestjs/nj15-exception-filters"
+          href="/learn/nestjs/nj29-swagger"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-15: Exception Filters →
+          Proceed to NJ-27: Swagger &amp; OpenAPI Documentation →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the next topic in Phase 03?"
-        answer="NJ-15: Exception Filters (Catching errors globally, custom exception hierarchies, and standardized error schemas)."
+        question="What is the next topic after Interceptors?"
+        answer="NJ-27: Swagger & OpenAPI Documentation (auto-generating interactive API docs from DTOs with @nestjs/swagger)."
       />
     </SectionContainer>
   );

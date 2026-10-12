@@ -6,7 +6,7 @@ import { SectionContainer, TopicHeader, SectionHeading, SummaryBox, Divider, Com
 
 export function OopVsProceduralSection() {
   return (
-    <SectionContainer number={8} title="OOP vs Procedural">
+    <SectionContainer number={10} title="OOP vs Procedural">
 
       <div className="mb-10 p-5 rounded-2xl bg-[#e7e9f5]/60 dark:bg-[#212a5d]/40 border border-[#b4b8d7] dark:border-[#212a5d]">
         <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">

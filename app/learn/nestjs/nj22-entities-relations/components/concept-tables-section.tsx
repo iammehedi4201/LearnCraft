@@ -9,34 +9,34 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 12 — CONCEPT TABLES & RELATIONS MATRIX
+// MODULE 12 — DOMAIN MODELING MASTER MATRIX
 // ═══════════════════════════════════════════════════════════
 
 export function ConceptTablesSection() {
   return (
-    <SectionContainer number={12} title="Concept Tables & Relations Master Matrix">
-      {/* ── 12.1 Relations Matrix ── */}
+    <SectionContainer number={12} title="Domain Modeling Master Matrix">
+      {/* ── 12.1 Modeling Matrix ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Prisma Relations Comparison"
-          description="A complete cheat sheet of all relationship structures in Prisma."
+          number={12}
+          title="Architectural Comparison Matrix"
+          description="A reference guide comparing DTOs, Domain Entities, Value Objects, and Aggregate Roots."
           color="primary"
         />
 
         <ComparisonTable
-          headers={["Relation Type", "Model A Syntax", "Model B Syntax", "Foreign Key Location"]}
+          headers={["Concept", "Primary Responsibility", "Identity & Mutability", "Validation Mechanism"]}
           rows={[
-            ["1-to-1", "profile Profile?", "userId Int @unique + user User @relation(...)", "Child model (Profile) with @unique"],
-            ["1-to-Many", "posts Post[]", "authorId Int + author User @relation(...)", "Child model (Post)"],
-            ["Implicit Many-to-Many", "tags Tag[]", "posts Post[]", "Managed _PostToTag SQL join table"],
-            ["Explicit Many-to-Many", "teams UsersOnTeams[]", "members UsersOnTeams[]", "Dedicated UsersOnTeams join model with @@id"],
+            ["DTO", "Network serialization across HTTP boundary", "No identity, purely transient payload", "class-validator decorators (@IsString, @IsEmail)"],
+            ["Domain Entity", "Core business state, operations, and lifecycle", "Has unique ID, mutable through methods", "Entity methods and constructor assertions"],
+            ["Value Object", "Immutable descriptive attribute without identity", "No ID, immutable, compared by value", "Constructor validation during instantiation"],
+            ["Aggregate Root", "Transaction boundary for a cluster of entities", "Has unique ID, root access point", "Enforces cross-entity business consistency"],
           ]}
         />
 
         <QuickCheck
-          question="Which side of a 1-to-Many relationship holds the scalar foreign key column?"
-          answer="The 'Many' (child) side (e.g. Post holds authorId)."
+          question="Can a Value Object contain other Value Objects?"
+          answer="Yes! For example, an Address value object can be composed of Street, PostalCode, and City value objects."
         />
       </div>
 

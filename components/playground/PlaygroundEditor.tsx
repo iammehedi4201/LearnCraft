@@ -72,7 +72,8 @@ export function PlaygroundEditor({
 
   // Word Wrap State (Controlled or Uncontrolled)
   const [internalWordWrap, setInternalWordWrap] = useState<boolean>(false);
-  const effectiveWordWrap = isWordWrapProp !== undefined ? isWordWrapProp : internalWordWrap;
+  const effectiveWordWrap =
+    isWordWrapProp !== undefined ? isWordWrapProp : internalWordWrap;
 
   const toggleWordWrap = useCallback(() => {
     if (onToggleWordWrapProp) {
@@ -138,15 +139,22 @@ export function PlaygroundEditor({
     const textarea = textareaRef.current;
     if (!textarea) return;
 
+    // Read actual metrics from computed style for resilience across contexts
+    const computedStyle = getComputedStyle(textarea);
+    const lineHeight =
+      parseFloat(computedStyle.lineHeight) || LINE_HEIGHT_PX;
+    const paddingTop =
+      parseFloat(computedStyle.paddingTop) || PADDING_TOP_PX;
+
     const cursorPos = textarea.selectionStart;
     const textBefore = textarea.value.substring(0, cursorPos);
     const lineNumber = textBefore.split("\n").length; // 1-based line number
 
-    const verticalBuffer = LINE_HEIGHT_PX * 3; // 72px (3 lines breathing room)
+    const verticalBuffer = lineHeight * 3; // 3 lines breathing room
 
     // Vertical auto-scroll
-    const cursorTop = PADDING_TOP_PX + (lineNumber - 1) * LINE_HEIGHT_PX;
-    const cursorBottom = cursorTop + LINE_HEIGHT_PX;
+    const cursorTop = paddingTop + (lineNumber - 1) * lineHeight;
+    const cursorBottom = cursorTop + lineHeight;
 
     const clientHeight = textarea.clientHeight;
     if (clientHeight > 0) {
@@ -154,7 +162,10 @@ export function PlaygroundEditor({
       const visibleBottom = textarea.scrollTop + clientHeight;
 
       if (cursorBottom + verticalBuffer > visibleBottom) {
-        textarea.scrollTop = Math.max(0, cursorBottom + verticalBuffer - clientHeight);
+        textarea.scrollTop = Math.max(
+          0,
+          cursorBottom + verticalBuffer - clientHeight,
+        );
       } else if (cursorTop - verticalBuffer < visibleTop) {
         textarea.scrollTop = Math.max(0, cursorTop - verticalBuffer);
       }
@@ -184,9 +195,11 @@ export function PlaygroundEditor({
   const [cursorOffset, setCursorOffset] = useState<number | null>(null);
 
   const syncCursorPos = useCallback(() => {
-    if (textareaRef.current) {
-      setCursorOffset(textareaRef.current.selectionStart);
-    }
+    requestAnimationFrame(() => {
+      if (textareaRef.current) {
+        setCursorOffset(textareaRef.current.selectionStart);
+      }
+    });
   }, []);
 
   // ─── Helper for Deterministic Text Mutations with Undo Support ───
@@ -195,7 +208,7 @@ export function PlaygroundEditor({
       newFullValue: string,
       newCursorStart: number,
       newCursorEnd: number = newCursorStart,
-      recordUndo: boolean = true
+      recordUndo: boolean = true,
     ) => {
       const textarea = textareaRef.current;
       if (!textarea) return;
@@ -225,7 +238,7 @@ export function PlaygroundEditor({
         }
       });
     },
-    [onChange, scrollCursorIntoView, syncScrollLayers]
+    [onChange, scrollCursorIntoView, syncScrollLayers],
   );
 
   // ─── Direct In-Editor Format Handler (Preserves Cursor, Scroll & Undo) ───
@@ -237,7 +250,7 @@ export function PlaygroundEditor({
     const { formatted, cursorOffset: newCursor } = formatCodeWithCursor(
       value,
       currentCursor,
-      language
+      language,
     );
 
     if (formatted !== value) {
@@ -320,7 +333,12 @@ export function PlaygroundEditor({
               selectionStart: start,
               selectionEnd: end,
             });
-            applyTextEdit(nextEntry.value, nextEntry.selectionStart, nextEntry.selectionEnd, false);
+            applyTextEdit(
+              nextEntry.value,
+              nextEntry.selectionStart,
+              nextEntry.selectionEnd,
+              false,
+            );
             return;
           }
         } else {
@@ -333,7 +351,12 @@ export function PlaygroundEditor({
               selectionStart: start,
               selectionEnd: end,
             });
-            applyTextEdit(prevEntry.value, prevEntry.selectionStart, prevEntry.selectionEnd, false);
+            applyTextEdit(
+              prevEntry.value,
+              prevEntry.selectionStart,
+              prevEntry.selectionEnd,
+              false,
+            );
             return;
           }
         }
@@ -349,7 +372,12 @@ export function PlaygroundEditor({
             selectionStart: start,
             selectionEnd: end,
           });
-          applyTextEdit(nextEntry.value, nextEntry.selectionStart, nextEntry.selectionEnd, false);
+          applyTextEdit(
+            nextEntry.value,
+            nextEntry.selectionStart,
+            nextEntry.selectionEnd,
+            false,
+          );
           return;
         }
       }
@@ -367,8 +395,8 @@ export function PlaygroundEditor({
         e.key === "PageDown"
       ) {
         closeSuggestions();
+        syncCursorPos();
         requestAnimationFrame(() => {
-          syncCursorPos();
           scrollCursorIntoView();
         });
         return;
@@ -379,21 +407,30 @@ export function PlaygroundEditor({
         e.preventDefault();
         const selStartLine = domValue.lastIndexOf("\n", start - 1) + 1;
         const selEndLineIdx = domValue.indexOf("\n", end);
-        const selEndLine = selEndLineIdx === -1 ? domValue.length : selEndLineIdx;
+        const selEndLine =
+          selEndLineIdx === -1 ? domValue.length : selEndLineIdx;
 
-        const lineArr = domValue.substring(selStartLine, selEndLine).split("\n");
-        const allCommented = lineArr.every((l) => /^\s*\/\//.test(l) || !l.trim());
+        const lineArr = domValue
+          .substring(selStartLine, selEndLine)
+          .split("\n");
+        const allCommented = lineArr.every(
+          (l) => /^\s*\/\//.test(l) || !l.trim(),
+        );
 
         let newLines: string[];
         if (allCommented) {
           newLines = lineArr.map((l) => l.replace(/^(\s*)\/\/\s?/, "$1"));
         } else {
-          newLines = lineArr.map((l) => (l.trim() ? l.replace(/^(\s*)/, "$1// ") : l));
+          newLines = lineArr.map((l) =>
+            l.trim() ? l.replace(/^(\s*)/, "$1// ") : l,
+          );
         }
 
         const newContent = newLines.join("\n");
         const newFullValue =
-          domValue.substring(0, selStartLine) + newContent + domValue.substring(selEndLine);
+          domValue.substring(0, selStartLine) +
+          newContent +
+          domValue.substring(selEndLine);
         const lengthDelta = newContent.length - (selEndLine - selStartLine);
 
         if (start === end) {
@@ -415,11 +452,15 @@ export function PlaygroundEditor({
         e.preventDefault();
         const curLineStart = domValue.lastIndexOf("\n", start - 1) + 1;
         const curLineEndIdx = domValue.indexOf("\n", start);
-        const curLineEnd = curLineEndIdx === -1 ? domValue.length : curLineEndIdx;
+        const curLineEnd =
+          curLineEndIdx === -1 ? domValue.length : curLineEndIdx;
         const lineContent = domValue.substring(curLineStart, curLineEnd);
 
         const newFullValue =
-          domValue.substring(0, curLineEnd) + "\n" + lineContent + domValue.substring(curLineEnd);
+          domValue.substring(0, curLineEnd) +
+          "\n" +
+          lineContent +
+          domValue.substring(curLineEnd);
         const colOffset = start - curLineStart;
         const newPos = curLineEnd + 1 + colOffset;
         applyTextEdit(newFullValue, newPos, newPos);
@@ -437,7 +478,11 @@ export function PlaygroundEditor({
           const wrapped = openChar + selectedText + matchingClose;
           const newFullValue =
             domValue.substring(0, start) + wrapped + domValue.substring(end);
-          applyTextEdit(newFullValue, start + 1, start + 1 + selectedText.length);
+          applyTextEdit(
+            newFullValue,
+            start + 1,
+            start + 1 + selectedText.length,
+          );
           return;
         }
 
@@ -452,7 +497,8 @@ export function PlaygroundEditor({
           e.preventDefault();
           requestAnimationFrame(() => {
             if (textareaRef.current) {
-              textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 1;
+              textareaRef.current.selectionStart =
+                textareaRef.current.selectionEnd = start + 1;
               setCursorOffset(start + 1);
               scrollCursorIntoView();
             }
@@ -467,7 +513,10 @@ export function PlaygroundEditor({
 
         e.preventDefault();
         const newFullValue =
-          domValue.substring(0, start) + openChar + matchingClose + domValue.substring(end);
+          domValue.substring(0, start) +
+          openChar +
+          matchingClose +
+          domValue.substring(end);
         applyTextEdit(newFullValue, start + 1, start + 1);
         return;
       }
@@ -478,7 +527,8 @@ export function PlaygroundEditor({
           e.preventDefault();
           requestAnimationFrame(() => {
             if (textareaRef.current) {
-              textareaRef.current.selectionStart = textareaRef.current.selectionEnd = start + 1;
+              textareaRef.current.selectionStart =
+                textareaRef.current.selectionEnd = start + 1;
               setCursorOffset(start + 1);
               scrollCursorIntoView();
             }
@@ -500,8 +550,8 @@ export function PlaygroundEditor({
             return;
           }
         }
+        syncCursorPos();
         requestAnimationFrame(() => {
-          syncCursorPos();
           scrollCursorIntoView();
         });
       }
@@ -514,9 +564,12 @@ export function PlaygroundEditor({
           // Shift+Tab: Dedent
           const selStartLine = domValue.lastIndexOf("\n", start - 1) + 1;
           const selEndLineIdx = domValue.indexOf("\n", end);
-          const selEndLine = selEndLineIdx === -1 ? domValue.length : selEndLineIdx;
+          const selEndLine =
+            selEndLineIdx === -1 ? domValue.length : selEndLineIdx;
 
-          const lineArr = domValue.substring(selStartLine, selEndLine).split("\n");
+          const lineArr = domValue
+            .substring(selStartLine, selEndLine)
+            .split("\n");
           let firstLineRemoved = 0;
           let totalRemoved = 0;
 
@@ -535,7 +588,9 @@ export function PlaygroundEditor({
           if (totalRemoved > 0) {
             const newContent = dedented.join("\n");
             const newFullValue =
-              domValue.substring(0, selStartLine) + newContent + domValue.substring(selEndLine);
+              domValue.substring(0, selStartLine) +
+              newContent +
+              domValue.substring(selEndLine);
             const newStart = Math.max(selStartLine, start - firstLineRemoved);
             const newEnd = Math.max(selStartLine, end - totalRemoved);
             applyTextEdit(newFullValue, newStart, newEnd);
@@ -547,13 +602,18 @@ export function PlaygroundEditor({
         if (start !== end) {
           const selStartLine = domValue.lastIndexOf("\n", start - 1) + 1;
           const selEndLineIdx = domValue.indexOf("\n", end);
-          const selEndLine = selEndLineIdx === -1 ? domValue.length : selEndLineIdx;
+          const selEndLine =
+            selEndLineIdx === -1 ? domValue.length : selEndLineIdx;
 
-          const lineArr = domValue.substring(selStartLine, selEndLine).split("\n");
+          const lineArr = domValue
+            .substring(selStartLine, selEndLine)
+            .split("\n");
           const indented = lineArr.map((l) => "  " + l);
           const newContent = indented.join("\n");
           const newFullValue =
-            domValue.substring(0, selStartLine) + newContent + domValue.substring(selEndLine);
+            domValue.substring(0, selStartLine) +
+            newContent +
+            domValue.substring(selEndLine);
 
           applyTextEdit(newFullValue, start + 2, end + 2 * lineArr.length);
         } else {
@@ -567,7 +627,8 @@ export function PlaygroundEditor({
       // ─── 5. Smart Enter between Braces and Auto-Indent ───
       if (e.key === "Enter") {
         e.preventDefault();
-        const currentLine = domValue.substring(0, start).split("\n").pop() || "";
+        const currentLine =
+          domValue.substring(0, start).split("\n").pop() || "";
         const indent = currentLine.match(/^\s*/)?.[0] || "";
 
         // Check if cursor is between { and } or ( and )
@@ -605,7 +666,7 @@ export function PlaygroundEditor({
       onFormat,
       toggleWordWrap,
       syncScrollLayers,
-    ]
+    ],
   );
 
   const handleChange = useCallback(
@@ -614,13 +675,13 @@ export function PlaygroundEditor({
       lastRecordedValueRef.current = newVal;
       onChange(newVal);
 
+      syncCursorPos();
       requestAnimationFrame(() => {
-        syncCursorPos();
         scrollCursorIntoView();
         syncScrollLayers();
       });
     },
-    [onChange, scrollCursorIntoView, syncCursorPos, syncScrollLayers]
+    [onChange, scrollCursorIntoView, syncCursorPos, syncScrollLayers],
   );
 
   const handleKeyUp = useCallback(() => {
@@ -664,7 +725,7 @@ export function PlaygroundEditor({
       className={`playground-editor-wrapper ${effectiveWordWrap ? "playground-editor-wrapper--word-wrap" : ""}`}
       style={{
         height: "100%",
-        minHeight: isFullscreen ? "100%" : (minHeight || "240px"),
+        minHeight: isFullscreen ? "100%" : minHeight || "240px",
       }}
     >
       {/* Line Numbers Gutter */}
@@ -719,7 +780,12 @@ export function PlaygroundEditor({
           ref={highlightRef}
           className="playground-highlight-layer"
           aria-hidden="true"
-        ><code className="playground-code-content">{highlightCode(value, cursorOffset)}{value.endsWith("\n") ? "\n" : ""}</code></pre>
+        >
+          <code className="playground-code-content">
+            {highlightCode(value, cursorOffset)}
+            {value.endsWith("\n") ? "\n" : ""}
+          </code>
+        </pre>
 
         {/* Interactive Textarea (z-index: 2, transparent text, caret & selection visible) */}
         <textarea

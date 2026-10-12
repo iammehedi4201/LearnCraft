@@ -134,6 +134,8 @@ export function transpileTypeScriptLocally(code: string): string {
         compilerOptions: {
           target: ts.ScriptTarget.ES2022,
           module: ts.ModuleKind.ESNext,
+          experimentalDecorators: true,
+          emitDecoratorMetadata: true,
           removeComments: false,
         },
       });
@@ -596,7 +598,7 @@ self.onmessage = async function(e) {
               success: false,
               output,
               error: errObj,
-              duration: Date.now() - startTime,
+              duration: Date.now() - startTime,    
             });
           };
 

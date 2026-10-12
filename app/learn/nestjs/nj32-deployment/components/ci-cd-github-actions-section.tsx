@@ -10,78 +10,55 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 7 — CI/CD AUTOMATION WITH GITHUB ACTIONS
+// MODULE 7 — NODE.JS PRODUCTION RUNTIME TUNING
 // ═══════════════════════════════════════════════════════════
 
 export function CiCdGithubActionsSection() {
   return (
-    <SectionContainer number={7} title="Automated CI/CD with GitHub Actions">
-      {/* ── 7.1 GitHub Actions ── */}
+    <SectionContainer number={7} title="Node.js Production Runtime Tuning &amp; Memory Limits">
+      {/* ── 7.1 Runtime Tuning ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Automated Lint, Test, Build &amp; Deploy Pipeline"
-          description="Build a production CI/CD workflow that tests every commit and deploys to Docker registry automatically."
+          number={7}
+          title="Optimizing V8 Flags for NestJS Backends"
+          description="How to tune memory limits, enable production sourcemaps, and configure the libuv threadpool."
           color="amber"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>🚀</span> .github/workflows/deploy.yml
+            <span>⚡</span> Recommended Production Execution Command
           </h4>
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            Running <code>node dist/main.js</code> with key runtime flags prevents out-of-memory (OOM) crashes and provides crystal-clear error stacks:
+          </p>
           <EnhancedCodeBlock
-            code={`name: CI/CD Production Pipeline
+            code={`# package.json
+{
+  "scripts": {
+    "start:prod": "node --enable-source-maps --max-old-space-size=2048 dist/main.js"
+  }
+}
 
-on:
-  push:
-    branches: [main]
+# Explanation of Flags:
+# --enable-source-maps: Translates runtime stack traces from compiled JavaScript back to your original TypeScript line numbers!
+# --max-old-space-size=2048: Allocates up to 2GB of V8 heap memory before the garbage collector triggers OOM crashes.`}
+            language="bash"
+          />
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: TypeScript & Lint Check
-        run: |
-          npx tsc --noEmit
-          npm run lint
-
-      - name: Run Test Suites
-        run: npm run test
-
-  build-and-push:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: \${{ secrets.DOCKERHUB_USERNAME }}
-          password: \${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and Push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: myorg/learncraft-api:latest,myorg/learncraft-api:\${{ github.sha }}`}
-            language="yaml"
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mt-4 mb-2">
+            <strong>Threadpool Tuning for Crypto:</strong> If your API handles high volumes of password hashing (bcrypt/argon2), increase the default libuv threadpool from 4 to 8 or 16 threads:
+          </p>
+          <EnhancedCodeBlock
+            code={`# Set in environment:
+UV_THREADPOOL_SIZE=8 node dist/main.js`}
+            language="bash"
           />
         </WhyBox>
 
         <QuickCheck
-          question="Why does the 'build-and-push' job declare 'needs: test'?"
-          answer="It creates a dependency gate: Docker images are only built and pushed if all TypeScript checks, linters, and unit tests pass with zero errors."
+          question="Why is '--enable-source-maps' critical in production NestJS environments?"
+          answer="Without it, error stack traces in production logs point to compiled dist/main.js line numbers. With source maps enabled, stack traces point directly to your original src/*.ts source code lines."
         />
       </div>
 

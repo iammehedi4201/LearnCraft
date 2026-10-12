@@ -18,7 +18,7 @@ import {
 
 export function MetadataReflectionSection() {
   return (
-    <SectionContainer number={13} title="Metadata & Reflection">
+    <SectionContainer number={18} title="Metadata & Reflection">
       {/* ── 13.1 What is Metadata? ── */}
       <div className="mb-16">
         <TopicHeader

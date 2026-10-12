@@ -108,59 +108,56 @@ console.log("Created member:", member.username);`}
         <TopicHeader
           number={2}
           title="Function Wrappers & Closures"
-          description="In JavaScript, functions can take other functions as inputs and return brand new wrapped functions. This is the secret behind how decorators intercept method calls."
+          description="A function wrapper takes a function, adds something extra, and returns a new function. This is the trick decorators use to intercept method calls."
           color="sky"
         />
 
-        <AnalogyBox emoji="🎁" title="Functions as Gift Wrappers">
+        <AnalogyBox emoji="📱" title="Think of it Like a Phone Case">
           <p>
-            Think of a <strong>Function Wrapper</strong> like wrapping a gift box. You take an ordinary item (the original function), wrap it with colorful paper and a bow (extra logging or timing code), and return the wrapped gift!
+            Your phone (the original function) works perfectly fine on its own. A phone case (the wrapper) goes around it and adds protection — but the phone still does the exact same thing inside.
           </p>
           <p className="mt-2">
-            When someone opens the gift (calls the function), the wrapper runs first, then the original item does its job.
+            A <strong>function wrapper</strong> does the same thing: it wraps extra behavior around a function without changing what the function actually does.
           </p>
         </AnalogyBox>
 
         <div className="mb-8">
-          <SectionHeading>🚀 Try It Yourself: Wrapping a Function Live</SectionHeading>
+          <SectionHeading>🚀 Try It Yourself: Wrapping a Function</SectionHeading>
           <p className="text-xs text-ds-text-sub mb-3">
-            See how <code>withTiming</code> wraps an ordinary <code>sendEmail</code> function to automatically measure how long it takes:
+            <code>addKnock</code> takes any function, wraps it so it prints a message first, then runs the original function:
           </p>
           <Playground
             runtime="typescript"
             language="TypeScript"
-            starterCode={`// 1. The original simple function:
-function sendEmail(recipient: string, message: string) {
-  console.log("📨 Sending email to " + recipient + ": " + message);
-  return { success: true };
+            starterCode={`// The original function — just says hello
+function sayHello(name: string) {
+  console.log("Hello, " + name + "!");
 }
 
-// 2. A wrapper function that adds a timer around ANY function:
-function withTiming(originalFn: Function) {
-  // Returns a new function that wraps the original one:
+// A wrapper: takes ANY function, adds a "knock" before it
+function addKnock(fn: Function) {
   return function (...args: any[]) {
-    console.log("⏱️ Timer started...");
-    const start = performance.now();
-    
-    // Call the original function with its arguments
-    const result = originalFn(...args);
-    
-    const duration = (performance.now() - start).toFixed(2);
-    console.log("✅ Finished in " + duration + "ms");
-    return result;
+    console.log("🚪 Knock knock!");  // extra behavior
+    fn(...args);                      // run the original
   };
 }
 
-// 3. Create our timed version and test it:
-const timedSendEmail = withTiming(sendEmail);
-timedSendEmail("alice@test.com", "Welcome to LearnCraft!");`}
-            height="380px"
+// Without wrapper:
+sayHello("Mehedi");
+
+// With wrapper:
+const politeHello = addKnock(sayHello);
+politeHello("Mehedi");`}
+            height="340px"
           />
         </div>
 
-        <InfoCallout emoji="💡" title="What is a 'Closure' in Plain English?">
+        <InfoCallout emoji="💡" title="What is a 'Closure'?">
           <p>
-            A <strong>closure</strong> is just an inner function that remembers the variables from the outer function, even after the outer function has finished running. Decorators use closures so they can remember your settings (like <code>@Roles(&apos;admin&apos;)</code>) whenever someone calls the method later.
+            A <strong>closure</strong> = an inner function that <strong>remembers</strong> variables from the outer function, even after the outer function is done.
+          </p>
+          <p className="mt-2">
+            In the example above, <code>addKnock</code> returns a new function. That new function still remembers <code>fn</code> (the original function) — that&apos;s a closure! Decorators use closures to remember your settings (like <code>@Roles(&apos;admin&apos;)</code>) whenever the method is called later.
           </p>
         </InfoCallout>
       </div>
@@ -171,50 +168,58 @@ timedSendEmail("alice@test.com", "Welcome to LearnCraft!");`}
       <div className="mb-16">
         <TopicHeader
           number={3}
-          title="Preserving 'this' (The Object Context)"
-          description="When a decorator wraps a class method, it must ensure the method can still access its own instance variables (like this.balance or this.name). We do this using .apply(this, args)."
+          title="Keeping 'this' Working"
+          description="When a wrapper replaces a class method, it must still tell the original method which object it belongs to. That is what .apply(this, args) does."
           color="emerald"
         />
 
+        <AnalogyBox emoji="🏷️" title="What does 'this' mean?">
+          <p>
+            Inside a class method, <strong>this</strong> means &ldquo;the object that called this method.&rdquo; For example, in <code>counter.add(2)</code>, <code>this</code> is the <code>counter</code> object.
+          </p>
+          <p className="mt-2">
+            <strong>The problem:</strong> when you wrap a method with a new function, <code>this</code> can get lost. The fix is simple: <code>originalMethod.apply(this, args)</code> means &ldquo;run the original method, but keep <code>this</code> pointing to the same object.&rdquo;
+          </p>
+        </AnalogyBox>
+
         <div className="mb-8">
-          <SectionHeading>🚀 Try It Yourself: Keeping the 'this' Context Intact</SectionHeading>
+          <SectionHeading>🚀 Try It Yourself: Keep the Counter Working</SectionHeading>
           <p className="text-xs text-ds-text-sub mb-3">
-            In this example, <code>this.balance</code> needs to belong to the specific bank account instance. Calling <code>original.apply(this, args)</code> guarantees <code>this</code> points to the right account:
+            The wrapper logs a message, then calls the original <code>add</code> method. The counter still updates because <code>.apply(this, args)</code> keeps <code>this</code> connected to the counter object:
           </p>
           <Playground
             runtime="typescript"
             language="TypeScript"
-            starterCode={`class BankAccount {
-  balance = 500;
+            starterCode={`class Counter {
+  count = 0;
 
-  deposit(amount: number) {
-    this.balance += amount;
-    console.log("💰 Deposited $" + amount + ". New balance: $" + this.balance);
-    return this.balance;
+  add(number: number) {
+    this.count += number;
+    console.log("Count is now " + this.count);
   }
 }
 
-// If we wrap the method, we MUST preserve 'this':
+// Put a wrapper in front of a method:
 function wrapMethod(targetObj: any, methodName: string) {
-  const original = targetObj[methodName];
+  const originalMethod = targetObj[methodName];
   
   targetObj[methodName] = function (...args: any[]) {
-    console.log("🔍 Intercepted " + methodName + " with args:", args);
-    // 'this' inside this function is the BankAccount instance!
-    return original.apply(this, args); // Correctly updates this.balance!
+    console.log("Wrapper ran first!");
+    // .apply(this, args) = "run original, keep same object"
+    return originalMethod.apply(this, args);
   };
 }
 
-const account = new BankAccount();
-wrapMethod(account, "deposit");
-account.deposit(250); // Balance becomes $750`}
+const counter = new Counter();
+wrapMethod(counter, "add");
+counter.add(5); // Wrapper runs, then count becomes 5`}
             height="380px"
           />
         </div>
 
         <QuickCheck
-          question="Why do we use originalMethod.apply(this, args) instead of just originalMethod(...args)?"
-          answer="Because class methods need to access instance data like this.balance or this.userService. If we call originalMethod() without .apply(this, args), JavaScript loses track of 'this', causing runtime errors when trying to read this.properties."
+          question="What does originalMethod.apply(this, args) tell JavaScript?"
+          answer="It tells JavaScript to run the original method with the same object and the same arguments. This lets the method keep using its own data, such as this.count."
         />
       </div>
     </SectionContainer>

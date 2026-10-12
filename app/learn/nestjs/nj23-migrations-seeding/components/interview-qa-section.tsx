@@ -8,7 +8,7 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 11 — TOP 5 INTERVIEW QUESTIONS (PRISMA MIGRATIONS)
+// MODULE 11 — TOP 5 INTERVIEW QUESTIONS (LIFECYCLE & SEEDING)
 // ═══════════════════════════════════════════════════════════
 
 export function InterviewQaSection() {
@@ -16,35 +16,35 @@ export function InterviewQaSection() {
 
   const qas = [
     {
-      q: "Q1: Explain the difference between 'prisma migrate dev', 'prisma migrate deploy', and 'prisma db push'.",
-      a: "• 'prisma migrate dev': Used in development. Diffs schema, generates new timestamped SQL files, applies them locally, and runs prisma generate.\n• 'prisma migrate deploy': Used in production CI/CD. Applies pending SQL files non-interactively without generating new migrations.\n• 'prisma db push': Direct schema synchronization without creating SQL migration files (ideal only for fast hackathons/prototypes).",
+      q: "Q1: Walk through the complete lifecycle sequence of a NestJS application from startup to shutdown.",
+      a: "1. Module graph compilation and dependency resolution.\n2. onModuleInit() called on each provider and module in dependency order.\n3. onApplicationBootstrap() called once all modules are initialized.\n4. app.listen() starts the HTTP server listening on the configured port.\n5. Upon receiving SIGINT/SIGTERM (with enableShutdownHooks), beforeApplicationShutdown() fires.\n6. onModuleDestroy() and beforeApplicationShutdown() hooks clean up resources.\n7. Server closes and the process terminates cleanly.",
     },
     {
-      q: "Q2: What is the purpose of the _prisma_migrations table in PostgreSQL?",
-      a: "It acts as a persistent ledger storing the list of all applied migration directories along with their SHA-256 checksums and completion timestamps, ensuring migrations run exactly once in order.",
+      q: "Q2: When would you use OnApplicationBootstrap instead of OnModuleInit?",
+      a: "Use OnApplicationBootstrap when your initialization logic depends on other modules having already finished their own OnModuleInit routines (e.g., when an Auth module needs to verify that the Roles module has already seeded all default permission sets).",
     },
     {
-      q: "Q3: How do you achieve zero-downtime migrations when renaming a database column in production?",
-      a: "Use the 'Expand and Contract' pattern:\n1. Add the new column alongside the old one.\n2. Deploy backend code that writes to both columns and reads from the new one.\n3. Backfill old rows into the new column.\n4. Deploy a final migration to drop the old column.",
+      q: "Q3: How do you build a standalone CLI seeder without launching an HTTP listener?",
+      a: "Use NestFactory.createApplicationContext(AppModule). This instantiates the full NestJS dependency injection container and executes OnModuleInit hooks without binding to a network port. You then resolve your SeederService, execute your seed, and call await app.close().",
     },
     {
-      q: "Q4: How do you resolve a failed migration on production using the Prisma CLI?",
-      a: "Use 'npx prisma migrate resolve'. If the migration was rolled back manually, run --rolled-back <name>. If the migration was fixed manually in the database, run --applied <name>.",
+      q: "Q4: Why does NestJS require an explicit call to app.enableShutdownHooks()?",
+      a: "Listening to OS signals (SIGINT, SIGTERM) consumes system event listeners and can conflict with process managers (like PM2 or Docker). NestJS keeps shutdown hooks opt-in so developers have full control over signal handling.",
     },
     {
-      q: "Q5: Why should database seed scripts always be idempotent?",
-      a: "So that running the seed command multiple times (e.g. during CI/CD tests or container reboots) does not cause duplicate key violations or create thousands of duplicate rows.",
+      q: "Q5: How do you ensure state seeding is strictly idempotent across test runs?",
+      a: "By querying the repository for existing unique natural keys (such as email, username, or role name) before creating records, or by implementing an atomic upsert operation that updates existing records rather than failing on duplicate keys.",
     },
   ];
 
   return (
-    <SectionContainer number={11} title="Top 5 Interview Questions on Prisma Migrations">
+    <SectionContainer number={11} title="Top 5 Interview Questions on NestJS Lifecycle">
       {/* ── 11.1 Interview Q&As ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Senior-Level Interview Questions"
-          description="Master these frequently asked questions on migration workflows, schema drift, and deployment safety."
+          number={11}
+          title="Senior-Level Architecture Questions"
+          description="Master these frequently asked questions on lifecycle hooks, bootstrap sequence, and headless context."
           color="amber"
         />
 

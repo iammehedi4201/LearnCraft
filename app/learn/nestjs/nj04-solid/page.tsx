@@ -5,8 +5,9 @@
  *
  * CORE CONCEPT
  * ────────────
- * SOLID is an acronym for 5 design principles that make software maintainable,
- * flexible, and scalable. NestJS architecture is built directly ON these principles.
+ * SOLID is an acronym for 5 design principles that can make software easier to
+ * maintain and extend. NestJS provides useful building blocks, but good design
+ * still depends on the choices developers make.
  *
  * THE 5 PRINCIPLES
  * ────────────────
@@ -20,11 +21,15 @@
  */
 
 "use client";
+import { LayoutGrid } from "../components/icons";
 
-import { useState, useEffect } from "react";
+import Link from "next/link";
+
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
-import { getAllAnnotations } from "@/lib/revision-storage";
+import { useModuleProgress } from "../hooks/use-module-progress";
+import { LessonNavFooter } from "../components/lesson-nav-footer";
 
 // Section components
 import { HeaderSection } from "./components/header-section";
@@ -44,168 +49,124 @@ import { FinalProjectSection } from "./components/final-project-section";
 import { ClosingSections } from "./components/closing-sections";
 
 const SECTIONS = [
-  { id: "part1",  label: "The Big Picture",          icon: "🚀" },
-  { id: "part2",  label: "S — Single Responsibility", icon: "📦" },
-  { id: "part3",  label: "O — Open / Closed",         icon: "🔌" },
-  { id: "part4",  label: "L — Liskov Substitution",   icon: "🦅" },
-  { id: "part5",  label: "I — Interface Segregation", icon: "📺" },
-  { id: "part6",  label: "D — Dependency Inversion",  icon: "🦁" },
-  { id: "part7",  label: "How NestJS Uses SOLID",     icon: "🏛️" },
-  { id: "part8",  label: "Express vs NestJS",         icon: "⚖️" },
-  { id: "part9",  label: "Real-World Payment System", icon: "💳" },
-  { id: "part10", label: "Beginner Mistakes",         icon: "⚠️" },
-  { id: "part11", label: "Concept Tables",            icon: "📊" },
-  { id: "part12", label: "Learning Checks",           icon: "🧠" },
-  { id: "part13", label: "Coding Exercises",          icon: "💻" },
-  { id: "part14", label: "Final Capstone Project",    icon: "🏆" },
-  { id: "part15", label: "Quick Memory Guide",        icon: "🎯" },
+  { id: "part1", label: "The Big Picture", icon: "🚀" },
+  { id: "part2", label: "S — Single Responsibility", icon: "📦" },
+  { id: "part3", label: "O — Open / Closed", icon: "🔌" },
+  { id: "part4", label: "L — Liskov Substitution", icon: "🦅" },
+  { id: "part5", label: "I — Interface Segregation", icon: "📺" },
+  { id: "part6", label: "D — Dependency Inversion", icon: "🦁" },
+  { id: "part7", label: "How NestJS Uses SOLID", icon: "🏛️" },
+  { id: "part8", label: "Express vs NestJS", icon: "⚖️" },
+  { id: "part9", label: "Real-World Payment System", icon: "💳" },
+  { id: "part10", label: "Beginner Mistakes", icon: "⚠️" },
+  { id: "part11", label: "Concept Tables", icon: "📊" },
+  { id: "part12", label: "Learning Checks", icon: "🧠" },
+  { id: "part13", label: "Coding Exercises", icon: "💻" },
+  { id: "part14", label: "Final Capstone Project", icon: "🏆" },
+  { id: "part15", label: "Quick Memory Guide", icon: "🎯" },
 ];
 
-const PROGRESS_STORAGE_KEY = "learncraft_progress_nj04-solid";
+
 
 export default function NJ04SOLID(): JSX.Element {
-  const searchParams = useSearchParams();
-  const highlightId = searchParams?.get("highlightId");
-  const sectionParam = searchParams?.get("section");
-
-  const [activeSection, setActiveSection] = useState<string>("part1");
-  const [completedSections, setCompletedSections] = useState<Set<string>>(
-    new Set(),
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong">
+          <Nav />
+          <p className="max-w-6xl mx-auto px-6 py-12 text-sm text-ds-text-sub">
+            Loading the SOLID lesson…
+          </p>
+        </div>
+      }
+    >
+      <NJ04SOLIDContent />
+    </Suspense>
   );
+}
 
-  // Initialize from URL, highlight, or localStorage on mount
-  useEffect(() => {
-    // 1. URL search param has highest priority
-    if (sectionParam && SECTIONS.some((s) => s.id === sectionParam)) {
-      setActiveSection(sectionParam);
-      const targetIdx = SECTIONS.findIndex((s) => s.id === sectionParam);
-      if (targetIdx > 0) {
-        setCompletedSections((prev) => {
-          const next = new Set(prev);
-          for (let i = 0; i < targetIdx; i++) {
-            next.add(SECTIONS[i].id);
-          }
-          return next;
-        });
-      }
-      return;
-    }
+function NJ04SOLIDContent(): JSX.Element {
+  const searchParams = useSearchParams();
+  const isImproveMode = searchParams?.get("improveMode") === "true";
 
-    // 2. Highlight deep-link lookup
-    if (highlightId) {
-      const all = getAllAnnotations();
-      const target = all.find(
-        (a) =>
-          a.id === highlightId ||
-          a.id === `rev_${highlightId}` ||
-          `rev-highlight-${a.id}` === highlightId
-      );
-      if (target?.sectionId && SECTIONS.some((s) => s.id === target.sectionId)) {
-        setActiveSection(target.sectionId);
-        const targetIdx = SECTIONS.findIndex((s) => s.id === target.sectionId);
-        if (targetIdx > 0) {
-          setCompletedSections((prev) => {
-            const next = new Set(prev);
-            for (let i = 0; i < targetIdx; i++) {
-              next.add(SECTIONS[i].id);
-            }
-            return next;
-          });
-        }
-        // Clean highlightId from URL so refresh does not force-jump to this note
-        if (typeof window !== "undefined") {
-          const url = new URL(window.location.href);
-          url.searchParams.delete("highlightId");
-          url.searchParams.set("section", target.sectionId);
-          window.history.replaceState(null, "", url.toString());
-        }
-        return;
-      }
-    }
-
-    // 3. Restore persisted progress from localStorage on page refresh
-    try {
-      const saved = localStorage.getItem(PROGRESS_STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.activeSection && SECTIONS.some((s) => s.id === parsed.activeSection)) {
-          setActiveSection(parsed.activeSection);
-        }
-        if (Array.isArray(parsed.completedSections)) {
-          setCompletedSections(new Set(parsed.completedSections));
-        }
-      }
-    } catch {}
-  }, [highlightId, sectionParam]);
-
-  const currentIndex = SECTIONS.findIndex((s) => s.id === activeSection);
+  const {
+    isAuthenticated,
+    activeSection,
+    completedSections,
+    isLessonCompleted,
+    currentIndex,
+    progressPercent,
+    handleSectionChange,
+    completeLesson,
+    getStepState,
+  } = useModuleProgress({
+    lessonSlug: "nj04-solid",
+    sections: SECTIONS,
+  });
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [activeSection]);
 
-  const handleSectionChange = (sectionId: string) => {
-    const nextCompleted = new Set([...completedSections, activeSection]);
-    setCompletedSections(nextCompleted);
-    setActiveSection(sectionId);
-
-    // Persist to localStorage
-    try {
-      localStorage.setItem(
-        PROGRESS_STORAGE_KEY,
-        JSON.stringify({
-          activeSection: sectionId,
-          completedSections: Array.from(nextCompleted),
-        })
-      );
-    } catch {}
-
-    // Synchronize URL search param without full reload and delete highlightId
-    if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      url.searchParams.delete("highlightId");
-      url.searchParams.set("section", sectionId);
-      window.history.replaceState(null, "", url.toString());
-    }
-  };
-
-  const getStepState = (index: number): "done" | "active" | "todo" => {
-    const section = SECTIONS[index];
-    if (section.id === activeSection) return "active";
-    if (completedSections.has(section.id) || index < currentIndex)
-      return "done";
-    return "todo";
-  };
+  useEffect(() => {
+    const handleNavigate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail?.direction === "prev" && currentIndex > 0) {
+        handleSectionChange(SECTIONS[currentIndex - 1].id);
+      } else if (customEvent.detail?.direction === "next" && currentIndex < SECTIONS.length - 1) {
+        handleSectionChange(SECTIONS[currentIndex + 1].id);
+      }
+    };
+    window.addEventListener("lc-navigate-module", handleNavigate);
+    return () => window.removeEventListener("lc-navigate-module", handleNavigate);
+  }, [currentIndex, handleSectionChange]);
 
   const renderContent = () => {
     switch (activeSection) {
-      case "part1":  return <HeaderSection />;
-      case "part2":  return <SrpSection />;
-      case "part3":  return <OcpSection />;
-      case "part4":  return <LspSection />;
-      case "part5":  return <IspSection />;
-      case "part6":  return <DipSection />;
-      case "part7":  return <NestjsSolidSection />;
-      case "part8":  return <ExpressVsNestjsSection />;
-      case "part9":  return <RealWorldExampleSection />;
-      case "part10": return <BeginnerMistakesSection />;
-      case "part11": return <ConceptTablesSection />;
-      case "part12": return <LearningChecksSection />;
-      case "part13": return <CodingExercisesSection />;
-      case "part14": return <FinalProjectSection />;
-      case "part15": return <ClosingSections />;
-      default:       return <HeaderSection />;
+      case "part1":
+        return <HeaderSection />;
+      case "part2":
+        return <SrpSection />;
+      case "part3":
+        return <OcpSection />;
+      case "part4":
+        return <LspSection />;
+      case "part5":
+        return <IspSection />;
+      case "part6":
+        return <DipSection />;
+      case "part7":
+        return <NestjsSolidSection />;
+      case "part8":
+        return <ExpressVsNestjsSection />;
+      case "part9":
+        return <RealWorldExampleSection />;
+      case "part10":
+        return <BeginnerMistakesSection />;
+      case "part11":
+        return <ConceptTablesSection />;
+      case "part12":
+        return <LearningChecksSection />;
+      case "part13":
+        return <CodingExercisesSection />;
+      case "part14":
+        return <FinalProjectSection />;
+      case "part15":
+        return <ClosingSections />;
+      default:
+        return <HeaderSection />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-light/20">
+    <div className="min-h-screen bg-ds-bg-weak text-ds-text-strong selection:bg-ds-feature-lighter">
       <Nav />
 
-      <div className="relative z-10 max-w-[95rem] mx-auto px-6 lg:px-8 py-2">
+      <div className="relative z-10 max-w-[95rem] mx-auto px-3 sm:px-6 lg:px-8 py-2">
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
           {/* Stepper Sidebar */}
-          <aside className="lg:w-[280px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
+          {!isImproveMode && (
+<aside className="w-full lg:w-[280px] shrink-0 lg:sticky lg:top-20 lg:max-h-[calc(100vh-7rem)] flex flex-col border border-ds-stroke-soft rounded-2xl bg-ds-bg-white p-4 shadow-sm">
             {/* Header */}
             <div className="px-2 mb-3 shrink-0">
               <p className="text-[10px] font-black text-ds-text-soft uppercase tracking-[0.3em]">
@@ -214,7 +175,10 @@ export default function NJ04SOLID(): JSX.Element {
             </div>
 
             {/* Stepper (Scrollable List) */}
-            <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
+            <nav
+              aria-label="SOLID lesson modules"
+              className="flex-1 lg:overflow-y-auto pr-1 space-y-1"
+            >
               <ol className="space-y-1.5 relative">
                 {SECTIONS.map((section, index) => {
                   const state = getStepState(index);
@@ -225,8 +189,10 @@ export default function NJ04SOLID(): JSX.Element {
                   return (
                     <li key={section.id}>
                       <button
+                        type="button"
                         onClick={() => handleSectionChange(section.id)}
-                        disabled={isTodo}
+                        disabled={isAuthenticated && isTodo && index > currentIndex + 1}
+                        aria-current={isActive ? "step" : undefined}
                         className={`
                           group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
                           transition-all duration-200 text-left
@@ -235,7 +201,7 @@ export default function NJ04SOLID(): JSX.Element {
                               ? "bg-ds-feature-lighter border border-ds-feature-base"
                               : isDone
                                 ? "hover:bg-ds-bg-weak cursor-pointer"
-                                : "opacity-50 cursor-not-allowed"
+                                : !isAuthenticated ? "hover:bg-ds-bg-weak cursor-pointer" : "opacity-50 cursor-not-allowed"
                           }
                         `}
                       >
@@ -255,6 +221,7 @@ export default function NJ04SOLID(): JSX.Element {
                         >
                           {isDone ? (
                             <svg
+                              aria-hidden="true"
                               className="w-3.5 h-3.5"
                               viewBox="0 0 14 14"
                               fill="none"
@@ -300,7 +267,10 @@ export default function NJ04SOLID(): JSX.Element {
 
                         {/* Active indicator dot */}
                         {isActive && (
-                          <div className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0" />
+                          <div
+                            aria-hidden="true"
+                            className="ml-auto w-2 h-2 rounded-full bg-ds-feature-base shrink-0"
+                          />
                         )}
                       </button>
                     </li>
@@ -316,25 +286,34 @@ export default function NJ04SOLID(): JSX.Element {
                   Progress
                 </span>
                 <span className="text-[12px] font-bold text-ds-text-strong">
-                  {Math.round(((currentIndex + 1) / SECTIONS.length) * 100)}%
+                  {isAuthenticated ? `${progressPercent}%` : "0%"}
                 </span>
               </div>
-              <div className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden">
+              <div
+                className="h-1.5 w-full bg-ds-bg-soft rounded-full overflow-hidden"
+                role="progressbar"
+                aria-label="Lesson progress"
+                aria-valuemin={0}
+                aria-valuemax={SECTIONS.length}
+                aria-valuenow={completedSections.size}
+                aria-valuetext={`${completedSections.size} of ${SECTIONS.length} modules completed`}
+              >
                 <div
                   className="h-full rounded-full transition-all duration-500 ease-out bg-ds-feature-base"
                   style={{
-                    width: `${((currentIndex + 1) / SECTIONS.length) * 100}%`,
+                    width: `${isAuthenticated ? `${progressPercent}%` : "0%"}`,
                   }}
                 />
               </div>
               <p className="mt-2 text-[10px] text-ds-text-soft">
-                {currentIndex + 1} of {SECTIONS.length} modules
+                {isAuthenticated ? `${completedSections.size} of ${SECTIONS.length} modules completed` : "Sign in to save progress"}
               </p>
             </div>
 
             {/* Prev / Next navigation */}
             <div className="mt-3 shrink-0 flex gap-2">
               <button
+                type="button"
                 onClick={() =>
                   currentIndex > 0 &&
                   handleSectionChange(SECTIONS[currentIndex - 1].id)
@@ -345,23 +324,44 @@ export default function NJ04SOLID(): JSX.Element {
                 ← Prev
               </button>
               <button
-                onClick={() =>
-                  currentIndex < SECTIONS.length - 1 &&
-                  handleSectionChange(SECTIONS[currentIndex + 1].id)
-                }
-                disabled={currentIndex === SECTIONS.length - 1}
-                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10"
+                type="button"
+                onClick={() => {
+                  if (currentIndex < SECTIONS.length - 1) {
+                    handleSectionChange(SECTIONS[currentIndex + 1].id);
+                  } else {
+                    completeLesson();
+                  }
+                }}
+                className="flex-1 py-2.5 rounded-xl text-[12px] font-bold text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-ds-feature-base/10 cursor-pointer"
               >
-                Next →
+                {currentIndex === SECTIONS.length - 1
+                  ? isLessonCompleted
+                    ? "Completed ✓"
+                    : "Finish Lesson ✓"
+                  : "Next →"}
               </button>
             </div>
+            {/* Course Hub link */}
+            <div className="mt-3 pt-3 shrink-0 border-t border-ds-stroke-soft text-center">
+              <Link
+                href="/learn/nestjs"
+                className="inline-flex items-center gap-1.5 text-xs text-ds-text-sub hover:text-ds-feature-dark transition-colors font-semibold"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>NestJS Curriculum</span>
+              </Link>
+            </div>
           </aside>
+)}
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0 max-w-6xl">
-            <div className="animate-in fade-in slide-in-from-bottom-6 duration-700 ease-out">
-              {renderContent()}
-            </div>
+          <main className={`${isImproveMode ? "w-full min-w-0" : "flex-1 min-w-0 max-w-6xl"}`}>
+            <h1 className="sr-only">SOLID Principles in TypeScript</h1>
+            <p className="sr-only" aria-live="polite">
+              Now viewing: {SECTIONS[currentIndex]?.label}
+            </p>
+            <div>{renderContent()}</div>
+            <LessonNavFooter currentSlug="nj04-solid" />
           </main>
         </div>
       </div>

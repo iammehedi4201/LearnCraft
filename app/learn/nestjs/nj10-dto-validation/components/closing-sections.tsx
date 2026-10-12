@@ -56,15 +56,23 @@ export function ClosingSections() {
           Congratulations! You Have Mastered Core NestJS Architecture!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You have successfully completed the foundational NestJS journey: <strong>Project Setup (NJ-05)</strong>, <strong>Modules (NJ-06)</strong>, <strong>Controllers (NJ-07)</strong>, <strong>Services (NJ-08)</strong>, <strong>Dependency Injection (NJ-09)</strong>, and <strong>DTO &amp; Validation (NJ-10)</strong>!
+          You have successfully completed Stage 2 Core Architecture: <strong>Setup</strong>, <strong>Controllers</strong>, <strong>Services</strong>, <strong>Dependency Injection</strong>, <strong>Modules</strong>, and <strong>DTO Validation</strong>. Now take your backend to the next level with real database persistence!
         </p>
 
-        <Link
-          href="/learn"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
-        >
-          Return to Course Dashboard 🏠
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/learn/nestjs/nj26-config"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
+          >
+            <span>Advance to Stage 3: Config &amp; Database (NJ-11) →</span>
+          </Link>
+          <Link
+            href="/learn/nestjs"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-text-strong bg-ds-bg-white hover:bg-ds-bg-weak border border-ds-stroke-soft transition-all shadow-sm"
+          >
+            NestJS Overview 🏠
+          </Link>
+        </div>
       </div>
 
       <QuickCheck

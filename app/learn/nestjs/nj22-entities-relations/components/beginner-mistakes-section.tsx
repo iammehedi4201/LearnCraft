@@ -8,61 +8,73 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 10 — TOP 5 BEGINNER PRISMA RELATION MISTAKES
+// MODULE 10 — TOP 5 BEGINNER DOMAIN MODELING MISTAKES
 // ═══════════════════════════════════════════════════════════
 
 export function BeginnerMistakesSection() {
   return (
-    <SectionContainer number={10} title="Top 5 Beginner Relation Mistakes">
+    <SectionContainer number={10} title="Top 5 Beginner Domain Modeling Mistakes">
       {/* ── Top Mistakes ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Common Relational Pitfalls"
-          description="Avoid these common mistakes when defining relationships and querying data."
+          number={10}
+          title="Common Domain & Entity Pitfalls in NestJS"
+          description="Avoid these architectural mistakes when modeling entities and relationships."
           color="primary"
         />
 
         <MistakeBox
-          title="Missing @unique on 1-to-1 Foreign Key"
-          description="Without @unique on userId, Prisma treats the relationship as a 1-to-Many."
-          wrong={`// ❌ Wrong: Missing @unique allows multiple profiles per user:
-model Profile {
-  id     Int  @id
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
-}`}
-          right={`// ✅ Correct: @unique guarantees exactly 1 profile per user:
-model Profile {
-  id     Int  @id
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
+          title="Anemic Domain Models (Public Fields with No Invariants)"
+          description="Treating entities as passive data structures leads to duplicated, scattered business logic in controllers."
+          wrong={`// ❌ Wrong: Public mutable fields with zero validation:
+export class AccountEntity {
+  public id: string;
+  public balance: number;
+}
+// Logic scattered in controllers:
+if (account.balance >= 100) account.balance -= 100;`}
+          right={`// ✅ Correct: Rich entity encapsulating business rules:
+export class AccountEntity {
+  constructor(public readonly id: string, private _balance: number) {}
+  get balance(): number { return this._balance; }
+  withdraw(amount: number): void {
+    if (amount <= 0) throw new Error("Amount must be positive");
+    if (this._balance < amount) throw new Error("Insufficient funds");
+    this._balance -= amount;
+  }
 }`}
         />
 
         <MistakeBox
-          title="Expecting Relational Fields Without include / select"
-          description="Prisma does not load relation fields by default to avoid slow automatic join penalties."
-          wrong={`// ❌ posts array is undefined:
-const user = await prisma.user.findUnique({ where: { id: 1 } });
-console.log(user.posts.length); // TypeError: Cannot read property 'length' of undefined`}
-          right={`// ✅ Eager-loads relational posts:
-const user = await prisma.user.findUnique({
-  where: { id: 1 },
-  include: { posts: true },
-});`}
+          title="Leaking Raw Entities Directly to HTTP Clients"
+          description="Returning internal domain entities can leak sensitive data (hashes, salt) or cause circular reference crashes."
+          wrong={`// ❌ Returning domain entity with sensitive fields directly:
+@Get(':id')
+getUser(@Param('id') id: string) {
+  return this.usersService.findById(id); // Exposes passwordHash!
+}`}
+          right={`// ✅ Map to a response DTO or use ClassSerializerInterceptor:
+@Get(':id')
+@UseInterceptors(ClassSerializerInterceptor)
+getUser(@Param('id') id: string): Promise<UserEntity> {
+  return this.usersService.findById(id); // @Exclude() strips passwordHash
+}`}
         />
 
         <MistakeBox
-          title="Deleting Parents with Orphaned Children (No Cascade)"
-          description="Deleting a User when foreign key constraints have no onDelete rule throws a Foreign Key Constraint Failed error."
-          wrong={`user User @relation(fields: [userId], references: [id]) // Fails when User is deleted`}
-          right={`user User @relation(fields: [userId], references: [id], onDelete: Cascade) // Auto-cleans children`}
+          title="Circular References in Bidirectional Entity Relations"
+          description="Nesting full parent and child objects inside each other causes JSON.stringify stack overflows."
+          wrong={`// ❌ Infinite circular loop:
+user.posts[0].author.posts[0].author... // JSON.stringify throws TypeError`}
+          right={`// ✅ Reference by ID or use unidirectional associations:
+export class PostEntity {
+  constructor(public readonly authorId: string) {} // Reference by ID!
+}`}
         />
 
         <QuickCheck
-          question="Why does user.posts return undefined if you don't provide 'include: { posts: true }'?"
-          answer="Because Prisma query engine avoids slow hidden database joins by default, returning only scalar columns unless explicitly instructed to include relations."
+          question="What is the difference between DTO validation and Domain Entity validation?"
+          answer="DTO validation (class-validator) verifies network syntax (e.g. isEmail, isNotEmpty), whereas Domain validation verifies business rules (e.g. account has sufficient funds, user is not banned)."
         />
       </div>
     </SectionContainer>

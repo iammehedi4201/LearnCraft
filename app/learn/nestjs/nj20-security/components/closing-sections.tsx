@@ -49,28 +49,36 @@ export function ClosingSections() {
 
       <Divider />
 
-      {/* ── Phase 04 Capstone Celebration ── */}
+      {/* ── Stage 05 Capstone Celebration ── */}
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 🏆 🔒</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Phase 04 (Authentication &amp; Security) Complete!
+          Stage 5 (Authentication &amp; Security) Complete!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          Outstanding work! You have completed all 4 lessons of Phase 04:
-          <strong> Custom Decorators (NJ-17)</strong>, <strong>JWT &amp; Passport Auth (NJ-18)</strong>, <strong>RBAC &amp; CASL (NJ-19)</strong>, and <strong>Security Hardening (NJ-20)</strong>!
+          Outstanding work! You have mastered end-to-end security:
+          <strong> Custom Decorators (NJ-21)</strong>, <strong>JWT &amp; Passport Auth (NJ-22)</strong>, <strong>RBAC Roles (NJ-23)</strong>, <strong>Serialization (NJ-24)</strong>, and <strong>Security Hardening (NJ-25)</strong>!
         </p>
 
-        <Link
-          href="/learn/nestjs"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
-        >
-          Return to NestJS Roadmap Hub 🏠
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/learn/nestjs/nj14-interceptors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
+          >
+            Advance to Stage 6: Interceptors &amp; RxJS (NJ-26) →
+          </Link>
+          <Link
+            href="/learn/nestjs"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-text-strong bg-ds-bg-white hover:bg-ds-bg-weak border border-ds-stroke-soft transition-all shadow-sm"
+          >
+            NestJS Overview 🏠
+          </Link>
+        </div>
       </div>
 
       <QuickCheck
-        question="What is the next phase in the NestJS curriculum?"
-        answer="Phase 05: Database Layer with Prisma ORM & PostgreSQL (NJ-21 to NJ-25) — models, migrations, relations, transactions, and repository patterns!"
+        question="What is the next stage in the NestJS curriculum?"
+        answer="Stage 6: Production Engineering & Performance (NJ-26 to NJ-30) — Interceptors, Swagger documentation, Pino logging, Redis caching, and File Uploads!"
       />
     </SectionContainer>
   );

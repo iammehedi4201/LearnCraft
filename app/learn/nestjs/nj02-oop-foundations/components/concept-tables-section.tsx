@@ -2,7 +2,7 @@ import { SectionContainer, SectionHeading, ComparisonTable, SummaryBox, Divider 
 
 export function ConceptTablesSection() {
   return (
-    <SectionContainer number={13} title="Concept Comparison Tables">
+    <SectionContainer number={9} title="Concept Comparison Tables">
 
       <div className="mb-10 p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
         <p className="text-sm text-ds-text-sub leading-relaxed">

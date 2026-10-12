@@ -10,50 +10,66 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 8 — COMPOSITE KEYS & COMPOUND INDEXES
+// MODULE 8 — VALUE OBJECTS VS DOMAIN ENTITIES
 // ═══════════════════════════════════════════════════════════
 
 export function CompositeKeysIndexesSection() {
   return (
-    <SectionContainer number={8} title="Composite Keys & Compound Indexes">
-      {/* ── 8.1 Indexes ── */}
+    <SectionContainer number={8} title="Value Objects vs Entities (Identity vs Value)">
+      {/* ── 8.1 Value Objects ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Multi-Column Constraints & Query Performance"
-          description="Accelerate queries and enforce unique pairs with @@id, @@unique, and @@index."
+          number={8}
+          title="Modeling Immutable Attributes as Value Objects"
+          description="How to differentiate between objects with distinct identity (Entities) and objects defined by their values."
           color="primary"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>⚡</span> Schema Index Attributes
+            <span>⚡</span> The Money Value Object Example
           </h4>
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            Not everything in your domain needs an <code>id</code>. An amount of money ($50 USD) has no identity; any $50 USD bill is equal to any other:
+          </p>
           <EnhancedCodeBlock
-            code={`model Article {
-  id        Int      @id @default(autoincrement())
-  authorId  Int
-  status    String   // "DRAFT", "PUBLISHED"
-  createdAt DateTime @default(now())
+            code={`export class Money {
+  constructor(
+    public readonly amountCents: number,
+    public readonly currency: "USD" | "EUR" | "GBP",
+  ) {
+    if (amountCents < 0) {
+      throw new Error("Money amount cannot be negative");
+    }
+  }
 
-  // ⭐ Compound Index: Speeds up queries like "WHERE authorId = 10 AND status = 'PUBLISHED'":
-  @@index([authorId, status])
+  add(other: Money): Money {
+    if (this.currency !== other.currency) {
+      throw new Error(\`Currency mismatch: \${this.currency} vs \${other.currency}\`);
+    }
+    return new Money(this.amountCents + other.amountCents, this.currency);
+  }
+
+  equals(other: Money): boolean {
+    return this.amountCents === other.amountCents && this.currency === other.currency;
+  }
 }
 
-model OrganizationMember {
-  orgId  Int
-  userId Int
-
-  // ⭐ Multi-column Unique Constraint (User can only join an org once):
-  @@unique([orgId, userId])
+// In your ProductEntity:
+export class ProductEntity {
+  constructor(
+    public readonly id: string, // ⭐ Entity has identity
+    public title: string,
+    public price: Money,        // ⭐ Price is an immutable Value Object
+  ) {}
 }`}
-            language="prisma"
+            language="typescript"
           />
         </WhyBox>
 
         <QuickCheck
-          question="Why are compound indexes (@@index([authorId, status])) important in large database tables?"
-          answer="They allow PostgreSQL to jump directly to the matching rows in milliseconds instead of scanning millions of rows sequentially."
+          question="What is the primary difference between a Domain Entity and a Value Object?"
+          answer="An Entity is defined by its unique identity (ID) and changes over time, while a Value Object is immutable and defined entirely by the equality of its attributes."
         />
       </div>
 

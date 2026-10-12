@@ -5,7 +5,7 @@ import { SectionContainer, TopicHeader, Divider, SummaryBox } from "./shared-com
 
 export function RealWorldExamplesSection() {
   return (
-    <SectionContainer number={9} title="Real-World OOP Examples">
+    <SectionContainer number={11} title="Real-World OOP Examples">
 
       <div className="mb-10 p-5 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
         <p className="text-sm text-ds-text-sub leading-relaxed">

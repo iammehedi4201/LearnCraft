@@ -2,7 +2,7 @@ import { SectionContainer, MistakeBox, SummaryBox } from "./shared-components";
 
 export function BeginnerMistakesSection() {
   return (
-    <SectionContainer number={11} title="Common Beginner Mistakes">
+    <SectionContainer number={8} title="Common Beginner Mistakes">
 
       <div className="mb-10 p-5 rounded-2xl bg-red-500/5 border border-red-500/10">
         <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">

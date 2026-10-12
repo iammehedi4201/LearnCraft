@@ -10,57 +10,75 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 3 — 1-TO-MANY RELATIONS (USER & POSTS)
+// MODULE 3 — 1-TO-MANY DOMAIN COLLECTIONS (USER & POSTS)
 // ═══════════════════════════════════════════════════════════
 
 export function OneToManySection() {
   return (
-    <SectionContainer number={3} title="1-to-Many Relations (Authors & Posts)">
+    <SectionContainer number={3} title="1-to-Many Collections (Authors & Posts)">
       {/* ── 3.1 One-to-Many ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="The Most Common Database Relationship"
-          description="Model parent-child records like Users having multiple Posts or Orders."
+          number={3}
+          title="Encapsulating Domain Collections in NestJS"
+          description="How parent entities manage child collections and enforce business rules on child additions."
           color="emerald"
         />
 
         <WhyBox>
           <h4 className="font-bold text-sm text-ds-text-strong mb-2 flex items-center gap-2">
-            <span>📝</span> Author &amp; Posts Schema
+            <span>📝</span> The Author &amp; Posts Aggregate
           </h4>
+          <p className="text-xs sm:text-sm text-ds-text-sub leading-relaxed mb-3">
+            In clean architecture, child entities should be manipulated through the parent aggregate root rather than directly mutated in controllers:
+          </p>
           <EnhancedCodeBlock
-            code={`model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  posts Post[] // ⭐ Array type indicates 1-to-Many relation
+            code={`export class PostEntity {
+  constructor(
+    public readonly id: string,
+    public title: string,
+    public content: string,
+    public readonly authorId: string,
+    public isPublished: boolean = false,
+  ) {}
+
+  publish(): void {
+    if (this.content.length < 50) {
+      throw new Error("Post must have at least 50 characters to publish");
+    }
+    this.isPublished = true;
+  }
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean  @default(false)
+export class AuthorEntity {
+  private _posts: PostEntity[] = [];
 
-  // Foreign Key column:
-  authorId  Int
-  author    User     @relation(fields: [authorId], references: [id])
-}
+  constructor(
+    public readonly id: string,
+    public readonly name: string,
+    public isVerified: boolean = false,
+  ) {}
 
-// In your NestJS Service (Fetching user WITH their posts):
-async getUserWithPosts(userId: number) {
-  return await this.prisma.user.findUnique({
-    where: { id: userId },
-    include: { posts: true }, // ⭐ Eager-loads relational posts array!
-  });
+  get posts(): readonly PostEntity[] {
+    return Object.freeze([...this._posts]);
+  }
+
+  createPost(id: string, title: string, content: string): PostEntity {
+    if (!this.isVerified && this._posts.length >= 3) {
+      throw new Error("Unverified authors cannot create more than 3 posts");
+    }
+    const newPost = new PostEntity(id, title, content, this.id);
+    this._posts.push(newPost);
+    return newPost;
+  }
 }`}
-            language="prisma"
+            language="typescript"
           />
         </WhyBox>
 
         <QuickCheck
-          question="How do you tell Prisma to load related posts when fetching a user in TypeScript?"
-          answer="Pass 'include: { posts: true }' inside the findUnique or findMany query."
+          question="Why return 'readonly PostEntity[]' with Object.freeze in 'get posts()'?"
+          answer="It prevents external callers from directly pushing or splicing elements into the internal array, bypassing business rules like post limits."
         />
       </div>
 

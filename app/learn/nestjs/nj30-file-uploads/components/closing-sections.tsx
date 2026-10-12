@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 ☁️ 🚀</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-30 Completed!
+          Stage 6 Production Engineering Complete!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You have mastered Multer file handling, AWS S3 integration, and Pre-Signed direct uploads! Next, learn how to accelerate database reads by 100x using Redis in-memory caching in NJ-31!
+          You have mastered production observability, Redis caching, Swagger documentation, and file handling! Now let&apos;s enter Stage 7 to test and containerize your application for deployment!
         </p>
 
         <Link
-          href="/learn/nestjs/nj31-caching"
+          href="/learn/nestjs/nj28-testing"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-31: Caching &amp; Redis Integration →
+          Proceed to NJ-31: Automated Testing with Jest →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the next topic in Phase 06?"
-        answer="NJ-31: Caching & Redis Integration (@nestjs/cache-manager, cache-manager-redis-yet, CacheInterceptor, CacheKey, CacheTTL, and Redis Cache Invalidation)."
+        question="What is the next topic after File Uploads?"
+        answer="NJ-31: Automated Testing (unit testing services with Jest mocks, Prisma testing, and Supertest E2E)."
       />
     </SectionContainer>
   );

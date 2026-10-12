@@ -53,23 +53,23 @@ export function ClosingSections() {
       <div className="p-8 bg-gradient-to-br from-ds-feature-lighter to-ds-success-lighter border-2 border-ds-feature-base rounded-3xl shadow-sm text-center">
         <span className="text-5xl block mb-3">🎓 🔍 🛡️</span>
         <h3 className="text-2xl font-black text-ds-text-strong mb-2 font-display">
-          Module NJ-12 Completed!
+          Module NJ-16 Completed!
         </h3>
         <p className="text-sm text-ds-text-sub max-w-2xl mx-auto leading-relaxed mb-6">
-          You have mastered data transformation, parameter sanitization, and pipe chaining in NestJS. Next, learn how to protect routes with authentication and role-based access control.
+          You have mastered data transformation, parameter parsing, and pipe validation in NestJS. Next, learn how Exception Filters catch and format errors with custom schemas when validation fails in NJ-17!
         </p>
 
         <Link
-          href="/learn/nestjs/nj13-guards"
+          href="/learn/nestjs/nj15-exception-filters"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-sm text-ds-static-white bg-ds-feature-base hover:bg-ds-feature-dark transition-all shadow-md shadow-ds-feature-base/20"
         >
-          Proceed to NJ-13: Guards &amp; Authorization →
+          Proceed to NJ-17: Exception Filters &amp; Errors →
         </Link>
       </div>
 
       <QuickCheck
-        question="What is the next lesson in Phase 03?"
-        answer="NJ-13: Guards & Authorization (CanActivate, ExecutionContext, Reflector, and Role-Based Access Control)."
+        question="What is the next topic after Pipes?"
+        answer="NJ-17: Exception Filters (catching pipe validation errors, custom HttpException classes, and standardized JSON error envelopes)."
       />
     </SectionContainer>
   );

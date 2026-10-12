@@ -79,14 +79,25 @@ blockquote:not(.rcp-root *),
 /* ── Panel Positioning & Animations ── */
 .rcp-root {
   position: fixed;
-  bottom: 28px;
-  right: 28px;
+  bottom: 24px;
+  right: 24px;
   z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .rcp-root {
+    bottom: 16px;
+    right: 16px;
+    gap: 8px;
+  }
 }
 
 .rcp-panel {
   position: absolute;
-  bottom: 64px;
+  bottom: 56px;
   right: 0;
   width: 340px;
   transform-origin: bottom right;

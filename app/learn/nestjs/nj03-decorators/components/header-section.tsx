@@ -51,70 +51,57 @@ export function HeaderSection() {
 
         <div className="space-y-6 mb-8">
           <div>
-            <SectionHeading>❌ Step 1: Look at the messy way (Without Decorators)</SectionHeading>
+            <SectionHeading>❌ Step 1: The messy way (Manual extra code)</SectionHeading>
             <p className="text-xs text-ds-text-sub mb-3">
-              Notice how <code>createUser</code> is bloated with timer and log code that has nothing to do with actually creating a user:
+              We have to manually write log statements inside our business method:
             </p>
             <Playground
               runtime="typescript"
               language="TypeScript"
-              starterCode={`// ─── ❌ WITHOUT DECORATORS (Repetitive Extra Code) ───
-class ManualUserService {
+              starterCode={`// ─── ❌ WITHOUT DECORATOR (Extra Code Inside Method) ───
+class UserService {
   createUser(name: string) {
-    console.log("LOG: Started createUser for:", name); // repetitive extra work
-    const start = Date.now();                         // repetitive extra work
-    
-    // The actual core task:
-    const user = { id: 1, name };
-    
-    console.log("LOG: Finished in " + (Date.now() - start) + "ms"); // repetitive extra work
-    return user;
+    console.log("➡️ [LOG] Running: createUser"); // Extra manual code!
+    return { name };
   }
 }
 
-const service = new ManualUserService();
+const service = new UserService();
 service.createUser("Mehedi");`}
-              height="300px"
+              height="200px"
             />
           </div>
 
           <div>
-            <SectionHeading>✨ Step 2: Look at the clean way (With a Decorator)</SectionHeading>
+            <SectionHeading>✨ Step 2: The clean way (With a Decorator)</SectionHeading>
             <p className="text-xs text-ds-text-sub mb-3">
-              With a decorator, the method only has its actual job. The <code>@Log</code> tag automatically handles the logging and timing around it:
+              We write <code>@Log</code> once. It automatically logs before running the method, keeping our method 100% clean:
             </p>
             <Playground
               runtime="typescript"
               language="TypeScript"
-              starterCode={`// ─── ✨ WITH DECORATOR (Clean & Reusable) ───
+              starterCode={`// ─── ✨ WITH DECORATOR (Simple & Clean) ───
 // A decorator is just a function that wraps another function!
-function Log(target: any, methodName: string, descriptor: PropertyDescriptor) {
-  const originalMethod = descriptor.value; // Save the original function
 
-  // Replace it with our wrapped version:
-  descriptor.value = function (...args: any[]) {
-    console.log("LOG: Started " + methodName + " with:", ...args);
-    const start = Date.now();
+function Log(target: any, key: string, descriptor: PropertyDescriptor) {
+  const original = descriptor.value; // 1. Save the original function
 
-    // Run the real method
-    const result = originalMethod.apply(this, args);
-
-    console.log("LOG: Finished " + methodName + " in " + (Date.now() - start) + "ms");
-    return result;
+  descriptor.value = function (name: string) {
+    console.log("➡️ [LOG] Running:", key); // 2. Extra log behavior
+    return original.call(this, name);      // 3. Run original function
   };
 }
 
 class UserService {
   @Log
   createUser(name: string) {
-    // Clean and simple business logic!
-    return { id: 1, name };
+    return { name }; // ✨ Only pure, clean business logic!
   }
 }
 
-const cleanService = new UserService();
-cleanService.createUser("Mehedi");`}
-              height="380px"
+const service = new UserService();
+service.createUser("Mehedi");`}
+              height="280px"
             />
           </div>
         </div>

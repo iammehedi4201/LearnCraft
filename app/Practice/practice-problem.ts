@@ -1,80 +1,34 @@
-// // ─── 1. Entity / Model ───
-// class User {
-//   constructor(public id: number, public name: string, public email: string) {}
-// }
+function Log(
+  _target: any,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+): PropertyDescriptor {
+  const originalMethod = descriptor.value;
 
-// // ─── 2. Repository (Data Access) ───
-// class UserRepository {
-//   private users: User[] = [];
+  // Replace the original method with a wrapped version
+  descriptor.value = function (...args: any[]) {
+    console.log(`🚀 [LOG] Calling "${propertyKey}" with arguments:`, args);
 
-//   save(user: User): User {
-//     this.users.push(user);
-//     return user;
-//   }
+    // Call the original method with the original context and arguments
+    const result = originalMethod.apply(this, args);
 
-//   findById(id: number): User | null {
-//     return this.users.find(u => u.id === id) || null;
-//   }
+    console.log(`✅ [LOG] "${propertyKey}" returned:`, result);
+    return result;
+  };
 
-//   findAll(): User[] {
-//     return [...this.users];
-//   }
-// }
+  return descriptor;
+}
 
-// // ─── 3. Service (Business Logic) ───
-// class UserService {
-//   private userRepo: UserRepository;
+class UserService {
+  @Log
+  createUser(name: string) {
+    return { id: 1, name };
+  }
+}
 
-//   constructor() {
-//     this.userRepo = new UserRepository();
-//   }
+// --- Usage Test ---
+const service = new UserService();
+service.createUser("Mehedi");
 
-//   createUser(name: string, email: string): User {
-//     if (!email.includes("@")) {
-//       throw new Error("Invalid email format!");
-//     }
-//     const user = new User(Date.now(), name, email);
-//     return this.userRepo.save(user);
-//   }
 
-//   getUser(id: number): User {
-//     const user = this.userRepo.findById(id);
-//     if (!user) throw new Error("User with ID " + id + " not found!");
-//     return user;
-//   }
 
-//   getAllUsers(): User[] {
-//     return this.userRepo.findAll();
-//   }
-// }
-
-// // ─── 4. Controller (HTTP Handler) ───
-// class UserController {
-//   private userService: UserService;
-
-//   constructor() {
-//     this.userService = new UserService();
-//   }
-
-//   handleCreateUser(name: string, email: string) {
-//     try {
-//       const user = this.userService.createUser(name, email);
-//       console.log("✅ 201 Created: " + user.name + " (" + user.email + ")");
-//     } catch (err: any) {
-//       console.log("❌ 400 Bad Request: " + err.message);
-//     }
-//   }
-
-//   handleListUsers() {
-//     const users = this.userService.getAllUsers();
-//     console.log("📋 200 OK: Total " + users.length + " users");
-//     users.forEach(u => console.log("   • " + u.name + " <" + u.email + ">"));
-//   }
-// }
-
-// // Simulate API Requests
-// const controller = new UserController();
-// controller.handleCreateUser("Mehedi", "mehedi@test.com");
-// controller.handleCreateUser("Alice", "alice@test.com");
-// controller.handleCreateUser("InvalidUser", "bad-email");
-// controller.handleListUsers();

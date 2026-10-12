@@ -7,7 +7,7 @@ import { Playground } from "@/components/playground/Playground";
 
 export function FinalProjectSection() {
   return (
-    <SectionContainer number={16} title="Final OOP Project">
+    <SectionContainer number={17} title="Final OOP Project">
 
       <div className="mb-10 p-6 rounded-2xl bg-ds-bg-weak border border-ds-stroke-soft shadow-sm">
         <div className="flex items-center gap-3 mb-3">

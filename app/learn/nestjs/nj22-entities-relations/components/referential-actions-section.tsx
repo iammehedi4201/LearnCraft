@@ -11,52 +11,68 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 6 — CASCADE DELETES & REFERENTIAL ACTIONS
+// MODULE 6 — DOMAIN LIFECYCLE & CASCADING INVARIANTS
 // ═══════════════════════════════════════════════════════════
 
 export function ReferentialActionsSection() {
   return (
-    <SectionContainer number={6} title="Cascade Deletes & Referential Actions">
-      {/* ── 6.1 Referential Actions ── */}
+    <SectionContainer number={6} title="Domain Invariants & Cascading Lifecycle Rules">
+      {/* ── 6.1 Domain Lifecycle Actions ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="Controlling What Happens When Parents are Deleted"
-          description="Configure onDelete: Cascade, SetNull, and Restrict in @relation."
+          number={6}
+          title="Protecting Business Rules on Parent Entity Removal"
+          description="How NestJS domain services enforce business restrictions before allowing entity deletion."
           color="primary"
         />
 
         <EnhancedCodeBlock
-          code={`model User {
-  id      Int      @id @default(autoincrement())
-  posts   Post[]
-  profile Profile?
-}
+          code={`@Injectable()
+export class UsersService {
+  constructor(
+    private readonly usersRepo: UsersRepository,
+    private readonly ordersRepo: OrdersRepository,
+    private readonly auditRepo: AuditRepository,
+  ) {}
 
-model Profile {
-  id     Int  @id @default(autoincrement())
-  userId Int  @unique
-  // ⭐ If User is deleted, their Profile is deleted automatically:
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  async deleteUser(userId: string): Promise<void> {
+    const user = await this.usersRepo.findById(userId);
+    if (!user) {
+      throw new NotFoundException(\`User \${userId} not found\`);
+    }
+
+    // ⭐ 1. Restrict deletion if active business operations exist:
+    const activeOrders = await this.ordersRepo.findActiveByUserId(userId);
+    if (activeOrders.length > 0) {
+      throw new BadRequestException("Cannot delete user with active in-flight orders");
+    }
+
+    // ⭐ 2. Cascade soft-deletion or cleanup on child entities:
+    await this.ordersRepo.archiveHistoricalOrders(userId);
+
+    // ⭐ 3. Remove user & record audit trail
+    await this.usersRepo.delete(userId);
+    await this.auditRepo.record("USER_DELETED", { userId });
+  }
 }`}
-          language="prisma"
+          language="typescript"
         />
 
         <ComparisonTable
-          headers={["onDelete Action", "Database Behavior", "Ideal Use Case"]}
+          headers={["Lifecycle Strategy", "Domain Behavior", "Ideal Use Case"]}
           rows={[
-            ["Cascade", "Automatically deletes all child records when parent is deleted", "User profile, Post comments, Order items"],
-            ["SetNull", "Sets foreign key column to NULL on child records", "Audit logs, Author re-assignment on deleted staff"],
-            ["Restrict", "Blocks deletion of parent if any child records still exist", "Categories with existing products, Bank accounts with transactions"],
-            ["NoAction", "Throws database foreign key constraint error", "Strict relational integrity checks"],
+            ["Cascading Delete", "Child entities are pruned along with the parent aggregate", "User temporary session tokens, draft notes"],
+            ["Restrict Deletion", "Rejects deletion if any active dependent entities exist", "Accounts with positive balances, products in cart"],
+            ["Soft Deletion", "Sets 'isArchived: true' or 'deletedAt: Date' without dropping data", "Customer accounts, invoices, compliance records"],
+            ["Orphan Reassignment", "Transfers child entities to a system default administrator", "Department tickets when a manager leaves"],
           ]}
         />
 
-        <EasyRuleCard rule="Use onDelete: Cascade for tightly coupled child data (profiles, comments); use Restrict or SetNull for financial records and audit histories." />
+        <EasyRuleCard rule="In clean architecture, business constraints (like preventing deletion when active orders exist) belong in NestJS domain services, not just as raw database triggers." />
 
         <QuickCheck
-          question="What happens when you delete a User whose related posts have 'onDelete: Cascade' configured?"
-          answer="All posts authored by that user are automatically deleted from the database in the same transaction."
+          question="Why should critical deletion checks be performed in NestJS domain services rather than relying solely on database foreign keys?"
+          answer="Domain services can return clear HTTP exception messages (e.g. 400 Bad Request with a clear reason), invoke audit loggers, and verify higher-level business rules before touching storage."
         />
       </div>
 

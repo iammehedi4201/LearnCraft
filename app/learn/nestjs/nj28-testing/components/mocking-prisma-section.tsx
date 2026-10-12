@@ -10,68 +10,81 @@ import {
 } from "./shared-components";
 
 // ═══════════════════════════════════════════════════════════
-// MODULE 4 — DEEP MOCKING PRISMA WITH JEST-MOCK-EXTENDED
+// MODULE 4 — MOCKING CUSTOM PROVIDERS & REPOSITORIES
 // ═══════════════════════════════════════════════════════════
 
 export function MockingPrismaSection() {
   return (
-    <SectionContainer number={4} title="Deep Mocking Prisma with jest-mock-extended">
-      {/* ── 4.1 Prisma Mocking ── */}
+    <SectionContainer number={4} title="Mocking Custom Providers & Repositories with useValue">
+      {/* ── 4.1 Provider Mocking ── */}
       <div className="mb-16">
         <TopicHeader
-          number={1}
-          title="The Gold Standard for Prisma Unit Tests"
-          description="Automatically generate 100% typed mocks for every Prisma model method with mockDeep."
+          number={4}
+          title="Isolating Services with useValue Mocks"
+          description="How to replace repository tokens and external dependencies with typed jest.fn() mocks inside Test.createTestingModule."
           color="rose"
         />
 
         <EnhancedCodeBlock
-          code={`# npm install jest-mock-extended --save-dev
+          code={`import { Test, TestingModule } from '@nestjs/testing';
+import { UsersService } from './users.service';
+import { USERS_REPOSITORY, IUsersRepository } from './users.repository.interface';
+import { UserEntity } from './user.entity';
 
-// test/prisma-mock.ts
-import { PrismaClient } from '@prisma/client';
-import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
+describe('UsersService Unit Tests', () => {
+  let service: UsersService;
+  let mockRepo: Partial<Record<keyof IUsersRepository, jest.Mock>>;
 
-export type MockPrisma = DeepMockProxy<PrismaClient>;
-export const createPrismaMock = (): MockPrisma => mockDeep<PrismaClient>();
+  beforeEach(async () => {
+    mockRepo = {
+      findById: jest.fn(),
+      findByEmail: jest.fn(),
+      create: jest.fn(),
+      delete: jest.fn(),
+    };
 
-// In your spec file:
-let prismaMock: MockPrisma;
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        UsersService,
+        {
+          provide: USERS_REPOSITORY,
+          useValue: mockRepo, // ⭐ Swaps real repository with in-memory mock
+        },
+      ],
+    }).compile();
 
-beforeEach(async () => {
-  prismaMock = createPrismaMock();
+    service = module.get<UsersService>(UsersService);
+  });
 
-  const module = await Test.createTestingModule({
-    providers: [
-      UsersService,
-      { provide: PrismaService, useValue: prismaMock },
-    ],
-  }).compile();
-});
+  it('should find user by id when record exists', async () => {
+    const fakeUser = new UserEntity('u-1', 'alex@learncraft.dev', 'alex');
+    mockRepo.findById!.mockResolvedValue(fakeUser);
 
-it('creates user successfully', async () => {
-  const user = { id: 10, email: 'bob@test.com', name: 'Bob' };
-  prismaMock.user.create.mockResolvedValue(user as any);
+    const result = await service.getUserById('u-1');
 
-  const result = await service.create({ email: 'bob@test.com', name: 'Bob' });
-  expect(result.id).toBe(10);
+    expect(result).toBe(fakeUser);
+    expect(mockRepo.findById).toHaveBeenCalledWith('u-1');
+    expect(mockRepo.findById).toHaveBeenCalledTimes(1);
+  });
 });`}
           language="typescript"
         />
 
         <PredictOutputBox
-          code={`prismaMock.user.findMany.mockResolvedValue([
-  { id: 1, name: 'Alice' },
-  { id: 2, name: 'Bob' }
-] as any);
-const users = await service.findAll();
-expect(users).toHaveLength(2);`}
-          answer={`Predicted Test Result:\n\nPASS! ✓\n\n'prismaMock.user.findMany' instantly returns the 2 mocked objects in 1 millisecond without touching any PostgreSQL database!`}
+          code={`// What happens if we test findUserById with a non-existent ID?
+mockRepo.findById!.mockResolvedValue(null);
+await expect(service.getUserById('missing-99')).rejects.toThrow(NotFoundException);`}
+          answer={`Predicted Test Result: PASS ✅
+
+The mock returns null, triggering the service's invariant:
+if (!user) throw new NotFoundException('User missing-99 not found');
+
+The test passes cleanly in ~3ms without requiring a live database or network connection!`}
         />
 
         <QuickCheck
-          question="What problem does 'jest-mock-extended' solve when mocking Prisma in NestJS?"
-          answer="It creates a deep, fully type-safe mock proxy of all Prisma models and methods (create, findUnique, update, delete, count) without having to manually define hundreds of jest.fn() stubs."
+          question="Why is useValue preferred over monkey-patching methods on live service instances?"
+          answer="useValue leverages NestJS's native dependency injection container to swap tokens cleanly per test suite, ensuring total test isolation without side-effects."
         />
       </div>
 

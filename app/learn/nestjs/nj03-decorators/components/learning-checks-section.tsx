@@ -14,7 +14,7 @@ import {
 
 export function LearningChecksSection() {
   return (
-    <SectionContainer number={18} title="Learning Checks & Quizzes">
+    <SectionContainer number={14} title="Learning Checks & Quizzes">
       {/* ── Predict Output ── */}
       <div className="mb-16">
         <TopicHeader
