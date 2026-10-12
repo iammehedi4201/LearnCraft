@@ -201,7 +201,15 @@ export function Hero() {
     if (tabsRef.current) {
       const activeBtn = tabsRef.current.children[activeTab] as HTMLElement | undefined;
       if (activeBtn) {
-        activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        // Only scroll the tabs strip horizontally; NEVER scroll the document window
+        const container = tabsRef.current;
+        const btnLeft = activeBtn.offsetLeft;
+        const btnWidth = activeBtn.offsetWidth;
+        const containerWidth = container.offsetWidth;
+        container.scrollTo({
+          left: btnLeft - containerWidth / 2 + btnWidth / 2,
+          behavior: 'smooth',
+        });
       }
     }
   }, [activeTab]);
@@ -258,7 +266,7 @@ export function Hero() {
                 </div>
                 <div 
                   ref={tabsRef}
-                  className="flex gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5 max-w-[calc(100%-80px)] select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                  className="relative flex gap-2 overflow-x-auto no-scrollbar scroll-smooth py-0.5 max-w-[calc(100%-80px)] select-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
                 >
                   {snippets.map((s, i) => (
                     <button
