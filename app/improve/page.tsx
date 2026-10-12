@@ -18,7 +18,7 @@ export default function ImprovePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-slate-100">
+    <div className="min-h-screen bg-ds-bg-weak text-slate-100">
       <Nav />
 
       <main className="mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8">

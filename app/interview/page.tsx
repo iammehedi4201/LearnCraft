@@ -10,6 +10,7 @@ import {
 } from "@/lib/interview-progress";
 import { OverallInterviewStats, TrackInterviewStats } from "@/types/interview";
 import { TopicCard } from "@/components/interview/TopicCard";
+import { InteractiveGrid } from "@/components/interactive-grid";
 
 export default function InterviewHubPage() {
   const [tracks, setTracks] = useState<InterviewTrackInfo[]>([]);
@@ -71,7 +72,7 @@ export default function InterviewHubPage() {
   }, [tracks, searchQuery, filterDueOnly, trackStatsMap]);
 
   return (
-    <div className="min-h-screen bg-[#08090C] text-neutral-100 py-8 px-4 sm:px-6 lg:px-8">
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-neutral-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Top Breadcrumb & Tag */}
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -95,7 +96,7 @@ export default function InterviewHubPage() {
         </div>
 
         {/* Hero Header */}
-        <div className="relative rounded-3xl bg-neutral-900/80 border border-white/[0.08] p-6 sm:p-10 overflow-hidden backdrop-blur-xl">
+        <div className="relative rounded-3xl bg-[#0E121B] border border-white/[0.08] p-6 sm:p-10 overflow-hidden backdrop-blur-xl">
           {/* Subtle Ambient Backlight */}
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -173,7 +174,7 @@ export default function InterviewHubPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search topics (e.g. React, Event Loop, Indexes)..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-neutral-900 border border-white/[0.08] focus:border-purple-500/50 text-xs sm:text-sm text-white placeholder-neutral-500 focus:outline-none transition-colors"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0E121B] border border-white/[0.08] focus:border-purple-500/50 text-xs sm:text-sm text-white placeholder-neutral-500 focus:outline-none transition-colors"
             />
           </div>
 
@@ -198,7 +199,7 @@ export default function InterviewHubPage() {
 
         {/* Topics Grid */}
         {filteredTracks.length === 0 ? (
-          <div className="p-12 text-center rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
+          <div className="p-12 text-center rounded-2xl bg-[#0E121B] border border-white/[0.06] space-y-3">
             <span className="text-4xl block">🔍</span>
             <h3 className="text-lg font-bold text-white">No topics match your filter</h3>
             <p className="text-xs text-neutral-400 max-w-md mx-auto">
@@ -240,6 +241,6 @@ export default function InterviewHubPage() {
           </div>
         )}
       </div>
-    </div>
+    </InteractiveGrid>
   );
 }

@@ -12,6 +12,7 @@ import {
 import { InterviewQuestion, QuestionProgress, InterviewGrade } from "@/types/interview";
 import { Flashcard } from "@/components/interview/Flashcard";
 import { TechIcon } from "@/components/roadmap/TechIcon";
+import { InteractiveGrid } from "@/components/interactive-grid";
 
 interface PracticePageProps {
   params: Promise<{ track: string }>;
@@ -60,8 +61,8 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
 
   if (!questions || (questions.length === 0 && TOPICS_META[trackKey])) {
     return (
-      <div className="min-h-screen bg-[#08090C] text-neutral-100 flex items-center justify-center p-4">
-        <div className="p-8 rounded-2xl bg-neutral-900 border border-white/[0.08] text-center max-w-md space-y-4">
+      <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-neutral-100 flex items-center justify-center p-4">
+        <div className="p-8 rounded-2xl bg-[#0E121B] border border-white/[0.08] text-center max-w-md space-y-4">
           <span className="text-4xl">⏳</span>
           <h2 className="text-xl font-bold text-white">Questions Coming Soon</h2>
           <p className="text-xs text-neutral-400">
@@ -75,7 +76,7 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
             ← Back to Interview Hub
           </Link>
         </div>
-      </div>
+      </InteractiveGrid>
     );
   }
 
@@ -121,7 +122,7 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#08090C] text-neutral-100 py-6 px-4 sm:px-6 lg:px-8">
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-neutral-100 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Navigation Bar */}
         <div className="flex items-center justify-between gap-4">
@@ -153,7 +154,7 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
         </div>
 
         {/* Progress & Track Header */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-neutral-900/60 border border-white/[0.06] backdrop-blur-md space-y-3">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] backdrop-blur-md space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-lg bg-white/[0.05] border border-white/[0.08] flex items-center justify-center p-1.5 flex-shrink-0 shadow-sm">
@@ -197,7 +198,7 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
           />
         ) : (
           /* Session Completion Screen */
-          <div className="p-8 sm:p-12 rounded-3xl bg-neutral-900/90 border border-white/[0.08] shadow-2xl backdrop-blur-xl text-center space-y-6 animate-fadeIn">
+          <div className="p-8 sm:p-12 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-2xl backdrop-blur-xl text-center space-y-6 animate-fadeIn">
             <div className="w-16 h-16 rounded-2xl bg-purple-600 flex items-center justify-center text-3xl mx-auto shadow-xl shadow-purple-600/20">
               🎉
             </div>
@@ -267,6 +268,6 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
           </div>
         )}
       </div>
-    </div>
+    </InteractiveGrid>
   );
 }

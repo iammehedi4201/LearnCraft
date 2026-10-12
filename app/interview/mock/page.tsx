@@ -15,6 +15,7 @@ import {
 import { Flashcard } from "@/components/interview/Flashcard";
 import { Scorecard } from "@/components/interview/Scorecard";
 import { TechIcon } from "@/components/roadmap/TechIcon";
+import { InteractiveGrid } from "@/components/interactive-grid";
 
 type MockPhase = "config" | "active" | "summary";
 
@@ -175,7 +176,7 @@ export default function MockInterviewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#08090C] text-neutral-100 py-8 px-4 sm:px-6 lg:px-8">
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-neutral-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Navigation Breadcrumb */}
         <div className="flex items-center justify-between gap-4">
@@ -201,7 +202,7 @@ export default function MockInterviewPage() {
 
         {/* ─── PHASE 1: CONFIGURATION ─── */}
         {phase === "config" && (
-          <div className="p-6 sm:p-10 rounded-3xl bg-neutral-900/80 border border-white/[0.08] backdrop-blur-xl space-y-8 animate-fadeIn">
+          <div className="p-6 sm:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] backdrop-blur-xl space-y-8 animate-fadeIn">
             {/* Header */}
             <div className="space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-xs font-semibold">
@@ -339,7 +340,7 @@ export default function MockInterviewPage() {
         {phase === "active" && sessionQuestions.length > 0 && (
           <div className="space-y-6">
             {/* Live Progress & Timer Header */}
-            <div className="p-4 rounded-2xl bg-neutral-900/80 border border-white/[0.08] backdrop-blur-md flex items-center justify-between gap-4">
+            <div className="p-4 rounded-2xl bg-[#0E121B] border border-white/[0.08] backdrop-blur-md flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <span className="text-xs font-mono font-bold text-purple-300">
                   Question {currentIndex + 1} of {sessionQuestions.length}
@@ -387,6 +388,6 @@ export default function MockInterviewPage() {
           <Scorecard result={mockResult} onRestart={resetConfig} />
         )}
       </div>
-    </div>
+    </InteractiveGrid>
   );
 }

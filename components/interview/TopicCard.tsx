@@ -12,7 +12,7 @@ interface TopicCardProps {
 
 export function TopicCard({ track, stats }: TopicCardProps) {
   return (
-    <div className="group relative rounded-2xl bg-neutral-900/70 border border-white/[0.08] hover:border-purple-500/40 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 flex flex-col justify-between backdrop-blur-sm">
+    <div className="group relative rounded-2xl bg-[#0E121B] border border-white/[0.08] hover:border-purple-500/40 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/10 flex flex-col justify-between backdrop-blur-sm">
       {/* Glow Hover Effect */}
       <div className="absolute -inset-px rounded-2xl bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 

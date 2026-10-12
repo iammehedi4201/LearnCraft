@@ -9,6 +9,7 @@ import { getAllQuestionProgress } from "@/lib/interview-progress";
 import { InterviewQuestion, QuestionProgress } from "@/types/interview";
 import { MarkdownRenderer } from "@/components/revision/MarkdownRenderer";
 import { TechIcon } from "@/components/roadmap/TechIcon";
+import { InteractiveGrid } from "@/components/interactive-grid";
 
 interface BrowsePageProps {
   params: Promise<{ track: string }>;
@@ -113,7 +114,7 @@ export default function TrackBrowsePage({ params }: BrowsePageProps) {
   const reviewedCount = questions.filter((q) => progressMap[q.id]?.timesReviewed).length;
 
   return (
-    <div className="min-h-screen bg-[#08090C] text-neutral-100 py-8 px-4 sm:px-6 lg:px-8">
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-neutral-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-6">
         {/* Breadcrumb Navigation */}
         <div className="flex items-center justify-between gap-4">
@@ -138,7 +139,7 @@ export default function TrackBrowsePage({ params }: BrowsePageProps) {
         </div>
 
         {/* ─── SECTION 1: HERO HEADER ─── */}
-        <div className="relative rounded-3xl bg-neutral-900/60 border border-white/[0.08] p-6 sm:p-8 backdrop-blur-xl overflow-hidden shadow-2xl">
+        <div className="relative rounded-3xl bg-[#0E121B] border border-white/[0.08] p-6 sm:p-8 backdrop-blur-xl overflow-hidden shadow-2xl">
           {/* Subtle Ambient Glow */}
           <div className="absolute -right-20 -top-20 w-72 h-72 bg-purple-600/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -left-20 -bottom-20 w-72 h-72 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -198,7 +199,7 @@ export default function TrackBrowsePage({ params }: BrowsePageProps) {
         </div>
 
         {/* ─── SECTION 2: SEARCH & FILTER COMMAND BAR ─── */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-neutral-900/80 border border-white/[0.08] backdrop-blur-xl space-y-4 shadow-xl">
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] backdrop-blur-xl space-y-4 shadow-xl">
           {/* Top Controls: Search Bar + Category & Type Dropdowns */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             {/* Search Input */}
@@ -442,8 +443,8 @@ export default function TrackBrowsePage({ params }: BrowsePageProps) {
                   key={q.id}
                   className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
                     isExpanded
-                      ? "bg-neutral-900/95 border-purple-500/40 shadow-xl shadow-purple-950/20"
-                      : "bg-neutral-900/60 border-white/[0.06] hover:border-white/[0.12] hover:bg-neutral-900/80"
+                      ? "bg-[#0E121B] border-purple-500/40 shadow-xl shadow-purple-950/20"
+                      : "bg-[#0E121B] border-white/[0.06] hover:border-white/[0.12] hover:bg-[#121622]"
                   }`}
                 >
                   {/* Card Collapsed Header */}
@@ -587,6 +588,6 @@ export default function TrackBrowsePage({ params }: BrowsePageProps) {
           )}
         </div>
       </div>
-    </div>
+    </InteractiveGrid>
   );
 }

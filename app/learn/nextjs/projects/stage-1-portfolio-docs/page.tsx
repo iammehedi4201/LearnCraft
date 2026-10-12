@@ -420,7 +420,7 @@ export default function Stage1PortfolioDocsProjectPage(): JSX.Element {
   };
 
   return (
-    <InteractiveGrid className="min-h-screen bg-[#0A0D14] text-white selection:bg-purple-500/20 font-sans">
+    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-white selection:bg-purple-500/20 font-sans">
       <Nav />
 
       <main className="max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-24">

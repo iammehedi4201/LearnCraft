@@ -138,7 +138,7 @@ export function Flashcard({
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col gap-4">
       {/* Question Card Container */}
-      <div className="relative rounded-2xl bg-neutral-900/90 border border-white/[0.08] shadow-2xl backdrop-blur-xl overflow-hidden transition-all duration-300 hover:border-purple-500/30">
+      <div className="relative rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-2xl backdrop-blur-xl overflow-hidden transition-all duration-300 hover:border-purple-500/30">
         {/* Subtle Top Border Accent */}
         <div className="h-0.5 w-full bg-purple-500/40" />
 
