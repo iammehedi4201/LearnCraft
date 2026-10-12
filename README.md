@@ -12,9 +12,81 @@
 
 **High-impact engineering education platform featuring 12 technology tracks, local-first zero-latency synchronization, interactive sandboxes, and SuperMemo SM-2 spaced repetition interview prep.**
 
-[Features](#-key-features) • [Curriculum Tracks](#-curriculum-tracks) • [System Architecture](#-system-architecture) • [Getting Started](#-getting-started) • [Performance Engineering](#-performance-engineering) • [Testing](#-testing--verification)
+[Demo & Visuals](#-live-platform-tour--walkthrough) • [Key Features](#-key-features) • [Curriculum Tracks](#-curriculum-tracks) • [System Architecture](#-system-architecture) • [Getting Started](#-getting-started) • [Performance Engineering](#-performance-engineering) • [Testing](#-testing--verification)
 
 </div>
+
+---
+
+## 🎬 Live Platform Tour & Walkthrough
+
+Here is a full walkthrough demonstrating LearnCraft's local-first reactivity, real-time curriculum navigation, SuperMemo SM-2 interview drills, multi-block notes, and live TypeScript sandboxes:
+
+<div align="center">
+  <img src="./docs/assets/learncraft_demo_tour.webp" alt="LearnCraft Platform Walkthrough" width="100%" style="border-radius: 8px; border: 1px solid #334155;" />
+</div>
+
+---
+
+## 📸 Platform Gallery & Screenshots
+
+Explore the key interfaces across LearnCraft:
+
+### 1. Curriculum Hub & Roadmaps
+<table>
+  <tr>
+    <td width="50%">
+      <b>Curriculum Hub (12 Tracks)</b><br/>
+      <img src="./docs/assets/learn_hub.png" alt="Curriculum Hub" width="100%" />
+    </td>
+    <td width="50%">
+      <b>Engineering Roadmaps & Skill Trees</b><br/>
+      <img src="./docs/assets/roadmaps_hub.png" alt="Engineering Roadmaps" width="100%" />
+    </td>
+  </tr>
+</table>
+
+### 2. Spaced Repetition Interview Prep & Practice Session
+<table>
+  <tr>
+    <td width="50%">
+      <b>Interview Prep Hub (14 Topics)</b><br/>
+      <img src="./docs/assets/interview_prep_hub.png" alt="Interview Prep Hub" width="100%" />
+    </td>
+    <td width="50%">
+      <b>Interactive SM-2 Recall Session</b><br/>
+      <img src="./docs/assets/interview_session.png" alt="Interactive SM-2 Recall Session" width="100%" />
+    </td>
+  </tr>
+</table>
+
+### 3. Study Notebook & Spaced Review Center
+<table>
+  <tr>
+    <td width="50%">
+      <b>Unified Study Notes & Code Bookmarks</b><br/>
+      <img src="./docs/assets/notes_bookmarks.png" alt="Study Notes and Code Bookmarks" width="100%" />
+    </td>
+    <td width="50%">
+      <b>Active Recall Flashcard Center</b><br/>
+      <img src="./docs/assets/revision_center.png" alt="Active Recall Revision Center" width="100%" />
+    </td>
+  </tr>
+</table>
+
+### 4. Interactive Lesson & Live TypeScript Code Sandbox
+<table>
+  <tr>
+    <td width="50%">
+      <b>Interactive Capstone Code Sandbox</b><br/>
+      <img src="./docs/assets/code_sandbox.png" alt="Interactive Capstone Code Sandbox" width="100%" />
+    </td>
+    <td width="50%">
+      <b>7-Part Pedagogical Lesson View</b><br/>
+      <img src="./docs/assets/interactive_lesson.png" alt="Pedagogical Lesson View" width="100%" />
+    </td>
+  </tr>
+</table>
 
 ---
 
