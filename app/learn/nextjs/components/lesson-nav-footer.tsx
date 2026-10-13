@@ -103,6 +103,17 @@ export function LessonNavFooter({
         )}
       </div>
 
+      {/* Middle: Assessment Quiz */}
+      <div className="hidden sm:block">
+        <Link
+          href={`/quiz/nextjs/${currentSlug}`}
+          className="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 hover:text-white border border-purple-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
+        >
+          <span>🎯</span>
+          <span>Module Quiz (+30 XP)</span>
+        </Link>
+      </div>
+
       {/* Right Side: Next Lesson */}
       <div>
         {nextLesson ? (

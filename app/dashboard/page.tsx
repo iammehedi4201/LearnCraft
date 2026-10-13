@@ -20,6 +20,7 @@ import { TrackProgressDonut, TrackProgressData } from "@/components/dashboard/Tr
 import { ContinueLearningCard, NextLessonRecommendation } from "@/components/dashboard/ContinueLearningCard";
 import { InterviewReadinessWidget } from "@/components/dashboard/InterviewReadinessWidget";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
+import { QuizHistoryWidget } from "@/components/dashboard/QuizHistoryWidget";
 
 import { TRACK_METAS } from "@/lib/dashboard-metadata";
 
@@ -252,6 +253,9 @@ export default function DashboardPage() {
         {interviewStats && (
           <InterviewReadinessWidget stats={interviewStats} />
         )}
+
+        {/* Module Assessments & Quiz History */}
+        <QuizHistoryWidget />
 
         {/* Quick Nav Bar */}
         <div className="p-4 rounded-2xl bg-[#0E121B] border border-white/[0.08] flex flex-wrap items-center justify-between gap-4 text-xs">

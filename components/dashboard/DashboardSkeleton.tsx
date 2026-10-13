@@ -147,6 +147,22 @@ export function DashboardSkeleton(): JSX.Element {
             ))}
           </div>
         </div>
+
+        {/* 6. Quiz History Skeleton */}
+        <div className="rounded-3xl bg-[#0E121B] border border-white/[0.08] p-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1.5">
+              <div className="h-5 w-52 rounded bg-white/[0.1]" />
+              <div className="h-3.5 w-64 rounded bg-white/[0.04]" />
+            </div>
+            <div className="h-7 w-28 rounded-xl bg-white/[0.05]" />
+          </div>
+          <div className="space-y-3 pt-1">
+            {[1, 2].map((i) => (
+              <div key={i} className="h-16 w-full rounded-2xl bg-white/[0.02] border border-white/[0.04]" />
+            ))}
+          </div>
+        </div>
       </main>
 
       <Footer />
