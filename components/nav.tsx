@@ -479,47 +479,6 @@ function NavContent(): JSX.Element {
                     </div>
                   )}
                 </div>
-
-                <Link
-                  href="/dashboard"
-                  prefetch={true}
-                  className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
-                >
-                  <span>📊</span>
-                  <span>Dashboard</span>
-                </Link>
-
-                <Link
-                  href="/notes"
-                  prefetch={true}
-                  className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
-                >
-                  <span>📝</span>
-                  <span>Notes</span>
-                  {notesCount > 0 && (
-                    <span className="px-1.5 py-0.5 rounded-full bg-purple-500/15 border border-purple-500/30 text-purple-300 text-[10px] font-mono font-bold">
-                      {notesCount}
-                    </span>
-                  )}
-                </Link>
-
-                <Link
-                  href="/interview"
-                  prefetch={true}
-                  className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
-                >
-                  <span>🎯</span>
-                  <span>Interview</span>
-                </Link>
-
-                <Link
-                  href="/roadmaps"
-                  prefetch={true}
-                  className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
-                >
-                  <span>🗺️</span>
-                  <span>Roadmaps</span>
-                </Link>
               </div>
             </div>
 
@@ -852,21 +811,6 @@ function UserNavMenu({
 
           {/* Navigation Links */}
           <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => {
-                setIsOpen(false);
-                window.dispatchEvent(new CustomEvent("learncraft-open-command-palette"));
-              }}
-              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors text-left"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="text-purple-400">🔍</span>
-                <span>Command Palette</span>
-              </div>
-              <span className="text-[10px] text-slate-400 font-mono">⌘K</span>
-            </button>
-
             <Link
               href="/dashboard"
               prefetch={true}
@@ -923,18 +867,6 @@ function UserNavMenu({
               <div className="flex items-center gap-2.5">
                 <span className="text-purple-400">🎯</span>
                 <span>Interview Preparation</span>
-              </div>
-            </Link>
-
-            <Link
-              href="/roadmaps"
-              prefetch={true}
-              onClick={() => setIsOpen(false)}
-              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
-            >
-              <div className="flex items-center gap-2.5">
-                <span className="text-purple-400">🗺️</span>
-                <span>Skill Roadmaps</span>
               </div>
             </Link>
           </div>
