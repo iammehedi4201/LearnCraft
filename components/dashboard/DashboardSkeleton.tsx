@@ -67,9 +67,9 @@ export function DashboardSkeleton(): JSX.Element {
         </div>
 
         {/* 3. Charts Row: XP Progression (2 cols) + Track Mastery Donut (1 col) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           {/* XP Line Chart Skeleton */}
-          <div className="lg:col-span-2 rounded-3xl bg-[#0E121B] border border-white/[0.08] p-6 space-y-6">
+          <div className="lg:col-span-2 rounded-2xl bg-[#0E121B] border border-white/[0.08] p-5 sm:p-6 space-y-6 flex flex-col justify-between h-full">
             <div className="flex items-center justify-between">
               <div className="space-y-1.5">
                 <div className="h-5 w-44 rounded bg-white/[0.1]" />
@@ -90,7 +90,7 @@ export function DashboardSkeleton(): JSX.Element {
           </div>
 
           {/* Donut Chart Skeleton */}
-          <div className="lg:col-span-1 rounded-3xl bg-[#0E121B] border border-white/[0.08] p-6 space-y-6">
+          <div className="lg:col-span-1 rounded-2xl bg-[#0E121B] border border-white/[0.08] p-5 sm:p-6 space-y-5 flex flex-col justify-between h-full">
             <div className="space-y-1.5">
               <div className="h-5 w-36 rounded bg-white/[0.1]" />
               <div className="h-3.5 w-48 rounded bg-white/[0.04]" />

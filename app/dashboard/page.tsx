@@ -191,16 +191,21 @@ export default function DashboardPage() {
         <ContinueLearningCard recommendation={recommendation} />
 
         {/* Charts Row: Custom SVG XP Progression + Track Mastery Donut */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+          <div className="lg:col-span-2 flex flex-col">
             <XPProgressionChart
               xpHistory={gameState.recentXPLogs || []}
+              dailyActivity={gameState.dailyHistory || {}}
               totalXP={gameState.totalXP}
+              className="h-full"
             />
           </div>
 
-          <div className="lg:col-span-1">
-            <TrackProgressDonut tracks={trackProgressList} />
+          <div className="lg:col-span-1 flex flex-col">
+            <TrackProgressDonut
+              tracks={trackProgressList}
+              className="h-full"
+            />
           </div>
         </div>
 

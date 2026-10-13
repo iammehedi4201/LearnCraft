@@ -1,16 +1,23 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { XPLogEntry } from "@/types/gamification";
+import { XPLogEntry, DailyActivityRecord } from "@/types/gamification";
 
 interface XPProgressionChartProps {
-  xpHistory: XPLogEntry[];
+  xpHistory?: XPLogEntry[];
   totalXP: number;
+  dailyActivity?: Record<string, DailyActivityRecord>;
+  className?: string;
 }
 
 type TimeRange = "7d" | "30d" | "all";
 
-export function XPProgressionChart({ xpHistory = [], totalXP = 0 }: XPProgressionChartProps) {
+export function XPProgressionChart({
+  xpHistory = [],
+  totalXP = 0,
+  dailyActivity = {},
+  className = "",
+}: XPProgressionChartProps) {
   const [range, setRange] = useState<TimeRange>("30d");
   const [hoveredPoint, setHoveredPoint] = useState<{
     date: string;
@@ -24,39 +31,77 @@ export function XPProgressionChart({ xpHistory = [], totalXP = 0 }: XPProgressio
   const chartData = useMemo(() => {
     const days = range === "7d" ? 7 : range === "30d" ? 30 : 60;
     const now = new Date();
-    const result: { date: string; label: string; xp: number; cumulative: number }[] = [];
 
-    // Map existing history by date YYYY-MM-DD
+    // Map daily earned XP from dailyActivity and xpHistory
     const xpByDay: Record<string, number> = {};
-    for (const entry of xpHistory) {
-      const d = new Date(entry.timestamp).toISOString().split("T")[0];
-      xpByDay[d] = (xpByDay[d] || 0) + entry.amount;
+    if (dailyActivity) {
+      for (const [dateStr, rec] of Object.entries(dailyActivity)) {
+        if (rec && typeof rec.xpEarned === "number" && rec.xpEarned > 0) {
+          xpByDay[dateStr] = (xpByDay[dateStr] || 0) + rec.xpEarned;
+        }
+      }
+    }
+    if (xpHistory && Array.isArray(xpHistory)) {
+      for (const entry of xpHistory) {
+        if (!entry || !entry.timestamp) continue;
+        const d = entry.timestamp.split("T")[0];
+        if (!dailyActivity?.[d]) {
+          xpByDay[d] = (xpByDay[d] || 0) + (entry.amount || 0);
+        }
+      }
     }
 
-    // Build chronological days
-    let runningCumulative = Math.max(0, totalXP - 120); // base fallback
+    // Build chronological date list
+    const dates: Date[] = [];
     for (let i = days - 1; i >= 0; i--) {
-      const targetDate = new Date(now);
-      targetDate.setDate(targetDate.getDate() - i);
-      const dateStr = targetDate.toISOString().split("T")[0];
-      const dailyEarned = xpByDay[dateStr] || (i === 0 ? 35 : i % 3 === 0 ? 25 : i % 5 === 0 ? 40 : 0);
-      runningCumulative += dailyEarned;
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      dates.push(d);
+    }
 
-      result.push({
+    const result: { date: string; label: string; xp: number; cumulative: number }[] = new Array(days);
+
+    // Compute cumulative backwards from totalXP so it is strictly monotonic and never plummets
+    let currentCumulative = Math.max(0, totalXP);
+    for (let i = days - 1; i >= 0; i--) {
+      const targetDate = dates[i];
+      const dateStr = targetDate.toISOString().split("T")[0];
+      const earned = xpByDay[dateStr] || 0;
+
+      result[i] = {
         date: dateStr,
         label: targetDate.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-        xp: dailyEarned,
-        cumulative: runningCumulative,
-      });
+        xp: earned,
+        cumulative: currentCumulative,
+      };
+
+      currentCumulative = Math.max(0, currentCumulative - earned);
     }
 
-    // Adjust max cumulative to match totalXP if current
-    if (result.length > 0 && totalXP > 0) {
-      result[result.length - 1].cumulative = totalXP;
+    // If totalXP > 0 but NO individual daily activity records exist in storage yet,
+    // show a clean, realistic ramp across recent active streak days up to totalXP
+    const hasAnyLoggedXP = Object.values(xpByDay).some((v) => v > 0);
+    if (!hasAnyLoggedXP && totalXP > 0) {
+      const activeWindow = Math.min(days, 5);
+      const startIdx = days - activeWindow;
+      const step = totalXP / activeWindow;
+
+      for (let i = 0; i < days; i++) {
+        if (i < startIdx) {
+          result[i].cumulative = 0;
+          result[i].xp = 0;
+        } else {
+          const stepCount = i - startIdx + 1;
+          const cumVal = i === days - 1 ? totalXP : Math.round(stepCount * step);
+          const prevVal = i === startIdx ? 0 : result[i - 1].cumulative;
+          result[i].cumulative = cumVal;
+          result[i].xp = Math.max(0, cumVal - prevVal);
+        }
+      }
     }
 
     return result;
-  }, [range, xpHistory, totalXP]);
+  }, [range, xpHistory, dailyActivity, totalXP]);
 
   // Chart dimensions
   const width = 640;
@@ -108,7 +153,7 @@ export function XPProgressionChart({ xpHistory = [], totalXP = 0 }: XPProgressio
   }, [chartData, maxVal, minVal]);
 
   return (
-    <div className="rounded-2xl bg-[#0E121B] border border-white/[0.08] p-5 sm:p-6 space-y-4">
+    <div className={`rounded-2xl bg-[#0E121B] border border-white/[0.08] p-5 sm:p-6 flex flex-col justify-between h-full space-y-4 ${className}`}>
       {/* Chart Header & Range Toggles */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
@@ -141,7 +186,7 @@ export function XPProgressionChart({ xpHistory = [], totalXP = 0 }: XPProgressio
       </div>
 
       {/* Custom SVG Chart */}
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full overflow-hidden flex-1 flex flex-col justify-end pt-2">
         <svg
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto overflow-visible select-none"
