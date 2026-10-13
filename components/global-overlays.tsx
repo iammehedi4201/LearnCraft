@@ -48,6 +48,14 @@ const LessonImprovementOverlay = dynamic(
   { ssr: false }
 );
 
+const CommandPalette = dynamic(
+  () =>
+    import("@/components/command-palette/CommandPalette").then(
+      (mod) => mod.CommandPalette
+    ),
+  { ssr: false }
+);
+
 export function GlobalOverlays(): JSX.Element {
   return (
     <>
@@ -57,6 +65,7 @@ export function GlobalOverlays(): JSX.Element {
       <ExistingHighlightPopover />
       <LessonAnnotationLayer />
       <LessonImprovementOverlay />
+      <CommandPalette />
     </>
   );
 }

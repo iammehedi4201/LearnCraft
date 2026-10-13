@@ -481,6 +481,15 @@ function NavContent(): JSX.Element {
                 </div>
 
                 <Link
+                  href="/dashboard"
+                  prefetch={true}
+                  className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
+                >
+                  <span>📊</span>
+                  <span>Dashboard</span>
+                </Link>
+
+                <Link
                   href="/notes"
                   prefetch={true}
                   className="text-sm font-semibold text-ds-text-sub hover:text-ds-text-strong transition-colors flex items-center gap-1.5"
@@ -516,6 +525,29 @@ function NavContent(): JSX.Element {
 
             {/* Right Side Actions — Clean & Streamlined */}
             <div className="flex items-center gap-2 sm:gap-3">
+              {/* Global Search Palette Trigger */}
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent("learncraft-open-command-palette"))}
+                className="flex items-center gap-2 px-3 py-1.5 text-xs text-ds-text-sub hover:text-ds-text-strong bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/40 rounded-xl transition-all duration-200 cursor-pointer shadow-sm group"
+                aria-label="Open search command palette"
+                title="Search lessons, tracks, roadmaps, notes (Cmd+K / Ctrl+K)"
+              >
+                <svg
+                  className="w-3.5 h-3.5 text-purple-400 group-hover:text-purple-300 transition-colors"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="hidden md:inline font-medium text-slate-300 group-hover:text-white">Search</span>
+                <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-slate-400 bg-white/[0.06] border border-white/[0.1] rounded-md">
+                  <span>⌘K</span>
+                </kbd>
+              </button>
+
               {/* Daily Streak & XP Widget */}
               <StreakXPPill />
 
@@ -611,6 +643,34 @@ function NavContent(): JSX.Element {
 
               {/* Mobile Revision & Roadmaps link */}
               <div className="pt-2 border-t border-white/[0.06] flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    window.dispatchEvent(new CustomEvent("learncraft-open-command-palette"));
+                  }}
+                  className="w-full flex items-center justify-between p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-white text-xs font-bold"
+                >
+                  <div className="flex items-center gap-2">
+                    <span>🔍</span>
+                    <span>Search & Command Palette</span>
+                  </div>
+                  <span className="text-[10px] font-mono text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded">⌘K</span>
+                </button>
+
+                <Link
+                  href="/dashboard"
+                  prefetch={true}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-white text-xs font-bold"
+                >
+                  <div className="flex items-center gap-2">
+                    <span>📊</span>
+                    <span>Analytics Dashboard</span>
+                  </div>
+                  <span className="text-purple-400">→</span>
+                </Link>
+
                 <Link
                   href="/notes"
                   prefetch={true}
@@ -792,6 +852,34 @@ function UserNavMenu({
 
           {/* Navigation Links */}
           <div className="space-y-0.5">
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                window.dispatchEvent(new CustomEvent("learncraft-open-command-palette"));
+              }}
+              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors text-left"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-purple-400">🔍</span>
+                <span>Command Palette</span>
+              </div>
+              <span className="text-[10px] text-slate-400 font-mono">⌘K</span>
+            </button>
+
+            <Link
+              href="/dashboard"
+              prefetch={true}
+              onClick={() => setIsOpen(false)}
+              className="w-full flex items-center justify-between p-2 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/[0.04] transition-colors"
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-purple-400">📊</span>
+                <span>Analytics Dashboard</span>
+              </div>
+              <span className="text-[10px] text-purple-400 font-mono font-bold">New</span>
+            </Link>
+
             <Link
               href="/notes"
               prefetch={true}
