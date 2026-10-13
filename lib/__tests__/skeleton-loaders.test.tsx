@@ -104,7 +104,8 @@ describe("Page-Specific Skeleton Loaders", () => {
   it("renders TopicCurriculumSkeleton matching /learn/[topic] layout", () => {
     const html = renderToStaticMarkup(<TopicCurriculumSkeleton />);
     expect(html).toContain("max-w-5xl lg:max-w-6xl");
-    expect(html).toContain("border-l-2 border-white/[0.06]");
+    expect(html).toContain("border-[#7c3aed]/40");
+    expect(html).toContain("border-dashed");
   });
 
   it("renders LessonSkeleton matching 2-column sidebar and content layout", () => {

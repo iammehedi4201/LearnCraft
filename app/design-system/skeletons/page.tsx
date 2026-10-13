@@ -13,7 +13,7 @@ import { TrackBrowseSkeleton } from "@/components/interview/TrackBrowseSkeleton"
 import { MockInterviewSkeleton } from "@/components/interview/MockInterviewSkeleton";
 import { RoadmapsSkeleton } from "@/components/roadmap/RoadmapsSkeleton";
 
-export type SkeletonType =
+type SkeletonType =
   | "lesson"
   | "flashcards-revision"
   | "flashcards-interview"
@@ -25,7 +25,7 @@ export type SkeletonType =
   | "mock-interview"
   | "roadmaps";
 
-export const SKELETON_ITEMS: {
+const SKELETON_ITEMS: {
   id: SkeletonType;
   label: string;
   tag: string;
@@ -64,7 +64,7 @@ export const SKELETON_ITEMS: {
     label: "Topic Curriculum",
     tag: "Curriculum Hub",
     description:
-      "Course header, 4 metrics pills, prerequisite checklist card, resume step hero card, and multi-phase progression timeline.",
+      "Exact 1:1 match with CurriculumPath: Course header, Prerequisites checklist card, Current step spotlight, Current phase with lesson rows, Roadmap toggle, and Capstone card.",
   },
   {
     id: "notes",
