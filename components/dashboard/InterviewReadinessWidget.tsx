@@ -86,7 +86,7 @@ export function InterviewReadinessWidget({ stats }: InterviewReadinessWidgetProp
             </span>
           </div>
           <Link
-            href="/interview/react"
+            href="/interview"
             className="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-black text-xs font-bold transition-all text-center"
           >
             Review Flashcards

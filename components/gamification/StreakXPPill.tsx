@@ -111,7 +111,7 @@ export function StreakXPPill(): JSX.Element {
             <div className="flex items-center justify-between text-xs">
               <span className="text-slate-400 text-[11px]">Level Progress</span>
               <span className="font-mono text-xs font-bold text-slate-300">
-                {levelProgressPercent}% ({xpToNextLevel} XP to next rank)
+                {levelProgressPercent}% ({xpToNextLevel === 0 && currentLevel.level < 5 ? 1 : xpToNextLevel} XP to next rank)
               </span>
             </div>
             <div className="h-2 w-full bg-white/[0.06] rounded-full overflow-hidden">

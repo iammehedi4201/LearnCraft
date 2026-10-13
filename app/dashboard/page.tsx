@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Nav } from "@/components/nav";
+import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
 import {
   getGamificationState,
@@ -20,22 +21,7 @@ import { ContinueLearningCard, NextLessonRecommendation } from "@/components/das
 import { InterviewReadinessWidget } from "@/components/dashboard/InterviewReadinessWidget";
 import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
 
-// 14 Core Curriculum Tracks metadata
-const TRACK_METAS: { key: string; title: string; totalLessons: number; color: string }[] = [
-  { key: "nextjs", title: "Next.js", totalLessons: 22, color: "#8C71F6" },
-  { key: "react", title: "React.js", totalLessons: 24, color: "#38BDF8" },
-  { key: "typescript", title: "TypeScript", totalLessons: 21, color: "#3B82F6" },
-  { key: "javascript", title: "JavaScript", totalLessons: 25, color: "#F59E0B" },
-  { key: "nodejs", title: "Node.js", totalLessons: 24, color: "#10B981" },
-  { key: "express", title: "Express.js", totalLessons: 28, color: "#6366F1" },
-  { key: "nestjs", title: "NestJS", totalLessons: 32, color: "#E11D48" },
-  { key: "postgresql", title: "PostgreSQL", totalLessons: 29, color: "#0EA5E9" },
-  { key: "mongodb", title: "MongoDB", totalLessons: 26, color: "#10B981" },
-  { key: "redux", title: "Redux", totalLessons: 26, color: "#7C3AED" },
-  { key: "prisma", title: "Prisma", totalLessons: 27, color: "#14B8A6" },
-  { key: "system-design", title: "System Design", totalLessons: 28, color: "#EC4899" },
-  { key: "oop", title: "OOP", totalLessons: 20, color: "#F97316" },
-];
+import { TRACK_METAS } from "@/lib/dashboard-metadata";
 
 export default function DashboardPage() {
   const [gameState, setGameState] = useState<UserGamificationState | null>(null);
@@ -56,20 +42,61 @@ export default function DashboardPage() {
     // 3. Scan local progress across tracks
     const allProgress = getLocalProgressList();
     const completedModuleSet = new Set(
-      allProgress.filter((p) => p.completed).map((p) => p.module)
+      allProgress.filter((p) => p.completed).map((p) => p.module.toLowerCase())
     );
 
-    // Compute track percentages
+    // Compute track percentages from all storage engines
     const tracksData: TrackProgressData[] = TRACK_METAS.map((track) => {
-      // Find completed lessons matching track slug prefix (e.g. nx01, rc01, ts01)
-      let count = 0;
-      for (const mod of completedModuleSet) {
-        if (mod.startsWith(track.key) || mod.includes(track.key)) {
-          count++;
+      const completedSet = new Set<string>();
+
+      if (typeof window !== "undefined") {
+        // A. Check curriculum-path unified store: learncraft_progress_${track.key}
+        try {
+          const raw1 = localStorage.getItem(`learncraft_progress_${track.key}`);
+          if (raw1) {
+            const p1 = JSON.parse(raw1);
+            if (Array.isArray(p1.completedLessonIds)) {
+              p1.completedLessonIds.forEach((id: string) => completedSet.add(id.toLowerCase()));
+            }
+          }
+        } catch {}
+
+        // B. Check track-specific progress store: learncraft_${track.key}_progress
+        try {
+          const raw2 = localStorage.getItem(`learncraft_${track.key}_progress`);
+          if (raw2) {
+            const p2 = JSON.parse(raw2);
+            if (Array.isArray(p2.completedLessons)) {
+              p2.completedLessons.forEach((id: string) => completedSet.add(id.toLowerCase()));
+            }
+          }
+        } catch {}
+
+        // C. Check legacy nestjs progress store
+        if (track.key === "nestjs") {
+          try {
+            const rawNest = localStorage.getItem("learncraft_nestjs_global_progress");
+            if (rawNest) {
+              const pNest = JSON.parse(rawNest);
+              if (Array.isArray(pNest.completedLessons)) {
+                pNest.completedLessons.forEach((id: string) => completedSet.add(id.toLowerCase()));
+              }
+            }
+          } catch {}
         }
       }
-      // Demo fallback if fresh install so dashboard is visually rich
-      const completedLessons = Math.min(count, track.totalLessons);
+
+      // D. Check progress-sync modules
+      for (const mod of completedModuleSet) {
+        const matchesPrefix = track.prefixes.some(
+          (pfx) => mod.startsWith(pfx) || mod.includes(pfx)
+        );
+        if (matchesPrefix) {
+          completedSet.add(mod);
+        }
+      }
+
+      const completedLessons = Math.min(completedSet.size, track.totalLessons);
       const percent = Math.round((completedLessons / track.totalLessons) * 100);
 
       return {
@@ -84,20 +111,25 @@ export default function DashboardPage() {
     setTrackProgressList(tracksData);
 
     // 4. Recommendation for Next Lesson
-    // Default to Next.js Step 1 or whichever has partial progress
-    const activeTrack = tracksData.find((t) => t.completedLessons > 0 && t.percent < 100) || tracksData[0];
+    // Pick active in-progress track or default to Next.js
+    const activeTrackMeta =
+      TRACK_METAS.find((tm) => {
+        const tData = tracksData.find((td) => td.trackKey === tm.key);
+        return tData && tData.completedLessons > 0 && tData.percent < 100;
+      }) || TRACK_METAS[0];
+
+    const activeTrackData = tracksData.find((t) => t.trackKey === activeTrackMeta.key) || tracksData[0];
+
     setRecommendation({
-      trackKey: activeTrack.trackKey,
-      trackTitle: activeTrack.title,
-      lessonId: `${activeTrack.trackKey}-01`,
-      lessonTitle: activeTrack.trackKey === "nextjs"
-        ? "The App Router Architecture"
-        : `${activeTrack.title} Core Architecture & Foundations`,
-      phaseName: "App Router & Foundations",
+      trackKey: activeTrackMeta.key,
+      trackTitle: activeTrackMeta.title,
+      lessonId: `${activeTrackMeta.key}-01`,
+      lessonTitle: activeTrackMeta.defaultLessonTitle,
+      phaseName: activeTrackMeta.defaultPhaseName,
       phaseNumber: 1,
       minutes: 20,
-      href: `/learn/${activeTrack.trackKey}`,
-      progressPercent: activeTrack.percent,
+      href: `/learn/${activeTrackMeta.key}`,
+      progressPercent: activeTrackData.percent,
     });
 
     setIsLoading(false);
@@ -179,7 +211,7 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="flex justify-between text-[11px] text-neutral-400 font-mono">
-                  <span>{xpToNextLevel} XP to Next Tier</span>
+                  <span>{xpToNextLevel === 0 && levelInfo.level < 5 ? 1 : xpToNextLevel} XP to Next Tier</span>
                   <span>{Math.round(levelProgressPercent)}%</span>
                 </div>
               </div>
@@ -250,18 +282,9 @@ export default function DashboardPage() {
             <span>→</span>
           </Link>
         </div>
-
-        {/* Inline Footer */}
-        <footer className="pt-6 pb-12 border-t border-white/[0.06] text-center text-xs text-neutral-500 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© 2026 LearnCraft. Open-source mastery for modern full-stack engineering.</p>
-          <div className="flex items-center gap-4">
-            <Link href="/learn" className="hover:text-white transition-colors">Curriculum</Link>
-            <Link href="/interview" className="hover:text-white transition-colors">Interviews</Link>
-            <Link href="/roadmaps" className="hover:text-white transition-colors">Roadmaps</Link>
-            <Link href="/notes" className="hover:text-white transition-colors">Notes</Link>
-          </div>
-        </footer>
       </main>
+
+      <Footer />
     </InteractiveGrid>
   );
 }

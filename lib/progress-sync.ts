@@ -45,6 +45,28 @@ export function getLocalProgressList(): ModuleProgress[] {
               completed: isCompleted,
               score: data.score ?? null,
             });
+
+            // Also register individual completed lesson IDs if course-level progress object was stored
+            if (Array.isArray(data.completedLessonIds)) {
+              for (const lId of data.completedLessonIds) {
+                if (typeof lId === "string" && !results.some((r) => r.module === lId)) {
+                  results.push({
+                    module: lId,
+                    completed: true,
+                  });
+                }
+              }
+            }
+            if (Array.isArray(data.completedLessons)) {
+              for (const lId of data.completedLessons) {
+                if (typeof lId === "string" && !results.some((r) => r.module === lId)) {
+                  results.push({
+                    module: lId,
+                    completed: true,
+                  });
+                }
+              }
+            }
           } catch {
             // If raw boolean or string was stored
             results.push({

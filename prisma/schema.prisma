@@ -21,6 +21,7 @@ model User {
   updatedAt DateTime @updatedAt
   
   progress      Progress[]
+  quizAttempts  QuizAttempt[]
 }
 
 model Account {
@@ -125,3 +126,29 @@ model InterviewQuestionRecord {
   @@index([difficulty])
   @@map("interview_questions")
 }
+
+model QuizAttempt {
+  id             String   @id @default(cuid())
+  userId         String
+  quizId         String   // e.g. "quiz-nextjs-nx01"
+  trackKey       String   // e.g. "nextjs"
+  lessonSlug     String   // e.g. "nx01-app-router"
+  lessonTitle    String
+  score          Int      // percentage score, 0 to 100
+  totalQuestions Int
+  correctAnswers Int
+  xpEarned       Int      @default(0)
+  xpSpentOnHints Int      @default(0)
+  hintsUsed      String[] @default([])
+  answers        Json?    // Detailed user answers, questions, evaluations
+  completedAt    DateTime @default(now())
+  createdAt      DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, trackKey])
+  @@index([userId, lessonSlug])
+  @@index([userId, completedAt])
+  @@map("quiz_attempts")
+}
+

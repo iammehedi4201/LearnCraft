@@ -1,6 +1,7 @@
 "use client";
 
 import { Nav } from "@/components/nav";
+import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
 
 export function DashboardSkeleton(): JSX.Element {
@@ -147,6 +148,8 @@ export function DashboardSkeleton(): JSX.Element {
           </div>
         </div>
       </main>
+
+      <Footer />
     </InteractiveGrid>
   );
 }

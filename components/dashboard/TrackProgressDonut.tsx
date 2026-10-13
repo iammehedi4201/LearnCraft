@@ -65,7 +65,7 @@ export function TrackProgressDonut({ tracks = [], className = "" }: TrackProgres
           </h3>
         </div>
         <p className="text-xs text-neutral-400 mt-0.5">
-          {totalCompleted} of {totalAllLessons} total lessons mastered across 14 tracks
+          {totalCompleted} of {totalAllLessons} total lessons mastered across {tracks.length} tracks
         </p>
       </div>
 
@@ -165,7 +165,7 @@ export function TrackProgressDonut({ tracks = [], className = "" }: TrackProgres
 
       {/* Footer link */}
       <div className="pt-2 border-t border-white/[0.04] flex items-center justify-between text-xs">
-        <span className="text-neutral-400 text-[11px]">Structured across 14 full-stack tracks</span>
+        <span className="text-neutral-400 text-[11px]">Structured across {tracks.length} full-stack tracks</span>
         <Link
           href="/learn"
           className="text-purple-400 hover:text-purple-300 font-semibold text-[11px] flex items-center gap-1 transition-colors"
