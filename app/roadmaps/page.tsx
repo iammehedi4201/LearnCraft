@@ -149,9 +149,11 @@ function RoadmapsContent() {
   );
 }
 
+import { RoadmapsSkeleton } from "@/components/roadmap/RoadmapsSkeleton";
+
 export default function RoadmapsPage() {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<RoadmapsSkeleton />}>
       <RoadmapsContent />
     </Suspense>
   );

@@ -293,7 +293,17 @@ const SEED_DEMO_NOTE: UserNote = {
 export default function NotesPage(): JSX.Element {
   const [selectedTrack, setSelectedTrack] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [notes, setNotes] = useState<UserNote[]>([]);
+  const [notes, setNotes] = useState<UserNote[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = getLocalNotes();
+        if (cached.length > 0) return cached;
+      } catch {
+        // fallback
+      }
+    }
+    return [];
+  });
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Dropdown states

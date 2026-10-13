@@ -14,6 +14,8 @@ import { Flashcard } from "@/components/interview/Flashcard";
 import { TechIcon } from "@/components/roadmap/TechIcon";
 import { InteractiveGrid } from "@/components/interactive-grid";
 
+import { TrackPracticeSkeleton } from "@/components/interview/TrackPracticeSkeleton";
+
 interface PracticePageProps {
   params: Promise<{ track: string }>;
 }
@@ -22,6 +24,7 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
   const resolvedParams = use(params);
   const trackKey = resolvedParams.track;
 
+  const [isLoading, setIsLoading] = useState(true);
   const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [progressMap, setProgressMap] = useState<Record<string, QuestionProgress>>({});
@@ -30,8 +33,13 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
   const [sessionRatings, setSessionRatings] = useState<Record<string, InterviewGrade>>({});
 
   useEffect(() => {
+    setIsLoading(true);
     const qs = getQuestionsByTrack(trackKey);
-    if (!qs || qs.length === 0) return;
+    if (!qs || qs.length === 0) {
+      setQuestions([]);
+      setIsLoading(false);
+      return;
+    }
 
     const prog = getAllQuestionProgress();
     setProgressMap(prog);
@@ -57,9 +65,14 @@ export default function TrackPracticePage({ params }: PracticePageProps) {
     });
 
     setQuestions(sorted);
+    setIsLoading(false);
   }, [trackKey]);
 
-  if (!questions || (questions.length === 0 && TOPICS_META[trackKey])) {
+  if (isLoading) {
+    return <TrackPracticeSkeleton />;
+  }
+
+  if (questions.length === 0 && TOPICS_META[trackKey]) {
     return (
       <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-neutral-100 flex items-center justify-center p-4">
         <div className="p-8 rounded-2xl bg-[#0E121B] border border-white/[0.08] text-center max-w-md space-y-4">

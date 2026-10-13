@@ -150,3 +150,5 @@ export function DashboardSkeleton(): JSX.Element {
     </InteractiveGrid>
   );
 }
+
+export default DashboardSkeleton;
