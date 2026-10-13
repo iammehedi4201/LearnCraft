@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { InteractiveGrid } from "@/components/interactive-grid";
 import {
@@ -381,7 +382,7 @@ export function SiteNav() {
               </p>
             </div>
 
-            <div className="p-6 rounded-2xl bg-[#0E121B] border border-white/[0.08] space-y-4">
+            <div id="knowledge-check-quiz" className="p-6 rounded-2xl bg-[#0E121B] border border-white/[0.08] space-y-4">
               <h3 className="text-base font-bold text-white">
                 Why does Next.js &lt;Link&gt; feel much faster than traditional HTML links?
               </h3>
@@ -419,6 +420,20 @@ export function SiteNav() {
                 ))}
               </div>
             </div>
+
+            {/* Module Assessment Quiz CTA */}
+            <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div>
+                <span className="font-bold text-purple-300 block">🎯 Ready for Full Assessment & Code Prediction?</span>
+                <span className="text-slate-400">Earn +30 XP by taking the complete NX-02 Module Assessment Quiz.</span>
+              </div>
+              <Link
+                href="/quiz/nextjs/nx02-navigation"
+                className="px-3.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-bold font-mono text-xs transition-colors shrink-0 text-center"
+              >
+                Launch Assessment Quiz (+30 XP) →
+              </Link>
+            </div>
           </section>
         );
 
@@ -445,17 +460,6 @@ export function SiteNav() {
             isLessonCompleted={isLessonCompleted}
             getStepState={getStepState}
             onSelectSection={handleSectionChange}
-            onPrev={() =>
-              currentIndex > 0 &&
-              handleSectionChange(SECTIONS[currentIndex - 1].id)
-            }
-            onNext={() => {
-              if (currentIndex < SECTIONS.length - 1) {
-                handleSectionChange(SECTIONS[currentIndex + 1].id);
-              } else {
-                completeLesson();
-              }
-            }}
           />
 
           {/* Main Content Pane */}
@@ -481,7 +485,26 @@ export function SiteNav() {
               {renderSectionContent()}
             </div>
 
-            <NextjsLessonNavFooter currentSlug="nx02-navigation" />
+            <NextjsLessonNavFooter
+              currentSlug="nx02-navigation"
+              currentIndex={currentIndex}
+              totalLessons={SECTIONS.length}
+              onPrevLesson={() =>
+                currentIndex > 0 &&
+                handleSectionChange(SECTIONS[currentIndex - 1].id)
+              }
+              onNextLesson={() => {
+                if (currentIndex < SECTIONS.length - 1) {
+                  handleSectionChange(SECTIONS[currentIndex + 1].id);
+                }
+              }}
+              isLessonCompleted={isLessonCompleted}
+              canComplete={isLessonCompleted || quizAnswer === 1}
+              onLessonComplete={completeLesson}
+              onDirectToQuiz={() => {
+                document.getElementById("knowledge-check-quiz")?.scrollIntoView({ behavior: "smooth" });
+              }}
+            />
           </main>
         </div>
       </div>

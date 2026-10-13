@@ -14,8 +14,8 @@ interface NextjsLessonSidebarProps {
   isLessonCompleted: boolean;
   getStepState: (index: number) => "done" | "active" | "todo";
   onSelectSection: (sectionId: string) => void;
-  onPrev: () => void;
-  onNext: () => void;
+  onPrev?: () => void;
+  onNext?: () => void;
 }
 
 export function NextjsLessonSidebar({
@@ -25,11 +25,11 @@ export function NextjsLessonSidebar({
   progressPercent,
   completedSectionsCount,
   isAuthenticated,
-  isLessonCompleted,
+  isLessonCompleted: _isLessonCompleted,
   getStepState,
   onSelectSection,
-  onPrev,
-  onNext,
+  onPrev: _onPrev,
+  onNext: _onNext,
 }: NextjsLessonSidebarProps) {
   return (
     <aside className="lg:w-[300px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-white/[0.08] rounded-2xl bg-[#0E121B] p-4 shadow-xl">
@@ -151,27 +151,6 @@ export function NextjsLessonSidebar({
         <p className="mt-2 text-[10px] text-slate-400">
           {`${completedSectionsCount} of ${sections.length} parts completed`}
         </p>
-      </div>
-
-      {/* Prev / Next navigation */}
-      <div className="mt-3 shrink-0 flex gap-2">
-        <button
-          onClick={onPrev}
-          disabled={currentIndex === 0}
-          className="flex-1 py-2 rounded-xl text-xs font-bold border border-white/[0.08] text-slate-300 bg-white/[0.02] hover:bg-white/[0.06] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
-        >
-          ← Prev
-        </button>
-        <button
-          onClick={onNext}
-          className="flex-1 py-2 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-purple-600/20 cursor-pointer"
-        >
-          {currentIndex === sections.length - 1
-            ? isLessonCompleted
-              ? "Completed ✓"
-              : "Finish Lesson ✓"
-            : "Next →"}
-        </button>
       </div>
 
       {/* Course Hub link */}

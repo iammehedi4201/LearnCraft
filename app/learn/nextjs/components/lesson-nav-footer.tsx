@@ -1,33 +1,41 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   getNextNextjsLesson,
-  getPrevNextjsLesson,
   NEXTJS_CAPSTONE,
 } from "../data/nextjs-curriculum";
 import { isLessonComplete } from "../data/progress-store";
+import { UnifiedLessonNavBar } from "@/components/curriculum/UnifiedLessonNavBar";
 
 interface LessonNavFooterProps {
   currentSlug: string;
+  currentIndex?: number;
+  totalLessons?: number;
+  onPrevLesson?: () => void;
+  onNextLesson?: () => void;
   isLessonCompleted?: boolean;
   canComplete?: boolean;
   onLessonComplete?: () => void;
+  onDirectToQuiz?: () => void;
 }
 
 export function LessonNavFooter({
   currentSlug,
+  currentIndex = 0,
+  totalLessons = 1,
+  onPrevLesson = () => {},
+  onNextLesson = () => {},
   isLessonCompleted,
-  canComplete: _canComplete,
+  canComplete = true,
   onLessonComplete,
+  onDirectToQuiz,
 }: LessonNavFooterProps) {
-  const [_completed, setCompleted] = useState<boolean>(() => {
+  const [completed, setCompleted] = useState<boolean>(() => {
     if (isLessonCompleted !== undefined) return isLessonCompleted;
     return isLessonComplete(currentSlug);
   });
 
-  const prevLesson = getPrevNextjsLesson(currentSlug);
   const nextLesson = getNextNextjsLesson(currentSlug);
 
   useEffect(() => {
@@ -80,62 +88,26 @@ export function LessonNavFooter({
     };
   }, [currentSlug, isLessonCompleted]);
 
-  const handleNextClick = () => {
+  const handleCompleteAction = () => {
     if (onLessonComplete) {
       onLessonComplete();
     }
   };
 
   return (
-    <div className="p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-xl flex items-center justify-between gap-4 mt-14">
-      {/* Left Side: Previous Lesson */}
-      <div>
-        {prevLesson ? (
-          <Link
-            href={prevLesson.path}
-            className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-white/[0.08] text-slate-300 hover:text-white bg-white/[0.02] hover:bg-white/[0.06] transition-colors flex items-center gap-2"
-          >
-            <span>←</span>
-            <span>Previous: {prevLesson.code}</span>
-          </Link>
-        ) : (
-          <span className="text-xs font-mono text-slate-500 px-3 py-2">Start of Course</span>
-        )}
-      </div>
-
-      {/* Middle: Assessment Quiz */}
-      <div className="hidden sm:block">
-        <Link
-          href={`/quiz/nextjs/${currentSlug}`}
-          className="px-4 py-2 rounded-xl text-xs font-bold font-mono bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 hover:text-white border border-purple-500/30 transition-all flex items-center gap-1.5 cursor-pointer"
-        >
-          <span>🎯</span>
-          <span>Module Quiz (+30 XP)</span>
-        </Link>
-      </div>
-
-      {/* Right Side: Next Lesson */}
-      <div>
-        {nextLesson ? (
-          <Link
-            href={nextLesson.path}
-            onClick={handleNextClick}
-            className="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600/20 hover:bg-purple-600/35 text-purple-200 hover:text-white border border-purple-500/30 hover:border-purple-400 transition-all flex items-center gap-2 font-mono cursor-pointer"
-          >
-            <span>Next: {nextLesson.code}</span>
-            <span>→</span>
-          </Link>
-        ) : (
-          <Link
-            href={NEXTJS_CAPSTONE.path}
-            onClick={handleNextClick}
-            className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 transition-colors flex items-center gap-1.5 font-mono cursor-pointer"
-          >
-            <span>Launch Capstone 🎓</span>
-          </Link>
-        )}
-      </div>
-    </div>
+    <UnifiedLessonNavBar
+      currentIndex={currentIndex}
+      totalLessons={totalLessons}
+      onPrevLesson={onPrevLesson}
+      onNextLesson={onNextLesson}
+      isLessonCompleted={completed}
+      onCompleteModule={handleCompleteAction}
+      nextModuleHref={nextLesson ? nextLesson.path : NEXTJS_CAPSTONE.path}
+      nextModuleCode={nextLesson ? nextLesson.code : "Capstone"}
+      nextModuleName={nextLesson ? nextLesson.name : NEXTJS_CAPSTONE.title}
+      canCompleteModule={canComplete}
+      onDirectToQuiz={onDirectToQuiz}
+    />
   );
 }
 

@@ -13,3 +13,4 @@ export * from "./use-lesson-progress";
 export * from "./DataDrivenLessonView";
 export * from "./LessonNotesDrawer";
 export * from "./CodeBookmarkButton";
+export * from "./UnifiedLessonNavBar";

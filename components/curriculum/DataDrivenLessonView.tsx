@@ -23,6 +23,7 @@ import {
   LessonSectionItem,
 } from "./lesson-content-types";
 import { recordActivity } from "@/lib/gamification";
+import { UnifiedLessonNavBar } from "./UnifiedLessonNavBar";
 import { LayoutGrid } from "@/app/learn/nextjs/components/icons";
 
 export interface DataDrivenLessonViewProps {
@@ -54,7 +55,7 @@ export function DataDrivenLessonView({
   lesson,
   content,
   stageName,
-  prevLesson,
+  prevLesson: _prevLesson,
   nextLesson,
   onLessonComplete,
   isInitiallyComplete = false,
@@ -826,27 +827,6 @@ export function DataDrivenLessonView({
               </p>
             </div>
 
-            {/* Prev / Next navigation */}
-            <div className="mt-3 shrink-0 flex gap-2">
-              <button
-                onClick={handlePrev}
-                disabled={currentIndex === 0}
-                className="flex-1 py-2 rounded-xl text-xs font-bold border border-white/[0.08] text-slate-300 bg-white/[0.02] hover:bg-white/[0.06] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
-              >
-                ← Prev
-              </button>
-              <button
-                onClick={handleNext}
-                className="flex-1 py-2 rounded-xl text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-purple-600/20 cursor-pointer"
-              >
-                {currentIndex === sections.length - 1
-                  ? isLessonCompleted
-                    ? "Completed ✓"
-                    : "Finish Lesson ✓"
-                  : "Next →"}
-              </button>
-            </div>
-
             {/* Course Hub link */}
             <div className="mt-3 pt-3 shrink-0 border-t border-white/[0.06] text-center">
               <Link
@@ -887,44 +867,22 @@ export function DataDrivenLessonView({
               {renderSectionContent()}
             </div>
 
-            {/* Footer Navigation Bar */}
-            <div className="p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-xl flex items-center justify-between gap-4">
-              {/* Left Side: Previous Lesson */}
-              <div>
-                {prevLesson ? (
-                  <Link
-                    href={`${trackHref}/${prevLesson.slug}`}
-                    className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold border border-white/[0.08] text-slate-300 hover:text-white bg-white/[0.02] hover:bg-white/[0.06] transition-colors flex items-center gap-2"
-                  >
-                    <span>←</span>
-                    <span>Previous: {prevLesson.code}</span>
-                  </Link>
-                ) : (
-                  <span className="text-xs font-mono text-slate-500 px-3 py-2">Start of Course</span>
-                )}
-              </div>
-
-              {/* Right Side: Next Lesson (Automatically marks lesson complete when proceeding) */}
-              <div>
-                {nextLesson ? (
-                  <Link
-                    href={`${trackHref}/${nextLesson.slug}`}
-                    onClick={() => completeLesson()}
-                    className="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600/20 hover:bg-purple-600/35 text-purple-200 hover:text-white border border-purple-500/30 hover:border-purple-400 transition-all flex items-center gap-2 font-mono cursor-pointer"
-                  >
-                    <span>Next: {nextLesson.code}</span>
-                    <span>→</span>
-                  </Link>
-                ) : (
-                  <button
-                    onClick={() => completeLesson()}
-                    className="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 transition-colors flex items-center gap-1.5 font-mono cursor-pointer"
-                  >
-                    <span>Course Completed 🎓</span>
-                  </button>
-                )}
-              </div>
-            </div>
+            {/* Unified Lesson Navigation Bar */}
+            <UnifiedLessonNavBar
+              currentIndex={currentIndex}
+              totalLessons={sections.length}
+              onPrevLesson={handlePrev}
+              onNextLesson={handleNext}
+              isLessonCompleted={isLessonCompleted}
+              onCompleteModule={completeLesson}
+              nextModuleHref={nextLesson ? `${trackHref}/${nextLesson.slug}` : null}
+              nextModuleCode={nextLesson?.code}
+              nextModuleName={nextLesson?.title}
+              canCompleteModule={isLessonCompleted || quizSubmitted || !sections.some((s) => s.id === "part6")}
+              onDirectToQuiz={() => {
+                handleSectionChange("part6");
+              }}
+            />
           </main>
         </div>
       </div>
