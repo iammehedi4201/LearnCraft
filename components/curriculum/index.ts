@@ -14,3 +14,4 @@ export * from "./DataDrivenLessonView";
 export * from "./LessonNotesDrawer";
 export * from "./CodeBookmarkButton";
 export * from "./UnifiedLessonNavBar";
+export * from "./ModuleAssessmentCta";

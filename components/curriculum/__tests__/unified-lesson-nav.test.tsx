@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { UnifiedLessonNavBar } from "../UnifiedLessonNavBar";
+import { ModuleAssessmentCta } from "../ModuleAssessmentCta";
 import { NextjsLessonSidebar } from "@/app/learn/nextjs/components/lesson-sidebar";
 import { NextjsLessonNavFooter } from "@/app/learn/nextjs/components/lesson-nav-footer";
 
@@ -203,3 +204,52 @@ describe("NextjsLessonNavFooter with Unified Navigation", () => {
     expect(html).not.toContain("Next: NX-04");
   });
 });
+
+describe("ModuleAssessmentCta Highlighting", () => {
+  it("renders elevated, highly-highlighted assessment card with glowing borders and rewards", () => {
+    const html = renderToStaticMarkup(
+      <ModuleAssessmentCta
+        moduleCode="NX-04"
+        quizHref="/quiz/nextjs/nx04-dynamic-routes"
+      />
+    );
+
+    // Clean solid dark container styling
+    expect(html).toContain("bg-[#0E121B]");
+    expect(html).toContain("border-purple-500/30");
+
+    // No gradients
+    expect(html).not.toContain("bg-gradient");
+    expect(html).not.toContain("bg-clip-text");
+
+    // Module assessment badges & XP rewards
+    expect(html).toContain("MODULE ASSESSMENT");
+    expect(html).toContain("+30 XP REWARD");
+
+    // Title and module code
+    expect(html).toContain("Ready for Full Assessment &amp; Code Prediction?");
+    expect(html).toContain("NX-04");
+
+    // Solid purple button with XP badge and arrow
+    expect(html).toContain("href=\"/quiz/nextjs/nx04-dynamic-routes\"");
+    expect(html).toContain("bg-purple-600");
+    expect(html).toContain("Launch Assessment Quiz");
+    expect(html).toContain("+30 XP");
+  });
+
+  it("renders custom title and description when provided", () => {
+    const html = renderToStaticMarkup(
+      <ModuleAssessmentCta
+        moduleCode="TS-01"
+        quizHref="/quiz/typescript/ts01-types"
+        title="Custom Assessment Challenge"
+        description="Verify your TypeScript generics mastery."
+      />
+    );
+
+    expect(html).toContain("Custom Assessment Challenge");
+    expect(html).toContain("Verify your TypeScript generics mastery.");
+    expect(html).toContain("href=\"/quiz/typescript/ts01-types\"");
+  });
+});
+

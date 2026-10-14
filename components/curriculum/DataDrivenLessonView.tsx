@@ -24,6 +24,7 @@ import {
 } from "./lesson-content-types";
 import { recordActivity } from "@/lib/gamification";
 import { UnifiedLessonNavBar } from "./UnifiedLessonNavBar";
+import { ModuleAssessmentCta } from "./ModuleAssessmentCta";
 import { LayoutGrid } from "@/app/learn/nextjs/components/icons";
 
 export interface DataDrivenLessonViewProps {
@@ -624,33 +625,12 @@ export function DataDrivenLessonView({
             </div>
 
             {/* Module Assessment Quiz Card */}
-            <div className="p-5 rounded-2xl bg-[#090C14] border border-purple-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm">🎯</span>
-                  <span className="text-[11px] font-mono text-purple-300 font-bold uppercase tracking-wider">
-                    Module Assessment Quiz
-                  </span>
-                  <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-mono font-bold">
-                    +30 XP Available
-                  </span>
-                </div>
-                <h4 className="text-sm sm:text-base font-bold text-white">
-                  Test Your {lesson.code} Mastery & Code Output Prediction
-                </h4>
-                <p className="text-xs text-slate-400">
-                  Multiple choice questions & real-world code output prediction to verify your mental model.
-                </p>
-              </div>
-
-              <Link
-                href={`/quiz/${trackKey}/${lesson.slug}`}
-                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold transition-all shadow-lg shrink-0 flex items-center gap-1.5 cursor-pointer"
-              >
-                <span>Launch Quiz</span>
-                <span>&rarr;</span>
-              </Link>
-            </div>
+            <ModuleAssessmentCta
+              moduleCode={lesson.code}
+              quizHref={`/quiz/${trackKey}/${lesson.slug}`}
+              title={`Test Your ${lesson.code} Mastery & Code Output Prediction`}
+              description={`Multiple choice questions & real-world code output prediction to verify your mental model.`}
+            />
 
             {content.part7?.takeaways && (
               <div className="space-y-3">
