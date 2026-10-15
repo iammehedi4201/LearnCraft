@@ -12,6 +12,7 @@ export type QuestionType = "multiple_choice" | "code_output";
 export interface BaseQuestion {
   id: string;
   type: QuestionType;
+  title?: string;
   prompt: string;
   explanation: string;
   hint?: string;

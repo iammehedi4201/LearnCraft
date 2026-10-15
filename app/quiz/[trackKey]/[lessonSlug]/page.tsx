@@ -2,8 +2,6 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
-import { Nav } from "@/components/nav";
-import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";
 import { QuizRunner } from "@/components/quiz/QuizRunner";
 import { getQuizBySlug } from "@/lib/quiz/quiz-registry";
@@ -30,12 +28,10 @@ export default function ModuleQuizPage({ params }: PageProps) {
   }, [trackKey, lessonSlug]);
 
   return (
-    <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-300">
-      <Nav />
-
-      <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
+    <InteractiveGrid className="h-screen w-full overflow-hidden bg-[#07090E] text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-300">
+      <main className="relative z-10 w-full h-full flex flex-col overflow-hidden">
         {isLoading ? (
-          <div className="p-8 rounded-3xl bg-[#0E121B] border border-white/10 animate-pulse space-y-4">
+          <div className="w-full h-full p-8 bg-[#080B14] animate-pulse space-y-4 flex flex-col justify-center">
             <div className="h-6 w-32 bg-white/10 rounded-lg" />
             <div className="h-8 w-3/4 bg-white/10 rounded-lg" />
             <div className="h-4 w-1/2 bg-white/10 rounded-lg" />
@@ -44,7 +40,7 @@ export default function ModuleQuizPage({ params }: PageProps) {
         ) : quiz ? (
           <QuizRunner quiz={quiz} trackHref={`/learn/${trackKey}`} />
         ) : (
-          <div className="p-8 rounded-3xl bg-[#0E121B] border border-white/10 text-center space-y-4">
+          <div className="w-full max-w-xl m-auto p-8 rounded-3xl bg-[#0E121B] border border-white/10 text-center space-y-4 shadow-2xl">
             <span className="text-4xl block">🔍</span>
             <h2 className="text-xl font-bold text-white">Quiz Not Found</h2>
             <p className="text-xs text-slate-400">
@@ -52,15 +48,13 @@ export default function ModuleQuizPage({ params }: PageProps) {
             </p>
             <Link
               href={`/learn/${trackKey}`}
-              className="inline-block px-4 py-2 rounded-xl bg-purple-600 text-white text-xs font-bold"
+              className="inline-block px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-colors"
             >
               Back to Track
             </Link>
           </div>
         )}
       </main>
-
-      <Footer />
     </InteractiveGrid>
   );
 }

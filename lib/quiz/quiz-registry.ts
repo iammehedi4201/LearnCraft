@@ -28,6 +28,7 @@ export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
       {
         id: "nx01-q1",
         type: "multiple_choice",
+        title: "Layout state",
         prompt: "In the Next.js App Router, how does layout state behave when a user navigates between sibling child routes (e.g. from /dashboard/analytics to /dashboard/settings)?",
         options: [
           "The parent layout fully unmounts and remounts with brand-new state",
@@ -43,6 +44,7 @@ export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
       {
         id: "nx01-q2",
         type: "code_output",
+        title: "Server execution",
         prompt: "Predict the terminal vs browser console output when this Server Component renders during initial page load:",
         codeSnippet: `// app/feed/page.tsx (Server Component)
 export default async function FeedPage() {
@@ -68,6 +70,7 @@ export default async function FeedPage() {
       {
         id: "nx01-q3",
         type: "code_output",
+        title: "Boundary hydration",
         prompt: "What will be rendered and logged given this boundary hierarchy?",
         codeSnippet: `// app/components/Counter.tsx
 "use client";
@@ -103,6 +106,7 @@ export default function Page() {
       {
         id: "nx01-q4",
         type: "multiple_choice",
+        title: "Route Groups",
         prompt: "What is the primary architectural purpose of Route Groups with parentheses like `app/(marketing)/about/page.tsx` and `app/(dashboard)/settings/page.tsx`?",
         options: [
           "They define nested URL pathname segments like /marketing/about",
@@ -396,6 +400,7 @@ export function getQuizBySlug(trackKey: string, lessonSlug: string): ModuleQuiz 
       {
         id: `${lessonSlug}-q1`,
         type: "multiple_choice",
+        title: "Design principle",
         prompt: `Which of the following best represents the primary design principle established in ${formattedTitle}?`,
         options: [
           "Decoupling concerns to guarantee deterministic execution and maintainability",
@@ -411,6 +416,7 @@ export function getQuizBySlug(trackKey: string, lessonSlug: string): ModuleQuiz 
       {
         id: `${lessonSlug}-q2`,
         type: "code_output",
+        title: "Code prediction",
         prompt: `Predict the output or behavior of this code snippet related to ${formattedTitle}:`,
         codeSnippet: `const config = Object.freeze({
   mode: "production",
@@ -440,6 +446,7 @@ console.log(config.retries);`,
       {
         id: `${lessonSlug}-q3`,
         type: "multiple_choice",
+        title: "Recovery strategy",
         prompt: `What is the recommended production failure-recovery strategy for this layer?`,
         options: [
           "Structured Error Boundaries with fallback UI and graceful degradation",

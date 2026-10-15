@@ -1,6 +1,7 @@
 "use client";
 
 import { QuestionEvaluation } from "@/lib/quiz/quiz-types";
+import { renderFormattedText } from "./QuizRunner";
 
 interface QuizReviewModalProps {
   isOpen: boolean;
@@ -84,7 +85,7 @@ export function QuizReviewModal({
 
               {/* Prompt */}
               <h3 className="text-sm sm:text-base font-semibold text-white mb-3">
-                {item.prompt}
+                {renderFormattedText(item.prompt)}
               </h3>
 
               {/* Code Snippet if applicable */}
@@ -118,7 +119,7 @@ export function QuizReviewModal({
                       key={optIdx}
                       className={`p-3 rounded-xl border text-xs sm:text-sm font-mono flex items-center justify-between gap-3 ${optClass}`}
                     >
-                      <span>{opt}</span>
+                      <span>{renderFormattedText(opt)}</span>
                       <span className="text-[10px] font-sans font-bold uppercase tracking-wider shrink-0">
                         {isCorrectAnswer && "✓ Correct Answer"}
                         {isUserSelection && !isCorrectAnswer && "✗ Your Pick"}
@@ -133,7 +134,7 @@ export function QuizReviewModal({
                 <strong className="block text-white font-semibold flex items-center gap-1.5">
                   <span>💡</span> Architectural Explanation:
                 </strong>
-                <p>{item.explanation}</p>
+                <p>{renderFormattedText(item.explanation)}</p>
                 {item.hintUsed && (
                   <p className="text-[11px] text-amber-300 font-mono pt-1">
                     *(Hint was revealed during test)*
