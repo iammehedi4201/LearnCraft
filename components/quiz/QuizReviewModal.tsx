@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { QuestionEvaluation } from "@/lib/quiz/quiz-types";
 import { renderFormattedText } from "./QuizRunner";
 
@@ -10,6 +11,7 @@ interface QuizReviewModalProps {
   lessonCode: string;
   score: number;
   evaluations: QuestionEvaluation[];
+  initialQuestionIndex?: number;
 }
 
 export function QuizReviewModal({
@@ -19,7 +21,19 @@ export function QuizReviewModal({
   lessonCode,
   score,
   evaluations,
+  initialQuestionIndex,
 }: QuizReviewModalProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen && initialQuestionIndex !== undefined && initialQuestionIndex >= 0) {
+      const el = document.getElementById(`review-question-${initialQuestionIndex}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  }, [isOpen, initialQuestionIndex]);
+
   if (!isOpen) return null;
 
   return (
@@ -57,10 +71,11 @@ export function QuizReviewModal({
         </div>
 
         {/* Scrollable Questions Review */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div ref={containerRef} className="flex-1 overflow-y-auto p-6 space-y-6">
           {evaluations.map((item, idx) => (
             <div
               key={item.questionId || idx}
+              id={`review-question-${idx}`}
               className={`p-5 rounded-2xl border transition-all ${
                 item.isCorrect
                   ? "bg-emerald-500/[0.03] border-emerald-500/20"
