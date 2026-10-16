@@ -11,7 +11,7 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { InteractiveGrid } from "@/components/interactive-grid";
@@ -55,7 +55,7 @@ export function DataDrivenLessonView({
   trackHref,
   lesson,
   content,
-  stageName,
+  stageName: _stageName,
   prevLesson: _prevLesson,
   nextLesson,
   onLessonComplete,
@@ -63,6 +63,28 @@ export function DataDrivenLessonView({
   playgroundRuntime = "typescript",
 }: DataDrivenLessonViewProps): JSX.Element {
   const sections = content.sections || [];
+  const sidebarRef = useRef<HTMLElement>(null);
+  const [sidebarHeight, setSidebarHeight] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (sidebarRef.current && window.innerWidth >= 1024) {
+        setSidebarHeight(sidebarRef.current.offsetHeight);
+      } else {
+        setSidebarHeight(undefined);
+      }
+    };
+    updateHeight();
+    const observer = new ResizeObserver(updateHeight);
+    if (sidebarRef.current) {
+      observer.observe(sidebarRef.current);
+    }
+    window.addEventListener("resize", updateHeight);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, []);
 
   const {
     isAuthenticated,
@@ -688,7 +710,10 @@ export function DataDrivenLessonView({
         {/* 2-Column Layout: Sidebar Stepper + Main Content */}
         <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
           {/* Stepper Sidebar */}
-          <aside className="w-full lg:w-[300px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-white/[0.08] rounded-2xl bg-[#0E121B] p-4 shadow-xl">
+          <aside
+            ref={sidebarRef}
+            className="w-full lg:w-[300px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-white/[0.08] rounded-2xl bg-[#0E121B] p-4 shadow-xl"
+          >
             {/* Header */}
             <div className="px-2 mb-3 shrink-0 flex items-center justify-between gap-2">
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
@@ -821,29 +846,10 @@ export function DataDrivenLessonView({
 
           {/* Main Content Pane */}
           <main className="flex-1 min-w-0 max-w-5xl space-y-8">
-            <div className="p-6 sm:p-8 lg:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-xl space-y-8">
-              <header className="space-y-2 border-b border-white/[0.08] pb-6">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/25">
-                    {lesson.code}
-                  </span>
-                  {stageName && (
-                    <span className="text-[11px] font-mono text-purple-300/70 border border-white/[0.06] bg-white/[0.02] px-2 py-0.5 rounded-full">
-                      {stageName}
-                    </span>
-                  )}
-                  <span className="text-xs text-slate-400 font-mono">
-                    {getSectionLabel(sections[currentIndex], currentIndex)}
-                  </span>
-                </div>
-                <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                  {lesson.title}
-                </h1>
-                <p className="text-sm text-slate-300 leading-relaxed">
-                  {lesson.subtitle || lesson.description}
-                </p>
-              </header>
-
+            <div
+              className="p-6 sm:p-8 lg:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-xl space-y-8"
+              style={{ minHeight: sidebarHeight ? `${sidebarHeight}px` : undefined }}
+            >
               {renderSectionContent()}
             </div>
 
