@@ -88,11 +88,11 @@ export function PartStepper({
     }
   };
 
-  // Floating bar styling: rounded corners, 1px border, subtle shadow, ~95% opaque dark background with blur
+  // Floating bar styling: rounded corners, borderless, subtle shadow, ~95% opaque dark background with blur
   const floatingStyles = floating
-    ? "sticky z-30 transition-[top] duration-300 ease-out motion-reduce:transition-none rounded-2xl border border-white/[0.08] bg-[#0E121B]/95 backdrop-blur-md shadow-xl shadow-black/30 px-5 sm:px-6 py-3 sm:py-3.5"
+    ? "sticky z-30 transition-[top] duration-300 ease-out motion-reduce:transition-none rounded-2xl bg-[#0E121B]/95 backdrop-blur-md shadow-xl shadow-black/30 px-5 sm:px-6 py-3 sm:py-3.5"
     : sticky
-    ? "sticky top-0 sm:top-14 z-30 bg-[#0E121B]/95 backdrop-blur-md border-b border-white/[0.08]"
+    ? "sticky top-0 sm:top-14 z-30 bg-[#0E121B]/95 backdrop-blur-md"
     : "";
 
   return (
