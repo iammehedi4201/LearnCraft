@@ -130,4 +130,5 @@ export interface PlaygroundProps {
   height?: string;                 // Minimum height (default: "240px", automatically expands to fit all code without scrolling)
   minHeight?: string;
   onSuccess?: (result: ValidationResult) => void;
+  onRun?: () => void;
 }

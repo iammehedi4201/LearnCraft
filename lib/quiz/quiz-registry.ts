@@ -8,8 +8,13 @@
  */
 
 import { ModuleQuiz } from "./quiz-types";
+import { JAVASCRIPT_MODULE_QUIZZES } from "./javascript-quizzes";
 
 export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
+  // ──────────────────────────────────────────────────────────────────────────
+  // JAVASCRIPT CURRICULUM QUIZZES
+  // ──────────────────────────────────────────────────────────────────────────
+  ...JAVASCRIPT_MODULE_QUIZZES,
   // ──────────────────────────────────────────────────────────────────────────
   // NEXT.JS: NX-01 — The App Router Architecture
   // ──────────────────────────────────────────────────────────────────────────

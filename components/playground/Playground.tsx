@@ -48,6 +48,7 @@ export function Playground({
   className = "",
   height = "240px",
   onSuccess,
+  onRun,
 }: PlaygroundProps) {
   const exampleCode = exercise?.starterCode ?? starterCode ?? "";
 
@@ -180,6 +181,7 @@ export function Playground({
     setTestResults(undefined);
 
     try {
+      onRun?.();
       const rt = getRuntime();
       const result = await rt.run({
         code: codeToRun,
@@ -218,6 +220,7 @@ export function Playground({
     displayLanguage,
     contextKey,
     reloadSnapshots,
+    onRun,
   ]);
 
   const handleCheck = useCallback(async () => {
@@ -252,6 +255,7 @@ export function Playground({
     setDuration(undefined);
 
     try {
+      onRun?.();
       const rt = getRuntime();
       if (rt.validate) {
         const result = await rt.validate(
@@ -310,6 +314,8 @@ export function Playground({
     handleRun,
     contextKey,
     reloadSnapshots,
+    onSuccess,
+    onRun,
   ]);
 
   const handleReset = useCallback(() => {

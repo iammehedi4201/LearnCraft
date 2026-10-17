@@ -725,10 +725,28 @@ export function getStages(): StageMeta[] {
 }
 
 export function getLessonBySlug(slug: string): LessonMeta | undefined {
-  return getAllLessons().find(
+  const norm = slug.toLowerCase().trim();
+  const cleanNorm = norm.replace(/[^a-z0-9]/g, "");
+
+  // 1. Direct match on slug, path suffix, or substring
+  const directMatch = getAllLessons().find(
     (l) =>
-      l.slug === slug || l.path.endsWith(`/${slug}`) || l.path.includes(slug),
+      l.slug.toLowerCase() === norm ||
+      l.path.endsWith(`/${norm}`) ||
+      l.path.toLowerCase().includes(norm),
   );
+  if (directMatch) return directMatch;
+
+  // 2. Match by normalized code (e.g. "js06" or "js-06") or slug prefix (e.g. "js06-functions")
+  return getAllLessons().find((l) => {
+    const lSlugNorm = l.slug.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const lCodeNorm = l.code.toLowerCase().replace(/[^a-z0-9]/g, "");
+    return (
+      lCodeNorm === cleanNorm ||
+      lSlugNorm.startsWith(cleanNorm) ||
+      cleanNorm.startsWith(lCodeNorm)
+    );
+  });
 }
 
 export function getLessonByCode(code: string): LessonMeta | undefined {

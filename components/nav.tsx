@@ -98,6 +98,7 @@ const CATEGORIES: CategoryMeta[] = [
 function NavContent(): JSX.Element {
   const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<CoreCategory>("language");
@@ -137,13 +138,111 @@ function NavContent(): JSX.Element {
     };
   }, []);
 
-  // Scroll detection
+  // Scroll detection & auto-hide/reveal logic with single passive listener
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    let lastScrollY = typeof window !== "undefined" ? window.scrollY : 0;
+    const threshold = 8; // ~8px threshold to prevent flickering
+
+    const updateCssNavbarOffset = (visible: boolean) => {
+      // When navbar visible: 56px (h-14).
+      // When hidden: 0px (flush against top of screen with no gap).
+      const offset = visible ? "56px" : "0px";
+      document.documentElement.style.setProperty("--navbar-offset", offset);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    // Check if current page is a curriculum module page on mount
+    const initialPart1 = typeof document !== "undefined" ? document.getElementById("part-1") : null;
+    const initialPart2 = typeof document !== "undefined" ? document.getElementById("part-2") : null;
+    const initialScrollY = typeof window !== "undefined" ? window.scrollY : 0;
+
+    if (initialScrollY > 40) {
+      setIsScrolled(true);
+      if (initialPart1 && initialPart2 && initialPart2.getBoundingClientRect().top <= 80) {
+        setIsVisible(false);
+        updateCssNavbarOffset(false);
+      } else {
+        updateCssNavbarOffset(true);
+      }
+    } else {
+      updateCssNavbarOffset(true);
+    }
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const scrollDiff = currentScrollY - lastScrollY;
+
+      // Check if we are on a curriculum module page (sections part-1 and part-2 exist)
+      const part1 = document.getElementById("part-1");
+      const part2 = document.getElementById("part-2");
+      const isModulePage = Boolean(part1);
+
+      // Always show when scrollY is near the top of the page
+      if (currentScrollY <= 40) {
+        setIsVisible(true);
+        setIsScrolled(currentScrollY > 20);
+        updateCssNavbarOffset(true);
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      setIsScrolled(true);
+
+      // On module pages, determine if user has reached the first section.
+      // If part2 exists, user is at the first section when part2 is below the sticky header area (> 80px).
+      // When user is in part 2, 3, 4, etc., part2's top is <= 80px.
+      const isAtFirstSection = isModulePage
+        ? (part2 ? part2.getBoundingClientRect().top > 80 : currentScrollY <= 200)
+        : true;
+
+      if (scrollDiff < 0) {
+        // Scrolling up:
+        if (isModulePage) {
+          // Requirement: "The navbar should only appear when I reach the first section of the current module."
+          if (isAtFirstSection) {
+            setIsVisible(true);
+            updateCssNavbarOffset(true);
+          } else {
+            // In parts 2..7: keep navbar hidden
+            setIsVisible(false);
+            updateCssNavbarOffset(false);
+          }
+        } else {
+          // Standard page: reveal navbar on scroll up
+          if (Math.abs(scrollDiff) >= threshold) {
+            setIsVisible(true);
+            updateCssNavbarOffset(true);
+          }
+        }
+        lastScrollY = currentScrollY;
+      } else if (scrollDiff > 0) {
+        // Scrolling down: auto-hide navbar
+        if (Math.abs(scrollDiff) >= threshold) {
+          setIsVisible(false);
+          updateCssNavbarOffset(false);
+          lastScrollY = currentScrollY;
+        }
+      }
+    };
+
+    const showNavbar = () => {
+      setIsVisible(true);
+      updateCssNavbarOffset(true);
+    };
+
+    const hideNavbar = () => {
+      setIsVisible(false);
+      updateCssNavbarOffset(false);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("learncraft-show-nav", showNavbar);
+    window.addEventListener("learncraft-hide-nav", hideNavbar);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("learncraft-show-nav", showNavbar);
+      window.removeEventListener("learncraft-hide-nav", hideNavbar);
+    };
   }, []);
 
   // Click outside and escape key handling
@@ -230,9 +329,11 @@ function NavContent(): JSX.Element {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex justify-center ${
-          isScrolled ? "pt-0 px-0" : "pt-6 px-6"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-300 ease-out motion-reduce:transition-none ${
+          isVisible || isMenuOpen || isMobileMenuOpen
+            ? "translate-y-0"
+            : "-translate-y-full"
+        } ${isScrolled ? "pt-0 px-0" : "pt-6 px-6"}`}
       >
         <nav
           className={`transition-all duration-500 w-full border border-ds-stroke-soft shadow-sm pointer-events-auto ${

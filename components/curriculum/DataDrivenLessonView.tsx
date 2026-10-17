@@ -5,13 +5,22 @@
  * DATA-DRIVEN LESSON VIEW ENGINE
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * Universal, responsive, high-aesthetic curriculum lesson renderer.
- * Eliminates thousands of lines of copy-pasted UI across all learning modules.
- * Includes interactive section stepper, live code sandbox playground,
- * bad vs good architecture comparisons, and XP-awarding interactive quizzes.
+ * Renders all 7 module parts stacked vertically on one scrolling page:
+ * 1. Overview & Real-Life Analogy
+ * 2. Core Concepts & Mechanics
+ * 3. Mental Model & Structure
+ * 4. Bad Code vs Clean Code
+ * 5. Interactive Code Sandbox
+ * 6. Summary & Key Takeaways
+ * 7. Knowledge Check Quiz
+ *
+ * Includes floating sticky scroll-spy PartStepper with auto-hiding navbar
+ * coordination, automatic reading completion timers, live sandbox execution
+ * tracking, and quiz verification.
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { InteractiveGrid } from "@/components/interactive-grid";
@@ -23,9 +32,7 @@ import {
   LessonSectionItem,
 } from "./lesson-content-types";
 import { recordActivity } from "@/lib/gamification";
-import { UnifiedLessonNavBar } from "./UnifiedLessonNavBar";
-import { ModuleAssessmentCta } from "./ModuleAssessmentCta";
-import { LayoutGrid } from "@/app/learn/nextjs/components/icons";
+import { PartStepper } from "./PartStepper";
 
 export interface DataDrivenLessonViewProps {
   trackKey: string;
@@ -62,40 +69,40 @@ export function DataDrivenLessonView({
   isInitiallyComplete = false,
   playgroundRuntime = "typescript",
 }: DataDrivenLessonViewProps): JSX.Element {
-  const sections = content.sections || [];
-  const sidebarRef = useRef<HTMLElement>(null);
-  const [sidebarHeight, setSidebarHeight] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    const updateHeight = () => {
-      if (sidebarRef.current && window.innerWidth >= 1024) {
-        setSidebarHeight(sidebarRef.current.offsetHeight);
-      } else {
-        setSidebarHeight(undefined);
-      }
-    };
-    updateHeight();
-    const observer = new ResizeObserver(updateHeight);
-    if (sidebarRef.current) {
-      observer.observe(sidebarRef.current);
+  // Normalize sections so Part 6 is Summary & Key Takeaways and Part 7 is Knowledge Check Quiz
+  const sections = useMemo(() => {
+    const rawSections = content.sections || [];
+    const hasPart7 = rawSections.some((s) => s.id === "part7");
+    if (!hasPart7) {
+      return rawSections;
     }
-    window.addEventListener("resize", updateHeight);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", updateHeight);
-    };
-  }, []);
+    return rawSections.map((sec) => {
+      if (sec.id === "part6") {
+        return {
+          ...sec,
+          label: "Summary & Key Takeaways",
+          icon: "🎓",
+        };
+      }
+      if (sec.id === "part7") {
+        return {
+          ...sec,
+          label: "Knowledge Check Quiz",
+          icon: "🎯",
+        };
+      }
+      return sec;
+    });
+  }, [content.sections]);
 
   const {
-    isAuthenticated,
     activeSection,
+    completedSections,
     currentIndex,
     progressPercent,
-    completedSectionsCount,
     isLessonCompleted,
-    handleSectionChange,
-    handlePrev,
-    handleNext,
+    setActiveSectionId,
+    markSectionComplete,
     completeLesson,
     getStepState,
   } = useLessonProgress({
@@ -109,28 +116,162 @@ export function DataDrivenLessonView({
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<number | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
 
-  // Reset quiz state when section changes
-  useEffect(() => {
-    setSelectedQuizAnswer(null);
-    setQuizSubmitted(false);
-  }, [activeSection, lesson.slug]);
+  // Active section ref to prevent redundant re-renders during scrolling
+  const activeSectionRef = useRef(activeSection);
+  activeSectionRef.current = activeSection;
 
-  // Scroll to top of lesson content on section switch
+  // Initialize CSS variable fallback on mount if needed
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [activeSection]);
+    if (typeof window !== "undefined") {
+      if (!document.documentElement.style.getPropertyValue("--navbar-offset")) {
+        document.documentElement.style.setProperty("--navbar-offset", "56px");
+      }
+    }
+  }, []);
 
-  // Global custom event navigation listener
+  // 1. Initial Hash Navigation: scroll to #part-X if present in URL
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const hash = window.location.hash;
+    if (hash && hash.startsWith("#part-")) {
+      const targetEl = document.querySelector(hash);
+      if (targetEl) {
+        const prefersReducedMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)"
+        ).matches;
+        setTimeout(() => {
+          targetEl.scrollIntoView({
+            behavior: prefersReducedMotion ? "auto" : "smooth",
+            block: "start",
+          });
+        }, 150);
+      }
+    }
+  }, []);
+
+  // 2. IntersectionObserver: Sticky scroll-spy & 1.5s reading timer completion
+  useEffect(() => {
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+
+    const timers: Record<string, NodeJS.Timeout> = {};
+    const readingPartDomIds = new Set(["part-1", "part-2", "part-3", "part-4", "part-6"]);
+
+    const getSectionByDomId = (domId: string) => {
+      const match = domId.match(/^part-(\d+)$/);
+      if (match) {
+        const idx = parseInt(match[1], 10) - 1;
+        return { section: sections[idx], index: idx };
+      }
+      return null;
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let bestCandidateDomId: string | null = null;
+        let bestVisibleHeight = 0;
+
+        for (const entry of entries) {
+          const domId = entry.target.id;
+          const intersectionHeight = entry.intersectionRect.height;
+
+          if (entry.isIntersecting && intersectionHeight > bestVisibleHeight) {
+            bestVisibleHeight = intersectionHeight;
+            bestCandidateDomId = domId;
+          }
+
+          // Reading completion tracking: 60% visible for 1.5s
+          if (readingPartDomIds.has(domId)) {
+            const mapped = getSectionByDomId(domId);
+            const secId = mapped?.section?.id;
+
+            if (secId && !completedSections.has(secId)) {
+              const isMostlyVisible =
+                entry.isIntersecting &&
+                (entry.intersectionRatio >= 0.55 ||
+                  entry.intersectionRect.height / (window.innerHeight || 800) >= 0.5);
+
+              if (isMostlyVisible) {
+                if (!timers[domId]) {
+                  timers[domId] = setTimeout(() => {
+                    markSectionComplete(secId);
+                    delete timers[domId];
+                  }, 1500);
+                }
+              } else {
+                if (timers[domId]) {
+                  clearTimeout(timers[domId]);
+                  delete timers[domId];
+                }
+              }
+            }
+          }
+        }
+
+        // Update active section only when changed (Performance requirement)
+        if (bestCandidateDomId) {
+          const mapped = getSectionByDomId(bestCandidateDomId);
+          if (mapped?.section && mapped.section.id !== activeSectionRef.current) {
+            setActiveSectionId(mapped.section.id);
+            try {
+              if (window.location.hash !== `#${bestCandidateDomId}`) {
+                window.history.replaceState(null, "", `#${bestCandidateDomId}`);
+              }
+            } catch {}
+          }
+        }
+      },
+      {
+        root: null,
+        // Match the sticky stepper height (~66px) when scrolling through sections
+        rootMargin: "-80px 0px -40% 0px",
+        threshold: [0, 0.25, 0.55, 0.75, 1.0],
+      }
+    );
+
+    // Observe all 7 sections
+    for (let i = 1; i <= sections.length; i++) {
+      const el = document.getElementById(`part-${i}`);
+      if (el) {
+        observer.observe(el);
+      }
+    }
+
+    return () => {
+      observer.disconnect();
+      Object.values(timers).forEach((t) => clearTimeout(t));
+    };
+  }, [sections, completedSections, markSectionComplete, setActiveSectionId]);
+
+  // Global custom event navigation listener for shortcuts
   useEffect(() => {
     const handleNavigate = (e: Event) => {
       const customEvent = e as CustomEvent<{ direction: "prev" | "next" }>;
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+      ).matches;
+
       if (customEvent.detail?.direction === "prev" && currentIndex > 0) {
-        handleSectionChange(sections[currentIndex - 1].id);
+        const prevTarget = document.getElementById(`part-${currentIndex}`);
+        if (prevTarget) {
+          prevTarget.scrollIntoView({
+            behavior: prefersReducedMotion ? "auto" : "smooth",
+            block: "start",
+          });
+          setActiveSectionId(sections[currentIndex - 1].id);
+        }
       } else if (
         customEvent.detail?.direction === "next" &&
         currentIndex < sections.length - 1
       ) {
-        handleSectionChange(sections[currentIndex + 1].id);
+        const nextTarget = document.getElementById(`part-${currentIndex + 2}`);
+        if (nextTarget) {
+          nextTarget.scrollIntoView({
+            behavior: prefersReducedMotion ? "auto" : "smooth",
+            block: "start",
+          });
+          setActiveSectionId(sections[currentIndex + 1].id);
+        }
       }
     };
 
@@ -138,7 +279,7 @@ export function DataDrivenLessonView({
     return () => {
       window.removeEventListener("learncraft-navigate", handleNavigate);
     };
-  }, [currentIndex, sections, handleSectionChange]);
+  }, [currentIndex, sections, setActiveSectionId]);
 
   const getTagColorClass = (color?: string) => {
     switch (color) {
@@ -162,715 +303,732 @@ export function DataDrivenLessonView({
 
   const getSectionLabel = (sec?: LessonSectionItem, defaultIdx?: number): string => {
     if (!sec) return defaultIdx !== undefined ? `Part ${defaultIdx + 1}` : "";
-    return sec.label || sec.title || (defaultIdx !== undefined ? `Part ${defaultIdx + 1}` : "Section");
+    return sec.label || sec.title || (defaultIdx !== undefined ? `Part ${defaultIdx + 1}` : "Part");
   };
 
-  const renderSectionContent = () => {
-    switch (activeSection) {
-      // ─── Part 1: The Big Picture & Architecture Breakdown ─────────────────
-      case "part1": {
-        const title = content.part1?.title || getSectionLabel(sections[currentIndex], currentIndex);
-        const explanation = content.part1?.explanation || content.part1?.bigPicture;
-        return (
-          <section className="space-y-6 animate-in fade-in duration-300">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-                <span>✨</span>
-                <span>PART 01 · CORE CONCEPT</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {title}
-              </h2>
-              {explanation && (
-                <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                  {explanation}
-                </p>
-              )}
+  // Common section attributes: scrollMarginTop dynamically accounts for stepper height + offset
+  const sectionProps = {
+    style: { scrollMarginTop: "calc(var(--navbar-offset, 64px) + 76px)" },
+    className: "scroll-mt-36 sm:scroll-mt-40 space-y-6",
+  };
+
+  // ─── Part 1: Overview & Real-Life Analogy ───────────────────────────────────
+  const renderPart1 = () => {
+    const title = content.part1?.title || getSectionLabel(sections[0], 0);
+    const explanation = content.part1?.explanation || content.part1?.bigPicture;
+    const isCompleted = completedSections.has(sections[0]?.id || "part1");
+
+    return (
+      <section id="part-1" {...sectionProps}>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+              <span>✨</span>
+              <span>PART 01 · CORE CONCEPT</span>
             </div>
-
-            {/* PostgreSQL Analogy Callout Box */}
-            {content.part1?.analogy && (
-              <div className="p-5 rounded-2xl bg-amber-500/[0.06] border border-amber-500/20 space-y-2">
-                <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider font-mono">
-                  <span>💡 Real-World Analogy</span>
-                </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  {content.part1.analogy}
-                </p>
-              </div>
+            {isCompleted && (
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                ✓ Read
+              </span>
             )}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            {title}
+          </h2>
+          {explanation && (
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+              {explanation}
+            </p>
+          )}
+        </div>
 
-            {/* PostgreSQL Architecture / Relational Diagram */}
-            {content.part1?.diagram && (
-              <div className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.08] shadow-lg space-y-3">
-                <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs uppercase tracking-wider font-mono">
-                  <span>📐 Architecture & Topology</span>
-                </div>
-                <pre className="p-4 rounded-xl bg-black/60 border border-white/[0.06] font-mono text-xs sm:text-sm text-cyan-300/90 overflow-x-auto leading-relaxed">
-                  {content.part1.diagram}
-                </pre>
-              </div>
-            )}
-
-            {/* Standard Breakdown Items */}
-            {content.part1?.breakdownItems && (
-              <div className="p-6 rounded-2xl bg-[#090C14] border border-white/[0.08] shadow-lg relative overflow-hidden space-y-4">
-                <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                  <span className="text-purple-400">✨</span>
-                  <span>{content.part1.breakdownTitle || "Core Breakdown"}</span>
-                </h3>
-                <ul className="text-xs sm:text-sm text-slate-300 space-y-2.5 list-disc pl-5">
-                  {content.part1.breakdownItems.map((item, idx) => (
-                    <li key={idx}>
-                      <strong className="text-white">{item.title}:</strong> {item.desc}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </section>
-        );
-      }
-
-      // ─── Part 2: Core Mechanics & Concept Cards ────────────────────────────
-      case "part2":
-        return (
-          <section className="space-y-6 animate-in fade-in duration-300">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-                <span>🧩</span>
-                <span>PART 02 · CORE MECHANICS</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {content.part2?.title || getSectionLabel(sections[currentIndex], currentIndex)}
-              </h2>
-              {content.part2?.intro && (
-                <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                  {content.part2.intro}
-                </p>
-              )}
+        {/* Real-World Analogy Callout Box */}
+        {content.part1?.analogy && (
+          <div className="p-5 rounded-2xl bg-amber-500/[0.06] border border-amber-500/20 space-y-2">
+            <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider font-mono">
+              <span>💡 Real-World Analogy</span>
             </div>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              {content.part1.analogy}
+            </p>
+          </div>
+        )}
 
-            {/* PostgreSQL Concepts */}
-            {content.part2?.concepts && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
-                {content.part2.concepts.map((concept, idx) => (
-                  <div
-                    key={idx}
-                    className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-3 flex flex-col justify-between hover:border-purple-500/30 transition-colors"
-                  >
-                    <div className="space-y-2">
-                      <div className="inline-block font-mono font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border text-purple-400 bg-purple-500/10 border-purple-500/20">
-                        Concept {idx + 1}
-                      </div>
-                      <div className="text-base font-bold text-white">
-                        {concept.name}
-                      </div>
-                      <p className="text-xs text-slate-300 leading-relaxed">
-                        {concept.desc}
-                      </p>
-                    </div>
-                    {concept.codeSnippet && (
-                      <div className="pt-2">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Example</span>
-                        </div>
-                        <pre className="text-xs bg-black/60 p-3 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto leading-relaxed">
-                          {concept.codeSnippet}
-                        </pre>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Standard Cards */}
-            {content.part2?.cards && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
-                {content.part2.cards.map((card: LessonContentCard, idx: number) => (
-                  <div
-                    key={idx}
-                    className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-2 flex flex-col justify-between hover:border-purple-500/30 transition-colors"
-                  >
-                    <div>
-                      <div
-                        className={`inline-block font-mono font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border mb-2 ${getTagColorClass(
-                          card.color
-                        )}`}
-                      >
-                        {card.number} · {card.tag}
-                      </div>
-                      <div className="text-base font-bold text-white">
-                        {card.title}
-                      </div>
-                    </div>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      {card.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {content.part2?.rule && (
-              <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-200 text-xs sm:text-sm">
-                <strong className="text-white">
-                  {content.part2.rule.title}:
-                </strong>{" "}
-                {content.part2.rule.content}
-              </div>
-            )}
-          </section>
-        );
-
-      // ─── Part 3: Deep Dive & Code Examples ─────────────────────────────────
-      case "part3":
-        return (
-          <section className="space-y-6 animate-in fade-in duration-300">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-                <span>💻</span>
-                <span>PART 03 · DEEP DIVE & CODE</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {content.part3?.title || getSectionLabel(sections[currentIndex], currentIndex)}
-              </h2>
-              {content.part3?.intro && (
-                <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                  {content.part3.intro}
-                </p>
-              )}
+        {/* Architecture / Diagram */}
+        {content.part1?.diagram && (
+          <div className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.08] shadow-lg space-y-3">
+            <div className="flex items-center gap-2 text-cyan-400 font-bold text-xs uppercase tracking-wider font-mono">
+              <span>📐 Architecture & Topology</span>
             </div>
+            <pre className="p-4 rounded-xl bg-black/60 border border-white/[0.06] font-mono text-xs sm:text-sm text-cyan-300/90 overflow-x-auto leading-relaxed">
+              {content.part1.diagram}
+            </pre>
+          </div>
+        )}
 
-            {/* PostgreSQL Deep Dives */}
-            {content.part3?.deepDives && (
-              <div className="space-y-4">
-                {content.part3.deepDives.map((dive, idx) => (
-                  <div
-                    key={idx}
-                    className="p-5 sm:p-6 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-3"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-mono font-bold flex items-center justify-center">
-                        {idx + 1}
-                      </span>
-                      <h3 className="text-white font-bold text-base sm:text-lg">
-                        {dive.heading}
-                      </h3>
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      {dive.content}
-                    </p>
-                    {dive.bulletPoints && dive.bulletPoints.length > 0 && (
-                      <ul className="text-xs sm:text-sm text-slate-300 space-y-2 list-disc pl-5 pt-1">
-                        {dive.bulletPoints.map((bp, bpIdx) => (
-                          <li key={bpIdx} className="leading-relaxed">
-                            {bp}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+        {/* Standard Breakdown Items */}
+        {content.part1?.breakdownItems && (
+          <div className="p-6 rounded-2xl bg-[#090C14] border border-white/[0.08] shadow-lg relative overflow-hidden space-y-4">
+            <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
+              <span className="text-purple-400">✨</span>
+              <span>{content.part1.breakdownTitle || "Core Breakdown"}</span>
+            </h3>
+            <ul className="text-xs sm:text-sm text-slate-300 space-y-2.5 list-disc pl-5">
+              {content.part1.breakdownItems.map((item, idx) => (
+                <li key={idx}>
+                  <strong className="text-white">{item.title}:</strong> {item.desc}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
+    );
+  };
 
-            {/* Standard Points */}
-            {content.part3?.points && (
-              <div className="space-y-4">
-                {content.part3.points.map((pt, idx) => (
-                  <div
-                    key={idx}
-                    className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-2"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-white font-bold text-base">
-                        {pt.title}
-                      </span>
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      {pt.content}
-                    </p>
-                    {pt.codeSnippet && (
-                      <pre className="text-xs bg-black/50 p-4 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto mt-2">
-                        {pt.codeSnippet}
-                      </pre>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        );
+  // ─── Part 2: Core Concepts & Mechanics ─────────────────────────────────────
+  const renderPart2 = () => {
+    const isCompleted = completedSections.has(sections[1]?.id || "part2");
 
-      // ─── Part 4: Design Patterns (Anti-pattern vs Production) ──────────────
-      case "part4": {
-        const badComparison =
-          content.part4?.bad ||
-          (content.part4?.badApproach
-            ? {
-                title: content.part4.badApproach.title,
-                code: content.part4.badApproach.code,
-                explanation: content.part4.badApproach.flaw || "",
-              }
-            : undefined);
-
-        const goodComparison =
-          content.part4?.good ||
-          (content.part4?.betterApproach
-            ? {
-                title: content.part4.betterApproach.title,
-                code: content.part4.betterApproach.code,
-                explanation: content.part4.betterApproach.benefit || "",
-              }
-            : undefined);
-
-        return (
-          <section className="space-y-6 animate-in fade-in duration-300">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-                <span>⚠️</span>
-                <span>PART 04 · PATTERNS & TRAPS</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {content.part4?.title || getSectionLabel(sections[currentIndex], currentIndex)}
-              </h2>
+    return (
+      <section id="part-2" {...sectionProps}>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+              <span>🧩</span>
+              <span>PART 02 · CORE MECHANICS</span>
             </div>
-
-            {/* PostgreSQL Architectural Problem Callout */}
-            {content.part4?.problem && (
-              <div className="p-4 rounded-xl bg-amber-500/[0.08] border border-amber-500/20 text-amber-200 text-xs sm:text-sm flex items-start gap-2.5">
-                <span className="text-amber-400 font-bold text-base leading-none">⚠️</span>
-                <div>
-                  <strong className="text-amber-300 block mb-0.5 font-bold uppercase tracking-wide text-xs">
-                    Core Architectural Challenge
-                  </strong>
-                  <p className="text-slate-300">{content.part4.problem}</p>
-                </div>
-              </div>
+            {isCompleted && (
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                ✓ Read
+              </span>
             )}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            {content.part2?.title || getSectionLabel(sections[1], 1)}
+          </h2>
+          {content.part2?.intro && (
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+              {content.part2.intro}
+            </p>
+          )}
+        </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              {/* Bad / Anti-Pattern */}
-              {badComparison && (
-                <div className="p-5 rounded-2xl bg-rose-500/[0.03] border border-rose-500/30 space-y-3 flex flex-col justify-between">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
-                      <span>❌ {badComparison.title}</span>
-                    </div>
-                    <pre className="text-xs bg-[#090C14] p-3 rounded-xl border border-rose-500/20 overflow-x-auto text-slate-300 font-mono leading-relaxed">
-                      {badComparison.code}
-                    </pre>
-                  </div>
-                  <p className="text-xs text-rose-300/80 leading-relaxed">
-                    {badComparison.explanation}
-                  </p>
-                </div>
-              )}
-
-              {/* Good / Production Grade */}
-              {goodComparison && (
-                <div className="p-5 rounded-2xl bg-emerald-500/[0.03] border border-emerald-500/30 space-y-3 flex flex-col justify-between">
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
-                      <span>✅ {goodComparison.title}</span>
-                    </div>
-                    <pre className="text-xs bg-[#090C14] p-3 rounded-xl border border-emerald-500/20 overflow-x-auto text-slate-300 font-mono leading-relaxed">
-                      {goodComparison.code}
-                    </pre>
-                  </div>
-                  <p className="text-xs text-emerald-300/80 leading-relaxed">
-                    {goodComparison.explanation}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* PostgreSQL Why It Matters Callout */}
-            {content.part4?.whyItMatters && (
-              <div className="p-4 rounded-xl bg-purple-500/[0.08] border border-purple-500/20 text-purple-200 text-xs sm:text-sm flex items-start gap-2.5">
-                <span className="text-purple-400 font-bold text-base leading-none">💡</span>
-                <div>
-                  <strong className="text-purple-300 block mb-0.5 font-bold uppercase tracking-wide text-xs">
-                    Why This Matters in Production
-                  </strong>
-                  <p className="text-slate-300">{content.part4.whyItMatters}</p>
-                </div>
-              </div>
-            )}
-          </section>
-        );
-      }
-
-      // ─── Part 5: Interactive Code Sandbox ──────────────────────────────────
-      case "part5": {
-        const effectiveRuntime = playgroundRuntime === "sql" ? "javascript" : playgroundRuntime;
-        return (
-          <section className="space-y-6 animate-in fade-in duration-300">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-                <span>⚡</span>
-                <span>PART 05 · INTERACTIVE SANDBOX</span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  {content.part5?.title || getSectionLabel(sections[currentIndex], currentIndex)}
-                </h2>
-              </div>
-              {content.part5?.intro && (
-                <p className="text-sm text-slate-300 leading-relaxed">{content.part5.intro}</p>
-              )}
-            </div>
-
-            <Playground
-              key={`${lesson.slug}-${activeSection}`}
-              runtime={effectiveRuntime as any}
-              starterCode={content.part5?.starterCode || ""}
-            />
-          </section>
-        );
-      }
-
-      // ─── Part 6: Knowledge Check Interactive Quiz ──────────────────────────
-      case "part6": {
-        const quiz = content.part6?.quiz;
-        return (
-          <section className="space-y-6 animate-in fade-in duration-300">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-                <span>🧠</span>
-                <span>PART 06 · KNOWLEDGE CHECK</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {content.part6?.title || "Check Your Understanding"}
-              </h2>
-              <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                Test your comprehension of {lesson.title} core principles:
-              </p>
-            </div>
-
-            {quiz && (
-              <div className="p-6 rounded-2xl bg-[#090C14] border border-white/[0.08] space-y-4">
-                <h3 className="text-base font-bold text-white">
-                  {quiz.question}
-                </h3>
-
+        {/* Concepts Grid */}
+        {content.part2?.concepts && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
+            {content.part2.concepts.map((concept, idx) => (
+              <div
+                key={idx}
+                className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-3 flex flex-col justify-between hover:border-purple-500/30 transition-colors"
+              >
                 <div className="space-y-2">
-                  {quiz.options.map((option, idx) => {
-                    const isSelected = selectedQuizAnswer === idx;
-                    const isCorrect = idx === quiz.correctIndex;
-
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => {
-                          setSelectedQuizAnswer(idx);
-                          setQuizSubmitted(true);
-                          if (isCorrect) {
-                            recordActivity("exercise_pass", `Passed Quiz on ${lesson.title}`, {
-                              lessonSlug: lesson.slug,
-                              trackKey,
-                            });
-                          }
-                        }}
-                        className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm font-mono transition-all cursor-pointer flex items-center justify-between ${
-                          quizSubmitted
-                            ? isCorrect
-                              ? "bg-emerald-500/20 border-emerald-500 text-emerald-300"
-                              : isSelected
-                              ? "bg-rose-500/20 border-rose-500 text-rose-300"
-                              : "bg-white/[0.02] border-white/[0.06] text-slate-400 opacity-60"
-                            : isSelected
-                            ? "bg-purple-600/20 border-purple-500 text-white"
-                            : "bg-white/[0.02] hover:bg-white/[0.06] border-white/[0.06] text-slate-300 hover:text-white"
-                        }`}
-                      >
-                        <span>{option}</span>
-                        {quizSubmitted && isSelected && (
-                          <span className="font-bold text-xs">
-                            {isCorrect ? "✓ Correct! (+15 XP)" : "✗ Try again"}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
+                  <div className="inline-block font-mono font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border text-purple-400 bg-purple-500/10 border-purple-500/20">
+                    Concept {idx + 1}
+                  </div>
+                  <div className="text-base font-bold text-white">
+                    {concept.name}
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed">
+                    {concept.desc}
+                  </p>
                 </div>
-
-                {quizSubmitted && (
-                  <div
-                    className={`p-4 rounded-xl text-xs sm:text-sm animate-in fade-in duration-200 ${
-                      selectedQuizAnswer === quiz.correctIndex
-                        ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
-                        : "bg-rose-500/10 border border-rose-500/30 text-rose-300"
-                    }`}
-                  >
-                    <strong className="block mb-1">
-                      {selectedQuizAnswer === quiz.correctIndex
-                        ? "🎉 Excellent!"
-                        : "💡 Explanation:"}
-                    </strong>
-                    <p>{quiz.explanation}</p>
+                {concept.codeSnippet && (
+                  <div className="pt-2">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Example</span>
+                    </div>
+                    <pre className="text-xs bg-black/60 p-3 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto leading-relaxed">
+                      {concept.codeSnippet}
+                    </pre>
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+        )}
 
-                {/* Extended Assessment CTA */}
-                <div className="pt-2 flex items-center justify-between border-t border-white/[0.06] text-xs">
-                  <span className="text-slate-400">Ready for full code prediction & challenge questions?</span>
-                  <Link
-                    href={`/quiz/${trackKey}/${lesson.slug}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white border border-purple-500/30 font-bold transition-all cursor-pointer"
+        {/* Standard Cards */}
+        {content.part2?.cards && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
+            {content.part2.cards.map((card: LessonContentCard, idx: number) => (
+              <div
+                key={idx}
+                className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-2 flex flex-col justify-between hover:border-purple-500/30 transition-colors"
+              >
+                <div>
+                  <div
+                    className={`inline-block font-mono font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border mb-2 ${getTagColorClass(
+                      card.color
+                    )}`}
                   >
-                    <span>Take Full {lesson.code} Quiz</span>
-                    <span>&rarr;</span>
-                  </Link>
+                    {card.number} · {card.tag}
+                  </div>
+                  <div className="text-base font-bold text-white">
+                    {card.title}
+                  </div>
                 </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  {card.description}
+                </p>
               </div>
-            )}
-          </section>
-        );
-      }
+            ))}
+          </div>
+        )}
 
-      // ─── Part 7: Summary & Progression ─────────────────────────────────────
-      case "part7":
-      default:
-        return (
-          <section className="space-y-6 animate-in fade-in duration-300">
-            <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-                <span>🎓</span>
-                <span>PART 07 · SUMMARY & NEXT STEPS</span>
+        {content.part2?.rule && (
+          <div className="p-4 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-200 text-xs sm:text-sm">
+            <strong className="text-white">
+              {content.part2.rule.title}:
+            </strong>{" "}
+            {content.part2.rule.content}
+          </div>
+        )}
+      </section>
+    );
+  };
+
+  // ─── Part 3: Mental Model & Structure ──────────────────────────────────────
+  const renderPart3 = () => {
+    const isCompleted = completedSections.has(sections[2]?.id || "part3");
+
+    return (
+      <section id="part-3" {...sectionProps}>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+              <span>💻</span>
+              <span>PART 03 · DEEP DIVE & STRUCTURE</span>
+            </div>
+            {isCompleted && (
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                ✓ Read
+              </span>
+            )}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            {content.part3?.title || getSectionLabel(sections[2], 2)}
+          </h2>
+          {content.part3?.intro && (
+            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+              {content.part3.intro}
+            </p>
+          )}
+        </div>
+
+        {/* Deep Dives */}
+        {content.part3?.deepDives && (
+          <div className="space-y-4">
+            {content.part3.deepDives.map((dive, idx) => (
+              <div
+                key={idx}
+                className="p-5 sm:p-6 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-3"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-300 text-xs font-mono font-bold flex items-center justify-center">
+                    {idx + 1}
+                  </span>
+                  <h3 className="text-white font-bold text-base sm:text-lg">
+                    {dive.heading}
+                  </h3>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  {dive.content}
+                </p>
+                {dive.bulletPoints && dive.bulletPoints.length > 0 && (
+                  <ul className="text-xs sm:text-sm text-slate-300 space-y-2 list-disc pl-5 pt-1">
+                    {dive.bulletPoints.map((bp, bpIdx) => (
+                      <li key={bpIdx} className="leading-relaxed">
+                        {bp}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                {content.part7?.title || getSectionLabel(sections[currentIndex], currentIndex) || "Summary & Progression"}
-              </h2>
+            ))}
+          </div>
+        )}
+
+        {/* Standard Points */}
+        {content.part3?.points && (
+          <div className="space-y-4">
+            {content.part3.points.map((pt, idx) => (
+              <div
+                key={idx}
+                className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-2"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-white font-bold text-base">
+                    {pt.title}
+                  </span>
+                </div>
+                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                  {pt.content}
+                </p>
+                {pt.codeSnippet && (
+                  <pre className="text-xs bg-black/50 p-4 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto mt-2">
+                    {pt.codeSnippet}
+                  </pre>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    );
+  };
+
+  // ─── Part 4: Bad Code vs Clean Code ────────────────────────────────────────
+  const renderPart4 = () => {
+    const isCompleted = completedSections.has(sections[3]?.id || "part4");
+
+    const badComparison =
+      content.part4?.bad ||
+      (content.part4?.badApproach
+        ? {
+            title: content.part4.badApproach.title,
+            code: content.part4.badApproach.code,
+            explanation: content.part4.badApproach.flaw || "",
+          }
+        : undefined);
+
+    const goodComparison =
+      content.part4?.good ||
+      (content.part4?.betterApproach
+        ? {
+            title: content.part4.betterApproach.title,
+            code: content.part4.betterApproach.code,
+            explanation: content.part4.betterApproach.benefit || "",
+          }
+        : undefined);
+
+    return (
+      <section id="part-4" {...sectionProps}>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+              <span>⚠️</span>
+              <span>PART 04 · PATTERNS & TRAPS</span>
+            </div>
+            {isCompleted && (
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                ✓ Read
+              </span>
+            )}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            {content.part4?.title || getSectionLabel(sections[3], 3)}
+          </h2>
+        </div>
+
+        {/* Architectural Problem Callout */}
+        {content.part4?.problem && (
+          <div className="p-4 rounded-xl bg-amber-500/[0.08] border border-amber-500/20 text-amber-200 text-xs sm:text-sm flex items-start gap-2.5">
+            <span className="text-amber-400 font-bold text-base leading-none">⚠️</span>
+            <div>
+              <strong className="text-amber-300 block mb-0.5 font-bold uppercase tracking-wide text-xs">
+                Core Architectural Challenge
+              </strong>
+              <p className="text-slate-300">{content.part4.problem}</p>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Bad / Anti-Pattern */}
+          {badComparison && (
+            <div className="p-5 rounded-2xl bg-rose-500/[0.03] border border-rose-500/30 space-y-3 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
+                  <span>❌ {badComparison.title}</span>
+                </div>
+                <pre className="text-xs bg-[#090C14] p-3 rounded-xl border border-rose-500/20 overflow-x-auto text-slate-300 font-mono leading-relaxed">
+                  {badComparison.code}
+                </pre>
+              </div>
+              <p className="text-xs text-rose-300/80 leading-relaxed">
+                {badComparison.explanation}
+              </p>
+            </div>
+          )}
+
+          {/* Good / Production Grade */}
+          {goodComparison && (
+            <div className="p-5 rounded-2xl bg-emerald-500/[0.03] border border-emerald-500/30 space-y-3 flex flex-col justify-between">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                  <span>✅ {goodComparison.title}</span>
+                </div>
+                <pre className="text-xs bg-[#090C14] p-3 rounded-xl border border-emerald-500/20 overflow-x-auto text-slate-300 font-mono leading-relaxed">
+                  {goodComparison.code}
+                </pre>
+              </div>
+              <p className="text-xs text-emerald-300/80 leading-relaxed">
+                {goodComparison.explanation}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Why It Matters Callout */}
+        {content.part4?.whyItMatters && (
+          <div className="p-4 rounded-xl bg-purple-500/[0.08] border border-purple-500/20 text-purple-200 text-xs sm:text-sm flex items-start gap-2.5">
+            <span className="text-purple-400 font-bold text-base leading-none">💡</span>
+            <div>
+              <strong className="text-purple-300 block mb-0.5 font-bold uppercase tracking-wide text-xs">
+                Why This Matters in Production
+              </strong>
+              <p className="text-slate-300">{content.part4.whyItMatters}</p>
+            </div>
+          </div>
+        )}
+      </section>
+    );
+  };
+
+  // ─── Part 5: Interactive Code Sandbox ──────────────────────────────────────
+  const renderPart5 = () => {
+    const effectiveRuntime = playgroundRuntime === "sql" ? "javascript" : playgroundRuntime;
+    const isCompleted = completedSections.has(sections[4]?.id || "part5");
+
+    return (
+      <section id="part-5" {...sectionProps}>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+              <span>⚡</span>
+              <span>PART 05 · INTERACTIVE SANDBOX</span>
+            </div>
+            {isCompleted && (
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                ✓ Run Verified
+              </span>
+            )}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            {content.part5?.title || getSectionLabel(sections[4], 4)}
+          </h2>
+          {content.part5?.intro && (
+            <p className="text-sm text-slate-300 leading-relaxed">{content.part5.intro}</p>
+          )}
+        </div>
+
+        <Playground
+          key={lesson.slug}
+          runtime={effectiveRuntime as any}
+          starterCode={content.part5?.starterCode || ""}
+          onRun={() => {
+            const part5Id = sections[4]?.id || "part5";
+            markSectionComplete(part5Id);
+          }}
+        />
+      </section>
+    );
+  };
+
+  // ─── Part 6: Summary & Key Takeaways ──────────────────────────────────────
+  const renderPart6 = () => {
+    const takeaways = content.part6?.takeaways || content.part7?.takeaways;
+    const title = content.part6?.takeaways
+      ? (content.part6?.title || "Summary & Key Takeaways")
+      : content.part7?.title && !content.part7.title.toLowerCase().includes("quiz")
+      ? content.part7.title
+      : "Summary & Key Takeaways";
+    const isCompleted = completedSections.has(sections[5]?.id || "part6");
+
+    return (
+      <section id="part-6" {...sectionProps}>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+              <span>🎓</span>
+              <span>PART 06 · SUMMARY & KEY TAKEAWAYS</span>
+            </div>
+            {isCompleted && (
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                ✓ Read
+              </span>
+            )}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            {title || getSectionLabel(sections[5], 5) || "Summary & Key Takeaways"}
+          </h2>
+          <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+            Review the core mental models and best practices from {lesson.title}:
+          </p>
+        </div>
+
+        {takeaways && (
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <span>✨</span> Key Takeaways
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {takeaways.map((item: any, idx: number) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-xl bg-[#090C14] border border-white/[0.06] space-y-1"
+                >
+                  <strong className="text-white text-xs sm:text-sm block">
+                    {item.title}
+                  </strong>
+                  <p className="text-xs text-slate-400">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+    );
+  };
+
+  // ─── Part 7: Knowledge Check Quiz ──────────────────────────────────────────
+  const renderPart7 = () => {
+    const quiz = content.part7?.quiz || content.part6?.quiz || (content as any).quiz;
+    const quizTitle = content.part7?.quiz
+      ? (content.part7?.title || "Knowledge Check Quiz")
+      : content.part6?.quiz
+      ? (content.part6?.title || "Knowledge Check Quiz")
+      : "Knowledge Check Quiz";
+    const isCompleted = completedSections.has(sections[6]?.id || "part7");
+
+    return (
+      <section id="part-7" {...sectionProps}>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+              <span>🎯</span>
+              <span>PART 07 · KNOWLEDGE CHECK QUIZ</span>
+            </div>
+            {isCompleted && (
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                ✓ Passed
+              </span>
+            )}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            {quizTitle || "Check Your Understanding"}
+          </h2>
+          <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
+            Test your comprehension of {lesson.title} core principles:
+          </p>
+        </div>
+
+        {quiz && (
+          <div className="p-6 rounded-2xl bg-[#090C14] border border-white/[0.08] space-y-4">
+            <h3 className="text-base font-bold text-white">
+              {quiz.question}
+            </h3>
+
+            <div className="space-y-2">
+              {quiz.options.map((option: string, idx: number) => {
+                const isSelected = selectedQuizAnswer === idx;
+                const isCorrect = idx === quiz.correctIndex;
+
+                return (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setSelectedQuizAnswer(idx);
+                      setQuizSubmitted(true);
+                      if (isCorrect) {
+                        const part7Id = sections[6]?.id || "part7";
+                        markSectionComplete(part7Id);
+                        recordActivity("exercise_pass", `Passed Quiz on ${lesson.title}`, {
+                          lessonSlug: lesson.slug,
+                          trackKey,
+                        });
+                      }
+                    }}
+                    className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm font-mono transition-all cursor-pointer flex items-center justify-between ${
+                      quizSubmitted
+                        ? isCorrect
+                          ? "bg-emerald-500/20 border-emerald-500 text-emerald-300"
+                          : isSelected
+                          ? "bg-rose-500/20 border-rose-500 text-rose-300"
+                          : "bg-white/[0.02] border-white/[0.06] text-slate-400 opacity-60"
+                        : isSelected
+                        ? "bg-purple-600/20 border-purple-500 text-white"
+                        : "bg-white/[0.02] hover:bg-white/[0.06] border-white/[0.06] text-slate-300 hover:text-white"
+                    }`}
+                  >
+                    <span>{option}</span>
+                    {quizSubmitted && isSelected && (
+                      <span className="font-bold text-xs">
+                        {isCorrect ? "✓ Correct! (+15 XP)" : "✗ Try again"}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Module Assessment Quiz Card */}
-            <ModuleAssessmentCta
-              moduleCode={lesson.code}
-              quizHref={`/quiz/${trackKey}/${lesson.slug}`}
-              title={`Test Your ${lesson.code} Mastery & Code Output Prediction`}
-              description={`Multiple choice questions & real-world code output prediction to verify your mental model.`}
-            />
-
-            {content.part7?.takeaways && (
-              <div className="space-y-3">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <span>✨</span> Key Takeaways
-                </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {content.part7.takeaways.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="p-4 rounded-xl bg-[#090C14] border border-white/[0.06] space-y-1"
-                    >
-                      <strong className="text-white text-xs sm:text-sm block">
-                        {item.title}
-                      </strong>
-                      <p className="text-xs text-slate-400">{item.desc}</p>
-                    </div>
-                  ))}
-                </div>
+            {quizSubmitted && (
+              <div
+                className={`p-4 rounded-xl text-xs sm:text-sm animate-in fade-in duration-200 ${
+                  selectedQuizAnswer === quiz.correctIndex
+                    ? "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300"
+                    : "bg-rose-500/10 border border-rose-500/30 text-rose-300"
+                }`}
+              >
+                <strong className="block mb-1">
+                  {selectedQuizAnswer === quiz.correctIndex
+                    ? "🎉 Excellent!"
+                    : "💡 Explanation:"}
+                </strong>
+                <p>{quiz.explanation}</p>
               </div>
             )}
 
-            {content.part7?.nextLessonPreview && nextLesson && (
-              <div className="p-5 rounded-2xl bg-purple-500/10 border border-purple-500/20 space-y-2">
-                <div className="text-[11px] font-mono uppercase tracking-wider text-purple-400 font-bold">
-                  Up Next: {nextLesson.code}
-                </div>
-                <h4 className="text-base font-bold text-white">
-                  {nextLesson.title}
-                </h4>
-                <p className="text-xs text-purple-200/80">
-                  {content.part7.nextLessonPreview.desc}
-                </p>
-                <div className="pt-2">
-                  <Link
-                    href={`${trackHref}/${nextLesson.slug}`}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-md cursor-pointer"
-                  >
-                    <span>Proceed to {nextLesson.code}</span>
-                    <span>&rarr;</span>
-                  </Link>
-                </div>
-              </div>
-            )}
-          </section>
-        );
-    }
+            {/* Extended Assessment CTA */}
+            <div className="pt-2 flex items-center justify-between border-t border-white/[0.06] text-xs">
+              <span className="text-slate-400">Ready for full code prediction & challenge questions?</span>
+              <Link
+                href={`/quiz/${trackKey}/${lesson.slug}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-600/20 hover:bg-purple-600 text-purple-300 hover:text-white border border-purple-500/30 font-bold transition-all cursor-pointer"
+              >
+                <span>Take Full {lesson.code} Quiz</span>
+                <span>&rarr;</span>
+              </Link>
+            </div>
+          </div>
+        )}
+      </section>
+    );
+  };
+
+  // ─── End of Page: Single "Next lesson →" button ─────────────────────────────
+  const renderEndOfPageCTA = () => {
+    const allPartsCompleted =
+      sections.length > 0 && completedSections.size >= sections.length;
+    const canProceed = isLessonCompleted || allPartsCompleted;
+    const nextLessonUrl = nextLesson ? `${trackHref}/${nextLesson.slug}` : trackHref;
+
+    return (
+      <div className="pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-xs text-slate-400">
+          {canProceed ? (
+            <span className="text-emerald-400 font-medium flex items-center gap-1.5">
+              <span>✓</span> All {sections.length} parts completed! Ready for the next lesson.
+            </span>
+          ) : (
+            <span>
+              Complete all {sections.length} parts to unlock the next lesson ({completedSections.size}/{sections.length} completed).
+            </span>
+          )}
+        </div>
+
+        {nextLesson ? (
+          <Link
+            href={nextLessonUrl}
+            onClick={() => {
+              if (canProceed) completeLesson();
+            }}
+            aria-disabled={!canProceed}
+            className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
+              canProceed
+                ? "bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
+                : "bg-white/[0.06] text-slate-500 border border-white/[0.06] cursor-not-allowed opacity-60"
+            }`}
+          >
+            <span>Next lesson →</span>
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => {
+              if (canProceed) completeLesson();
+            }}
+            disabled={!canProceed}
+            className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
+              canProceed
+                ? "bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
+                : "bg-white/[0.06] text-slate-500 border border-white/[0.06] cursor-not-allowed opacity-60"
+            }`}
+          >
+            <span>Complete Course 🎓</span>
+          </button>
+        )}
+      </div>
+    );
   };
 
   return (
     <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-300">
       <Nav />
 
-      <div className="relative z-10 max-w-[95rem] mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
-        {/* 2-Column Layout: Sidebar Stepper + Main Content */}
-        <div className="flex flex-col lg:flex-row gap-8 items-start justify-center">
-          {/* Stepper Sidebar */}
-          <aside
-            ref={sidebarRef}
-            className="w-full lg:w-[300px] shrink-0 lg:sticky lg:top-20 max-h-[calc(100vh-7rem)] flex flex-col border border-white/[0.08] rounded-2xl bg-[#0E121B] p-4 shadow-xl"
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
+        {/* Module Header & Breadcrumb Row */}
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <Link
+            href={trackHref}
+            className="inline-flex items-center gap-1.5 text-slate-400 hover:text-purple-300 transition-colors font-medium group"
           >
-            {/* Header */}
-            <div className="px-2 mb-3 shrink-0 flex items-center justify-between gap-2">
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider truncate">
-                {lesson.code} Modules
-              </p>
-              <span className="shrink-0 whitespace-nowrap text-[10px] font-mono text-purple-300 font-bold bg-purple-500/15 px-2.5 py-0.5 rounded-full border border-purple-500/25 leading-normal">
-                {sections.length} parts
+            <span className="transition-transform group-hover:-translate-x-0.5">←</span>
+            <span>{trackTitle} Curriculum</span>
+          </Link>
+          <div className="flex items-center gap-2">
+            {_stageName && (
+              <span className="text-[11px] font-medium text-slate-400 hidden sm:inline">
+                {_stageName} ·
               </span>
-            </div>
-
-            {/* Stepper (Scrollable List) */}
-            <nav className="flex-1 overflow-y-auto pr-1 space-y-1">
-              <ol className="space-y-1.5 relative">
-                {sections.map((section, index) => {
-                  const state = getStepState(index);
-                  const isActive = section.id === activeSection;
-                  const isDone = state === "done";
-                  const isTodo = state === "todo";
-
-                  return (
-                    <li key={section.id}>
-                      <button
-                        onClick={() => handleSectionChange(section.id)}
-                        disabled={isAuthenticated && isTodo && index > currentIndex + 1}
-                        className={`group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-left cursor-pointer ${
-                          isActive
-                            ? "bg-purple-600/15 border border-purple-500/40 shadow-sm shadow-purple-600/10"
-                            : isDone
-                            ? "hover:bg-white/[0.04]"
-                            : !isAuthenticated
-                            ? "hover:bg-white/[0.04]"
-                            : "opacity-40 cursor-not-allowed"
-                        }`}
-                      >
-                        {/* Step indicator circle */}
-                        <div
-                          className={`relative z-10 flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-200 ${
-                            isActive
-                              ? "bg-purple-600 text-white scale-105 shadow-md shadow-purple-600/30 ring-2 ring-purple-500/30"
-                              : isDone
-                              ? "bg-emerald-500 text-white"
-                              : "bg-white/[0.04] text-slate-400 border border-white/[0.08]"
-                          }`}
-                        >
-                          {isDone ? (
-                            <svg
-                              className="w-3.5 h-3.5"
-                              viewBox="0 0 14 14"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <polyline points="2,7 5.5,10.5 12,3.5" />
-                            </svg>
-                          ) : (
-                            <span>{index + 1}</span>
-                          )}
-                        </div>
-
-                        {/* Label area */}
-                        <div className="flex flex-col items-start gap-0.5 min-w-0 flex-1">
-                          <span
-                            className={`text-xs font-semibold leading-tight truncate transition-colors duration-200 ${
-                              isActive
-                                ? "text-purple-300 font-bold"
-                                : isDone
-                                ? "text-slate-200 group-hover:text-purple-300"
-                                : "text-slate-400 group-hover:text-slate-200"
-                            }`}
-                          >
-                            {getSectionLabel(section, index)}
-                          </span>
-                          {isActive && (
-                            <span className="text-[10px] font-medium text-purple-400">
-                              In progress
-                            </span>
-                          )}
-                          {isDone && (
-                            <span className="text-[10px] text-emerald-400 font-medium">
-                              Completed
-                            </span>
-                          )}
-                        </div>
-
-                        {/* Active indicator dot */}
-                        {isActive && (
-                          <div className="ml-auto w-2 h-2 rounded-full bg-purple-400 shrink-0 animate-pulse" />
-                        )}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-            </nav>
-
-            {/* Progress box */}
-            <div className="mt-4 shrink-0 px-4 py-3 rounded-xl bg-black/40 border border-white/[0.06]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
-                  PROGRESS
-                </span>
-                <span className="text-xs font-mono font-bold text-white">
-                  {`${progressPercent}%`}
-                </span>
-              </div>
-              <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500 ease-out bg-purple-600"
-                  style={{ width: `${progressPercent}%` }}
-                />
-              </div>
-              <p className="mt-2 text-[10px] text-slate-400">
-                {`${completedSectionsCount} of ${sections.length} parts completed`}
-              </p>
-            </div>
-
-            {/* Course Hub link */}
-            <div className="mt-3 pt-3 shrink-0 border-t border-white/[0.06] text-center">
-              <Link
-                href={trackHref}
-                className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-purple-300 transition-colors font-medium"
-              >
-                <LayoutGrid className="w-3.5 h-3.5" />
-                <span>{trackTitle} Curriculum</span>
-              </Link>
-            </div>
-          </aside>
-
-          {/* Main Content Pane */}
-          <main className="flex-1 min-w-0 max-w-5xl space-y-8">
-            <div
-              className="p-6 sm:p-8 lg:p-10 rounded-3xl bg-[#0E121B] border border-white/[0.08] shadow-xl space-y-8"
-              style={{ minHeight: sidebarHeight ? `${sidebarHeight}px` : undefined }}
-            >
-              {renderSectionContent()}
-            </div>
-
-            {/* Unified Lesson Navigation Bar */}
-            <UnifiedLessonNavBar
-              currentIndex={currentIndex}
-              totalLessons={sections.length}
-              onPrevLesson={handlePrev}
-              onNextLesson={handleNext}
-              isLessonCompleted={isLessonCompleted}
-              onCompleteModule={completeLesson}
-              nextModuleHref={nextLesson ? `${trackHref}/${nextLesson.slug}` : null}
-              nextModuleCode={nextLesson?.code}
-              nextModuleName={nextLesson?.title}
-              canCompleteModule={isLessonCompleted || quizSubmitted || !sections.some((s) => s.id === "part6")}
-              onDirectToQuiz={() => {
-                handleSectionChange("part6");
-              }}
-            />
-          </main>
+            )}
+            <span className="text-[10px] font-mono text-purple-300 font-bold bg-purple-500/15 px-2.5 py-0.5 rounded-full border border-purple-500/25">
+              {lesson.code}
+            </span>
+            <span className="text-slate-300 font-semibold truncate max-w-[200px] sm:max-w-md">
+              {lesson.title}
+            </span>
+            {lesson.minutes && (
+              <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
+                ⏱️ {lesson.minutes} min
+              </span>
+            )}
+          </div>
         </div>
+
+        {/* Floating Sticky PartStepper */}
+        <PartStepper
+          sections={sections}
+          activeSectionId={activeSection}
+          currentIndex={currentIndex}
+          onSelectPart={(secId) => {
+            setActiveSectionId(secId);
+          }}
+          getStepState={getStepState}
+          progressPercent={progressPercent}
+          getPartTitle={getSectionLabel}
+          floating={true}
+          className="mb-6"
+        />
+
+        {/* Focused Centered Lesson Card */}
+        <main className="w-full flex flex-col rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-2xl relative">
+          {/* Card Content: All 7 Parts stacked vertically in order */}
+          <div className="p-6 sm:p-8 lg:p-10 flex-1 space-y-12 sm:space-y-14">
+            {renderPart1()}
+            <hr className="border-t border-white/[0.08]" />
+            {renderPart2()}
+            <hr className="border-t border-white/[0.08]" />
+            {renderPart3()}
+            <hr className="border-t border-white/[0.08]" />
+            {renderPart4()}
+            <hr className="border-t border-white/[0.08]" />
+            {renderPart5()}
+            <hr className="border-t border-white/[0.08]" />
+            {renderPart6()}
+            {sections.some((s) => s.id === "part7") && (
+              <>
+                <hr className="border-t border-white/[0.08]" />
+                {renderPart7()}
+              </>
+            )}
+
+            {/* End of Page Next Lesson CTA */}
+            {renderEndOfPageCTA()}
+          </div>
+        </main>
       </div>
     </InteractiveGrid>
   );

@@ -41,6 +41,11 @@ export function useLessonProgress({
     (id?: string | null): string | null => {
       if (!id) return null;
       if (sections.some((s) => s.id === id)) return id;
+      const match = id.match(/^#?part-?(\d+)$/i);
+      if (match) {
+        const idx = parseInt(match[1], 10) - 1;
+        if (sections[idx]) return sections[idx].id;
+      }
       return null;
     },
     [sections]
@@ -264,6 +269,79 @@ export function useLessonProgress({
     ]
   );
 
+  // 3b. Direct active section update (without auto-marking previous complete)
+  const setActiveSectionId = useCallback(
+    (newSectionId: string | number) => {
+      let validId: string | null = null;
+      if (typeof newSectionId === "number") {
+        validId = sections[newSectionId]?.id || null;
+      } else {
+        validId = resolveId(newSectionId);
+      }
+      if (!validId) return;
+      if (validId !== activeSectionRef.current) {
+        activeSectionRef.current = validId;
+        setActiveSection(validId);
+      }
+    },
+    [resolveId, sections]
+  );
+
+  // 3c. Mark single section complete (independent completion tracking)
+  const markSectionComplete = useCallback(
+    (targetIdOrIndex: string | number) => {
+      let targetId: string | null = null;
+      if (typeof targetIdOrIndex === "number") {
+        targetId = sections[targetIdOrIndex]?.id || null;
+      } else {
+        targetId = resolveId(targetIdOrIndex);
+      }
+
+      if (!targetId) return;
+
+      setCompletedSections((prev) => {
+        if (prev.has(targetId!)) return prev;
+
+        const next = new Set(prev);
+        next.add(targetId!);
+
+        const allDone = sections.length > 0 && next.size >= sections.length;
+        if (allDone) {
+          setIsLessonCompleted(true);
+          onLessonCompleted?.(lessonSlug);
+          recordActivity("lesson_complete", `Completed lesson: ${lessonSlug}`, {
+            lessonSlug,
+            trackKey,
+          });
+        }
+
+        try {
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              activeSection: activeSectionRef.current,
+              completedSections: Array.from(next),
+              isCompleted: allDone,
+              updatedAt: Date.now(),
+            })
+          );
+        } catch {}
+
+        saveProgressToServer(activeSectionRef.current, Array.from(next), allDone);
+        return next;
+      });
+    },
+    [
+      resolveId,
+      sections,
+      lessonSlug,
+      onLessonCompleted,
+      trackKey,
+      storageKey,
+      saveProgressToServer,
+    ]
+  );
+
   // 4. Compute index & percentage
   const currentIndex = sections.findIndex((s) => s.id === activeSection);
   const safeCurrentIndex = currentIndex === -1 ? 0 : currentIndex;
@@ -334,6 +412,8 @@ export function useLessonProgress({
     progressPercent,
     completedSectionsCount: completedSections.size,
     handleSectionChange,
+    setActiveSectionId,
+    markSectionComplete,
     completeLesson,
     handlePrev,
     handleNext,

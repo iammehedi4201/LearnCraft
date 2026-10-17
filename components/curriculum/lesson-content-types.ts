@@ -114,10 +114,12 @@ export interface StandardLessonContent {
   part6?: {
     title?: string;
     quiz?: LessonQuizData;
+    takeaways?: LessonTakeaway[];
   };
   part7?: {
     title?: string;
     takeaways?: LessonTakeaway[];
+    quiz?: LessonQuizData;
     nextLessonPreview?: { title: string; desc: string };
   };
 }

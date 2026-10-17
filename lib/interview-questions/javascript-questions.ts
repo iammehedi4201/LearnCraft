@@ -38,8 +38,8 @@ JavaScript runs code synchronously on the call stack. When async tasks finish, m
       "setTimeout and setInterval belong to macrotasks (task queue)"
     ],
     tags: ["event-loop", "asynchronous", "microtasks", "macrotasks", "promises"],
-    relatedLessonSlug: "/learn/javascript/js07-event-loop-microtasks",
-    relatedLessonName: "JS-07: The Event Loop & Microtasks"
+    relatedLessonSlug: "/learn/javascript/js23-the-event-loop",
+    relatedLessonName: "JS-23: The Event Loop & Concurrency: Call Stack & Task Queues"
   },
   {
     id: "js-q02",
@@ -97,8 +97,8 @@ Because \`var\` is function-scoped, all callbacks close over the exact same vari
       "Closures capture variables by reference, not value snapshot"
     ],
     tags: ["closures", "scoping", "var-let-const", "asynchronous"],
-    relatedLessonSlug: "/learn/javascript/js03-closures-and-lexical-scope",
-    relatedLessonName: "JS-03: Closures & Lexical Scope"
+    relatedLessonSlug: "/learn/javascript/js08-closures",
+    relatedLessonName: "JS-08: Closures: How Functions Remember Their Birthplace"
   },
   {
     id: "js-q03",
@@ -148,8 +148,8 @@ JavaScript objects inherit from other objects via prototypes. The \`prototype\` 
       "Use Object.getPrototypeOf() instead of __proto__"
     ],
     tags: ["prototypes", "inheritance", "oop", "objects"],
-    relatedLessonSlug: "/learn/javascript/js04-prototypal-inheritance",
-    relatedLessonName: "JS-04: Prototypal Inheritance Deep Dive"
+    relatedLessonSlug: "/learn/javascript/js18-prototypes-and-prototype-chain",
+    relatedLessonName: "JS-18: Prototypes & The Prototype Chain: JavaScript's Inheritance"
   },
   {
     id: "js-q04",
@@ -191,8 +191,8 @@ Use \`Promise.all\` when all tasks must succeed. Use \`Promise.allSettled\` when
       "Promise.any ignores rejections until all fail"
     ],
     tags: ["promises", "async", "concurrency", "error-handling"],
-    relatedLessonSlug: "/learn/javascript/js06-promises-and-async-await",
-    relatedLessonName: "JS-06: Promises & Async/Await Architecture"
+    relatedLessonSlug: "/learn/javascript/js21-promises-and-chaining",
+    relatedLessonName: "JS-21: Promises: Managing Future Values with .then() & .catch()"
   },
   {
     id: "js-q05",
@@ -232,8 +232,8 @@ Memory leaks occur when unused objects remain reachable from the root. The most 
       "WeakMap and WeakSet prevent reference retention"
     ],
     tags: ["memory-leaks", "garbage-collection", "performance", "devtools"],
-    relatedLessonSlug: "/learn/javascript/js08-memory-management-and-gc",
-    relatedLessonName: "JS-08: Memory Management & V8 Garbage Collection"
+    relatedLessonSlug: "/learn/javascript/js30-browser-storage-and-debugging",
+    relatedLessonName: "JS-30: Browser Storage (localStorage) & DevTools Debugging"
   },
   {
     id: "js-q06",
@@ -280,8 +280,8 @@ Primitives are stored and copied by value, meaning changing one variable does no
       "Assigning an object copies the reference address, not the underlying data"
     ],
     tags: ["primitives", "reference-types", "data-types", "memory"],
-    relatedLessonSlug: "/learn/javascript/js01-types-and-variables",
-    relatedLessonName: "JS-01: JavaScript Data Types & Memory Allocation"
+    relatedLessonSlug: "/learn/javascript/js02-variables-and-data-types",
+    relatedLessonName: "JS-02: Variables & Data Types: Storing Data with let & const"
   },
   {
     id: "js-q07",
@@ -328,8 +328,8 @@ Always prefer \`===\` because it avoids unexpected type conversions and compares
       "NaN === NaN is false; use Number.isNaN(x)"
     ],
     tags: ["equality", "type-coercion", "operators", "comparison"],
-    relatedLessonSlug: "/learn/javascript/js02-operators-and-coercion",
-    relatedLessonName: "JS-02: Equality, Truthy/Falsy & Type Coercion"
+    relatedLessonSlug: "/learn/javascript/js03-operators-and-equality",
+    relatedLessonName: "JS-03: Operators, Equality & Type Coercion: The === Rule"
   },
   {
     id: "js-q08",
@@ -379,8 +379,8 @@ console.log(null === undefined); // false
       "null == undefined is true, but null === undefined is false"
     ],
     tags: ["null", "undefined", "types", "fundamentals"],
-    relatedLessonSlug: "/learn/javascript/js01-types-and-variables",
-    relatedLessonName: "JS-01: JavaScript Data Types & Memory Allocation"
+    relatedLessonSlug: "/learn/javascript/js02-variables-and-data-types",
+    relatedLessonName: "JS-02: Variables & Data Types: Storing Data with let & const"
   },
   {
     id: "js-q09",
@@ -433,8 +433,8 @@ The main difference is \`this\`. Arrow functions do not bind their own \`this\`,
       "call, apply, and bind cannot re-bind an arrow function's this"
     ],
     tags: ["arrow-functions", "this", "functions", "scope"],
-    relatedLessonSlug: "/learn/javascript/js03-closures-and-lexical-scope",
-    relatedLessonName: "JS-03: Closures & Lexical Scope"
+    relatedLessonSlug: "/learn/javascript/js07-scope-global-function-block",
+    relatedLessonName: "JS-07: Scope: Global, Function, and Block Scope"
   },
   {
     id: "js-q10",
@@ -481,8 +481,8 @@ Hoisting moves declarations to the top of their scope during compilation. Functi
       "let and const exist in TDZ until evaluated"
     ],
     tags: ["hoisting", "var", "let", "const", "tdz"],
-    relatedLessonSlug: "/learn/javascript/js03-closures-and-lexical-scope",
-    relatedLessonName: "JS-03: Closures & Lexical Scope"
+    relatedLessonSlug: "/learn/javascript/js06-functions-and-arrow-syntax",
+    relatedLessonName: "JS-06: Functions: Parameters, Return Values & Arrow Syntax"
   },
   {
     id: "js-q11",
@@ -532,8 +532,8 @@ Use \`map\` when you want to transform items into a new array. Use \`filter\` wh
       "forEach returns undefined and is used for side effects"
     ],
     tags: ["arrays", "map", "filter", "reduce", "forEach"],
-    relatedLessonSlug: "/learn/javascript/js05-array-methods-and-iteration",
-    relatedLessonName: "JS-05: Array Methods & Higher-Order Functions"
+    relatedLessonSlug: "/learn/javascript/js11-essential-array-methods",
+    relatedLessonName: "JS-11: Essential Array Methods: map, filter, find & reduce"
   },
   {
     id: "js-q12",
@@ -585,8 +585,8 @@ console.log(sarahIntro("~")); // "Welcome, I am Sarah~"
       "Useful for borrowing methods from other objects"
     ],
     tags: ["this", "call", "apply", "bind", "functions"],
-    relatedLessonSlug: "/learn/javascript/js03-closures-and-lexical-scope",
-    relatedLessonName: "JS-03: Closures & Lexical Scope"
+    relatedLessonSlug: "/learn/javascript/js17-the-this-keyword",
+    relatedLessonName: "JS-17: The this Keyword: Who Called Me?"
   },
   {
     id: "js-q13",
@@ -638,8 +638,8 @@ Shallow copies only clone top-level properties, leaving nested objects linked by
       "JSON serialization drops functions, undefined, and converts Dates to strings"
     ],
     tags: ["shallow-copy", "deep-copy", "structuredClone", "objects"],
-    relatedLessonSlug: "/learn/javascript/js01-types-and-variables",
-    relatedLessonName: "JS-01: JavaScript Data Types & Memory Allocation"
+    relatedLessonSlug: "/learn/javascript/js13-object-references-and-copying",
+    relatedLessonName: "JS-13: Object References & Immutability: Shallow vs Deep Copy"
   },
   {
     id: "js-q14",
@@ -691,8 +691,8 @@ Debounce delays execution until a pause in activity (like waiting for typing to 
       "Essential for preventing expensive calculations or API calls on frequent events"
     ],
     tags: ["debounce", "throttle", "performance", "timers"],
-    relatedLessonSlug: "/learn/javascript/js07-event-loop-microtasks",
-    relatedLessonName: "JS-07: The Event Loop & Microtasks"
+    relatedLessonSlug: "/learn/javascript/js20-synchronous-vs-asynchronous",
+    relatedLessonName: "JS-20: Synchronous vs Asynchronous: Why JavaScript Never Freezes"
   },
   {
     id: "js-q15",
@@ -741,8 +741,8 @@ Events travel down in the capturing phase and bubble up in the bubbling phase. E
       "target is what was clicked; currentTarget is element holding the listener"
     ],
     tags: ["events", "bubbling", "capturing", "delegation", "dom"],
-    relatedLessonSlug: "/learn/javascript/js07-event-loop-microtasks",
-    relatedLessonName: "JS-07: The Event Loop & Microtasks"
+    relatedLessonSlug: "/learn/javascript/js29-events-and-delegation",
+    relatedLessonName: "JS-29: Events, Event Listeners & Event Delegation"
   },
   {
     id: "js-q16",
@@ -793,8 +793,8 @@ Scope controls variable visibility. JavaScript has global scope, function scope,
       "Strict mode ('use strict') prevents accidental globals"
     ],
     tags: ["scope", "scope-chain", "block-scope", "variables"],
-    relatedLessonSlug: "/learn/javascript/js03-closures-and-lexical-scope",
-    relatedLessonName: "JS-03: Closures & Lexical Scope"
+    relatedLessonSlug: "/learn/javascript/js07-scope-global-function-block",
+    relatedLessonName: "JS-07: Scope: Global, Function, and Block Scope"
   },
   {
     id: "js-q17",
@@ -854,8 +854,8 @@ const [user, posts] = await Promise.all([fetchUser(), fetchPosts()]);
       "Avoid sequential awaits for independent calls; use Promise.all"
     ],
     tags: ["async-await", "promises", "error-handling", "asynchronous"],
-    relatedLessonSlug: "/learn/javascript/js06-promises-and-async-await",
-    relatedLessonName: "JS-06: Promises & Async/Await Architecture"
+    relatedLessonSlug: "/learn/javascript/js23-the-event-loop",
+    relatedLessonName: "JS-23: The Event Loop & Concurrency: Call Stack & Task Queues"
   },
   {
     id: "js-q18",
@@ -915,8 +915,8 @@ Currying transforms a function that takes multiple arguments into nested unary f
       "Widely used in functional libraries and Redux middleware"
     ],
     tags: ["currying", "functional-programming", "closures", "functions"],
-    relatedLessonSlug: "/learn/javascript/js03-closures-and-lexical-scope",
-    relatedLessonName: "JS-03: Closures & Lexical Scope"
+    relatedLessonSlug: "/learn/javascript/js09-callbacks-and-higher-order-functions",
+    relatedLessonName: "JS-09: Callbacks & Higher-Order Functions: Functions as Data"
   },
   {
     id: "js-q19",
@@ -968,8 +968,8 @@ Both methods are **shallow**. Nested objects inside a frozen object can still be
       "In strict mode, attempting forbidden mutations throws a TypeError"
     ],
     tags: ["object-freeze", "object-seal", "immutability", "objects"],
-    relatedLessonSlug: "/learn/javascript/js01-types-and-variables",
-    relatedLessonName: "JS-01: JavaScript Data Types & Memory Allocation"
+    relatedLessonSlug: "/learn/javascript/js12-objects-and-methods",
+    relatedLessonName: "JS-12: Objects: Key-Value Pairs, Methods & Property Access"
   },
   {
     id: "js-q20",
@@ -1026,7 +1026,7 @@ Web Workers provide true background multi-threading in browsers for CPU-heavy ta
       "Can transfer memory ownership using Transferable Objects (ArrayBuffer)"
     ],
     tags: ["web-workers", "concurrency", "multi-threading", "performance", "browser-apis"],
-    relatedLessonSlug: "/learn/javascript/js07-event-loop-microtasks",
-    relatedLessonName: "JS-07: The Event Loop & Microtasks"
+    relatedLessonSlug: "/learn/javascript/js20-synchronous-vs-asynchronous",
+    relatedLessonName: "JS-20: Synchronous vs Asynchronous: Why JavaScript Never Freezes"
   }
 ];

@@ -28,6 +28,10 @@ export interface UnifiedLessonNavBarProps {
   onDirectToQuiz?: () => void;
   /** Optional custom class name */
   className?: string;
+  /** Label for position and button actions (e.g. 'Lesson' or 'Part') */
+  itemLabel?: "Lesson" | "Part";
+  /** Display variant: 'floating' (standalone card with margin) or 'docked' (embedded within card footer) */
+  variant?: "floating" | "docked";
 }
 
 export function UnifiedLessonNavBar({
@@ -43,6 +47,8 @@ export function UnifiedLessonNavBar({
   canCompleteModule = true,
   onDirectToQuiz,
   className = "",
+  itemLabel = "Lesson",
+  variant = "floating",
 }: UnifiedLessonNavBarProps): JSX.Element {
   const [showQuizNotice, setShowQuizNotice] = useState<boolean>(false);
 
@@ -66,8 +72,11 @@ export function UnifiedLessonNavBar({
     }
   };
 
+  const isDocked = variant === "docked";
+  const labelText = itemLabel === "Part" ? "Part" : "Lesson";
+
   return (
-    <div className={`space-y-3 mt-8 sm:mt-12 ${className}`}>
+    <div className={`${isDocked ? "space-y-3" : "space-y-3 mt-8 sm:mt-12"} ${className}`}>
       {/* Required Quiz Inline Notice if user tries to complete before passing quiz */}
       {showQuizNotice && !isLessonCompleted && (
         <div
@@ -93,15 +102,19 @@ export function UnifiedLessonNavBar({
       {/* Unified Single Navigation Bar */}
       <nav
         aria-label="Lesson navigation"
-        className="p-4 sm:p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-xl flex items-center justify-between gap-3 sm:gap-4"
+        className={
+          isDocked
+            ? "py-1.5 sm:py-2 flex items-center justify-between gap-3 sm:gap-4"
+            : "p-4 sm:p-5 rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-xl flex items-center justify-between gap-3 sm:gap-4"
+        }
       >
-        {/* Left Action: Previous Lesson */}
+        {/* Left Action: Previous Lesson / Part */}
         <div className="flex-1 flex justify-start">
           <button
             type="button"
             onClick={onPrevLesson}
             disabled={isFirstLesson}
-            aria-label="Previous lesson"
+            aria-label={`Previous ${labelText.toLowerCase()}`}
             className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition-all flex items-center gap-1.5 select-none ${
               isFirstLesson
                 ? "border-white/[0.04] text-slate-600 bg-white/[0.01] cursor-not-allowed opacity-35"
@@ -109,7 +122,7 @@ export function UnifiedLessonNavBar({
             }`}
           >
             <span aria-hidden="true">←</span>
-            <span>Previous lesson</span>
+            <span>{`Previous ${labelText.toLowerCase()}`}</span>
           </button>
         </div>
 
@@ -119,20 +132,20 @@ export function UnifiedLessonNavBar({
             data-testid="lesson-position-indicator"
             className="text-xs sm:text-sm font-mono text-slate-300 font-semibold tracking-wide"
           >
-            Lesson {safeCurrent + 1} of {safeTotal}
+            {labelText} {safeCurrent + 1} of {safeTotal}
           </span>
         </div>
 
-        {/* Right Action: Next Lesson OR Complete Module / Next Module */}
+        {/* Right Action: Next Lesson / Part OR Complete Module / Next Module */}
         <div className="flex-1 flex justify-end">
           {!isFinalLesson ? (
             <button
               type="button"
               onClick={onNextLesson}
-              aria-label="Next lesson"
+              aria-label={`Next ${labelText.toLowerCase()}`}
               className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
-              <span>Next lesson</span>
+              <span>{`Next ${labelText.toLowerCase()}`}</span>
               <span aria-hidden="true">→</span>
             </button>
           ) : isLessonCompleted ? (
