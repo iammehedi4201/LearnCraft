@@ -108,10 +108,10 @@ describe("Page-Specific Skeleton Loaders", () => {
     expect(html).toContain("border-dashed");
   });
 
-  it("renders LessonSkeleton matching 2-column sidebar and content layout", () => {
+  it("renders LessonSkeleton matching vertical layout with top stepper", () => {
     const html = renderToStaticMarkup(<LessonSkeleton />);
-    expect(html).toContain("lg:w-72 xl:w-80");
-    expect(html).toContain("max-w-5xl");
+    expect(html).toContain("max-w-[1200px]");
+    expect(html).toContain("rounded-2xl");
   });
 
   it("renders RoadmapsSkeleton matching skill grid layout", () => {

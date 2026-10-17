@@ -958,7 +958,7 @@ export function DataDrivenLessonView({
     <InteractiveGrid className="min-h-screen bg-ds-bg-weak text-slate-100 flex flex-col font-sans selection:bg-purple-500/20 selection:text-purple-300">
       <Nav />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
+      <div className="relative z-10 max-w-6xl xl:max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
         {/* Module Header & Breadcrumb Row */}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-xs">
           <Link
@@ -977,7 +977,7 @@ export function DataDrivenLessonView({
             <span className="text-[10px] font-mono text-purple-300 font-bold bg-purple-500/15 px-2.5 py-0.5 rounded-full border border-purple-500/25">
               {lesson.code}
             </span>
-            <span className="text-slate-300 font-semibold truncate max-w-[200px] sm:max-w-md">
+            <span className="text-slate-300 font-semibold truncate max-w-[200px] sm:max-w-lg md:max-w-xl">
               {lesson.title}
             </span>
             {lesson.minutes && (
