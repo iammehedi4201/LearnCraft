@@ -69,30 +69,14 @@ export function DataDrivenLessonView({
   isInitiallyComplete = false,
   playgroundRuntime = "typescript",
 }: DataDrivenLessonViewProps): JSX.Element {
-  // Normalize sections so Part 6 is Summary & Key Takeaways and Part 7 is Knowledge Check Quiz
+  // Normalize sections without forcing generic labels over topic-specific custom labels
   const sections = useMemo(() => {
     const rawSections = content.sections || [];
-    const hasPart7 = rawSections.some((s) => s.id === "part7");
-    if (!hasPart7) {
-      return rawSections;
-    }
-    return rawSections.map((sec) => {
-      if (sec.id === "part6") {
-        return {
-          ...sec,
-          label: "Summary & Key Takeaways",
-          icon: "🎓",
-        };
-      }
-      if (sec.id === "part7") {
-        return {
-          ...sec,
-          label: "Knowledge Check Quiz",
-          icon: "🎯",
-        };
-      }
-      return sec;
-    });
+    return rawSections.map((sec, idx) => ({
+      ...sec,
+      label: sec.label || sec.title || `Part ${idx + 1}`,
+      icon: sec.icon || (sec.id === "part7" ? "🎯" : sec.id === "part6" ? "🎓" : sec.id === "part5" ? "💻" : "📄"),
+    }));
   }, [content.sections]);
 
   const {
@@ -155,7 +139,6 @@ export function DataDrivenLessonView({
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
 
     const timers: Record<string, NodeJS.Timeout> = {};
-    const readingPartDomIds = new Set(["part-1", "part-2", "part-3", "part-4", "part-6"]);
 
     const getSectionByDomId = (domId: string) => {
       const match = domId.match(/^part-(\d+)$/);
@@ -181,28 +164,27 @@ export function DataDrivenLessonView({
           }
 
           // Reading completion tracking: 60% visible for 1.5s
-          if (readingPartDomIds.has(domId)) {
-            const mapped = getSectionByDomId(domId);
-            const secId = mapped?.section?.id;
+          // (Only triggers for conceptual reading parts; interactive sandbox & quiz require explicit action)
+          const mapped = getSectionByDomId(domId);
+          const secId = mapped?.section?.id;
 
-            if (secId && !completedSections.has(secId)) {
-              const isMostlyVisible =
-                entry.isIntersecting &&
-                (entry.intersectionRatio >= 0.55 ||
-                  entry.intersectionRect.height / (window.innerHeight || 800) >= 0.5);
+          if (secId && secId !== "part5" && secId !== "part7" && !completedSections.has(secId)) {
+            const isMostlyVisible =
+              entry.isIntersecting &&
+              (entry.intersectionRatio >= 0.55 ||
+                entry.intersectionRect.height / (window.innerHeight || 800) >= 0.5);
 
-              if (isMostlyVisible) {
-                if (!timers[domId]) {
-                  timers[domId] = setTimeout(() => {
-                    markSectionComplete(secId);
-                    delete timers[domId];
-                  }, 1500);
-                }
-              } else {
-                if (timers[domId]) {
-                  clearTimeout(timers[domId]);
+            if (isMostlyVisible) {
+              if (!timers[domId]) {
+                timers[domId] = setTimeout(() => {
+                  markSectionComplete(secId);
                   delete timers[domId];
-                }
+                }, 1500);
+              }
+            } else {
+              if (timers[domId]) {
+                clearTimeout(timers[domId]);
+                delete timers[domId];
               }
             }
           }
@@ -313,18 +295,19 @@ export function DataDrivenLessonView({
   };
 
   // ─── Part 1: Overview & Real-Life Analogy ───────────────────────────────────
-  const renderPart1 = () => {
-    const title = content.part1?.title || getSectionLabel(sections[0], 0);
+  const renderPart1 = (sec: LessonSectionItem, index: number) => {
+    const title = content.part1?.title || sec.label || getSectionLabel(sec, index);
     const explanation = content.part1?.explanation || content.part1?.bigPicture;
-    const isCompleted = completedSections.has(sections[0]?.id || "part1");
+    const isCompleted = completedSections.has(sec.id);
+    const domId = `part-${index + 1}`;
 
     return (
-      <section id="part-1" {...sectionProps}>
+      <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-              <span>✨</span>
-              <span>PART 01 · CORE CONCEPT</span>
+              <span>{sec.icon || "✨"}</span>
+              <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · CORE CONCEPT`}</span>
             </div>
             {isCompleted && (
               <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
@@ -387,16 +370,17 @@ export function DataDrivenLessonView({
   };
 
   // ─── Part 2: Core Concepts & Mechanics ─────────────────────────────────────
-  const renderPart2 = () => {
-    const isCompleted = completedSections.has(sections[1]?.id || "part2");
+  const renderPart2 = (sec: LessonSectionItem, index: number) => {
+    const isCompleted = completedSections.has(sec.id);
+    const domId = `part-${index + 1}`;
 
     return (
-      <section id="part-2" {...sectionProps}>
+      <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-              <span>🧩</span>
-              <span>PART 02 · CORE MECHANICS</span>
+              <span>{sec.icon || "🧩"}</span>
+              <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · CORE MECHANICS`}</span>
             </div>
             {isCompleted && (
               <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
@@ -405,7 +389,7 @@ export function DataDrivenLessonView({
             )}
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            {content.part2?.title || getSectionLabel(sections[1], 1)}
+            {content.part2?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
           {content.part2?.intro && (
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
@@ -489,16 +473,17 @@ export function DataDrivenLessonView({
   };
 
   // ─── Part 3: Mental Model & Structure ──────────────────────────────────────
-  const renderPart3 = () => {
-    const isCompleted = completedSections.has(sections[2]?.id || "part3");
+  const renderPart3 = (sec: LessonSectionItem, index: number) => {
+    const isCompleted = completedSections.has(sec.id);
+    const domId = `part-${index + 1}`;
 
     return (
-      <section id="part-3" {...sectionProps}>
+      <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-              <span>💻</span>
-              <span>PART 03 · DEEP DIVE & STRUCTURE</span>
+              <span>{sec.icon || "🧠"}</span>
+              <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · DEEP DIVE & STRUCTURE`}</span>
             </div>
             {isCompleted && (
               <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
@@ -507,7 +492,7 @@ export function DataDrivenLessonView({
             )}
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            {content.part3?.title || getSectionLabel(sections[2], 2)}
+            {content.part3?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
           {content.part3?.intro && (
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
@@ -579,8 +564,9 @@ export function DataDrivenLessonView({
   };
 
   // ─── Part 4: Bad Code vs Clean Code ────────────────────────────────────────
-  const renderPart4 = () => {
-    const isCompleted = completedSections.has(sections[3]?.id || "part4");
+  const renderPart4 = (sec: LessonSectionItem, index: number) => {
+    const isCompleted = completedSections.has(sec.id);
+    const domId = `part-${index + 1}`;
 
     const badComparison =
       content.part4?.bad ||
@@ -603,12 +589,12 @@ export function DataDrivenLessonView({
         : undefined);
 
     return (
-      <section id="part-4" {...sectionProps}>
+      <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-              <span>⚠️</span>
-              <span>PART 04 · PATTERNS & TRAPS</span>
+              <span>{sec.icon || "⚠️"}</span>
+              <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · PATTERNS & TRAPS`}</span>
             </div>
             {isCompleted && (
               <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
@@ -617,7 +603,7 @@ export function DataDrivenLessonView({
             )}
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            {content.part4?.title || getSectionLabel(sections[3], 3)}
+            {content.part4?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
         </div>
 
@@ -687,17 +673,18 @@ export function DataDrivenLessonView({
   };
 
   // ─── Part 5: Interactive Code Sandbox ──────────────────────────────────────
-  const renderPart5 = () => {
+  const renderPart5 = (sec: LessonSectionItem, index: number) => {
     const effectiveRuntime = playgroundRuntime === "sql" ? "javascript" : playgroundRuntime;
-    const isCompleted = completedSections.has(sections[4]?.id || "part5");
+    const isCompleted = completedSections.has(sec.id);
+    const domId = `part-${index + 1}`;
 
     return (
-      <section id="part-5" {...sectionProps}>
+      <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-              <span>⚡</span>
-              <span>PART 05 · INTERACTIVE SANDBOX</span>
+              <span>{sec.icon || "⚡"}</span>
+              <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · INTERACTIVE SANDBOX`}</span>
             </div>
             {isCompleted && (
               <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
@@ -706,7 +693,7 @@ export function DataDrivenLessonView({
             )}
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            {content.part5?.title || getSectionLabel(sections[4], 4)}
+            {content.part5?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
           {content.part5?.intro && (
             <p className="text-sm text-slate-300 leading-relaxed">{content.part5.intro}</p>
@@ -718,8 +705,7 @@ export function DataDrivenLessonView({
           runtime={effectiveRuntime as any}
           starterCode={content.part5?.starterCode || ""}
           onRun={() => {
-            const part5Id = sections[4]?.id || "part5";
-            markSectionComplete(part5Id);
+            markSectionComplete(sec.id);
           }}
         />
       </section>
@@ -727,22 +713,23 @@ export function DataDrivenLessonView({
   };
 
   // ─── Part 6: Summary & Key Takeaways ──────────────────────────────────────
-  const renderPart6 = () => {
+  const renderPart6 = (sec: LessonSectionItem, index: number) => {
     const takeaways = content.part6?.takeaways || content.part7?.takeaways;
     const title = content.part6?.takeaways
-      ? (content.part6?.title || "Summary & Key Takeaways")
+      ? (content.part6?.title || sec.label || "Summary & Key Takeaways")
       : content.part7?.title && !content.part7.title.toLowerCase().includes("quiz")
       ? content.part7.title
-      : "Summary & Key Takeaways";
-    const isCompleted = completedSections.has(sections[5]?.id || "part6");
+      : sec.label || "Summary & Key Takeaways";
+    const isCompleted = completedSections.has(sec.id);
+    const domId = `part-${index + 1}`;
 
     return (
-      <section id="part-6" {...sectionProps}>
+      <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-              <span>🎓</span>
-              <span>PART 06 · SUMMARY & KEY TAKEAWAYS</span>
+              <span>{sec.icon || "🎓"}</span>
+              <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · SUMMARY & KEY TAKEAWAYS`}</span>
             </div>
             {isCompleted && (
               <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
@@ -751,7 +738,7 @@ export function DataDrivenLessonView({
             )}
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-            {title || getSectionLabel(sections[5], 5) || "Summary & Key Takeaways"}
+            {title || getSectionLabel(sec, index) || "Summary & Key Takeaways"}
           </h2>
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
             Review the core mental models and best practices from {lesson.title}:
@@ -783,22 +770,23 @@ export function DataDrivenLessonView({
   };
 
   // ─── Part 7: Knowledge Check Quiz ──────────────────────────────────────────
-  const renderPart7 = () => {
+  const renderPart7 = (sec: LessonSectionItem, index: number) => {
     const quiz = content.part7?.quiz || content.part6?.quiz || (content as any).quiz;
     const quizTitle = content.part7?.quiz
-      ? (content.part7?.title || "Knowledge Check Quiz")
+      ? (content.part7?.title || sec.label || "Knowledge Check Quiz")
       : content.part6?.quiz
-      ? (content.part6?.title || "Knowledge Check Quiz")
-      : "Knowledge Check Quiz";
-    const isCompleted = completedSections.has(sections[6]?.id || "part7");
+      ? (content.part6?.title || sec.label || "Knowledge Check Quiz")
+      : sec.label || "Knowledge Check Quiz";
+    const isCompleted = completedSections.has(sec.id);
+    const domId = `part-${index + 1}`;
 
     return (
-      <section id="part-7" {...sectionProps}>
+      <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-              <span>🎯</span>
-              <span>PART 07 · KNOWLEDGE CHECK QUIZ</span>
+              <span>{sec.icon || "🎯"}</span>
+              <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · KNOWLEDGE CHECK QUIZ`}</span>
             </div>
             {isCompleted && (
               <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
@@ -833,8 +821,7 @@ export function DataDrivenLessonView({
                       setSelectedQuizAnswer(idx);
                       setQuizSubmitted(true);
                       if (isCorrect) {
-                        const part7Id = sections[6]?.id || "part7";
-                        markSectionComplete(part7Id);
+                        markSectionComplete(sec.id);
                         recordActivity("exercise_pass", `Passed Quiz on ${lesson.title}`, {
                           lessonSlug: lesson.slug,
                           trackKey,
@@ -1005,25 +992,27 @@ export function DataDrivenLessonView({
 
         {/* Focused Centered Lesson Card */}
         <main className="w-full flex flex-col rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-2xl relative">
-          {/* Card Content: All 7 Parts stacked vertically in order */}
+          {/* Card Content: Dynamic Sections rendered in configured order */}
           <div className="p-6 sm:p-8 lg:p-10 flex-1 space-y-12 sm:space-y-14">
-            {renderPart1()}
-            <hr className="border-t border-white/[0.08]" />
-            {renderPart2()}
-            <hr className="border-t border-white/[0.08]" />
-            {renderPart3()}
-            <hr className="border-t border-white/[0.08]" />
-            {renderPart4()}
-            <hr className="border-t border-white/[0.08]" />
-            {renderPart5()}
-            <hr className="border-t border-white/[0.08]" />
-            {renderPart6()}
-            {sections.some((s) => s.id === "part7") && (
-              <>
-                <hr className="border-t border-white/[0.08]" />
-                {renderPart7()}
-              </>
-            )}
+            {sections.map((sec, idx) => {
+              let partNode: JSX.Element | null = null;
+              if (sec.id === "part1") partNode = renderPart1(sec, idx);
+              else if (sec.id === "part2") partNode = renderPart2(sec, idx);
+              else if (sec.id === "part3") partNode = renderPart3(sec, idx);
+              else if (sec.id === "part4") partNode = renderPart4(sec, idx);
+              else if (sec.id === "part5") partNode = renderPart5(sec, idx);
+              else if (sec.id === "part6") partNode = renderPart6(sec, idx);
+              else if (sec.id === "part7") partNode = renderPart7(sec, idx);
+
+              if (!partNode) return null;
+
+              return (
+                <div key={sec.id}>
+                  {idx > 0 && <hr className="border-t border-white/[0.08] mb-12 sm:mb-14" />}
+                  {partNode}
+                </div>
+              );
+            })}
 
             {/* End of Page Next Lesson CTA */}
             {renderEndOfPageCTA()}

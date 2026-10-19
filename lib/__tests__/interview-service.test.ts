@@ -12,7 +12,7 @@ describe("Interview Question Service Layer (Phase 4 Provider Pattern)", () => {
 
   it("should retrieve all curated questions via CuratedQuestionProvider", () => {
     const all = curatedProvider.getQuestions();
-    expect(all.length).toBe(193);
+    expect(all.length).toBe(203);
   });
 
   it("should filter by trackKey accurately", () => {
@@ -106,7 +106,7 @@ describe("Interview Question Service Layer (Phase 4 Provider Pattern)", () => {
 
     const all = await service.getAllQuestions();
     // Total should still equal curated count because react-q01 was deduplicated
-    expect(all.length).toBe(193);
+    expect(all.length).toBe(203);
 
     const reactQ01 = await service.getQuestionById("react-q01");
     expect(reactQ01).toBeDefined();

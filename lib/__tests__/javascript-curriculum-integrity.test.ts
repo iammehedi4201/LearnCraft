@@ -49,7 +49,7 @@ describe("JavaScript Curriculum Integrity & Health Suite", () => {
     expect(byCode?.code).toBe("JS-06");
   });
 
-  it("verifies all 30 lessons have complete 7-part content in JS_LESSONS_CONTENT", () => {
+  it("verifies all 30 lessons have complete, tailored section content in JS_LESSONS_CONTENT", () => {
     const lessons = getAllLessons();
 
     for (const lesson of lessons) {
@@ -58,7 +58,8 @@ describe("JavaScript Curriculum Integrity & Health Suite", () => {
       expect(content.code).toBe(lesson.code);
       expect(content.title.length).toBeGreaterThan(5);
       expect(content.subtitle.length).toBeGreaterThan(10);
-      expect(content.sections.length).toBe(7);
+      expect(content.sections.length).toBeGreaterThanOrEqual(6);
+      expect(content.sections.length).toBeLessThanOrEqual(7);
 
       // Part 1: Overview
       expect(content.part1.bigPicture.length).toBeGreaterThan(20);
@@ -91,8 +92,8 @@ describe("JavaScript Curriculum Integrity & Health Suite", () => {
     }
   });
 
-  it("verifies all 20 JavaScript interview questions link to valid curriculum lessons", () => {
-    expect(JAVASCRIPT_QUESTIONS.length).toBe(20);
+  it("verifies all 30 JavaScript interview questions link to valid curriculum lessons", () => {
+    expect(JAVASCRIPT_QUESTIONS.length).toBe(30);
 
     for (const q of JAVASCRIPT_QUESTIONS) {
       expect(q.relatedLessonSlug).toBeDefined();
@@ -105,20 +106,37 @@ describe("JavaScript Curriculum Integrity & Health Suite", () => {
     }
   });
 
-  it("verifies curated JavaScript module quizzes have valid questions and non-ambiguous options", () => {
-    expect(JAVASCRIPT_MODULE_QUIZZES.length).toBeGreaterThanOrEqual(10);
+  it("verifies all 30 curriculum lessons have dedicated module quizzes with valid questions", () => {
+    expect(JAVASCRIPT_MODULE_QUIZZES.length).toBe(30);
 
-    for (const quiz of JAVASCRIPT_MODULE_QUIZZES) {
-      expect(quiz.trackKey).toBe("javascript");
-      expect(quiz.questions.length).toBeGreaterThanOrEqual(3);
+    const lessons = getAllLessons();
+    const quizMap = new Map(JAVASCRIPT_MODULE_QUIZZES.map((q) => [q.lessonSlug, q]));
 
-      for (const q of quiz.questions) {
+    for (const lesson of lessons) {
+      const quiz = quizMap.get(lesson.slug);
+      expect(quiz, `Missing module quiz for lesson ${lesson.slug}`).toBeDefined();
+      expect(quiz?.lessonCode).toBe(lesson.code);
+      expect(quiz?.questions.length).toBeGreaterThanOrEqual(3);
+
+      for (const q of quiz?.questions || []) {
         expect(q.id).toBeDefined();
         expect(q.prompt.length).toBeGreaterThan(10);
         expect(q.options.length).toBe(4);
         expect(q.correctAnswer).toBeGreaterThanOrEqual(0);
         expect(q.correctAnswer).toBeLessThan(4);
         expect(q.explanation.length).toBeGreaterThan(10);
+      }
+    }
+  });
+
+  it("verifies every section listed in content.sections maps to defined content", () => {
+    const lessons = getAllLessons();
+
+    for (const lesson of lessons) {
+      const content = getJSLessonContent(lesson.slug);
+      for (const sec of content.sections) {
+        expect(["part1", "part2", "part3", "part4", "part5", "part6", "part7"]).toContain(sec.id);
+        expect((content as any)[sec.id], `Section ${sec.id} in ${lesson.slug} does not have content`).toBeDefined();
       }
     }
   });

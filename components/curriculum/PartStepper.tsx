@@ -63,7 +63,9 @@ export function PartStepper({
     if (typeof window !== "undefined") {
       const targetId = `part-${index + 1}`;
       const targetEl =
-        document.getElementById(targetId) || document.getElementById(section.id);
+        document.getElementById(targetId) ||
+        document.getElementById(section.id) ||
+        document.querySelector(`[data-section-id="${section.id}"]`);
       if (targetEl) {
         const prefersReducedMotion = window.matchMedia(
           "(prefers-reduced-motion: reduce)"

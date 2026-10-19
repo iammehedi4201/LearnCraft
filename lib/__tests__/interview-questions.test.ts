@@ -32,8 +32,8 @@ import {
 } from "../interview-questions/architecture-questions";
 
 describe("Curated Interview Question Bank (Phase 2 Expansion)", () => {
-  it("should contain exactly 193 high-quality questions across 14 tracks", () => {
-    expect(ALL_INTERVIEW_QUESTIONS.length).toBe(193);
+  it("should contain exactly 203 high-quality questions across 14 tracks", () => {
+    expect(ALL_INTERVIEW_QUESTIONS.length).toBe(203);
   });
 
   it("should ensure every question ID across the entire bank is unique", () => {
@@ -42,7 +42,7 @@ describe("Curated Interview Question Bank (Phase 2 Expansion)", () => {
       expect(idSet.has(q.id), `Duplicate ID found: ${q.id}`).toBe(false);
       idSet.add(q.id);
     }
-    expect(idSet.size).toBe(193);
+    expect(idSet.size).toBe(203);
   });
 
   it("should preserve all legacy baseline question IDs without breakage", () => {
@@ -85,7 +85,7 @@ describe("Curated Interview Question Bank (Phase 2 Expansion)", () => {
   });
 
   it("should meet target question quotas for all 14 tracks", () => {
-    expect(JAVASCRIPT_QUESTIONS.length).toBe(20);
+    expect(JAVASCRIPT_QUESTIONS.length).toBe(30);
     expect(TYPESCRIPT_QUESTIONS.length).toBe(18);
     expect(REACT_QUESTIONS.length).toBe(20);
     expect(NEXTJS_QUESTIONS.length).toBe(15);
@@ -145,7 +145,7 @@ describe("Curated Interview Question Bank (Phase 2 Expansion)", () => {
     expect(reactQs.every((q) => q.trackKey === "react")).toBe(true);
 
     const jsQs = getQuestionsByTrack("javascript");
-    expect(jsQs.length).toBe(20);
+    expect(jsQs.length).toBe(30);
     expect(jsQs.every((q) => q.trackKey === "javascript")).toBe(true);
 
     const nonExistent = getQuestionsByTrack("non-existent-track");

@@ -76,9 +76,9 @@ describe("Spaced Repetition (SM-2) & Progress Tracking Engine", () => {
     // Brand new state
     const stats = getTrackStats("javascript", JAVASCRIPT_QUESTIONS);
     expect(stats.trackKey).toBe("javascript");
-    expect(stats.totalQuestions).toBe(20);
+    expect(stats.totalQuestions).toBe(30);
     expect(stats.questionsReviewed).toBe(0);
-    expect(stats.dueForReview).toBe(20); // All unreviewed are due
+    expect(stats.dueForReview).toBe(30); // All unreviewed are due
 
     // Review one question
     recordQuestionGrade("js-q01", "good");
@@ -94,7 +94,7 @@ describe("Spaced Repetition (SM-2) & Progress Tracking Engine", () => {
 
   it("should retrieve overall interview stats across all 14 tracks", () => {
     const overall = getOverallInterviewStats();
-    expect(overall.totalQuestions).toBe(193);
+    expect(overall.totalQuestions).toBe(203);
     expect(overall.totalTracks).toBe(14);
     expect(overall.questionsReviewed).toBe(0);
   });
