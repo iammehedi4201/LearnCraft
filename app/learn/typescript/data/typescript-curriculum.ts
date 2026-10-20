@@ -189,8 +189,8 @@ export const TYPESCRIPT_STAGES: StageMeta[] = [
         code: "TS-01",
         stepNumber: 1,
         slug: "ts01-mental-model",
-        name: "Mental Model & Static Typing",
-        desc: "Why TypeScript exists, compile-time vs runtime, static analysis, and the compilation pipeline.",
+        name: "What is TypeScript? The Guardrail Mental Model",
+        desc: "Why TypeScript exists, how it relates to JavaScript, compile-time vs runtime, and type erasure.",
         path: "/learn/typescript/ts01-mental-model",
         tag: "CORE",
         estimatedMinutes: 20,
@@ -200,8 +200,8 @@ export const TYPESCRIPT_STAGES: StageMeta[] = [
         code: "TS-02",
         stepNumber: 2,
         slug: "ts02-primitives-inference",
-        name: "Type Annotations & Inference",
-        desc: "Explicit annotations vs implicit inference for string, number, boolean, symbol, and bigint.",
+        name: "Basic Types & Type Inference",
+        desc: "Master primitive type annotations (string, number, boolean), understand automatic type inference, and decode type errors.",
         path: "/learn/typescript/ts02-primitives-inference",
         tag: "CORE",
         estimatedMinutes: 20,
@@ -211,8 +211,8 @@ export const TYPESCRIPT_STAGES: StageMeta[] = [
         code: "TS-03",
         stepNumber: 3,
         slug: "ts03-arrays-tuples",
-        name: "Arrays, Tuples & Readonly",
-        desc: "Typed arrays, fixed-length heterogeneous tuples, and the readonly modifier.",
+        name: "Arrays, Tuples & Readonly Collections",
+        desc: "Type-safe arrays (string[], number[]), fixed-position tuples ([string, number]), and immutable readonly modifiers.",
         path: "/learn/typescript/ts03-arrays-tuples",
         tag: "CORE",
         estimatedMinutes: 25,
@@ -222,8 +222,8 @@ export const TYPESCRIPT_STAGES: StageMeta[] = [
         code: "TS-04",
         stepNumber: 4,
         slug: "ts04-object-types",
-        name: "Object Types & Properties",
-        desc: "Shape typing, optional properties (?), readonly fields, and dynamic index signatures.",
+        name: "Object Types, Optional Fields & Readonly",
+        desc: "Define strict object shapes, handle optional properties with ?, protect immutable fields with readonly, and understand excess property checks.",
         path: "/learn/typescript/ts04-object-types",
         tag: "CORE",
         estimatedMinutes: 25,
@@ -234,10 +234,10 @@ export const TYPESCRIPT_STAGES: StageMeta[] = [
         stepNumber: 5,
         slug: "ts05-special-types",
         name: "Special Types: any, unknown, void & never",
-        desc: "The type hierarchy: Top types (any, unknown), bottom types (never), and void/null/undefined.",
+        desc: "Master the type hierarchy: top types (any vs unknown), bottom types (never), and function return void for safe data handling.",
         path: "/learn/typescript/ts05-special-types",
         tag: "CORE",
-        estimatedMinutes: 30,
+        estimatedMinutes: 25,
         prerequisite: "TS-04 (Object Types)",
       },
     ],
@@ -788,10 +788,28 @@ export function getStages(): StageMeta[] {
 }
 
 export function getLessonBySlug(slug: string): LessonMeta | undefined {
-  return getAllLessons().find(
+  const norm = slug.toLowerCase().trim();
+  const cleanNorm = norm.replace(/[^a-z0-9]/g, "");
+
+  // 1. Direct match on slug, path suffix, or substring
+  const directMatch = getAllLessons().find(
     (l) =>
-      l.slug === slug || l.path.endsWith(`/${slug}`) || l.path.includes(slug),
+      l.slug.toLowerCase() === norm ||
+      l.path.endsWith(`/${norm}`) ||
+      l.path.toLowerCase().includes(norm),
   );
+  if (directMatch) return directMatch;
+
+  // 2. Match by normalized code (e.g. "ts01" or "ts-01") or slug prefix (e.g. "ts01-mental")
+  return getAllLessons().find((l) => {
+    const lSlugNorm = l.slug.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const lCodeNorm = l.code.toLowerCase().replace(/[^a-z0-9]/g, "");
+    return (
+      lCodeNorm === cleanNorm ||
+      lSlugNorm.startsWith(cleanNorm) ||
+      cleanNorm.startsWith(lCodeNorm)
+    );
+  });
 }
 
 export function getLessonByCode(code: string): LessonMeta | undefined {

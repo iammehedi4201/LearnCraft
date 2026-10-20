@@ -9,12 +9,17 @@
 
 import { ModuleQuiz } from "./quiz-types";
 import { JAVASCRIPT_MODULE_QUIZZES } from "./javascript-quizzes";
+import { TYPESCRIPT_MODULE_QUIZZES } from "./typescript-quizzes";
 
 export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
   // ──────────────────────────────────────────────────────────────────────────
   // JAVASCRIPT CURRICULUM QUIZZES
   // ──────────────────────────────────────────────────────────────────────────
   ...JAVASCRIPT_MODULE_QUIZZES,
+  // ──────────────────────────────────────────────────────────────────────────
+  // TYPESCRIPT CURRICULUM QUIZZES
+  // ──────────────────────────────────────────────────────────────────────────
+  ...TYPESCRIPT_MODULE_QUIZZES,
   // ──────────────────────────────────────────────────────────────────────────
   // NEXT.JS: NX-01 — The App Router Architecture
   // ──────────────────────────────────────────────────────────────────────────
@@ -210,96 +215,6 @@ export default function Page() {
         correctAnswer: 1,
         explanation: "React relies on keys during reconciliation to correlate items across render cycles. Without keys (or with array indices when items are reordered), React risks updating or recycling incorrect DOM elements and local component states.",
         hint: "Reconciliation diffing needs a stable identity to know if an element was moved, added, or deleted.",
-        hintCostXP: 5,
-      },
-    ],
-  },
-
-  // ──────────────────────────────────────────────────────────────────────────
-  // TYPESCRIPT: TS-01 — Types vs Values & The Static Type System
-  // ──────────────────────────────────────────────────────────────────────────
-  {
-    id: "quiz-typescript-ts01",
-    trackKey: "typescript",
-    trackTitle: "TypeScript",
-    lessonSlug: "ts01-mental-model",
-    lessonCode: "TS-01",
-    lessonTitle: "Types vs Values & The Static Type System",
-    description: "Assess your knowledge of type erasure, structural typing, and type-space vs value-space separation.",
-    passingScore: 75,
-    baseXpReward: 30,
-    perfectScoreBonusXp: 15,
-    questions: [
-      {
-        id: "ts01-q1",
-        type: "code_output",
-        prompt: "What is the runtime console output after compilation to JavaScript?",
-        codeSnippet: `interface User {
-  id: string;
-  name: string;
-}
-
-const user: User = { id: "u1", name: "Alice" };
-
-console.log(typeof user);
-// @ts-ignore
-console.log(typeof User);`,
-        language: "typescript",
-        options: [
-          "'object' then 'undefined'",
-          "'User' then 'interface'",
-          "'object' then 'object'",
-          "'User' then 'undefined'",
-        ],
-        correctAnswer: 0,
-        explanation: "Interfaces exist purely in TypeScript's type space and are completely erased during compilation. At JavaScript runtime, 'typeof user' evaluates to 'object', while 'User' does not exist in JavaScript value space, producing 'undefined'.",
-        hint: "Types and interfaces are erased at compile time; they do not exist in the emitted JavaScript runtime.",
-        hintCostXP: 5,
-      },
-      {
-        id: "ts01-q2",
-        type: "multiple_choice",
-        prompt: "TypeScript is structurally typed rather than nominally typed. What does this mean in practice?",
-        options: [
-          "Two types are compatible only if they share the exact same declared class name",
-          "Two types are compatible if their shape and properties match, regardless of declaration name",
-          "Types must be explicitly cast using the 'as' keyword before any assignment",
-          "Variables can only hold primitives; object structures require schema validation libraries",
-        ],
-        correctAnswer: 1,
-        explanation: "In structural typing (duck typing for types), compatibility is based on whether the required properties and types match the expected shape, not whether they were instantiated from the same named type or class.",
-        hint: "'If it walks like a duck and quacks like a duck, it's a duck.'",
-        hintCostXP: 5,
-      },
-      {
-        id: "ts01-q3",
-        type: "code_output",
-        prompt: "What will this discriminated union pattern print at runtime?",
-        codeSnippet: `type Shape = 
-  | { kind: "circle"; radius: number }
-  | { kind: "square"; side: number };
-
-function getArea(shape: Shape): number {
-  switch (shape.kind) {
-    case "circle":
-      return Math.PI * shape.radius ** 2;
-    case "square":
-      return shape.side * shape.side;
-  }
-}
-
-const item = { kind: "square" as const, side: 4, label: "Box" };
-console.log(getArea(item));`,
-        language: "typescript",
-        options: [
-          "16",
-          "NaN",
-          "TypeError: item has excess property 'label'",
-          "undefined",
-        ],
-        correctAnswer: 0,
-        explanation: "The object satisfies { kind: 'square'; side: number } structurally. Passing an existing object variable bypasses excess property checks (which only apply to direct object literals), calculating 4 * 4 = 16.",
-        hint: "4 * 4 = 16. Excess property checks only run on fresh inline object literals.",
         hintCostXP: 5,
       },
     ],
