@@ -108,39 +108,1632 @@ export interface JSLessonContent {
 
 export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "js01-how-javascript-runs": {
-  "slug": "js01-how-javascript-runs",
-  "code": "JS-01",
-  "title": "How JavaScript Runs: The Runtime, Console & Statements",
-  "subtitle": "Learn where JavaScript runs, how code executes line by line, and how to write statements and print output with console.log().",
+    "slug": "js01-how-javascript-runs",
+    "code": "JS-01",
+    "title": "How JavaScript Works: Running Code, The Console & Sequential Steps",
+    "subtitle": "Discover what JavaScript is, how computers run instructions line by line, and how to print messages and calculations with console.log().",
+    "sections": [
+      {
+        "id": "part1",
+        "label": "What is JavaScript?",
+        "icon": "⚡",
+        "tag": "FOUNDATION"
+      },
+      {
+        "id": "part2",
+        "label": "Printing with console.log()",
+        "icon": "💻",
+        "tag": "OUTPUT"
+      },
+      {
+        "id": "part3",
+        "label": "Step-by-Step Flow",
+        "icon": "📝",
+        "tag": "EXECUTION"
+      },
+      {
+        "id": "part4",
+        "label": "Common Mistakes",
+        "icon": "⚠️",
+        "tag": "TRAPS"
+      },
+      {
+        "id": "part5",
+        "label": "Console Playground",
+        "icon": "🚀",
+        "tag": "PRACTICE"
+      },
+      {
+        "id": "part6",
+        "label": "Key Takeaways",
+        "icon": "🎓",
+        "tag": "SUMMARY"
+      },
+      {
+        "id": "part7",
+        "label": "Quick Quiz",
+        "icon": "🎯",
+        "tag": "QUIZ"
+      }
+    ],
+    "part1": {
+      "title": "What JavaScript Is & How Your Computer Runs It",
+      "bigPicture": "JavaScript is the programming language that makes websites interactive. When you write JavaScript code, an environment called a runtime (like your web browser) reads your instructions and runs them sequentially, line by line from top to bottom, exactly like following a recipe.",
+      "breakdownTitle": "What You Will Learn in This Lesson:",
+      "breakdownItems": [
+        {
+          "title": "What JavaScript Does",
+          "desc": "JavaScript gives instructions to computers to display messages, calculate values, and react to actions."
+        },
+        {
+          "title": "Line-by-Line Execution",
+          "desc": "Computers execute instructions in strict sequential order, completing one step before starting the next."
+        },
+        {
+          "title": "The Console as Your Output Screen",
+          "desc": "Using console.log() to print text, numbers, and calculation results directly to your screen."
+        }
+      ]
+    },
+    "part2": {
+      "title": "Printing Output: Text, Numbers & Comments",
+      "intro": "Before writing complex programs, you need a way to see what your code is doing. JavaScript gives you three essential building blocks:",
+      "cards": [
+        {
+          "number": "01",
+          "tag": "Messages",
+          "title": "Printing Text in Quotes",
+          "description": "To print words or sentences, wrap them in matching quotes, like console.log(\"Hello, World!\"). The quotes tell JavaScript this is plain text.",
+          "color": "emerald"
+        },
+        {
+          "number": "02",
+          "tag": "Calculations",
+          "title": "Printing Numbers & Math",
+          "description": "To print numbers or do calculations, do not use quotes! Writing console.log(10 + 5) tells JavaScript to calculate the sum (15) and print the result.",
+          "color": "cyan"
+        },
+        {
+          "number": "03",
+          "tag": "Notes",
+          "title": "Helpful Notes (Comments)",
+          "description": "Use // to write notes for yourself or other humans. JavaScript completely ignores anything after // on that line.",
+          "color": "purple"
+        }
+      ],
+      "rule": {
+        "title": "💡 Essential Beginner Rule",
+        "content": "Always put quotes around text you want to display, but never put quotes around math calculations you want the computer to solve."
+      }
+    },
+    "part3": {
+      "title": "How the Computer Reads and Runs Your Code",
+      "intro": "Understanding the exact line-by-line order the computer follows when reading your code:",
+      "points": [
+        {
+          "title": "1. Reading Top to Bottom in Sequential Order",
+          "content": "The computer starts at line 1, executes that statement completely, and then moves down to line 2. It never skips ahead or runs lines out of order."
+        },
+        {
+          "title": "2. Calculating Expressions Inside Parentheses First",
+          "content": "When the computer sees an expression like console.log(20 + 30), it first calculates the result (50) inside the parentheses. Once the value is ready, it prints 50 to your screen."
+        },
+        {
+          "title": "3. Printing Multiple Items Together",
+          "content": "You can print multiple items in a single line by separating them with commas. For example, console.log(\"Total items:\", 5 + 3) displays 'Total items: 8' with an automatic space in between.",
+          "codeSnippet": "// Notice how text and numbers combine easily:\nconsole.log(\"Step 1: Starting up\");\nconsole.log(\"Total items:\", 5 + 3); // Prints: Total items: 8\nconsole.log(\"Step 2: All done!\");"
+        }
+      ]
+    },
+    "part4": {
+      "title": "Common Beginner Mistakes with console.log()",
+      "bad": {
+        "title": "❌ Broken: Missing quotes on words and quoting math calculations",
+        "code": "// Mistake 1: Missing quotes causes an error (computer looks for a command named Hello)\nconsole.log(Hello);\n\n// Mistake 2: Quoting math prevents the calculation from happening\nconsole.log(\"10 + 5\"); // Prints literal text '10 + 5' instead of 15!",
+        "explanation": "Leaving quotes off words makes JavaScript think 'Hello' is a variable or command that doesn't exist, causing a crash. Putting quotes around '10 + 5' treats it as plain text instead of doing the math."
+      },
+      "good": {
+        "title": "✅ Clean: Words quoted, math unquoted, and clear output labels",
+        "code": "// 1. Text is safely wrapped in double quotes\nconsole.log(\"Hello, Welcome to LearnCraft!\");\n\n// 2. Math is unquoted so the computer calculates it\nconsole.log(\"Calculation result:\", 10 + 5); // Prints: Calculation result: 15\n\n// 3. Clear step labels help you follow the flow\nconsole.log(\"Program finished successfully.\");",
+        "explanation": "Wrapping text in quotes and leaving numbers unquoted produces clean, error-free output that is easy to read and understand."
+      }
+    },
+    "part5": {
+      "title": "Console & Output Playground",
+      "intro": "Click Run Code to execute the script line by line. Notice how each statement prints in order. Then try the small exercise below!",
+      "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-01: HOW JAVASCRIPT RUNS\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Printing text messages:\nconsole.log(\"👋 Welcome to LearnCraft!\");\nconsole.log(\"Programming in JavaScript is fun!\");\n\n// 2. Doing math calculations (no quotes):\nconsole.log(\"Result of 10 + 5:\", 10 + 5);\nconsole.log(\"Result of 100 - 25:\", 100 - 25);\nconsole.log(\"Result of 4 * 6:\", 4 * 6);\n\n// 3. Sequential order:\nconsole.log(\"First step: Preparing\");\nconsole.log(\"Second step: Processing\");\nconsole.log(\"Third step: Completed!\");\n\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// YOUR TURN:\n// 1. Add a console.log() below that prints a friendly message with your name.\n// 2. Add a console.log() below that calculates 50 * 2.\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    },
+    "part6": {
+      "title": "Key Takeaways: How JavaScript Runs",
+      "takeaways": [
+        {
+          "title": "1. Sequential Order",
+          "desc": "JavaScript runs instructions top to bottom, one line after another."
+        },
+        {
+          "title": "2. console.log() Displays Output",
+          "desc": "Use console.log() to print messages, values, and calculations to your screen."
+        },
+        {
+          "title": "3. Text Needs Quotes",
+          "desc": "Always enclose words and text inside matching quotes like \"Hello\" or 'Hello'."
+        },
+        {
+          "title": "4. Math Does Not Use Quotes",
+          "desc": "Write numbers and math symbols without quotes so the computer calculates the answer."
+        }
+      ],
+      "nextLessonPreview": {
+        "title": "JS-02: Variables & Data Types: Storing Data with let & const",
+        "desc": "Now that you know how code runs and prints, learn how to store values in named containers so you can reuse them."
+      }
+    },
+    "part7": {
+      "title": "Knowledge Check: How JavaScript Runs",
+      "quiz": {
+        "question": "What will the following line of code print to the screen: console.log(\"5 + 5\", 5 + 5);",
+        "options": [
+          "\"5 + 5 10\"",
+          "5 + 5 10",
+          "10 10",
+          "5 + 5 5 + 5"
+        ],
+        "correctIndex": 1,
+        "explanation": "The first item \"5 + 5\" is in quotes, so JavaScript prints the literal text 5 + 5. The second item is unquoted, so JavaScript calculates 5 + 5 to produce the number 10."
+      }
+    }
+  },
+
+  "js02-variables-and-data-types": {
+    "slug": "js02-variables-and-data-types",
+    "code": "JS-02",
+    "title": "Variables & Data Types: Storing Data with let & const",
+    "subtitle": "Learn what variables are, how to create them with const and let, and how to work with the core data types (strings, numbers, and booleans).",
+    "sections": [
+      {
+        "id": "part1",
+        "label": "What is a Variable?",
+        "icon": "📦",
+        "tag": "CONCEPT"
+      },
+      {
+        "id": "part2",
+        "label": "const vs let Rules",
+        "icon": "🔒",
+        "tag": "RULES"
+      },
+      {
+        "id": "part3",
+        "label": "The Core Data Types",
+        "icon": "💎",
+        "tag": "TYPES"
+      },
+      {
+        "id": "part4",
+        "label": "Common Mistakes",
+        "icon": "⚠️",
+        "tag": "TRAPS"
+      },
+      {
+        "id": "part5",
+        "label": "Variables Playground",
+        "icon": "💻",
+        "tag": "PRACTICE"
+      },
+      {
+        "id": "part6",
+        "label": "Key Takeaways",
+        "icon": "🎓",
+        "tag": "SUMMARY"
+      },
+      {
+        "id": "part7",
+        "label": "Quick Quiz",
+        "icon": "🎯",
+        "tag": "QUIZ"
+      }
+    ],
+    "part1": {
+      "title": "What Is a Variable & Why Do We Need Them?",
+      "bigPicture": "A variable is a labeled container in your computer's memory that stores a piece of information. Instead of typing the same number or name repeatedly, you store it once under a clear name. Later in your program, you can refer to that name whenever you need the value.",
+      "breakdownTitle": "The Natural Steps to Learning Variables:",
+      "breakdownItems": [
+        {
+          "title": "1. Giving Data a Name",
+          "desc": "Store a value in a labeled container so you can reuse it throughout your program."
+        },
+        {
+          "title": "2. Choosing const vs let",
+          "desc": "Lock values that should never change with const, and allow updates with let."
+        },
+        {
+          "title": "3. Core Data Types",
+          "desc": "Understand text (strings), numbers, and true/false states (booleans)."
+        }
+      ]
+    },
+    "part2": {
+      "title": "Creating Variables: When to Use const and let",
+      "intro": "Modern JavaScript gives you two keywords to create a variable. The rule for choosing between them is simple:",
+      "cards": [
+        {
+          "number": "01",
+          "tag": "Unchangeable",
+          "title": "const (For Values That Stay the Same)",
+          "description": "Use const by default. Once you assign a value to a const variable, it cannot be changed or overwritten. This keeps your code safe and predictable.",
+          "color": "emerald"
+        },
+        {
+          "number": "02",
+          "tag": "Changeable",
+          "title": "let (For Values That Change)",
+          "description": "Use let only when you know the value will change later in your program, like a game score, an item counter, or a user input.",
+          "color": "purple"
+        },
+        {
+          "number": "03",
+          "tag": "Legacy",
+          "title": "Why We Avoid var",
+          "description": "Older JavaScript written years ago used the keyword var. Modern code avoids var because it can accidentally leak outside blocks and cause difficult bugs.",
+          "color": "amber"
+        }
+      ],
+      "rule": {
+        "title": "💡 The Modern Variable Rule",
+        "content": "Always start by creating your variables with const. If you later realize that the value must be changed, change const to let."
+      }
+    },
+    "part3": {
+      "title": "Understanding JavaScript's Core Data Types",
+      "intro": "Every value in JavaScript belongs to a specific type. Here are the essential types you will use every day:",
+      "points": [
+        {
+          "title": "1. Strings (Text in Quotes)",
+          "content": "Any text wrapped in quotes (like \"LearnCraft\" or 'Alice') is a String. Strings hold names, messages, addresses, and any written words."
+        },
+        {
+          "title": "2. Numbers & Booleans",
+          "content": "Numbers are written without quotes (like 42 or 19.99) and can be added or multiplied. Booleans are simple true or false switches used for checking states (like isLoggedIn = true)."
+        },
+        {
+          "title": "3. Empty Values: undefined vs null",
+          "content": "undefined means a variable was created, but no value has been put into it yet. null is an intentional value you assign to say 'this container is empty on purpose'. Use typeof to check what kind of value a variable holds.",
+          "codeSnippet": "const city = \"Tokyo\";     // string\nconst price = 25;         // number\nconst isOpen = true;      // boolean\nlet userFeedback;         // undefined (not assigned yet)\nconst discount = null;    // null (explicitly empty)"
+        }
+      ]
+    },
+    "part4": {
+      "title": "Common Beginner Mistakes with Variables",
+      "bad": {
+        "title": "❌ Broken: Reassigning const and forgetting quotes around words",
+        "code": "// Mistake 1: Trying to change a const variable\nconst currentScore = 10;\ncurrentScore = 15; // ❌ TypeError: Assignment to constant variable!\n\n// Mistake 2: Forgetting quotes around text\nconst userCity = Paris; // ❌ ReferenceError: Paris is not defined!\n\n// Mistake 3: Misspelling the variable name\nconst accountBalance = 50;\nconsole.log(accountBalanse); // ❌ ReferenceError: accountBalanse is not defined",
+        "explanation": "You cannot change a const variable once assigned. Forgetting quotes around 'Paris' causes JavaScript to look for a variable named Paris instead of storing the city name text."
+      },
+      "good": {
+        "title": "✅ Clean: Using let for changing values and const for fixed values",
+        "code": "// 1. Fixed values use const\nconst maxScore = 100;\nconst playerName = \"Alex\"; // Text in quotes!\n\n// 2. Values that change use let\nlet currentScore = 10;\ncurrentScore = 15; // ✅ Allowed because currentScore is a let variable!\n\n// 3. Clear, accurate names when printing\nconsole.log(playerName, \"has score:\", currentScore, \"out of\", maxScore);",
+        "explanation": "Using const for fixed settings and let for values that change makes your code clear, predictable, and free from runtime crashes."
+      }
+    },
+    "part5": {
+      "title": "Variables & Data Types Playground",
+      "intro": "Run the code to see how const protects fixed values while let allows updates. Then follow the instructions to create your own variables!",
+      "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-02: VARIABLES & DATA TYPES\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Information that stays constant (const):\nconst appName = \"LearnCraft\";\nconst releaseYear = 2026;\n\n// 2. Information that updates over time (let):\nlet activeUsers = 50;\nconsole.log(appName, \"launched in\", releaseYear, \"with\", activeUsers, \"users.\");\n\n// Update the user count:\nactiveUsers = activeUsers + 25;\nconsole.log(\"Updated active users:\", activeUsers);\n\n// 3. Inspecting types with typeof:\nconsole.log(\"Type of appName:\", typeof appName);         // string\nconsole.log(\"Type of releaseYear:\", typeof releaseYear); // number\nconsole.log(\"Type of isLive:\", typeof true);             // boolean\n\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// YOUR TURN:\n// 1. Create a const variable named 'country' and store your country in quotes.\n// 2. Create a let variable named 'userScore' and set it to 10.\n// 3. On the next line, update 'userScore' to 20.\n// 4. Print both variables using console.log().\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    },
+    "part6": {
+      "title": "Key Takeaways: Storing Data in Variables",
+      "takeaways": [
+        {
+          "title": "1. Variables Are Containers",
+          "desc": "They hold values in memory under a label so you can reuse them anywhere in your code."
+        },
+        {
+          "title": "2. const by Default",
+          "desc": "Use const for values that stay constant to protect against accidental overwrites."
+        },
+        {
+          "title": "3. let for Changing Values",
+          "desc": "Use let when you know a value will be updated, such as counters, totals, or game states."
+        },
+        {
+          "title": "4. Core Data Types",
+          "desc": "Strings are text in quotes, Numbers are for math, and Booleans are true/false switches."
+        }
+      ],
+      "nextLessonPreview": {
+        "title": "JS-03: Operators, Comparisons & Type Conversion: The === Rule",
+        "desc": "Now that you know how to store values, learn how to calculate, compare, and convert them safely."
+      }
+    },
+    "part7": {
+      "title": "Knowledge Check: Variables & Data Types",
+      "quiz": {
+        "question": "What happens if you try to reassign a new value to a variable created with 'const'?",
+        "options": [
+          "JavaScript silently ignores the new value and keeps running.",
+          "JavaScript throws a TypeError because constant variables cannot be reassigned.",
+          "The variable automatically converts from const to let.",
+          "The computer deletes the variable from memory."
+        ],
+        "correctIndex": 1,
+        "explanation": "A const variable is locked upon creation. Trying to assign a new value to it triggers a TypeError: Assignment to constant variable."
+      }
+    }
+  },
+
+  "js03-operators-and-equality": {
+    "slug": "js03-operators-and-equality",
+    "code": "JS-03",
+    "title": "Operators, Comparisons & Type Conversion: The === Rule",
+    "subtitle": "Perform calculations, compare values with strict equality (===), convert data types, and combine conditions with logic.",
+    "sections": [
+      {
+        "id": "part1",
+        "label": "What Are Operators?",
+        "icon": "🔢",
+        "tag": "OPERATORS"
+      },
+      {
+        "id": "part2",
+        "label": "Math & Comparisons",
+        "icon": "⚖️",
+        "tag": "COMPARISONS"
+      },
+      {
+        "id": "part3",
+        "label": "Strict Equality & Types",
+        "icon": "🛡️",
+        "tag": "STRICT"
+      },
+      {
+        "id": "part4",
+        "label": "Common Mistakes",
+        "icon": "⚠️",
+        "tag": "TRAPS"
+      },
+      {
+        "id": "part5",
+        "label": "Operators Playground",
+        "icon": "💻",
+        "tag": "PRACTICE"
+      },
+      {
+        "id": "part6",
+        "label": "Key Takeaways",
+        "icon": "🎓",
+        "tag": "SUMMARY"
+      },
+      {
+        "id": "part7",
+        "label": "Quick Quiz",
+        "icon": "🎯",
+        "tag": "QUIZ"
+      }
+    ],
+    "part1": {
+      "title": "What Operators Are & How We Use Them",
+      "bigPicture": "Operators are special symbols that tell JavaScript to perform an action on values. You use arithmetic operators to calculate totals, comparison operators to check if two values are equal or which one is larger, and logical operators to combine multiple checks together.",
+      "breakdownTitle": "What You Will Learn in This Lesson:",
+      "breakdownItems": [
+        {
+          "title": "1. Arithmetic & Text Joining",
+          "desc": "Perform math (+, -, *, /, %) and learn how the plus symbol (+) also joins text together."
+        },
+        {
+          "title": "2. Comparison Operators & The === Rule",
+          "desc": "Compare values (>, <, >=, <=) and understand why developers always use strict equality (===)."
+        },
+        {
+          "title": "3. Type Conversion & Logic",
+          "desc": "Learn how to convert between strings and numbers, and how to test multiple conditions using && and ||."
+        }
+      ]
+    },
+    "part2": {
+      "title": "The Three Main Families of Operators",
+      "intro": "Every JavaScript operator belongs to one of three main groups:",
+      "cards": [
+        {
+          "number": "01",
+          "tag": "Math",
+          "title": "Arithmetic Operators (+, -, *, /, %)",
+          "description": "Add, subtract, multiply, and divide numbers. The remainder operator (%) gives you what is left over after division (for example, 7 % 2 is 1).",
+          "color": "emerald"
+        },
+        {
+          "number": "02",
+          "tag": "Checks",
+          "title": "Comparison Operators (===, !==, >, <)",
+          "description": "Comparisons always produce a boolean answer: true or false. For example, 10 > 5 is true, while 4 === 9 is false.",
+          "color": "cyan"
+        },
+        {
+          "number": "03",
+          "tag": "Logic",
+          "title": "Logical Operators (&&, ||, !)",
+          "description": "Combine checks together: && (AND) requires both sides to be true; || (OR) requires at least one side to be true; ! (NOT) flips true to false.",
+          "color": "purple"
+        }
+      ],
+      "rule": {
+        "title": "💡 The Strict Equality Rule",
+        "content": "Always compare values with triple equals (===) and !==. Triple equals checks both the value and the type, preventing hidden surprises."
+      }
+    },
+    "part3": {
+      "title": "Type Conversion & Why Double Equals (==) Is Dangerous",
+      "intro": "JavaScript sometimes tries to guess what you meant when mixing types, which can cause subtle bugs if you are not careful:",
+      "points": [
+        {
+          "title": "1. The Plus Trap: Math vs Text Joining",
+          "content": "When you use + between numbers, JavaScript adds them (5 + 5 is 10). But if either value is text, JavaScript joins them together as a string (\"5\" + 5 is \"55\"!)."
+        },
+        {
+          "title": "2. Intentional Type Conversion",
+          "content": "Never let JavaScript guess. If you have text like \"42\" and want to do math, convert it intentionally using Number(\"42\"). To convert a number to text, use String(42)."
+        },
+        {
+          "title": "3. Strict (===) vs Loose (==) Equality",
+          "content": "Double equals (==) tries to convert types behind your back, making 0 == \"\" true! Triple equals (===) strictly checks that both sides have the exact same type and value, so 0 === \"\" is correctly false.",
+          "codeSnippet": "// Notice the difference between strict and loose equality:\nconsole.log(10 === 10);     // true (same type and value)\nconsole.log(10 === \"10\");   // false (number is not string)\nconsole.log(10 == \"10\");    // true (danger: loose equality converts types!)"
+        }
+      ]
+    },
+    "part4": {
+      "title": "Common Beginner Mistakes with Operators & Equality",
+      "bad": {
+        "title": "❌ Broken: Using = instead of ===, and adding text to numbers by mistake",
+        "code": "// Mistake 1: Accidentally using a single equals = (assignment) instead of === (comparison)\nconst userAge = 18;\n// if (userAge = 21) { ... } -> ❌ Overwrites userAge instead of comparing it!\n\n// Mistake 2: Mixing numbers and strings in math without converting\nconst itemPrice = \"20\";\nconst tax = 5;\nconst total = itemPrice + tax; // ❌ Result is \"205\" instead of 25!",
+        "explanation": "A single equals (=) assigns a value, while triple equals (===) tests for equality. Adding a string to a number joins the characters together (\"205\") instead of calculating 25."
+      },
+      "good": {
+        "title": "✅ Clean: Strict equality checks and intentional type conversion",
+        "code": "// 1. Comparing safely with triple equals\nconst userAge = 18;\nconst isAdult = userAge >= 18;\nconsole.log(\"Is user an adult?\", isAdult); // true\n\n// 2. Converting text to number before calculating\nconst itemPriceText = \"20\";\nconst itemPrice = Number(itemPriceText); // Convert text to number 20\nconst tax = 5;\nconst total = itemPrice + tax; // ✅ Correctly calculates 25\nconsole.log(\"Total price:\", total);",
+        "explanation": "Converting string inputs to numbers using Number() guarantees accurate arithmetic, and using === and >= makes comparisons clear and reliable."
+      }
+    },
+    "part5": {
+      "title": "Operators & Equality Playground",
+      "intro": "Run the code below to see arithmetic, comparisons, and logical checks in action. Then complete the challenges in the comments!",
+      "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-03: OPERATORS, EQUALITY & TYPE CONVERSION\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Arithmetic & Text Joining:\nconst price = 40;\nconst shipping = 10;\nconst totalCost = price + shipping;\nconsole.log(\"Order Total: $\" + totalCost); // Text joining with +\n\n// 2. Comparisons (produce true or false):\nconst userAge = 20;\nconst hasTicket = true;\n\nconst isOldEnough = userAge >= 18;\nconsole.log(\"Is 18 or older:\", isOldEnough); // true\n\n// 3. Strict Equality (===):\nconsole.log(\"Strict check (userAge === 20):\", userAge === 20);     // true\nconsole.log(\"Strict check (userAge === '20'):\", userAge === \"20\"); // false\n\n// 4. Combining checks with && (AND):\nconst canEnterEvent = isOldEnough && hasTicket;\nconsole.log(\"Can enter event:\", canEnterEvent); // true\n\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// YOUR TURN:\n// 1. Create a variable 'score' set to 85.\n// 2. Create a boolean variable 'passed' that checks if score >= 70.\n// 3. Print 'passed' to the console.\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    },
+    "part6": {
+      "title": "Key Takeaways: Operators & Comparisons",
+      "takeaways": [
+        {
+          "title": "1. Math vs Text Joining",
+          "desc": "The + symbol adds numbers together, but if either side is text, it joins them as a string."
+        },
+        {
+          "title": "2. Comparisons Return Booleans",
+          "desc": "Operators like >, <, >=, and === always evaluate to true or false."
+        },
+        {
+          "title": "3. Always Use ===",
+          "desc": "Strict equality (===) checks both value and type without silent, error-prone conversions."
+        },
+        {
+          "title": "4. Combine with && and ||",
+          "desc": "Use && when all conditions must be true, and || when at least one condition must be true."
+        }
+      ],
+      "nextLessonPreview": {
+        "title": "JS-04: Conditional Logic: Decision Making with if/else & switch",
+        "desc": "Now that you know how to compare values, learn how to make decisions and run different code blocks using if and else."
+      }
+    },
+    "part7": {
+      "title": "Knowledge Check: Operators & Equality",
+      "quiz": {
+        "question": "What does the expression 10 + \"5\" evaluate to in JavaScript?",
+        "options": [
+          "15 (as a number)",
+          "\"105\" (as text)",
+          "NaN (Not a Number error)",
+          "undefined"
+        ],
+        "correctIndex": 1,
+        "explanation": "Because one of the values is a string (\"5\"), JavaScript converts the number 10 into text and joins them together, producing the string \"105\"."
+      }
+    }
+  },
+
+  "js04-conditional-logic": {
+    "slug": "js04-conditional-logic",
+    "code": "JS-04",
+    "title": "Conditional Logic: Making Decisions with if, else & switch",
+    "subtitle": "Teach your programs to make decisions: run code only when conditions are true, handle alternatives with else, and match multiple cases with switch.",
+    "sections": [
+      {
+        "id": "part1",
+        "label": "How Code Makes Decisions",
+        "icon": "🚦",
+        "tag": "DECISIONS"
+      },
+      {
+        "id": "part2",
+        "label": "if, else if, and else",
+        "icon": "🔀",
+        "tag": "BRANCHING"
+      },
+      {
+        "id": "part3",
+        "label": "Ternary & switch",
+        "icon": "⚖️",
+        "tag": "CHOICES"
+      },
+      {
+        "id": "part4",
+        "label": "Common Mistakes",
+        "icon": "⚠️",
+        "tag": "TRAPS"
+      },
+      {
+        "id": "part5",
+        "label": "Conditionals Playground",
+        "icon": "💻",
+        "tag": "PRACTICE"
+      },
+      {
+        "id": "part6",
+        "label": "Key Takeaways",
+        "icon": "🎓",
+        "tag": "SUMMARY"
+      },
+      {
+        "id": "part7",
+        "label": "Quick Quiz",
+        "icon": "🎯",
+        "tag": "QUIZ"
+      }
+    ],
+    "part1": {
+      "title": "Decision Making: How Programs Choose Different Paths",
+      "bigPicture": "Every program needs to make decisions based on changing information. An if statement is like a fork in the road: if the signal light is green, proceed forward; otherwise, take a different path or stop.",
+      "breakdownTitle": "What You Will Learn in This Lesson:",
+      "breakdownItems": [
+        {
+          "title": "The if Statement",
+          "desc": "Run a block of code only when a condition evaluates to true."
+        },
+        {
+          "title": "Handling Alternatives with else",
+          "desc": "Provide an alternative fallback block when the condition is false."
+        },
+        {
+          "title": "Ternary & switch",
+          "desc": "Write concise one-line checks and handle multiple exact matches cleanly."
+        }
+      ]
+    },
+    "part2": {
+      "title": "Branching Flow: if, else if, and else",
+      "intro": "JavaScript uses three keywords to create decision branches in your code:",
+      "cards": [
+        {
+          "number": "01",
+          "tag": "Primary",
+          "title": "if Statement",
+          "description": "Runs its curly-brace code block only if its condition evaluates to true. If false, JavaScript skips the block completely.",
+          "color": "emerald"
+        },
+        {
+          "number": "02",
+          "tag": "Fallback",
+          "title": "else Statement",
+          "description": "Runs only when the if condition above it is false. It guarantees that one of the two code blocks will always run.",
+          "color": "cyan"
+        },
+        {
+          "number": "03",
+          "tag": "Chaining",
+          "title": "else if Statement",
+          "description": "Lets you check multiple possible conditions in order from top to bottom. The first one that is true runs, and the rest are skipped.",
+          "color": "purple"
+        }
+      ],
+      "rule": {
+        "title": "💡 The Order-of-Checks Rule",
+        "content": "JavaScript checks conditions from top to bottom and stops at the very first true match. Always place your most specific conditions first."
+      }
+    },
+    "part3": {
+      "title": "The Ternary Operator & switch Statements",
+      "intro": "When you need concise checks or want to match multiple exact values, JavaScript provides two clean tools:",
+      "points": [
+        {
+          "title": "1. The Ternary Operator (? : ) for Quick Choices",
+          "content": "When you simply want to pick one of two values based on a condition, the ternary operator is a clean shortcut: const status = isOnline ? \"Active\" : \"Offline\";"
+        },
+        {
+          "title": "2. switch Statements for Multiple Exact Values",
+          "content": "When checking a single variable against many exact values (like days of the week or user roles), switch is cleaner than writing many else if statements."
+        },
+        {
+          "title": "3. Why Every switch Case Needs a 'break'",
+          "content": "Without a break statement, JavaScript does not stop after matching a case; it falls through and runs the next cases too! Always end each case with break.",
+          "codeSnippet": "const userRole = \"admin\";\n\nswitch (userRole) {\n  case \"admin\":\n    console.log(\"Full access granted\");\n    break; // Stop here!\n  case \"editor\":\n    console.log(\"Edit access granted\");\n    break;\n  default:\n    console.log(\"Read-only access\");\n}"
+        }
+      ]
+    },
+    "part4": {
+      "title": "Common Beginner Mistakes with Conditionals",
+      "bad": {
+        "title": "❌ Broken: Using = instead of ===, and adding a semicolon after the if condition",
+        "code": "const score = 85;\n\n// Mistake 1: Accidental assignment instead of comparison\n// if (score = 100) -> Overwrites score with 100 and always runs!\n\n// Mistake 2: Semicolon after if condition terminates it immediately\nif (score > 90); {\n  console.log(\"You got an A!\"); // Runs even though score is 85!\n}",
+        "explanation": "Putting a semicolon immediately after if (score > 90); cuts the if statement short, so the code inside the curly braces runs unconditionally. Using single = reassigns the variable instead of comparing it."
+      },
+      "good": {
+        "title": "✅ Clean: Clear comparisons with proper curly-brace blocks",
+        "code": "const score = 85;\n\nif (score >= 90) {\n  console.log(\"Grade: A (Excellent!)\");\n} else if (score >= 80) {\n  console.log(\"Grade: B (Well done!)\");\n} else {\n  console.log(\"Grade: C (Keep practicing!)\");\n}\n\n// Clean ternary for status label:\nconst passStatus = score >= 70 ? \"Passed\" : \"Needs review\";\nconsole.log(\"Status:\", passStatus);",
+        "explanation": "Using === or >= with clean curly-brace blocks ensures each branch runs only when its condition is genuinely met."
+      }
+    },
+    "part5": {
+      "title": "Conditional Logic Playground",
+      "intro": "Run the code below to see if/else branching, ternary checks, and switch statements in action:",
+      "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-04: CONDITIONAL LOGIC & DECISION MAKING\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst userAge = 20;\nconst isMember = true;\n\n// 1. Basic if / else branching:\nif (userAge >= 18) {\n  console.log(\"Access: Welcome to the adult section!\");\n} else {\n  console.log(\"Access: Sorry, you must be 18 or older.\");\n}\n\n// 2. Chained else if for membership discounts:\nlet discountRate = 0;\n\nif (isMember && userAge >= 60) {\n  discountRate = 30; // Senior Member\n} else if (isMember) {\n  discountRate = 15; // Regular Member\n} else {\n  discountRate = 0;  // Non-member\n}\nconsole.log(\"Discount Rate:\", discountRate + \"%\");\n\n// 3. Ternary operator shortcut:\nconst accountStatus = isMember ? \"Active Member\" : \"Guest\";\nconsole.log(\"Status:\", accountStatus);\n\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// YOUR TURN:\n// 1. Create a variable 'temperature' set to 28.\n// 2. If temperature > 25, print \"Wear shorts!\".\n// 3. Otherwise, print \"Bring a jacket!\".\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    },
+    "part6": {
+      "title": "Key Takeaways: Making Decisions",
+      "takeaways": [
+        {
+          "title": "1. if Checks Conditions",
+          "desc": "Code inside an if block runs only when its condition evaluates to true."
+        },
+        {
+          "title": "2. else Provides Fallbacks",
+          "desc": "Use else to run an alternative block when the condition is false."
+        },
+        {
+          "title": "3. Ternary for Simple Values",
+          "desc": "condition ? valueIfTrue : valueIfFalse is great for simple one-line assignments."
+        },
+        {
+          "title": "4. break in switch",
+          "desc": "Always put a break statement at the end of each switch case to prevent fall-through."
+        }
+      ],
+      "nextLessonPreview": {
+        "title": "JS-05: Loops & Iteration: Repeating Work Without Repeating Code",
+        "desc": "Now that you know how to make decisions, learn how to repeat instructions automatically with loops."
+      }
+    },
+    "part7": {
+      "title": "Knowledge Check: Decision Making",
+      "quiz": {
+        "question": "What happens in a switch statement if you forget to add a 'break' statement after a case?",
+        "options": [
+          "It throws a SyntaxError and stops running immediately.",
+          "It falls through and executes the next case regardless of whether that case matches.",
+          "It restarts the switch statement from the top.",
+          "It deletes the variable being tested."
+        ],
+        "correctIndex": 1,
+        "explanation": "Without a break statement, JavaScript continues executing subsequent cases even if their case values do not match."
+      }
+    }
+  },
+
+  "js05-loops-and-iteration": {
+    "slug": "js05-loops-and-iteration",
+    "code": "JS-05",
+    "title": "Loops & Iteration: Repeating Work Without Repeating Code",
+    "subtitle": "Automate repetitive tasks: understand while loops, master counting with classic for loops, and control iteration with break and continue.",
+    "sections": [
+      {
+        "id": "part1",
+        "label": "Why We Need Loops",
+        "icon": "🔁",
+        "tag": "AUTOMATION"
+      },
+      {
+        "id": "part2",
+        "label": "while & for Loop Mechanics",
+        "icon": "⚙️",
+        "tag": "SYNTAX"
+      },
+      {
+        "id": "part3",
+        "label": "Counter Walkthrough",
+        "icon": "🔢",
+        "tag": "COUNTERS"
+      },
+      {
+        "id": "part4",
+        "label": "Infinite Loop Traps",
+        "icon": "⚠️",
+        "tag": "TRAPS"
+      },
+      {
+        "id": "part5",
+        "label": "Loops Playground",
+        "icon": "💻",
+        "tag": "PRACTICE"
+      },
+      {
+        "id": "part6",
+        "label": "Key Takeaways",
+        "icon": "🎓",
+        "tag": "SUMMARY"
+      },
+      {
+        "id": "part7",
+        "label": "Quick Quiz",
+        "icon": "🎯",
+        "tag": "QUIZ"
+      }
+    ],
+    "part1": {
+      "title": "Repeating Tasks: Why Loops Save Time",
+      "bigPicture": "Computers are incredible at repeating work thousands of times without making mistakes or getting tired. Instead of copying and pasting the same line of code over and over, a loop tells the computer: 'keep running this block of code until my condition says to stop'.",
+      "breakdownTitle": "What You Will Learn in This Lesson:",
+      "breakdownItems": [
+        {
+          "title": "1. while Loops",
+          "desc": "Repeat instructions as long as a condition remains true."
+        },
+        {
+          "title": "2. for Loops",
+          "desc": "A compact, standard loop for counting from a start number to an end number."
+        },
+        {
+          "title": "3. Loop Control",
+          "desc": "Use break to stop a loop early, and continue to skip to the next repetition."
+        }
+      ]
+    },
+    "part2": {
+      "title": "The Two Main Kinds of Loops: while and for",
+      "intro": "JavaScript gives you two primary ways to repeat code:",
+      "cards": [
+        {
+          "number": "01",
+          "tag": "Condition-First",
+          "title": "The while Loop",
+          "description": "while (condition) { ... } checks its condition before every round. As long as it is true, the block runs again. Great when you don't know the exact count in advance.",
+          "color": "amber"
+        },
+        {
+          "number": "02",
+          "tag": "Counting",
+          "title": "The Classic for Loop",
+          "description": "for (start; check; step) packs the counter creation, condition check, and increment into one neat line. Perfect when you know how many times to repeat.",
+          "color": "emerald"
+        },
+        {
+          "number": "03",
+          "tag": "Steering",
+          "title": "break and continue",
+          "description": "break stops the entire loop immediately. continue skips the rest of the current round and jumps straight to the next cycle.",
+          "color": "purple"
+        }
+      ],
+      "rule": {
+        "title": "💡 The Termination Rule",
+        "content": "Every loop must have a guaranteed path to its exit condition. Always make sure your counter moves closer to stopping on every single round."
+      }
+    },
+    "part3": {
+      "title": "Step-by-Step Walkthrough of a for Loop",
+      "intro": "Understanding exactly what happens on each round of a counting loop:",
+      "points": [
+        {
+          "title": "1. The 3 Parts of a for Loop",
+          "content": "In for (let i = 1; i <= 3; i++), part 1 runs once at the start (let i = 1). Part 2 checks if i <= 3. If true, the code block runs. Part 3 increments i (i++), and the cycle repeats."
+        },
+        {
+          "title": "2. Tracing the Counter",
+          "content": "Round 1: i is 1 (runs). Round 2: i is 2 (runs). Round 3: i is 3 (runs). Then i becomes 4: 4 <= 3 is false, so the loop stops!"
+        },
+        {
+          "title": "3. break vs continue in Action",
+          "content": "Use break when you find what you are looking for and don't need to check further. Use continue when you want to ignore a specific number (like skipping even numbers).",
+          "codeSnippet": "// Count from 1 to 5, but skip number 3:\nfor (let i = 1; i <= 5; i++) {\n  if (i === 3) continue; // Skip 3\n  console.log(\"Count:\", i); // Prints 1, 2, 4, 5\n}"
+        }
+      ]
+    },
+    "part4": {
+      "title": "The Infinite Loop Trap: Freezing the Browser",
+      "bad": {
+        "title": "❌ Broken: Forgetting to increment the counter in a while loop",
+        "code": "let count = 1;\n\n// Danger: count is never updated inside the loop!\n// while (count <= 3) {\n//   console.log(\"Count:\", count);\n//   // Forgot count++! Runs forever and freezes your tab!\n// }",
+        "explanation": "Because count remains 1 forever, count <= 3 is always true. The loop repeats millions of times per second until the browser crashes."
+      },
+      "good": {
+        "title": "✅ Clean: Guaranteed counter progression with safe bounds",
+        "code": "// 1. while loop with counter update\nlet count = 1;\nwhile (count <= 3) {\n  console.log(\"While count:\", count);\n  count++; // Safe: moves toward 4, stopping the loop!\n}\n\n// 2. for loop with compact counting\nfor (let i = 1; i <= 3; i++) {\n  console.log(\"For loop count:\", i);\n}",
+        "explanation": "Updating the counter on every iteration guarantees that the exit condition is reached cleanly."
+      }
+    },
+    "part5": {
+      "title": "Loops & Iteration Playground",
+      "intro": "Run counting loops, experiment with while statements, and control loops with break:",
+      "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-05: LOOPS & ITERATION\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Counting with a classic for loop:\nconsole.log(\"--- Counting 1 to 5 ---\\n\");\nfor (let i = 1; i <= 5; i++) {\n  console.log(\"Step #\" + i);\n}\n\n// 2. Countdown with a while loop:\nconsole.log(\"\\n--- Rocket Launch Countdown ---\\n\");\nlet countdown = 3;\nwhile (countdown > 0) {\n  console.log(countdown + \"...\");\n  countdown--; // Decrement counter\n}\nconsole.log(\"🚀 Blast off!\\n\");\n\n// 3. Early exit with break:\nconsole.log(\"--- Searching for number 3 ---\\n\");\nfor (let num = 1; num <= 10; num++) {\n  if (num === 3) {\n    console.log(\"Found target number 3! Stopping early.\");\n    break; // Stop loop here\n  }\n  console.log(\"Checking:\", num);\n}\n\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// YOUR TURN:\n// 1. Write a for loop that calculates the sum of numbers from 1 to 5.\n//    (Hint: start with let total = 0; before the loop).\n// 2. Print the final total to the console.\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    },
+    "part6": {
+      "title": "Key Takeaways: Repeating Tasks",
+      "takeaways": [
+        {
+          "title": "1. Loops Automate Repetition",
+          "desc": "They run a code block repeatedly until their exit condition is reached."
+        },
+        {
+          "title": "2. for for Counting",
+          "desc": "Use for (let i = 0; i < n; i++) when you know the number of repetitions."
+        },
+        {
+          "title": "3. Guaranteed Counter Updates",
+          "desc": "Always ensure while loop counters increment to avoid infinite loops."
+        },
+        {
+          "title": "4. break & continue",
+          "desc": "Use break to exit early, and continue to skip the current cycle."
+        }
+      ],
+      "nextLessonPreview": {
+        "title": "JS-06: Functions: Packaging Reusable Logic & Arrow Syntax",
+        "desc": "Now that you can make decisions and repeat tasks, learn how to package code into reusable functions."
+      }
+    },
+    "part7": {
+      "title": "Knowledge Check: Repeating Tasks",
+      "quiz": {
+        "question": "What is the key difference between the 'break' and 'continue' keywords inside a loop?",
+        "options": [
+          "break stops the entire loop immediately; continue skips to the next cycle of the loop.",
+          "break pauses execution for 1 second; continue runs the loop faster.",
+          "break is only allowed in while loops; continue is only allowed in for loops.",
+          "There is no difference; both words do the exact same thing."
+        ],
+        "correctIndex": 0,
+        "explanation": "The 'break' keyword terminates the loop completely, while 'continue' skips the rest of the current round and jumps to the next iteration."
+      }
+    }
+  },
+
+  "js06-functions-and-arrow-syntax": {
+    "slug": "js06-functions-and-arrow-syntax",
+    "code": "JS-06",
+    "title": "Functions: Packaging Reusable Logic & Arrow Syntax",
+    "subtitle": "Write reusable blocks of code: understand function declarations, pass parameters in, return results, and master concise modern arrow functions.",
+    "sections": [
+      {
+        "id": "part1",
+        "label": "What Is a Function?",
+        "icon": "📦",
+        "tag": "CONCEPT"
+      },
+      {
+        "id": "part2",
+        "label": "Parameters & Return Values",
+        "icon": "📥",
+        "tag": "MECHANICS"
+      },
+      {
+        "id": "part3",
+        "label": "Modern Arrow Functions",
+        "icon": "🏹",
+        "tag": "ARROWS"
+      },
+      {
+        "id": "part4",
+        "label": "Common Function Mistakes",
+        "icon": "⚠️",
+        "tag": "TRAPS"
+      },
+      {
+        "id": "part5",
+        "label": "Functions Playground",
+        "icon": "💻",
+        "tag": "PRACTICE"
+      },
+      {
+        "id": "part6",
+        "label": "Key Takeaways",
+        "icon": "🎓",
+        "tag": "SUMMARY"
+      },
+      {
+        "id": "part7",
+        "label": "Quick Quiz",
+        "icon": "🎯",
+        "tag": "QUIZ"
+      }
+    ],
+    "part1": {
+      "title": "What a Function Is & Why We Use Them",
+      "bigPicture": "A function is a reusable machine in your code. You write a set of instructions once, give it a name, and can call it anytime with different inputs to get calculated results. Think of a function like a smoothie blender: you drop ingredients in (parameters), run the machine, and pour out the delicious result (return value).",
+      "breakdownTitle": "What You Will Learn in This Lesson:",
+      "breakdownItems": [
+        {
+          "title": "1. Function Declarations",
+          "desc": "Define reusable blocks using the function keyword and give them descriptive names."
+        },
+        {
+          "title": "2. Parameters vs Arguments",
+          "desc": "Parameters are the input placeholders in the definition; arguments are the real values passed in."
+        },
+        {
+          "title": "3. Return Values & Arrow Syntax",
+          "desc": "Send computed answers back to callers using return, and write concise modern arrow functions."
+        }
+      ]
+    },
+    "part2": {
+      "title": "Parameters, Arguments & Return Values",
+      "intro": "Functions communicate with the rest of your program through inputs and outputs:",
+      "cards": [
+        {
+          "number": "01",
+          "tag": "Standard",
+          "title": "function Declaration",
+          "description": "function greet(name) { return \"Hello, \" + name; } — the standard, classic way to define a named reusable function.",
+          "color": "emerald"
+        },
+        {
+          "number": "02",
+          "tag": "Inputs",
+          "title": "Parameters & Arguments",
+          "description": "Parameters are the variable names in the function definition (like name). Arguments are the actual values you pass in when calling it (like greet(\"Alice\")).",
+          "color": "cyan"
+        },
+        {
+          "number": "03",
+          "tag": "Outputs",
+          "title": "The return Keyword",
+          "description": "Sends a value back out to where the function was called. If you don't write a return statement, the function returns undefined by default.",
+          "color": "purple"
+        }
+      ],
+      "rule": {
+        "title": "💡 The Single Responsibility Rule",
+        "content": "Keep each function focused on doing one job well. Give your function a clear action verb name like calculateTotal, formatName, or isAdult."
+      }
+    },
+    "part3": {
+      "title": "Modern Arrow Functions (=>)",
+      "intro": "Writing clean, concise functions using modern ES6 arrow syntax:",
+      "points": [
+        {
+          "title": "1. Arrow Function Syntax",
+          "content": "Modern JavaScript allows writing functions using an arrow (=>): const add = (a, b) => { return a + b; }; It creates a function and stores it inside a const variable."
+        },
+        {
+          "title": "2. One-Line Implicit Return Shortcut",
+          "content": "If an arrow function only contains a single expression, you can remove the curly braces and the return keyword! const add = (a, b) => a + b; automatically returns the sum."
+        },
+        {
+          "title": "3. Default Parameters",
+          "content": "You can provide a fallback value for any parameter: function greet(name = \"Guest\") { ... } If someone calls greet() without passing a name, it uses 'Guest' automatically.",
+          "codeSnippet": "// Classic function:\nfunction multiply(a, b) {\n  return a * b;\n}\n\n// Modern 1-line arrow function (implicit return):\nconst multiplyArrow = (a, b) => a * b;\n\nconsole.log(multiplyArrow(4, 5)); // 20"
+        }
+      ]
+    },
+    "part4": {
+      "title": "Common Beginner Mistakes with Functions",
+      "bad": {
+        "title": "❌ Broken: Forgetting the return statement and mixing up parameters with console.log",
+        "code": "// Mistake 1: Forgetting return (calling code gets undefined!)\nfunction addBonus(score) {\n  const newScore = score + 50;\n  // Forgot to return newScore!\n}\n\nconst finalScore = addBonus(100);\nconsole.log(\"Final Score:\", finalScore); // ❌ undefined!\n\n// Mistake 2: Forgetting to call the function with parentheses\nconsole.log(addBonus); // ❌ Prints function code, does not run it!",
+        "explanation": "Printing with console.log() inside a function only shows output on the screen; it does NOT send the value back to your code. You must use return. Also, writing addBonus without () references the function itself without executing it."
+      },
+      "good": {
+        "title": "✅ Clean: Explicit returns and proper function calls",
+        "code": "// 1. Function calculates and returns the result\nfunction addBonus(score) {\n  return score + 50; // ✅ Returns the new number\n}\n\n// 2. Call with parentheses and store the returned answer\nconst finalScore = addBonus(100);\nconsole.log(\"Final Score:\", finalScore); // 150\n\n// 3. Clean arrow function alternative\nconst double = (num) => num * 2;\nconsole.log(\"Double 25:\", double(25)); // 50",
+        "explanation": "Using return delivers the calculated value so you can store it in variables or pass it to other calculations."
+      }
+    },
+    "part5": {
+      "title": "Functions & Arrow Syntax Playground",
+      "intro": "Write functions, experiment with default parameters, and convert regular functions to arrows:",
+      "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-06: FUNCTIONS & ARROW SYNTAX\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Standard Function with Default Parameter:\nfunction greetUser(name = \"Friend\") {\n  return \"Hello, \" + name + \"! Welcome back.\";\n}\n\nconsole.log(greetUser(\"Alex\"));\nconsole.log(greetUser()); // Uses default 'Friend'\n\n// 2. Function with Math calculation and explicit return:\nfunction calculateDiscount(price, discountPercent = 10) {\n  const discountAmount = price * (discountPercent / 100);\n  return price - discountAmount;\n}\n\nconst salePrice = calculateDiscount(100, 20);\nconsole.log(\"Sale Price ($100 with 20% off): $\" + salePrice);\n\n// 3. Concise 1-line Arrow Function (implicit return):\nconst isAdult = (age) => age >= 18;\nconsole.log(\"Is age 20 an adult?:\", isAdult(20)); // true\n\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// YOUR TURN:\n// 1. Create a function 'calculateArea(width, height)' that returns width * height.\n// 2. Call calculateArea(5, 10) and print the result.\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    },
+    "part6": {
+      "title": "Key Takeaways: Functions & Reusable Logic",
+      "takeaways": [
+        {
+          "title": "1. Functions Package Code",
+          "desc": "Write logic once and run it many times with different inputs."
+        },
+        {
+          "title": "2. Parameters vs Arguments",
+          "desc": "Parameters are the variables in the definition; arguments are the real values passed in."
+        },
+        {
+          "title": "3. Always return Results",
+          "desc": "Use return to send computed values back to the calling code."
+        },
+        {
+          "title": "4. Arrow Functions (=>)",
+          "desc": "Use arrow functions for clean, modern syntax and concise one-line returns."
+        }
+      ],
+      "nextLessonPreview": {
+        "title": "JS-07: Scope: Global, Function, and Block Scope",
+        "desc": "Now that you can write functions, learn where variables live and why scope boundaries protect your code."
+      }
+    },
+    "part7": {
+      "title": "Knowledge Check: Functions & Arrow Syntax",
+      "quiz": {
+        "question": "What does a JavaScript function return if it finishes running without reaching an explicit 'return' statement?",
+        "options": [
+          "null",
+          "0",
+          "undefined",
+          "false"
+        ],
+        "correctIndex": 2,
+        "explanation": "In JavaScript, any function that finishes executing without an explicit return statement automatically returns undefined."
+      }
+    }
+  },
+
+  "js07-scope-global-function-block": {
+    "slug": "js07-scope-global-function-block",
+    "code": "JS-07",
+    "title": "Scope: Where Variables Live (Global, Function & Block)",
+    "subtitle": "Understand variable visibility boundaries: discover why let and const stay inside curly braces, how function scope protects data, and how the one-way scope chain works.",
+    "sections": [
+      {
+        "id": "part1",
+        "label": "What Is Scope?",
+        "icon": "🔍",
+        "tag": "BOUNDARIES"
+      },
+      {
+        "id": "part2",
+        "label": "The 3 Scope Levels",
+        "icon": "🧱",
+        "tag": "LEVELS"
+      },
+      {
+        "id": "part3",
+        "label": "The Scope Chain",
+        "icon": "🪜",
+        "tag": "LOOKUP"
+      },
+      {
+        "id": "part4",
+        "label": "Common Scope Mistakes",
+        "icon": "⚠️",
+        "tag": "TRAPS"
+      },
+      {
+        "id": "part5",
+        "label": "Scope Playground",
+        "icon": "💻",
+        "tag": "PRACTICE"
+      },
+      {
+        "id": "part6",
+        "label": "Key Takeaways",
+        "icon": "🎓",
+        "tag": "SUMMARY"
+      },
+      {
+        "id": "part7",
+        "label": "Quick Quiz",
+        "icon": "🎯",
+        "tag": "QUIZ"
+      }
+    ],
+    "part1": {
+      "title": "Scope: Where Variables Live and Where They Disappear",
+      "bigPicture": "Scope is the set of rules that decides where your variables can be seen and reached in your code. Think of scope like rooms in a building with one-way glass: code running inside an inner room can look out into the hallway to see outer variables, but code in the hallway cannot look inside the private room to see inner variables.",
+      "breakdownTitle": "What You Will Learn in This Lesson:",
+      "breakdownItems": [
+        {
+          "title": "1. Global Scope",
+          "desc": "Variables created outside of any function or block, accessible everywhere in your script."
+        },
+        {
+          "title": "2. Function Scope",
+          "desc": "Variables created inside a function exist only while that function is running."
+        },
+        {
+          "title": "3. Block Scope (let and const)",
+          "desc": "Variables declared inside curly braces { } cannot leak outside those braces."
+        }
+      ]
+    },
+    "part2": {
+      "title": "The Three Levels of Scope in JavaScript",
+      "intro": "Every variable you create lives in one of three scope levels:",
+      "cards": [
+        {
+          "number": "01",
+          "tag": "Everywhere",
+          "title": "Global Scope",
+          "description": "Variables declared outside of all functions and blocks. Any part of your script can read them. Keep them few to avoid accidental name collisions.",
+          "color": "emerald"
+        },
+        {
+          "number": "02",
+          "tag": "Function",
+          "title": "Function Scope",
+          "description": "Variables declared inside a function are born when the function runs and disappear when it finishes. Outside code cannot reach them.",
+          "color": "cyan"
+        },
+        {
+          "number": "03",
+          "tag": "Curly Braces",
+          "title": "Block Scope (let & const)",
+          "description": "Any pair of curly braces { } (like in an if statement or loop) creates a block. Modern let and const stay strictly locked inside.",
+          "color": "purple"
+        }
+      ],
+      "rule": {
+        "title": "💡 The Least Privilege Rule",
+        "content": "Keep your variables as local as possible. Declare them inside the smallest function or block that needs them, rather than making everything global."
+      }
+    },
+    "part3": {
+      "title": "The One-Way Scope Chain Lookup",
+      "intro": "Understanding how JavaScript searches for variables when running your code:",
+      "points": [
+        {
+          "title": "1. Searching Outward Only",
+          "content": "When code uses a variable, JavaScript checks the local block first. If it cannot find it, it steps outward to the parent function, and finally to the global scope. It NEVER searches inward into other blocks or functions."
+        },
+        {
+          "title": "2. Variable Shadowing",
+          "content": "If an inner block declares a variable with the exact same name as an outer variable, the inner variable temporarily shadows (hides) the outer one inside that block."
+        },
+        {
+          "title": "3. ReferenceError When Looking Inward",
+          "content": "If code outside an if block tries to read a variable declared inside that block, JavaScript cannot see it and throws a ReferenceError.",
+          "codeSnippet": "const appName = \"LearnCraft\"; // Global scope\n\nfunction startSession() {\n  const userId = 42; // Function scope\n\n  if (true) {\n    const role = \"Admin\"; // Block scope\n    console.log(appName, userId, role); // Sees all three!\n  }\n  // console.log(role); // ❌ ReferenceError: role is not defined!\n}"
+        }
+      ]
+    },
+    "part4": {
+      "title": "Common Beginner Mistakes with Scope",
+      "bad": {
+        "title": "❌ Broken: Trying to access block-scoped variables outside their curly braces",
+        "code": "let isMember = true;\n\nif (isMember) {\n  const discount = 20; // Locked inside this if block!\n}\n\n// Trying to use discount outside the block:\nconsole.log(\"Your discount is:\", discount); // ❌ ReferenceError: discount is not defined!",
+        "explanation": "Because discount was declared with const inside the if block's curly braces, it does not exist outside that block. Attempting to log it causes a ReferenceError crash."
+      },
+      "good": {
+        "title": "✅ Clean: Declaring variables in the outer scope when they need to be shared",
+        "code": "let isMember = true;\nlet discount = 0; // Declared in outer scope!\n\nif (isMember) {\n  discount = 20; // Updates the outer variable\n}\n\nconsole.log(\"Your discount is:\", discount + \"%\"); // ✅ 20%",
+        "explanation": "If a value calculated inside a block needs to be used outside, declare the variable with let before the block, and update it inside."
+      }
+    },
+    "part5": {
+      "title": "Scope & Visibility Playground",
+      "intro": "Test global, function, and block scope boundaries and observe what can and cannot be accessed:",
+      "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-07: SCOPE & VISIBILITY\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Global variable (seen everywhere):\nconst globalGame = \"Space Quest\";\n\nfunction playRound() {\n  // 2. Function-scoped variable (seen only in playRound):\n  const roundScore = 50;\n  console.log(\"Playing:\", globalGame, \"| Score:\", roundScore);\n\n  if (roundScore >= 50) {\n    // 3. Block-scoped variable (seen only in this if block):\n    const bonusBadge = \"🌟 Gold Star\";\n    console.log(\"Achieved badge:\", bonusBadge);\n  }\n\n  // Un-commenting the next line would cause a ReferenceError:\n  // console.log(bonusBadge); // Error: bonusBadge is trapped in the if block!\n}\n\nplayRound();\n\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// YOUR TURN:\n// 1. Create a function 'checkAge(age)'.\n// 2. Inside an if block (age >= 18), declare 'const canDrive = true;'.\n// 3. Print canDrive inside the if block.\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    },
+    "part6": {
+      "title": "Key Takeaways: Where Variables Live",
+      "takeaways": [
+        {
+          "title": "1. Block Scope with {}",
+          "desc": "Variables created with let and const stay strictly inside their curly braces."
+        },
+        {
+          "title": "2. Function Scope",
+          "desc": "Variables inside a function are private to that function."
+        },
+        {
+          "title": "3. The One-Way Lookup",
+          "desc": "Inner scopes can look outward to find variables, but outer code cannot look inward."
+        },
+        {
+          "title": "4. Keep Variables Local",
+          "desc": "Declare variables only where they are needed to prevent accidental bugs."
+        }
+      ],
+      "nextLessonPreview": {
+        "title": "JS-08: Closures: How Functions Remember Their Birthplace",
+        "desc": "Now that you know how scope boundaries work, discover how functions can remember variables even after their outer function finishes."
+      }
+    },
+    "part7": {
+      "title": "Knowledge Check: Scope",
+      "quiz": {
+        "question": "Can code running outside an 'if' block access a variable declared with 'const' inside that block?",
+        "options": [
+          "Yes, const variables are always globally accessible.",
+          "No, const and let are strictly block-scoped to their enclosing curly braces {}.",
+          "Only if the condition evaluated to true.",
+          "Only if the variable was a number."
+        ],
+        "correctIndex": 1,
+        "explanation": "Variables declared with let and const are block-scoped and cannot be accessed outside the curly braces {} where they were created."
+      }
+    }
+  },
+
+  "js08-closures": {
+    "slug": "js08-closures",
+    "code": "JS-08",
+    "title": "Closures: How Functions Remember Their Birthplace",
+    "subtitle": "Discover how inner functions carry a backpack of variables from where they were created, even after the outer function has finished running.",
+    "sections": [
+      {
+        "id": "part1",
+        "label": "What Is a Closure?",
+        "icon": "🎒",
+        "tag": "CONCEPT"
+      },
+      {
+        "id": "part2",
+        "label": "The Backpack Model",
+        "icon": "🧠",
+        "tag": "MECHANICS"
+      },
+      {
+        "id": "part3",
+        "label": "Private Memory",
+        "icon": "🛡️",
+        "tag": "PRIVACY"
+      },
+      {
+        "id": "part4",
+        "label": "Common Misunderstandings",
+        "icon": "⚠️",
+        "tag": "TRAPS"
+      },
+      {
+        "id": "part5",
+        "label": "Closures Playground",
+        "icon": "💻",
+        "tag": "PRACTICE"
+      },
+      {
+        "id": "part6",
+        "label": "Key Takeaways",
+        "icon": "🎓",
+        "tag": "SUMMARY"
+      },
+      {
+        "id": "part7",
+        "label": "Quick Quiz",
+        "icon": "🎯",
+        "tag": "QUIZ"
+      }
+    ],
+    "part1": {
+      "title": "Closures: Functions Carrying Their Variable Backpack",
+      "bigPicture": "Normally, when a function finishes running, all of its local variables are wiped from memory. But when an inner function is created inside an outer function and returned, it remembers and holds onto the variables from where it was created. This superpower is called a closure: the inner function carries a 'backpack' of variables from its birthplace.",
+      "breakdownTitle": "What You Will Learn in This Lesson:",
+      "breakdownItems": [
+        {
+          "title": "1. Born Inside, Used Outside",
+          "desc": "A function created inside another function carries access to the outer function's variables."
+        },
+        {
+          "title": "2. Persistent Private Memory",
+          "desc": "The remembered variables stay alive in memory as long as the inner function is kept around."
+        },
+        {
+          "title": "3. Independent Instances",
+          "desc": "Calling the outer creator function multiple times creates fresh, separate backpacks."
+        }
+      ]
+    },
+    "part2": {
+      "title": "How a Closure Works Under the Hood",
+      "intro": "Understanding why closures preserve variables and keep them private:",
+      "cards": [
+        {
+          "number": "01",
+          "tag": "Definition",
+          "title": "What is a Closure?",
+          "description": "A closure happens when a function remembers variables from where it was created, even after the outer function has finished running.",
+          "color": "emerald"
+        },
+        {
+          "number": "02",
+          "tag": "Privacy",
+          "title": "Private State",
+          "description": "Variables inside the closure backpack cannot be modified directly from outside. They can only be read or changed by the inner function.",
+          "color": "purple"
+        },
+        {
+          "number": "03",
+          "tag": "Factories",
+          "title": "Function Factories",
+          "description": "A function that configures and returns another customized function (like makeGreeter(\"Hello\") or createCounter()).",
+          "color": "cyan"
+        }
+      ],
+      "rule": {
+        "title": "💡 The Closure Rule",
+        "content": "Functions in JavaScript remember variables based on where they were written, not where or when they are executed later."
+      }
+    },
+    "part3": {
+      "title": "Step-by-Step Walkthrough: The Private Counter",
+      "intro": "Following how a closure preserves a number across multiple function calls:",
+      "points": [
+        {
+          "title": "1. Step-by-Step Counter Creation",
+          "content": "function createCounter() { let count = 0; return function() { count++; return count; }; } When createCounter() runs, it sets count = 0 and returns the inner function. Even though createCounter() ends, the returned function keeps count in its backpack!"
+        },
+        {
+          "title": "2. Completely Independent Backpacks",
+          "content": "If you run const counterA = createCounter(); and const counterB = createCounter();, counterA and counterB each have their own private count. Calling counterA() does not affect counterB()!"
+        },
+        {
+          "title": "3. Custom Greeter Factories",
+          "content": "function makeGreeter(greeting) { return (name) => greeting + \", \" + name + \"!\"; } const sayHello = makeGreeter(\"Hello\"); Calling sayHello(\"Alex\") prints 'Hello, Alex!' because it remembered 'Hello'.",
+          "codeSnippet": "function createCounter() {\n  let count = 0; // Private variable\n  return function() {\n    count++;\n    return count;\n  };\n}\nconst myCounter = createCounter();\nconsole.log(myCounter()); // 1\nconsole.log(myCounter()); // 2"
+        }
+      ]
+    },
+    "part4": {
+      "title": "Common Misunderstandings with Closures",
+      "bad": {
+        "title": "❌ Bad: Using exposed global variables that any code can accidentally overwrite",
+        "code": "// Anyone in the script can accidentally modify or reset globalCount:\nlet globalCount = 0;\n\nfunction increment() {\n  globalCount++;\n}\n\n// Somewhere else in the code, a bug resets it:\nglobalCount = -999; // ❌ Ruined by accidental overwrite!",
+        "explanation": "Relying on global variables means any part of your code can accidentally overwrite them or corrupt their state."
+      },
+      "good": {
+        "title": "✅ Clean: Encapsulated private state protected inside a closure",
+        "code": "function createSafeCounter() {\n  let count = 0; // Protected inside the closure\n  return function() {\n    count++;\n    return count;\n  };\n}\n\nconst safeCounter = createSafeCounter();\nconsole.log(safeCounter()); // 1\nconsole.log(safeCounter()); // 2\n// Outside code CANNOT access or overwrite 'count' directly!",
+        "explanation": "The count variable is completely inaccessible from the outside world. It can only be updated through the safe returned function."
+      }
+    },
+    "part5": {
+      "title": "Closures Playground",
+      "intro": "Run the code below to see private counters and custom greeter closures in action:",
+      "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-08: CLOSURES & PRIVATE STATE\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Private Counter Closure:\nfunction createCounter(label) {\n  let count = 0; // Private variable trapped in the closure\n\n  return function() {\n    count++;\n    return label + \": \" + count;\n  };\n}\n\nconst clicks = createCounter(\"Button Clicks\");\nconst views = createCounter(\"Page Views\");\n\nconsole.log(clicks()); // Button Clicks: 1\nconsole.log(clicks()); // Button Clicks: 2\nconsole.log(views());  // Page Views: 1 (independent!)\nconsole.log(clicks()); // Button Clicks: 3\n\n// 2. Custom Greeter Factory:\nfunction makeGreeter(greeting) {\n  return function(name) {\n    return greeting + \", \" + name + \"!\";\n  };\n}\n\nconst sayWelcome = makeGreeter(\"Welcome\");\nconsole.log(sayWelcome(\"Alex\"));\nconsole.log(sayWelcome(\"Emma\"));\n\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// YOUR TURN:\n// 1. Create a function 'makeMultiplier(factor)'.\n// 2. Inside, return a function that takes 'number' and returns number * factor.\n// 3. Test it by creating 'const triple = makeMultiplier(3);' and logging triple(5).\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    },
+    "part6": {
+      "title": "Key Takeaways: How Functions Remember",
+      "takeaways": [
+        {
+          "title": "1. What a Closure Is",
+          "desc": "A function that remembers variables from where it was created, even after the outer function ends."
+        },
+        {
+          "title": "2. Private Memory",
+          "desc": "Variables inside the closure cannot be changed directly by outside code."
+        },
+        {
+          "title": "3. Separate Instances",
+          "desc": "Each time you call the outer function, a brand-new independent closure is born."
+        },
+        {
+          "title": "4. Next: Callbacks",
+          "desc": "In JS-09, we learn how to pass functions into other functions as data values."
+        }
+      ],
+      "nextLessonPreview": {
+        "title": "JS-09: Callbacks & Higher-Order Functions: Functions as Data",
+        "desc": "Now that you understand functions and closures, learn how to pass functions to other functions as data."
+      }
+    },
+    "part7": {
+      "title": "Knowledge Check: Closures",
+      "quiz": {
+        "question": "What is a Closure in JavaScript?",
+        "options": [
+          "A command used to close a browser tab.",
+          "A function that remembers variables from where it was created, even after the outer function has finished running.",
+          "A syntax error caused by forgetting a closing bracket.",
+          "A method that converts a number into text."
+        ],
+        "correctIndex": 1,
+        "explanation": "A closure happens when an inner function remembers the variables from the scope where it was created, even after the outer function has finished running."
+      }
+    }
+  },
+
+  "js09-callbacks-and-higher-order-functions": {
+    "slug": "js09-callbacks-and-higher-order-functions",
+    "code": "JS-09",
+    "title": "Callbacks & Higher-Order Functions: Functions as Data",
+    "subtitle": "Treat functions as values: pass callback functions into other functions and manufacture custom functions dynamically.",
+    "sections": [
+      {
+        "id": "part1",
+        "label": "Functions as Values",
+        "icon": "🧩",
+        "tag": "FIRST-CLASS"
+      },
+      {
+        "id": "part2",
+        "label": "What Is a Callback?",
+        "icon": "📞",
+        "tag": "CALLBACKS"
+      },
+      {
+        "id": "part3",
+        "label": "Higher-Order Functions",
+        "icon": "⚡",
+        "tag": "COMPOSITION"
+      },
+      {
+        "id": "part4",
+        "label": "Passing vs Calling",
+        "icon": "⚠️",
+        "tag": "TRAPS"
+      },
+      {
+        "id": "part5",
+        "label": "Callbacks Playground",
+        "icon": "💻",
+        "tag": "PRACTICE"
+      },
+      {
+        "id": "part6",
+        "label": "Key Takeaways",
+        "icon": "🎓",
+        "tag": "SUMMARY"
+      },
+      {
+        "id": "part7",
+        "label": "Quick Quiz",
+        "icon": "🎯",
+        "tag": "QUIZ"
+      }
+    ],
+    "part1": {
+      "title": "First-Class Functions: Treating Functions as Values",
+      "bigPicture": "In JavaScript, functions are first-class citizens. That simply means functions can be treated just like any other value: you can assign a function to a variable, pass a function into another function as an argument, and return a function from a function.",
+      "breakdownTitle": "What You Will Learn in This Lesson:",
+      "breakdownItems": [
+        {
+          "title": "1. Functions as Values",
+          "desc": "Functions can be stored in variables and handed to other functions."
+        },
+        {
+          "title": "2. Callback Functions",
+          "desc": "A function you pass into another function to be 'called back' when needed."
+        },
+        {
+          "title": "3. Higher-Order Functions",
+          "desc": "A function that accepts another function as an input, or returns a new function."
+        }
+      ]
+    },
+    "part2": {
+      "title": "What a Callback Function Is",
+      "intro": "When you hand a function to another function to do a specific job, it is called a callback:",
+      "cards": [
+        {
+          "number": "01",
+          "tag": "Value",
+          "title": "Functions in Variables",
+          "description": "const sayHi = () => console.log(\"Hi!\"); — functions can be stored in variables just like numbers or text.",
+          "color": "emerald"
+        },
+        {
+          "number": "02",
+          "tag": "Input",
+          "title": "Callback Functions",
+          "description": "A function passed as an argument into another function. The receiving function calls it at the right moment.",
+          "color": "cyan"
+        },
+        {
+          "number": "03",
+          "tag": "Manager",
+          "title": "Higher-Order Functions",
+          "description": "Any function that takes a callback as a parameter or returns a function. It manages the general flow while the callback supplies the custom action.",
+          "color": "purple"
+        }
+      ],
+      "rule": {
+        "title": "💡 The Callback Execution Rule",
+        "content": "When passing a function as a callback, pass its name WITHOUT parentheses (myCallback). Adding parentheses (myCallback()) calls the function immediately instead of waiting."
+      }
+    },
+    "part3": {
+      "title": "Higher-Order Functions in Action",
+      "intro": "How higher-order functions use callbacks to build flexible, reusable tools:",
+      "points": [
+        {
+          "title": "1. The Universal Calculator",
+          "content": "function calculate(a, b, operation) { return operation(a, b); } calculate does not care whether you add, multiply, or subtract. You pass the specific operation callback to tell it what to do!"
+        },
+        {
+          "title": "2. Anonymous Inline Callbacks",
+          "content": "Instead of naming every callback beforehand, you can pass an arrow function directly: calculate(10, 5, (x, y) => x - y); This is the exact pattern used across all modern JavaScript code."
+        },
+        {
+          "title": "3. Repeating Actions with Callbacks",
+          "content": "function repeat(times, action) { for (let i = 1; i <= times; i++) action(i); } You build a reusable repeater, and caller callbacks specify what action happens on each step.",
+          "codeSnippet": "function calculate(a, b, operation) {\n  return operation(a, b);\n}\n\nconst add = (x, y) => x + y;\nconst multiply = (x, y) => x * y;\n\nconsole.log(calculate(4, 5, add));      // 9\nconsole.log(calculate(4, 5, multiply)); // 20"
+        }
+      ]
+    },
+    "part4": {
+      "title": "Common Beginner Mistakes with Callbacks",
+      "bad": {
+        "title": "❌ Broken: Calling the callback immediately by accidentally adding parentheses ()",
+        "code": "function runWithGreeting(name, callback) {\n  return callback(name);\n}\n\nfunction formatName(n) {\n  return \"*** \" + n + \" ***\";\n}\n\n// Mistake: accidentally adding (name) when passing the callback:\n// runWithGreeting(\"Alex\", formatName(\"Alex\"));\n// ❌ TypeError: callback is not a function! (because formatName(\"Alex\") ran immediately and passed a string!)",
+        "explanation": "Adding parentheses immediately invokes the function and passes its return value instead of passing the function itself."
+      },
+      "good": {
+        "title": "✅ Clean: Passing the function reference without parentheses",
+        "code": "function runWithGreeting(name, callback) {\n  return callback(name); // ✅ Higher-order function invokes it here\n}\n\nfunction formatName(n) {\n  return \"*** \" + n + \" ***\";\n}\n\n// Pass the function name without ()\nconst result = runWithGreeting(\"Alex\", formatName);\nconsole.log(result); // \"*** Alex ***\"",
+        "explanation": "Passing formatName without parentheses allows runWithGreeting to receive the function and call it at the right time."
+      }
+    },
+    "part5": {
+      "title": "Callbacks & Higher-Order Functions Playground",
+      "intro": "Experiment with passing functions as arguments and executing custom operations:",
+      "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-09: CALLBACKS & HIGHER-ORDER FUNCTIONS\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Higher-order function that accepts an operation callback:\nfunction calculate(a, b, operation) {\n  return operation(a, b);\n}\n\n// Named callbacks:\nconst add = (x, y) => x + y;\nconst multiply = (x, y) => x * y;\n\nconsole.log(\"10 + 5 =\", calculate(10, 5, add));\nconsole.log(\"10 * 5 =\", calculate(10, 5, multiply));\n\n// 2. Anonymous inline callback:\nconsole.log(\"10 - 5 =\", calculate(10, 5, (x, y) => x - y));\n\n// 3. Action repeater higher-order function:\nfunction repeatAction(times, action) {\n  for (let i = 1; i <= times; i++) {\n    action(i);\n  }\n}\n\nconsole.log(\"\\n--- Running Action Repeater ---\\n\");\nrepeatAction(3, (step) => {\n  console.log(\"Step #\" + step + \": Processing item...\");\n});\n\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// YOUR TURN:\n// 1. Use calculate(20, 4, callback) to divide 20 by 4 using an arrow function callback.\n// 2. Print the result.\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    },
+    "part6": {
+      "title": "Key Takeaways: Functions as Data",
+      "takeaways": [
+        {
+          "title": "1. Functions are Values",
+          "desc": "You can store functions in variables, pass them as arguments, and return them."
+        },
+        {
+          "title": "2. Callbacks are Input Functions",
+          "desc": "A callback is a function passed to another function to be executed."
+        },
+        {
+          "title": "3. Pass Without ()",
+          "desc": "Pass the function name without parentheses so the receiving function can run it."
+        },
+        {
+          "title": "4. Prepares You for Arrays",
+          "desc": "In JS-10 and JS-11, you will use callbacks to power array methods like map and filter."
+        }
+      ],
+      "nextLessonPreview": {
+        "title": "JS-10: Arrays & Indexing: Managing Ordered Lists",
+        "desc": "Now that you understand functions and callbacks, learn how to store lists of data with arrays and access items by index."
+      }
+    },
+    "part7": {
+      "title": "Knowledge Check: Functions as Data",
+      "quiz": {
+        "question": "What is a 'Higher-Order Function' in JavaScript?",
+        "options": [
+          "A function that runs faster than normal functions.",
+          "A function that accepts another function as an argument, or returns a function.",
+          "A function that contains more than 10 lines of code.",
+          "A function that can only be called from inside a loop."
+        ],
+        "correctIndex": 1,
+        "explanation": "A Higher-Order Function is any function that accepts one or more functions as arguments, or returns a function as its result."
+      }
+    }
+  },
+
+  "js10-arrays-and-indexing": {
+  "slug": "js10-arrays-and-indexing",
+  "code": "JS-10",
+  "title": "Arrays & Indexing: Managing Ordered Lists",
+  "subtitle": "Store ordered collections of data, access elements with zero-based indexing, read array length, and add or remove items using push, pop, and slice.",
   "sections": [
     {
       "id": "part1",
-      "label": "The Runtime & Execution",
-      "icon": "⚡",
-      "tag": "RUNTIME"
+      "label": "Ordered Lists",
+      "icon": "📋",
+      "tag": "FOUNDATION"
     },
     {
       "id": "part2",
-      "label": "Statements & Expressions",
-      "icon": "📝",
-      "tag": "SYNTAX"
+      "label": "Zero-Based Indices",
+      "icon": "🔢",
+      "tag": "OPERATIONS"
     },
     {
       "id": "part3",
-      "label": "Console & Output",
-      "icon": "💻",
-      "tag": "OUTPUT"
+      "label": "Reading & Slicing",
+      "icon": "✂️",
+      "tag": "MANIPULATION"
     },
     {
       "id": "part4",
-      "label": "Clean Instructions",
-      "icon": "🛡️",
-      "tag": "BEST PRACTICE"
+      "label": "Off-by-One Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
     },
     {
       "id": "part5",
-      "label": "Console Playground",
-      "icon": "🚀",
+      "label": "Arrays Playground",
+      "icon": "💻",
       "tag": "SANDBOX"
     },
     {
@@ -157,1712 +1750,132 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
     }
   ],
   "part1": {
-    "title": "Where and How JavaScript Runs",
-    "bigPicture": "JavaScript is the programming language that makes websites interactive. When you write JavaScript, an environment called a runtime (like your web browser) reads your code and follows your instructions line by line, from top to bottom, like reading a recipe.",
-    "breakdownTitle": "What You Will Learn in This Lesson:",
+    "title": "Why Arrays Matter: Storing Ordered Lists Under One Name",
+    "bigPicture": "Imagine organizing a playlist of your favorite songs or a grocery shopping list. Without arrays, you would need separate variables like song1, song2, and song3—which becomes unmanageable the moment your list grows or changes! An array is a single container that holds an ordered list of items, keeping them in the exact order you put them in.",
+    "breakdownTitle": "Core Concepts of JavaScript Arrays:",
     "breakdownItems": [
       {
-        "title": "The Runtime Environment",
-        "desc": "Where your code lives and executes. Web browsers have a built-in runtime that reads your JavaScript."
+        "title": "The Square Bracket Container",
+        "desc": "Create an array by wrapping items in square brackets separated by commas: const fruits = ['apple', 'banana', 'orange']."
       },
-      {
-        "title": "Line-by-Line Execution",
-        "desc": "JavaScript follows your instructions in order from top to bottom without skipping ahead."
-      },
-      {
-        "title": "Statements and the Console",
-        "desc": "Write complete instructions and use console.log() to print messages and results directly to your screen."
-      }
-    ]
-  },
-  "part2": {
-    "title": "Statements, Expressions & Comments",
-    "intro": "Every JavaScript program is built from three simple building blocks:",
-    "cards": [
-      {
-        "number": "01",
-        "tag": "Instructions",
-        "title": "Statements",
-        "description": "A statement is a complete instruction that tells the computer to perform an action. Statements usually end with a semicolon (;).",
-        "color": "purple"
-      },
-      {
-        "number": "02",
-        "tag": "Values",
-        "title": "Expressions",
-        "description": "An expression is any piece of code that produces a value. For example, 5 + 3 produces 8, and 'Welcome' produces a text string.",
-        "color": "cyan"
-      },
-      {
-        "number": "03",
-        "tag": "Notes",
-        "title": "Comments",
-        "description": "Notes written for humans that the computer completely ignores. Use // for a single-line note or /* ... */ for multiple lines.",
-        "color": "emerald"
-      }
-    ],
-    "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Write one clear statement per line, end each statement with a semicolon (;), and use comments to explain why your code is doing something."
-    }
-  },
-  "part3": {
-    "title": "How JavaScript Reads and Displays Your Code",
-    "intro": "Understanding how your computer reads statements and displays output:",
-    "points": [
-      {
-        "title": "1. Reading Line by Line (Top to Bottom)",
-        "content": "JavaScript reads your code like a book, starting at line 1 and moving downward in order. It finishes the current line before moving on to the next line."
-      },
-      {
-        "title": "2. Calculating Expressions First",
-        "content": "When JavaScript encounters an expression like 10 + 5 inside an instruction, it calculates the result (15) first, then carries out the statement."
-      },
-      {
-        "title": "3. The Console as Your Feedback Window",
-        "content": "The browser console is your primary tool for seeing what your code is doing. Writing console.log(message) displays text, numbers, or calculation results on your screen."
-      }
-    ]
-  },
-  "part4": {
-    "title": "Writing Clean, Readable Statements",
-    "bad": {
-      "title": "❌ Bad: Crammed statements with no comments and no output checking",
-      "code": "// Multiple instructions crammed together with no spacing and no logging:\nconst price=100;const tax=0.15;const total=price+(price*tax);\n// Did it work? We have no idea because nothing was printed to the console!",
-      "explanation": "Cramming multiple instructions onto one line without spacing makes code difficult to read. If you never log your results, you cannot verify that your calculations worked."
-    },
-    "good": {
-      "title": "✅ Clean: One clear statement per line with helpful comments and logging",
-      "code": "// 1. Set the initial price and tax rate\nconst itemPrice = 100;\nconst taxRate = 0.15;\n\n// 2. Calculate the total cost (expression evaluated first)\nconst totalCost = itemPrice + (itemPrice * taxRate);\n\n// 3. Print the result clearly to the console\nconsole.log(\"Item Price: $\" + itemPrice);\nconsole.log(\"Total with Tax: $\" + totalCost);",
-      "explanation": "Writing one statement per line with clear variable names and console.log() makes it easy to understand the steps and verify the output."
-    }
-  },
-  "part5": {
-    "title": "Console & Statements Playground",
-    "intro": "Run the statements below to watch how sequential code executes and prints output in the console:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-01: HOW JAVASCRIPT RUNS\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. A friendly welcome statement:\nconsole.log(\"👋 Welcome to LearnCraft JavaScript!\");\n\n// 2. Expressions produce values:\nconsole.log(\"Math result (10 + 5):\", 10 + 5);\nconsole.log(\"Text expression:\", \"JavaScript\" + \" \" + \"is fun!\");\n\n// 3. Top-to-bottom sequential execution:\nconsole.log(\"Step 1: Getting ready\");\nconsole.log(\"Step 2: Performing action\");\nconsole.log(\"Step 3: All done!\");\n\n// Try it yourself:\n// Add a console.log() below with your own message or calculation!\n"
-  },
-  "part6": {
-    "title": "Key Takeaways: How JavaScript Runs",
-    "takeaways": [
-      {
-        "title": "1. The Runtime Environment",
-        "desc": "JavaScript runs inside a host environment (like your web browser) that reads and executes your instructions."
-      },
-      {
-        "title": "2. Line-by-Line Execution",
-        "desc": "JavaScript runs code sequentially from top to bottom, completing one statement before moving to the next."
-      },
-      {
-        "title": "3. Statements vs. Expressions",
-        "desc": "An expression produces a value (like 5 + 3); a statement is a complete instruction that performs an action."
-      },
-      {
-        "title": "4. console.log() for Output",
-        "desc": "Use console.log() to print text, numbers, and calculation results so you can see what your code is doing."
-      }
-    ],
-    "nextLessonPreview": {
-      "title": "JS-02: Variables & Data Types: Storing Data with let & const",
-      "desc": "Now that you know how code runs and prints, learn how to store information using let and const."
-    }
-  },
-  "part7": {
-    "title": "Knowledge Check: How JavaScript Runs",
-    "quiz": {
-      "question": "How does JavaScript execute statements in a program by default?",
-      "options": [
-        "From bottom to top, starting at the last line.",
-        "Line by line from top to bottom, in sequential order.",
-        "In completely random order every time you run it.",
-        "All lines run at the exact same millisecond simultaneously."
-      ],
-      "correctIndex": 1,
-      "explanation": "JavaScript runs code sequentially from top to bottom. It finishes executing one line before moving on to the next line."
-    }
-  }
-},
-
-  "js02-variables-and-data-types": {
-  "slug": "js02-variables-and-data-types",
-  "code": "JS-02",
-  "title": "Variables & Data Types: Storing Data with let & const",
-  "subtitle": "Master let, const, primitive types, and avoid the pitfalls of legacy var.",
-  "sections": [
-        {
-            "id": "part1",
-            "label": "Why Variables Exist",
-            "icon": "📦",
-            "tag": "VARIABLES"
-        },
-        {
-            "id": "part2",
-            "label": "const vs let Rules",
-            "icon": "🔒",
-            "tag": "RULES"
-        },
-        {
-            "id": "part3",
-            "label": "7 Primitive Types",
-            "icon": "💎",
-            "tag": "PRIMITIVES"
-        },
-        {
-            "id": "part4",
-            "label": "Avoiding Legacy var",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Variables Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
-  "part1": {
-    "title": "Why We Store Data in Variables",
-    "bigPicture": "A variable is a labeled storage container in memory where we keep values so we can use them later. Think of this like labeled bins in a workshop — some are sealed, while others can be emptied and refilled.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
-    "breakdownItems": [
-      {
-        "title": "let vs const",
-        "desc": "Use const by default for values that never change. Use let only when you know you will change the value later."
-      },
-      {
-        "title": "Primitive Types",
-        "desc": "JavaScript has 7 simple primitive data types, including text (strings), numbers, and true/false values (booleans)."
-      },
-      {
-        "title": "Avoid Legacy var",
-        "desc": "Old code used var, but var can leak out of loops and cause confusing bugs. Modern JavaScript always uses const and let."
-      }
-    ]
-  },
-  "part2": {
-    "title": "The Modern Rule: const by Default, let When Changing",
-    "intro": "How modern JavaScript guarantees variable predictability:",
-    "cards": [
-      {
-        "number": "01",
-        "tag": "Variables",
-        "title": "const (Default)",
-        "description": "Locks the value so you cannot overwrite it by mistake. This keeps your program predictable and safe.",
-        "color": "emerald"
-      },
-      {
-        "number": "02",
-        "tag": "Variables",
-        "title": "let (When Changing)",
-        "description": "A flexible variable you can change later, perfect for game scores, user inputs, or counting loops.",
-        "color": "purple"
-      },
-      {
-        "number": "03",
-        "tag": "Data Types",
-        "title": "7 Primitives",
-        "description": "Simple, single values like numbers and text. Changing a copy will never mess up the original.",
-        "color": "amber"
-      }
-    ],
-    "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Default to const for 95% of variables. Switch to let only when you know the value must be reassigned."
-    }
-  },
-  "part3": {
-    "title": "JavaScript's 7 Primitive Data Types",
-    "intro": "The fundamental building blocks stored directly by value:",
-    "points": [
-      {
-        "title": "1. Strings, Numbers & Booleans",
-        "content": "Text inside quotes like 'LearnCraft' is a string. Numeric values like 42 or 3.14 are numbers. True or false switches (true / false) are booleans."
-      },
-      {
-        "title": "2. null vs undefined",
-        "content": "undefined means a variable was created but no value has been put in it yet. null is an intentional empty value that you assign on purpose."
-      },
-      {
-        "title": "3. BigInt, Symbol & typeof",
-        "content": "BigInt holds integers larger than normal numbers can handle. Symbol creates a guaranteed unique identifier. Use typeof (like typeof 'cat') to check any variable's type."
-      }
-    ]
-  },
-  "part4": {
-    "title": "Why Modern JavaScript Forbids Legacy var",
-    "bad": {
-      "title": "❌ Bad: Using var and accidental variable leakage",
-      "code": "for (var i = 0; i < 3; i++) {\n  // var leaks out of this loop into outer scope!\n}\nconsole.log(\"Leaked i outside loop:\", i); // 3 (Dangerous!)",
-      "explanation": "Because var does not care about curly braces, the variable leaks outside the loop and can accidentally overwrite other variables."
-    },
-    "good": {
-      "title": "✅ Clean: Clean const and let with block-scoped isolation",
-      "code": "const maxItems = 3;\nlet currentCount = 0;\n\nfor (let i = 0; i < maxItems; i++) {\n  currentCount++;\n}\n\nconsole.log(\"Final count:\", currentCount);\n// i is safely cleaned up and does not leak outside!",
-      "explanation": "Using let keeps the counter safely inside the loop, and it disappears automatically when the loop is done."
-    }
-  },
-  "part5": {
-    "title": "Variables & Data Types Playground",
-    "intro": "Declare variables, inspect their runtime types with typeof, and verify const protections:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-02: VARIABLES & DATA TYPES\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Value that never changes (const)\nconst websiteName = \"LearnCraft\";\nconst maxScore = 100;\nconst isLive = true;\n\n// 2. Variable you can change (let)\nlet currentScore = 85;\ncurrentScore += 10;\n\nconsole.log(\"Platform:\", websiteName);\nconsole.log(\"Current Score:\", currentScore, \"/\", maxScore);\n\n// 3. Inspecting Primitive Types with typeof\nconsole.log(\"Type of websiteName:\", typeof websiteName); // string\nconsole.log(\"Type of currentScore:\", typeof currentScore); // number\nconsole.log(\"Type of isLive:\", typeof isLive);             // boolean\n\n// 4. null vs undefined\nlet unassignedValue;\nconst intentionalEmpty = null;\n\nconsole.log(\"Unassigned:\", unassignedValue); // undefined\nconsole.log(\"Intentional Empty:\", intentionalEmpty); // null\n"
-  },
-  "part6": {
-    "title": "Key Takeaways: Why We Store Data in Variables",
-    "takeaways": [
-      {
-        "title": "1. Always const First",
-        "desc": "Default to const to avoid accidental reassignments."
-      },
-      {
-        "title": "2. let for Changes",
-        "desc": "Use let for counters, accumulators, and toggles."
-      },
-      {
-        "title": "3. Block Scope",
-        "desc": "Both let and const respect curly braces {}."
-      },
-      {
-        "title": "4. Next: Operators",
-        "desc": "In JS-03, we explore arithmetic, logical operators, and ===."
-      }
-    ],
-    "nextLessonPreview": {
-      "title": "JS-03: Operators, Equality & Type Conversion: The === Rule",
-      "desc": "Learn why developers always use === and how JavaScript evaluates truthy vs falsy values."
-    }
-  },
-  "part7": {
-    "title": "Knowledge Check: Why We Store Data in Variables",
-    "quiz": {
-      "question": "Which keyword should you use by default when creating a new variable in modern JavaScript?",
-      "options": [
-        "var, because it works everywhere.",
-        "const, because it prevents accidental reassignment and makes code predictable.",
-        "let, because const is deprecated.",
-        "global, to make variables accessible everywhere."
-      ],
-      "correctIndex": 1,
-      "explanation": "Best practice is to use const by default. Only use let when you explicitly know the value will be reassigned."
-    }
-  }
-},
-
-  "js03-operators-and-equality": {
-  "slug": "js03-operators-and-equality",
-  "code": "JS-03",
-  "title": "Operators, Equality & Type Conversion: The === Rule",
-  "subtitle": "Master math operators, logical expressions, and why you must always use strict equality (===).",
-  "sections": [
-        {
-            "id": "part1",
-            "label": "Strict Equality Rule",
-            "icon": "⚖️",
-            "tag": "EQUALITY"
-        },
-        {
-            "id": "part2",
-            "label": "Math & Logic Operators",
-            "icon": "🔢",
-            "tag": "OPERATORS"
-        },
-        {
-            "id": "part3",
-            "label": "Truthy vs Falsy",
-            "icon": "✨",
-            "tag": "BOOLEAN"
-        },
-        {
-            "id": "part4",
-            "label": "Type Guessing Traps",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Operators Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
-  "part1": {
-    "title": "The Golden Rule of Equality: Always Use ===",
-    "bigPicture": "To compare values safely in JavaScript, you must check both the value and the type. Think of triple equals (===) like a strict airport customs officer checking both your ticket name and your passport photo.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
-    "breakdownItems": [
-      {
-        "title": "Arithmetic & Logic",
-        "desc": "Perform calculations (+, -, *, /, %) and logical tests (&&, ||, !)."
-      },
-      {
-        "title": "The Triple Equals Rule",
-        "desc": "Always use === (triple equals) because it checks both the value and the type, without guessing or converting types behind your back."
-      },
-      {
-        "title": "Truthy vs Falsy",
-        "desc": "Know the 6 core falsy values: false, 0, '', null, undefined, and NaN."
-      }
-    ]
-  },
-  "part2": {
-    "title": "Arithmetic & Logical Operators",
-    "intro": "Performing calculations and combining multiple logical conditions:",
-    "cards": [
-      {
-        "number": "01",
-        "tag": "Strict",
-        "title": "=== (Strict Equality)",
-        "description": "Checks value AND type. 5 === '5' is false. Predictable and bug-free.",
-        "color": "emerald"
-      },
-      {
-        "number": "02",
-        "tag": "Loose Trap",
-        "title": "== (Loose Equality)",
-        "description": "Performs hidden type conversions. 0 == '' is true. Never use in modern code.",
-        "color": "rose"
-      },
-      {
-        "number": "03",
-        "tag": "Logical",
-        "title": "&& and || Operators",
-        "description": "Smart shortcuts: && (AND) stops at the first false value it sees. || (OR) stops at the first true value it sees.",
-        "color": "cyan"
-      }
-    ],
-    "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Never use == or !=. Always use === and !==. Memorize the 6 falsy values to write bug-free conditions."
-    }
-  },
-  "part3": {
-    "title": "Understanding Truthy and Falsy Values",
-    "intro": "How JavaScript evaluates any value in boolean expressions:",
-    "points": [
-      {
-        "title": "1. What Is Truthy and Falsy?",
-        "content": "In JavaScript, any value can be used inside an if condition. Values that count as true are called truthy. Values that count as false are called falsy."
-      },
-      {
-        "title": "2. The 6 Falsy Values",
-        "content": "Only 6 values in JavaScript are falsy: false, 0, empty text '', null, undefined, and NaN. Every other value is truthy, including empty arrays [] and empty objects {}."
-      },
-      {
-        "title": "3. Safe Boolean Conversion",
-        "content": "You can turn any value into a real true or false boolean by passing it to Boolean(value) or writing double exclamation marks !!value."
-      }
-    ]
-  },
-  "part4": {
-    "title": "Trap: The Bizarre World of Loose Equality (==)",
-    "bad": {
-      "title": "❌ Bad: Using double equals (==) and confusing automatic conversions",
-      "code": "console.log(0 == \"\");      // true! (Confusing!)\nconsole.log(false == \"0\"); // true! (Bizarre!)\nconsole.log(null == undefined); // true!",
-      "explanation": "Double equals (==) silently guesses and changes types, making 0 equal to empty text '', which leads to hard-to-find bugs."
-    },
-    "good": {
-      "title": "✅ Clean: Predictable strict equality (===) and explicit type checks",
-      "code": "console.log(0 === \"\");       // false (Number is not String!)\nconsole.log(false === \"0\");  // false (Boolean is not String!)\nconsole.log(5 === 5);        // true (Exact match)",
-      "explanation": "Triple equals (===) strictly checks that both sides have the exact same value and the exact same type."
-    }
-  },
-  "part5": {
-    "title": "Operators & Equality Playground",
-    "intro": "Test arithmetic calculations, logic guards, and compare strict vs loose equality:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-03: OPERATORS & EQUALITY\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst userAge = 20;\nconst hasIdCard = true;\nconst isVipMember = false;\n\n// 1. Math calculation\nconst ticketPrice = 50;\nconst tax = ticketPrice * 0.10;\nconst totalCost = ticketPrice + tax;\nconsole.log(\"Total Cost: $\" + totalCost);\n\n// 2. Logical AND (&&): 18+ AND has ID\nconst canEnter = userAge >= 18 && hasIdCard;\nconsole.log(\"Allowed to enter club:\", canEnter);\n\n// 3. Logical OR (||): VIP OR spent > $100\nconst getsFreeDrink = isVipMember || totalCost > 100;\nconsole.log(\"Gets free drink:\", getsFreeDrink);\n\n// 4. Strict check\nconsole.log(\"Is age exactly 20?:\", userAge === 20); // true\nconsole.log(\"Is age strictly '20'?:\", userAge === \"20\"); // false!\n"
-  },
-  "part6": {
-    "title": "Key Takeaways: The Golden Rule of Equality",
-    "takeaways": [
-      {
-        "title": "1. Always Use ===",
-        "desc": "Check both type and value with triple equals."
-      },
-      {
-        "title": "2. Know the 6 Falsies",
-        "desc": "false, 0, '', null, undefined, and NaN."
-      },
-      {
-        "title": "3. Combine with && and ||",
-        "desc": "Use logical operators to test multiple conditions."
-      },
-      {
-        "title": "4. Next: Conditional Logic",
-        "desc": "In JS-04, we learn how to make decisions with if, else, and switch."
-      }
-    ],
-    "nextLessonPreview": {
-      "title": "JS-04: Conditional Logic: Decision Making with if/else & switch",
-      "desc": "Learn how your code chooses different paths using if, else, and switch statements."
-    }
-  },
-  "part7": {
-    "title": "Knowledge Check: The Golden Rule of Equality",
-    "quiz": {
-      "question": "Why should developers always use === instead of == in JavaScript?",
-      "options": [
-        "Because === is three letters shorter to type.",
-        "Because === checks both the value and the type without guessing or changing types behind your back.",
-        "Because == was removed from JavaScript in 2024.",
-        "Because === only works for negative numbers."
-      ],
-      "correctIndex": 1,
-      "explanation": "Strict equality (===) avoids unexpected type conversion bugs by checking both the value and type."
-    }
-  }
-},
-
-  "js04-conditional-logic": {
-  "slug": "js04-conditional-logic",
-  "code": "JS-04",
-  "title": "Conditional Logic: Decision Making with if/else & switch",
-  "subtitle": "Make decisions in code using if, else, ternary operators, and switch blocks with break.",
-  "sections": [
-        {
-            "id": "part1",
-            "label": "Why Decisions Matter",
-            "icon": "🚦",
-            "tag": "LOGIC"
-        },
-        {
-            "id": "part2",
-            "label": "Branching Syntax",
-            "icon": "🔀",
-            "tag": "CONDITIONS"
-        },
-        {
-            "id": "part3",
-            "label": "Evaluation & Guard Clauses",
-            "icon": "🛡️",
-            "tag": "FLOW"
-        },
-        {
-            "id": "part4",
-            "label": "Missing break Traps",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Conditionals Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
-  "part1": {
-    "title": "Decision Making: How Code Chooses Paths",
-    "bigPicture": "Programs need to react differently based on input. Think of conditional statements like a train track switch that guides the train onto different tracks depending on the signal light.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
-    "breakdownItems": [
-      {
-        "title": "if / else Branching",
-        "desc": "Execute block A when condition is true, or block B when false."
-      },
-      {
-        "title": "Ternary Operator ( ? : )",
-        "desc": "A concise 1-line expression for assigning values conditionally."
-      },
-      {
-        "title": "switch with break",
-        "desc": "Match multiple exact values without repeating verbose if/else chains."
-      }
-    ]
-  },
-  "part2": {
-    "title": "if, else if, else & The Ternary Operator",
-    "intro": "Controlling branching flow and writing clean conditional expressions:",
-    "cards": [
-      {
-        "number": "01",
-        "tag": "Branching",
-        "title": "if...else if...else",
-        "description": "Evaluates truthy/falsy conditions in order from top to bottom.",
-        "color": "purple"
-      },
-      {
-        "number": "02",
-        "tag": "Inline",
-        "title": "Ternary Operator",
-        "description": "condition ? valueIfTrue : valueIfFalse — use for simple inline assignments.",
-        "color": "emerald"
-      },
-      {
-        "number": "03",
-        "tag": "Multi-Match",
-        "title": "switch Statements",
-        "description": "Always include 'break' after each case to prevent accidental fallthrough.",
-        "color": "amber"
-      }
-    ],
-    "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Avoid nesting if statements more than 2 levels deep. Use guard clauses (early return) to keep logic flat and readable."
-    }
-  },
-  "part3": {
-    "title": "How Decision Structures Evaluate Code",
-    "intro": "Step-by-step breakdown of how JavaScript tests and branches through conditions:",
-    "points": [
-      {
-        "title": "1. Top-Down Evaluation",
-        "content": "JavaScript tests conditions in order from top to bottom. As soon as it finds a true condition, it runs that code block and skips all remaining else if blocks."
-      },
-      {
-        "title": "2. Guard Clauses & Early Returns",
-        "content": "Instead of nesting if statements inside other if statements, check for invalid or special cases first and return immediately. This keeps your main code flat and readable."
-      },
-      {
-        "title": "3. The switch Statement & break",
-        "content": "When checking one value against several exact matches, switch is cleaner than many if...else if lines. Always include 'break' so execution does not accidentally bleed into the next case."
-      }
-    ]
-  },
-  "part4": {
-    "title": "Switch Statement Trap: The Missing break Bug",
-    "bad": {
-      "title": "❌ Bad: Deeply nested pyramid of if-statements",
-      "code": "function getRoleBadge(role) {\n  if (role) {\n    if (role === \"admin\") {\n      return \"👑 Admin\";\n    } else {\n      if (role === \"editor\") {\n        return \"✍️ Editor\";\n      } else {\n        return \"👤 Viewer\";\n      }\n    }\n  }\n}",
-      "explanation": "Deep nesting creates an unreadable 'pyramid of doom'. It is easy to miss edge cases or make indentation mistakes."
-    },
-    "good": {
-      "title": "✅ Clean: Guard clause + clean switch with explicit cases",
-      "code": "function getRoleBadge(role) {\n  switch (role) {\n    case \"admin\":\n      return \"👑 Admin\";\n    case \"editor\":\n      return \"✍️ Editor\";\n    case \"viewer\":\n    default:\n      return \"👤 Viewer\";\n  }\n}\nconsole.log(getRoleBadge(\"admin\")); // 👑 Admin",
-      "explanation": "Flat, readable switch block with clear cases and a default fallback. Direct returns eliminate the need for break keywords."
-    }
-  },
-  "part5": {
-    "title": "Conditional Logic Playground",
-    "intro": "Practice writing if/else branches, ternary checks, and multi-case switch blocks:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-04: CONDITIONAL LOGIC & DECISION MAKING\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst userTier = \"PREMIUM\";\nconst cartTotal = 120;\n\n// 1. Guard clause / conditional logic\nlet discountPercent = 0;\n\nif (userTier === \"VIP\") {\n  discountPercent = 25;\n} else if (userTier === \"PREMIUM\" && cartTotal >= 100) {\n  discountPercent = 15;\n} else if (cartTotal >= 150) {\n  discountPercent = 10;\n} else {\n  discountPercent = 0;\n}\n\n// 2. Ternary operator for shipping status\nconst isFreeShipping = cartTotal >= 50 ? \"FREE\" : \"$9.99\";\n\nconsole.log(\"Tier:\", userTier);\nconsole.log(\"Discount Applied:\", discountPercent + \"%\");\nconsole.log(\"Shipping:\", isFreeShipping);\n\nconst finalPrice = cartTotal - (cartTotal * (discountPercent / 100));\nconsole.log(\"Final Total: $\" + finalPrice.toFixed(2));\n"
-  },
-  "part6": {
-    "title": "Key Takeaways: Decision Making",
-    "takeaways": [
-      {
-        "title": "1. Guard Clauses",
-        "desc": "Return early to keep code flat and avoid deep if-nesting."
-      },
-      {
-        "title": "2. Ternary for Assignments",
-        "desc": "Use ternary operators only for simple 1-line assignments."
-      },
-      {
-        "title": "3. Break in Switch",
-        "desc": "Always terminate switch cases with break or return."
-      },
-      {
-        "title": "4. Next: Loops",
-        "desc": "In JS-05, we learn how to repeat tasks efficiently with loops."
-      }
-    ],
-    "nextLessonPreview": {
-      "title": "JS-05: Loops & Iteration: Repeating Work Without Repeating Code",
-      "desc": "Master for, while, and for...of loops without creating browser-freezing infinite loops."
-    }
-  },
-  "part7": {
-    "title": "Knowledge Check: Decision Making",
-    "quiz": {
-      "question": "What happens in a switch statement if you forget to add a 'break' statement after a case?",
-      "options": [
-        "It throws a SyntaxError and stops execution.",
-        "It falls through and executes the next case regardless of whether the condition matches.",
-        "It restarts the switch statement from the top.",
-        "It automatically returns null."
-      ],
-      "correctIndex": 1,
-      "explanation": "Without a break statement, JavaScript falls through to execute subsequent case blocks even if their case expressions do not match."
-    }
-  }
-},
-
-  "js05-loops-and-iteration": {
-  "slug": "js05-loops-and-iteration",
-  "code": "JS-05",
-  "title": "Loops & Iteration: Repeating Work Without Repeating Code",
-  "subtitle": "Repeat tasks efficiently using for, while, and for...of loops without creating infinite loops.",
-  "sections": [
-        {
-            "id": "part1",
-            "label": "Why Loops Matter",
-            "icon": "🔁",
-            "tag": "ITERATION"
-        },
-        {
-            "id": "part2",
-            "label": "Loop Types & Syntax",
-            "icon": "⚙️",
-            "tag": "SYNTAX"
-        },
-        {
-            "id": "part3",
-            "label": "Termination Control",
-            "icon": "🛑",
-            "tag": "FLOW"
-        },
-        {
-            "id": "part4",
-            "label": "Infinite Loop Traps",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Loops Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
-  "part1": {
-    "title": "Repeating Tasks: Why Loops Save Time",
-    "bigPicture": "Computers excel at repeating tasks thousands of times without tiring. Think of a loop like an automated assembly line that inspects and packages items one by one until the conveyor belt is empty.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
-    "breakdownItems": [
-      {
-        "title": "for Loop",
-        "desc": "Repeat a fixed number of times with an index counter."
-      },
-      {
-        "title": "while Loop",
-        "desc": "Repeat continuously as long as a condition remains true."
-      },
-      {
-        "title": "for...of Loop",
-        "desc": "The cleanest modern way to loop through arrays and lists."
-      }
-    ]
-  },
-  "part2": {
-    "title": "for Loops vs while Loops vs for...of",
-    "intro": "Choosing the right iteration tool for your data:",
-    "cards": [
-      {
-        "number": "01",
-        "tag": "Counting",
-        "title": "Classic for loop",
-        "description": "for (let i = 0; i < max; i++) — best when you need the numeric index.",
-        "color": "purple"
-      },
-      {
-        "number": "02",
-        "tag": "Conditional",
-        "title": "while loop",
-        "description": "while (condition) — best when you do not know beforehand how many loops are needed.",
-        "color": "amber"
-      },
-      {
-        "number": "03",
-        "tag": "Collections",
-        "title": "for...of loop",
-        "description": "for (const item of list) — modern, readable loop for arrays without manually counting index numbers.",
-        "color": "emerald"
-      }
-    ],
-    "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Always ensure your loop has a guaranteed exit condition. In while loops, increment the counter to avoid freezing the browser."
-    }
-  },
-  "part3": {
-    "title": "Loop Counters, Step Increments & Termination",
-    "intro": "How loop counters progress and when the termination condition triggers:",
-    "points": [
-      {
-        "title": "1. Three Parts of for",
-        "content": "Initialization (let i = 0), Condition (i < n), and Update (i++)."
-      },
-      {
-        "title": "2. Break vs Continue",
-        "content": "break stops the loop entirely; continue skips the current iteration and jumps to the next."
-      },
-      {
-        "title": "3. Prefer for...of",
-        "content": "Whenever you only need values from an array, use for...of instead of manual indices."
-      }
-    ]
-  },
-  "part4": {
-    "title": "The Infinite Loop Trap: Freezing the Browser",
-    "bad": {
-      "title": "❌ Bad: Accidental infinite loop freezing the browser",
-      "code": "let count = 0;\n// Dangerous while loop missing counter update:\n// while (count < 5) {\n//   console.log(\"Count:\", count);\n//   // Forgot count++ -> Browser tab freezes forever!\n// }",
-      "explanation": "If the loop condition never becomes false, the engine runs forever in an infinite loop, freezing the browser tab."
-    },
-    "good": {
-      "title": "✅ Clean: Clean for...of loop with break condition",
-      "code": "const tasks = [\"Review PR\", \"Deploy build\", \"URGENT: Fix bug\", \"Write docs\"];\n\nfor (const task of tasks) {\n  if (task.startsWith(\"URGENT\")) {\n    console.log(\"🚨 Priority task found:\", task);\n    break; // Exit loop early\n  }\n  console.log(\"Processed:\", task);\n}",
-      "explanation": "Using for...of with a clean break condition executes safely and stops immediately when the target is found."
-    }
-  },
-  "part5": {
-    "title": "Loops & Iteration Playground",
-    "intro": "Run counting loops, iterate over items with for...of, and verify loop exit conditions:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-05: LOOPS & ITERATION DEMO\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst scores = [85, 92, 45, 99, 78];\n\nconsole.log(\"--- 1. Loop with for...of ---\");\nlet total = 0;\nfor (const score of scores) {\n  total += score;\n}\nconsole.log(\"Class Average:\", (total / scores.length).toFixed(1));\n\nconsole.log(\"--- 2. Loop with index (Classic for) ---\");\nfor (let i = 0; i < scores.length; i++) {\n  const status = scores[i] >= 80 ? \"Pass (Honor)\" : scores[i] >= 50 ? \"Pass\" : \"Fail\";\n  console.log(`Student #${i + 1}: ${scores[i]} pts -> ${status}`);\n}\n"
-  },
-  "part6": {
-    "title": "Key Takeaways: Repeating Tasks",
-    "takeaways": [
-      {
-        "title": "1. for...of for Lists",
-        "desc": "Use for...of for clean, readable array loops without manually counting index numbers."
-      },
-      {
-        "title": "2. Guaranteed Exit",
-        "desc": "Always update while counters to prevent infinite loops."
-      },
-      {
-        "title": "3. break & continue",
-        "desc": "Control iteration flow cleanly without complicated flags."
-      },
-      {
-        "title": "4. Next: Functions",
-        "desc": "In JS-06, we learn how to package code into reusable functions."
-      }
-    ],
-    "nextLessonPreview": {
-      "title": "JS-06: Functions: Parameters, Return Values & Arrow Syntax",
-      "desc": "Learn how to write reusable functions, use default parameters, and write modern arrow functions."
-    }
-  },
-  "part7": {
-    "title": "Knowledge Check: Repeating Tasks",
-    "quiz": {
-      "question": "What is the difference between the 'break' and 'continue' keywords inside a loop?",
-      "options": [
-        "break exits the entire loop immediately; continue skips to the next iteration.",
-        "break pauses for 1 second; continue speeds up the loop.",
-        "break is only used in switch statements; continue is only used in loops.",
-        "They are completely interchangeable."
-      ],
-      "correctIndex": 0,
-      "explanation": "The 'break' keyword terminates the loop entirely, while 'continue' skips the rest of the current iteration and proceeds to the next cycle."
-    }
-  }
-},
-
-  "js06-functions-and-arrow-syntax": {
-  "slug": "js06-functions-and-arrow-syntax",
-  "code": "JS-06",
-  "title": "Functions: Parameters, Return Values & Arrow Syntax",
-  "subtitle": "Write reusable functions: pass inputs in, perform operations, and return results.",
-  "sections": [
-        {
-            "id": "part1",
-            "label": "Packaging Logic",
-            "icon": "📦",
-            "tag": "REUSABILITY"
-        },
-        {
-            "id": "part2",
-            "label": "Parameters & Returns",
-            "icon": "📥",
-            "tag": "SYNTAX"
-        },
-        {
-            "id": "part3",
-            "label": "Arrow Functions",
-            "icon": "🏹",
-            "tag": "ARROWS"
-        },
-        {
-            "id": "part4",
-            "label": "Missing return Trap",
-            "icon": "⚠️",
-            "tag": "PITFALL"
-        },
-        {
-            "id": "part5",
-            "label": "Functions Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
-  "part1": {
-    "title": "Packaging Reusable Logic into Functions",
-    "bigPicture": "Functions allow you to write a block of code once and reuse it across your entire application. Think of a function like a kitchen blender: you put ingredients in (parameters), press blend, and receive a smoothie out (return value).",
-    "breakdownTitle": "Key Concepts in This Lesson:",
-    "breakdownItems": [
-      {
-        "title": "Function Declarations",
-        "desc": "Declared with 'function name() {}'; hoisted to the top of their scope."
-      },
-      {
-        "title": "Arrow Functions",
-        "desc": "Modern syntax 'const name = () => {}' with concise 1-line returns."
-      },
-      {
-        "title": "Parameters & Returns",
-        "desc": "Pass data in with parameters, provide defaults, and return computed results."
-      }
-    ]
-  },
-  "part2": {
-    "title": "Parameters, Arguments & Return Values",
-    "intro": "Passing data into functions and capturing the calculated result:",
-    "cards": [
-      {
-        "number": "01",
-        "tag": "Declaration",
-        "title": "function keyword",
-        "description": "function add(a, b) { return a + b; } — traditional hoisted function.",
-        "color": "purple"
-      },
-      {
-        "number": "02",
-        "tag": "Arrow ES6",
-        "title": "Arrow Syntax",
-        "description": "const add = (a, b) => a + b; — concise, modern, and does not rebind 'this'.",
-        "color": "emerald"
-      },
-      {
-        "number": "03",
-        "tag": "Defaults",
-        "title": "Default Parameters",
-        "description": "function greet(name = 'Guest') — provides safe fallbacks for missing arguments.",
-        "color": "cyan"
-      }
-    ],
-    "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Keep each function small and focused on one specific job. If you need the result later, always use the return keyword."
-    }
-  },
-  "part3": {
-    "title": "Arrow Functions: Modern, Concise Function Syntax",
-    "intro": "Writing expressive one-line functions and handling implicit returns:",
-    "points": [
-      {
-        "title": "1. Implicit Return",
-        "content": "Arrow functions with no curly braces automatically return the expression value."
-      },
-      {
-        "title": "2. Pure Functions",
-        "content": "Functions that return the same output for the same input without side effects are easy to test."
-      },
-      {
-        "title": "3. Arguments vs Parameters",
-        "content": "Parameters are the variable names in the definition; arguments are the real values passed in."
-      }
-    ]
-  },
-  "part4": {
-    "title": "Common Mistake: Forgetting to Return a Value",
-    "bad": {
-      "title": "❌ Bad: Missing return statement causing undefined bugs",
-      "code": "function calculateTotal(price, taxRate) {\n  const tax = price * taxRate;\n  const total = price + tax;\n  // Forgot return statement!\n}\n\nconst bill = calculateTotal(100, 0.08);\nconsole.log(\"Total:\", bill); // undefined!",
-      "explanation": "If you omit 'return', JavaScript returns 'undefined' by default, corrupting downstream calculations."
-    },
-    "good": {
-      "title": "✅ Clean: Clean arrow function with explicit return and defaults",
-      "code": "const calculateTotal = (price, taxRate = 0.08) => {\n  const tax = price * taxRate;\n  return Number((price + tax).toFixed(2));\n};\n\nconst bill = calculateTotal(100);\nconsole.log(\"Total:\", bill); // 108",
-      "explanation": "Providing default parameters prevents NaN bugs, and an explicit return delivers the calculated total."
-    }
-  },
-  "part5": {
-    "title": "Functions & Arrow Syntax Playground",
-    "intro": "Write functions, experiment with default parameters, and convert regular functions to arrows:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-06: FUNCTIONS & ARROW SYNTAX\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Regular Function Declaration (Hoisted)\nfunction formatCurrency(amount, currency = \"$\") {\n  return currency + amount.toFixed(2);\n}\n\n// 2. Modern Arrow Function\nconst calculateDiscount = (price, discountPercent = 10) => {\n  const discountAmount = price * (discountPercent / 100);\n  return price - discountAmount;\n};\n\n// 3. Concise 1-line Arrow Function (implicit return)\nconst isEligibleForFreeShipping = (total) => total >= 75;\n\n// Test execution:\nconst originalPrice = 120;\nconst salePrice = calculateDiscount(originalPrice, 20);\n\nconsole.log(\"Original:\", formatCurrency(originalPrice));\nconsole.log(\"Sale Price (20% off):\", formatCurrency(salePrice));\nconsole.log(\"Free Shipping?:\", isEligibleForFreeShipping(salePrice));\n"
-  },
-  "part6": {
-    "title": "Key Takeaways: Packaging Reusable Logic into Functions",
-    "takeaways": [
-      {
-        "title": "1. Arrow Functions",
-        "desc": "Use arrow functions for concise syntax and callbacks."
-      },
-      {
-        "title": "2. Default Parameters",
-        "desc": "Set fallbacks in the parameter list to prevent undefined errors."
-      },
-      {
-        "title": "3. Explicit Returns",
-        "desc": "Always return the calculated result so callers can use it."
-      },
-      {
-        "title": "4. Next: Scope",
-        "desc": "In JS-07, we explore where variables live: global, function, and block scope."
-      }
-    ],
-    "nextLessonPreview": {
-      "title": "JS-07: Scope: Global, Function, and Block Scope",
-      "desc": "Understand variable visibility, the scope chain, and why block scoping prevents naming conflicts."
-    }
-  },
-  "part7": {
-    "title": "Knowledge Check: Packaging Reusable Logic into Functions",
-    "quiz": {
-      "question": "What does a JavaScript function return if it executes to the end without reaching a 'return' statement?",
-      "options": [
-        "null",
-        "0",
-        "undefined",
-        "false"
-      ],
-      "correctIndex": 2,
-      "explanation": "In JavaScript, any function that finishes executing without an explicit return statement returns undefined."
-    }
-  }
-},
-
-  "js07-scope-global-function-block": {
-  "slug": "js07-scope-global-function-block",
-  "code": "JS-07",
-  "title": "Scope: Global, Function, and Block Scope",
-  "subtitle": "Understand where variables live, the scope chain, and how block scoping prevents bugs.",
-  "sections": [
-        {
-            "id": "part1",
-            "label": "Scope Boundaries",
-            "icon": "🔍",
-            "tag": "BOUNDARIES"
-        },
-        {
-            "id": "part2",
-            "label": "3 Scope Levels",
-            "icon": "🧱",
-            "tag": "LEVELS"
-        },
-        {
-            "id": "part3",
-            "label": "Scope Chain Lookup",
-            "icon": "🪜",
-            "tag": "LOOKUP"
-        },
-        {
-            "id": "part4",
-            "label": "Global Pollution Traps",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Scope Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
-  "part1": {
-    "title": "Scope: Where Variables Live and Die",
-    "bigPicture": "Scope defines where your variables can be seen and accessed in code. Think of scope like one-way tinted glass: someone inside a private conference room can look out into the hallway, but people in the hallway cannot look inside.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
-    "breakdownItems": [
-      {
-        "title": "Global Scope",
-        "desc": "Variables accessible anywhere in the entire program; use sparingly."
-      },
-      {
-        "title": "Function Scope",
-        "desc": "Variables created inside a function exist only during its execution."
-      },
-      {
-        "title": "Block Scope (let/const)",
-        "desc": "Confined strictly within { } curly braces, preventing leaks."
-      }
-    ]
-  },
-  "part2": {
-    "title": "Global, Function, and Block Scope with let & const",
-    "intro": "The three distinct scope boundaries in modern JavaScript:",
-    "cards": [
-      {
-        "number": "01",
-        "tag": "Scope Level",
-        "title": "Block Scope",
-        "description": "Variables declared with let/const inside { } are inaccessible from outside.",
-        "color": "emerald"
-      },
-      {
-        "number": "02",
-        "tag": "Scope Level",
-        "title": "Function Scope",
-        "description": "Each function creates a new execution context and variable environment.",
-        "color": "purple"
-      },
-      {
-        "number": "03",
-        "tag": "Lookup",
-        "title": "Scope Chain",
-        "description": "If a variable is not found locally, the engine searches outward to parent scopes.",
-        "color": "cyan"
-      }
-    ],
-    "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Always minimize global variables. Keep variables as close to their point of use as possible to prevent collisions."
-    }
-  },
-  "part3": {
-    "title": "The One-Way Scope Chain Lookup",
-    "intro": "How the engine searches outward from inner scopes to find variables:",
-    "points": [
-      {
-        "title": "1. Outward Lookup Only",
-        "content": "Inner scopes can access outer variables, but outer scopes cannot reach into inner scopes."
-      },
-      {
-        "title": "2. Variable Shadowing",
-        "content": "Declaring a variable with the same name in an inner scope shadows (masks) the outer one."
-      },
-      {
-        "title": "3. Pollution Risks",
-        "content": "Excessive global variables cause name collisions in large web applications."
-      }
-    ]
-  },
-  "part4": {
-    "title": "The Global Variable Collision Trap",
-    "bad": {
-      "title": "❌ Bad: Accidental global variable declaration without keyword",
-      "code": "function processPayment(amount) {\n  // Forgot const/let! userBalance becomes an accidental global variable:\n  userBalance = 500 - amount;\n}\nprocessPayment(100);\nconsole.log(\"Accidental global:\", userBalance); // 400",
-      "explanation": "Assigning to an undeclared variable implicitly creates a global property, polluting memory."
-    },
-    "good": {
-      "title": "✅ Clean: Strict block and function scoping with let and const",
-      "code": "function processPayment(amount) {\n  const initialBalance = 500;\n  const remaining = initialBalance - amount;\n  return remaining;\n}\nconst updated = processPayment(100);\nconsole.log(\"Remaining:\", updated);\n// initialBalance and remaining are safely encapsulated!",
-      "explanation": "Encapsulating variables inside the function prevents unintended side effects and global pollution."
-    }
-  },
-  "part5": {
-    "title": "Scope & Visibility Playground",
-    "intro": "Test block isolation with curly braces {}, variable shadowing, and scope errors:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-07: SCOPE DEMO\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst appVersion = \"1.0.0\"; // Global scope\n\nfunction createSession(user) {\n  const sessionId = \"sess_\" + Math.floor(Math.random() * 10000); // Function scope\n\n  if (user) {\n    const role = user.isAdmin ? \"ADMIN\" : \"MEMBER\"; // Block scope\n    console.log(`[Session ${sessionId}] User: ${user.name} (${role})`);\n  }\n\n  // console.log(role); // ReferenceError! role is trapped inside the if-block.\n  return sessionId;\n}\n\nconst activeId = createSession({ name: \"Alex\", isAdmin: true });\nconsole.log(\"Active Session Created:\", activeId);\nconsole.log(\"Global App Version:\", appVersion);\n"
-  },
-  "part6": {
-    "title": "Key Takeaways: Scope",
-    "takeaways": [
-      {
-        "title": "1. Block Isolation",
-        "desc": "let and const keep variables confined to their enclosing block."
-      },
-      {
-        "title": "2. Scope Chain",
-        "desc": "The engine searches outward, never inward."
-      },
-      {
-        "title": "3. No Accidental Globals",
-        "desc": "Always declare variables with const or let."
-      },
-      {
-        "title": "4. Next: Closures",
-        "desc": "In JS-08, we explore how functions remember variables from their birthplace."
-      }
-    ],
-    "nextLessonPreview": {
-      "title": "JS-08: Closures: How Functions Remember Their Birthplace",
-      "desc": "Learn how inner functions retain access to outer variables even after the outer function has finished executing."
-    }
-  },
-  "part7": {
-    "title": "Knowledge Check: Scope",
-    "quiz": {
-      "question": "Can code running outside an 'if' block access a variable declared with 'const' inside that block?",
-      "options": [
-        "Yes, const variables are always globally accessible.",
-        "No, const and let are block-scoped to the enclosing curly braces {}.",
-        "Only if the condition was true.",
-        "Only in Node.js, not in browsers."
-      ],
-      "correctIndex": 1,
-      "explanation": "Variables declared with let and const are strictly block-scoped and cannot be accessed outside the curly braces {}."
-    }
-  }
-},
-
-  "js08-closures": {
-  "slug": "js08-closures",
-  "code": "JS-08",
-  "title": "Closures: How Functions Remember Their Birthplace",
-  "subtitle": "Understand how functions carry a backpack of variables from where they were born.",
-  "sections": [
-        {
-            "id": "part1",
-            "label": "The Closure Backpack",
-            "icon": "🎒",
-            "tag": "MEMORY"
-        },
-        {
-            "id": "part2",
-            "label": "Retaining State",
-            "icon": "🧠",
-            "tag": "MECHANICS"
-        },
-        {
-            "id": "part3",
-            "label": "Data Privacy",
-            "icon": "🛡️",
-            "tag": "PRIVATE DATA"
-        },
-        {
-            "id": "part4",
-            "label": "Shared Loop Traps",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Closures Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
-  "part1": {
-    "title": "Closures: Functions Carrying Their Backpack",
-    "bigPicture": "A closure happens when a function remembers variables from the place it was created, even after that outer function has finished executing. Think of an inner function carrying a backpack holding the variables from its birthplace.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
-    "breakdownItems": [
-      {
-        "title": "Where Variables Live",
-        "desc": "Functions resolve variables based on where they were written, not where called."
-      },
-      {
-        "title": "The Closure Backpack",
-        "desc": "Retains references to outer variables even after the parent function returns."
-      },
-      {
-        "title": "Data Privacy & Keeping Variables Safe",
-        "desc": "Create private state without needing classes or special symbols."
-      }
-    ]
-  },
-  "part2": {
-    "title": "How Inner Functions Retain Outer Scope",
-    "intro": "Preserving persistent state without polluting the global scope:",
-    "cards": [
-      {
-        "number": "01",
-        "tag": "Definition",
-        "title": "What is a Closure?",
-        "description": "A function bundled together with the variables from where it was created.",
-        "color": "purple"
-      },
-      {
-        "number": "02",
-        "tag": "Use Case",
-        "title": "Private State",
-        "description": "Keep variables hidden from external tampering by exposing only controlled methods.",
-        "color": "emerald"
-      },
-      {
-        "number": "03",
-        "tag": "Memory",
-        "title": "Garbage Collection",
-        "description": "Variables retained by an active closure are kept alive in memory.",
-        "color": "amber"
-      }
-    ],
-    "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Use closures to keep secret data safe inside a function, giving outside code only the specific helper methods it needs."
-    }
-  },
-  "part3": {
-    "title": "Private Variables & Data Protection",
-    "intro": "Using closures to build secure counters, factories, and private state:",
-    "points": [
-      {
-        "title": "1. Birthplace Binding",
-        "content": "A closure remembers the variables from the exact place it was created, no matter where or when you run it later."
-      },
-      {
-        "title": "2. By-Reference Capture",
-        "content": "Closures remember variables directly, so changing the variable updates what the closure sees."
-      },
-      {
-        "title": "3. Factory Functions",
-        "content": "Functions returning functions allow you to manufacture customized handlers with baked-in data."
-      }
-    ]
-  },
-  "part4": {
-    "title": "Accidental Shared Closure Variables (The Loop Trap)",
-    "bad": {
-      "title": "❌ Bad: Exposing mutable state globally for anyone to overwrite",
-      "code": "// Anyone in the app can accidentally change or mess up bankBalance!\nlet bankBalance = 1000;\n\nfunction withdraw(amount) {\n  bankBalance -= amount;\n}\n\n// Another script accidentally overwrites it:\nbankBalance = -999999;",
-      "explanation": "Global variables can be overwritten by any rogue script or third-party dependency."
-    },
-    "good": {
-      "title": "✅ Clean: Encapsulated private state via a closure factory",
-      "code": "function createBankAccount(initialDeposit) {\n  let balance = initialDeposit; // Private variable!\n\n  return {\n    deposit: (amount) => { balance += amount; return balance; },\n    withdraw: (amount) => {\n      if (amount > balance) return \"Insufficient funds\";\n      balance -= amount;\n      return balance;\n    },\n    getBalance: () => balance,\n  };\n}\n\nconst account = createBankAccount(100);\naccount.deposit(50);\nconsole.log(account.getBalance()); // 150",
-      "explanation": "balance cannot be accessed or corrupted from outside, only modified through the safe deposit/withdraw methods."
-    }
-  },
-  "part5": {
-    "title": "Closures Playground",
-    "intro": "Create function factories, build private state counters, and observe retained memory:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-08: CLOSURES & PRIVATE STATE\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nfunction createCounter(name, initialValue = 0) {\n  let count = initialValue; // Private state protected by closure\n\n  return {\n    increment() {\n      count++;\n      return `[${name}] Count is now: ${count}`;\n    },\n    decrement() {\n      count--;\n      return `[${name}] Count is now: ${count}`;\n    },\n    getCount() {\n      return count;\n    }\n  };\n}\n\n// Create two completely independent counters:\nconst clickCounter = createCounter(\"ButtonClicks\", 0);\nconst pageViews = createCounter(\"PageViews\", 100);\n\nconsole.log(clickCounter.increment());\nconsole.log(clickCounter.increment());\nconsole.log(pageViews.increment());\n\nconsole.log(\"Final click count:\", clickCounter.getCount());\nconsole.log(\"Final page views:\", pageViews.getCount());\n"
-  },
-  "part6": {
-    "title": "Key Takeaways: Closures",
-    "takeaways": [
-      {
-        "title": "1. Birthplace Scope",
-        "desc": "Functions remember the variables where they were written."
-      },
-      {
-        "title": "2. Private State",
-        "desc": "Closures keep your variables safe and private inside a function so outside code cannot accidentally tamper with them."
-      },
-      {
-        "title": "3. Independent Instances",
-        "desc": "Calling the factory function creates a brand-new, isolated closure with its own memory."
-      },
-      {
-        "title": "4. Next: Callbacks",
-        "desc": "In JS-09, we learn how to pass functions into other functions as data."
-      }
-    ],
-    "nextLessonPreview": {
-      "title": "JS-09: Callbacks & Higher-Order Functions: Functions as Data",
-      "desc": "Treat functions as first-class citizens: pass callbacks into other functions and return customized functions."
-    }
-  },
-  "part7": {
-    "title": "Knowledge Check: Closures",
-    "quiz": {
-      "question": "What is a Closure in JavaScript?",
-      "options": [
-        "A statement that closes an open browser window.",
-        "A function that remembers variables from the place where it was created, even after the outer function has finished running.",
-        "A syntax error caused by forgetting a closing bracket.",
-        "A method to delete variables from memory."
-      ],
-      "correctIndex": 1,
-      "explanation": "A closure happens when a function remembers the variables from the place where it was created, even after the outer function has finished running."
-    }
-  }
-},
-
-  "js09-callbacks-and-higher-order-functions": {
-  "slug": "js09-callbacks-and-higher-order-functions",
-  "code": "JS-09",
-  "title": "Callbacks & Higher-Order Functions: Functions as Data",
-  "subtitle": "Treat functions like values: pass callbacks to other functions and return new functions.",
-  "sections": [
-        {
-            "id": "part1",
-            "label": "Functions as Data",
-            "icon": "🧩",
-            "tag": "FIRST-CLASS"
-        },
-        {
-            "id": "part2",
-            "label": "Passing Callbacks",
-            "icon": "📞",
-            "tag": "CALLBACKS"
-        },
-        {
-            "id": "part3",
-            "label": "Higher-Order Functions",
-            "icon": "⚡",
-            "tag": "COMPOSITION"
-        },
-        {
-            "id": "part4",
-            "label": "Reusable Callbacks",
-            "icon": "⚡",
-            "tag": "CLEAN CODE"
-        },
-        {
-            "id": "part5",
-            "label": "Callbacks Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
-  "part1": {
-    "title": "First-Class Citizens: Treating Functions as Data",
-    "bigPicture": "In JavaScript, functions are first-class values — you can pass a function into another function just like a number or a string. Think of a callback function like handing a courier a specific task sheet to complete upon arrival.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
-    "breakdownItems": [
-      {
-        "title": "First-Class Citizens",
-        "desc": "In JavaScript, functions are values: you can store them in variables and pass them as arguments."
-      },
-      {
-        "title": "Callback Functions",
-        "desc": "A function passed into another function to be executed at a later time."
-      },
-      {
-        "title": "Higher-Order Functions",
-        "desc": "A function that takes another function as an argument, or returns a new function."
-      }
-    ]
-  },
-  "part2": {
-    "title": "Passing Callbacks into Other Functions",
-    "intro": "Executing custom logic when a specific event or calculation finishes:",
-    "cards": [
-      {
-        "number": "01",
-        "tag": "Concept",
-        "title": "Functions as Values",
-        "description": "const fn = () => {}; — functions can be passed around just like numbers or strings.",
-        "color": "cyan"
-      },
-      {
-        "number": "02",
-        "tag": "Pattern",
-        "title": "Callbacks",
-        "description": "Called by the outer function when a specific action or event finishes.",
-        "color": "purple"
-      },
-      {
-        "number": "03",
-        "tag": "Composition",
-        "title": "Higher-Order (HOF)",
-        "description": "Functions that take or return functions to compose reusable logic.",
-        "color": "emerald"
-      }
-    ],
-    "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Keep callbacks small and focused. Name callbacks clearly (e.g. onSuccess, onError, onComplete) to make asynchronous flow obvious."
-    }
-  },
-  "part3": {
-    "title": "Higher-Order Functions: Functions Returning Functions",
-    "intro": "Creating customized, reusable utility functions dynamically:",
-    "points": [
-      {
-        "title": "1. Synchronous vs Async",
-        "content": "Callbacks can be synchronous (array methods) or asynchronous (setTimeout, events)."
-      },
-      {
-        "title": "2. Declarative Code",
-        "content": "Higher-order functions allow declarative code that describes WHAT to do rather than HOW to loop."
-      },
-      {
-        "title": "3. Factory Creation",
-        "content": "HOFs can return specialized functions tailored with specific configurations."
-      }
-    ]
-  },
-  "part4": {
-    "title": "Clean Code: Reusable Callbacks vs Duplicated Functions",
-    "bad": {
-      "title": "❌ Bad: Duplicating entire functions for minor logic variations",
-      "code": "function doubleNumbers(arr) {\n  const result = [];\n  for (let n of arr) result.push(n * 2);\n  return result;\n}\n\nfunction tripleNumbers(arr) {\n  const result = [];\n  for (let n of arr) result.push(n * 3);\n  return result;\n}",
-      "explanation": "Writing new loops for every math operation causes massive code duplication and maintenance headaches."
-    },
-    "good": {
-      "title": "✅ Clean: Higher-order transformer with reusable callbacks",
-      "code": "function transformList(list, transformer) {\n  const result = [];\n  for (const item of list) {\n    result.push(transformer(item));\n  }\n  return result;\n}\n\nconst numbers = [1, 2, 3];\nconst doubled = transformList(numbers, (n) => n * 2);\nconsole.log(doubled); // [2, 4, 6]",
-      "explanation": "One higher-order function handles the iteration; different callbacks supply custom behavior flexibly."
-    }
-  },
-  "part5": {
-    "title": "Callbacks & Higher-Order Functions Playground",
-    "intro": "Pass callbacks into helper functions, filter data dynamically, and inspect returns:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-09: CALLBACKS & HIGHER-ORDER FUNCTIONS\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Higher-order function that accepts a callback:\nfunction processTransaction(amount, feeCalculator, notifyCallback) {\n  const fee = feeCalculator(amount);\n  const total = amount + fee;\n  notifyCallback(total, fee);\n  return total;\n}\n\n// 2. Define custom callbacks:\nconst standardFee = (amt) => amt * 0.03;\nconst vipFee = (amt) => amt * 0.01;\n\nconst printReceipt = (total, fee) => {\n  console.log(`💳 Transaction processed! Fee: $${fee.toFixed(2)}, Total: $${total.toFixed(2)}`);\n};\n\n// 3. Execute with different callbacks:\nprocessTransaction(100, standardFee, printReceipt);\nprocessTransaction(100, vipFee, printReceipt);\n"
-  },
-  "part6": {
-    "title": "Key Takeaways: First-Class Citizens",
-    "takeaways": [
-      {
-        "title": "1. Functions are Values",
-        "desc": "Pass and return functions just like variables."
-      },
-      {
-        "title": "2. Decouple Logic",
-        "desc": "Separate the loop mechanics from the processing logic."
-      },
-      {
-        "title": "3. Basis of Array Methods",
-        "desc": "map, filter, and reduce are built on higher-order callbacks."
-      },
-      {
-        "title": "4. Next: Arrays",
-        "desc": "In JS-10, we explore ordered collections, indexes, and basic list methods."
-      }
-    ],
-    "nextLessonPreview": {
-      "title": "JS-10: Arrays & Indexing: Managing Ordered Lists",
-      "desc": "Learn how JavaScript stores ordered data, access elements with zero-based indexing, and manipulate arrays."
-    }
-  },
-  "part7": {
-    "title": "Knowledge Check: First-Class Citizens",
-    "quiz": {
-      "question": "What defines a 'Higher-Order Function' in JavaScript?",
-      "options": [
-        "A function that runs faster than normal functions.",
-        "A function that accepts another function as an argument, or returns a function.",
-        "A function declared with the 'async' keyword.",
-        "A function with more than 10 parameters."
-      ],
-      "correctIndex": 1,
-      "explanation": "A Higher-Order Function is any function that takes one or more functions as arguments, or returns a function as its result."
-    }
-  }
-},
-
-  "js10-arrays-and-indexing": {
-  "slug": "js10-arrays-and-indexing",
-  "code": "JS-10",
-  "title": "Arrays & Indexing: Managing Ordered Lists",
-  "subtitle": "Store ordered collections, access elements with zero-based indexing, and use push, pop, and slice.",
-  "sections": [
-        {
-            "id": "part1",
-            "label": "Ordered Lists",
-            "icon": "📋",
-            "tag": "ARRAYS"
-        },
-        {
-            "id": "part2",
-            "label": "Indices & Push/Pop",
-            "icon": "🔢",
-            "tag": "OPERATIONS"
-        },
-        {
-            "id": "part3",
-            "label": "Slice vs Splice",
-            "icon": "✂️",
-            "tag": "SLICING"
-        },
-        {
-            "id": "part4",
-            "label": "Off-by-One Traps",
-            "icon": "⚠️",
-            "tag": "PITFALL"
-        },
-        {
-            "id": "part5",
-            "label": "Arrays Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
-  "part1": {
-    "title": "Arrays: Storing Ordered Lists in JavaScript",
-    "bigPicture": "An array is an ordered list of items stored under a single variable name. Think of an array like a row of numbered lockers at a gym: each locker has an exact index number starting at zero.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
-    "breakdownItems": [
       {
         "title": "Zero-Based Indexing",
-        "desc": "The first item is always at index [0]; the last item is at [length - 1]."
+        "desc": "JavaScript numbers array slots starting from 0. The first item is at index [0], the second at [1], and so on."
       },
       {
-        "title": "Adding & Removing Items",
-        "desc": "push/pop manipulate the end; unshift/shift manipulate the front."
-      },
-      {
-        "title": "Non-Destructive Slicing",
-        "desc": "slice(start, end) copies a portion of an array without modifying the original."
+        "title": "The .length Property",
+        "desc": "JavaScript automatically tracks the total number of items with .length, keeping your counts up to date as items are added or removed."
       }
     ]
   },
   "part2": {
-    "title": "Zero-Based Indices & Core Array Operations",
-    "intro": "Accessing items, reading length, and adding or removing items with push and pop:",
+    "title": "Zero-Based Indices & Adding/Removing Elements",
+    "intro": "Understanding how indices count distance from the start, and modifying array ends with push and pop:",
     "cards": [
       {
         "number": "01",
         "tag": "Index",
-        "title": "Zero-Indexed",
-        "description": "Array items start at 0. Accessing an out-of-bounds index safely returns undefined.",
+        "title": "Zero-Based Index [0]",
+        "description": "Think of an index as the distance or steps from the starting line. The very first item has 0 distance from the start, so it sits at index [0].",
         "color": "purple"
       },
       {
         "number": "02",
-        "tag": "Changing Data",
-        "title": "push & pop",
-        "description": "Fastest way to add and remove items at the end of an array.",
+        "tag": "Add & Remove",
+        "title": "push() & pop()",
+        "description": "Use .push(item) to append an item to the end of the array. Use .pop() to remove and return the last item from the array.",
         "color": "emerald"
       },
       {
         "number": "03",
-        "tag": "Length",
-        "title": ".length Property",
-        "description": "Tracks the total number of items automatically as elements are added or removed.",
+        "tag": "Count",
+        "title": "The .length Property",
+        "description": "array.length gives the total count of items. Because counting starts at 0, the last item is always at index array.length - 1.",
         "color": "cyan"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Remember that some methods (like splice and sort) change the original list, while others (like slice and concat) give you a safe new copy. Prefer methods that leave the original list untouched."
+      "title": "💡 Golden Rule of Array Length",
+      "content": "An array's total length is always 1 greater than its highest index! If an array has 3 items, its valid indices are 0, 1, and 2. Reading array[3] returns undefined because slot 3 does not exist."
     }
   },
   "part3": {
-    "title": "Safe Array Slicing vs Modifying Original Arrays",
-    "intro": "Understanding non-destructive slice() versus destructive splice():",
+    "title": "Reading, Updating & Safe Extraction with slice()",
+    "intro": "Working with elements directly, modifying values in place, and extracting non-destructive slices:",
     "points": [
       {
-        "title": "1. Zero-Based Offsets",
-        "content": "Index represents the distance offset from the start of the array in memory."
+        "title": "1. Reading and Updating by Index",
+        "content": "Access an item using square brackets: const first = fruits[0]. You can replace an existing item by assigning to its index: fruits[1] = 'blueberry'."
       },
       {
-        "title": "2. Out of Bounds",
-        "content": "Accessing an index past the end returns undefined without throwing an error."
+        "title": "2. Safe Copying with slice(start, end)",
+        "content": "Use array.slice(start, end) to grab a portion of your array without modifying the original. The start index is included, but the end index is excluded."
       },
       {
-        "title": "3. at() Method",
-        "content": "Modern JavaScript provides array.at(-1) to cleanly grab the last element."
+        "title": "3. Out-of-Bounds Returns undefined",
+        "content": "If you try to read an index that doesn't exist (like fruits[99]), JavaScript doesn't crash your application—it safely returns undefined."
       }
     ]
   },
   "part4": {
-    "title": "Common Mistake: Off-by-One Array Indexing",
+    "title": "Common Mistakes: Off-by-One Bugs and Bracket Confusion",
     "bad": {
-      "title": "❌ Bad: Off-by-one bug when reading the last element",
-      "code": "const colors = [\"red\", \"green\", \"blue\"];\n// Off-by-one bug: colors has 3 items, so colors[3] is undefined!\nconst lastColor = colors[colors.length];\nconsole.log(\"Last:\", lastColor); // undefined!",
-      "explanation": "Since arrays start at index 0, the last item is located at index colors.length - 1, not colors.length."
+      "title": "❌ Bad: Reading array[array.length] or using parentheses",
+      "code": "const colors = [\"red\", \"green\", \"blue\"];\n\n// Bug 1: Off-by-one! colors has 3 items, so colors[3] is undefined!\nconst lastColor = colors[colors.length];\nconsole.log(lastColor); // undefined!\n\n// Bug 2: Using parentheses instead of square brackets:\n// const first = colors(0); // TypeError: colors is not a function!",
+      "explanation": "Because indices start at 0, an array with 3 items has slots 0, 1, and 2. colors[colors.length] searches for slot 3, which does not exist."
     },
     "good": {
-      "title": "✅ Clean: Safe last element access and safe copying with slice",
-      "code": "const colors = [\"red\", \"green\", \"blue\"];\n// Safe access via length - 1 or .at(-1)\nconst lastItem = colors[colors.length - 1];\nconsole.log(\"Last color:\", lastItem); // \"blue\"\n\nconst firstTwo = colors.slice(0, 2);\nconsole.log(\"First two:\", firstTwo); // [\"red\", \"green\"]",
-      "explanation": "Using colors.length - 1 or colors.at(-1) safely retrieves the last element without off-by-one bugs."
+      "title": "✅ Clean: Safe last item access and non-destructive slicing",
+      "code": "const colors = [\"red\", \"green\", \"blue\"];\n\n// Safe last item access: length - 1\nconst lastColor = colors[colors.length - 1];\nconsole.log(\"Last color:\", lastColor); // \"blue\"\n\n// Safe copy of the first two colors:\nconst topColors = colors.slice(0, 2);\nconsole.log(\"Top colors:\", topColors); // [\"red\", \"green\"]\nconsole.log(\"Original colors untouched:\", colors); // [\"red\", \"green\", \"blue\"]",
+      "explanation": "Using colors[colors.length - 1] reliably grabs the last element. Using .slice(0, 2) makes a fresh copy without modifying the original array."
     }
   },
   "part5": {
-    "title": "Arrays & Indexing Playground",
-    "intro": "Create arrays, access items by index, append elements, and slice subarrays safely:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-10: ARRAYS & INDEXING\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst playlist = [\"Bohemian Rhapsody\", \"Hotel California\", \"Imagine\"];\n\nconsole.log(\"Initial songs:\", playlist.length);\nconsole.log(\"First song:\", playlist[0]);\nconsole.log(\"Last song:\", playlist[playlist.length - 1]);\n\n// Add and remove items:\nplaylist.push(\"Stairway to Heaven\"); // Add to end\nconsole.log(\"After push:\", playlist);\n\nconst removed = playlist.pop(); // Remove from end\nconsole.log(\"Removed song:\", removed);\n\n// Copy a slice non-destructively:\nconst topTwo = playlist.slice(0, 2);\nconsole.log(\"Top 2 favorites:\", topTwo);\n"
+    "title": "Interactive Arrays Playground",
+    "intro": "Create a movie watchlist, inspect its length, access items by index, push and pop, and copy a slice:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-10: ARRAYS & INDEXING PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Create an array of movies:\nconst watchlist = [\"Inception\", \"Interstellar\", \"The Matrix\"];\n\nconsole.log(\"Total movies in list:\", watchlist.length);\nconsole.log(\"First movie [0]:\", watchlist[0]);\nconsole.log(\"Second movie [1]:\", watchlist[1]);\nconsole.log(\"Last movie [length - 1]:\", watchlist[watchlist.length - 1]);\n\n// 2. Add a new movie to the end:\nwatchlist.push(\"Spirited Away\");\nconsole.log(\"After push:\", watchlist);\nconsole.log(\"New length:\", watchlist.length);\n\n// 3. Remove the last movie:\nconst removedMovie = watchlist.pop();\nconsole.log(\"Popped movie:\", removedMovie);\nconsole.log(\"After pop:\", watchlist);\n\n// 4. Update an item in place:\nwatchlist[0] = \"Inception (Extended)\";\nconsole.log(\"Updated first movie:\", watchlist[0]);\n\n// 5. Extract a safe slice (first 2 movies) without touching original:\nconst weekendPicks = watchlist.slice(0, 2);\nconsole.log(\"Weekend picks:\", weekendPicks);\nconsole.log(\"Original watchlist is intact:\", watchlist);\n"
   },
   "part6": {
-    "title": "Key Takeaways: Arrays",
+    "title": "Key Takeaways: Arrays & Indexing",
     "takeaways": [
       {
-        "title": "1. Zero-Based",
-        "desc": "First item is index 0; last item is length - 1."
+        "title": "1. Square Brackets for Lists",
+        "desc": "Arrays group multiple values into an ordered list using square brackets []."
       },
       {
-        "title": "2. push & pop",
-        "desc": "Efficiently add or remove elements at the end of lists."
+        "title": "2. Zero-Based Indexing",
+        "desc": "First item is at index 0, second is at 1, and the last item is at array.length - 1."
       },
       {
-        "title": "3. Safe Copying with slice",
-        "desc": "Use slice to copy items without changing the original list."
+        "title": "3. push & pop at the End",
+        "desc": "Use .push(item) to append to the end, and .pop() to remove and retrieve the last item."
       },
       {
-        "title": "4. Next: Array Methods",
-        "desc": "In JS-11, we master map, filter, find, and reduce."
+        "title": "4. Non-Destructive Slicing",
+        "desc": "Use .slice(start, end) to copy a portion of the array without altering the original list."
+      },
+      {
+        "title": "5. Next Step: Array Methods",
+        "desc": "In JS-11, we learn powerful declarative methods: map, filter, find, and reduce!"
       }
     ],
     "nextLessonPreview": {
       "title": "JS-11: Essential Array Methods: map, filter, find & reduce",
-      "desc": "Transform arrays with map, filter items with criteria, and calculate totals with reduce."
+      "desc": "Transform lists with map, keep matching items with filter, locate single items with find, and calculate totals with reduce."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Arrays",
+    "title": "Knowledge Check: Arrays & Indexing",
     "quiz": {
-      "question": "What is the index of the first item in a JavaScript array?",
+      "question": "What is the index of the first item in any JavaScript array?",
       "options": [
         "1",
         "0",
         "-1",
-        "undefined"
+        "It depends on the array length"
       ],
       "correctIndex": 1,
-      "explanation": "JavaScript arrays are zero-indexed. The first item is stored at index 0, and the second item is stored at index 1."
+      "explanation": "JavaScript arrays are zero-indexed. The very first item is always located at index 0."
     }
   }
 },
@@ -1871,174 +1884,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js11-essential-array-methods",
   "code": "JS-11",
   "title": "Essential Array Methods: map, filter, find & reduce",
-  "subtitle": "Transform data with map, select items with filter, locate elements with find, and aggregate with reduce.",
+  "subtitle": "Transform lists with map, keep matching items with filter, locate single items with find, and calculate totals with reduce.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Declarative Arrays",
-            "icon": "✨",
-            "tag": "PIPELINES"
-        },
-        {
-            "id": "part2",
-            "label": "The Big Four Methods",
-            "icon": "🛠️",
-            "tag": "CORE METHODS"
-        },
-        {
-            "id": "part3",
-            "label": "Method Chaining",
-            "icon": "🔗",
-            "tag": "CHAINING"
-        },
-        {
-            "id": "part4",
-            "label": "Chaining Pipelines",
-            "icon": "✨",
-            "tag": "PATTERNS"
-        },
-        {
-            "id": "part5",
-            "label": "Methods Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Declarative Lists",
+      "icon": "✨",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "The Core Four",
+      "icon": "🛠️",
+      "tag": "METHODS"
+    },
+    {
+      "id": "part3",
+      "label": "Callbacks & Pipelines",
+      "icon": "🔗",
+      "tag": "PIPELINES"
+    },
+    {
+      "id": "part4",
+      "label": "Callback Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Methods Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Transforming Arrays Declaratively",
-    "bigPicture": "Instead of writing tedious for loops with manual index counters, modern JavaScript provides powerful array methods. Think of these methods like an automated conveyor belt that transforms or filters items in one clean step.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "Declarative Arrays: Letting Methods Do the Heavy Lifting",
+    "bigPicture": "In JS-09, you learned how to pass functions into other functions as callbacks. Now, array methods are where that superpower shines! In the past, developers had to write repetitive for-loops with index counters (let i = 0) just to double numbers or filter out unpaid orders. Modern JavaScript gives us expressive array methods: you provide a short callback function describing what to do with each item, and JavaScript handles the looping automatically.",
+    "breakdownTitle": "The Big Four Methods at a Glance:",
     "breakdownItems": [
       {
-        "title": "map() — Transform",
-        "desc": "Transforms every item into a new item, returning an array of equal length."
+        "title": "map() — Transform Every Item",
+        "desc": "Transforms each element into something new and returns a brand-new array of equal length."
       },
       {
-        "title": "filter() — Select",
-        "desc": "Keeps only items that pass a boolean test, returning a subset array."
+        "title": "filter() — Keep What Matches",
+        "desc": "Tests each item against a condition and returns a new array with only the items that passed the test."
       },
       {
-        "title": "find() vs reduce()",
-        "desc": "find returns the first matching item; reduce folds the array into a single accumulated value."
+        "title": "find() & reduce() — Lookup and Aggregate",
+        "desc": "find() returns the first matching item directly; reduce() accumulates all items into a single final value like a total price."
       }
     ]
   },
   "part2": {
-    "title": "The Big Four: map, filter, find & reduce",
-    "intro": "The four most important methods in JavaScript and React development:",
+    "title": "The Big Four: How map, filter, find & reduce Work",
+    "intro": "Understanding the exact inputs and outputs of each core method:",
     "cards": [
       {
         "number": "01",
         "tag": "Transform",
         "title": "map(item => newItem)",
-        "description": "Transforms each item without changing the original list.",
+        "description": "Runs your callback on every item and builds a new array of the exact same length. Original array is untouched.",
         "color": "purple"
       },
       {
         "number": "02",
         "tag": "Selection",
         "title": "filter(item => boolean)",
-        "description": "Constructs a new array with all elements that pass the predicate.",
+        "description": "Keeps only items where your callback returns true. Returns a new array with 0 up to N items.",
         "color": "emerald"
       },
       {
         "number": "03",
         "tag": "Aggregation",
-        "title": "reduce((acc, curr) => ...)",
-        "description": "Accumulates array elements into a single value, object, or total.",
+        "title": "find() & reduce()",
+        "description": "find() returns the first matching item directly. reduce((acc, curr) => ..., initial) rolls all items into a single result.",
         "color": "amber"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Never change array items directly inside map or filter. Always return a new value. Chain methods cleanly: filter first to reduce work, then map."
+      "title": "💡 Golden Rule of Array Methods",
+      "content": "Methods like map and filter NEVER change the original array—they always produce a brand-new array! Always make sure your callback returns the new value inside map, and returns a boolean inside filter."
     }
   },
   "part3": {
-    "title": "Chaining Array Methods for Clean Data Pipelines",
-    "intro": "Combining filter and map into expressive, readable data transformations:",
+    "title": "Understanding reduce() and Method Chaining",
+    "intro": "How the accumulator works in reduce(), and how chaining methods creates clean data pipelines:",
     "points": [
       {
-        "title": "1. Safe Copies",
-        "content": "map, filter, and slice return fresh arrays without modifying the input array."
+        "title": "1. The reduce() Accumulator",
+        "content": "In reduce((accumulator, current) => accumulator + current, 0), the accumulator is your running tally (like a cash register) and 0 is the starting value. Each step updates the running tally."
       },
       {
-        "title": "2. find vs filter",
-        "content": "find stops at the very first match and returns the item (or undefined); filter checks all items."
+        "title": "2. find() vs filter()",
+        "content": "find() stops the moment it finds the first match and returns that single element (or undefined). filter() always checks every single item and returns an array."
       },
       {
-        "title": "3. reduce Initial Value",
-        "content": "Always supply an initial value as the second argument to reduce (e.g. reduce(..., 0))."
+        "title": "3. Clean Method Chaining",
+        "content": "Because filter and map return arrays, you can chain them: products.filter(p => p.inStock).map(p => p.name). Filter first so map has fewer items to process!"
       }
     ]
   },
   "part4": {
-    "title": "Clean Code: Method Chaining vs Manual Loops",
+    "title": "Common Mistakes: Missing return in Curly-Braced Callbacks",
     "bad": {
-      "title": "❌ Bad: Long manual loops that change variables directly",
-      "code": "const products = [\n  { name: \"Laptop\", price: 1000, inStock: true },\n  { name: \"Mouse\", price: 25, inStock: false },\n  { name: \"Keyboard\", price: 75, inStock: true }\n];\n\n// Messy manual loop to filter and format:\nconst labels = [];\nfor (let i = 0; i < products.length; i++) {\n  if (products[i].inStock) {\n    labels.push(products[i].name + \": $\" + products[i].price);\n  }\n}",
-      "explanation": "Writing loops by hand takes extra lines of code, requires manual counters, and makes it easy to make counting mistakes."
+      "title": "❌ Bad: Forgetting to return inside curly braces, or manual loops",
+      "code": "const prices = [10, 20, 30];\n\n// Bug: Opening curly braces without writing 'return'!\nconst discounted = prices.map(price => {\n  price * 0.9; // Missing return!\n});\nconsole.log(discounted); // [undefined, undefined, undefined]!",
+      "explanation": "In arrow functions, if you add curly braces {}, you MUST write an explicit return statement. Otherwise, the callback returns undefined for every item!"
     },
     "good": {
-      "title": "✅ Clean: Declarative chaining with filter and map",
-      "code": "const products = [\n  { name: \"Laptop\", price: 1000, inStock: true },\n  { name: \"Mouse\", price: 25, inStock: false },\n  { name: \"Keyboard\", price: 75, inStock: true }\n];\n\nconst availableLabels = products\n  .filter((p) => p.inStock)\n  .map((p) => `${p.name}: $${p.price}`);\n\nconsole.log(availableLabels);\n// [\"Laptop: $1000\", \"Keyboard: $75\"]",
-      "explanation": "Array methods like .filter() and .map() read like clear English: first pick the items you want, then format them."
+      "title": "✅ Clean: Concise implicit return or explicit return statement",
+      "code": "const prices = [10, 20, 30];\n\n// Clean 1-line arrow function (implicit return):\nconst discounted = prices.map(price => price * 0.9);\nconsole.log(\"Discounted prices:\", discounted); // [9, 18, 27]\n\n// Explicit return when multi-line logic is needed:\nconst formatted = prices.map(price => {\n  const finalPrice = price * 0.9;\n  return \"$\" + finalPrice.toFixed(2);\n});\nconsole.log(\"Formatted:\", formatted); // [\"$9.00\", \"$18.00\", \"$27.00\"]",
+      "explanation": "1-line arrow functions automatically return the expression. When using curly braces, explicitly writing return ensures your transformed values are kept."
     }
   },
   "part5": {
     "title": "Array Methods Playground",
-    "intro": "Transform numbers with map, filter active records, and calculate order totals with reduce:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-11: ESSENTIAL ARRAY METHODS\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst cart = [\n  { id: 1, name: \"Mechanical Keyboard\", price: 120, qty: 1 },\n  { id: 2, name: \"USB-C Cable\", price: 15, qty: 3 },\n  { id: 3, name: \"Gaming Mouse\", price: 65, qty: 1 }\n];\n\n// 1. map: Get array of product names\nconst productNames = cart.map(item => item.name);\nconsole.log(\"Items in cart:\", productNames);\n\n// 2. filter: Find items over $50\nconst expensiveItems = cart.filter(item => item.price >= 50);\nconsole.log(\"Expensive items count:\", expensiveItems.length);\n\n// 3. find: Locate specific item by ID\nconst cable = cart.find(item => item.id === 2);\nconsole.log(\"Found item:\", cable?.name);\n\n// 4. reduce: Calculate total cart price\nconst grandTotal = cart.reduce((total, item) => total + (item.price * item.qty), 0);\nconsole.log(\"Cart Grand Total: $\" + grandTotal.toFixed(2));\n"
+    "intro": "Filter available products, format their display names with map, locate a product with find, and calculate cart total with reduce:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-11: ESSENTIAL ARRAY METHODS PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst inventory = [\n  { id: 1, name: \"Mechanical Keyboard\", price: 120, inStock: true },\n  { id: 2, name: \"Wireless Mouse\", price: 45, inStock: false },\n  { id: 3, name: \"USB-C Monitor\", price: 280, inStock: true },\n  { id: 4, name: \"Desk Pad\", price: 20, inStock: true }\n];\n\n// 1. filter(): Keep only items that are in stock\nconst availableItems = inventory.filter(item => item.inStock);\nconsole.log(\"In-stock items count:\", availableItems.length);\n\n// 2. map(): Format available items into readable strings\nconst productTags = availableItems.map(item => item.name + \" ($\" + item.price + \")\");\nconsole.log(\"Product tags:\", productTags);\n\n// 3. find(): Locate a specific item by its ID\nconst mouse = inventory.find(item => item.id === 2);\nconsole.log(\"Found item by ID 2:\", mouse.name, \"| inStock:\", mouse.inStock);\n\n// 4. reduce(): Calculate the total value of all in-stock inventory\nconst totalValue = availableItems.reduce((runningTotal, item) => {\n  return runningTotal + item.price;\n}, 0);\n\nconsole.log(\"Total value of available stock: $\" + totalValue);\n\n// 5. Method Chaining: Filter items under $100 and get just their uppercase names\nconst budgetNames = inventory\n  .filter(item => item.price < 100)\n  .map(item => item.name.toUpperCase());\n\nconsole.log(\"Budget item names:\", budgetNames);\n"
   },
   "part6": {
-    "title": "Key Takeaways: Transforming Arrays Declaratively",
+    "title": "Key Takeaways: Essential Array Methods",
     "takeaways": [
       {
-        "title": "1. map for 1:1",
-        "desc": "Transform every item into a new shape."
+        "title": "1. map for 1-to-1 Transformations",
+        "desc": "Transforms each item into something new, returning an array of the same length."
       },
       {
-        "title": "2. filter for Subsets",
-        "desc": "Pick elements that match a condition."
+        "title": "2. filter for Selection",
+        "desc": "Returns a new array containing only elements that pass your true/false test."
       },
       {
-        "title": "3. reduce for Aggregation",
-        "desc": "Fold arrays into sums, counts, or objects."
+        "title": "3. find for Single Match",
+        "desc": "Returns the first matching item directly, or undefined if no item matches."
       },
       {
-        "title": "4. Next: Objects",
-        "desc": "In JS-12, we explore key-value pairs, methods, and property access."
+        "title": "4. reduce for Aggregation",
+        "desc": "Folds all elements into a single value, such as a sum or count. Always provide an initial value!"
+      },
+      {
+        "title": "5. Next Step: Objects & Methods",
+        "desc": "In JS-12, we learn how to model real-world entities using key-value pairs and object methods!"
       }
     ],
     "nextLessonPreview": {
-      "title": "JS-12: Objects: Key-Value Pairs, Methods & Property Access",
-      "desc": "Model real-world entities using JavaScript objects, dot vs bracket notation, and object methods."
+      "title": "JS-12: Objects & Methods: Key-Value Pairs & Behaviors",
+      "desc": "Model real-world entities using labeled key-value pairs, understand dot vs bracket notation, and attach reusable methods."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Transforming Arrays Declaratively",
+    "title": "Knowledge Check: Array Methods",
     "quiz": {
       "question": "What is the primary difference between .find() and .filter()?",
       "options": [
-        "find() returns the first matching item or undefined, while filter() returns an array of all matching items.",
-        "filter() mutates the original array, while find() does not.",
-        "find() only works on numbers, while filter() only works on strings.",
-        "There is no difference; they are aliases of each other."
+        ".find() returns the first matching item directly (or undefined), while .filter() returns an array of all matching items",
+        ".find() changes the original array, but .filter() does not",
+        ".filter() can only be used on numbers, while .find() works on any data",
+        "There is no difference; .find() is an alias for .filter()"
       ],
       "correctIndex": 0,
-      "explanation": "find() stops at the first element that satisfies the testing function and returns it directly. filter() continues through the entire array and returns a new array with all matching elements."
+      "explanation": ".find() stops evaluating as soon as it encounters the first matching element and returns that element directly. .filter() checks every item and returns an array containing all matches."
     }
   }
 },
@@ -2046,175 +2063,179 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "js12-objects-and-methods": {
   "slug": "js12-objects-and-methods",
   "code": "JS-12",
-  "title": "Objects: Key-Value Pairs, Methods & Property Access",
-  "subtitle": "Model real-world entities with properties and actions using object literals and methods.",
+  "title": "Objects & Methods: Key-Value Pairs & Behaviors",
+  "subtitle": "Model real-world entities using labeled key-value pairs, understand dot vs bracket notation, and attach reusable methods.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Key-Value Pairs",
-            "icon": "🗂️",
-            "tag": "OBJECTS"
-        },
-        {
-            "id": "part2",
-            "label": "Dot vs Bracket",
-            "icon": "🔍",
-            "tag": "PROPERTIES"
-        },
-        {
-            "id": "part3",
-            "label": "Object Methods",
-            "icon": "⚙️",
-            "tag": "METHODS"
-        },
-        {
-            "id": "part4",
-            "label": "Dynamic Key Traps",
-            "icon": "🔑",
-            "tag": "PITFALL"
-        },
-        {
-            "id": "part5",
-            "label": "Objects Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Key-Value Pairs",
+      "icon": "🗂️",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "Dot vs Bracket",
+      "icon": "🔍",
+      "tag": "NOTATION"
+    },
+    {
+      "id": "part3",
+      "label": "Methods & this",
+      "icon": "⚙️",
+      "tag": "METHODS"
+    },
+    {
+      "id": "part4",
+      "label": "Dynamic Key Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Objects Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Objects: Modeling Real-World Data with Key-Value Pairs",
-    "bigPicture": "An object is a collection of named properties and methods. Think of an object like an ID card: it groups related attributes (name, age, role) together into one neat identity.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "Why Objects Matter: Modeling Real-World Data with Labels",
+    "bigPicture": "Arrays are great for ordered lists of similar items, like a list of high scores: [90, 85, 92]. But what if you need to describe a user or a product? Storing a user as ['Alex', 28, 'alex@test.com', true] is confusing because slot 0 is a name, slot 1 is an age, and slot 3 is a status, but none of them have labels! An object solves this by attaching a descriptive name (a key) to every value. Together, they are called key-value pairs.",
+    "breakdownTitle": "Core Concepts of JavaScript Objects:",
     "breakdownItems": [
       {
-        "title": "Object Literals",
-        "desc": "Create keyed records with curly braces { key: value }."
+        "title": "The Object Literal {}",
+        "desc": "Curly braces create an object. You write labeled properties as key: value pairs separated by commas."
       },
       {
-        "title": "Dot vs Bracket Notation",
-        "desc": "Use dot notation user.name for static keys; use bracket user[var] for dynamic keys."
+        "title": "Dot Notation (user.name)",
+        "desc": "The cleanest and most common way to read or change a property when you know the key name ahead of time."
       },
       {
-        "title": "Object Methods",
-        "desc": "Functions attached to object properties that act on object data."
+        "title": "Bracket Notation (user['name'])",
+        "desc": "Required when property names are stored inside variables or contain spaces or special characters."
       }
     ]
   },
   "part2": {
-    "title": "Accessing Properties: Dot Notation vs Bracket Notation",
-    "intro": "When to use user.name and when bracket notation user['name'] is required:",
+    "title": "Reading & Updating Properties: Dot vs Bracket Notation",
+    "intro": "When to use standard dot notation and when bracket notation is required:",
     "cards": [
       {
         "number": "01",
-        "tag": "Properties",
+        "tag": "Standard",
         "title": "Dot Notation (obj.prop)",
-        "description": "Standard, clean property access when the key name is known in advance.",
+        "description": "Clean and standard for everyday property access when the property name is a known, valid identifier.",
         "color": "cyan"
       },
       {
         "number": "02",
         "tag": "Dynamic",
-        "title": "Bracket (obj[prop])",
-        "description": "Required for dynamic keys, spaces, or keys stored in variables.",
+        "title": "Bracket Notation (obj[key])",
+        "description": "Required when the key is stored in a variable (user[field]) or has spaces or hyphens (user['postal-code']).",
         "color": "purple"
       },
       {
         "number": "03",
         "tag": "Behavior",
-        "title": "Methods",
-        "description": "Functions stored as object properties that define the object's behaviors.",
+        "title": "Object Methods",
+        "description": "Functions stored as properties inside an object. They allow objects to perform actions using their own data.",
         "color": "emerald"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Use dot notation by default. Use bracket notation only when property keys contain special characters or come from variables."
+      "title": "💡 Golden Rule of Property Access",
+      "content": "Always use dot notation by default! Switch to bracket notation only when the key name comes from a variable (e.g. user[dynamicKey]) or contains hyphens or spaces."
     }
   },
   "part3": {
-    "title": "Object Methods & Dynamic Properties",
-    "intro": "Attaching functions to objects and reading dynamic keys:",
+    "title": "Object Methods, the this Keyword & Built-in Helpers",
+    "intro": "Giving objects behaviors with methods, referencing properties with this, and inspecting keys:",
     "points": [
       {
-        "title": "1. String & Symbol Keys",
-        "content": "Object keys are automatically converted to strings (or Symbols)."
+        "title": "1. The this Keyword in Methods",
+        "content": "When an object method runs, this points to the object that owns the method. Inside user.greet(), this.name reads the name property from that user."
       },
       {
-        "title": "2. Object.keys & Object.values",
-        "content": "Useful built-in utility methods to iterate over object keys and values."
+        "title": "2. Adding and Updating Properties on const Objects",
+        "content": "Declaring an object with const prevents reassigning the variable to a different object, but the properties inside can still be updated freely: user.age = 29."
       },
       {
-        "title": "3. Method Shorthand",
-        "content": "ES6 allows concise method declarations: greet() {} instead of greet: function() {}."
+        "title": "3. Object.keys() and Object.values()",
+        "content": "Use Object.keys(obj) to get an array of all property names, and Object.values(obj) to get an array of all property values."
       }
     ]
   },
   "part4": {
-    "title": "Common Mistake: Dot Notation with Dynamic Variable Keys",
+    "title": "Common Mistakes: Using Dot Notation with Variables",
     "bad": {
-      "title": "❌ Bad: Using dot notation with dynamic variable keys",
-      "code": "const propertyToRead = \"email\";\nconst user = { name: \"Alice\", email: \"alice@example.com\" };\n\n// Bug: Searches for literal property named 'propertyToRead' on user!\nconsole.log(user.propertyToRead); // undefined!",
-      "explanation": "Dot notation (user.name) looks for the literal word 'name'. If your property name is stored in a variable, you must use square brackets user[key]."
+      "title": "❌ Bad: Using dot notation when the property name is in a variable",
+      "code": "const user = { name: \"Alice\", email: \"alice@example.com\" };\n\nconst propertyToRead = \"email\";\n\n// Bug: Searches for a property literally named \"propertyToRead\"!\nconsole.log(user.propertyToRead); // undefined!",
+      "explanation": "Dot notation (user.propertyToRead) looks for the literal word 'propertyToRead' on the object. Because that property does not exist, it evaluates to undefined."
     },
     "good": {
-      "title": "✅ Clean: Dynamic property access using brackets and methods",
-      "code": "const propertyToRead = \"email\";\nconst user = {\n  name: \"Alice\",\n  email: \"alice@example.com\",\n  getDisplayName() {\n    return `${this.name} <${this.email}>`;\n  }\n};\n\n// Bracket notation evaluates the variable correctly:\nconsole.log(user[propertyToRead]); // \"alice@example.com\"\nconsole.log(user.getDisplayName());",
-      "explanation": "Bracket notation evaluates variables dynamically, making data lookups flexible and correct."
+      "title": "✅ Clean: Evaluating dynamic variable keys with square brackets",
+      "code": "const user = { name: \"Alice\", email: \"alice@example.com\" };\n\nconst propertyToRead = \"email\";\n\n// Square brackets evaluate the variable's value (\"email\"):\nconsole.log(user[propertyToRead]); // \"alice@example.com\"\n\n// Also works for keys with hyphens or spaces:\nuser[\"account-status\"] = \"ACTIVE\";\nconsole.log(user[\"account-status\"]); // \"ACTIVE\"",
+      "explanation": "Bracket notation evaluates the variable inside the brackets first, correctly looking up user['email']."
     }
   },
   "part5": {
     "title": "Objects & Methods Playground",
-    "intro": "Create objects, access properties, run methods, and inspect keys:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-12: OBJECTS & METHODS\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst userProfile = {\n  username: \"code_ninja\",\n  reputation: 420,\n  skills: [\"JavaScript\", \"TypeScript\", \"React\"],\n  status: \"ACTIVE\",\n\n  // Modern method shorthand:\n  addReputation(points) {\n    this.reputation += points;\n    return `${this.username} now has ${this.reputation} reputation points!`;\n  }\n};\n\nconsole.log(\"Username:\", userProfile.username);\nconsole.log(\"First skill:\", userProfile.skills[0]);\n\n// Dynamic key lookup:\nconst keyToInspect = \"status\";\nconsole.log(\"Current status:\", userProfile[keyToInspect]);\n\n// Call object method:\nconsole.log(userProfile.addReputation(50));\n\n// Utility functions:\nconsole.log(\"Keys:\", Object.keys(userProfile));\nconsole.log(\"Values count:\", Object.values(userProfile).length);\n"
+    "intro": "Build a game character profile with stats, access properties dynamically, call a method with this, and inspect keys:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-12: OBJECTS & METHODS PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst player = {\n  username: \"PixelKnight\",\n  level: 1,\n  hp: 100,\n  skills: [\"Slash\", \"Shield Block\"],\n\n  // Method that uses 'this' to access its own properties:\n  levelUp() {\n    this.level += 1;\n    this.hp += 20;\n    return this.username + \" reached Level \" + this.level + \"! HP is now \" + this.hp;\n  }\n};\n\n// 1. Read properties with dot notation:\nconsole.log(\"Player name:\", player.username);\nconsole.log(\"Current level:\", player.level);\nconsole.log(\"First skill:\", player.skills[0]);\n\n// 2. Read properties dynamically with bracket notation:\nconst statToQuery = \"hp\";\nconsole.log(\"Queried stat (\" + statToQuery + \"):\", player[statToQuery]);\n\n// 3. Call the method:\nconsole.log(player.levelUp());\nconsole.log(\"Updated level:\", player.level);\n\n// 4. Add a new property:\nplayer.guild = \"DragonSlayers\";\nconsole.log(\"Joined guild:\", player.guild);\n\n// 5. Inspect keys and values using built-in Object utilities:\nconsole.log(\"Object keys:\", Object.keys(player));\nconsole.log(\"Total property count:\", Object.keys(player).length);\n"
   },
   "part6": {
-    "title": "Key Takeaways: Objects",
+    "title": "Key Takeaways: Objects & Methods",
     "takeaways": [
       {
-        "title": "1. Key-Value Pairs",
-        "desc": "Objects store keyed properties and methods."
+        "title": "1. Labeled Data with {}",
+        "desc": "Objects group related information into labeled key-value pairs using curly braces."
       },
       {
-        "title": "2. Dot for Static",
-        "desc": "Use user.name when the key is known at author time."
+        "title": "2. Dot for Known, Bracket for Dynamic",
+        "desc": "Use dot notation obj.key by default; use brackets obj[variable] for dynamic keys."
       },
       {
-        "title": "3. Bracket for Dynamic",
-        "desc": "Use user[key] when property names come from variables."
+        "title": "3. Methods and this",
+        "desc": "Methods are functions stored on objects. Inside a method, this refers to the object itself."
       },
       {
-        "title": "4. Next: Object References",
-        "desc": "In JS-13, we learn why objects are copied by reference, not value."
+        "title": "4. const Objects are Mutable",
+        "desc": "const locks the variable reference, but you can freely add, update, and delete properties inside."
+      },
+      {
+        "title": "5. Next Step: Object References",
+        "desc": "In JS-13, we learn how objects live in memory and why copying them requires special care!"
       }
     ],
     "nextLessonPreview": {
-      "title": "JS-13: Object References & Copying: Shallow vs Deep Copy",
-      "desc": "Discover why changing a copied object affects the original, and learn how to copy data safely."
+      "title": "JS-13: Object References & Copying: References, Shallow vs Deep Cloning",
+      "desc": "Understand how objects live in memory, why copying variables creates shared references, and how to safely clone objects with spread and structuredClone."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Objects",
+    "title": "Knowledge Check: Objects & Methods",
     "quiz": {
-      "question": "When must you use bracket notation (obj[key]) instead of dot notation (obj.key)?",
+      "question": "When MUST you use bracket notation (obj[key]) instead of dot notation (obj.key)?",
       "options": [
-        "When the property name is stored in a variable or contains spaces/hyphens.",
-        "Whenever the object has more than 5 properties.",
-        "Only when accessing functions.",
-        "Dot notation is deprecated; bracket notation is always required."
+        "When the property name is stored inside a variable or contains spaces/hyphens",
+        "Only when the object contains more than 10 properties",
+        "Whenever you want to call an object method",
+        "Bracket notation is obsolete; dot notation is always required"
       ],
       "correctIndex": 0,
-      "explanation": "Bracket notation is required when the key name is dynamic (stored in a variable) or contains characters not valid in JS identifiers like dashes or spaces."
+      "explanation": "Bracket notation is required when the key name is stored inside a variable or contains characters that aren't valid in JavaScript identifiers (like hyphens or spaces)."
     }
   }
 },
@@ -2222,175 +2243,179 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "js13-object-references-and-copying": {
   "slug": "js13-object-references-and-copying",
   "code": "JS-13",
-  "title": "Object References & Copying: Shallow vs Deep Copy",
-  "subtitle": "Understand memory references, avoid accidental mutations, and clone objects safely.",
+  "title": "Object References & Copying: References, Shallow vs Deep Cloning",
+  "subtitle": "Understand how objects live in memory, why copying variables creates shared references, and how to safely clone objects with spread and structuredClone.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Values vs Pointers",
-            "icon": "📍",
-            "tag": "MEMORY"
-        },
-        {
-            "id": "part2",
-            "label": "Reference Copying",
-            "icon": "🔗",
-            "tag": "REFERENCES"
-        },
-        {
-            "id": "part3",
-            "label": "Shallow vs Deep Copy",
-            "icon": "🧬",
-            "tag": "CLONING"
-        },
-        {
-            "id": "part4",
-            "label": "Accidental Mutations",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "References Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Values vs Pointers",
+      "icon": "📍",
+      "tag": "MEMORY"
+    },
+    {
+      "id": "part2",
+      "label": "The Reference Trap",
+      "icon": "🔗",
+      "tag": "REFERENCES"
+    },
+    {
+      "id": "part3",
+      "label": "Shallow vs Deep",
+      "icon": "🧬",
+      "tag": "CLONING"
+    },
+    {
+      "id": "part4",
+      "label": "Mutation Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Cloning Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Memory References: Values vs Pointers",
-    "bigPicture": "Primitives (numbers, strings) are copied by value, but objects are copied by reference. Think of an object like a shared Google Doc link: copying the link doesn't create a new document; anyone who edits it modifies the exact same document.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "Values vs Memory References: How JavaScript Stores Data",
+    "bigPicture": "In JavaScript, primitive values (numbers, strings, booleans) and objects behave completely differently when you copy them. Primitives are copied by value—like printing a second copy of a document on paper. If you write notes on your paper copy, your friend's paper copy doesn't change. But objects are stored in memory and copied by reference—like sharing a Google Docs link. If you give someone the link and they edit the document, you see the edits immediately because you are both looking at the exact same document!",
+    "breakdownTitle": "Core Concepts of Object Memory:",
     "breakdownItems": [
       {
-        "title": "Primitives vs References",
-        "desc": "Primitives copy by value; objects, arrays, and functions copy by memory reference."
+        "title": "Primitives Copy by Value",
+        "desc": "let a = 5; let b = a; b = 10; leaves a untouched at 5. Primitives are completely independent copies."
       },
       {
-        "title": "Shallow Copy",
-        "desc": "Spreading {...obj} copies top-level keys, but nested objects still share memory references."
+        "title": "Objects Copy by Reference",
+        "desc": "const b = a does NOT copy an object. It simply creates a second variable pointing to the exact same object in memory."
       },
       {
-        "title": "Deep Copy",
-        "desc": "structuredClone(obj) completely copies every nested level into independent memory."
+        "title": "Object Equality with ===",
+        "desc": "Two objects are only === if they point to the exact same memory address. Even if two separate objects have identical properties ({ score: 10 } === { score: 10 }), the result is false!"
       }
     ]
   },
   "part2": {
-    "title": "How Object Copying Really Works in JavaScript",
-    "intro": "Why assigning const b = a causes both variables to point to the same memory:",
+    "title": "The Shared Reference Trap & Safe Cloning Techniques",
+    "intro": "Why assigning variables shares memory, and how to make safe shallow and deep copies:",
     "cards": [
       {
         "number": "01",
-        "tag": "Memory",
-        "title": "Reference Sharing",
-        "description": "const b = a; does not clone the object; it creates another pointer to the same memory.",
+        "tag": "Trap",
+        "title": "Shared Reference (b = a)",
+        "description": "Both variables point to the same memory box. Changing a property on b will silently modify a as well!",
         "color": "rose"
       },
       {
         "number": "02",
-        "tag": "Copying",
-        "title": "Shallow: {...obj}",
-        "description": "Copies top-level properties. Fast and suitable for flat objects.",
+        "tag": "Shallow",
+        "title": "Shallow Copy ({ ...obj })",
+        "description": "Copies the top-level properties into a new object. Perfect for flat objects with no nested objects or arrays.",
         "color": "purple"
       },
       {
         "number": "03",
-        "tag": "Safe Deep",
-        "title": "structuredClone()",
-        "description": "Modern standard built-in for deep copying objects with nested arrays and dates.",
+        "tag": "Deep",
+        "title": "Deep Clone (structuredClone)",
+        "description": "Standard modern function that recursively clones every nested layer into independent memory.",
         "color": "emerald"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Avoid changing objects that other parts of your app are using. Make a safe copy with {...obj} before editing properties."
+      "title": "💡 Golden Rule of Object Copying",
+      "content": "Never assume that const b = a creates a new copy of an object! If you need an independent copy, use shallow spread { ...a } for flat objects, or structuredClone(a) when the object has nested objects or arrays."
     }
   },
   "part3": {
-    "title": "Shallow Copy with Spread vs Native structuredClone",
-    "intro": "When top-level spread {...obj} is enough and when deep cloning is needed:",
+    "title": "Shallow Copy Limits vs Modern structuredClone()",
+    "intro": "Understanding where shallow copying falls short and when deep cloning is necessary:",
     "points": [
       {
-        "title": "1. Pointer Comparison",
-        "content": "Two objects are only === if they point to the exact same memory address ({a:1} !== {a:1})."
+        "title": "1. The Shallow Copy Limitation",
+        "content": "Spread { ...user } creates a new outer object. However, if user has a nested object (like address: { city: 'Tokyo' }), the address property in both copies still points to the same inner address object!"
       },
       {
-        "title": "2. Shallow Limitations",
-        "content": "Spread {...user} clones user, but user.address remains shared by reference."
+        "title": "2. Native structuredClone() for Deep Copies",
+        "content": "Modern JavaScript provides structuredClone(original) as a native global function. It makes a complete deep clone of nested objects and arrays without third-party libraries."
       },
       {
-        "title": "3. Modern structuredClone",
-        "content": "Avoid JSON.parse(JSON.stringify(x)) which drops Dates and undefined; use structuredClone."
+        "title": "3. Object Comparison Gotcha",
+        "content": "Checking { name: 'Sam' } === { name: 'Sam' } evaluates to false because each curly-brace literal creates a brand-new, distinct object in memory."
       }
     ]
   },
   "part4": {
-    "title": "The Shared Reference Trap: Accidental Changes to the Original",
+    "title": "Common Mistakes: Accidental Mutation via Shared Pointers",
     "bad": {
-      "title": "❌ Bad: Accidentally changing the original object through a shared reference",
-      "code": "const userA = { name: \"Sarah\", role: \"Viewer\" };\n// Accidental pointer copy:\nconst userB = userA;\n\nuserB.role = \"Admin\"; // Mutates userA as well!\nconsole.log(\"User A role:\", userA.role); // \"Admin\" (Accidental privilege escalation!)",
-      "explanation": "Both variables share the exact same object in memory. Changing one will silently change the other."
+      "title": "❌ Bad: Modifying an object through a shared reference",
+      "code": "const originalUser = { name: \"Sarah\", role: \"Viewer\" };\n\n// Bug: Not a copy! Both variables point to the same object in memory!\nconst updatedUser = originalUser;\nupdatedUser.role = \"Admin\";\n\n// Original user was accidentally changed!\nconsole.log(\"Original role:\", originalUser.role); // \"Admin\" (Security bug!)",
+      "explanation": "Assigning updatedUser = originalUser does not duplicate the object. Modifying updatedUser.role mutates the original object."
     },
     "good": {
-      "title": "✅ Clean: Safe shallow copy with property updates",
-      "code": "const userA = { name: \"Sarah\", role: \"Viewer\" };\n\n// Clean clone with explicit override:\nconst userB = { ...userA, role: \"Admin\" };\n\nconsole.log(\"User A:\", userA.role); // \"Viewer\" (Untouched!)\nconsole.log(\"User B:\", userB.role); // \"Admin\"",
-      "explanation": "Using the spread operator ({ ...user }) creates a fresh copy so your changes do not affect the original object."
+      "title": "✅ Clean: Safe shallow copy with property overrides",
+      "code": "const originalUser = { name: \"Sarah\", role: \"Viewer\" };\n\n// Clean: Spread creates a fresh independent object:\nconst updatedUser = { ...originalUser, role: \"Admin\" };\n\nconsole.log(\"Original role:\", originalUser.role); // \"Viewer\" (Safe and untouched!)\nconsole.log(\"Updated role:\", updatedUser.role);   // \"Admin\"",
+      "explanation": "Using the spread operator ({ ...originalUser }) creates a new object in memory, leaving the original object completely untouched."
     }
   },
   "part5": {
     "title": "Object References & Cloning Playground",
-    "intro": "Observe shared reference mutations, test shallow copy limits, and use structuredClone:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-13: OBJECT REFERENCES & CLONING\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst originalSettings = {\n  theme: \"dark\",\n  notifications: { email: true, push: false }\n};\n\n// 1. Shallow copy with spread\nconst shallowCopy = { ...originalSettings };\n\n// 2. Deep copy with structuredClone (Modern JS)\nconst deepCopy = structuredClone(originalSettings);\n\n// Modifying nested property on shallow copy affects original!\nshallowCopy.notifications.push = true;\nconsole.log(\"Original push notification:\", originalSettings.notifications.push); // true! (Mutated!)\n\n// Modifying deep copy leaves original safe:\ndeepCopy.notifications.email = false;\nconsole.log(\"Original email:\", originalSettings.notifications.email); // true (Safe!)\nconsole.log(\"Deep copy email:\", deepCopy.notifications.email);       // false\n"
+    "intro": "Observe shared reference mutations, see where shallow copy stops, and perform a deep clone with structuredClone:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-13: OBJECT REFERENCES & CLONING PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Primitive copy by value (independent):\nlet scoreA = 100;\nlet scoreB = scoreA;\nscoreB = 200;\nconsole.log(\"Primitives are independent -> scoreA:\", scoreA, \"| scoreB:\", scoreB);\n\n// 2. The Shared Reference Trap:\nconst hero1 = { name: \"Aria\", level: 10 };\nconst hero2 = hero1; // Shares the same reference!\nhero2.level = 99;\nconsole.log(\"Shared reference -> hero1.level:\", hero1.level); // 99 (Mutated!)\n\n// 3. Safe Shallow Copy for flat objects:\nconst userProfile = { name: \"Maya\", theme: \"dark\" };\nconst userProfileCopy = { ...userProfile, theme: \"light\" };\nconsole.log(\"Original theme:\", userProfile.theme);     // \"dark\" (Untouched)\nconsole.log(\"Copy theme:\", userProfileCopy.theme);     // \"light\"\n\n// 4. Nested Objects: Shallow copy vs structuredClone():\nconst gameSettings = {\n  volume: 80,\n  graphics: { resolution: \"1080p\", shadows: true }\n};\n\n// Shallow copy:\nconst shallowSettings = { ...gameSettings };\n\n// Deep clone:\nconst deepSettings = structuredClone(gameSettings);\n\n// Modifying nested property on shallow copy affects original!\nshallowSettings.graphics.resolution = \"4K\";\nconsole.log(\"Original graphics after shallow edit:\", gameSettings.graphics.resolution); // \"4K\"!\n\n// Modifying deep clone leaves original safe:\ndeepSettings.graphics.resolution = \"1440p\";\nconsole.log(\"Original graphics after deep clone edit:\", gameSettings.graphics.resolution); // \"4K\" (Untouched)\nconsole.log(\"Deep clone graphics:\", deepSettings.graphics.resolution);                    // \"1440p\"\n"
   },
   "part6": {
-    "title": "Key Takeaways: Memory References",
+    "title": "Key Takeaways: Object References & Copying",
     "takeaways": [
       {
-        "title": "1. References vs Values",
-        "desc": "Objects copy by reference; primitives copy by value."
+        "title": "1. Values vs References",
+        "desc": "Primitives copy values independently; objects copy memory pointers to the same data."
       },
       {
-        "title": "2. Shallow Copy",
-        "desc": "Use {...obj} to clone 1-level flat objects."
+        "title": "2. The b = a Trap",
+        "desc": "Assigning an object variable to another does not clone it. Changes to one affect the other."
       },
       {
-        "title": "3. structuredClone",
-        "desc": "Use structuredClone() for complete, nested deep cloning."
+        "title": "3. Shallow Copy with Spread",
+        "desc": "Use { ...obj } to clone top-level properties of flat objects."
       },
       {
-        "title": "4. Next: Destructuring",
-        "desc": "In JS-14, we learn how to unpack properties cleanly with destructuring."
+        "title": "4. Deep Clone with structuredClone",
+        "desc": "Use structuredClone(obj) when cloning objects that contain nested objects or arrays."
+      },
+      {
+        "title": "5. Next Step: Modern ES6+ Syntax",
+        "desc": "In JS-14, we begin Stage 4 with Destructuring to easily unpack objects and arrays into variables!"
       }
     ],
     "nextLessonPreview": {
       "title": "JS-14: Destructuring: Unpacking Objects & Arrays with Ease",
-      "desc": "Extract values directly from objects and arrays with clean, modern destructuring syntax."
+      "desc": "Extract properties directly into named variables with fallback defaults and key renaming."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Memory References",
+    "title": "Knowledge Check: Object References",
     "quiz": {
-      "question": "What happens if you do: const b = a; where 'a' is an object?",
+      "question": "Why does modifying b.score also modify a.score after running 'const b = a'?",
       "options": [
-        "A deep copy of 'a' is created in memory.",
-        "'b' receives a reference pointing to the exact same object in memory as 'a'.",
-        "The object 'a' is destroyed.",
-        "JavaScript throws a reference error."
+        "Because both variables point to the exact same object in computer memory",
+        "Because const variables automatically sync their values",
+        "Because JavaScript creates a background timer that copies changes",
+        "It does not; b is an independent copy"
       ],
-      "correctIndex": 1,
-      "explanation": "In JavaScript, objects are reference types. Variable assignment copies the reference pointer, meaning both variables point to the same object in memory."
+      "correctIndex": 0,
+      "explanation": "Assigning const b = a copies the memory reference (pointer), not the object. Both a and b point to the exact same object in memory."
     }
   }
 },
@@ -2399,174 +2424,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js14-destructuring",
   "code": "JS-14",
   "title": "Destructuring: Unpacking Objects & Arrays with Ease",
-  "subtitle": "Extract properties and array items directly into standalone variables with default fallbacks.",
+  "subtitle": "Extract properties from objects and items from arrays into standalone variables with renaming and fallback defaults.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Unpacking Values",
-            "icon": "📦",
-            "tag": "DESTRUCTURING"
-        },
-        {
-            "id": "part2",
-            "label": "Object Extraction",
-            "icon": "🏷️",
-            "tag": "OBJECTS"
-        },
-        {
-            "id": "part3",
-            "label": "Arrays & Defaults",
-            "icon": "📑",
-            "tag": "ARRAYS"
-        },
-        {
-            "id": "part4",
-            "label": "Clean Destructuring",
-            "icon": "📦",
-            "tag": "CLEAN CODE"
-        },
-        {
-            "id": "part5",
-            "label": "Destructuring Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Unpacking Values",
+      "icon": "📦",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "Object Extraction",
+      "icon": "🏷️",
+      "tag": "OBJECTS"
+    },
+    {
+      "id": "part3",
+      "label": "Arrays & Parameters",
+      "icon": "📑",
+      "tag": "ARRAYS"
+    },
+    {
+      "id": "part4",
+      "label": "Clean Code & Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Destructuring Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Unpacking Values: The Destructuring Shortcut",
-    "bigPicture": "Destructuring is a clean syntax for extracting values from objects and arrays into distinct variables. Think of it like unpacking a delivery box: you pull out the items you need directly onto your table.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "Unpacking Values: The Clean Modern Shortcut",
+    "bigPicture": "Imagine receiving a delivery box of groceries. Rather than keeping everything sealed inside the box and writing box.milk, box.bread, and box.eggs every time you cook, you unpack the items onto your kitchen counter where you can grab them directly! In JavaScript, destructuring is the exact same concept: it is a modern, clean syntax that unpacks properties from objects or items from arrays into standalone variables in a single line.",
+    "breakdownTitle": "Core Concepts in This Lesson:",
     "breakdownItems": [
       {
-        "title": "Object Destructuring",
-        "desc": "Extract properties by key: const { name, age } = user;."
+        "title": "Object Destructuring ({ name, age } = user)",
+        "desc": "Extracts values by their matching property names. Because objects are labeled collections, order does not matter."
       },
       {
-        "title": "Array Destructuring",
-        "desc": "Extract items by position: const [first, second] = list;."
+        "title": "Array Destructuring ([first, second] = list)",
+        "desc": "Extracts values by their numbered position (index). The first variable receives index [0], the second receives [1]."
       },
       {
-        "title": "Renaming & Defaults",
-        "desc": "Assign custom variable names { role: userRole } and fallback defaults { theme = 'dark' }."
+        "title": "Renaming & Fallback Defaults",
+        "desc": "Rename extracted variables with colons ({ role: userRole }) and protect against missing values with defaults ({ theme = 'dark' })."
       }
     ]
   },
   "part2": {
     "title": "Object Destructuring: Extracting Properties by Name",
-    "intro": "Replacing repetitive user.name and user.email with clean destructuring:",
+    "intro": "How curly brace destructuring pulls data directly into named variables:",
     "cards": [
       {
         "number": "01",
         "tag": "Objects",
-        "title": "{ key } = obj",
-        "description": "Pulls keys by exact name. Order does not matter.",
+        "title": "Object Unpacking ({ key })",
+        "description": "Matches properties by exact key name. const { name, email } = user creates two independent variables directly from the user object.",
         "color": "purple"
       },
       {
         "number": "02",
         "tag": "Arrays",
-        "title": "[a, b] = arr",
-        "description": "Pulls items by index position. Skip items with empty commas [, , c].",
+        "title": "Array Unpacking ([a, b])",
+        "description": "Matches items by order/position. const [first, second] = colors extracts the first two elements. Use commas [, , third] to skip items.",
         "color": "cyan"
       },
       {
         "number": "03",
-        "tag": "Fallbacks",
-        "title": "Default Values",
-        "description": "const { timeout = 5000 } provides safe fallbacks if the key is undefined.",
+        "tag": "Safety",
+        "title": "Fallback Defaults (= value)",
+        "description": "const { role = 'Guest' } = user sets role to 'Guest' if the role property is missing or strictly undefined in the object.",
         "color": "emerald"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Unpack function inputs right inside the parentheses: function renderUser({ name, role = 'User' }) to write cleaner, self-explanatory code."
+      "title": "💡 Golden Rule of Destructuring",
+      "content": "Object destructuring uses curly braces {} and matches by key name (order does not matter). Array destructuring uses square brackets [] and matches by position (order matters completely)!"
     }
   },
   "part3": {
-    "title": "Array Destructuring, Default Values & Renaming",
-    "intro": "Unpacking ordered items, providing fallbacks, and aliasing conflicting names:",
+    "title": "Renaming Properties & Parameter Destructuring",
+    "intro": "Assigning custom variable names and unpacking objects directly in function signatures:",
     "points": [
       {
-        "title": "1. Renaming Properties",
-        "content": "Use colon syntax: const { id: userId } = data creates a variable named userId."
+        "title": "1. Renaming with Colons ({ originalKey: newName })",
+        "content": "If a property name collides with an existing variable, rename it using a colon: const { id: userId } = user. The original object key is on the left, and your new variable name is on the right."
       },
       {
-        "title": "2. Nested Destructuring",
-        "content": "Unpack nested structures: const { address: { city } } = user."
+        "title": "2. Destructuring in Function Parameters",
+        "content": "Instead of accepting a generic options object and writing options.name everywhere, unpack it right in the function header: function greet({ name, role = 'Member' }). This is standard in modern frameworks like React!"
       },
       {
-        "title": "3. Undefined Protection",
-        "content": "Defaults apply only if the target property is strictly undefined."
+        "title": "3. Defaults Only Activate on undefined",
+        "content": "A default value only kicks in if the extracted value is strictly undefined. If the property contains null, false, or 0, the default value will NOT trigger."
       }
     ]
   },
   "part4": {
-    "title": "Clean Code: Parameter Destructuring with Defaults",
+    "title": "Common Mistakes: Confusing Renaming Syntax with Defaults",
     "bad": {
-      "title": "❌ Bad: Repetitive property access with long chains",
-      "code": "function renderUserCard(user) {\n  const name = user.name;\n  const role = user.role !== undefined ? user.role : \"Guest\";\n  const email = user.email;\n  console.log(name, role, email);\n}",
-      "explanation": "Copying properties out of an object one by one requires lots of repetitive, boring code."
+      "title": "❌ Bad: Using equal signs to rename or writing repetitive manual assignments",
+      "code": "const user = { username: \"coder99\", role: \"Editor\" };\n\n// Bug: Writing = when you meant to rename!\n// const { username = handle } = user; // Doesn't rename username to handle!\n\n// Repetitive manual extraction:\nconst username = user.username;\nconst role = user.role !== undefined ? user.role : \"Guest\";\nconsole.log(username, role);",
+      "explanation": "Equal signs (=) are for default fallback values. To rename a property during destructuring, you must use a colon (:)."
     },
     "good": {
-      "title": "✅ Clean: Destructuring in parameters with defaults",
-      "code": "function renderUserCard({ name, role = \"Guest\", email }) {\n  console.log(`${name} (${role}) - ${email}`);\n}\n\nrenderUserCard({ name: \"Alex\", email: \"alex@test.com\" });\n// \"Alex (Guest) - alex@test.com\"",
-      "explanation": "Destructuring unpacks only the properties you need in a single clean line, with safe default values if anything is missing."
+      "title": "✅ Clean: Clear renaming with colons and clean parameter unpacking",
+      "code": "const user = { username: \"coder99\", role: \"Editor\" };\n\n// Correct renaming: { originalKey: newVariableName }\nconst { username: handle, role = \"Guest\" } = user;\nconsole.log(\"Handle:\", handle); // \"coder99\"\nconsole.log(\"Role:\", role);     // \"Editor\"\n\n// Unpack directly in function arguments:\nfunction displayBadge({ username, role = \"Guest\" }) {\n  console.log(`[${role.toUpperCase()}] ${username}`);\n}\ndisplayBadge(user); // \"[EDITOR] coder99\"",
+      "explanation": "Using colon syntax ({ username: handle }) cleanly creates a new variable named handle. Destructuring in function headers makes requirements instantly clear."
     }
   },
   "part5": {
     "title": "Destructuring Playground",
-    "intro": "Destructure nested objects, unpack function arguments directly, and test default values:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-14: DESTRUCTURING DEMO\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst serverResponse = {\n  status: 200,\n  data: {\n    user: { id: 101, username: \"dev_dan\", active: true },\n    token: \"jwt_token_secret_xyz\"\n  }\n};\n\n// 1. Nested object destructuring + renaming:\nconst {\n  status: statusCode,\n  data: { user: { username, active } }\n} = serverResponse;\n\nconsole.log(\"Status Code:\", statusCode);\nconsole.log(\"User:\", username, \"(Active:\", active, \")\");\n\n// 2. Array destructuring:\nconst coordinates = [37.7749, -122.4194];\nconst [latitude, longitude] = coordinates;\nconsole.log(`Location: Lat ${latitude}, Long ${longitude}`);\n\n// 3. Swap variables without temp variable:\nlet a = 1, b = 2;\n[a, b] = [b, a];\nconsole.log(\"Swapped: a =\", a, \", b =\", b);\n"
+    "intro": "Unpack nested user records, rename colliding variables, unpack array coordinates, and swap variables cleanly:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-14: DESTRUCTURING PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst account = {\n  id: 402,\n  profile: {\n    displayName: \"Alex Rivera\",\n    email: \"alex@example.com\"\n  },\n  preferences: {\n    theme: \"dark\"\n    // notifications is undefined\n  }\n};\n\n// 1. Nested object destructuring with renaming and defaults:\nconst {\n  id: accountId, // Renamed from id to accountId\n  profile: { displayName, email },\n  preferences: { theme, notifications = \"email-only\" } // Default fallback\n} = account;\n\nconsole.log(\"Account ID:\", accountId);\nconsole.log(\"User:\", displayName, \"(\" + email + \")\");\nconsole.log(\"Theme:\", theme, \"| Notifications:\", notifications);\n\n// 2. Array destructuring with item skipping:\nconst coordinates = [37.7749, -122.4194, 15]; // [latitude, longitude, zoom]\nconst [lat, lng, zoom = 10] = coordinates;\nconsole.log(\"Location -> Lat:\", lat, \"Lng:\", lng, \"Zoom:\", zoom);\n\n// 3. Variable swapping without a temporary variable:\nlet primary = \"Gold\";\nlet secondary = \"Silver\";\n[primary, secondary] = [secondary, primary];\nconsole.log(\"Swapped colors -> Primary:\", primary, \"| Secondary:\", secondary);\n\n// 4. Function parameter destructuring:\nfunction printSummary({ profile: { displayName }, preferences: { theme } }) {\n  return `Summary: ${displayName} prefers ${theme} mode.`;\n}\nconsole.log(printSummary(account));\n"
   },
   "part6": {
-    "title": "Key Takeaways: Unpacking Values",
+    "title": "Key Takeaways: Destructuring",
     "takeaways": [
       {
-        "title": "1. Unpack Cleanly",
-        "desc": "Extract object keys and array items in 1 line."
+        "title": "1. Objects by Key Name",
+        "desc": "Use { prop } to unpack object properties directly. Order does not matter."
       },
       {
-        "title": "2. Set Defaults",
-        "desc": "Use { prop = defaultVal } to handle missing data."
+        "title": "2. Arrays by Position",
+        "desc": "Use [item1, item2] to unpack array items by index position."
       },
       {
-        "title": "3. Parameter Signatures",
-        "desc": "Destructure options objects directly in function headers."
+        "title": "3. Rename with Colons",
+        "desc": "Use { originalKey: newName } to assign properties to custom variable names."
       },
       {
-        "title": "4. Next: Spread & Rest",
-        "desc": "In JS-15, we master the three dots (...) for spreading and gathering."
+        "title": "4. Defaults for undefined",
+        "desc": "Use { prop = defaultVal } to provide a safe fallback if the property is missing."
+      },
+      {
+        "title": "5. Next Step: Spread & Rest",
+        "desc": "In JS-15, we master the three dots (...) to expand collections and gather arguments!"
       }
     ],
     "nextLessonPreview": {
-      "title": "JS-15: Spread & Rest Operators: Combining and Gathering (...)",
-      "desc": "Use the three dots (...) to copy arrays, merge objects, and capture variable arguments with rest parameters."
+      "title": "JS-15: Spread & Rest Operators: Expanding and Gathering (...)",
+      "desc": "Use the three dots (...) to unpack collections with spread and collect variable arguments with rest parameters."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Unpacking Values",
+    "title": "Knowledge Check: Destructuring",
     "quiz": {
-      "question": "How do you rename a property while destructuring from an object?",
+      "question": "How do you rename a property from 'id' to 'userId' while destructuring an object?",
       "options": [
-        "const { originalKey as newName } = obj",
-        "const { originalKey: newName } = obj",
-        "const { originalKey -> newName } = obj",
-        "const [ originalKey, newName ] = obj"
+        "const { id as userId } = user;",
+        "const { id: userId } = user;",
+        "const { id -> userId } = user;",
+        "const { userId = id } = user;"
       ],
       "correctIndex": 1,
-      "explanation": "In JavaScript object destructuring, renaming uses a colon: { propertyName: newVariableName } = object."
+      "explanation": "In JavaScript object destructuring, renaming uses a colon: { originalKey: newVariableName } = object. The colon specifies the new variable name to create."
     }
   }
 },
@@ -2574,169 +2603,179 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "js15-spread-and-rest-operators": {
   "slug": "js15-spread-and-rest-operators",
   "code": "JS-15",
-  "title": "Spread & Rest Operators: Combining and Gathering (...)",
-  "subtitle": "Use the three dots (...) to unpack collections with spread and gather parameters with rest.",
+  "title": "Spread & Rest Operators: Expanding and Gathering (...)",
+  "subtitle": "Use the three dots (...) to unpack collections with spread and collect variable arguments with rest parameters.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "The Three Dots (...)",
-            "icon": "✨",
-            "tag": "SYNTAX"
-        },
-        {
-            "id": "part2",
-            "label": "Rest Parameters",
-            "icon": "📥",
-            "tag": "REST"
-        },
-        {
-            "id": "part3",
-            "label": "Spread Operator",
-            "icon": "📤",
-            "tag": "SPREAD"
-        },
-        {
-            "id": "part5",
-            "label": "Spread & Rest Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "The Three Dots (...)",
+      "icon": "✨",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "Spread: Unpacking",
+      "icon": "📤",
+      "tag": "SPREAD"
+    },
+    {
+      "id": "part3",
+      "label": "Rest: Gathering",
+      "icon": "📥",
+      "tag": "REST"
+    },
+    {
+      "id": "part4",
+      "label": "Placement Rules & Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Spread & Rest Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
     "title": "The Three Dots (...): Spreading vs Gathering",
-    "bigPicture": "The three dots (...) do two different jobs. Spread unpacks a list into separate items. Rest collects multiple items into a single list. Think of Rest like packing a suitcase, and Spread like unpacking it.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "bigPicture": "In modern JavaScript, the three dots (...) are one of the most versatile tools you will use. But beginners are often confused because the exact same three dots do two opposite jobs depending on where you put them! Think of packing and unpacking a suitcase: Spread is unpacking your suitcase and spreading your clothes across your room. Rest is gathering loose clothes from the floor and packing them into a suitcase.",
+    "breakdownTitle": "The Twin Roles of the Three Dots (...):",
     "breakdownItems": [
       {
-        "title": "Spread Operator (...)",
-        "desc": "Expands an iterable (array, object, string) into individual elements or keys."
+        "title": "Spread Operator (Unpack)",
+        "desc": "Unpacks an array or object into individual elements or properties. Use it to copy arrays, concatenate lists, or merge objects."
       },
       {
-        "title": "Rest Parameters (...)",
-        "desc": "Gathers remaining function arguments into a real JavaScript array."
+        "title": "Rest Parameters (Gather)",
+        "desc": "Gathers multiple incoming function arguments or remaining object properties into a single, real JavaScript array."
       },
       {
-        "title": "Safe Merging",
-        "desc": "Combine multiple arrays or objects without changing the originals."
+        "title": "Safe Non-Destructive Merging",
+        "desc": "Combining data with spread creates fresh collections, leaving your original arrays and objects completely untouched."
       }
     ]
   },
   "part2": {
-    "title": "Rest Parameters: Flexible Function Arguments",
-    "intro": "Writing functions that accept any number of arguments cleanly:",
+    "title": "Spread Syntax: Unpacking Arrays & Merging Objects",
+    "intro": "How spread expands items into new arrays and objects without modifying originals:",
     "cards": [
       {
         "number": "01",
-        "tag": "Unpack",
-        "title": "Spread: [...arr, ...arr2]",
-        "description": "Unpacks elements to shallow copy or concatenate arrays.",
+        "tag": "Arrays",
+        "title": "Array Spread [...a, ...b]",
+        "description": "Unpacks elements from multiple arrays into a fresh, combined array. Perfect for safe cloning and concatenation.",
         "color": "purple"
       },
       {
         "number": "02",
-        "tag": "Gather",
-        "title": "Rest: function(first, ...rest)",
-        "description": "Captures indefinite function arguments as a standard array.",
+        "tag": "Objects",
+        "title": "Object Spread { ...a, ...b }",
+        "description": "Merges objects cleanly. If both objects contain the same key, the property on the right overwrites the one on the left.",
         "color": "emerald"
       },
       {
         "number": "03",
-        "tag": "Merging",
-        "title": "Object Spread: { ...a, ...b }",
-        "description": "Merges objects; properties on the right overwrite identical properties on the left.",
-        "color": "amber"
+        "tag": "Function Calls",
+        "title": "Math.max(...numbers)",
+        "description": "Unpacks an array of numbers as individual arguments into functions that expect separate parameters.",
+        "color": "cyan"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Rest parameters must always be the last parameter in a function definition: function(a, b, ...rest) {} — you cannot put parameters after rest."
+      "title": "💡 Golden Rule of Object Merging",
+      "content": "When merging objects with spread { ...defaults, ...custom }, keys from the object on the right always overwrite keys on the left! Put your default values first, followed by custom user overrides."
     }
   },
   "part3": {
-    "title": "Spread Syntax: Merging Arrays & Combining Objects",
-    "intro": "Combining arrays and copying objects without changing the originals:",
+    "title": "Rest Parameters: Gathering Flexible Arguments",
+    "intro": "Writing functions that accept any number of arguments cleanly:",
     "points": [
       {
-        "title": "1. Spread Unpacks",
-        "content": "Spread expands elements where individual items are expected."
+        "title": "1. Gathering Indefinite Arguments",
+        "content": "Use ...args in a function parameter list: function sumAll(...numbers). All incoming arguments are gathered into a real array named numbers."
       },
       {
-        "title": "2. Rest Gathers",
-        "content": "Rest condenses multiple values into a single array."
+        "title": "2. Real Array Superpowers",
+        "content": "Unlike the confusing legacy 'arguments' object from older JavaScript, rest parameters produce a real JavaScript array with full access to .map(), .filter(), and .reduce()."
       },
       {
-        "title": "3. Real Array",
-        "content": "Unlike legacy 'arguments', rest parameters produce a real array with map, filter, etc."
+        "title": "3. Rest in Destructuring",
+        "content": "You can also use rest to collect remaining properties: const [first, ...others] = [1, 2, 3, 4] gives first = 1 and others = [2, 3, 4]."
       }
     ]
   },
   "part4": {
-    "title": "Rest Parameters vs Legacy arguments Object",
+    "title": "Common Mistakes: Rest Placement and Mutation Traps",
     "bad": {
-      "title": "❌ Bad: Using legacy arguments object instead of rest",
-      "code": "function sumAll() {\n  // arguments is an array-like object missing array methods:\n  // arguments.map(...) -> TypeError!\n  let sum = 0;\n  for (let i = 0; i < arguments.length; i++) sum += arguments[i];\n  return sum;\n}",
-      "explanation": "The old 'arguments' keyword is confusing and not a real array. Modern code uses rest parameters (...args) instead."
+      "title": "❌ Bad: Putting rest parameters in the middle of a parameter list",
+      "code": "// SyntaxError: Rest parameter must be last formal parameter!\n// function logEvent(level, ...details, timestamp) {\n//   console.log(level, details, timestamp);\n// }\n\nfunction sumAll() {\n  // Bad legacy code: arguments is not an array!\n  // arguments.map(n => n * 2); // TypeError: arguments.map is not a function!\n}",
+      "explanation": "JavaScript requires the rest parameter to be the very last parameter because it collects all remaining arguments. Placing anything after it causes a SyntaxError."
     },
     "good": {
-      "title": "✅ Clean: Rest parameters producing a real array with reduce",
-      "code": "const sumAll = (...numbers) => numbers.reduce((acc, n) => acc + n, 0);\n\nconsole.log(sumAll(10, 20, 30)); // 60",
-      "explanation": "Rest parameters gather any number of inputs into a real, easy-to-use array."
+      "title": "✅ Clean: Rest at the end and modern declarative array reduction",
+      "code": "// Clean: Rest parameter is always the final parameter:\nfunction logEvent(level, timestamp, ...details) {\n  console.log(`[${level}] at ${timestamp}:`, details.join(\" | \"));\n}\nlogEvent(\"INFO\", \"12:00PM\", \"User logged in\", \"IP 10.0.0.1\");\n\n// Clean modern rest function with reduce:\nconst sumAll = (...numbers) => numbers.reduce((total, n) => total + n, 0);\nconsole.log(\"Sum:\", sumAll(10, 20, 30)); // 60",
+      "explanation": "Placing the rest parameter at the end allows JavaScript to gather all trailing arguments into a real array that supports all array methods."
     }
   },
   "part5": {
     "title": "Spread & Rest Playground",
-    "intro": "Combine lists with spread, merge configuration objects, and write flexible rest functions:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-15: SPREAD & REST OPERATORS\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Spread with Arrays (Concatenation & Cloning)\nconst frontend = [\"HTML\", \"CSS\", \"JS\"];\nconst backend = [\"Node.js\", \"PostgreSQL\"];\nconst fullStack = [...frontend, ...backend, \"Docker\"];\nconsole.log(\"Full Stack Stack:\", fullStack);\n\n// 2. Spread with Objects (Merging & Overriding)\nconst defaultTheme = { theme: \"light\", fontSize: 14, showSidebar: true };\nconst userCustomization = { theme: \"dark\", fontSize: 16 };\nconst activeTheme = { ...defaultTheme, ...userCustomization };\nconsole.log(\"Merged Theme:\", activeTheme);\n\n// 3. Rest Parameters in Functions\nfunction recordLog(level, ...messages) {\n  console.log(`[${level.toUpperCase()}] ${messages.join(\" - \")}`);\n}\n\nrecordLog(\"info\", \"User logged in\", \"IP: 192.168.1.1\", \"Session: active\");\n"
+    "intro": "Merge arrays and objects with spread, pass array items into Math functions, and write flexible rest functions:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-15: SPREAD & REST PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Array Spread: Combine lists non-destructively\nconst starterSkills = [\"HTML\", \"CSS\"];\nconst backendSkills = [\"Node.js\", \"PostgreSQL\"];\nconst fullStackSkills = [...starterSkills, \"JavaScript\", ...backendSkills, \"Git\"];\nconsole.log(\"Full Stack Skills:\", fullStackSkills);\n\n// 2. Object Spread: Merging defaults with user settings\nconst defaultSettings = { theme: \"light\", fontSize: 14, autoSave: true };\nconst userCustomizations = { theme: \"dark\", fontSize: 16 }; // Custom overrides\nconst activeConfig = { ...defaultSettings, ...userCustomizations };\nconsole.log(\"Active Config (dark theme wins):\", activeConfig);\n\n// 3. Function Call Spread: Math.max on an array\nconst scores = [85, 92, 78, 99, 88];\nconst highestScore = Math.max(...scores); // Unpacks to: Math.max(85, 92, 78, 99, 88)\nconsole.log(\"Highest Score:\", highestScore);\n\n// 4. Rest Parameters in Functions:\nfunction formatInvoice(customerName, discountPercent, ...itemPrices) {\n  const subtotal = itemPrices.reduce((sum, price) => sum + price, 0);\n  const discountAmount = subtotal * (discountPercent / 100);\n  const finalTotal = subtotal - discountAmount;\n  return `Invoice for ${customerName}: $${finalTotal.toFixed(2)} (${itemPrices.length} items)`;\n}\n\nconsole.log(formatInvoice(\"Acme Corp\", 10, 100, 50, 25));\n\n// 5. Rest in Destructuring:\nconst [primaryColor, ...accentColors] = [\"#ff0000\", \"#00ff00\", \"#0000ff\", \"#ffff00\"];\nconsole.log(\"Primary:\", primaryColor);\nconsole.log(\"Accents array:\", accentColors);\n"
   },
   "part6": {
-    "title": "Key Takeaways: The Three Dots (...)",
+    "title": "Key Takeaways: Spread & Rest Operators",
     "takeaways": [
       {
-        "title": "1. Spread Unpacks",
-        "desc": "Use ... to merge arrays and clone objects."
+        "title": "1. Spread Unpacks (...)",
+        "desc": "Expands arrays into individual items and merges objects cleanly without mutations."
       },
       {
-        "title": "2. Rest Gathers",
-        "desc": "Capture indefinite arguments into a true array."
+        "title": "2. Rest Gathers (...)",
+        "desc": "Collects multiple incoming arguments into a single real JavaScript array."
       },
       {
-        "title": "3. Precedence in Merge",
-        "desc": "In {...a, ...b}, properties in 'b' overwrite 'a'."
+        "title": "3. Right-Side Precedence",
+        "desc": "In object spread { ...a, ...b }, properties from 'b' overwrite identical properties from 'a'."
       },
       {
-        "title": "4. Next: Optional Chaining",
-        "desc": "In JS-16, we explore ?. and ?? for safe data access."
+        "title": "4. Rest Must Be Last",
+        "desc": "Rest parameters must always sit at the end of a function parameter list."
+      },
+      {
+        "title": "5. Next Step: Safe Property Access",
+        "desc": "In JS-16, we learn Optional Chaining (?.) and Nullish Coalescing (??) to prevent crashes!"
       }
     ],
     "nextLessonPreview": {
       "title": "JS-16: Optional Chaining (?.) & Nullish Coalescing (??)",
-      "desc": "Safely navigate deep nested data without 'Cannot read properties of undefined' errors."
+      "desc": "Prevent runtime errors by safely navigating nested data with ?. and setting safe fallbacks with ?? without false-alarm bugs."
     }
   },
   "part7": {
-    "title": "Knowledge Check: The Three Dots (...)",
+    "title": "Knowledge Check: Spread & Rest",
     "quiz": {
-      "question": "Where must a Rest parameter (...args) be placed in a function's parameter list?",
+      "question": "Where must a Rest parameter (...args) be placed in a function definition?",
       "options": [
-        "Anywhere; order does not matter.",
-        "It must always be the very last parameter in the list.",
-        "It must always be the very first parameter in the list.",
-        "Rest parameters are only allowed in class constructors."
+        "Anywhere in the parameter list; position does not matter",
+        "It must always be the very last parameter in the list",
+        "It must always be the very first parameter in the list",
+        "A function can have multiple rest parameters anywhere"
       ],
       "correctIndex": 1,
-      "explanation": "In JavaScript syntax, a rest parameter must always be the last parameter in the function declaration because it gathers all remaining arguments."
+      "explanation": "A rest parameter gathers all remaining arguments into an array, so it must always be the last parameter in the function declaration."
     }
   }
 },
@@ -2745,174 +2784,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js16-optional-chaining-and-nullish-coalescing",
   "code": "JS-16",
   "title": "Optional Chaining (?.) & Nullish Coalescing (??)",
-  "subtitle": "Navigate nested data safely with ?. and provide default fallbacks with ?? without false-alarm bugs.",
+  "subtitle": "Prevent runtime errors by safely navigating nested data with ?. and setting safe fallbacks with ?? without false-alarm bugs.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Defensive Coding",
-            "icon": "🛡️",
-            "tag": "SAFETY"
-        },
-        {
-            "id": "part2",
-            "label": "Optional Chaining (?.)",
-            "icon": "🔗",
-            "tag": "CHAINING"
-        },
-        {
-            "id": "part3",
-            "label": "Nullish Coalescing (??)",
-            "icon": "⚖️",
-            "tag": "DEFAULTS"
-        },
-        {
-            "id": "part4",
-            "label": "Nullish ?? vs OR ||",
-            "icon": "🛡️",
-            "tag": "PITFALL"
-        },
-        {
-            "id": "part5",
-            "label": "Safe Navigation Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Defensive Coding",
+      "icon": "🛡️",
+      "tag": "SAFETY"
+    },
+    {
+      "id": "part2",
+      "label": "Optional Chaining (?.)",
+      "icon": "🔗",
+      "tag": "CHAINING"
+    },
+    {
+      "id": "part3",
+      "label": "Nullish (??) vs OR (||)",
+      "icon": "⚖️",
+      "tag": "DEFAULTS"
+    },
+    {
+      "id": "part4",
+      "label": "The Falsy Zero Bug",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Safe Navigation Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Defensive Coding: Surviving Missing Properties",
-    "bigPicture": "Modern applications frequently handle nested API responses where properties may be missing. Optional chaining (?.) and nullish coalescing (??) protect your code from crashing without bulky if statements.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "Defensive Coding: Surviving Missing Properties and API Data",
+    "bigPicture": "Every JavaScript developer eventually encounters the most common runtime crash: TypeError: Cannot read properties of undefined (reading 'city'). This happens when your code tries to drill into an object that doesn't exist—often because an API response is still loading, a profile field is optional, or data is missing. In the past, developers had to write long, clunky checks like user && user.address && user.address.city. Modern JavaScript solves this elegantly with two tools: Optional Chaining (?.) and Nullish Coalescing (??).",
+    "breakdownTitle": "The Defensive Coding Toolkit:",
     "breakdownItems": [
       {
         "title": "Optional Chaining (?.)",
-        "desc": "Safely accesses deeply nested properties; if any link is nullish, returns undefined instead of throwing."
+        "desc": "Safely reads nested properties. If any part of the chain is null or undefined, it stops immediately and safely returns undefined instead of crashing."
       },
       {
         "title": "Nullish Coalescing (??)",
-        "desc": "Returns the right side ONLY if the left side is null or undefined (preserves 0, false, and '')."
+        "desc": "Provides a fallback value ONLY when the left side is null or undefined, safely preserving valid 0, false, and empty string '' values."
       },
       {
-        "title": "Why || is Risky",
-        "desc": "The logical OR (||) treats 0, false, and '' as falsy, replacing valid zero values with defaults."
+        "title": "The || False-Alarm Trap",
+        "desc": "Logical OR (||) treats 0, false, and '' as falsy, accidentally overwriting legitimate zero values with fallback defaults."
       }
     ]
   },
   "part2": {
-    "title": "Optional Chaining (?.): No More Cannot Read Property Errors",
-    "intro": "Safely drilling into deeply nested object properties without runtime crashes:",
+    "title": "Optional Chaining (?.): Safe Property Access",
+    "intro": "Navigating deeply nested structures without fearing runtime crashes:",
     "cards": [
       {
         "number": "01",
-        "tag": "Safe Access",
-        "title": "Optional Chaining (?.)",
-        "description": "user?.address?.city — stops evaluation immediately if user or address is nullish.",
+        "tag": "Safe Drill",
+        "title": "Nested Keys (user?.address?.city)",
+        "description": "If user or address is null or undefined, evaluation stops immediately and evaluates to undefined. No crash!",
         "color": "emerald"
       },
       {
         "number": "02",
-        "tag": "Defaults",
-        "title": "Nullish (??)",
-        "description": "count ?? 10 — only triggers fallback if count is null or undefined.",
+        "tag": "Smart Defaults",
+        "title": "Nullish Coalescing (value ?? default)",
+        "description": "Returns the fallback only if value is null or undefined. A score of 0 or boolean of false is kept intact.",
         "color": "purple"
       },
       {
         "number": "03",
-        "tag": "Trap",
-        "title": "The || Trap",
-        "description": "count || 10 — replaces 0 with 10! Always prefer ?? for numbers and booleans.",
-        "color": "rose"
+        "tag": "Safe Calls",
+        "title": "Optional Calls (callback?.())",
+        "description": "Executes a function only if it exists. If the callback was omitted, JavaScript cleanly skips the call without errors.",
+        "color": "cyan"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Use ?? for default values when 0, false, or '' are valid data values. Use ?. to safely access API response properties."
+      "title": "💡 Golden Rule of Default Values",
+      "content": "Always choose the nullish coalescing operator ?? over logical OR || when providing default values for numbers, booleans, and strings! ?? protects against replacing valid zeros or false booleans."
     }
   },
   "part3": {
     "title": "Nullish Coalescing (??) vs Logical OR (||)",
-    "intro": "Why ?? preserves valid values like 0, false, and empty string '':",
+    "intro": "Understanding why ?? is much safer than || for default values:",
     "points": [
       {
-        "title": "1. Function Calls (?.)",
-        "content": "You can safely call optional callbacks: onComplete?.() won't crash if onComplete is undefined."
+        "title": "1. The Falsy Overwrite Trap with ||",
+        "content": "The logical OR operator (||) checks for any falsy value (0, false, '', null, undefined, NaN). If a user has 0 unread messages, count || 10 replaces 0 with 10! That's a real bug."
       },
       {
-        "title": "2. Array Indexing (?.[0])",
-        "content": "Safely access first item: list?.[0] checks if list is nullish before indexing."
+        "title": "2. The Nullish Definition (??)",
+        "content": "The nullish operator (??) only looks for 'nullish' values: null and undefined. It treats 0, false, and empty strings as completely valid, preserving your real data."
       },
       {
-        "title": "3. Short-Circuiting",
-        "content": "As soon as ?. encounters null or undefined, the rest of the chain is skipped."
+        "title": "3. Safe Array Indexing (?.[0])",
+        "content": "You can safely access array elements that might not exist using bracket notation: users?.[0]?.name cleanly checks if users exists and has a first element."
       }
     ]
   },
   "part4": {
-    "title": "Common Mistake: Using || When ?? Is Needed",
+    "title": "Common Mistakes: Using || for Numeric Defaults",
     "bad": {
-      "title": "❌ Bad: Using || for numeric defaults and crashing on missing properties",
-      "code": "const userScore = 0; // 0 is a valid score!\nconst score = userScore || 50; // Bug: 0 is falsy, so score becomes 50!\nconsole.log(\"Score:\", score); // 50 (Incorrect!)\n\nconst user = {};\n// Crashes the app: Cannot read properties of undefined (reading 'street')\n// console.log(user.profile.street);",
-      "explanation": "Using || accidentally replaces valid zero (0) values, and reading deeply nested properties without ?. crashes your app if anything is missing."
+      "title": "❌ Bad: Using || for numeric defaults and deep access without ?.",
+      "code": "const userSettings = {\n  volume: 0,         // Legitimate volume level (muted)!\n  notifications: false // Legitimate boolean choice!\n};\n\n// Bug: 0 is falsy, so || overrides it with 50!\nconst activeVolume = userSettings.volume || 50;\nconsole.log(\"Volume:\", activeVolume); // 50 (Mute was ignored!)\n\nconst account = {};\n// Crashes the app: TypeError: Cannot read properties of undefined!\n// const zipCode = account.profile.address.zipCode;",
+      "explanation": "Using || replaces valid zero (0) values with the default. Accessing properties on undefined without ?. crashes your application immediately."
     },
     "good": {
       "title": "✅ Clean: Safe navigation with ?. and accurate defaults with ??",
-      "code": "const userScore = 0;\n// ?? only replaces null or undefined, preserving 0:\nconst score = userScore ?? 50;\nconsole.log(\"Score:\", score); // 0 (Correct!)\n\nconst user = {};\nconsole.log(\"Street:\", user.profile?.street ?? \"No street provided\");\n// \"No street provided\" without any errors!",
-      "explanation": "Optional chaining (?.) stops crashes if something is missing, and nullish coalescing (??) safely keeps zero and false while replacing only null or undefined."
+      "code": "const userSettings = {\n  volume: 0,\n  notifications: false\n};\n\n// Clean: ?? preserves 0 and false, replacing only null or undefined:\nconst activeVolume = userSettings.volume ?? 50;\nconst notificationsOn = userSettings.notifications ?? true;\nconsole.log(\"Volume:\", activeVolume);            // 0 (Muted volume preserved!)\nconsole.log(\"Notifications:\", notificationsOn); // false (User choice preserved!)\n\nconst account = {};\n// Safe drill: Evaluates cleanly to undefined without crashing\nconst zipCode = account.profile?.address?.zipCode ?? \"No ZIP provided\";\nconsole.log(\"Zip Code:\", zipCode); // \"No ZIP provided\"",
+      "explanation": "Optional chaining (?.) prevents crashes when intermediate objects are missing, and nullish coalescing (??) reliably distinguishes valid zeros from missing data."
     }
   },
   "part5": {
     "title": "Safe Navigation Playground",
-    "intro": "Drill into deeply nested API structures safely and test fallback defaults with ?? and ||:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-16: OPTIONAL CHAINING & NULLISH COALESCING\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst apiResponse = {\n  user: {\n    name: \"Elena\",\n    preferences: {\n      notificationsCount: 0, // Valid 0!\n      soundEnabled: false    // Valid false!\n    }\n  }\n};\n\n// 1. Optional Chaining on nested properties\nconst zipCode = apiResponse.user?.address?.zipCode;\nconsole.log(\"Zip Code (safe access):\", zipCode); // undefined (No crash!)\n\n// 2. Safe method call\napiResponse.user?.sendNotification?.(); // Skips cleanly\n\n// 3. Nullish Coalescing (??) preserves 0 and false\nconst unread = apiResponse.user.preferences.notificationsCount ?? 10;\nconst sound = apiResponse.user.preferences.soundEnabled ?? true;\n\nconsole.log(\"Notifications Count:\", unread); // 0 (Preserved!)\nconsole.log(\"Sound Enabled:\", sound);       // false (Preserved!)\n\n// Compare with || trap:\nconsole.log(\"With || trap:\", apiResponse.user.preferences.notificationsCount || 10); // 10 (Corrupted!)\n"
+    "intro": "Explore deep object drilling, test safe method execution, and compare ?? vs || with zeros and booleans:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-16: OPTIONAL CHAINING & NULLISH COALESCING\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst apiResponse = {\n  status: 200,\n  data: {\n    user: {\n      name: \"Elena Rostova\",\n      metrics: {\n        totalLogins: 0,      // Valid zero!\n        isProMember: false   // Valid false!\n      }\n      // address is missing\n      // sendAlert() method is missing\n    }\n  }\n};\n\n// 1. Safe nested property access with ?.\nconst street = apiResponse.data?.user?.address?.street;\nconsole.log(\"Street address (safe access):\", street); // undefined (No crash!)\n\n// 2. Safe method invocation with ?.()\napiResponse.data?.user?.sendAlert?.(\"Hello!\");\nconsole.log(\"Safely called optional method without errors!\");\n\n// 3. Nullish Coalescing (??) preserves 0 and false:\nconst logins = apiResponse.data.user.metrics.totalLogins ?? 1;\nconst isPro = apiResponse.data.user.metrics.isProMember ?? true;\n\nconsole.log(\"Total logins (??):\", logins); // 0 (Preserved!)\nconsole.log(\"Is Pro (??):\", isPro);        // false (Preserved!)\n\n// Compare with logical OR (||) false-alarm trap:\nconst corruptedLogins = apiResponse.data.user.metrics.totalLogins || 1;\nconst corruptedPro = apiResponse.data.user.metrics.isProMember || true;\n\nconsole.log(\"With || trap -> logins:\", corruptedLogins); // 1 (Bug: 0 was replaced!)\nconsole.log(\"With || trap -> isPro:\", corruptedPro);     // true (Bug: false was replaced!)\n\n// 4. Combined ?. and ?? pattern:\nconst city = apiResponse.data?.user?.address?.city ?? \"City not specified\";\nconsole.log(\"User city:\", city); // \"City not specified\"\n"
   },
   "part6": {
-    "title": "Key Takeaways: Defensive Coding",
+    "title": "Key Takeaways: Optional Chaining & Nullish Coalescing",
     "takeaways": [
       {
-        "title": "1. No More Crashes",
-        "desc": "Use ?. to safely access deeply nested data."
+        "title": "1. No More TypeError Crashes",
+        "desc": "Use ?. to safely access deeply nested properties across potentially missing objects."
       },
       {
-        "title": "2. Preserve 0 & false",
-        "desc": "Use ?? to default only null or undefined."
+        "title": "2. Preserves 0, false, and ''",
+        "desc": "Use ?? to provide defaults only when a value is strictly null or undefined."
       },
       {
-        "title": "3. Optional Methods",
-        "desc": "Call callbacks safely with callback?.()."
+        "title": "3. Optional Function Calling",
+        "desc": "Use callback?.() to safely run callbacks that may not have been passed."
       },
       {
-        "title": "4. Next: The this Keyword",
-        "desc": "In JS-17, we unlock the dynamic behavior of this in JavaScript."
+        "title": "4. Avoid || for Data Defaults",
+        "desc": "The || operator treats 0 and false as missing, introducing subtle false-alarm bugs."
+      },
+      {
+        "title": "5. Next Step: Object-Oriented JS",
+        "desc": "In Stage 5, we explore the 'this' keyword, prototype inheritance, and modern classes!"
       }
     ],
     "nextLessonPreview": {
       "title": "JS-17: The this Keyword: Who Called Me?",
-      "desc": "Master the rules of this: method calls, arrow functions, and explicit binding with call, apply, and bind."
+      "desc": "Learn how 'this' dynamically resolves based on who called a function, and how arrow functions borrow 'this' from their surrounding scope."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Defensive Coding",
+    "title": "Knowledge Check: Safe Navigation",
     "quiz": {
-      "question": "What will this expression evaluate to: (0 ?? 100) vs (0 || 100)?",
+      "question": "What does user?.address?.city evaluate to if user.address is null or undefined?",
       "options": [
-        "Both evaluate to 100.",
-        "Both evaluate to 0.",
-        "(0 ?? 100) evaluates to 0; (0 || 100) evaluates to 100.",
-        "Throws a syntax error."
+        "It throws a TypeError: Cannot read property 'city' of undefined",
+        "undefined (without throwing any error)",
+        "null",
+        "false"
       ],
-      "correctIndex": 2,
-      "explanation": "0 is a falsy value, so || treats it as false and returns 100. However, 0 is not null or undefined, so ?? preserves 0."
+      "correctIndex": 1,
+      "explanation": "Optional chaining (?.) short-circuits and safely returns undefined the moment any property in the chain is null or undefined, completely avoiding runtime crashes."
     }
   }
 },
@@ -2921,160 +2964,164 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js17-the-this-keyword",
   "code": "JS-17",
   "title": "The this Keyword: Who Called Me?",
-  "subtitle": "Understand how this dynamically refers to the object currently executing the method.",
+  "subtitle": "Learn how this gets its value dynamically at call time, how arrow functions borrow this, and how to avoid losing context in callbacks.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Who Called Me?",
-            "icon": "👤",
-            "tag": "CONTEXT"
-        },
-        {
-            "id": "part2",
-            "label": "The Dot Rule",
-            "icon": "🎯",
-            "tag": "RULES"
-        },
-        {
-            "id": "part3",
-            "label": "Arrow Inherited this",
-            "icon": "🏹",
-            "tag": "ARROWS"
-        },
-        {
-            "id": "part4",
-            "label": "Losing this in Callbacks",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "this Keyword Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Who Called Me?",
+      "icon": "👤",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "The Dot Rule",
+      "icon": "🎯",
+      "tag": "RULES"
+    },
+    {
+      "id": "part3",
+      "label": "Arrows & Callbacks",
+      "icon": "🏹",
+      "tag": "ARROWS"
+    },
+    {
+      "id": "part4",
+      "label": "Detached Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "this Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "The this Keyword: Who Is Calling the Method?",
-    "bigPicture": "In JavaScript, the 'this' keyword dynamically refers to the object currently executing the method. Think of 'this' like the pronoun 'I' or 'My' — depending on who is currently speaking, the word 'I' refers to a different person.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "The this Keyword: Who Is Speaking Right Now?",
+    "bigPicture": "The 'this' keyword is famously one of the most misunderstood topics in JavaScript. But you can master it with a simple analogy: think of 'this' like the pronoun 'I' or 'My'. If Alice says 'I am hungry', the word 'I' refers to Alice. If Bob says 'I am hungry', the word 'I' refers to Bob! The pronoun 'I' has no permanent identity—its meaning depends on who is speaking right now. In JavaScript, 'this' works the exact same way: its value depends on how a function is called, not where it was typed.",
+    "breakdownTitle": "The Three Core Rules of 'this':",
     "breakdownItems": [
       {
-        "title": "Method Calls",
-        "desc": "When called as user.speak(), this refers to the object before the dot (user)."
+        "title": "The Dot Rule (user.speak())",
+        "desc": "Look immediately to the left of the dot when a function is called. Whatever is to the left of the dot becomes 'this' inside that function."
       },
       {
-        "title": "Arrow Functions",
-        "desc": "Arrow functions DO NOT have their own this; they simply use the this from the surrounding code where they were written."
+        "title": "Arrow Functions Borrow 'this'",
+        "desc": "Arrow functions do NOT have their own 'this'. They simply borrow the 'this' value from the surrounding code where they were written."
       },
       {
-        "title": "Explicit Binding",
-        "desc": "call(), apply(), and bind() allow you to explicitly dictate what this should point to."
+        "title": "The Detached Callback Trap",
+        "desc": "When an object method is passed as a detached callback without parentheses (like setTimeout(user.speak)), the dot disappears and 'this' is lost!"
       }
     ]
   },
   "part2": {
-    "title": "The Dot Rule: Method Invocations & Execution Context",
-    "intro": "Look immediately to the left of the dot when the function is called:",
+    "title": "The Dot Rule: Determining this at Call Time",
+    "intro": "Understanding how the object before the dot controls execution context:",
     "cards": [
       {
         "number": "01",
-        "tag": "Dynamic",
-        "title": "Dot Rule (obj.method)",
-        "description": "Look immediately to the left of the dot when the function is called.",
+        "tag": "Method Call",
+        "title": "The Dot Rule (obj.method())",
+        "description": "When invoked as player.attack(), the player object is directly to the left of the dot, so this points to player.",
         "color": "purple"
       },
       {
         "number": "02",
-        "tag": "Inherited",
-        "title": "Arrow Functions",
-        "description": "Inherits this from outer scope. Never use arrow functions for object methods.",
+        "tag": "Lexical Scope",
+        "title": "Arrow Functions (() => {})",
+        "description": "Arrow functions never create their own this. They inherit this from the outer scope where they were written. Never use them as object methods!",
         "color": "cyan"
       },
       {
         "number": "03",
-        "tag": "Fixed",
-        "title": ".bind(context)",
-        "description": "Permanently locks this to a specific target object, returning a new function.",
+        "tag": "Fixed Context",
+        "title": "Explicit Binding (.bind())",
+        "description": "fn.bind(target) creates a brand-new function where this is permanently locked to the target object, even when passed as a callback.",
         "color": "emerald"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Use standard methods for object definitions (greet() {}). Use arrow functions for callbacks inside methods to preserve this."
+      "title": "💡 Golden Rule of this and Methods",
+      "content": "Always use standard method syntax (greet() {}) for defining methods on objects. Use arrow functions inside methods when passing callbacks, so the callback safely borrows this from the method!"
     }
   },
   "part3": {
-    "title": "Arrow Functions: Borrowed this That Never Changes",
-    "intro": "Why arrow functions inherit this from where they were written:",
+    "title": "Arrow Functions & Keeping Context in Nested Callbacks",
+    "intro": "Why arrow functions are the perfect solution for nested callbacks inside methods:",
     "points": [
       {
-        "title": "1. Left of the Dot",
-        "content": "The object to the left of the dot at call time determines this for regular functions."
+        "title": "1. The Missing Dot in Callbacks",
+        "content": "If you pass an object method as a raw callback (e.g., setTimeout(user.greet, 100)), the timer calls greet() on its own without the dot. In strict mode, this becomes undefined."
       },
       {
-        "title": "2. Loss of Context",
-        "content": "Passing an object method as an uncalled callback (e.g. setTimeout(user.greet)) detaches this."
+        "title": "2. The Arrow Function Fix",
+        "content": "Because arrow functions borrow this from their enclosing scope, wrapping the callback in an arrow function (() => user.greet()) or using an arrow callback inside setTimeout(() => this.name) keeps this intact."
       },
       {
-        "title": "3. Strict Mode",
-        "content": "In strict mode, a standalone function call sets this to undefined instead of the global window."
+        "title": "3. Explicit Control with .call() and .apply()",
+        "content": "You can manually tell a function which object to use right now with fn.call(targetObject, arg1, arg2). It runs the function immediately with this set to targetObject."
       }
     ]
   },
   "part4": {
-    "title": "Detached Callbacks: The Losing this Trap",
+    "title": "Common Mistakes: Arrow Methods vs Detached Callbacks",
     "bad": {
-      "title": "❌ Bad: Using an arrow function as an object method",
-      "code": "const user = {\n  name: \"Marcus\",\n  // Bug: Arrow function inherits 'this' from global/module scope!\n  greet: () => {\n    console.log(\"Hello, I am \" + this.name);\n  }\n};\nuser.greet(); // \"Hello, I am undefined\"",
-      "explanation": "Arrow functions do not have their own 'this'. Inside an object method, using an arrow function makes 'this' look at the outside window instead of the object."
+      "title": "❌ Bad: Arrow function as an object method, losing this to global scope",
+      "code": "const robot = {\n  name: \"Atlas\",\n  battery: 100,\n\n  // Bug: Arrow function does NOT create its own 'this'!\n  // It borrows 'this' from the file/window, so this.name is undefined!\n  checkStatus: () => {\n    console.log(\"Robot:\", this.name, \"| Battery:\", this.battery);\n  }\n};\n\nrobot.checkStatus(); // \"Robot: undefined | Battery: undefined\"",
+      "explanation": "Because checkStatus is an arrow function, it inherits 'this' from the outside file scope (module/window) instead of the robot object."
     },
     "good": {
-      "title": "✅ Clean: Standard method with nested arrow function",
-      "code": "const user = {\n  name: \"Marcus\",\n  greet() {\n    console.log(\"Hello, I am \" + this.name);\n  },\n  greetDelayed() {\n    // Arrow callback preserves 'this' from greetDelayed!\n    setTimeout(() => {\n      console.log(\"Delayed greeting:\", this.name);\n    }, 100);\n  }\n};\nuser.greet(); // \"Hello, I am Marcus\"\nuser.greetDelayed();",
-      "explanation": "Regular method syntax binds 'this' to the user object, and helper arrow functions inside it safely borrow that same object."
+      "title": "✅ Clean: Standard method with nested arrow function callback",
+      "code": "const robot = {\n  name: \"Atlas\",\n  battery: 100,\n\n  // Clean standard method syntax:\n  checkStatus() {\n    console.log(\"Robot:\", this.name, \"| Battery:\", this.battery);\n  },\n\n  // Nested arrow callback safely borrows 'this' from charge():\n  charge() {\n    console.log(\"Charging \" + this.name + \"...\");\n    setTimeout(() => {\n      this.battery = 100;\n      console.log(this.name + \" is fully charged: \" + this.battery + \"%!\");\n    }, 100);\n  }\n};\n\nrobot.checkStatus(); // \"Robot: Atlas | Battery: 100\"\nrobot.charge();      // Works perfectly!",
+      "explanation": "Standard method syntax binds 'this' to the robot object when called with robot.checkStatus(), and the arrow function inside setTimeout borrows that same robot reference."
     }
   },
   "part5": {
     "title": "The this Keyword Playground",
-    "intro": "Observe how this changes across regular methods, arrow functions, and explicit .bind():",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-17: THE THIS KEYWORD\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst chef = {\n  name: \"Chef Gordon\",\n  restaurant: \"Kitchen Master\",\n\n  cook(dish) {\n    console.log(`${this.name} from ${this.restaurant} is cooking ${dish}!`);\n  }\n};\n\n// 1. Direct method call (this = chef)\nchef.cook(\"Beef Wellington\");\n\n// 2. Explicit binding with .call()\nconst guestChef = { name: \"Chef Ramsay\", restaurant: \"Hell's Kitchen\" };\nchef.cook.call(guestChef, \"Risotto\");\n\n// 3. Permanent binding with .bind()\nconst boundCook = chef.cook.bind(guestChef, \"Sticky Toffee Pudding\");\nboundCook(); // Preserves guestChef as 'this'\n"
+    "intro": "Trace method calls, test arrow function inheritance, fix detached callbacks, and use .bind():",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-17: THE THIS KEYWORD PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst hero = {\n  heroName: \"Valkyrie\",\n  health: 120,\n\n  // 1. Regular method call (this = hero)\n  takeDamage(amount) {\n    this.health -= amount;\n    return `${this.heroName} took ${amount} damage! HP remaining: ${this.health}`;\n  },\n\n  // 2. Nested arrow function borrowing 'this'\n  delayedHeal(amount) {\n    console.log(`Preparing heal for ${this.heroName}...`);\n    setTimeout(() => {\n      this.health += amount;\n      console.log(`✨ ${this.heroName} healed to ${this.health} HP!`);\n    }, 100);\n  }\n};\n\n// 1. Normal method call (The Dot Rule):\nconsole.log(hero.takeDamage(30)); // this is hero!\n\n// 2. Delayed heal using borrowed arrow this:\nhero.delayedHeal(25);\n\n// 3. Explicit binding with .call():\nconst villain = { heroName: \"Shadowfang\", health: 200 };\n// Borrow hero's takeDamage method, but execute it on villain:\nconsole.log(hero.takeDamage.call(villain, 50));\n\n// 4. Permanent binding with .bind():\nconst boundVillainDamage = hero.takeDamage.bind(villain, 20);\nconsole.log(boundVillainDamage());\n"
   },
   "part6": {
     "title": "Key Takeaways: The this Keyword",
     "takeaways": [
       {
         "title": "1. The Dot Rule",
-        "desc": "Object before the dot is 'this' for regular methods."
+        "desc": "Look immediately to the left of the dot at call time (obj.method() -> this is obj)."
       },
       {
-        "title": "2. Arrow Functions",
-        "desc": "Borrow 'this' directly from the surrounding code."
+        "title": "2. Arrow Functions Borrow this",
+        "desc": "Arrow functions have no this; they borrow this from the surrounding code."
       },
       {
-        "title": "3. bind() for Locking",
-        "desc": "Permanently attach 'this' when passing methods as callbacks."
+        "title": "3. Avoid Arrow Object Methods",
+        "desc": "Use standard methods (greet() {}) for object properties, not arrow functions."
       },
       {
-        "title": "4. Next: Prototypes",
-        "desc": "In JS-18, we explore the prototype chain and shared methods."
+        "title": "4. Use .bind() for Callbacks",
+        "desc": "Lock this permanently to an object before passing methods as detached callbacks."
+      },
+      {
+        "title": "5. Next Step: Prototypes",
+        "desc": "In JS-18, we discover how objects share methods behind the scenes with prototypes!"
       }
     ],
     "nextLessonPreview": {
-      "title": "JS-18: Prototypes & The Prototype Chain: JavaScript's Inheritance",
-      "desc": "Learn how objects delegate properties up the prototype chain to share methods efficiently."
+      "title": "JS-18: Prototypes & The Prototype Chain: Inheritance Under the Hood",
+      "desc": "Understand how JavaScript objects share methods by delegating lookups up the prototype chain to save memory."
     }
   },
   "part7": {
@@ -3082,13 +3129,13 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
     "quiz": {
       "question": "How do Arrow Functions determine the value of 'this'?",
       "options": [
-        "They dynamically point to the object to the left of the dot.",
-        "They borrow 'this' from the surrounding code where the arrow function was created.",
-        "They always bind 'this' to the global window object.",
-        "They cannot be executed if 'this' is accessed."
+        "They dynamically point to the object to the left of the dot",
+        "They borrow 'this' from the surrounding code where the arrow function was created",
+        "They always bind 'this' to the global window object",
+        "They automatically convert 'this' into an empty object"
       ],
       "correctIndex": 1,
-      "explanation": "Arrow functions do not have their own 'this'. They simply use the 'this' value from the surrounding code where they were created."
+      "explanation": "Arrow functions do not have their own 'this'. They adopt ('borrow') the 'this' binding from the surrounding lexical scope where they were written."
     }
   }
 },
@@ -3096,175 +3143,179 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "js18-prototypes-and-prototype-chain": {
   "slug": "js18-prototypes-and-prototype-chain",
   "code": "JS-18",
-  "title": "Prototypes & The Prototype Chain: JavaScript's Inheritance",
-  "subtitle": "Learn how JavaScript objects share methods by delegating lookups up the prototype chain.",
+  "title": "Prototypes & The Prototype Chain: Inheritance Under the Hood",
+  "subtitle": "Understand how JavaScript objects share methods by delegating lookups up the prototype chain to save memory.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Delegation System",
-            "icon": "🧬",
-            "tag": "INHERITANCE"
-        },
-        {
-            "id": "part2",
-            "label": "The Prototype Chain",
-            "icon": "🪜",
-            "tag": "LOOKUP"
-        },
-        {
-            "id": "part3",
-            "label": "Shared Memory Methods",
-            "icon": "💾",
-            "tag": "EFFICIENCY"
-        },
-        {
-            "id": "part4",
-            "label": "Prototype Pollution",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Prototypes Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Delegation System",
+      "icon": "🧬",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "The Prototype Chain",
+      "icon": "🪜",
+      "tag": "LOOKUP"
+    },
+    {
+      "id": "part3",
+      "label": "Memory & Object.create",
+      "icon": "💾",
+      "tag": "EFFICIENCY"
+    },
+    {
+      "id": "part4",
+      "label": "Common Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Prototypes Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
     "title": "Prototypes: JavaScript's Delegation System",
-    "bigPicture": "In JavaScript, objects can borrow features from other objects through a prototype. Think of this like borrowing a tool: if you do not have a tool in your own toolbox, you ask your neighbor or parent to borrow theirs.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "bigPicture": "In JavaScript, inheritance is based on delegation rather than copying. Think of prototypes like borrowing tools from a neighbor: if you need a lawnmower, you check your own garage first. If you don't have one, you ask your neighbor (your prototype). If your neighbor doesn't have one either, they ask their parent! Only if nobody in the chain has the tool does JavaScript throw up its hands and say: 'undefined'.",
+    "breakdownTitle": "Core Concepts of JavaScript Prototypes:",
     "breakdownItems": [
       {
-        "title": "The Prototype Link",
-        "desc": "Every JavaScript object has an internal link ([[Prototype]]) to another object."
+        "title": "The Hidden Prototype Link",
+        "desc": "Every JavaScript object has a hidden link ([[Prototype]]) pointing to another object from which it can borrow features."
       },
       {
-        "title": "Method Delegation",
-        "desc": "If a property or method is missing on an object, JavaScript looks up the chain to find it."
+        "title": "Property Delegation",
+        "desc": "When you access obj.greet(), if greet is missing on obj, JavaScript automatically walks up the chain to find it on the prototype."
       },
       {
-        "title": "Memory Efficiency",
-        "desc": "Sharing methods on a prototype means 1,000 instances share one function in memory."
+        "title": "Massive RAM Savings",
+        "desc": "Instead of copying a 50-line method onto 10,000 separate object instances, you store it once on the prototype and let all instances share it."
       }
     ]
   },
   "part2": {
-    "title": "The Prototype Chain: How JavaScript Looks Up Methods",
-    "intro": "How objects delegate missing properties up to Object.prototype:",
+    "title": "The Prototype Chain: How JavaScript Looks Up Properties",
+    "intro": "Understanding the step-by-step lookup path from object to Object.prototype to null:",
     "cards": [
       {
         "number": "01",
-        "tag": "Lookup",
-        "title": "Delegation Chain",
-        "description": "obj -> Object.prototype -> null. Lookup stops at the first match.",
+        "tag": "Own Property",
+        "title": "Step 1: Check Own Object",
+        "description": "JavaScript first checks if the property exists directly on the object itself. If found, it uses it immediately.",
         "color": "purple"
       },
       {
         "number": "02",
-        "tag": "Creation",
-        "title": "Object.create(proto)",
-        "description": "Creates a new object whose [[Prototype]] points directly to the given proto.",
+        "tag": "Prototype",
+        "title": "Step 2: Check Prototype",
+        "description": "If missing, JavaScript inspects the object's prototype. This is how all arrays get methods like .map() and .filter()!",
         "color": "emerald"
       },
       {
         "number": "03",
-        "tag": "Performance",
-        "title": "Shared Memory",
-        "description": "Methods placed on the prototype are shared across all instances.",
+        "tag": "Chain End",
+        "title": "Step 3: Object.prototype -> null",
+        "description": "The top of every chain is Object.prototype. If the property still isn't found, it hits null and returns undefined.",
         "color": "cyan"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Never add custom methods directly to JavaScript's built-in prototypes like Array.prototype. It can break third-party libraries and cause dangerous security bugs."
+      "title": "💡 Golden Rule of Prototypes",
+      "content": "Never modify built-in prototypes like Array.prototype or Object.prototype! Adding custom methods to native prototypes causes unpredictable bugs, security issues, and conflicts with libraries."
     }
   },
   "part3": {
-    "title": "Object.create() & Memory-Efficient Method Sharing",
-    "intro": "Allowing 10,000 object instances to share a single function in memory:",
+    "title": "Object.create() & Checking Direct Properties with Object.hasOwn()",
+    "intro": "Creating linked objects explicitly and distinguishing own properties from inherited ones:",
     "points": [
       {
-        "title": "1. hasOwnProperty",
-        "content": "Checks whether a property belongs directly to the object or is inherited from the prototype."
+        "title": "1. Linking Prototypes with Object.create(proto)",
+        "content": "Object.create(parentObject) creates a brand-new, empty object whose hidden prototype points directly to parentObject."
       },
       {
-        "title": "2. The Chain End",
-        "content": "The top of every prototype chain is Object.prototype, whose prototype is null."
+        "title": "2. Object.hasOwn(obj, prop)",
+        "content": "Modern JavaScript provides Object.hasOwn(obj, 'prop') to verify whether a property belongs directly to the object or is being borrowed from its prototype."
       },
       {
-        "title": "3. Classes are Syntax Sugar",
-        "content": "JavaScript classes use the exact same prototypical delegation under the hood."
+        "title": "3. Classes Are Built on Prototypes",
+        "content": "ES6 class syntax does not introduce a new object model—it is clean, readable syntax sugar that configures prototypes behind the scenes!"
       }
     ]
   },
   "part4": {
-    "title": "The Catastrophic Prototype Pollution Trap",
+    "title": "Common Mistakes: Duplicating Methods on Every Single Instance",
     "bad": {
-      "title": "❌ Bad: Creating duplicate function copies on every instance",
-      "code": "function createUser(name) {\n  return {\n    name,\n    // Every single user allocates a brand new duplicate function in RAM:\n    greet() {\n      console.log(\"Hello, I am \" + this.name);\n    }\n  };\n}\n// 10,000 users = 10,000 duplicate functions in memory!",
-      "explanation": "Attaching a new function to every single object creates thousands of copies in memory, slowing down your app."
+      "title": "❌ Bad: Creating duplicate function copies inside factory functions",
+      "code": "function createPlayer(name, role) {\n  return {\n    name,\n    role,\n    // Bad: Every player creates a duplicate copy of this function in RAM:\n    attack() {\n      console.log(this.name + \" attacks!\");\n    }\n  };\n}\n\nconst p1 = createPlayer(\"Aria\", \"Warrior\");\nconst p2 = createPlayer(\"Leo\", \"Mage\");\nconsole.log(p1.attack === p2.attack); // false (Two different copies in RAM!)",
+      "explanation": "If you create 1,000 players, you create 1,000 identical attack functions in memory, wasting system resources."
     },
     "good": {
-      "title": "✅ Clean: Prototype delegation sharing a single method in memory",
-      "code": "const userMethods = {\n  greet() {\n    console.log(\"Hello, I am \" + this.name);\n  }\n};\n\nfunction createUser(name) {\n  const user = Object.create(userMethods);\n  user.name = name;\n  return user;\n}\n\nconst u1 = createUser(\"Alice\");\nconst u2 = createUser(\"Bob\");\nconsole.log(u1.greet === u2.greet); // true (Shared in RAM!)",
-      "explanation": "All objects share a single method on their prototype, saving computer memory while letting every object use it."
+      "title": "✅ Clean: Sharing methods through prototype delegation",
+      "code": "const playerMethods = {\n  attack() {\n    console.log(this.name + \" attacks!\");\n  }\n};\n\nfunction createPlayer(name, role) {\n  // Link new object to shared prototype:\n  const player = Object.create(playerMethods);\n  player.name = name;\n  player.role = role;\n  return player;\n}\n\nconst p1 = createPlayer(\"Aria\", \"Warrior\");\nconst p2 = createPlayer(\"Leo\", \"Mage\");\nconsole.log(p1.attack === p2.attack); // true (Shared in RAM!)",
+      "explanation": "Both player instances share the exact same attack function in memory, saving memory while keeping code clean and modular."
     }
   },
   "part5": {
-    "title": "Prototypes & Delegation Playground",
-    "intro": "Inspect __proto__, link objects with Object.create(), and check hasOwnProperty:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-18: PROTOTYPES & PROTOTYPE CHAIN\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Prototype definition\nconst vehiclePrototype = {\n  honk() {\n    return `${this.brand} says: BEEP BEEP! 🚗`;\n  }\n};\n\n// 2. Create object with specified prototype:\nconst myCar = Object.create(vehiclePrototype);\nmyCar.brand = \"Electric Roadster\";\n\nconsole.log(myCar.honk());\n\n// 3. Inspecting the prototype chain:\nconsole.log(\"Direct property brand:\", Object.hasOwn(myCar, \"brand\")); // true\nconsole.log(\"Direct property honk:\", Object.hasOwn(myCar, \"honk\"));   // false (Inherited!)\n\n// 4. Checking prototype relationship:\nconsole.log(\"Is vehiclePrototype parent?:\", Object.getPrototypeOf(myCar) === vehiclePrototype);\n"
+    "title": "Prototypes Playground",
+    "intro": "Create prototype-linked objects with Object.create(), verify shared memory, and inspect with Object.hasOwn():",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-18: PROTOTYPES & THE PROTOTYPE CHAIN PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Shared methods prototype:\nconst vehicleActions = {\n  drive(miles) {\n    this.mileage += miles;\n    return `${this.model} drove ${miles} miles. Total: ${this.mileage} miles.`;\n  },\n  honk() {\n    return `${this.model} says: BEEP BEEP! 🚗`;\n  }\n};\n\n// 2. Create instance using Object.create():\nconst carA = Object.create(vehicleActions);\ncarA.model = \"CyberTruck\";\ncarA.mileage = 1500;\n\nconst carB = Object.create(vehicleActions);\ncarB.model = \"Model 3\";\ncarB.mileage = 8000;\n\n// 3. Both cars borrow methods from vehicleActions:\nconsole.log(carA.drive(50));\nconsole.log(carB.honk());\n\n// 4. Verify shared function in memory:\nconsole.log(\"Do both cars share the exact same drive function in RAM?:\", carA.drive === carB.drive); // true!\n\n// 5. Inspecting Direct vs Inherited properties with Object.hasOwn():\nconsole.log(\"Is 'model' carA's own direct property?:\", Object.hasOwn(carA, \"model\")); // true\nconsole.log(\"Is 'drive' carA's own direct property?:\", Object.hasOwn(carA, \"drive\")); // false (Borrowed!)\n\n// 6. Inspecting the prototype link:\nconsole.log(\"carA's prototype is vehicleActions?:\", Object.getPrototypeOf(carA) === vehicleActions); // true\n"
   },
   "part6": {
-    "title": "Key Takeaways: Prototypes",
+    "title": "Key Takeaways: Prototypes & Prototype Chain",
     "takeaways": [
       {
-        "title": "1. Delegation",
-        "desc": "Objects share properties by delegating up the prototype chain."
+        "title": "1. Delegation, Not Copying",
+        "desc": "JavaScript objects borrow missing properties by delegating lookups up the chain."
       },
       {
-        "title": "2. Object.create",
-        "desc": "Directly configure the prototype of a new object."
+        "title": "2. Memory Efficiency",
+        "desc": "Storing methods on a prototype lets thousands of objects share one function in RAM."
       },
       {
-        "title": "3. Shared Memory",
-        "desc": "Shared methods save RAM across thousands of instances."
+        "title": "3. Object.create(proto)",
+        "desc": "Creates a fresh object whose prototype is set to the provided parent object."
       },
       {
-        "title": "4. Next: Classes",
-        "desc": "In JS-19, we learn modern class syntax: constructors, extends, and super."
+        "title": "4. Check Direct Keys",
+        "desc": "Use Object.hasOwn(obj, prop) to check if a property is direct or borrowed."
+      },
+      {
+        "title": "5. Next Step: ES6 Classes",
+        "desc": "In JS-19, we learn modern class syntax: constructors, extends, and super()!"
       }
     ],
     "nextLessonPreview": {
-      "title": "JS-19: Classes, Constructors, extends & super",
-      "desc": "Write clean object-oriented code using ES6 class syntax, inheritance, and method overriding."
+      "title": "JS-19: ES6 Classes, Constructors & Inheritance: Clean Object-Oriented JS",
+      "desc": "Write clean object-oriented code using the class blueprint syntax, constructors, extends for inheritance, and the super() rule."
     }
   },
   "part7": {
     "title": "Knowledge Check: Prototypes",
     "quiz": {
-      "question": "What happens when you access a property on an object that does not exist directly on that object?",
+      "question": "What happens when you access a property on an object that does NOT exist directly on that object?",
       "options": [
-        "JavaScript immediately crashes with a fatal error.",
-        "JavaScript traverses up the prototype chain until it finds the property or reaches null.",
-        "JavaScript automatically creates the property and sets it to 0.",
-        "The browser refreshes the page."
+        "JavaScript immediately throws a PropertyNotFoundError crash",
+        "JavaScript automatically looks up the prototype chain to find it on the object's prototype",
+        "JavaScript creates the property and sets it to null",
+        "The object is deleted from memory"
       ],
       "correctIndex": 1,
-      "explanation": "JavaScript checks the object's [[Prototype]]. If the property is missing, it walks up the chain step-by-step until it finds the property or hits null, returning undefined if not found anywhere."
+      "explanation": "JavaScript checks the object's [[Prototype]]. If the property is missing, it walks up the prototype chain until it finds the property or hits null, returning undefined if not found anywhere."
     }
   }
 },
@@ -3272,175 +3323,179 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "js19-classes-extends-and-super": {
   "slug": "js19-classes-extends-and-super",
   "code": "JS-19",
-  "title": "Classes, Constructors, extends & super",
-  "subtitle": "Write modern object-oriented code with clean class declarations, constructors, extends, and super().",
+  "title": "ES6 Classes, Constructors & Inheritance: Clean Object-Oriented JS",
+  "subtitle": "Write clean object-oriented code using the class blueprint syntax, constructors, extends for inheritance, and the super() rule.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Class Blueprints",
-            "icon": "🏗️",
-            "tag": "CLASSES"
-        },
-        {
-            "id": "part2",
-            "label": "Constructor & Methods",
-            "icon": "⚙️",
-            "tag": "SYNTAX"
-        },
-        {
-            "id": "part3",
-            "label": "extends & super()",
-            "icon": "🧬",
-            "tag": "INHERITANCE"
-        },
-        {
-            "id": "part4",
-            "label": "The super() Rule",
-            "icon": "🏗️",
-            "tag": "PITFALL"
-        },
-        {
-            "id": "part5",
-            "label": "Classes Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Class Blueprints",
+      "icon": "🏗️",
+      "tag": "CLASSES"
+    },
+    {
+      "id": "part2",
+      "label": "Constructors & Methods",
+      "icon": "⚙️",
+      "tag": "SYNTAX"
+    },
+    {
+      "id": "part3",
+      "label": "extends & super()",
+      "icon": "🧬",
+      "tag": "INHERITANCE"
+    },
+    {
+      "id": "part4",
+      "label": "The super() Rule",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Classes Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "ES6 Classes: Cleaner Syntax for Creating Objects",
-    "bigPicture": "ES6 classes provide a clean, modern syntax for creating objects and organizing inheritance, built directly on top of JavaScript's prototype system. Think of a class like an architectural blueprint for building houses.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "ES6 Classes: The Architectural Blueprint for Objects",
+    "bigPicture": "Creating prototype links with Object.create() worked, but it felt awkward and required multiple disconnected steps. ES6 introduced the class keyword to package everything into a single, clean blueprint! Think of a class like an architectural blueprint for a house: the blueprint describes what rooms and doors the house should have, and calling 'new House()' constructs an actual physical house from that blueprint.",
+    "breakdownTitle": "Core Elements of JavaScript Classes:",
     "breakdownItems": [
       {
-        "title": "class & constructor",
-        "desc": "The constructor runs when 'new ClassName()' is called, initializing properties."
+        "title": "The constructor() Function",
+        "desc": "The initialization function that runs automatically when you create a new instance with 'new ClassName()'."
       },
       {
-        "title": "extends & Inheritance",
-        "desc": "Subclasses inherit all methods and getters from their parent class."
+        "title": "Shared Prototype Methods",
+        "desc": "Methods defined inside a class body are automatically placed on the prototype so all instances share them."
       },
       {
-        "title": "super() Call",
-        "desc": "Must be called in subclass constructors before accessing 'this' to initialize the parent."
+        "title": "Inheritance with extends and super()",
+        "desc": "Create child classes that inherit and specialize parent classes, using super() to initialize the parent foundation."
       }
     ]
   },
   "part2": {
-    "title": "Constructors, Instance Properties & Methods",
-    "intro": "Initializing instance state and defining shared prototype methods:",
+    "title": "Constructors, Instance State & Prototype Methods",
+    "intro": "How class declarations organize object creation and method sharing:",
     "cards": [
       {
         "number": "01",
         "tag": "Blueprint",
-        "title": "class MyClass {}",
-        "description": "Modern, cleaner syntax built on top of JavaScript's prototype system.",
+        "title": "class User {}",
+        "description": "Defines the blueprint. Inside, the constructor(name) initializes personal properties (this.name = name).",
         "color": "purple"
       },
       {
         "number": "02",
-        "tag": "Inheritance",
-        "title": "class Sub extends Base",
-        "description": "Subclass gains access to all parent methods and behaviors.",
+        "tag": "Instantiate",
+        "title": "new User('Alice')",
+        "description": "The new operator creates a fresh object, sets its prototype to User.prototype, and executes the constructor.",
         "color": "emerald"
       },
       {
         "number": "03",
-        "tag": "Parent Init",
-        "title": "super(...args)",
-        "description": "Invokes the parent class constructor to set up inherited state.",
-        "color": "amber"
+        "tag": "Subclassing",
+        "title": "class Admin extends User",
+        "description": "Admin inherits all properties and methods from User, allowing you to reuse and extend code cleanly.",
+        "color": "cyan"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Keep class relationships simple. Avoid stacking classes 4 or 5 levels deep because it makes code rigid and difficult to change later."
+      "title": "💡 Golden Rule of Subclasses",
+      "content": "In any subclass constructor that uses 'extends', you MUST call super() before accessing 'this'! The parent class must build the foundation before the child class can add its own properties."
     }
   },
   "part3": {
-    "title": "Subclassing with extends and super()",
-    "intro": "Reusing and specializing parent functionality with clean inheritance:",
+    "title": "Subclassing with extends and Calling super()",
+    "intro": "Reusing parent functionality and overriding methods gracefully:",
     "points": [
       {
-        "title": "1. super() First",
-        "content": "In a derived class constructor, calling super() before accessing 'this' is mandatory."
+        "title": "1. Calling super(...args)",
+        "content": "In a child constructor, super(name, email) invokes the parent class constructor to set up inherited properties."
       },
       {
-        "title": "2. Private Fields (#)",
-        "content": "Modern classes support truly private fields using the # prefix (e.g. #apiKey)."
+        "title": "2. Method Overriding",
+        "content": "A child class can define a method with the same name as a parent method. It can call super.methodName() to reuse parent behavior while adding custom features."
       },
       {
-        "title": "3. Static Methods",
-        "content": "static methods are attached to the class constructor itself, not instances."
+        "title": "3. Under the Hood, It's Still Prototypes",
+        "content": "JavaScript classes do not introduce a different memory model. Under the hood, class methods are stored on the prototype, giving you the same high performance and memory efficiency."
       }
     ]
   },
   "part4": {
-    "title": "Common Mistake: Accessing this Before super() in Subclasses",
+    "title": "Common Mistakes: Accessing this Before super() in Subclasses",
     "bad": {
-      "title": "❌ Bad: Accessing this before calling super() in subclass",
-      "code": "class Animal {\n  constructor(name) { this.name = name; }\n}\n\nclass Dog extends Animal {\n  constructor(name, breed) {\n    // Bug: Accessing 'this' before super() throws ReferenceError!\n    this.breed = breed;\n    super(name);\n  }\n}",
-      "explanation": "In a child class, you must call super() first to set up the parent class before you are allowed to use 'this'."
+      "title": "❌ Bad: Using 'this' before calling super() in a child constructor",
+      "code": "class Employee {\n  constructor(name) {\n    this.name = name;\n  }\n}\n\nclass Manager extends Employee {\n  constructor(name, department) {\n    // Bug: Accessing 'this' before super() throws ReferenceError!\n    this.department = department;\n    super(name);\n  }\n}",
+      "explanation": "JavaScript requires the parent constructor to construct the object first via super(). Accessing this before calling super() crashes with a ReferenceError."
     },
     "good": {
-      "title": "✅ Clean: Proper super() call and method overriding",
-      "code": "class Animal {\n  constructor(name) {\n    this.name = name;\n  }\n  speak() {\n    return `${this.name} makes a sound.`;\n  }\n}\n\nclass Dog extends Animal {\n  constructor(name, breed) {\n    super(name); // Must call super first!\n    this.breed = breed;\n  }\n  speak() {\n    return `${this.name} (${this.breed}) barks: Woof!`;\n  }\n}\n\nconst rover = new Dog(\"Rover\", \"Golden Retriever\");\nconsole.log(rover.speak());",
-      "explanation": "Calling super(name) sets up the parent class properly, so the child class can safely add its own unique features."
+      "title": "✅ Clean: Calling super() first and method extension",
+      "code": "class Employee {\n  constructor(name) {\n    this.name = name;\n  }\n  describe() {\n    return `Employee: ${this.name}`;\n  }\n}\n\nclass Manager extends Employee {\n  constructor(name, department) {\n    super(name); // Must be called first!\n    this.department = department;\n  }\n\n  // Extend parent method cleanly:\n  describe() {\n    return `${super.describe()} (Lead of ${this.department})`;\n  }\n}\n\nconst boss = new Manager(\"Elena\", \"Engineering\");\nconsole.log(boss.describe()); // \"Employee: Elena (Lead of Engineering)\"",
+      "explanation": "Calling super(name) initializes the parent class properly, enabling the child class to safely add its own unique department property."
     }
   },
   "part5": {
     "title": "Classes & Inheritance Playground",
-    "intro": "Build a class hierarchy, create objects with new, and call super() methods:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-19: CLASSES, EXTENDS & SUPER\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nclass Account {\n  constructor(owner, initialBalance = 0) {\n    this.owner = owner;\n    this.balance = initialBalance;\n  }\n\n  deposit(amount) {\n    this.balance += amount;\n    console.log(`[Deposit] $${amount} added. Balance: $${this.balance}`);\n  }\n}\n\n// Subclass inheriting from Account\nclass PremiumAccount extends Account {\n  constructor(owner, initialBalance, cashbackRate = 0.02) {\n    super(owner, initialBalance); // Initialize parent class\n    this.cashbackRate = cashbackRate;\n  }\n\n  cashbackBonus(purchaseAmount) {\n    const bonus = purchaseAmount * this.cashbackRate;\n    this.deposit(bonus);\n    console.log(`🎁 Cashback bonus earned: $${bonus.toFixed(2)}`);\n  }\n}\n\nconst myAccount = new PremiumAccount(\"Samantha\", 500);\nmyAccount.deposit(200);\nmyAccount.cashbackBonus(150);\nconsole.log(\"Final balance:\", myAccount.balance);\n"
+    "intro": "Create a class hierarchy, instantiate objects with new, call super methods, and inspect prototype sharing:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-19: ES6 CLASSES, EXTENDS & SUPER PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Base Class (Parent Blueprint)\nclass BankAccount {\n  constructor(accountHolder, initialBalance = 0) {\n    this.accountHolder = accountHolder;\n    this.balance = initialBalance;\n  }\n\n  deposit(amount) {\n    this.balance += amount;\n    return `[${this.accountHolder}] Deposited $${amount}. Balance: $${this.balance}`;\n  }\n\n  withdraw(amount) {\n    if (amount > this.balance) {\n      return `[${this.accountHolder}] Insufficient funds! Balance is $${this.balance}`;\n    }\n    this.balance -= amount;\n    return `[${this.accountHolder}] Withdrew $${amount}. Balance: $${this.balance}`;\n  }\n}\n\n// 2. Subclass inheriting with extends:\nclass SavingsAccount extends BankAccount {\n  constructor(accountHolder, initialBalance, interestRate = 0.05) {\n    super(accountHolder, initialBalance); // Must initialize parent first!\n    this.interestRate = interestRate;\n  }\n\n  // Add subclass-specific method:\n  applyInterest() {\n    const interest = this.balance * this.interestRate;\n    this.balance += interest;\n    return `🎉 Added $${interest.toFixed(2)} interest! New Balance: $${this.balance.toFixed(2)}`;\n  }\n}\n\n// 3. Create instances:\nconst account = new SavingsAccount(\"Marcus Vance\", 1000, 0.04);\nconsole.log(account.deposit(500));\nconsole.log(account.withdraw(200));\nconsole.log(account.applyInterest());\n\n// 4. Verify prototype inheritance:\nconsole.log(\"Is account an instance of SavingsAccount?:\", account instanceof SavingsAccount); // true\nconsole.log(\"Is account an instance of BankAccount?:\", account instanceof BankAccount);       // true\n"
   },
   "part6": {
     "title": "Key Takeaways: ES6 Classes",
     "takeaways": [
       {
-        "title": "1. Clean Blueprints",
-        "desc": "Use classes to structure object-oriented models."
+        "title": "1. class Blueprint",
+        "desc": "Pack constructor and shared methods into a single, clean declaration."
       },
       {
-        "title": "2. extends for Subclasses",
-        "desc": "Inherit methods from parent classes."
+        "title": "2. The constructor()",
+        "desc": "Runs on 'new ClassName()', initializing personal instance properties on this."
       },
       {
-        "title": "3. super() First",
-        "desc": "Always call super() before touching 'this'."
+        "title": "3. Inheritance with extends",
+        "desc": "Subclasses inherit all methods and getters from their parent class."
       },
       {
-        "title": "4. Next: Async JS",
-        "desc": "In JS-20, we enter asynchronous JavaScript and non-blocking I/O."
+        "title": "4. super() Must Be First",
+        "desc": "Child constructors must call super() before touching 'this' to set up the parent."
+      },
+      {
+        "title": "5. Next Step: Asynchronous JS",
+        "desc": "In Stage 6, we begin Asynchronous JavaScript: Event Loop, Promises, and async/await!"
       }
     ],
     "nextLessonPreview": {
       "title": "JS-20: Synchronous vs Asynchronous: Why JavaScript Never Freezes",
-      "desc": "Understand the non-blocking execution model, timers, and why async code is vital for web applications."
+      "desc": "Learn how single-threaded JavaScript handles long tasks using timers, background Web APIs, and the event loop without freezing."
     }
   },
   "part7": {
-    "title": "Knowledge Check: ES6 Classes",
+    "title": "Knowledge Check: Classes & Inheritance",
     "quiz": {
-      "question": "What must you call in a child class constructor before using the 'this' keyword?",
+      "question": "In a subclass constructor that uses 'extends', why must you call super() before accessing 'this'?",
       "options": [
-        "this.init()",
-        "super()",
-        "parent.constructor()",
-        "Object.bind(this)"
+        "super() is optional and only used for debug logging",
+        "super() calls the parent constructor to initialize the instance foundation before 'this' can be accessed",
+        "super() converts the class into an arrow function",
+        "super() creates a background web worker thread"
       ],
       "correctIndex": 1,
-      "explanation": "In derived class constructors, you must call super() before accessing 'this'. Failure to do so throws a ReferenceError."
+      "explanation": "In JavaScript derived classes, instances are constructed by the parent constructor. Calling super() runs the parent constructor; attempting to access 'this' before super() throws a ReferenceError."
     }
   }
 },
@@ -3449,99 +3504,99 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js20-synchronous-vs-asynchronous",
   "code": "JS-20",
   "title": "Synchronous vs Asynchronous: Why JavaScript Never Freezes",
-  "subtitle": "Understand non-blocking execution, timers, and why async code keeps browser interfaces responsive.",
+  "subtitle": "Learn how single-threaded JavaScript handles long tasks using timers and background Web APIs without freezing the browser.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Single-Thread Challenge",
-            "icon": "⏳",
-            "tag": "ASYNC TASKS"
-        },
-        {
-            "id": "part2",
-            "label": "Web APIs & Timers",
-            "icon": "🌐",
-            "tag": "WEB APIS"
-        },
-        {
-            "id": "part3",
-            "label": "Execution Timeline",
-            "icon": "⏱️",
-            "tag": "TIMELINE"
-        },
-        {
-            "id": "part4",
-            "label": "UI Freezing Traps",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Async Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Single-Thread Challenge",
+      "icon": "⏳",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "Web APIs & Timers",
+      "icon": "🌐",
+      "tag": "CONCEPTS"
+    },
+    {
+      "id": "part3",
+      "label": "Execution Timeline",
+      "icon": "⏱️",
+      "tag": "TIMELINE"
+    },
+    {
+      "id": "part4",
+      "label": "UI Freezing Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Async Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
     "title": "Blocking vs Non-Blocking: The Single-Thread Challenge",
-    "bigPicture": "JavaScript has only one main thread. If a script runs a slow task directly on the main thread, the entire browser tab freezes. Asynchronous JavaScript offloads waiting tasks so the screen remains responsive.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "bigPicture": "JavaScript is single-threaded, meaning it can only execute one line of code at a time on its main thread. That same single thread is also responsible for rendering the webpage, animating buttons, and responding to mouse clicks! If JavaScript were strictly synchronous, every time you fetched data or waited for a timer, the entire browser would freeze completely. Asynchronous JavaScript solves this by offloading waiting tasks to the browser background while your code continues running smoothly.",
+    "breakdownTitle": "Core Concepts of Asynchronous JavaScript:",
     "breakdownItems": [
       {
         "title": "Synchronous Blocking",
-        "desc": "Code executes sequentially; a slow loop stops everything else from running."
+        "desc": "Each line waits for the previous line to finish. Heavy calculations or waiting loops freeze the user interface."
       },
       {
         "title": "Asynchronous Non-Blocking",
-        "desc": "Tasks like network requests or timers are handed off, allowing the UI to remain smooth."
+        "desc": "Tasks that require waiting (like network requests or timers) are delegated to background browser APIs."
       },
       {
-        "title": "Timers & Callbacks",
-        "desc": "setTimeout schedules a callback to run after the current call stack clears."
+        "title": "Timers with setTimeout()",
+        "desc": "Schedules a callback function to run after a specified delay, allowing all immediate code to run first."
       }
     ]
   },
   "part2": {
-    "title": "How Web APIs Handle Timers and Long Tasks",
-    "intro": "Handing off timers, network calls, and file I/O to the background environment:",
+    "title": "Web APIs & Background Waiting: The Coffee Shop Analogy",
+    "intro": "How the browser runtime handles waiting tasks in the background:",
     "cards": [
       {
         "number": "01",
         "tag": "Blocking",
-        "title": "Synchronous",
-        "description": "Line 2 cannot run until Line 1 finishes. Heavy math freezes the user interface.",
+        "title": "Synchronous Line",
+        "description": "Imagine a barista who takes your order, stares at the coffee machine for 5 minutes, and refuses to speak to anyone else until it finishes. Everyone waits!",
         "color": "rose"
       },
       {
         "number": "02",
         "tag": "Non-Blocking",
-        "title": "Asynchronous",
-        "description": "Offloads work to the browser runtime and schedules callbacks when ready.",
+        "title": "Asynchronous Buzzer",
+        "description": "The barista takes your order, hands you a buzzer, and immediately serves the next customer. When your coffee is ready, your buzzer rings!",
         "color": "emerald"
       },
       {
         "number": "03",
-        "tag": "Scheduling",
-        "title": "setTimeout(fn, ms)",
-        "description": "Sets a minimum delay before queuing the callback on the task queue.",
+        "tag": "Scheduler",
+        "title": "setTimeout(callback, ms)",
+        "description": "Hands the timer to the browser's Web APIs to count down in the background, keeping JavaScript's main thread free and responsive.",
         "color": "cyan"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Never write synchronous blocking loops (while(Date.now() < target)) to simulate delays. Always use setTimeout or Promise-based delays."
+      "title": "💡 Golden Rule of Non-Blocking Code",
+      "content": "Never write synchronous busy-waiting loops (e.g., while (Date.now() < target)) to simulate delays! Busy-waiting locks JavaScript's single thread and completely freezes the user's screen. Always use setTimeout() or Promises."
     }
   },
   "part3": {
@@ -3549,74 +3604,74 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
     "intro": "Why setTimeout(fn, 0) runs AFTER all synchronous statements complete:",
     "points": [
       {
-        "title": "1. The Single Thread",
-        "content": "JavaScript has one thread; offloading I/O prevents the thread from freezing."
+        "title": "1. The Call Stack Finishes First",
+        "content": "JavaScript will always execute every synchronous line in your script from top to bottom before it even checks for completed background timers."
       },
       {
-        "title": "2. Zero-Delay Timers",
-        "content": "setTimeout(fn, 0) defers execution until all current synchronous code finishes."
+        "title": "2. The Zero-Delay Timer (setTimeout(fn, 0))",
+        "content": "A delay of 0ms does NOT mean 'run right now'. It means 'hand this to the browser and run it as soon as all current synchronous code has finished'."
       },
       {
-        "title": "3. User Responsiveness",
-        "content": "Async code allows animations, scrolling, and clicks to respond instantly."
+        "title": "3. UI Smoothness & Responsiveness",
+        "content": "Because background operations don't block the thread, user clicks, typing, and CSS animations continue running at a smooth 60 frames per second."
       }
     ]
   },
   "part4": {
-    "title": "The UI Freeze Trap: Infinite Sync Work",
+    "title": "Common Mistakes: Trying to Pause JavaScript with Busy-Wait Loops",
     "bad": {
-      "title": "❌ Bad: Synchronous blocking loop freezing the entire webpage",
-      "code": "console.log(\"Starting task...\");\n// Freezes the browser tab completely for 3 seconds!\nconst end = Date.now() + 3000;\nwhile (Date.now() < end) {\n  // Page is totally frozen: buttons cannot be clicked!\n}\nconsole.log(\"Finished!\");",
-      "explanation": "A heavy, non-stop loop locks up JavaScript's single thread, completely freezing the web page so the user cannot click anything."
+      "title": "❌ Bad: Using a while loop to pause, freezing the entire webpage",
+      "code": "console.log(\"Starting order...\");\n\n// Catastrophic bug: Locks the single thread for 3 seconds!\nconst end = Date.now() + 3000;\nwhile (Date.now() < end) {\n  // Page is totally frozen: buttons cannot be clicked, animations stop!\n}\n\nconsole.log(\"Order ready!\");",
+      "explanation": "A synchronous while loop starves the single thread, freezing the user's browser tab completely for 3 seconds."
     },
     "good": {
-      "title": "✅ Clean: Asynchronous non-blocking timer preserving UI fluidity",
-      "code": "console.log(\"1. Order placed\");\n\nsetTimeout(() => {\n  console.log(\"3. Order ready for pickup! ☕\");\n}, 1000);\n\nconsole.log(\"2. Waiting comfortably without blocking other customers\");",
-      "explanation": "JavaScript lets the browser handle waiting in the background, keeping the screen smooth and responsive."
+      "title": "✅ Clean: Non-blocking setTimeout allowing the page to remain interactive",
+      "code": "console.log(\"1. Order placed with barista\");\n\n// Clean: Hands the timer to Web APIs and moves on immediately!\nsetTimeout(() => {\n  console.log(\"3. Buzzer rings: Coffee is ready! ☕\");\n}, 1000);\n\nconsole.log(\"2. Customer sits down, reads news, UI stays responsive\");",
+      "explanation": "Using setTimeout lets the browser count down in the background while the user interface stays silky smooth."
     }
   },
   "part5": {
     "title": "Async Execution Playground",
-    "intro": "Compare synchronous execution with setTimeout to observe how non-blocking code behaves:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-20: SYNCHRONOUS VS ASYNCHRONOUS DEMO\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconsole.log(\"🏁 Step 1: Program starting (Synchronous)\");\n\n// Asynchronous timer (scheduled in background):\nsetTimeout(() => {\n  console.log(\"⏰ Step 3: Timer finished after delay! (Asynchronous)\");\n}, 500);\n\nconsole.log(\"🚀 Step 2: Next synchronous line runs immediately!\");\n"
+    "intro": "Observe execution order between synchronous code and background timers, even with a 0ms delay:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-20: SYNCHRONOUS VS ASYNCHRONOUS PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconsole.log(\"🏁 Step 1: Program starts (Synchronous)\");\n\n// Schedule an async callback with 500ms delay:\nsetTimeout(() => {\n  console.log(\"⏰ Step 4: Timer finished after 500ms (Asynchronous)\");\n}, 500);\n\n// Schedule an async callback with 0ms delay:\nsetTimeout(() => {\n  console.log(\"⏱️ Step 3: Zero-delay timer callback executed!\");\n}, 0);\n\nconsole.log(\"🚀 Step 2: Next synchronous line runs immediately!\");\n\n// Notice that Step 2 runs BEFORE Step 3 and Step 4,\n// because all synchronous code on the call stack runs to completion first!\n"
   },
   "part6": {
-    "title": "Key Takeaways: Blocking vs Non-Blocking",
+    "title": "Key Takeaways: Synchronous vs Asynchronous",
     "takeaways": [
       {
-        "title": "1. Single-Threaded",
-        "desc": "One call stack means blocking code freezes the whole app."
+        "title": "1. Single-Threaded Runtime",
+        "desc": "JavaScript has one main thread that handles both code execution and UI rendering."
       },
       {
-        "title": "2. Non-Blocking I/O",
-        "desc": "Offload long operations so the user interface stays smooth."
+        "title": "2. Non-Blocking Web APIs",
+        "desc": "Slow tasks like timers and HTTP calls are handled by the browser environment in the background."
       },
       {
-        "title": "3. Execution Order",
-        "desc": "Synchronous code always finishes before queued async timers run."
+        "title": "3. Synchronous Priority",
+        "desc": "All synchronous code runs to completion before background timer callbacks are executed."
       },
       {
-        "title": "4. Next: Promises",
-        "desc": "In JS-21, we learn how Promises tame async callbacks."
+        "title": "4. Next Step: Promises",
+        "desc": "In JS-21, we learn how Promises tame asynchronous callbacks and handle future values cleanly!"
       }
     ],
     "nextLessonPreview": {
       "title": "JS-21: Promises: Managing Future Values with .then() & .catch()",
-      "desc": "Escape callback hell and handle asynchronous success and error states using clean Promise chains."
+      "desc": "Master Promise states (Pending, Fulfilled, Rejected), flat method chaining with .then(), and centralized error handling with .catch()."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Blocking vs Non-Blocking",
+    "title": "Knowledge Check: Synchronous vs Asynchronous",
     "quiz": {
       "question": "Why does JavaScript use asynchronous operations for network requests and timers?",
       "options": [
-        "Because computers cannot calculate math without waiting.",
-        "To prevent freezing the single-threaded UI and keep web pages responsive.",
-        "To slow down the browser deliberately.",
-        "Because JavaScript does not have variables."
+        "Because computers cannot calculate math without pausing",
+        "To prevent freezing the single-threaded UI and keep web pages interactive",
+        "To slow down the browser deliberately",
+        "Because JavaScript does not have variables"
       ],
       "correctIndex": 1,
-      "explanation": "Since JavaScript runs on a single main thread, asynchronous execution prevents long-running operations (like network requests or file reads) from freezing user interactions."
+      "explanation": "Because JavaScript runs on a single main thread, asynchronous execution prevents long-running operations (like network requests or timers) from freezing the user interface."
     }
   }
 },
@@ -3625,160 +3680,164 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js21-promises-and-chaining",
   "code": "JS-21",
   "title": "Promises: Managing Future Values with .then() & .catch()",
-  "subtitle": "Handle future values cleanly with Promise states: Pending, Fulfilled, and Rejected.",
+  "subtitle": "Master Promise states (Pending, Fulfilled, Rejected), flat method chaining with .then(), and centralized error handling with .catch().",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Future Guarantees",
-            "icon": "🤝",
-            "tag": "PROMISES"
-        },
-        {
-            "id": "part2",
-            "label": "3 Promise States",
-            "icon": "🚥",
-            "tag": "STATES"
-        },
-        {
-            "id": "part3",
-            "label": "Chaining with .then()",
-            "icon": "🔗",
-            "tag": "CHAINING"
-        },
-        {
-            "id": "part4",
-            "label": "Callback Hell Traps",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Promises Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Future Guarantees",
+      "icon": "🤝",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "The 3 States",
+      "icon": "🚥",
+      "tag": "STATES"
+    },
+    {
+      "id": "part3",
+      "label": "Chaining & Recovery",
+      "icon": "🔗",
+      "tag": "CHAINING"
+    },
+    {
+      "id": "part4",
+      "label": "Callback Hell Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Promises Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
     "title": "Promises: Guarantees for Future Values",
-    "bigPicture": "A Promise is an object representing the eventual completion (or failure) of an asynchronous operation. Think of a Promise like a restaurant buzzer: it buzzes when your meal is ready, or alerts you if the kitchen ran out of ingredients.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "bigPicture": "In early JavaScript, handling asynchronous results required passing callbacks inside callbacks. When you had several steps in a row, this created a deeply indented, unreadable mess called 'Callback Hell'. A Promise is an object that represents the eventual completion (or failure) of an asynchronous operation. Think of a Promise like a restaurant buzzer: while your meal is cooking, you hold the buzzer. When your food is ready, the buzzer buzzes with your meal. If the kitchen burns your food, the buzzer flashes an error!",
+    "breakdownTitle": "Core Concepts of JavaScript Promises:",
     "breakdownItems": [
       {
         "title": "The 3 Promise States",
-        "desc": "Pending (in progress), Fulfilled (resolved with value), or Rejected (failed with error)."
+        "desc": "A Promise starts Pending, and eventually settles into either Fulfilled (success with data) or Rejected (failure with an error)."
       },
       {
         "title": ".then() for Success",
-        "desc": "Executes when the promise resolves, receiving the resolved payload."
+        "desc": "Attaches a callback that runs when the Promise is fulfilled, receiving the resolved data."
       },
       {
-        "title": ".catch() & .finally()",
-        "desc": ".catch() handles errors anywhere in the chain; .finally() runs cleanup regardless of outcome."
+        "title": ".catch() for Error Handling",
+        "desc": "A single .catch() at the end of a chain catches any error that occurred in any previous step."
       }
     ]
   },
   "part2": {
     "title": "The 3 Promise States: Pending, Fulfilled, Rejected",
-    "intro": "How a Promise transitions from waiting to holding a final value or error:",
+    "intro": "Understanding how a Promise transitions from waiting to holding a final value or error:",
     "cards": [
       {
         "number": "01",
-        "tag": "State",
-        "title": "Pending -> Settled",
-        "description": "A promise starts Pending and settles into either Fulfilled or Rejected permanently.",
+        "tag": "Waiting",
+        "title": "Pending",
+        "description": "The asynchronous task is still working in the background. The promise has not produced a value or error yet.",
         "color": "cyan"
       },
       {
         "number": "02",
         "tag": "Success",
-        "title": ".then(data => ...)",
-        "description": "Transforms and passes data down the chain to the next handler.",
+        "title": "Fulfilled (Resolved)",
+        "description": "The task finished successfully! The promise now permanently holds the resolved data, delivered to .then().",
         "color": "emerald"
       },
       {
         "number": "03",
-        "tag": "Recovery",
-        "title": ".catch(err => ...)",
-        "description": "Catches any error thrown in previous .then() steps, preventing unhandled rejections.",
+        "tag": "Failure",
+        "title": "Rejected (Failed)",
+        "description": "An error occurred. The promise permanently holds the error reason, delivered to .catch().",
         "color": "rose"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Always attach a .catch() handler to Promise chains (or wrap in try/catch). Unhandled rejections crash Node.js processes."
+      "title": "💡 Golden Rule of Promise States",
+      "content": "A Promise can only settle ONCE! Once a Promise moves from Pending to Fulfilled or Rejected, its state and value are permanently locked and cannot change."
     }
   },
   "part3": {
-    "title": "Sequential Operations with .then() and .catch()",
-    "intro": "Chaining asynchronous steps cleanly without nesting:",
+    "title": "Method Chaining with .then() and Centralized .catch()",
+    "intro": "Chaining sequential asynchronous tasks in a flat, readable pipeline:",
     "points": [
       {
-        "title": "1. Returning in .then",
-        "content": "Returning a value in a .then() callback wraps that value in a new resolved Promise."
+        "title": "1. Returning Values in .then()",
+        "content": "Whatever value you return from a .then() callback is automatically wrapped in a new resolved Promise and passed to the next .then() in the chain."
       },
       {
-        "title": "2. Flattening Chains",
-        "content": "Returning a Promise inside a .then() callback automatically unwraps it, preventing nesting."
+        "title": "2. Returning Promises to Flatten Chains",
+        "content": "If you return another Promise inside a .then(), JavaScript waits for that inner Promise to finish before moving to the next .then(). This eliminates nested pyramids!"
       },
       {
-        "title": "3. Promise.all()",
-        "content": "Runs multiple promises at the same time and finishes when ALL promises succeed."
+        "title": "3. .finally() for Cleanup",
+        "content": "Use .finally(() => {}) to run cleanup code (like turning off a loading spinner) regardless of whether the operation succeeded or failed."
       }
     ]
   },
   "part4": {
-    "title": "The Callback Hell Trap (The Pyramid of Doom)",
+    "title": "Common Mistakes: Callback Hell vs Clean Promise Chaining",
     "bad": {
-      "title": "❌ Bad: Callback Hell with nested asynchronous pyramids",
-      "code": "// Nested callback pyramid of doom:\ngetUser(userId, (user) => {\n  getOrders(user.id, (orders) => {\n    getOrderDetails(orders[0].id, (details) => {\n      console.log(details); // Hard to read, hard to catch errors!\n    });\n  });\n});",
-      "explanation": "Nesting lots of callbacks inside callbacks creates 'Callback Hell', which is messy, hard to read, and difficult to fix."
+      "title": "❌ Bad: Callback Hell (Pyramid of Doom) with nested callbacks",
+      "code": "// The Callback Hell Pyramid:\nfetchUser(101, (user) => {\n  fetchOrders(user.id, (orders) => {\n    fetchReceipt(orders[0].id, (receipt) => {\n      console.log(\"Receipt:\", receipt); // Deeply indented, hard to handle errors!\n    }, (err) => console.error(err));\n  }, (err) => console.error(err));\n}, (err) => console.error(err));",
+      "explanation": "Nesting multiple callbacks inside callbacks makes code difficult to read, impossible to debug, and requires duplicating error handlers at every layer."
     },
     "good": {
-      "title": "✅ Clean: Flat, readable Promise chaining with centralized error handling",
-      "code": "const fetchUser = (id) => Promise.resolve({ id, name: \"Maria\" });\nconst fetchOrders = (user) => Promise.resolve([\"Order #101\", \"Order #102\"]);\n\nfetchUser(1)\n  .then((user) => fetchOrders(user))\n  .then((orders) => console.log(\"Orders found:\", orders))\n  .catch((err) => console.error(\"Pipeline failed:\", err.message));",
-      "explanation": "Promises let you chain steps cleanly one after another with .then(), and a single .catch() at the end handles any mistake."
+      "title": "✅ Clean: Linear Promise chaining with centralized error handling",
+      "code": "// Flat, readable chain:\nfetchUser(101)\n  .then((user) => fetchOrders(user.id))\n  .then((orders) => fetchReceipt(orders[0].id))\n  .then((receipt) => {\n    console.log(\"Receipt total:\", receipt.amount);\n  })\n  .catch((error) => {\n    // Catches errors from ANY of the steps above!\n    console.error(\"Order processing failed:\", error.message);\n  })\n  .finally(() => {\n    console.log(\"Transaction flow finished.\");\n  });",
+      "explanation": "Promise chaining keeps every asynchronous step flat and linear, with a single .catch() guarding the entire sequence."
     }
   },
   "part5": {
     "title": "Promises Playground",
-    "intro": "Create promises, handle fulfilled results with .then(), and catch rejections:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-21: PROMISES & CHAINING\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Function returning a simulated Promise:\nfunction checkInventory(item, inStock) {\n  return new Promise((resolve, reject) => {\n    console.log(`🔍 Checking stock for ${item}...`);\n    setTimeout(() => {\n      if (inStock) {\n        resolve({ item, status: \"AVAILABLE\", price: 49.99 });\n      } else {\n        reject(new Error(`Out of stock: ${item}`));\n      }\n    }, 300);\n  });\n}\n\n// 2. Consume Promise with .then(), .catch(), and .finally():\ncheckInventory(\"Wireless Headphones\", true)\n  .then((product) => {\n    console.log(\"✅ Success! Item is:\", product.status);\n    return product.price * 1.08; // Add tax\n  })\n  .then((finalPrice) => {\n    console.log(\"💰 Final Price with Tax: $\" + finalPrice.toFixed(2));\n  })\n  .catch((error) => {\n    console.error(\"❌ Order Error:\", error.message);\n  })\n  .finally(() => {\n    console.log(\"🏁 Inventory check finished.\");\n  });\n"
+    "intro": "Create a custom Promise with resolve and reject, transform data through .then(), and catch simulated errors:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-21: PROMISES PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Create a function returning a Promise:\nfunction fetchProductDetails(productId) {\n  return new Promise((resolve, reject) => {\n    console.log(`⏳ Fetching details for product #${productId}...`);\n    setTimeout(() => {\n      if (productId > 0) {\n        resolve({ id: productId, name: \"Mechanical Keyboard\", price: 120 });\n      } else {\n        reject(new Error(\"Invalid product ID: must be greater than 0\"));\n      }\n    }, 300);\n  });\n}\n\n// 2. Consume the Promise chain:\nfetchProductDetails(42)\n  .then((product) => {\n    console.log(\"📦 Product fetched:\", product.name);\n    // Transform data: calculate price with 10% discount:\n    const discountedPrice = product.price * 0.9;\n    return { ...product, discountedPrice };\n  })\n  .then((updatedProduct) => {\n    console.log(`💰 Discounted price: $${updatedProduct.discountedPrice}`);\n  })\n  .catch((err) => {\n    console.error(\"❌ An error occurred:\", err.message);\n  })\n  .finally(() => {\n    console.log(\"🏁 Product request completed.\");\n  });\n\n// 3. Test rejection by passing an invalid ID:\nfetchProductDetails(-1)\n  .catch((err) => console.log(\"Caught expected error:\", err.message));\n"
   },
   "part6": {
     "title": "Key Takeaways: Promises",
     "takeaways": [
       {
-        "title": "1. 3 States",
-        "desc": "Pending -> Fulfilled or Rejected."
+        "title": "1. Three States",
+        "desc": "Pending -> permanently settles into Fulfilled or Rejected."
       },
       {
-        "title": "2. Flat Chains",
-        "desc": "Chain .then() handlers linearly instead of nesting callbacks."
+        "title": "2. Flat .then() Chains",
+        "desc": "Return values or inner Promises to chain steps linearly without nesting."
       },
       {
-        "title": "3. Central Catch",
-        "desc": "One .catch() at the end captures errors from any previous step."
+        "title": "3. Centralized .catch()",
+        "desc": "One .catch() at the end captures errors from any step in the chain."
       },
       {
-        "title": "4. Next: Async/Await",
-        "desc": "In JS-22, we make async code look and feel like synchronous code."
+        "title": "4. Guaranteed .finally()",
+        "desc": "Runs cleanup code regardless of success or rejection."
+      },
+      {
+        "title": "5. Next Step: Async/Await",
+        "desc": "In JS-22, we learn the modern async/await syntax to write asynchronous code that reads like synchronous code!"
       }
     ],
     "nextLessonPreview": {
       "title": "JS-22: Async/Await: Clean Asynchronous Workflows",
-      "desc": "Write asynchronous code that reads like synchronous code using the modern async and await keywords."
+      "desc": "Write asynchronous code that reads cleanly like synchronous code using async, await, try/catch, and parallel Promise.all()."
     }
   },
   "part7": {
@@ -3792,7 +3851,7 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
         ".except()"
       ],
       "correctIndex": 1,
-      "explanation": "The .catch() method is used in Promise chains to handle any errors or rejections that occur in earlier steps."
+      "explanation": "The .catch() method is used in Promise chains to capture any errors or rejections that occur in earlier steps."
     }
   }
 },
@@ -3801,99 +3860,99 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js22-async-await",
   "code": "JS-22",
   "title": "Async/Await: Clean Asynchronous Workflows",
-  "subtitle": "Write asynchronous code that reads cleanly like synchronous code using async and await with try/catch.",
+  "subtitle": "Write asynchronous code that reads cleanly like synchronous code using async, await, try/catch, and parallel Promise.all().",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Clean Async Code",
-            "icon": "✨",
-            "tag": "ASYNC/AWAIT"
-        },
-        {
-            "id": "part2",
-            "label": "await & try/catch",
-            "icon": "🛡️",
-            "tag": "ERROR SAFETY"
-        },
-        {
-            "id": "part3",
-            "label": "Running Tasks Together with Promise.all",
-            "icon": "⚡",
-            "tag": "PARALLEL"
-        },
-        {
-            "id": "part4",
-            "label": "Waterfall Traps",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Async/Await Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Clean Async Code",
+      "icon": "✨",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "await & try/catch",
+      "icon": "🛡️",
+      "tag": "SYNTAX"
+    },
+    {
+      "id": "part3",
+      "label": "Parallel with Promise.all",
+      "icon": "⚡",
+      "tag": "PARALLEL"
+    },
+    {
+      "id": "part4",
+      "label": "Waterfall Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Async/Await Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Async/Await: Clean Asynchronous Workflows",
-    "bigPicture": "Async/await is modern syntax that lets you write asynchronous code that reads cleanly like synchronous code. Think of await like waiting for an oven timer: you pause reading the recipe until the bell dings, but other kitchen helpers keep prepping in the background.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "Async/Await: The Cleanest Way to Work with Promises",
+    "bigPicture": "While Promises solved callback hell, chaining lots of .then() handlers can still look foreign and verbose. ES2017 introduced async and await: special keywords that let you write asynchronous code that reads and feels exactly like ordinary synchronous code! Think of await like setting an oven timer: you pause in the recipe until the timer dings, but other kitchen helpers keep prepping without freezing the kitchen.",
+    "breakdownTitle": "Core Concepts of Async/Await:",
     "breakdownItems": [
       {
         "title": "The async Keyword",
-        "desc": "Declaring a function 'async' guarantees it automatically returns a Promise."
+        "desc": "Marking a function as 'async' guarantees that it automatically returns a Promise."
       },
       {
         "title": "The await Keyword",
-        "desc": "Pauses function execution until the Promise resolves, unwrapping its value."
+        "desc": "Pauses the execution of the async function until the Promise settles, unwrapping its value directly into a variable."
       },
       {
-        "title": "try / catch Handling",
-        "desc": "Handle asynchronous errors using standard synchronous try/catch blocks."
+        "title": "Standard try / catch",
+        "desc": "Handle asynchronous errors using standard, familiar try/catch blocks instead of chaining .catch()."
       }
     ]
   },
   "part2": {
-    "title": "Unwrapping Promises with await and try/catch",
-    "intro": "Pausing function execution until a Promise resolves, unwrapping its value directly:",
+    "title": "Unwrapping Values with await and Guarding with try/catch",
+    "intro": "How await unwraps resolved values and converts rejections into catchable exceptions:",
     "cards": [
       {
         "number": "01",
-        "tag": "Syntax",
+        "tag": "Declaration",
         "title": "async function () {}",
-        "description": "Wraps the function return value in a Promise automatically.",
+        "description": "Any value returned by an async function is automatically wrapped in a resolved Promise (return 42 -> Promise.resolve(42)).",
         "color": "purple"
       },
       {
         "number": "02",
-        "tag": "Control",
-        "title": "await promise",
-        "description": "Pauses only the local function; other tasks on the event loop continue running.",
+        "tag": "Unwrap",
+        "title": "const data = await promise",
+        "description": "Pauses only the local async function until the promise resolves. The main thread and UI stay responsive!",
         "color": "emerald"
       },
       {
         "number": "03",
-        "tag": "Errors",
-        "title": "try { } catch (err) { }",
-        "description": "Unifies synchronous and asynchronous error handling into one clean block.",
+        "tag": "Safety",
+        "title": "try { } catch (error) { }",
+        "description": "If an awaited Promise rejects, JavaScript throws an exception directly into the surrounding catch block.",
         "color": "cyan"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Don't wait for independent tasks one by one! If task A and task B don't depend on each other, run them together with Promise.all([a(), b()]) to save time."
+      "title": "💡 Golden Rule of await",
+      "content": "You can only use the await keyword inside an async function (or at the top level of ES modules). Using await inside a standard function throws a SyntaxError!"
     }
   },
   "part3": {
@@ -3901,74 +3960,78 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
     "intro": "Running independent asynchronous tasks simultaneously instead of one by one:",
     "points": [
       {
-        "title": "1. Top-Level Await",
-        "content": "Modern ES Modules support top-level await outside of async functions."
+        "title": "1. The Async Waterfall Problem",
+        "content": "If you write const a = await getA(); const b = await getB(); and task B doesn't depend on A, task B is waiting needlessly. If each takes 1 second, your app takes 2 seconds total!"
       },
       {
-        "title": "2. Clean Unwrapping",
-        "content": "const data = await fetch() unwraps the Promise value directly without .then() nesting."
+        "title": "2. Parallel Execution with Promise.all()",
+        "content": "const [a, b] = await Promise.all([getA(), getB()]); starts both tasks at the exact same moment. If each takes 1 second, the total time is only 1 second!"
       },
       {
-        "title": "3. Parallel Execution",
-        "content": "Promise.all([fetchUsers(), fetchPosts()]) runs both tasks at the same time."
+        "title": "3. Top-Level Await in ES Modules",
+        "content": "In modern JavaScript files using ES modules, you can use await directly at the top level of the file without wrapping it in an async function."
       }
     ]
   },
   "part4": {
-    "title": "The Async Waterfall Trap: Awaiting Independent Tasks in Sequence",
+    "title": "Common Mistakes: The Sequential Waterfall Trap",
     "bad": {
-      "title": "❌ Bad: Sequential waterfall for independent network calls",
-      "code": "async function loadDashboard() {\n  // Bug: Sequential waterfall! Takes 1s + 1s = 2 seconds!\n  const users = await fetchUsers(); // 1 second\n  const stats = await fetchStats(); // 1 second (waits for users needlessly!)\n  return { users, stats };\n}",
-      "explanation": "Waiting for independent tasks one by one doubles your waiting time. Running them together with Promise.all saves precious seconds."
+      "title": "❌ Bad: Awaiting independent requests sequentially (slow waterfall)",
+      "code": "async function loadDashboard() {\n  // Bug: Sequential waterfall! Takes 1s + 1s = 2 seconds total!\n  const users = await fetchUsers();     // Takes 1 second\n  const products = await fetchProducts(); // Takes 1 second (waits for users needlessly!)\n  return { users, products };\n}",
+      "explanation": "Awaiting independent tasks one by one forces the second task to wait until the first finishes, needlessly doubling user waiting time."
     },
     "good": {
-      "title": "✅ Clean: Parallel execution with Promise.all and try/catch",
-      "code": "async function loadDashboard() {\n  try {\n    // Both network requests run at the same time: takes only 1 second total!\n    const [users, stats] = await Promise.all([\n      fetchUsers(),\n      fetchStats()\n    ]);\n    return { users, stats };\n  } catch (error) {\n    console.error(\"Dashboard failed to load:\", error);\n  }\n}",
-      "explanation": "Promise.all runs all your background tasks at the exact same time, cutting your total waiting time in half."
+      "title": "✅ Clean: Running independent tasks concurrently with Promise.all",
+      "code": "async function loadDashboard() {\n  try {\n    // Both requests fire simultaneously: takes only 1 second total!\n    const [users, products] = await Promise.all([\n      fetchUsers(),\n      fetchProducts()\n    ]);\n    return { users, products };\n  } catch (error) {\n    console.error(\"Dashboard failed to load:\", error.message);\n  }\n}",
+      "explanation": "Promise.all fires both network calls in parallel, cutting total waiting time in half while catching any errors cleanly."
     }
   },
   "part5": {
     "title": "Async/Await Playground",
-    "intro": "Write async functions, unwrap promises with await, and benchmark serial vs parallel workflows:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-22: ASYNC / AWAIT DEMO\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// Simulated asynchronous database queries:\nfunction queryUser(id) {\n  return new Promise((resolve) => {\n    setTimeout(() => resolve({ id, name: \"Sophia\", role: \"Developer\" }), 200);\n  });\n}\n\nfunction queryUserProjects(userId) {\n  return new Promise((resolve) => {\n    setTimeout(() => resolve([\"LearnCraft Platform\", \"API Gateway\"]), 200);\n  });\n}\n\n// Modern async/await workflow:\nasync function loadUserData(userId) {\n  console.log(\"⏳ Fetching user profile...\");\n  try {\n    const user = await queryUser(userId);\n    console.log(\"👤 User loaded:\", user.name, `(${user.role})`);\n\n    console.log(\"⏳ Fetching projects...\");\n    const projects = await queryUserProjects(user.id);\n    console.log(\"🚀 Active projects:\", projects.join(\", \"));\n\n    return { user, projects };\n  } catch (err) {\n    console.error(\"Failed to load user data:\", err);\n  }\n}\n\n// Execute the async function!\nloadUserData(42);\n"
+    "intro": "Write clean async functions, unwrap simulated database responses with await, and benchmark serial vs parallel workflows:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-22: ASYNC / AWAIT PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// Simulated asynchronous network services:\nfunction fetchUserProfile(userId) {\n  return new Promise((resolve) => {\n    setTimeout(() => resolve({ id: userId, username: \"dev_sara\", role: \"Engineer\" }), 200);\n  });\n}\n\nfunction fetchUserProjects(userId) {\n  return new Promise((resolve) => {\n    setTimeout(() => resolve([\"LearnCraft App\", \"AI Chat Engine\"]), 200);\n  });\n}\n\n// 1. Clean async/await workflow with try/catch:\nasync function loadUserData(userId) {\n  console.log(\"⏳ Fetching user data...\");\n  try {\n    // Run both independent requests in parallel:\n    const [user, projects] = await Promise.all([\n      fetchUserProfile(userId),\n      fetchUserProjects(userId)\n    ]);\n\n    console.log(\"👤 User loaded:\", user.username, `(${user.role})`);\n    console.log(\"📁 Projects loaded:\", projects.join(\", \"));\n\n    return { user, projects };\n  } catch (error) {\n    console.error(\"❌ Failed to load user data:\", error.message);\n  }\n}\n\n// 2. Invoke the async function:\nloadUserData(101).then((result) => {\n  console.log(\"🎉 Complete result ready:\", result !== undefined);\n});\n"
   },
   "part6": {
     "title": "Key Takeaways: Async/Await",
     "takeaways": [
       {
-        "title": "1. Clean Readability",
-        "desc": "Async/await eliminates nested .then() callbacks."
+        "title": "1. Linear Readability",
+        "desc": "Write asynchronous code that reads like clean synchronous statements."
       },
       {
-        "title": "2. Standard try/catch",
-        "desc": "Catch async errors using familiar try/catch syntax."
+        "title": "2. Automatic Promise Return",
+        "desc": "Any async function automatically wraps its return value in a Promise."
       },
       {
-        "title": "3. Avoid Waterfalls",
-        "desc": "Use Promise.all() for independent async tasks."
+        "title": "3. try/catch Error Handling",
+        "desc": "Awaited rejections become thrown exceptions caught by standard try/catch."
       },
       {
-        "title": "4. Next: The Event Loop",
-        "desc": "In JS-23, we look behind the curtain at the Event Loop and task queues."
+        "title": "4. Parallel with Promise.all",
+        "desc": "Never await independent tasks in sequence; fire them concurrently with Promise.all."
+      },
+      {
+        "title": "5. Next Step: The Event Loop",
+        "desc": "In JS-23, we look under the hood to see how the Call Stack and Task Queues prioritize execution!"
       }
     ],
     "nextLessonPreview": {
       "title": "JS-23: The Event Loop: Call Stack & Task Queues",
-      "desc": "Master the exact execution order: Call Stack, Microtasks (Promises), and Macrotasks (Timers)."
+      "desc": "Understand execution priority under the hood: the Call Stack, VIP Microtasks (Promises), and Macrotasks (Timers)."
     }
   },
   "part7": {
     "title": "Knowledge Check: Async/Await",
     "quiz": {
-      "question": "What does an 'async' function always return in JavaScript?",
+      "question": "What does an 'async' function ALWAYS return in JavaScript?",
       "options": [
-        "A synchronous string.",
-        "A Promise (automatically wrapping the return value).",
-        "undefined only.",
-        "A generator object."
+        "A plain string",
+        "A Promise (automatically wrapping the returned value)",
+        "undefined only",
+        "A generator object"
       ],
       "correctIndex": 1,
-      "explanation": "Any function marked with the async keyword always returns a Promise. If the function returns a non-promise value, JavaScript wraps it in a resolved Promise automatically."
+      "explanation": "Every async function automatically returns a Promise. If the function returns a non-promise value (e.g. return 42), JavaScript wraps it in a resolved Promise automatically."
     }
   }
 },
@@ -3977,166 +4040,170 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js23-the-event-loop",
   "code": "JS-23",
   "title": "The Event Loop: Call Stack & Task Queues",
-  "subtitle": "Master the exact execution order: Call Stack, Microtasks (Promises), and Macrotasks (Timers).",
+  "subtitle": "Understand execution priority under the hood: the Call Stack, VIP Microtasks (Promises), and Macrotasks (Timers).",
   "sections": [
-        {
-            "id": "part1",
-            "label": "The Airport Runway",
-            "icon": "🛫",
-            "tag": "EVENT LOOP"
-        },
-        {
-            "id": "part2",
-            "label": "Queue Priorities",
-            "icon": "📊",
-            "tag": "PRIORITIES"
-        },
-        {
-            "id": "part3",
-            "label": "Microtasks vs Timers",
-            "icon": "⏱️",
-            "tag": "ORDER"
-        },
-        {
-            "id": "part4",
-            "label": "Starvation Traps",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Event Loop Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "The Airport Runway",
+      "icon": "🛫",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "Queue Priorities",
+      "icon": "📊",
+      "tag": "PRIORITIES"
+    },
+    {
+      "id": "part3",
+      "label": "Microtasks vs Timers",
+      "icon": "⏱️",
+      "tag": "EXECUTION"
+    },
+    {
+      "id": "part4",
+      "label": "Order Traps",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Event Loop Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Quick Quiz",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "The Event Loop: Orchestrating the Single Thread",
-    "bigPicture": "The Event Loop coordinates the Call Stack, Microtask Queue, and Macrotask Queue. Think of this like an airport runway: the Call Stack is the active runway, Microtasks (Promises) are VIP first-class passengers who board immediately, and Macrotasks (Timers) wait in general boarding.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "The Event Loop: Coordinating JavaScript's Single Thread",
+    "bigPicture": "You now know that JavaScript is single-threaded and handles async code without freezing. But how does JavaScript decide what runs next when a timer finishes and a Promise resolves at the exact same moment? The Event Loop is the traffic controller that coordinates the Call Stack, the Microtask Queue, and the Macrotask Queue. Think of an airport runway: the Call Stack is the active runway. Microtasks (Promises) are VIP first-class passengers who board immediately. Macrotasks (Timers) wait in general boarding.",
+    "breakdownTitle": "The Three Stations of the Event Loop:",
     "breakdownItems": [
       {
-        "title": "Call Stack",
-        "desc": "Executes synchronous code until completely empty."
+        "title": "The Call Stack (Synchronous)",
+        "desc": "Executes synchronous code one frame at a time. The runway must be 100% empty before anything else can run."
       },
       {
-        "title": "Microtask Queue (VIP)",
-        "desc": "Drains ALL pending Promises and queueMicrotask items immediately when stack clears."
+        "title": "The Microtask Queue (VIP Priority)",
+        "desc": "Contains Promise callbacks (.then, .catch, await). Whenever the stack empties, ALL pending microtasks are drained immediately."
       },
       {
-        "title": "Macrotask Queue",
-        "desc": "Processes one timer or I/O event at a time after microtasks are completely empty."
+        "title": "The Macrotask Queue (General Priority)",
+        "desc": "Contains timer callbacks (setTimeout, setInterval). Dequeues one task at a time only after all microtasks have cleared."
       }
     ]
   },
   "part2": {
-    "title": "Call Stack, Microtask Queue & Macrotask Queue",
-    "intro": "The strict priority rules governing what runs next:",
+    "title": "Call Stack, Microtasks & Macrotasks: The Strict Priority Rule",
+    "intro": "Understanding the exact priority rules governing what code runs next:",
     "cards": [
       {
         "number": "01",
         "tag": "Priority 1",
         "title": "Call Stack (Sync)",
-        "description": "Runs top to bottom. Nothing else runs until the call stack is 100% empty.",
+        "description": "Runs all synchronous statements from top to bottom. Nothing from any queue can run until the Call Stack is completely clear.",
         "color": "purple"
       },
       {
         "number": "02",
         "tag": "Priority 2",
         "title": "Microtasks (Promises)",
-        "description": "Promise.then, catch, finally, queueMicrotask. Drained to zero every cycle.",
+        "description": "Promise callbacks (.then, .catch, await). Whenever the Call Stack empties, the engine drains ALL microtasks to zero before moving on.",
         "color": "emerald"
       },
       {
         "number": "03",
         "tag": "Priority 3",
         "title": "Macrotasks (Timers)",
-        "description": "setTimeout, setInterval, I/O events. Dequeued one by one between microtask checks.",
+        "description": "setTimeout and setInterval callbacks. One macrotask is processed per turn of the event loop, after microtasks are cleared.",
         "color": "amber"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Promises (Microtasks) ALWAYS run before setTimeout (Macrotasks), even if setTimeout is set to 0 milliseconds."
+      "title": "💡 Golden Rule of Event Loop Order",
+      "content": "Promise callbacks (Microtasks) ALWAYS run before setTimeout callbacks (Macrotasks), even if the setTimeout delay is set to 0 milliseconds!"
     }
   },
   "part3": {
     "title": "Execution Order: Why Promises Run Before Timers",
-    "intro": "Why a resolved Promise callback always fires before setTimeout(fn, 0):",
+    "intro": "Tracing step-by-step why a resolved Promise callback fires before setTimeout(fn, 0):",
     "points": [
       {
-        "title": "1. Complete Drain",
-        "content": "The engine never processes a macrotask if there are unhandled microtasks waiting."
+        "title": "1. The Call Stack Empties",
+        "content": "Synchronous statements (console.log) run first on the Call Stack. While running, any Promises schedule microtasks, and timers schedule macrotasks."
       },
       {
-        "title": "2. Starvation Risk",
-        "content": "Continuously adding new microtasks in a loop blocks the event loop and freezes the screen."
+        "title": "2. Microtask Queue Drains Completely",
+        "content": "As soon as the last synchronous line finishes, the Event Loop visits the Microtask Queue and runs every single waiting Promise callback."
       },
       {
-        "title": "3. Render Phase",
-        "content": "Browser repaints occur between macrotasks, after microtasks have cleared."
+        "title": "3. Macrotask Queue Executes",
+        "content": "Only after the Call Stack is empty AND the Microtask Queue has 0 items waiting does the Event Loop pick up the next timer callback."
       }
     ]
   },
   "part4": {
-    "title": "The Event Loop Starvation Trap",
+    "title": "Common Mistakes: Misunderstanding setTimeout(fn, 0) Order",
     "bad": {
-      "title": "❌ Bad: Misunderstanding execution order of setTimeout(fn, 0)",
-      "code": "console.log(\"1\");\nsetTimeout(() => console.log(\"2\"), 0);\nconsole.log(\"3\");\n// Believing \"2\" will run between \"1\" and \"3\" because delay is 0ms!",
-      "explanation": "Even with a 0-millisecond delay, timers are placed in a waiting line. They must wait until all regular code finishes before running."
+      "title": "❌ Bad: Assuming setTimeout(fn, 0) runs immediately between logs",
+      "code": "console.log(\"1\");\n// Buggy assumption: Believing \"2\" will run immediately because delay is 0ms:\nsetTimeout(() => console.log(\"2\"), 0);\nconsole.log(\"3\");\n\n// Expected by confused beginner: 1 -> 2 -> 3\n// Actual output: 1 -> 3 -> 2!",
+      "explanation": "Even with a 0-millisecond delay, setTimeout puts the callback into the Macrotask Queue. It cannot run until all synchronous code finishes."
     },
     "good": {
       "title": "✅ Clean: Predictable coordination between stack, microtasks, and macrotasks",
-      "code": "console.log(\"1. Synchronous Stack\");\n\nsetTimeout(() => console.log(\"4. Macrotask (setTimeout 0ms)\"), 0);\n\nPromise.resolve().then(() => console.log(\"3. Microtask (Promise.then)\"));\n\nconsole.log(\"2. Synchronous Stack Continues\");\n// Order logged: 1 -> 2 -> 3 -> 4!",
-      "explanation": "Regular code runs first. Then Promises run immediately as VIP tasks. Finally, timers run once everything else is clear."
+      "code": "console.log(\"1. Synchronous Stack Start\");\n\nsetTimeout(() => {\n  console.log(\"4. Macrotask (setTimeout 0ms)\");\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log(\"3. Microtask (Promise.then - VIP!)\");\n});\n\nconsole.log(\"2. Synchronous Stack End\");\n\n// Output Order:\n// 1. Synchronous Stack Start\n// 2. Synchronous Stack End\n// 3. Microtask (Promise.then - VIP!)\n// 4. Macrotask (setTimeout 0ms)",
+      "explanation": "Synchronous code runs first (1, 2). Then VIP microtasks drain (3). Finally, the macrotask timer runs (4)."
     }
   },
   "part5": {
     "title": "Event Loop Priority Playground",
-    "intro": "Mix console.log, setTimeout, and Promise.resolve to observe the exact microtask drain order:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-23: THE EVENT LOOP IN ACTION\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconsole.log(\"1️⃣ Synchronous Log: Call stack start\");\n\n// Macrotask (Timer):\nsetTimeout(() => {\n  console.log(\"4️⃣ Macrotask Log: setTimeout callback executed\");\n}, 0);\n\n// Microtask (Promise):\nPromise.resolve().then(() => {\n  console.log(\"3️⃣ Microtask Log: Promise.then executed (VIP priority!)\");\n});\n\nconsole.log(\"2️⃣ Synchronous Log: Call stack finish\");\n\n// Execution flow explanation:\n// 1. Logs \"1\" and \"2\" immediately on the Call Stack.\n// 2. Call Stack empties -> Microtask queue drains -> Logs \"3\".\n// 3. Next turn of Event Loop -> Macrotask queue dequeues -> Logs \"4\".\n"
+    "intro": "Mix synchronous logs, setTimeout timers, and Promise.resolve to observe the exact microtask drain order:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-23: THE EVENT LOOP PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconsole.log(\"1️⃣ Synchronous: Call stack line 1\");\n\n// Macrotask (Timer):\nsetTimeout(() => {\n  console.log(\"4️⃣ Macrotask: setTimeout 0ms executed (General boarding)\");\n}, 0);\n\n// Microtask (Promise):\nPromise.resolve().then(() => {\n  console.log(\"3️⃣ Microtask: Promise.then executed (VIP First-Class boarding!)\");\n});\n\nconsole.log(\"2️⃣ Synchronous: Call stack line 2\");\n\n// Step-by-step trace:\n// 1. \"1️⃣\" and \"2️⃣\" execute immediately on the active Call Stack.\n// 2. Call Stack becomes empty -> Event Loop checks Microtask Queue.\n// 3. Microtask Queue drains -> logs \"3️⃣\".\n// 4. Microtask Queue is empty -> Event Loop dequeues Macrotask -> logs \"4️⃣\".\n"
   },
   "part6": {
     "title": "Key Takeaways: The Event Loop",
     "takeaways": [
       {
         "title": "1. Call Stack First",
-        "desc": "All synchronous code runs to completion first."
+        "desc": "All synchronous code runs to completion before any queued callbacks can execute."
       },
       {
         "title": "2. Microtasks Drain Next",
-        "desc": "Promise handlers run before any timer callbacks."
+        "desc": "Promise handlers (.then, .catch, await) have VIP priority over timers."
       },
       {
         "title": "3. Macrotasks Run Last",
-        "desc": "setTimeout waits for the stack and microtasks to clear."
+        "desc": "Timers (setTimeout, setInterval) wait until both stack and microtasks are clear."
       },
       {
-        "title": "4. Next: Error Handling",
-        "desc": "In JS-24, we learn how to gracefully catch and recover from errors."
+        "title": "4. The 0ms Reality",
+        "desc": "setTimeout(fn, 0) schedules a macrotask; it never interrupts synchronous code."
+      },
+      {
+        "title": "5. Next Step: Errors, Modules & APIs",
+        "desc": "In Stage 7, we master Error Handling, ES Modules, and the Fetch API!"
       }
     ],
     "nextLessonPreview": {
       "title": "JS-24: Error Handling: try, catch, finally & throw",
-      "desc": "Protect your applications from unexpected crashes using defensive error handling patterns."
+      "desc": "Prevent crashes using try/catch/finally, throw custom errors, and inspect error messages."
     }
   },
   "part7": {
     "title": "Knowledge Check: The Event Loop",
     "quiz": {
-      "question": "In what order will these three lines execute? (A: setTimeout 0ms, B: Synchronous log, C: Promise.resolve().then)",
+      "question": "In what exact order will these execute? (A: setTimeout 0ms, B: Synchronous log, C: Promise.resolve().then)",
       "options": [
         "A -> B -> C",
         "B -> C -> A",
@@ -4153,174 +4220,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js24-error-handling",
   "code": "JS-24",
   "title": "Error Handling: try, catch, finally & throw",
-  "subtitle": "Protect web applications from crashes using try, catch, finally, and custom Error objects.",
+  "subtitle": "Protect web applications from crashes using try, catch, finally, and create intentional exceptions with throw.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "The Safety Net",
-            "icon": "🛡️",
-            "tag": "ERRORS"
-        },
-        {
-            "id": "part2",
-            "label": "try, catch & finally",
-            "icon": "🧯",
-            "tag": "HANDLING"
-        },
-        {
-            "id": "part3",
-            "label": "Custom Error Classes",
-            "icon": "🏷️",
-            "tag": "CUSTOM ERRORS"
-        },
-        {
-            "id": "part4",
-            "label": "Swallowed Errors Trap",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Error Handling Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "The Safety Net",
+      "icon": "🛡️",
+      "tag": "CRASH DEFENSE"
+    },
+    {
+      "id": "part2",
+      "label": "try, catch & finally",
+      "icon": "🧯",
+      "tag": "SYNTAX"
+    },
+    {
+      "id": "part3",
+      "label": "Execution Mental Model",
+      "icon": "🧠",
+      "tag": "FLOW"
+    },
+    {
+      "id": "part4",
+      "label": "Swallowed Errors Trap",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Error Sandbox",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Knowledge Check",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Errors in JavaScript: Handling the Unexpected",
-    "bigPicture": "Bugs and network failures will happen. Structured error handling ensures your application degrades gracefully instead of crashing the whole screen. Think of try/catch like an acrobat's safety net: if a jump fails, the net catches them safely.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "The Trapeze Safety Net: Why Programs Must Handle Failure",
+    "bigPicture": "When JavaScript encounters an unhandled runtime mistake—like accessing a property on undefined or receiving corrupted data—it panics and abruptly terminates the entire script! In a browser, that means buttons stop working, animations freeze, and users see a broken screen. Structured error handling is your safety net: it intercepts the failure before it kills your app, giving you the chance to log what went wrong, alert the user politely, and keep the application alive.",
+    "breakdownTitle": "Four Pillars of Error Handling:",
     "breakdownItems": [
       {
-        "title": "try / catch Blocks",
-        "desc": "Wrap risky operations (JSON parsing, network calls) in try; catch handles failures."
+        "title": "The try Block",
+        "desc": "Wraps code that might fail (like parsing external JSON or requesting server data) so errors can be intercepted."
       },
       {
-        "title": "The throw Statement",
-        "desc": "throw new Error('message') halts execution in the current block and transfers control to the nearest catch."
+        "title": "The catch Block",
+        "desc": "Acts as the safety net; it only executes if an error occurs inside try, receiving the error object for inspection."
       },
       {
         "title": "The finally Block",
-        "desc": "Guaranteed to run after try and catch, perfect for closing connections and clearing loading spinners."
+        "desc": "Guaranteed to run after try and catch finish, regardless of whether an error occurred. Ideal for cleanup."
+      },
+      {
+        "title": "The throw Statement",
+        "desc": "Allows you to manually trigger an error when custom business rules are violated (e.g., negative bank balance)."
       }
     ]
   },
   "part2": {
-    "title": "Structured Error Handling with try, catch & finally",
-    "intro": "Catching runtime exceptions and guaranteeing cleanup execution:",
+    "title": "Core Mechanics: try, catch, finally & Custom Errors",
+    "intro": "Master the syntax and tools JavaScript provides to catch and create errors:",
     "cards": [
       {
         "number": "01",
-        "tag": "Containment",
-        "title": "try { ... }",
-        "description": "Encloses potentially dangerous operations that might fail at runtime.",
-        "color": "purple"
+        "tag": "The Net",
+        "title": "try...catch(err)",
+        "description": "Runs risky code in try. If an exception is thrown, execution immediately jumps into catch without crashing the thread.",
+        "color": "emerald"
       },
       {
         "number": "02",
-        "tag": "Recovery",
-        "title": "catch (error) { ... }",
-        "description": "Provides graceful degradation, user messaging, or error telemetry.",
-        "color": "rose"
+        "tag": "The Cleanup",
+        "title": "The finally Block",
+        "description": "Always executes no matter what. Perfect for hiding loading spinners, closing database connections, or resetting flags.",
+        "color": "cyan"
       },
       {
         "number": "03",
-        "tag": "Cleanup",
-        "title": "finally { ... }",
-        "description": "Always executes regardless of whether an error was thrown or handled.",
-        "color": "emerald"
+        "tag": "Custom Errors",
+        "title": "throw new Error(msg)",
+        "description": "Creates and triggers an intentional Error instance complete with a descriptive message and line-numbered stack trace.",
+        "color": "purple"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Always write throw new Error('message') instead of just throw 'message'. Real Error objects remember the exact file and line number where the problem happened."
+      "title": "💡 Golden Rule of Error Objects",
+      "content": "Always throw an instance of the Error class (throw new Error('Something went wrong')) rather than primitive strings or numbers (throw 'bad'). The Error object automatically captures the exact call stack, file name, and line number where the problem occurred."
     }
   },
   "part3": {
-    "title": "Throwing Custom Errors & Error Classes",
-    "intro": "Creating meaningful, actionable errors with descriptive error codes:",
+    "title": "The Execution Mental Model: How Control Transfers",
+    "intro": "Understand exactly how JavaScript navigates between try, catch, and finally:",
     "points": [
       {
-        "title": "1. Stack Traces",
-        "content": "new Error() captures the exact file name and line number where the problem originated."
+        "title": "1. The Smooth Swing (No Errors)",
+        "content": "Code inside try runs line-by-line. If no errors occur, the catch block is completely skipped, and execution glides directly into finally (if present) before continuing onward."
       },
       {
-        "title": "2. Re-throwing",
-        "content": "If a catch block cannot handle a specific error, re-throw it: throw error."
+        "title": "2. The Slip (Error Thrown)",
+        "content": "The moment an error is thrown inside try, execution immediately abandons the rest of the try block! JavaScript teleports instantly into catch, passing the Error object."
       },
       {
-        "title": "3. Never Swallow Silently",
-        "content": "Never leave catch empty (catch (e) {}). Log or handle the failure so bugs aren't invisible."
+        "title": "3. The Unbreakable Guarantee (finally)",
+        "content": "Whether try succeeds smoothly or catch recovers from an explosion, the finally block ALWAYS executes before any subsequent code outside the try/catch statement runs."
       }
     ]
   },
   "part4": {
-    "title": "The Silent Failure Trap: Swallowing Errors Without Logging",
+    "title": "Common Mistakes: Swallowing Errors Silently (The Blindfold Trap)",
     "bad": {
-      "title": "❌ Bad: Empty catch block hiding critical production bugs",
-      "code": "try {\n  processPayment(user);\n} catch (error) {\n  // Silent swallow: developer will have NO IDEA why payments are failing!\n}",
-      "explanation": "Leaving a catch block empty hides the error silently, making it nearly impossible to figure out why your app broke."
+      "title": "❌ Bad: Empty catch block hiding bugs and leaving developers blind",
+      "code": "function loadUserProfile(userId) {\n  try {\n    const profile = fetchProfileFromDatabase(userId);\n    renderProfile(profile);\n  } catch (err) {\n    // Catastrophic anti-pattern: Silently swallowed!\n    // When users report a blank screen, there are ZERO console errors,\n    // ZERO logs, and no hint of what went wrong.\n  }\n}",
+      "explanation": "Leaving catch empty swallows the error into a black hole. Bugs remain hidden, making production debugging almost impossible."
     },
     "good": {
-      "title": "✅ Clean: Structured error handling with specific logging and cleanup",
-      "code": "const user = { hasValidCard: true };\nfunction processPayment(u) { console.log(\"Payment processed for user.\"); }\nfunction showToastNotification(msg) { console.log(\"Toast:\", msg); }\n\nlet isLoading = true;\ntry {\n  if (!user.hasValidCard) {\n    throw new Error(\"Payment card expired or invalid\");\n  }\n  processPayment(user);\n} catch (error) {\n  console.error(\"❌ Payment failed:\", error.message);\n  showToastNotification(\"Payment unsuccessful. Please check your card.\");\n} finally {\n  isLoading = false; // Always dismiss the loading spinner!\n  console.log(\"Loading state cleared:\", isLoading);\n}",
-      "explanation": "We log the error message so we can fix it, show a friendly message to the user, and use finally to clean up."
+      "title": "✅ Clean: Logging diagnostic details, alerting the user, and guaranteed cleanup",
+      "code": "function loadUserProfile(userId) {\n  setLoadingState(true);\n  try {\n    const profile = fetchProfileFromDatabase(userId);\n    renderProfile(profile);\n  } catch (err) {\n    console.error(\"Failed to load user profile:\", err.message);\n    displayUserNotice(\"Could not load your profile. Please refresh or try again later.\");\n  } finally {\n    // Guaranteed to turn off the loading spinner whether fetch succeeded or failed!\n    setLoadingState(false);\n  }\n}",
+      "explanation": "The error is logged for diagnostics, the user receives clear feedback, and the UI spinner is guaranteed to turn off in finally."
     }
   },
   "part5": {
     "title": "Error Handling Playground",
-    "intro": "Trigger errors, catch exceptions safely, and verify that finally blocks always run:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-24: ERROR HANDLING IN ACTION\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nfunction calculatePercentage(portion, total) {\n  if (typeof portion !== \"number\" || typeof total !== \"number\") {\n    throw new TypeError(\"Both arguments must be valid numbers\");\n  }\n  if (total === 0) {\n    throw new RangeError(\"Total cannot be zero (division by zero)\");\n  }\n  return ((portion / total) * 100).toFixed(1) + \"%\";\n}\n\n// Test case 1: Successful calculation\ntry {\n  const result = calculatePercentage(25, 100);\n  console.log(\"✅ Success result:\", result);\n} catch (err) {\n  console.error(\"Caught error:\", err.message);\n}\n\n// Test case 2: Handled division by zero\ntry {\n  console.log(\"Attempting division by zero...\");\n  calculatePercentage(50, 0);\n} catch (err) {\n  console.warn(\"⚠️ Handled expected error:\", err.name, \"-\", err.message);\n} finally {\n  console.log(\"🏁 Cleanup step: Calculation test cycle complete.\");\n}\n"
+    "intro": "Experiment with throwing custom errors, catching exceptions, and observing the unconditional finally block:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-24: ERROR HANDLING PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst bankAccount = {\n  owner: \"Alex Rivera\",\n  balance: 350,\n  isProcessing: true\n};\n\nfunction withdrawFunds(account, amount) {\n  console.log(`\\nAttempting withdrawal of $${amount}...`);\n  \n  try {\n    // 1. Validate amount\n    if (typeof amount !== \"number\" || amount <= 0) {\n      throw new Error(\"Withdrawal amount must be a positive number.\");\n    }\n\n    // 2. Check sufficient balance\n    if (amount > account.balance) {\n      throw new Error(`Insufficient funds: requested $${amount}, but balance is only $${account.balance}.`);\n    }\n\n    // 3. Process transaction\n    account.balance -= amount;\n    console.log(`✅ Withdrawal approved! New balance: $${account.balance}`);\n  } catch (error) {\n    console.error(`❌ Transaction rejected: ${error.message}`);\n  } finally {\n    account.isProcessing = false;\n    console.log(\"🔒 Transaction closed: processing flag reset to false.\");\n  }\n}\n\n// Test 1: Valid withdrawal\nwithdrawFunds(bankAccount, 100);\n\n// Test 2: Overdraft attempt (triggers custom error!)\nwithdrawFunds(bankAccount, 500);\n\n// Test 3: Invalid input type\nwithdrawFunds(bankAccount, -25);\n"
   },
   "part6": {
-    "title": "Key Takeaways: Errors in JavaScript",
+    "title": "Key Takeaways: Error Handling",
     "takeaways": [
       {
-        "title": "1. No Silent Swallows",
-        "desc": "Never leave catch blocks empty."
+        "title": "1. The try/catch Safety Net",
+        "desc": "Enclose operations that might fail inside try; if an error occurs, catch intercepts it before the script crashes."
       },
       {
-        "title": "2. Always throw Error",
-        "desc": "Use new Error() to preserve diagnostic stack traces."
+        "title": "2. The finally Block Always Runs",
+        "desc": "Guaranteed to execute whether an error occurred or not; ideal for turning off spinners and closing resources."
       },
       {
-        "title": "3. finally for Cleanups",
-        "desc": "Reset loading indicators and close connections in finally."
+        "title": "3. Never Swallow Errors Silently",
+        "desc": "Avoid empty catch blocks; always log diagnostic information or notify the user so bugs can be resolved."
       },
       {
-        "title": "4. Next: ES Modules",
-        "desc": "In JS-25, we organize modular code with import and export."
+        "title": "4. Throw Real Error Objects",
+        "desc": "Use throw new Error('message') so your exceptions include full stack trace and line number information."
       }
     ],
     "nextLessonPreview": {
       "title": "JS-25: ES Modules: Organizing Code with import & export",
-      "desc": "Structure scalable applications by separating code into reusable modules with named and default exports."
+      "desc": "Organize large JavaScript applications into isolated, reusable module files using named exports, default exports, and import statements."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Errors in JavaScript",
+    "title": "Knowledge Check: Error Handling",
     "quiz": {
-      "question": "What is guaranteed to happen in a try...catch...finally block?",
+      "question": "What is guaranteed about code placed inside a 'finally' block?",
       "options": [
-        "The catch block will always execute even if no error occurs.",
-        "The finally block will always execute regardless of whether an error was thrown or caught.",
-        "Execution immediately halts the entire browser application.",
-        "The try block runs twice if it fails."
+        "It only runs if an error was caught inside the catch block",
+        "It always executes after try and catch, regardless of whether an error was thrown",
+        "It executes before the try block starts",
+        "It causes the browser to reload the page automatically"
       ],
       "correctIndex": 1,
-      "explanation": "The 'finally' block is guaranteed to execute after the try (and catch, if an error occurred) block completes, regardless of the outcome."
+      "explanation": "The finally block is guaranteed to run after the try (and catch, if an error occurred) block completes, regardless of the outcome."
     }
   }
 },
@@ -4329,168 +4400,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js25-es-modules",
   "code": "JS-25",
   "title": "ES Modules: Organizing Code with import & export",
-  "subtitle": "Organize modern codebases into isolated, reusable files using named and default imports and exports.",
+  "subtitle": "Organize modern codebases into isolated, reusable files using named exports, default exports, and import statements.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Lego Brick Architecture",
-            "icon": "🧱",
-            "tag": "MODULES"
-        },
-        {
-            "id": "part2",
-            "label": "Named vs Default",
-            "icon": "📦",
-            "tag": "EXPORTS"
-        },
-        {
-            "id": "part3",
-            "label": "Importing & Scope",
-            "icon": "📥",
-            "tag": "IMPORTS"
-        },
-        {
-            "id": "part5",
-            "label": "Modules Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Lego Brick Architecture",
+      "icon": "🧱",
+      "tag": "ARCHITECTURE"
+    },
+    {
+      "id": "part2",
+      "label": "Named vs Default Exports",
+      "icon": "📦",
+      "tag": "SYNTAX"
+    },
+    {
+      "id": "part3",
+      "label": "Module Mental Model",
+      "icon": "🧠",
+      "tag": "SCOPES"
+    },
+    {
+      "id": "part4",
+      "label": "Monolith vs Modular",
+      "icon": "⚖️",
+      "tag": "BEST PRACTICES"
+    },
+    {
+      "id": "part5",
+      "label": "Modules Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Knowledge Check",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Modular Code: Breaking Projects into Maintainable Files",
-    "bigPicture": "Modern JavaScript uses ES Modules to split code into isolated, reusable files. Think of modules like Lego bricks: each brick has a defined shape and snaps cleanly into other bricks without interfering with their internals.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "The Lego Brick Architecture: Why Code Must Be Modular",
+    "bigPicture": "In early JavaScript, every script shared one massive global scope (the window object). If script A defined let total = 10 and script B also defined let total = 20, they collided, overwrote each other's data, and broke the website! ES Modules (ESM) solve this by treating every JavaScript file as an isolated module. Variables declared inside a file stay private to that file unless you explicitly export them, and other files must explicitly import only what they need.",
+    "breakdownTitle": "Four Pillars of ES Modules:",
     "breakdownItems": [
       {
-        "title": "Named Exports",
-        "desc": "Export multiple functions or constants by name: export const add = ...;."
+        "title": "File-Level Scope Isolation",
+        "desc": "Variables in an ES module do not pollute the global scope. Multiple files can share variable names safely."
       },
       {
-        "title": "Default Exports",
-        "desc": "Export the primary item per file: export default class User {}."
+        "title": "Named Exports (export const x)",
+        "desc": "Export multiple values from a single file by name; imported using matching curly braces { x }."
       },
       {
-        "title": "Module Isolation",
-        "desc": "Modules execute in strict mode by default and keep top-level variables private."
+        "title": "Default Exports (export default x)",
+        "desc": "Export the primary entity of a file; imported without curly braces and can be renamed freely."
+      },
+      {
+        "title": "Static Top-Level Imports",
+        "desc": "Import statements are resolved before code execution starts, enabling bundlers to detect unused code (tree-shaking)."
       }
     ]
   },
   "part2": {
-    "title": "Named Exports vs Default Exports",
-    "intro": "When to export multiple named functions and when to use a single default export:",
+    "title": "Core Mechanics: Named Exports, Default Exports & Aliases",
+    "intro": "Learn the exact syntax for exporting and importing modular code:",
     "cards": [
       {
         "number": "01",
         "tag": "Named",
         "title": "export { a, b }",
-        "description": "Imports must use exact matching names: import { a, b } from './math'.",
-        "color": "purple"
+        "description": "Used to export multiple utilities. Importers MUST use curly braces with exact matching names: import { a, b } from './file.js'.",
+        "color": "emerald"
       },
       {
         "number": "02",
         "tag": "Default",
-        "title": "export default fn",
-        "description": "Imports can use any chosen local name: import MyMath from './math'.",
-        "color": "emerald"
+        "title": "export default Component",
+        "description": "One default export per file. Importers MUST NOT use curly braces and can choose any local identifier name.",
+        "color": "purple"
       },
       {
         "number": "03",
-        "tag": "Static",
-        "title": "Tree Shaking",
-        "description": "Static import syntax allows bundlers to remove unused exports from final builds.",
+        "tag": "Aliases",
+        "title": "import { a as myA }",
+        "description": "Rename imports using 'as' to prevent naming conflicts, or bundle all named exports with 'import * as Utils'.",
         "color": "cyan"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Prefer named exports (export const add = ...) because they make it easy to import only what you need and prevent naming confusion."
+      "title": "💡 Golden Rule of Import Curly Braces",
+      "content": "Named exports REQUIRE curly braces when importing (import { add } from './math.js'). Default exports MUST NOT use curly braces (import Calculator from './calc.js'). Mixing these two up is the single most common module error in web development."
     }
   },
   "part3": {
-    "title": "Importing Dependencies & Module Scope",
-    "intro": "How top-level variables inside a module remain strictly private:",
+    "title": "The Module Mental Model: Private Vaults & Connectors",
+    "intro": "How the browser and bundlers connect modular files together:",
     "points": [
       {
-        "title": "1. Strict Mode by Default",
-        "content": "ES Modules automatically enforce 'use strict', preventing accidental globals."
+        "title": "1. The Private Vault",
+        "content": "Think of every module file as an enclosed room with opaque walls. Everything declared inside is private by default. Only items marked with 'export' are visible through the doorway."
       },
       {
-        "title": "2. Static Analysis",
-        "content": "Imports are resolved at compile time, enabling bundlers to optimize bundle size."
+        "title": "2. Explicit Connectors",
+        "content": "Files do not guess where functions come from. Every dependency is declared explicitly at the top of the file via import statements, making codebases self-documenting."
       },
       {
-        "title": "3. Dynamic Imports",
-        "content": "import('./module.js') allows lazy-loading code chunks on demand as a Promise."
+        "title": "3. Live Bindings, Not Copies",
+        "content": "When you import a variable, you get a live link to the exported binding, not a disconnected snapshot. If the source module modifies its exported state, the importer sees the change."
       }
     ]
   },
   "part4": {
-    "title": "Modular Organization vs Giant Monolithic Files",
+    "title": "Common Mistakes: Monolithic Global Dumping vs Clean Modules",
     "bad": {
-      "title": "❌ Bad: Putting everything in one giant 5,000-line global file",
-      "code": "// All models, database calls, API utilities, and UI code\n// dumped into one giant file with confusing global variables:\nvar appConfig = {};\nvar userList = [];\nfunction doEverything() {}",
-      "explanation": "Putting everything into one giant file makes it easy to accidentally reuse variable names and break other parts of your code."
+      "title": "❌ Bad: Dumping all app logic into a massive 3,000-line global file",
+      "code": "// everything.js - 3,000 lines of unrelated code\nfunction calculateTax() { /* ... */ }\nfunction renderCartTable() { /* ... */ }\nfunction validateCreditCard() { /* ... */ }\nfunction submitAnalyticsEvent() { /* ... */ }\n// All declared in one file or attached directly to window!\n// Hard to test, impossible to reuse, high risk of naming collisions.",
+      "explanation": "Monolithic scripts pollute the global namespace, make automated testing nearly impossible, and prevent code reuse across projects."
     },
     "good": {
-      "title": "✅ Clean: Clean separation into single-responsibility modules",
-      "code": "// mathUtils.js\nexport const add = (a, b) => a + b;\nexport const multiply = (a, b) => a * b;\n\n// main.js\n// import { add, multiply } from \"./mathUtils.js\";\nconsole.log(\"Modular add:\", add(5, 3)); // 8",
-      "explanation": "Splitting code into small, focused files makes each piece easy to understand, test, and reuse anywhere in your project."
+      "title": "✅ Clean: Focused single-responsibility modules with explicit imports",
+      "code": "// tax.js - Pure mathematical calculation\nexport const TAX_RATE = 0.08;\nexport function calculateTax(subtotal) {\n  return subtotal * TAX_RATE;\n}\n\n// checkout.js - Composes clean, tested utilities\nimport { calculateTax, TAX_RATE } from './tax.js';\n\nexport function getOrderSummary(subtotal) {\n  const tax = calculateTax(subtotal);\n  return { subtotal, tax, total: subtotal + tax };\n}",
+      "explanation": "Each module has one clear responsibility. Logic is easily unit-tested in isolation and imported only where needed."
     }
   },
   "part5": {
     "title": "ES Modules Playground",
-    "intro": "Simulate importing utilities, exporting configurations, and renaming imports:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-25: ES MODULE PATTERN DEMO\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// Simulating Module Export and Import Mechanics:\nconst CartModule = (() => {\n  // Private module state (not exported):\n  const items = [];\n\n  // Public exports:\n  return {\n    addItem(name, price) {\n      items.push({ name, price });\n      console.log(`📦 Added ${name} to cart ($ ${price})`);\n    },\n    getCartSummary() {\n      const total = items.reduce((acc, curr) => acc + curr.price, 0);\n      return { count: items.length, total: \"$\" + total.toFixed(2) };\n    }\n  };\n})();\n\n// Consuming the module:\nCartModule.addItem(\"Mechanical Keyboard\", 120);\nCartModule.addItem(\"Mousepad\", 20);\n\nconst summary = CartModule.getCartSummary();\nconsole.log(\"Cart items:\", summary.count);\nconsole.log(\"Total checkout cost:\", summary.total);\n"
+    "intro": "Simulate a modular export and import pipeline with named utilities and a default checkout coordinator:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-25: ES MODULES SIMULATION PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// Module 1: Simulated mathUtils.js\nconst mathUtils = {\n  // Named export 1: add\n  add(a, b) { return a + b; },\n  // Named export 2: multiply\n  multiply(a, b) { return a * b; },\n  // Named export 3: TAX_RATE constant\n  TAX_RATE: 0.075\n};\n\n// Module 2: Simulated cartService.js (with default export)\nconst cartService = {\n  // Default export: createReceipt\n  default: function createReceipt(items, taxRate) {\n    const subtotal = items.reduce((acc, item) => acc + item.price, 0);\n    const tax = subtotal * taxRate;\n    const total = subtotal + tax;\n    \n    return {\n      itemsCount: items.length,\n      subtotal: \"$\" + subtotal.toFixed(2),\n      tax: \"$\" + tax.toFixed(2),\n      total: \"$\" + total.toFixed(2)\n    };\n  }\n};\n\n// Simulated consumer: main.js\n// Destructure named exports (like: import { add, TAX_RATE } from './mathUtils.js')\nconst { add, multiply, TAX_RATE } = mathUtils;\n\n// Destructure default export (like: import createReceipt from './cartService.js')\nconst createReceipt = cartService.default;\n\n// Test the modular composition:\nconst shoppingCart = [\n  { name: \"Ergonomic Keyboard\", price: 129.99 },\n  { name: \"Vertical Mouse\", price: 65.50 }\n];\n\nconsole.log(\"Tax Rate:\", (TAX_RATE * 100).toFixed(1) + \"%\");\nconsole.log(\"Receipt Summary:\", createReceipt(shoppingCart, TAX_RATE));\n"
   },
   "part6": {
-    "title": "Key Takeaways: Modular Code",
+    "title": "Key Takeaways: ES Modules",
     "takeaways": [
       {
-        "title": "1. File Isolation",
-        "desc": "Variables stay local to the module unless explicitly exported."
+        "title": "1. File-Level Scope",
+        "desc": "Every module file has its own private scope; variables do not leak into the global environment."
       },
       {
-        "title": "2. Named vs Default",
-        "desc": "Use named exports for utilities; default for main components."
+        "title": "2. Named Exports Use Curly Braces",
+        "desc": "Export multiple items with 'export const x'; import them using matching curly braces { x }."
       },
       {
-        "title": "3. Tree Shaking",
-        "desc": "Bundlers strip out unused exports to keep apps fast."
+        "title": "3. Default Exports Do NOT Use Braces",
+        "desc": "A file can have one default export ('export default x'); import it directly without curly braces."
       },
       {
-        "title": "4. Next: Working with JSON",
-        "desc": "In JS-26, we learn how to serialize and parse data formats."
+        "title": "4. Renaming with 'as'",
+        "desc": "Prevent naming collisions between different modules using 'import { name as alias } from ...'."
       }
     ],
     "nextLessonPreview": {
       "title": "JS-26: Working with JSON: Parsing and Serializing Data",
-      "desc": "Exchange data between frontend and backend using JSON.stringify() and JSON.parse() safely."
+      "desc": "Convert live JavaScript data into JSON text blueprints with JSON.stringify and safely reconstruct objects with defensive JSON.parse."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Modular Code",
+    "title": "Knowledge Check: ES Modules",
     "quiz": {
-      "question": "What is a major advantage of Named Exports (export { foo }) over Default Exports?",
+      "question": "How do you correctly import a default export named 'UserStore' from a file located at './stores/user.js'?",
       "options": [
-        "Named exports make code execute 10 times faster in the CPU.",
-        "Named exports enforce consistent naming across files and provide better auto-complete tooling.",
-        "Named exports cannot be bundled.",
-        "Named exports can only be used in Node.js."
+        "import { UserStore } from './stores/user.js';",
+        "import UserStore from './stores/user.js';",
+        "import * as { UserStore } from './stores/user.js';",
+        "const UserStore = import('./stores/user.js');"
       ],
       "correctIndex": 1,
-      "explanation": "Named exports require importing files to use the exact matching identifier, which eliminates naming ambiguities and allows IDEs to auto-import symbols accurately."
+      "explanation": "Default exports are imported WITHOUT curly braces (import UserStore from './stores/user.js'). Curly braces are reserved exclusively for named exports."
     }
   }
 },
@@ -4499,174 +4580,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js26-working-with-json",
   "code": "JS-26",
   "title": "Working with JSON: Parsing and Serializing Data",
-  "subtitle": "Exchange data between browsers and servers using JSON.stringify() and JSON.parse() safely.",
+  "subtitle": "Exchange structured data across web servers and APIs using JSON.stringify and defensive JSON.parse.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Universal Data Format",
-            "icon": "🌐",
-            "tag": "JSON FORMAT"
-        },
-        {
-            "id": "part2",
-            "label": "stringify() & parse()",
-            "icon": "🔄",
-            "tag": "METHODS"
-        },
-        {
-            "id": "part3",
-            "label": "Serialization Rules",
-            "icon": "📋",
-            "tag": "SERIALIZATION"
-        },
-        {
-            "id": "part4",
-            "label": "Safe JSON Parsing",
-            "icon": "🛡️",
-            "tag": "DEFENSIVE"
-        },
-        {
-            "id": "part5",
-            "label": "JSON Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Shipping Blueprints",
+      "icon": "📦",
+      "tag": "DATA FORMAT"
+    },
+    {
+      "id": "part2",
+      "label": "stringify vs parse",
+      "icon": "⚙️",
+      "tag": "METHODS"
+    },
+    {
+      "id": "part3",
+      "label": "Serialization Mental Model",
+      "icon": "🧠",
+      "tag": "TRANSFORMATION"
+    },
+    {
+      "id": "part4",
+      "label": "Defensive Parsing",
+      "icon": "🛡️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "JSON Sandbox",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Knowledge Check",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "JSON: The Universal Language of Web APIs",
-    "bigPicture": "JSON (JavaScript Object Notation) is the standard plain-text format for transferring data across the web. Think of JSON like a universal shipping container: no matter what language the server uses (Python, Go, Node.js), every system can read JSON.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "The Universal Shipping Blueprint: Why JSON Exists",
+    "bigPicture": "In-memory JavaScript objects are living, complex structures containing prototypes, active methods, and memory pointers. A computer network wire, however, can only transport a flat stream of plain text bytes. JSON (JavaScript Object Notation) is a standardized, language-neutral text format based on JavaScript object syntax. Whether an external server is written in Python, Go, Java, or C#, every backend language can read and generate JSON text strings seamlessly.",
+    "breakdownTitle": "Core Concepts of JSON:",
     "breakdownItems": [
       {
-        "title": "What is JSON?",
-        "desc": "JavaScript Object Notation — the universal text-based data format for web APIs."
+        "title": "JSON is Plain Text",
+        "desc": "JSON is a formatted string of characters, NOT an in-memory JavaScript object. It can be saved to files or sent over HTTP."
       },
       {
-        "title": "JSON.stringify()",
-        "desc": "Converts a JavaScript object/array into a formatted JSON string for network transmission."
+        "title": "JSON.stringify() (Serialization)",
+        "desc": "Converts living JavaScript objects or arrays into a serialized JSON text string ready for transit."
       },
       {
-        "title": "JSON.parse()",
-        "desc": "Parses a valid JSON string back into a live JavaScript object; always wrap in try/catch!"
+        "title": "JSON.parse() (Deserialization)",
+        "desc": "Reads a JSON text string and reconstructs living JavaScript objects and arrays in computer memory."
+      },
+      {
+        "title": "Strict Formatting Rules",
+        "desc": "All keys and strings MUST use double quotes (\"). Single quotes, trailing commas, and comments are strictly forbidden."
       }
     ]
   },
   "part2": {
-    "title": "JSON.stringify() & JSON.parse(): Converting Data",
-    "intro": "Serializing objects to text and parsing incoming JSON strings back into live objects:",
+    "title": "Core Mechanics: stringify, parse & Omission Rules",
+    "intro": "Master the syntax, options, and limitations of JavaScript's built-in JSON object:",
     "cards": [
       {
         "number": "01",
         "tag": "Serialize",
-        "title": "JSON.stringify(obj)",
-        "description": "Turns in-memory objects into transmission strings. Skips undefined and functions.",
-        "color": "purple"
+        "title": "JSON.stringify(data)",
+        "description": "Turns objects into text. Accepts formatting options like JSON.stringify(obj, null, 2) to generate human-readable indented JSON.",
+        "color": "emerald"
       },
       {
         "number": "02",
         "tag": "Deserialize",
-        "title": "JSON.parse(string)",
-        "description": "Constructs live objects from strings. Throws a SyntaxError on invalid syntax.",
-        "color": "emerald"
+        "title": "JSON.parse(text)",
+        "description": "Rebuilds real objects from JSON strings. If the input text violates JSON syntax rules, it immediately throws a SyntaxError!",
+        "color": "cyan"
       },
       {
         "number": "03",
-        "tag": "Strict Rules",
-        "title": "Double Quotes Only",
-        "description": "All keys and strings in JSON must use double quotes \"key\": \"value\".",
-        "color": "amber"
+        "tag": "Omissions",
+        "title": "What JSON Drops",
+        "description": "Functions, undefined, and Symbols are completely stripped during stringify because executable logic cannot be safely represented in data.",
+        "color": "purple"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Always wrap JSON.parse in a try/catch block. If an external server sends corrupted text, JSON.parse will crash your app unless caught."
+      "title": "💡 Golden Rule of JSON Parsing",
+      "content": "Never call naked JSON.parse() on external data (like localStorage or API responses) without wrapping it in a try/catch block. Malformed JSON will throw a synchronous SyntaxError that crashes your entire app if uncaught."
     }
   },
   "part3": {
-    "title": "Handling Date Serialization & Safe Parsing",
-    "intro": "Why JSON lacks functions and Date types, and how to revive dates safely:",
+    "title": "The Transformation Mental Model: Pack, Ship, Unpack",
+    "intro": "Visualize what happens to data during the serialization cycle:",
     "points": [
       {
-        "title": "1. Double Quotes Required",
-        "content": "Single quotes and unquoted keys are invalid JSON and will fail parsing."
+        "title": "1. The 3D Castle to Flat Blueprint (stringify)",
+        "content": "Imagine your JavaScript object as a 3D Lego castle sitting in your computer's RAM. JSON.stringify flattens that castle into a printed 2D blueprint on a single sheet of paper (a text string)."
       },
       {
-        "title": "2. Stripped Values",
-        "content": "JSON.stringify strips functions, undefined, and symbols because JSON is pure data."
+        "title": "2. The Shipping Wire (Transit)",
+        "content": "The printed text blueprint travels across HTTP cables or sits inside browser localStorage. Because it is simple text, any operating system or programming language can store and read it."
       },
       {
-        "title": "3. Pretty Printing",
-        "content": "JSON.stringify(obj, null, 2) indents JSON with 2 spaces for readable debugging."
+        "title": "3. Reconstructing the Castle (parse)",
+        "content": "The receiving program reads the printed blueprint and builds a brand-new 3D Lego castle in its own memory. The new object looks identical in data, but occupies distinct memory addresses."
       }
     ]
   },
   "part4": {
-    "title": "Common Mistake: Calling JSON.parse() Without Safe Fallbacks",
+    "title": "Common Mistakes: Naked JSON.parse vs Defensive Safe Parsing",
     "bad": {
-      "title": "❌ Bad: Calling JSON.parse without try/catch protection",
-      "code": "const corruptedData = \"{ name: 'invalid JSON' }\"; // Single quotes!\n// Crashes immediately with SyntaxError: Unexpected token ' in JSON at position 2\nconst data = JSON.parse(corruptedData);",
-      "explanation": "JSON strictly requires double quotes around keys and text. If someone gives you invalid JSON, JSON.parse will crash unless wrapped in try/catch."
+      "title": "❌ Bad: Naked JSON.parse throwing uncaught SyntaxError on bad input",
+      "code": "function loadStoredPreferences() {\n  const rawData = localStorage.getItem(\"user_settings\");\n  // Catastrophic crash hazard:\n  // If rawData is null, empty string, or corrupted text,\n  // JSON.parse throws an unhandled SyntaxError and kills the entire app!\n  const settings = JSON.parse(rawData);\n  return settings.theme;\n}",
+      "explanation": "If the stored data is corrupted, empty, or edited by an extension, naked JSON.parse throws a fatal SyntaxError that freezes the application."
     },
     "good": {
-      "title": "✅ Clean: Safe parsing with try/catch and fallback defaults",
-      "code": "function safeJsonParse(jsonString, fallback = {}) {\n  try {\n    return JSON.parse(jsonString);\n  } catch (error) {\n    console.warn(\"⚠️ Invalid JSON detected. Using safe fallback.\");\n    return fallback;\n  }\n}\n\nconst safeResult = safeJsonParse(\"not a json string\", { items: [] });\nconsole.log(safeResult); // { items: [] } (No crash!)",
-      "explanation": "Wrapping JSON.parse inside a try/catch block catches mistakes kindly and provides a safe fallback value."
+      "title": "✅ Clean: Defensive JSON parsing with try/catch and fallback defaults",
+      "code": "function loadStoredPreferences(fallback = { theme: \"dark\", fontSize: 16 }) {\n  const rawData = localStorage.getItem(\"user_settings\");\n  if (!rawData) return fallback;\n\n  try {\n    return JSON.parse(rawData);\n  } catch (err) {\n    console.warn(\"Corrupted JSON detected in localStorage; reverting to safe default:\", err.message);\n    return fallback;\n  }\n}",
+      "explanation": "Wrapping JSON.parse in try/catch safely intercepts syntax errors, logs a helpful warning, and returns a reliable fallback object."
     }
   },
   "part5": {
-    "title": "JSON Playground",
-    "intro": "Serialize complex objects, parse API responses, and catch invalid JSON syntax errors safely:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-26: WORKING WITH JSON\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nconst userSession = {\n  id: \"usr_99\",\n  displayName: \"Jordan\",\n  roles: [\"editor\", \"moderator\"],\n  lastLogin: \"2026-10-17T06:00:00Z\",\n  token: undefined // Note: undefined will be stripped by stringify!\n};\n\n// 1. Serialize object to JSON string:\nconst serialized = JSON.stringify(userSession, null, 2);\nconsole.log(\"Serialized JSON String:\");\nconsole.log(serialized);\n\n// 2. Safe Deserialization with try/catch:\ntry {\n  const parsed = JSON.parse(serialized);\n  console.log(\"Restored Username:\", parsed.displayName);\n  console.log(\"Restored Roles:\", parsed.roles.join(\", \"));\n} catch (err) {\n  console.error(\"JSON parse failure:\", err.message);\n}\n"
+    "title": "JSON Serialization & Parsing Playground",
+    "intro": "Experiment with pretty-printing JSON, observing stripped functions/undefined, and testing defensive parsing:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-26: WORKING WITH JSON PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Observe what JSON.stringify strips out:\nconst userAccount = {\n  id: 101,\n  username: \"dev_alex\",\n  role: \"moderator\",\n  skills: [\"JS\", \"React\", \"Node\"],\n  secretKey: undefined, // Notice: undefined is dropped!\n  greet: function() { return `Hello from ${this.username}`; } // Notice: functions are dropped!\n};\n\nconsole.log(\"Original Object has greet method:\", typeof userAccount.greet);\n\n// Serialize to pretty-printed JSON string (2-space indent):\nconst jsonString = JSON.stringify(userAccount, null, 2);\nconsole.log(\"Serialized JSON Text:\\n\" + jsonString);\n\n// 2. Defensive JSON Parser Helper:\nfunction safeParse(text, fallback = null) {\n  if (typeof text !== \"string\" || !text.trim()) return fallback;\n  try {\n    return JSON.parse(text);\n  } catch (error) {\n    console.warn(\"⚠️ JSON Parse Error safely caught:\", error.message);\n    return fallback;\n  }\n}\n\n// Test A: Parsing valid JSON\nconst validResult = safeParse('{\"status\": \"ok\", \"itemsCount\": 42}');\nconsole.log(\"\\nValid parse result:\", validResult.status);\n\n// Test B: Parsing malformed JSON (missing quotes around keys, single quotes)\nconst invalidResult = safeParse(\"{ name: 'bad format' }\", { status: \"fallback\" });\nconsole.log(\"Invalid parse fallback:\", invalidResult.status);\n"
   },
   "part6": {
-    "title": "Key Takeaways: JSON",
+    "title": "Key Takeaways: Working with JSON",
     "takeaways": [
       {
-        "title": "1. Universal Format",
-        "desc": "JSON is the standard format for web API communication."
+        "title": "1. JSON is a Text Format",
+        "desc": "JSON is a standardized text string representation of data, not a living JavaScript object in memory."
       },
       {
-        "title": "2. Double Quotes Only",
-        "desc": "Keys and string values must be wrapped in double quotes \"\"."
+        "title": "2. Strict Double-Quote Rule",
+        "desc": "All property keys and string values MUST be enclosed in double quotes; trailing commas are illegal."
       },
       {
-        "title": "3. Safe JSON.parse",
-        "desc": "Always guard JSON.parse with try/catch."
+        "title": "3. Functions & Undefined Dropped",
+        "desc": "JSON.stringify silently removes functions, undefined values, and Symbols because executable code cannot be serialized."
       },
       {
-        "title": "4. Next: The Fetch API",
-        "desc": "In JS-27, we use fetch to request live JSON data from REST APIs."
+        "title": "4. Always Parse Defensively",
+        "desc": "Never call JSON.parse without try/catch protection when dealing with external or user-provided strings."
       }
     ],
     "nextLessonPreview": {
       "title": "JS-27: The Fetch API: Communicating with REST APIs",
-      "desc": "Send HTTP GET, POST, and PUT requests to web servers and fetch data and parse JSON responses in the background without freezing the page."
+      "desc": "Fetch live data from remote servers, send JSON payloads with HTTP POST, inspect HTTP status codes, and master the response.ok check."
     }
   },
   "part7": {
-    "title": "Knowledge Check: JSON",
+    "title": "Knowledge Check: Working with JSON",
     "quiz": {
-      "question": "Which of the following values will be stripped (ignored) by JSON.stringify() when serializing an object?",
+      "question": "What happens when you pass an object containing a function to JSON.stringify({ name: 'App', start: () => {} })?",
       "options": [
-        "Numbers and booleans",
-        "Arrays and strings",
-        "Functions and undefined properties",
-        "Objects with nested keys"
+        "The function code is serialized as a plain string inside the JSON output",
+        "The function property is completely omitted from the resulting JSON string",
+        "JSON.stringify throws an immediate TypeError",
+        "The function is replaced with the literal value null"
       ],
-      "correctIndex": 2,
-      "explanation": "JSON is a pure data format. Functions, Symbol keys, and undefined properties are omitted by JSON.stringify() because JSON cannot represent executable code or JS-specific types."
+      "correctIndex": 1,
+      "explanation": "JSON.stringify automatically strips out functions, undefined values, and Symbols from objects because JSON is a data-only format that cannot represent executable code."
     }
   }
 },
@@ -4675,174 +4760,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js27-the-fetch-api",
   "code": "JS-27",
   "title": "The Fetch API: Communicating with REST APIs",
-  "subtitle": "Make asynchronous HTTP requests, inspect response status codes, and parse JSON payloads safely.",
+  "subtitle": "Make HTTP requests, parse JSON streams, handle network errors, and master the critical response.ok check.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "HTTP Requests",
-            "icon": "📡",
-            "tag": "HTTP"
-        },
-        {
-            "id": "part2",
-            "label": "GET & POST Methods",
-            "icon": "📨",
-            "tag": "REQUESTS"
-        },
-        {
-            "id": "part3",
-            "label": "res.ok & Status Codes",
-            "icon": "🔍",
-            "tag": "RESPONSES"
-        },
-        {
-            "id": "part4",
-            "label": "The res.ok Guard",
-            "icon": "🌐",
-            "tag": "FETCH GUARD"
-        },
-        {
-            "id": "part5",
-            "label": "Fetch Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "The Restaurant Waiter",
+      "icon": "🌐",
+      "tag": "NETWORKING"
+    },
+    {
+      "id": "part2",
+      "label": "GET, POST & response.ok",
+      "icon": "📡",
+      "tag": "HTTP & APIs"
+    },
+    {
+      "id": "part3",
+      "label": "Two-Step Promise Flow",
+      "icon": "🧠",
+      "tag": "EXECUTION"
+    },
+    {
+      "id": "part4",
+      "label": "The 404 Fetch Trap",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Fetch Sandbox",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Knowledge Check",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Network Requests: Communicating with REST APIs",
-    "bigPicture": "The Fetch API is the browser's built-in tool for making HTTP requests over the network. Think of fetch() like a waiter taking your order to the kitchen, waiting for the chef, and bringing back your meal in a Promise.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "The Restaurant Waiter Analogy: Requesting Live Web Data",
+    "bigPicture": "Modern web applications don't refresh the whole page every time you like a post or load your feed. Instead, JavaScript talks to remote backend servers in the background using the browser's built-in fetch() API. Think of fetch() as sending a friendly waiter to the kitchen: you place your order, your code continues running smoothly without freezing, and when the waiter returns with your food (data), you unpack the meal and display it to the user.",
+    "breakdownTitle": "Four Pillars of the Fetch API:",
     "breakdownItems": [
       {
-        "title": "Making HTTP Requests",
-        "desc": "fetch(url, options) returns a Promise resolving to the HTTP Response object."
+        "title": "The Two-Step Promise",
+        "desc": "Step 1 (await fetch) receives HTTP headers and status; Step 2 (await res.json()) parses the streaming JSON body."
       },
       {
-        "title": "Checking res.ok",
-        "desc": "fetch() does NOT reject on 404 or 500 errors; you must explicitly verify res.ok === true."
+        "title": "The response.ok Guard",
+        "desc": "fetch() does NOT reject on 404 or 500 errors! You must check if (!res.ok) to verify the server request succeeded."
       },
       {
-        "title": "Parsing res.json()",
-        "desc": "Reads the response stream to completion and parses it as a live JavaScript object."
+        "title": "HTTP Methods (GET & POST)",
+        "desc": "Use GET to retrieve information; use POST to send new records to the server inside the request body."
+      },
+      {
+        "title": "The Content-Type Header",
+        "desc": "When sending JSON in a POST request, include 'Content-Type': 'application/json' so the server knows how to decode the body."
       }
     ]
   },
   "part2": {
-    "title": "Making GET and POST Requests with fetch()",
-    "intro": "Sending HTTP requests, inspecting headers, and parsing JSON payloads:",
+    "title": "Core Mechanics: GET, POST & Error Guards",
+    "intro": "Master the essential syntax for fetching and submitting data across the web:",
     "cards": [
       {
         "number": "01",
-        "tag": "HTTP",
-        "title": "fetch(url)",
-        "description": "Performs modern Promise-based network requests to REST API endpoints.",
-        "color": "purple"
-      },
-      {
-        "number": "02",
-        "tag": "Status Check",
-        "title": "res.ok Guard",
-        "description": "Checks if status is 200-299. Must verify manually before parsing data.",
+        "tag": "GET Request",
+        "title": "await fetch(url)",
+        "description": "Retrieves data. Always verify res.ok (true for HTTP 200-299) before calling await res.json() to extract the body.",
         "color": "emerald"
       },
       {
+        "number": "02",
+        "tag": "POST Request",
+        "title": "Sending JSON Payloads",
+        "description": "Pass an options object specifying method: 'POST', 'Content-Type' header, and JSON.stringify(payload) in the body.",
+        "color": "purple"
+      },
+      {
         "number": "03",
-        "tag": "Parsing",
-        "title": "await res.json()",
-        "description": "Parses the response body in the background into a usable object.",
+        "tag": "Network Defense",
+        "title": "try...catch with fetch",
+        "description": "Catches real network failures (like lost internet connection, DNS failure, or CORS errors) as well as errors thrown by your res.ok check.",
         "color": "cyan"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Never assume fetch() stops on 404 or 500 errors. Always check if (!res.ok) so you know whether the server actually succeeded."
+      "title": "💡 The #1 Fetch Trap: Always Check response.ok",
+      "content": "The fetch() Promise ONLY rejects if the network wire itself breaks (e.g. offline, DNS failure). If the server responds with a 404 Not Found or 500 Server Error, fetch() considers the HTTP exchange a success! You MUST always inspect 'if (!response.ok) throw new Error(...)'. "
     }
   },
   "part3": {
-    "title": "Handling Response Headers, res.ok & HTTP Statuses",
-    "intro": "Why fetch() does NOT reject on 404 or 500 errors, and how to check res.ok:",
+    "title": "The Mental Model: The Two-Step Promise Timeline",
+    "intro": "Why working with fetch involves two consecutive await statements:",
     "points": [
       {
-        "title": "1. Two-Step Promise",
-        "content": "fetch() requires two awaits: await fetch() for headers, then await res.json() for data body."
+        "title": "1. Step 1: The Response Envelope (await fetch(url))",
+        "content": "The first Promise resolves as soon as the server's HTTP response headers arrive. You now have access to response.status (200, 404), response.statusText, and response.ok, but the body data is still streaming over the wire."
       },
       {
-        "title": "2. Network Errors Only",
-        "content": "The promise rejects ONLY on true network failures (e.g. DNS failure, no internet connection)."
+        "title": "2. Step 2: Unpacking the Stream (await res.json())",
+        "content": "Calling res.json() returns a second Promise that waits for the rest of the incoming data packets to finish downloading and parses the raw text into a real JavaScript object."
       },
       {
-        "title": "3. Request Options",
-        "content": "Pass { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) } to post data."
+        "title": "3. The Error Boundary",
+        "content": "True network crashes jump straight to catch. HTTP errors (404/500) fulfill Step 1 normally; only your manual 'if (!res.ok) throw new Error()' redirects them into the catch block."
       }
     ]
   },
   "part4": {
-    "title": "Common Mistake: Assuming fetch() Rejects on 404 or 500",
+    "title": "Common Mistakes: The Blind Fetch (Ignoring response.ok)",
     "bad": {
-      "title": "❌ Bad: Assuming fetch throws errors on 404 or 500 status codes",
-      "code": "async function loadUser(id) {\n  try {\n    const res = await fetch(`/api/users/${id}`);\n    // If server returns 404 Not Found, fetch does NOT reject!\n    // It proceeds here and tries to parse HTML error page as JSON -> CRASH!\n    const data = await res.json();\n    return data;\n  } catch (err) {\n    console.log(\"Failed\");\n  }\n}",
-      "explanation": "fetch() only throws an error if the internet disconnects completely. If a page is not found (404), fetch() still counts it as a completed request."
+      "title": "❌ Bad: Assuming catch will handle 404 and 500 server errors",
+      "code": "async function loadProductDetails(productId) {\n  try {\n    const res = await fetch(`/api/products/${productId}`);\n    // Fatal mistake: If productId is not found (404), res.ok is false,\n    // but the code doesn't check it! It proceeds to parse the 404 HTML page:\n    const data = await res.json(); // SyntaxError or unexpected { error: 'not found' }!\n    renderProduct(data.title); // Uncaught TypeError: Cannot read properties of undefined!\n  } catch (err) {\n    // This catch block NEVER runs on 404 unless json() explodes!\n  }\n}",
+      "explanation": "Because fetch does not reject on 404, catch is bypassed. The app tries to read properties on undefined data and crashes."
     },
     "good": {
-      "title": "✅ Clean: Robust response checking with res.ok guard",
-      "code": "async function loadUser(id) {\n  const res = await fetch(`/api/users/${id}`);\n  if (!res.ok) {\n    throw new Error(`Server returned status ${res.status}: ${res.statusText}`);\n  }\n  return await res.json();\n}",
-      "explanation": "Checking res.ok ensures the server gave a successful answer before you try to read the data."
+      "title": "✅ Clean: Inspecting response.ok and throwing actionable errors",
+      "code": "async function loadProductDetails(productId) {\n  try {\n    const res = await fetch(`/api/products/${productId}`);\n    if (!res.ok) {\n      throw new Error(`Failed to fetch product (HTTP Status ${res.status}: ${res.statusText})`);\n    }\n    const product = await res.json();\n    renderProduct(product.title);\n  } catch (err) {\n    console.error(\"Product load failed:\", err.message);\n    showUserToast(\"Unable to load product information. Please try again.\");\n  }\n}",
+      "explanation": "Checking !res.ok ensures all 404 and 500 HTTP failures trigger the catch block with accurate status diagnostics."
     }
   },
   "part5": {
-    "title": "Fetch API Playground",
-    "intro": "Simulate network requests, parse incoming payloads, and test error handling:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-27: THE FETCH API DEMO\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// Universal API client that works both online and in sandbox environments:\nasync function fetchUserData(userId) {\n  console.log(`🌐 Fetching data for User #${userId}...`);\n\n  try {\n    // In live browsers, this makes a real HTTP request.\n    // In sandboxes without external network, we safely simulate the API response:\n    let response;\n    if (typeof fetch !== \"undefined\" && typeof window !== \"undefined\" && window?.location?.protocol?.startsWith(\"http\")) {\n      try {\n        response = await fetch(`https://jsonplaceholder.typicode.com/todos/${userId}`);\n      } catch (networkErr) {\n        // Fallback for sandboxed iframes\n        response = null;\n      }\n    }\n\n    if (response && response.ok) {\n      const data = await response.json();\n      console.log(\"✅ Live API Response received:\", data.title);\n      return data;\n    } else {\n      // Offline/sandboxed simulation:\n      console.log(\"📦 Loaded from simulated REST endpoint:\");\n      const mockData = { id: userId, title: \"Master modern JavaScript & React\", completed: true };\n      console.log(\"Task Title:\", mockData.title);\n      console.log(\"Status:\", mockData.completed ? \"COMPLETED ✅\" : \"PENDING ⏳\");\n      return mockData;\n    }\n  } catch (error) {\n    console.error(\"Fetch request failed:\", error.message);\n  }\n}\n\nfetchUserData(1);\n"
+    "title": "Fetch API Simulation Playground",
+    "intro": "Simulate a mock network client handling GET requests, 404 status checks, and sending POST JSON payloads:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-27: THE FETCH API PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Simulate a backend server responding over the network:\nfunction mockFetch(url, options = {}) {\n  return new Promise((resolve) => {\n    setTimeout(() => {\n      // Mock GET /api/users/42 (Success 200)\n      if (url.includes(\"/api/users/42\")) {\n        resolve({\n          ok: true,\n          status: 200,\n          statusText: \"OK\",\n          json: async () => ({ id: 42, name: \"Jordan Smith\", role: \"Frontend Dev\" })\n        });\n      } \n      // Mock GET /api/users/999 (Not Found 404)\n      else if (url.includes(\"/api/users/999\")) {\n        resolve({\n          ok: false,\n          status: 404,\n          statusText: \"Not Found\",\n          json: async () => ({ error: \"User not found\" })\n        });\n      }\n      // Mock POST /api/tasks (Created 201)\n      else if (options.method === \"POST\") {\n        const bodyData = JSON.parse(options.body || \"{}\");\n        resolve({\n          ok: true,\n          status: 201,\n          statusText: \"Created\",\n          json: async () => ({ id: 1001, ...bodyData, createdAt: new Date().toISOString() })\n        });\n      }\n    }, 150);\n  });\n}\n\n// 2. Robust API Client Function with response.ok check:\nasync function fetchUser(userId) {\n  try {\n    console.log(`📡 Fetching user ${userId}...`);\n    const res = await mockFetch(`/api/users/${userId}`);\n\n    // Mandatory check:\n    if (!res.ok) {\n      throw new Error(`HTTP ${res.status} (${res.statusText})`);\n    }\n\n    const user = await res.json();\n    console.log(\"✅ User loaded successfully:\", user.name);\n    return user;\n  } catch (err) {\n    console.error(`❌ Could not load user ${userId}:`, err.message);\n  }\n}\n\n// 3. Test GET for existing user:\nfetchUser(42);\n\n// 4. Test GET for non-existent user (triggers !res.ok check):\nfetchUser(999);\n"
   },
   "part6": {
-    "title": "Key Takeaways: Network Requests",
+    "title": "Key Takeaways: The Fetch API",
     "takeaways": [
       {
-        "title": "1. Check res.ok",
-        "desc": "Always check res.ok before attempting to parse response body."
+        "title": "1. Two-Step Promise Architecture",
+        "desc": "First await fetch(url) for headers and status; second await res.json() to read and parse the body data."
       },
       {
-        "title": "2. Two Awaits",
-        "desc": "Await the connection headers first, then await res.json()."
+        "title": "2. The response.ok Requirement",
+        "desc": "fetch() does NOT reject on 404 or 500 errors; always check if (!res.ok) to verify request success."
       },
       {
-        "title": "3. Handle Network Errors",
-        "desc": "Use try/catch to catch total connectivity failures."
+        "title": "3. Sending JSON with POST",
+        "desc": "Set method: 'POST', include header 'Content-Type': 'application/json', and pass JSON.stringify(data) in the body."
       },
       {
-        "title": "4. Next: DOM Essentials",
-        "desc": "In JS-28, we learn how to select and manipulate HTML elements."
+        "title": "4. Full Error Protection",
+        "desc": "Wrap fetch logic in try/catch to gracefully handle network dropouts, CORS blocks, and HTTP status exceptions."
       }
     ],
     "nextLessonPreview": {
       "title": "JS-28: Browser DOM Essentials: Selecting & Modifying Elements",
-      "desc": "Connect JavaScript with web page HTML: select elements with querySelector and update text, classes, and styles."
+      "desc": "Bridge JavaScript with the browser: select elements with querySelector, update text and styles, and prevent cross-site scripting."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Network Requests",
+    "title": "Knowledge Check: The Fetch API",
     "quiz": {
-      "question": "What happens when a fetch() request receives an HTTP 404 (Not Found) status from the server?",
+      "question": "How does the browser's fetch() API behave when the server returns an HTTP 404 Not Found error?",
       "options": [
-        "The fetch Promise immediately rejects and jumps to the catch block.",
-        "The Promise fulfills successfully, but res.ok is false and res.status is 404.",
-        "The browser immediately closes the network connection and reloads.",
-        "fetch returns null."
+        "The fetch() Promise rejects immediately and jumps directly into the catch block",
+        "The fetch() Promise fulfills normally, with response.ok set to false and response.status set to 404",
+        "The browser automatically retries the request up to three times",
+        "A synchronous NetworkError is thrown"
       ],
       "correctIndex": 1,
-      "explanation": "fetch() does not reject on HTTP errors (like 404 or 500). The promise fulfills normally; you must check res.ok or res.status to verify whether the request succeeded."
+      "explanation": "fetch() only rejects on real network failures (like lost internet connection or DNS errors). HTTP error status codes like 404 or 500 fulfill successfully, but response.ok will be false."
     }
   }
 },
@@ -4851,174 +4940,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js28-dom-essentials",
   "code": "JS-28",
   "title": "Browser DOM Essentials: Selecting & Modifying Elements",
-  "subtitle": "Bridge JavaScript with the browser: select elements with querySelector, update text, and manipulate styles.",
+  "subtitle": "Bridge JavaScript with the browser: select elements with querySelector, update text safely, and toggle CSS classes.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "The HTML Tree",
-            "icon": "🌳",
-            "tag": "DOM TREE"
-        },
-        {
-            "id": "part2",
-            "label": "Selecting Nodes",
-            "icon": "🎯",
-            "tag": "SELECTION"
-        },
-        {
-            "id": "part3",
-            "label": "Styling & Classes",
-            "icon": "🎨",
-            "tag": "CHANGING THE DOM"
-        },
-        {
-            "id": "part4",
-            "label": "XSS Security Traps",
-            "icon": "🛡️",
-            "tag": "SECURITY"
-        },
-        {
-            "id": "part5",
-            "label": "DOM Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "The HTML Tree",
+      "icon": "🌳",
+      "tag": "DOM TREE"
+    },
+    {
+      "id": "part2",
+      "label": "Selecting & Modifying",
+      "icon": "🎯",
+      "tag": "CORE SYNTAX"
+    },
+    {
+      "id": "part3",
+      "label": "The Living Node Model",
+      "icon": "🧠",
+      "tag": "MENTAL MODEL"
+    },
+    {
+      "id": "part4",
+      "label": "XSS Security Traps",
+      "icon": "🛡️",
+      "tag": "SECURITY"
+    },
+    {
+      "id": "part5",
+      "label": "DOM Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Knowledge Check",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "The Document Object Model: Connecting JavaScript to HTML",
-    "bigPicture": "The DOM is a live tree structure representing every element on your web page. JavaScript uses the DOM to change text, style elements, and add dynamic components. Think of the DOM like the wiring harness behind your dashboard controls.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "The Living Family Tree: How JavaScript Talks to HTML",
+    "bigPicture": "When a web browser loads an HTML file, it does not treat it as plain text. Instead, it parses every tag into a living tree of JavaScript objects called the Document Object Model (DOM). JavaScript cannot directly edit the HTML files saved on your hard drive, but it can freely read, add, remove, and restyle any node on this living in-memory tree in real time. The moment JavaScript changes a DOM node, the browser immediately repaints the screen.",
+    "breakdownTitle": "Four Pillars of DOM Manipulation:",
     "breakdownItems": [
       {
-        "title": "What is the DOM?",
-        "desc": "Document Object Model — a tree of JavaScript objects representing every HTML node on the page."
+        "title": "The document Object",
+        "desc": "The entry point to the webpage; provides query methods like querySelector and querySelectorAll to find elements."
       },
       {
-        "title": "Selecting Elements",
-        "desc": "document.querySelector('selector') finds elements using standard CSS selectors."
+        "title": "Safe Text Updates with textContent",
+        "desc": "Updates element text safely without parsing HTML, preventing dangerous Cross-Site Scripting (XSS) attacks."
       },
       {
-        "title": "Modifying Content & Styles",
-        "desc": "Update textContent, innerHTML, or toggle CSS classes with element.classList."
+        "title": "Dynamic Styling via classList",
+        "desc": "Add, remove, or toggle CSS class names dynamically instead of hardcoding fragile inline CSS styles."
+      },
+      {
+        "title": "Creating Nodes with createElement",
+        "desc": "Instantiate brand-new HTML elements in memory and append them into the live page tree with appendChild or append."
       }
     ]
   },
   "part2": {
-    "title": "Selecting Elements: querySelector & querySelectorAll",
-    "intro": "Targeting DOM nodes using standard CSS selectors:",
+    "title": "Core Mechanics: Selecting, Modifying & Creating Elements",
+    "intro": "Master the essential methods for interacting with page elements:",
     "cards": [
       {
         "number": "01",
-        "tag": "Select",
-        "title": "querySelector('.class')",
-        "description": "Selects the first matching element using any valid CSS selector.",
-        "color": "purple"
-      },
-      {
-        "number": "02",
-        "tag": "Safe Text",
-        "title": "textContent",
-        "description": "Safely sets plain text without risk of Cross-Site Scripting (XSS) attacks.",
+        "tag": "Selection",
+        "title": "querySelector(cssSelector)",
+        "description": "Finds the first matching element using CSS selector syntax (e.g., '#id', '.class', 'button[type=submit]'). Returns null if not found.",
         "color": "emerald"
       },
       {
-        "number": "03",
+        "number": "02",
         "tag": "Classes",
-        "title": "classList.toggle()",
-        "description": "Add, remove, or toggle CSS class names cleanly without editing raw strings.",
+        "title": "element.classList",
+        "description": "Manipulate CSS classes with .add('active'), .remove('hidden'), and .toggle('dark-mode') instead of touching element.style directly.",
         "color": "cyan"
+      },
+      {
+        "number": "03",
+        "tag": "Creation",
+        "title": "createElement & append",
+        "description": "Build new elements with document.createElement('div'), configure their text and classes, and insert them with parent.append(child).",
+        "color": "purple"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Never put text from users directly into innerHTML. Always use textContent so malicious HTML and scripts cannot run on your website."
+      "title": "💡 Golden Rule of DOM Security: Use textContent Over innerHTML",
+      "content": "Never insert untrusted user input using innerHTML! An attacker can pass malicious HTML containing script tags or image error payloads (<img src=x onerror=...>) that steal session cookies. Always use element.textContent for user data."
     }
   },
   "part3": {
-    "title": "Manipulating Classes, Styles, and Attributes",
-    "intro": "Dynamically toggling classes with classList and updating text content:",
+    "title": "The Living Node Mental Model: JavaScript Objects in Memory",
+    "intro": "How the browser bridges HTML tags with JavaScript objects:",
     "points": [
       {
-        "title": "1. querySelectorAll",
-        "content": "Returns a static NodeList of all matching elements, which you can iterate with forEach."
+        "title": "1. Tags Become Objects",
+        "content": "Every <button class='btn'>Click</button> tag becomes an HTMLButtonElement object in memory with properties like .textContent, .id, .className, and .style."
       },
       {
-        "title": "2. classList API",
-        "content": "classList.add(), remove(), toggle(), and contains() manage styles cleanly."
+        "title": "2. The Parent-Child Tree",
+        "content": "Elements nest like branches on a tree. <body> contains <main>, <main> contains <article>, <article> contains <p>. You can traverse parentNode, children, and closest() seamlessly."
       },
       {
-        "title": "3. createElement",
-        "content": "document.createElement('div') constructs new elements offscreen before appending."
+        "title": "3. Live Rendering Synchronization",
+        "content": "When you run card.classList.add('highlight'), you aren't editing a file—you are modifying a live property on a memory node. The browser's rendering engine notices the update and repaints pixels immediately."
       }
     ]
   },
   "part4": {
-    "title": "The Cross-Site Scripting (XSS) Trap: innerHTML vs textContent",
+    "title": "Common Mistakes: Dangerous innerHTML vs Safe textContent",
     "bad": {
-      "title": "❌ Bad: Using innerHTML with untrusted user input (XSS Vulnerability)",
-      "code": "const userInput = \"<img src='x' onerror='alert(\\\"HACKED\\\")'>\";\n// Dangerous: Injects raw HTML from user directly into the page!\ndocument.getElementById(\"profile\").innerHTML = userInput;",
-      "explanation": "Using innerHTML with user text allows bad actors to inject dangerous scripts (called Cross-Site Scripting or XSS) into your page."
+      "title": "❌ Bad: Using innerHTML with raw user input (Severe XSS Vulnerability)",
+      "code": "function renderUserComment(commentText) {\n  const container = document.querySelector(\"#comments\");\n  // Catastrophic security flaw:\n  // If commentText is: \"<img src=x onerror='stealCredentials()'>\"\n  // the browser executes the attacker's JavaScript code immediately!\n  container.innerHTML += `<div class=\"comment\">${commentText}</div>`;\n}",
+      "explanation": "Using innerHTML with untrusted user input allows attackers to inject malicious JavaScript into other users' browsers (Cross-Site Scripting)."
     },
     "good": {
-      "title": "✅ Clean: Safe text insertion and classList management",
-      "code": "const header = document.querySelector(\"#page-title\");\nif (header) {\n  // Safe: escapes any special HTML characters automatically:\n  header.textContent = \"Welcome back, User!\";\n  header.classList.add(\"text-emerald-400\", \"font-bold\");\n}",
-      "explanation": "Using textContent treats everything as safe plain text, and classList lets you add or remove CSS classes cleanly."
+      "title": "✅ Clean: Safe node creation using textContent and append",
+      "code": "function renderUserComment(commentText) {\n  const container = document.querySelector(\"#comments\");\n  \n  // Safe: Creates node in memory\n  const commentDiv = document.createElement(\"div\");\n  commentDiv.classList.add(\"comment\");\n  \n  // Safe: textContent treats all inputs strictly as plain text, escaping any HTML!\n  commentDiv.textContent = commentText;\n  \n  container.append(commentDiv);\n}",
+      "explanation": "textContent safely escapes all HTML characters, treating attack scripts as inert plain text and completely neutralizing XSS exploits."
     }
   },
   "part5": {
-    "title": "DOM Manipulation Playground",
-    "intro": "Select elements, safely update textContent, and toggle active classes:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-28: DOM ESSENTIALS DEMO\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// Simulating DOM node representation and manipulation:\nclass SimulatedElement {\n  constructor(tagName) {\n    this.tagName = tagName.toUpperCase();\n    this.textContent = \"\";\n    this.classes = new Set();\n  }\n\n  addClass(className) {\n    this.classes.add(className);\n    return this;\n  }\n\n  render() {\n    const classAttr = this.classes.size ? ` class=\"${[...this.classes].join(\" \")}\"` : \"\";\n    return `<${this.tagName}${classAttr}>${this.textContent}</${this.tagName}>`;\n  }\n}\n\n// 1. Create and manipulate element:\nconst button = new SimulatedElement(\"button\");\nbutton.textContent = \"Click Me\";\nbutton.addClass(\"btn\").addClass(\"btn-primary\");\n\nconsole.log(\"Rendered Element:\", button.render());\n\n// 2. Browser document check:\nif (typeof document !== \"undefined\") {\n  console.log(\"Document available! Document title:\", document.title || \"LearnCraft Sandbox\");\n} else {\n  console.log(\"Running in pure Node.js runtime (Document simulated)\");\n}\n"
+    "title": "DOM Manipulation Simulation Playground",
+    "intro": "Simulate creating, styling, and appending interactive task items safely in JavaScript:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-28: DOM ESSENTIALS PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Simulated DOM environment\nclass MockDOMElement {\n  constructor(tagName) {\n    this.tagName = tagName.toUpperCase();\n    this.textContent = \"\";\n    this.classList = new Set();\n    this.children = [];\n  }\n\n  append(child) {\n    this.children.push(child);\n  }\n\n  get className() {\n    return Array.from(this.classList).join(\" \");\n  }\n}\n\n// 2. Helper to simulate document.createElement\nfunction createElement(tag) {\n  return new MockDOMElement(tag);\n}\n\n// 3. Build a task card element safely:\nfunction createTaskCard(title, isCompleted) {\n  const card = createElement(\"article\");\n  card.classList.add(\"task-card\");\n  \n  if (isCompleted) {\n    card.classList.add(\"completed\");\n  }\n\n  // Safe text insertion:\n  const heading = createElement(\"h3\");\n  heading.textContent = title;\n  card.append(heading);\n\n  const statusBadge = createElement(\"span\");\n  statusBadge.classList.add(\"badge\");\n  statusBadge.textContent = isCompleted ? \"Done\" : \"In Progress\";\n  card.append(statusBadge);\n\n  return card;\n}\n\n// 4. Test card generation:\nconst card1 = createTaskCard(\"Master JavaScript DOM\", true);\nconst card2 = createTaskCard(\"Build Capstone App\", false);\n\nconsole.log(\"Card 1 Tag:\", card1.tagName);\nconsole.log(\"Card 1 Classes:\", card1.className);\nconsole.log(\"Card 1 Title:\", card1.children[0].textContent);\nconsole.log(\"Card 2 Status:\", card2.children[1].textContent);\n"
   },
   "part6": {
-    "title": "Key Takeaways: The Document Object Model",
+    "title": "Key Takeaways: Browser DOM Essentials",
     "takeaways": [
       {
-        "title": "1. querySelector",
-        "desc": "Select elements with standard CSS selectors."
+        "title": "1. The DOM is an Object Tree",
+        "desc": "The browser parses HTML tags into a live tree of JavaScript objects rooted at the global document object."
       },
       {
-        "title": "2. textContent for Safety",
-        "desc": "Prevent XSS by avoiding innerHTML for user data."
+        "title": "2. querySelector vs querySelectorAll",
+        "desc": "querySelector returns the first matching element node; querySelectorAll returns a list of all matching nodes."
       },
       {
-        "title": "3. classList API",
-        "desc": "Add, remove, and toggle styling classes dynamically."
+        "title": "3. Never Trust innerHTML",
+        "desc": "Always use textContent for inserting user text to protect your application and users from XSS injection attacks."
       },
       {
-        "title": "4. Next: Events & Delegation",
-        "desc": "In JS-29, we handle user clicks, inputs, and event bubbling."
+        "title": "4. Use classList for Styling",
+        "desc": "Toggle and manage CSS classes with element.classList.toggle() instead of hardcoding brittle inline style properties."
       }
     ],
     "nextLessonPreview": {
       "title": "JS-29: Events, Event Listeners & Event Delegation",
-      "desc": "Respond to user actions with addEventListener and master Event Bubbling and Event Delegation."
+      "desc": "Listen for user clicks, keyboard presses, and form submits using addEventListener, and master high-performance Event Delegation."
     }
   },
   "part7": {
-    "title": "Knowledge Check: The Document Object Model",
+    "title": "Knowledge Check: Browser DOM Essentials",
     "quiz": {
-      "question": "Why is 'textContent' preferred over 'innerHTML' when updating an element with user-provided text?",
+      "question": "Why should you use 'element.textContent' instead of 'element.innerHTML' when displaying user-submitted comments?",
       "options": [
-        "textContent executes faster on older smartphones.",
-        "textContent automatically escapes HTML characters, preventing Cross-Site Scripting (XSS) attacks.",
-        "innerHTML is deprecated in HTML5.",
-        "textContent changes the font to bold automatically."
+        "textContent renders faster because it disables font styling",
+        "textContent treats input strictly as plain text, escaping HTML tags to prevent Cross-Site Scripting (XSS)",
+        "innerHTML is deprecated in modern JavaScript standards",
+        "textContent automatically capitalizes the first letter of each sentence"
       ],
       "correctIndex": 1,
-      "explanation": "Setting textContent treats all inputs as plain text and escapes HTML entities, making it impossible for attackers to inject malicious script tags or HTML."
+      "explanation": "element.textContent treats all assigned values strictly as literal plain text. Any malicious HTML or script tags are safely escaped, preventing XSS vulnerabilities."
     }
   }
 },
@@ -5027,174 +5120,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js29-events-and-delegation",
   "code": "JS-29",
   "title": "Events, Event Listeners & Event Delegation",
-  "subtitle": "Respond to user clicks, keyboard presses, and form submissions using addEventListener and Event Delegation.",
+  "subtitle": "Respond to user clicks, keyboard presses, and form submissions using addEventListener and high-performance Event Delegation.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "The Doorbell Analogy",
-            "icon": "🔔",
-            "tag": "EVENTS"
-        },
-        {
-            "id": "part2",
-            "label": "Event Bubbling",
-            "icon": "🫧",
-            "tag": "BUBBLING"
-        },
-        {
-            "id": "part3",
-            "label": "Event Delegation",
-            "icon": "⚡",
-            "tag": "DELEGATION"
-        },
-        {
-            "id": "part4",
-            "label": "Event Delegation",
-            "icon": "⚡",
-            "tag": "PERFORMANCE"
-        },
-        {
-            "id": "part5",
-            "label": "Events Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "The Doorbell Analogy",
+      "icon": "🔔",
+      "tag": "FOUNDATION"
+    },
+    {
+      "id": "part2",
+      "label": "Listeners & Bubbling",
+      "icon": "🫧",
+      "tag": "SYNTAX"
+    },
+    {
+      "id": "part3",
+      "label": "Event Delegation",
+      "icon": "⚡",
+      "tag": "PERFORMANCE"
+    },
+    {
+      "id": "part4",
+      "label": "500 Listeners Trap",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Events Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Knowledge Check",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Browser Events: Reacting to User Interactions",
-    "bigPicture": "Events make web pages interactive by notifying your code when a user clicks, types, or scrolls. Think of an event listener like a doorbell: when someone presses the button, your chime plays automatically.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "The Doorbell & The Lobby: How Web Pages React to Users",
+    "bigPicture": "A webpage without events is a static poster. Events make the web interactive: clicking buttons, typing in search bars, submitting forms, and scrolling feeds all emit event signals. In JavaScript, an event listener is like wiring a doorbell: you register a callback function that sits dormant until the user presses the button, at which point the browser fires your handler with an Event object detailing exactly what happened.",
+    "breakdownTitle": "Four Pillars of Event Handling:",
     "breakdownItems": [
       {
-        "title": "addEventListener()",
-        "desc": "Attaches a callback function triggered when a user event occurs."
+        "title": "addEventListener('event', handler)",
+        "desc": "Attaches a listener function to any DOM element without overwriting existing handlers or polluting HTML."
+      },
+      {
+        "title": "The Event Object (e.target vs e.currentTarget)",
+        "desc": "e.target is the exact element that was clicked; e.currentTarget is the element running the event handler."
       },
       {
         "title": "Event Bubbling",
-        "desc": "Events bubble upward through the DOM hierarchy from child element to ancestors."
+        "desc": "Events bubble upward from the child element through each parent container like air bubbles rising in water."
       },
       {
         "title": "Event Delegation",
-        "desc": "Attach ONE listener to a parent container to manage hundreds of dynamic child elements."
+        "desc": "Attach ONE listener to a parent container to manage actions for hundreds of dynamic child items efficiently."
       }
     ]
   },
   "part2": {
-    "title": "Event Bubbling & The Event Object (event.target)",
-    "intro": "How events bubble up through parent containers and how event.target reveals the clicked node:",
+    "title": "Core Mechanics: addEventListener, preventDefault & Bubbling",
+    "intro": "Master the tools for capturing user actions and controlling event flow:",
     "cards": [
       {
         "number": "01",
-        "tag": "Listener",
-        "title": "addEventListener('click', fn)",
-        "description": "Listens for user actions (click, input, submit, keydown) non-destructively.",
-        "color": "purple"
+        "tag": "Listeners",
+        "title": "element.addEventListener()",
+        "description": "Registers an event type ('click', 'input', 'submit') and a callback function. Cleanly separates JavaScript logic from HTML markup.",
+        "color": "emerald"
       },
       {
         "number": "02",
-        "tag": "Flow",
-        "title": "Event Bubbling",
-        "description": "Target -> Parent -> Body -> Document. Event travels up the DOM tree.",
+        "tag": "Forms",
+        "title": "event.preventDefault()",
+        "description": "Cancels default browser actions like page reloads on form submit (<form>) or page jumping on link clicks (<a>).",
         "color": "cyan"
       },
       {
         "number": "03",
-        "tag": "Pattern",
-        "title": "Event Delegation",
-        "description": "Single listener on parent checks event.target.matches('button') for dynamic lists.",
-        "color": "emerald"
+        "tag": "Bubbling",
+        "title": "The Upward Bubble",
+        "description": "When a nested <span> inside a <button> is clicked, the event bubbles: span -> button -> div -> body -> document.",
+        "color": "purple"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Use Event Delegation for lists: attach a single click listener to the parent <ul> container instead of adding hundreds of listeners to every <li> item."
+      "title": "💡 Golden Rule of Dynamic Lists: Use Event Delegation",
+      "content": "Never attach individual addEventListener callbacks to items in a dynamic loop. Attach ONE single listener to the static parent container (<ul> or <main>) and inspect 'event.target.closest(...)' to handle actions. It saves memory and works automatically for future items."
     }
   },
   "part3": {
-    "title": "Event Delegation: Efficient Listening on Dynamic Lists",
-    "intro": "Attaching a single listener to a parent list instead of 1,000 listeners to child items:",
+    "title": "The Event Delegation Mental Model: The Lobby Concierge",
+    "intro": "Why one parent listener beats 500 individual child listeners:",
     "points": [
       {
-        "title": "1. event.preventDefault()",
-        "content": "Stops the default browser action (e.g., stopping a form submit from reloading the page)."
+        "title": "1. The 500 Security Guards Analogy",
+        "content": "Imagine an apartment building with 500 rooms. Hiring 500 security guards to stand outside each room door wastes massive resources. That is what attaching 500 event listeners in a forEach loop does to browser memory."
       },
       {
-        "title": "2. event.stopPropagation()",
-        "content": "Halts event bubbling up to parent ancestor elements."
+        "title": "2. The Front Desk Concierge (Delegation)",
+        "content": "Instead, hire ONE guard at the front entrance lobby (the parent <ul>). Because all visitors must pass through the lobby (event bubbling), that single guard handles all incoming traffic using event.target."
       },
       {
-        "title": "3. event.target vs currentTarget",
-        "content": "target is the exact element clicked; currentTarget is the element holding the listener."
+        "title": "3. Future-Proofing Dynamic Content",
+        "content": "When a new resident moves into room 501 (an item added via fetch or user input), they don't need a new guard hired. The lobby concierge already handles them automatically!"
       }
     ]
   },
   "part4": {
-    "title": "Performance Pattern: Event Delegation on Dynamic Lists",
+    "title": "Common Mistakes: Attaching 500 Listeners in a Loop",
     "bad": {
-      "title": "❌ Bad: Attaching individual listeners to hundreds of list items",
-      "code": "// Attaching 1,000 separate listeners in memory:\ndocument.querySelectorAll(\".todo-item-btn\").forEach((btn) => {\n  btn.addEventListener(\"click\", () => handleDelete());\n});\n// When new items are added dynamically, they have NO listeners attached!",
-      "explanation": "Attaching click listeners to hundreds of separate buttons wastes memory, and new buttons added later will not respond to clicks."
+      "title": "❌ Bad: Attaching listeners to every list item in a loop",
+      "code": "// Wasteful & fragile:\nconst deleteButtons = document.querySelectorAll(\".delete-btn\");\ndeleteButtons.forEach((button) => {\n  button.addEventListener(\"click\", (e) => {\n    deleteItem(e.target.dataset.id);\n  });\n});\n\n// Huge bug: When a user adds a new task dynamically,\n// the new delete button has NO listener attached and clicking it does nothing!",
+      "explanation": "Loops attach hundreds of separate functions in memory, and dynamically inserted items won't have listeners attached."
     },
     "good": {
-      "title": "✅ Clean: Event Delegation with a single listener on parent",
-      "code": "const listContainer = document.querySelector(\"#todo-list\");\n\nlistContainer.addEventListener(\"click\", (event) => {\n  const deleteBtn = event.target.closest(\".btn-delete\");\n  if (deleteBtn) {\n    const taskId = deleteBtn.dataset.taskId;\n    console.log(\"Deleted task ID:\", taskId);\n  }\n});",
-      "explanation": "Placing a single listener on the parent container handles clicks for all current buttons and any new buttons created in the future."
+      "title": "✅ Clean: Event Delegation with a single parent listener and closest()",
+      "code": "const taskList = document.querySelector(\"#task-list\");\n\n// Single listener on parent handles ALL current and future delete buttons:\ntaskList.addEventListener(\"click\", (e) => {\n  const deleteBtn = e.target.closest(\".delete-btn\");\n  if (!deleteBtn) return; // Click was not on or inside a delete button\n\n  const taskId = deleteBtn.dataset.id;\n  deleteItem(taskId);\n});",
+      "explanation": "One listener on the parent container handles clicks for all existing and newly added items with minimal memory usage."
     }
   },
   "part5": {
-    "title": "Events & Delegation Playground",
-    "intro": "Attach click listeners, inspect event.target, and implement parent delegation for list items:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-29: EVENTS & EVENT DELEGATION DEMO\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// Simulating Event Delegation Logic:\nfunction handleContainerClick(event) {\n  console.log(\"🔔 Event received at container level!\");\n  console.log(\"Clicked Element Tag:\", event.target.tagName);\n\n  // Check if click originated from or inside a delete button:\n  if (event.target.tagName === \"BUTTON\" && event.target.dataset.action === \"delete\") {\n    const itemId = event.target.dataset.id;\n    console.log(`🗑️ [Action Verified] Deleted item with ID: ${itemId}`);\n  } else {\n    console.log(\"ℹ️ Click ignored: Not a delete action button.\");\n  }\n}\n\n// Test case 1: User clicks on the delete button\nconst clickEvent1 = {\n  target: { tagName: \"BUTTON\", dataset: { action: \"delete\", id: \"task_101\" } }\n};\nhandleContainerClick(clickEvent1);\n\n// Test case 2: User clicks somewhere else in the row\nconst clickEvent2 = {\n  target: { tagName: \"DIV\", dataset: {} }\n};\nhandleContainerClick(clickEvent2);\n"
+    "title": "Event Delegation Simulation Playground",
+    "intro": "Observe event bubbling and delegation handling clicks on dynamic task items:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-29: EVENT DELEGATION PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. Simulated parent container and data state:\nconst state = {\n  tasks: [\n    { id: 1, title: \"Learn DOM Selection\" },\n    { id: 2, title: \"Master Event Delegation\" }\n  ]\n};\n\n// 2. Simulated Event Dispatcher representing a user click:\nfunction simulateUserClick(targetSelector, targetId) {\n  const event = {\n    target: {\n      matches: (selector) => selector === targetSelector,\n      dataset: { id: targetId }\n    }\n  };\n  \n  // Single delegated listener on parent:\n  handleParentListClick(event);\n}\n\n// 3. The Delegated Handler (The Front Desk Concierge):\nfunction handleParentListClick(event) {\n  if (event.target.matches(\".btn-delete\")) {\n    const id = Number(event.target.dataset.id);\n    state.tasks = state.tasks.filter(t => t.id !== id);\n    console.log(`🗑️ Delegated Handler: Deleted task #${id}!`);\n  } else {\n    console.log(\"ℹ️ Click ignored: Not on a delete button.\");\n  }\n}\n\n// 4. Test 1: Click delete on existing task #1\nsimulateUserClick(\".btn-delete\", 1);\nconsole.log(\"Remaining tasks:\", state.tasks.map(t => t.title));\n\n// 5. Test 2: Add dynamic task #3 (No new listener needed!)\nstate.tasks.push({ id: 3, title: \"Build Capstone Project\" });\nconsole.log(\"\\nAdded new task dynamically. Testing delegation on new task:\");\n\n// Test 3: Click delete on newly added task #3\nsimulateUserClick(\".btn-delete\", 3);\nconsole.log(\"Remaining tasks:\", state.tasks.map(t => t.title));\n"
   },
   "part6": {
-    "title": "Key Takeaways: Browser Events",
+    "title": "Key Takeaways: Events & Delegation",
     "takeaways": [
       {
-        "title": "1. addEventListener",
-        "desc": "Non-destructive event binding for user actions."
+        "title": "1. Clean Event Listeners",
+        "desc": "Use addEventListener to attach callbacks; avoid deprecated inline HTML onclick attributes."
       },
       {
-        "title": "2. Event Bubbling",
-        "desc": "Events travel up from the target element to the document root."
+        "title": "2. The Event Object",
+        "desc": "e.target tells you what was clicked; e.preventDefault() prevents unwanted browser page reloads."
       },
       {
-        "title": "3. Event Delegation",
-        "desc": "Manage dynamic lists with 1 listener on the parent."
+        "title": "3. Natural Event Bubbling",
+        "desc": "Events propagate upward through parent elements in the DOM tree, enabling centralized event handling."
       },
       {
-        "title": "4. Next: Browser Storage & DevTools",
-        "desc": "In JS-30, we persist state with localStorage and master debugging."
+        "title": "4. Master Event Delegation",
+        "desc": "Attach one listener to a static parent container to handle actions on dynamic children with minimal memory."
       }
     ],
     "nextLessonPreview": {
       "title": "JS-30: Browser Storage (localStorage) & DevTools Debugging",
-      "desc": "Persist user preferences with localStorage, inspect state in DevTools, and set debugger breakpoints."
+      "desc": "Persist user settings and application state across browser refreshes with localStorage, and master DevTools debugging."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Browser Events",
+    "title": "Knowledge Check: Events & Delegation",
     "quiz": {
-      "question": "What is the primary architectural benefit of Event Delegation?",
+      "question": "In an event listener attached to a parent container, what does 'event.target' represent?",
       "options": [
-        "It compiles JavaScript into C++ code.",
-        "It allows a single parent event listener to handle events for hundreds of dynamic children, saving memory.",
-        "It automatically prevents all network requests.",
-        "It makes buttons appear larger on the screen."
+        "The element where the event listener is attached",
+        "The exact deepest element that the user clicked on",
+        "The parent of the document body",
+        "The global window object"
       ],
       "correctIndex": 1,
-      "explanation": "Event delegation attaches one single listener to a parent element. Because clicks bubble up, that one listener handles clicks for every child element, saving memory."
+      "explanation": "event.target represents the exact element that originally triggered the event (the clicked element), whereas event.currentTarget represents the element holding the active event listener."
     }
   }
 },
@@ -5203,174 +5300,178 @@ export const JS_LESSONS_CONTENT: Record<string, JSLessonContent> = {
   "slug": "js30-browser-storage-and-debugging",
   "code": "JS-30",
   "title": "Browser Storage (localStorage) & DevTools Debugging",
-  "subtitle": "Persist user settings across page refreshes with localStorage and troubleshoot code using DevTools.",
+  "subtitle": "Persist user preferences across browser refreshes with localStorage and troubleshoot code like a pro using DevTools.",
   "sections": [
-        {
-            "id": "part1",
-            "label": "Persistent State",
-            "icon": "💾",
-            "tag": "STORAGE"
-        },
-        {
-            "id": "part2",
-            "label": "Local vs Session",
-            "icon": "⏱️",
-            "tag": "LIFETIMES"
-        },
-        {
-            "id": "part3",
-            "label": "DevTools Debugging",
-            "icon": "🐞",
-            "tag": "DEBUGGING"
-        },
-        {
-            "id": "part4",
-            "label": "[object Object] Trap",
-            "icon": "⚠️",
-            "tag": "TRAPS"
-        },
-        {
-            "id": "part5",
-            "label": "Storage Playground",
-            "icon": "💻",
-            "tag": "SANDBOX"
-        },
-        {
-            "id": "part6",
-            "label": "Key Takeaways",
-            "icon": "🎓",
-            "tag": "SUMMARY"
-        },
-        {
-            "id": "part7",
-            "label": "Quick Quiz",
-            "icon": "🎯",
-            "tag": "QUIZ"
-        }
-    ],
+    {
+      "id": "part1",
+      "label": "Persistent State",
+      "icon": "💾",
+      "tag": "STORAGE"
+    },
+    {
+      "id": "part2",
+      "label": "localStorage API",
+      "icon": "⏱️",
+      "tag": "SYNTAX"
+    },
+    {
+      "id": "part3",
+      "label": "DevTools Debugging",
+      "icon": "🐞",
+      "tag": "DEBUGGING"
+    },
+    {
+      "id": "part4",
+      "label": "[object Object] Trap",
+      "icon": "⚠️",
+      "tag": "TRAPS"
+    },
+    {
+      "id": "part5",
+      "label": "Storage Playground",
+      "icon": "💻",
+      "tag": "SANDBOX"
+    },
+    {
+      "id": "part6",
+      "label": "Key Takeaways",
+      "icon": "🎓",
+      "tag": "SUMMARY"
+    },
+    {
+      "id": "part7",
+      "label": "Knowledge Check",
+      "icon": "🎯",
+      "tag": "QUIZ"
+    }
+  ],
   "part1": {
-    "title": "Web Storage: Preserving State Across Page Reloads",
-    "bigPicture": "Variables in memory disappear whenever the user refreshes the page. Web Storage allows your web app to save user preferences, cart items, or auth tokens directly in the user's browser.",
-    "breakdownTitle": "Key Concepts in This Lesson:",
+    "title": "The Sticky Note & The Slow-Mo Replay: Persistence & Debugging",
+    "bigPicture": "Every time a user refreshes their browser tab, JavaScript's in-memory variables are wiped clean! To remember dark mode preferences, shopping cart items, or auth tokens, web applications use localStorage—a permanent key-value store built right into the browser. And when things don't work as expected, professional developers don't just guess with console.log: they use browser DevTools and the debugger statement to pause execution and inspect variables in slow motion.",
+    "breakdownTitle": "Four Pillars of Storage & Debugging:",
     "breakdownItems": [
       {
-        "title": "localStorage API",
-        "desc": "Key-value persistent storage that survives page refreshes and browser restarts."
+        "title": "localStorage Persistence",
+        "desc": "Stores text data that survives browser refreshes and computer restarts until explicitly cleared."
       },
       {
-        "title": "JSON Serialization",
-        "desc": "localStorage only stores strings; use JSON.stringify() to save and JSON.parse() to load."
+        "title": "The JSON Serialization Rule",
+        "desc": "localStorage only stores strings! Objects and arrays MUST be serialized with JSON.stringify before saving."
       },
       {
-        "title": "Browser DevTools & Debugging",
-        "desc": "Use console.table, debugger statements, and DevTools breakpoints to inspect live state."
+        "title": "localStorage vs sessionStorage",
+        "desc": "localStorage lasts indefinitely; sessionStorage is automatically cleared when the user closes the tab."
+      },
+      {
+        "title": "DevTools & debugger Statement",
+        "desc": "The debugger keyword acts as a programmatic breakpoint, pausing script execution to inspect scopes and call stacks."
       }
     ]
   },
   "part2": {
-    "title": "localStorage vs sessionStorage: Lifetimes & Capacities",
-    "intro": "When to store persistent data in localStorage and when to use tab-scoped sessionStorage:",
+    "title": "Core Mechanics: localStorage API & DevTools Breakpoints",
+    "intro": "Master the fundamental storage methods and debugging techniques:",
     "cards": [
       {
         "number": "01",
-        "tag": "Save",
-        "title": "setItem('key', str)",
-        "description": "Saves a string value under a specific key name in browser storage.",
-        "color": "purple"
-      },
-      {
-        "number": "02",
-        "tag": "Read",
-        "title": "getItem('key')",
-        "description": "Retrieves the saved string value, or null if the key does not exist.",
+        "tag": "Storage",
+        "title": "setItem & getItem",
+        "description": "Save data with localStorage.setItem('theme', 'dark') and retrieve with localStorage.getItem('theme'). Returns null if missing.",
         "color": "emerald"
       },
       {
+        "number": "02",
+        "tag": "Objects",
+        "title": "JSON Storage Pattern",
+        "description": "Save objects: localStorage.setItem('user', JSON.stringify(user)). Retrieve: JSON.parse(localStorage.getItem('user') || '{}').",
+        "color": "cyan"
+      },
+      {
         "number": "03",
-        "tag": "Diagnostics",
-        "title": "debugger Statement",
-        "description": "Triggers a breakpoint in browser DevTools, pausing execution for inspection.",
-        "color": "amber"
+        "tag": "Debugging",
+        "title": "The debugger Statement",
+        "description": "Insert 'debugger;' in your code. If DevTools is open, execution pauses instantly, letting you step line-by-line.",
+        "color": "purple"
       }
     ],
     "rule": {
-      "title": "💡 Golden Rule",
-      "content": "Never save sensitive information like passwords or private login tokens in localStorage, because any script running on the page could read it."
+      "title": "💡 Golden Rule of LocalStorage: Never Store Naked Objects",
+      "content": "If you pass an object directly to localStorage (localStorage.setItem('cart', cartObject)), JavaScript implicitly calls .toString(), saving the useless string '[object Object]'! Always serialize with JSON.stringify() and deserialize with JSON.parse()."
     }
   },
   "part3": {
-    "title": "Debugging in Browser DevTools: Breakpoints & Console",
-    "intro": "Using debugger statements and DevTools breakpoints instead of relying solely on console.log:",
+    "title": "The Debugging Mental Model: The Slow-Motion Replay",
+    "intro": "How browser DevTools lets you freeze and inspect JavaScript execution:",
     "points": [
       {
-        "title": "1. Strings Only",
-        "content": "localStorage stores all data as strings. Storing an object directly stores '[object Object]'."
+        "title": "1. The Live Freeze Frame",
+        "content": "When execution hits a breakpoint or 'debugger;' statement with DevTools open, the entire JavaScript engine pauses. The screen freezes, and no further lines execute until you press Step."
       },
       {
-        "title": "2. Storage Capacity",
-        "content": "localStorage typically allows ~5MB per origin. For larger databases, use IndexedDB."
+        "title": "2. The Scope Inspector",
+        "content": "Look at the Scope panel in DevTools: you can inspect every local, closure, and global variable at that exact millisecond without adding a single console.log statement."
       },
       {
-        "title": "3. console.table()",
-        "content": "Displays arrays of objects in a clean, sorted tabular format in DevTools."
+        "title": "3. Step Over vs Step Into",
+        "content": "'Step Over' (F10) moves to the next line in the current function. 'Step Into' (F11) steps inside the function being called, letting you follow data into helper utilities."
       }
     ]
   },
   "part4": {
-    "title": "The [object Object] Trap: Storing Raw Objects in LocalStorage",
+    "title": "Common Mistakes: The '[object Object]' Storage Disaster",
     "bad": {
-      "title": "❌ Bad: Storing raw objects in localStorage without JSON.stringify",
-      "code": "const settings = { theme: \"dark\", fontSize: 16 };\n// Bug: Stores the literal string \"[object Object]\"!\nlocalStorage.setItem(\"settings\", settings);\n\nconst loaded = localStorage.getItem(\"settings\");\nconsole.log(loaded); // \"[object Object]\" (Corrupted data!)",
-      "explanation": "localStorage can only save text. If you pass an object directly without JSON.stringify, it saves the useless text '[object Object]'."
+      "title": "❌ Bad: Storing naked objects and unsafely parsing null on first visit",
+      "code": "// Bug 1: Saves the useless string \"[object Object]\"!\nconst user = { name: \"Sam\", theme: \"dark\" };\nlocalStorage.setItem(\"user_profile\", user);\n\n// Bug 2: Naked JSON.parse on first load (when getItem returns null):\nconst saved = JSON.parse(localStorage.getItem(\"user_profile\"));\n// If nothing was saved yet, saved is null.\nconsole.log(saved.theme); // TypeError: Cannot read properties of null!",
+      "explanation": "Naked objects are ruined into '[object Object]', and failing to handle null on first load causes fatal TypeErrors."
     },
     "good": {
-      "title": "✅ Clean: Safe serialization and deserialization with fallbacks",
-      "code": "const settings = { theme: \"dark\", fontSize: 16 };\nlocalStorage.setItem(\"settings\", JSON.stringify(settings));\n\nconst raw = localStorage.getItem(\"settings\");\nconst savedSettings = raw ? JSON.parse(raw) : { theme: \"light\" };\nconsole.log(\"Restored Theme:\", savedSettings.theme);",
-      "explanation": "Converting objects to text with JSON.stringify keeps your data safe so you can read it back with JSON.parse after refreshing the page."
+      "title": "✅ Clean: Stringifying data and safely providing fallback defaults",
+      "code": "const user = { name: \"Sam\", theme: \"dark\" };\n\n// 1. Serialize objects to JSON text before saving:\nlocalStorage.setItem(\"user_profile\", JSON.stringify(user));\n\n// 2. Safe retrieval with fallback default:\nfunction loadProfile() {\n  const raw = localStorage.getItem(\"user_profile\");\n  if (!raw) return { name: \"Guest\", theme: \"system\" };\n  \n  try {\n    return JSON.parse(raw);\n  } catch (err) {\n    console.warn(\"Storage corrupted; using fallback default:\", err.message);\n    return { name: \"Guest\", theme: \"system\" };\n  }\n}",
+      "explanation": "Using JSON.stringify preserves data integrity, and defensive parsing guarantees safe fallbacks even on first load."
     }
   },
   "part5": {
-    "title": "Browser Storage & Debugging Playground",
-    "intro": "Store and retrieve structured data using JSON.stringify, inspect storage keys, and debug state:",
-    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-30: BROWSER STORAGE & DEBUGGING\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// Universal Storage simulation with localStorage fallback:\nconst memoryStorage = {};\nconst storageAdapter = {\n  setItem(key, value) {\n    if (typeof localStorage !== \"undefined\") {\n      try { localStorage.setItem(key, value); return; } catch (e) {}\n    }\n    memoryStorage[key] = String(value);\n  },\n  getItem(key) {\n    if (typeof localStorage !== \"undefined\") {\n      try { return localStorage.getItem(key); } catch (e) {}\n    }\n    return memoryStorage[key] ?? null;\n  }\n};\n\n// 1. Storing complex preferences:\nconst userPreferences = {\n  theme: \"dark\",\n  accentColor: \"#8B5CF6\",\n  autoSave: true,\n  lastVisited: \"2026-10-17\"\n};\n\nstorageAdapter.setItem(\"user_pref\", JSON.stringify(userPreferences));\nconsole.log(\"💾 Saved user preferences to persistent storage!\");\n\n// 2. Retrieving and deserializing:\nconst serializedPref = storageAdapter.getItem(\"user_pref\");\nif (serializedPref) {\n  const loadedPref = JSON.parse(serializedPref);\n  console.log(\"🔄 Restored Theme:\", loadedPref.theme);\n  console.log(\"🎨 Accent Color:\", loadedPref.accentColor);\n}\n\n// 3. DevTools inspection tip:\nconsole.log(\"💡 Tip: Use 'console.table(object)' in DevTools for tabular inspection!\");\nconsole.log(\"🎉 Congratulations! You have completed all 30 JavaScript Curriculum Lessons!\");\n"
+    "title": "Browser Storage & Persistence Playground",
+    "intro": "Simulate persistent user settings with JSON serialization and defensive loading:",
+    "starterCode": "// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n// JS-30: LOCALSTORAGE & PERSISTENCE PLAYGROUND\n// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n// 1. In-memory simulation of localStorage:\nconst mockStorage = {\n  store: {},\n  setItem(key, value) { this.store[key] = String(value); },\n  getItem(key) { return this.store[key] !== undefined ? this.store[key] : null; },\n  removeItem(key) { delete this.store[key]; }\n};\n\n// 2. Persistent Settings Manager:\nconst SettingsManager = {\n  storageKey: \"learncraft_user_prefs\",\n  \n  // Save settings with JSON serialization\n  save(prefs) {\n    const serialized = JSON.stringify(prefs);\n    mockStorage.setItem(this.storageKey, serialized);\n    console.log(\"💾 Saved preferences to storage:\", serialized);\n  },\n\n  // Load settings with defensive fallback\n  load() {\n    const raw = mockStorage.getItem(this.storageKey);\n    if (!raw) {\n      console.log(\"ℹ️ No saved preferences found; using defaults.\");\n      return { theme: \"system\", fontSize: 16, autoSave: true };\n    }\n\n    try {\n      return JSON.parse(raw);\n    } catch (e) {\n      console.error(\"⚠️ Corrupted storage, returning default:\", e.message);\n      return { theme: \"system\", fontSize: 16, autoSave: true };\n    }\n  }\n};\n\n// Test 1: Load on first visit (defaults applied)\nconst initial = SettingsManager.load();\nconsole.log(\"First visit theme:\", initial.theme);\n\n// Test 2: User updates theme to \"cyberpunk\"\nSettingsManager.save({ theme: \"cyberpunk\", fontSize: 18, autoSave: true });\n\n// Test 3: Reload on subsequent visit\nconst refreshed = SettingsManager.load();\nconsole.log(\"Loaded persistent theme:\", refreshed.theme);\nconsole.log(\"Loaded font size:\", refreshed.fontSize);\n"
   },
   "part6": {
-    "title": "Key Takeaways: Web Storage",
+    "title": "Key Takeaways: Browser Storage & Capstone Readiness",
     "takeaways": [
       {
-        "title": "1. Persistent Storage",
-        "desc": "localStorage persists data across tab closures and restarts."
+        "title": "1. localStorage Persists Across Refreshes",
+        "desc": "Data in localStorage lasts indefinitely until cleared, making it ideal for client-side persistence."
       },
       {
-        "title": "2. Strings Only",
-        "desc": "Always serialize objects with JSON.stringify before saving."
+        "title": "2. Always Stringify Objects",
+        "desc": "Never store naked objects; always use JSON.stringify() to save and defensive JSON.parse() to load."
       },
       {
-        "title": "3. DevTools Breakpoints",
-        "desc": "Use debugger; and console.table for professional debugging."
+        "title": "3. Master DevTools Debugging",
+        "desc": "Use the debugger; statement and DevTools breakpoints to inspect variable values in slow motion."
       },
       {
-        "title": "4. Curriculum Complete",
-        "desc": "You are now ready for Module Quizzes and Interview Preparation!"
+        "title": "4. You are Capstone Ready!",
+        "desc": "You have completed all 30 foundational JavaScript lessons. You now possess every core skill required to build the Interactive Task Manager Capstone Project!"
       }
     ],
     "nextLessonPreview": {
-      "title": "JavaScript Interview Preparation & Capstone",
-      "desc": "Prepare for frontend and full-stack technical interviews with our dedicated question bank."
+      "title": "JS-CAPSTONE: Interactive Task & Workflow Manager",
+      "desc": "Build a complete, modular vanilla JavaScript application demonstrating ES modules, array manipulation, event delegation, async fetch, and localStorage."
     }
   },
   "part7": {
-    "title": "Knowledge Check: Web Storage",
+    "title": "Knowledge Check: Browser Storage",
     "quiz": {
-      "question": "What data format does `localStorage` store values in?",
+      "question": "What format does the browser's 'localStorage' engine store all keys and values in?",
       "options": [
-        "Binary byte arrays",
-        "Strings only (objects must be serialized with JSON.stringify)",
-        "JavaScript Class instances",
-        "SQL database tables"
+        "Binary byte buffers",
+        "Plain text strings only (objects must be serialized with JSON.stringify)",
+        "JavaScript Map objects",
+        "Direct database records"
       ],
       "correctIndex": 1,
-      "explanation": "localStorage stores all keys and values strictly as strings. Storing objects requires serializing them with JSON.stringify(), and retrieving them requires JSON.parse()."
+      "explanation": "localStorage stores all keys and values strictly as strings. Storing objects requires serializing them with JSON.stringify(), and loading them requires parsing with JSON.parse()."
     }
   }
 }
