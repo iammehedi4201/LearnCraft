@@ -48,16 +48,35 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
     expect(byPrefix?.code).toBe("TS-02");
   });
 
-  it("verifies all handcrafted lessons in Stage 1 (TS-01 through TS-05) meet strict pedagogical structure", () => {
-    const stage1Slugs = [
+  it("verifies all handcrafted lessons in Stages 1, 2, 3, 4, 5 & 6 (TS-01 through TS-24) meet strict pedagogical structure", () => {
+    const handcraftedSlugs = [
       "ts01-mental-model",
       "ts02-primitives-inference",
       "ts03-arrays-tuples",
       "ts04-object-types",
       "ts05-special-types",
+      "ts06-function-types",
+      "ts07-function-overloads",
+      "ts08-unions-intersections",
+      "ts09-type-vs-interface",
+      "ts10-control-flow-guards",
+      "ts11-custom-type-predicates",
+      "ts12-discriminated-unions",
+      "ts13-exhaustive-checking",
+      "ts14-generic-functions",
+      "ts15-generic-interfaces",
+      "ts16-generic-constraints",
+      "ts17-generics-keyof",
+      "ts18-class-access-modifiers",
+      "ts19-parameter-properties",
+      "ts20-abstract-classes",
+      "ts21-indexed-access-typeof",
+      "ts22-conditional-types-infer",
+      "ts23-mapped-template-types",
+      "ts24-utility-types",
     ];
 
-    for (const slug of stage1Slugs) {
+    for (const slug of handcraftedSlugs) {
       expect(TYPESCRIPT_LESSONS_CONTENT[slug], `Missing handcrafted registry entry for ${slug}`).toBeDefined();
       const content = getTypeScriptLessonContent(slug);
       expect(content, `Missing content for ${slug}`).toBeDefined();
@@ -101,8 +120,8 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
     }
   });
 
-  it("verifies dedicated module quizzes for Stage 1 are registered and resolvable", () => {
-    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBeGreaterThanOrEqual(5);
+  it("verifies dedicated module quizzes for Stages 1, 2, 3, 4, 5 & 6 are registered and resolvable", () => {
+    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBeGreaterThanOrEqual(24);
 
     for (const quiz of TYPESCRIPT_MODULE_QUIZZES) {
       expect(quiz.trackKey).toBe("typescript");
