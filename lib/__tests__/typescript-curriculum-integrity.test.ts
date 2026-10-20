@@ -48,7 +48,7 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
     expect(byPrefix?.code).toBe("TS-02");
   });
 
-  it("verifies all handcrafted lessons in Stages 1 through 7 (TS-01 through TS-27) meet strict pedagogical structure", () => {
+  it("verifies all 32 handcrafted lessons across all 9 Stages (TS-01 through TS-32) meet strict pedagogical structure", () => {
     const handcraftedSlugs = [
       "ts01-mental-model",
       "ts02-primitives-inference",
@@ -77,7 +77,14 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
       "ts25-modules-type-imports",
       "ts26-tsconfig-strict-mode",
       "ts27-declarations-type-erasure",
+      "ts28-assertions-vs-satisfies",
+      "ts29-safe-error-handling",
+      "ts30-api-contracts-immutability",
+      "ts31-debugging-compiler-errors",
+      "ts32-type-architecture-smells",
     ];
+
+    expect(handcraftedSlugs.length).toBe(32);
 
     for (const slug of handcraftedSlugs) {
       expect(TYPESCRIPT_LESSONS_CONTENT[slug], `Missing handcrafted registry entry for ${slug}`).toBeDefined();
@@ -123,8 +130,8 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
     }
   });
 
-  it("verifies dedicated module quizzes for Stages 1 through 7 are registered and resolvable", () => {
-    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBeGreaterThanOrEqual(27);
+  it("verifies dedicated module quizzes for all 32 lessons across all 9 Stages are registered and resolvable", () => {
+    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBe(32);
 
     for (const quiz of TYPESCRIPT_MODULE_QUIZZES) {
       expect(quiz.trackKey).toBe("typescript");

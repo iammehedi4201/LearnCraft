@@ -1880,4 +1880,331 @@ u.fullName = "Grace Hopper";`,
       },
     ],
   },
+  // ──────────────────────────────────────────────────────────────────────────
+  // TS-28: Type Assertions vs satisfies
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    id: "quiz-typescript-ts28",
+    trackKey: "typescript",
+    trackTitle: "TypeScript",
+    lessonSlug: "ts28-assertions-vs-satisfies",
+    lessonCode: "TS-28",
+    lessonTitle: "Type Assertions vs satisfies",
+    description: "Master the critical differences between unsafe type assertions (as), type annotations, and the safe satisfies operator.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "ts28-q1",
+        type: "multiple_choice",
+        title: "The Danger of Unsafe Type Assertions",
+        prompt: "Why is writing `const user = {} as User;` considered a dangerous anti-pattern compared to `const user: User = ...;`?",
+        options: [
+          "`as User` tells the compiler to silence type errors and assume the empty object satisfies User, even if required properties are completely missing, leading to runtime crashes",
+          "`as User` prevents JavaScript garbage collection from reclaiming the memory",
+          "`as User` converts the object into a JSON string at runtime",
+          "`as User` requires importing the reflect-metadata library"
+        ],
+        correctAnswer: 0,
+        explanation: "Type assertions override the compiler's judgment. Writing `{} as User` silences errors for missing properties, so subsequent property accesses like `user.profile.name` fail at runtime with a TypeError.",
+        hint: "Does `as` check if all required properties are actually present in the object literal?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts28-q2",
+        type: "multiple_choice",
+        title: "The satisfies Operator Advantage",
+        prompt: "What is the primary architectural advantage of using `satisfies` over a standard type annotation (e.g. `const palette = { ... } satisfies Colors;`)?",
+        options: [
+          "`satisfies` validates that the object conforms to the type contract while preserving the exact literal types and specific property shapes of the value",
+          "`satisfies` forces all properties to become mutable arrays",
+          "`satisfies` runs an asynchronous validation check against a remote server",
+          "`satisfies` automatically generates GraphQL schemas"
+        ],
+        correctAnswer: 0,
+        explanation: "Standard annotations broaden types (e.g. string | number[]). The `satisfies` operator validates that the object adheres to the contract, but retains the specific inferred type for each property without broadening.",
+        hint: "Does satisfies broaden property types or preserve their exact specific types?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts28-q3",
+        type: "multiple_choice",
+        title: "Compiler Enforcement with satisfies",
+        prompt: "What happens if an object tested with `satisfies Contract` is missing a required property or has an invalid type?",
+        options: [
+          "TypeScript produces a compile-time error highlighting the exact missing or mismatched property",
+          "TypeScript silently accepts it like `as Contract` does",
+          "The program compiles but throws a ReferenceError in the browser",
+          "The compiler automatically fills in default dummy values"
+        ],
+        correctAnswer: 0,
+        explanation: "`satisfies` guarantees contract conformance. If a required property is absent or has an invalid type, TypeScript immediately reports a compile-time error.",
+        hint: "Does satisfies act as a real type check or an escape hatch?",
+        hintCostXP: 5,
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────────────────────────────────
+  // TS-29: Safe Error Handling with unknown
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    id: "quiz-typescript-ts29",
+    trackKey: "typescript",
+    trackTitle: "TypeScript",
+    lessonSlug: "ts29-safe-error-handling",
+    lessonCode: "TS-29",
+    lessonTitle: "Safe Error Handling with unknown",
+    description: "Master safe exception handling in TypeScript, useUnknownInCatchVariables, instanceof guards, and custom error predicates.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "ts29-q1",
+        type: "multiple_choice",
+        title: "Why Catch Variables are Typed as unknown",
+        prompt: "Why does TypeScript in strict mode type caught error variables as `unknown` in `catch (err)` blocks?",
+        options: [
+          "Because JavaScript allows throwing any arbitrary value (strings, numbers, null, plain objects), not just instances of the Error class",
+          "Because the Error class was deprecated in ES2022",
+          "Because TypeScript cannot inspect try blocks",
+          "Because catch blocks run in Web Worker threads"
+        ],
+        correctAnswer: 0,
+        explanation: "In JavaScript, any value can be thrown: `throw 'network failed'` or `throw { status: 500 }`. Typing `err` as `unknown` forces developers to safely verify its type before accessing `.message`.",
+        hint: "Can JavaScript throw a raw string or number instead of a new Error()?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts29-q2",
+        type: "multiple_choice",
+        title: "Safe Error Message Extraction",
+        prompt: "What is the idiomatic way to safely extract an error message from a `catch (err: unknown)` block?",
+        options: [
+          "Use a runtime check `if (err instanceof Error) { return err.message; }` with a fallback string representation",
+          "Cast immediately with `(err as Error).message` without checking",
+          "Convert err to `any` and access `err.msg`",
+          "Wrap the catch block in another try/catch"
+        ],
+        correctAnswer: 0,
+        explanation: "Checking `err instanceof Error` safely narrows `unknown` to `Error`, guaranteeing that `.message` exists. Direct casting with `(err as Error)` crashes if a non-Error value was thrown.",
+        hint: "Which JavaScript runtime operator checks if an object is an instance of a constructor class?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts29-q3",
+        type: "multiple_choice",
+        title: "Custom Error Type Predicates",
+        prompt: "When receiving structured API errors `{ code: number; details: string }`, how do you safely narrow `err: unknown`?",
+        options: [
+          "Write a custom type guard function `function isApiError(err: unknown): err is ApiError` that validates properties before narrowing",
+          "Assert `err as ApiError` at the start of the function",
+          "JSON.stringify the error and parse it again",
+          "Assign err to a generic variable `<T>(err: T)`"
+        ],
+        correctAnswer: 0,
+        explanation: "A custom type predicate (`err is ApiError`) performs runtime property checks on `err` and informs TypeScript's compiler to narrow the type safely without unsafe assertions.",
+        hint: "What TypeScript function feature combines runtime validation with compile-time type narrowing?",
+        hintCostXP: 5,
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────────────────────────────────
+  // TS-30: Type-Safe API Contracts & Immutability
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    id: "quiz-typescript-ts30",
+    trackKey: "typescript",
+    trackTitle: "TypeScript",
+    lessonSlug: "ts30-api-contracts-immutability",
+    lessonCode: "TS-30",
+    lessonTitle: "Type-Safe API Contracts & Immutability",
+    description: "Master external API boundary validation, literal narrowing with as const, deep immutability, and schema enforcement.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "ts30-q1",
+        type: "multiple_choice",
+        title: "The as const Assertion",
+        prompt: "What does appending `as const` to `const API_ROUTES = { users: '/api/v1/users', health: '/health' } as const;` do?",
+        options: [
+          "It narrows all string properties to exact string literal types and marks every property as readonly",
+          "It encrypts the route strings in the final bundle",
+          "It forces the routes to be fetched over HTTPS only",
+          "It registers the routes with the Express router"
+        ],
+        correctAnswer: 0,
+        explanation: "`as const` applies `readonly` deeply to all properties and prevents type broadening, preserving literal types (e.g. `'/health'` instead of `string`).",
+        hint: "Does as const make properties readonly and prevent type broadening to string?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts30-q2",
+        type: "multiple_choice",
+        title: "Validating Network Boundaries",
+        prompt: "Why is `const data = (await res.json()) as UserDto;` dangerous for production applications?",
+        options: [
+          "Type assertions do not perform runtime validation; if the server sends unexpected or malformed JSON, your app will crash when accessing properties",
+          "Because fetch does not support TypeScript",
+          "Because UserDto is converted to a JavaScript class at runtime",
+          "Because JSON.parse cannot read TypeScript interfaces"
+        ],
+        correctAnswer: 0,
+        explanation: "Network boundaries return unknown runtime data. Type assertions (`as UserDto`) trick the compiler into believing the payload is valid without performing any runtime validation, leading to undefined property crashes.",
+        hint: "Can the TypeScript compiler verify the contents of an HTTP response arriving over the internet?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts30-q3",
+        type: "multiple_choice",
+        title: "Deep Immutability with Recursive Types",
+        prompt: "Why is TypeScript's built-in `Readonly<T>` insufficient for deeply nested API data structures?",
+        options: [
+          "`Readonly<T>` is shallow; nested sub-objects remain fully mutable unless wrapped in a recursive DeepReadonly type or created with `as const`",
+          "`Readonly<T>` only works on array elements",
+          "`Readonly<T>` converts all properties to optional",
+          "`Readonly<T>` is only available in loose mode"
+        ],
+        correctAnswer: 0,
+        explanation: "Built-in `Readonly<T>` only freezes the top-level keys. Properties of nested child objects (e.g. `user.profile.settings`) remain mutable unless guarded by recursive mapped types.",
+        hint: "Does the standard Readonly utility type freeze nested child objects or only top-level properties?",
+        hintCostXP: 5,
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────────────────────────────────
+  // TS-31: Deciphering Complex Compiler Errors
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    id: "quiz-typescript-ts31",
+    trackKey: "typescript",
+    trackTitle: "TypeScript",
+    lessonSlug: "ts31-debugging-compiler-errors",
+    lessonCode: "TS-31",
+    lessonTitle: "Deciphering Complex Compiler Errors",
+    description: "Master decoding nested TypeScript error traces, reading bottom-up diagnostics, and resolving excess property check failures.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "ts31-q1",
+        type: "multiple_choice",
+        title: "Reading Nested Error Traces",
+        prompt: "When TypeScript presents a 10-line nested error message (e.g. `Type 'X' is not assignable to type 'Y'... The types of 'a.b.c' are incompatible...`), where is the root cause of the error usually described?",
+        options: [
+          "At the very bottom (innermost line) of the error trace, which identifies the specific property and exact type mismatch",
+          "At the very first line only, ignoring the rest",
+          "In the middle line exclusively",
+          "In your package.json dependencies"
+        ],
+        correctAnswer: 0,
+        explanation: "TypeScript error messages are hierarchical: the top line describes the high-level incompatibility, and each indented line drills deeper until the bottom line pinpoints the exact mismatch (e.g., Type 'string' is not assignable to type 'number').",
+        hint: "Should you read long TypeScript compiler error traces top-down or bottom-up?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts31-q2",
+        type: "multiple_choice",
+        title: "Excess Property Checks on Literals",
+        prompt: "Why does `const u: User = { id: '1', name: 'Ada', extra: true };` throw a compiler error even if `User` only requires `id` and `name`?",
+        options: [
+          "Object literals assigned directly to typed variables trigger excess property checks to catch typos and unintended extra properties",
+          "TypeScript does not support objects with more than two properties",
+          "Because extra is a reserved JavaScript keyword",
+          "Because interfaces cannot be instantiated directly"
+        ],
+        correctAnswer: 0,
+        explanation: "TypeScript applies excess property checks to freshly created object literals to prevent developers from accidentally misspelling properties or passing fields that the interface will never use.",
+        hint: "Why does TypeScript forbid extra properties on freshly declared object literals?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts31-q3",
+        type: "multiple_choice",
+        title: "Resolving 'Type | undefined' Incompatibilities",
+        prompt: "When the compiler reports `Type 'string | undefined' is not assignable to type 'string'`, what is the most idiomatic way to resolve it?",
+        options: [
+          "Narrow the variable using an `if (value !== undefined)` check or provide a fallback value with the nullish coalescing operator `??`",
+          "Add `// @ts-ignore` above every line that uses the variable",
+          "Cast the variable to `any`",
+          "Change the compiler target to ES3"
+        ],
+        correctAnswer: 0,
+        explanation: "Under strictNullChecks, `undefined` must be handled defensively. Use control-flow narrowing (`if`) or nullish coalescing (`value ?? 'default'`) to safely guarantee a concrete string.",
+        hint: "How do you safely prove to the compiler that an optional value is present without casting?",
+        hintCostXP: 5,
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────────────────────────────────
+  // TS-32: Clean Type Architecture & Smells
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    id: "quiz-typescript-ts32",
+    trackKey: "typescript",
+    trackTitle: "TypeScript",
+    lessonSlug: "ts32-type-architecture-smells",
+    lessonCode: "TS-32",
+    lessonTitle: "Clean Type Architecture & Smells",
+    description: "Master idiomatic type design principles, avoid over-engineering type-level gymnastics, eliminate type smells, and prepare for production capstones.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "ts32-q1",
+        type: "multiple_choice",
+        title: "The Over-Engineering Code Smell",
+        prompt: "Which of the following is a classic indicator that a TypeScript codebase has fallen into the 'type gymnastics' over-engineering trap?",
+        options: [
+          "Creating deeply nested conditional types and recursive mapped types when a simple discriminated union or function overload would be clearer and faster to compile",
+          "Using strict: true in tsconfig.json",
+          "Writing descriptive interface property comments with JSDoc",
+          "Organizing types into modular files"
+        ],
+        correctAnswer: 0,
+        explanation: "Types should serve developer productivity, documentation, and safety. Overly clever, complex type acrobatics slow down compiler performance, confuse teammates, and create fragile abstractions.",
+        hint: "Are complex recursive type puzzles better or worse than simple, readable unions in application code?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts32-q2",
+        type: "multiple_choice",
+        title: "Single Source of Truth Principle",
+        prompt: "What is the best way to prevent drift between a runtime configuration object (like `API_ROUTES`) and its compile-time TypeScript type?",
+        options: [
+          "Define the runtime value once with `as const`, and derive the type automatically using `typeof` and indexed access (e.g. `type Route = typeof ROUTES[keyof typeof ROUTES]`)",
+          "Manually maintain a separate interface and update both files whenever a route changes",
+          "Use string everywhere without any specific type",
+          "Write an external shell script that generates types on every keystroke"
+        ],
+        correctAnswer: 0,
+        explanation: "Deriving types directly from runtime values using `as const` and `typeof` establishes a single source of truth, guaranteeing zero schema drift when values change.",
+        hint: "How can you derive a type directly from a runtime JavaScript object?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts32-q3",
+        type: "multiple_choice",
+        title: "Making Impossible States Unrepresentable",
+        prompt: "In a production front-end architecture, why is `type State = { status: 'idle' } | { status: 'loading' } | { status: 'success'; data: User } | { status: 'error'; error: Error };` considered the gold standard of type architecture?",
+        options: [
+          "It makes impossible states unrepresentable, ensuring that success data and error objects can never coexist simultaneously or be accessed while loading",
+          "It reduces the generated JavaScript bundle size by 50%",
+          "It eliminates the need for unit tests",
+          "It runs asynchronously on worker threads"
+        ],
+        correctAnswer: 0,
+        explanation: "Designing state machines with discriminated unions eliminates bug-prone flag combinations (like `isLoading: true, isError: true, data: User`), ensuring only valid application states can ever compile.",
+        hint: "What does representing state as mutually exclusive union variants prevent?",
+        hintCostXP: 5,
+      },
+    ],
+  },
 ];
+
+

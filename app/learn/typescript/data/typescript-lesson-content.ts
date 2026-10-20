@@ -6689,6 +6689,1181 @@ trackEvent({ eventName: 42 });
 };
 
 // ────────────────────────────────────────────────────────────────────────────
+// TS-28: Type Assertions vs satisfies
+// ────────────────────────────────────────────────────────────────────────────
+export const TS28_CONTENT: StandardLessonContent = {
+  slug: "ts28-assertions-vs-satisfies",
+  code: "TS-28",
+  title: "Type Assertions vs satisfies",
+  subtitle:
+    "Master safe type validation with the satisfies operator, identify the severe risks of type assertions (as), and preserve exact literal types.",
+  sections: TYPESCRIPT_SECTIONS,
+  part1: {
+    title: "The Forged Security Badge vs The Biometric Scanner",
+    bigPicture:
+      "Flashing a forged plastic security badge (`user as Admin`) tricks the front door security guard into waiving you into the bank vault without checking your fingerprint or credentials. Later, when an automated robotic arm inside the vault expects you to have a retinal scan or authorized keys, everything fails catastrophically with a runtime crash (`Cannot read properties of undefined`). In TypeScript, type assertions (`as Type`) are that forged badge—they silence the compiler's safety warnings by commanding: 'Trust me, I know better than you.' The `satisfies` operator (introduced in TS 4.9) is the biometric scanner: it performs a thorough check to prove your object fulfills every requirement of the contract, yet it remembers your exact individual identity and specific property types without erasing or broadening them.",
+    breakdownTitle: "Four Critical Differences: Assertions vs satisfies:",
+    breakdownItems: [
+      {
+        title: "1. The Type Assertion Blind Spot",
+        desc: "`as Type` forces the compiler to suppress type checking. Writing `const u = {} as User` lets code compile even with 10 missing required fields!",
+      },
+      {
+        title: "2. The Type Annotation Dilemma",
+        desc: "Annotating `const config: Record<string, string | number>` broadens all values to a union, forcing you to check `typeof config.port === 'number'` even though you know it's a number.",
+      },
+      {
+        title: "3. The satisfies Superpower",
+        desc: "Validates that an expression matches a type contract without changing or broadening the resulting inferred type of the expression.",
+      },
+      {
+        title: "4. Catching Typos & Excess Properties",
+        desc: "Unlike `as`, `satisfies` catches misspelled properties and type mismatches immediately at compile time.",
+      },
+    ],
+  },
+  part2: {
+    title: "Core Mechanics: Assertions, Annotations, and satisfies",
+    intro: "Understand how each technique influences compiler verification and type inference:",
+    cards: [
+      {
+        number: "01",
+        tag: "Escape Hatch",
+        title: "Type Assertions (as)",
+        description:
+          "Overrules the compiler; silences missing property warnings. Dangerous for object construction; reserve for narrowing unknown after validation.",
+        color: "purple",
+      },
+      {
+        number: "02",
+        tag: "Contract Proof",
+        title: "satisfies Operator",
+        description:
+          "Guarantees that an object adheres strictly to a contract while preserving exact literal types and specific property shapes.",
+        color: "cyan",
+      },
+      {
+        number: "03",
+        tag: "Zero Broadening",
+        title: "Specific Inference",
+        description:
+          "Retains methods like `.toLowerCase()` on string properties and `.map()` on array properties without requiring union type guards.",
+        color: "emerald",
+      },
+    ],
+    rule: {
+      title: "💡 The satisfies-First Rule",
+      content:
+        "Whenever you want to verify that an object or configuration complies with an interface while preserving exact property types and autocomplete, use `satisfies`. Never use `as Type` to create mock objects or fill out partial records.",
+    },
+  },
+  part3: {
+    title: "Step-by-Step Mental Model: Preserving Exactness",
+    intro: "How satisfies resolves the classic TypeScript type-broadening problem:",
+    points: [
+      {
+        title: "1. The Danger of 'as' with Missing Fields",
+        content:
+          "Using `as User` tells the compiler to treat an empty or incomplete object as fully valid, bypassing all required property checks.",
+        codeSnippet: `interface User { id: string; profile: { email: string } }\n// ❌ Compiles without error! But crashes at runtime on user.profile.email\nconst user = {} as User;\n// console.log(user.profile.email); // TypeError!`,
+      },
+      {
+        title: "2. The Broadening Problem with Type Annotations",
+        content:
+          "Explicitly annotating an object with a union type broadens all properties to the union, losing exact type information for each specific key.",
+        codeSnippet: `type ColorMap = Record<"primary" | "accent", string | number[]>;\n// With standard type annotation:\nconst theme: ColorMap = {\n  primary: "#1e40af",\n  accent: [255, 115, 0],\n};\n// theme.primary is (string | number[])!\n// theme.primary.toLowerCase(); // Error: Property 'toLowerCase' does not exist!`,
+      },
+      {
+        title: "3. Precision Verification with satisfies",
+        content:
+          "Using `satisfies ColorMap` verifies that both 'primary' and 'accent' exist and are valid types, but remembers that 'primary' is specifically a `string` and 'accent' is `number[]`.",
+        codeSnippet: `const theme = {\n  primary: "#1e40af",\n  accent: [255, 115, 0],\n} satisfies ColorMap;\n\n// TypeScript knows primary is string! No error:\nconsole.log(theme.primary.toLowerCase());\n// TypeScript knows accent is number[]! No error:\nconsole.log(theme.accent.map((c) => c.toString(16)));`,
+      },
+      {
+        title: "4. Combining 'as const' with 'satisfies'",
+        content:
+          "The ultimate configuration pattern in modern TypeScript: `as const satisfies Contract` delivers deep readonly immutability AND strict contract enforcement.",
+        codeSnippet: `type AppRoutes = Record<string, string>;\n\nconst ROUTES = {\n  home: "/",\n  login: "/auth/login",\n  dashboard: "/app/dashboard",\n} as const satisfies AppRoutes;\n\n// ROUTES.home is typed as literal "/" (not string), and is readonly!`,
+      },
+    ],
+  },
+  part4: {
+    title: "Anti-Patterns vs Clean Validation",
+    bad: {
+      title: "Unsafe Type Assertion Masking Missing Configuration Fields",
+      code: `// ❌ Anti-pattern: using 'as' to create a configuration object
+interface ServerConfig {
+  host: string;
+  port: number;
+  corsOrigins: string[];
+}
+
+// Bypasses the compiler! Missing 'corsOrigins' and 'port' is a string!
+const config = {
+  host: "localhost",
+  port: "8080",
+} as unknown as ServerConfig;
+
+// Production crash when server starts:
+// config.corsOrigins.includes("*"); // TypeError: Cannot read properties of undefined`,
+      explanation:
+        "`as ServerConfig` tells the compiler to close its eyes. When the application accesses `config.corsOrigins.includes()`, it crashes in production with an uncaught exception.",
+    },
+    good: {
+      title: "Safe Contract Validation with satisfies",
+      code: `// ✅ Idiomatic: satisfies verifies all fields while keeping exact types
+interface ServerConfig {
+  host: string;
+  port: number;
+  corsOrigins: string[];
+}
+
+const config = {
+  host: "localhost",
+  port: 8080,
+  corsOrigins: ["https://learncraft.dev"],
+} satisfies ServerConfig;
+
+// Compile-time safety: any missing field or wrong type is flagged instantly!`,
+      explanation:
+        "`satisfies ServerConfig` validates every property. If `corsOrigins` is omitted or `port` is given as a string, TypeScript halts compilation with a precise error message.",
+    },
+  },
+  part5: {
+    title: "Interactive Code Sandbox: satisfies vs Type Annotations",
+    intro:
+      "Explore how satisfies preserves exact property types, allowing method access without type guards:",
+    starterCode: `// TS-28: Type Assertions vs satisfies
+// Practice the satisfies operator with a design token system
+
+type ColorValue = string | [number, number, number];
+
+type DesignTokens = {
+  brandPrimary: ColorValue;
+  surfaceBackground: ColorValue;
+  neutralBorder: ColorValue;
+};
+
+// Using satisfies: validates all token keys exist, but preserves exact types!
+const themeTokens = {
+  brandPrimary: "#6366f1",
+  surfaceBackground: [15, 23, 42],
+  neutralBorder: "#334155",
+} satisfies DesignTokens;
+
+// Notice: brandPrimary is known to be a string!
+// We can call .toUpperCase() directly without checking typeof:
+console.log("Brand Hex:", themeTokens.brandPrimary.toUpperCase());
+
+// Notice: surfaceBackground is known to be [number, number, number]!
+// We can use array methods directly:
+const rgbString = "rgb(" + themeTokens.surfaceBackground.join(", ") + ")";
+console.log("Surface RGB:", rgbString);
+
+// Try uncommenting the next line to see satisfies catch invalid properties:
+// const broken = { brandPrimary: 123 } satisfies DesignTokens;
+`,
+  },
+  part6: {
+    title: "Concept Check: Knowledge Assessment",
+    quiz: {
+      question:
+        "What is the key advantage of `const config = { port: 3000 } satisfies Config;` over `const config: Config = { port: 3000 };`?",
+      options: [
+        "`satisfies` validates that `config` conforms to `Config` while preserving the exact type of `port` as literal `3000` rather than broadening it",
+        "`satisfies` compiles code into WebAssembly for faster execution",
+        "`satisfies` makes all properties optional by default",
+        "`satisfies` permits missing required properties without error",
+      ],
+      correctIndex: 0,
+      explanation:
+        "`satisfies` ensures contract conformance while preventing type broadening. The expression retains its exact, specific type (like literal `3000` or `string` instead of a broad union), giving you optimal autocomplete and type safety.",
+    },
+  },
+  part7: {
+    title: "Key Takeaways & What's Next",
+    takeaways: [
+      {
+        title: "1. The Danger of 'as'",
+        desc: "Type assertions override the compiler and can easily hide missing properties, causing runtime TypeError crashes.",
+      },
+      {
+        title: "2. The Power of 'satisfies'",
+        desc: "satisfies validates that an object conforms to an interface while preserving its exact literal types.",
+      },
+      {
+        title: "3. No Broadening",
+        desc: "Unlike standard annotations (: Type), satisfies does not broaden union property values into generic unions.",
+      },
+      {
+        title: "4. as const satisfies",
+        desc: "Combine as const and satisfies for deeply immutable configurations that strictly satisfy domain contracts.",
+      },
+    ],
+    nextLessonPreview: {
+      title: "TS-29: Safe Error Handling with unknown",
+      desc: "Master safe exception handling in TypeScript, useUnknownInCatchVariables, instanceof guards, and custom error predicates.",
+    },
+  },
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// TS-29: Safe Error Handling with unknown
+// ────────────────────────────────────────────────────────────────────────────
+export const TS29_CONTENT: StandardLessonContent = {
+  slug: "ts29-safe-error-handling",
+  code: "TS-29",
+  title: "Safe Error Handling with unknown",
+  subtitle:
+    "Master safe exception handling in TypeScript, useUnknownInCatchVariables, instanceof guards, and custom error predicates.",
+  sections: TYPESCRIPT_SECTIONS,
+  part1: {
+    title: "The Hazmat Protocol: Inspecting Unknown Packages",
+    bigPicture:
+      "In high-security facilities, when an unvetted package arrives at the loading dock, the team doesn't assume it contains harmless mail and slice it open with a kitchen knife. They wear protective hazmat gear, treat the package as an unknown hazardous substance (`unknown`), and run Geiger counters and X-ray scans (`instanceof Error`, type guards) to verify its safety before handling it. In JavaScript, `throw` has no type restrictions whatsoever: any code can write `throw 'network disconnected'`, `throw 404`, `throw { status: 500 }`, or even `throw null`! In loose TypeScript, caught errors were typed as `any`, encouraging developers to write `(err as any).message`. If someone threw a string or a plain object, that code crashed with `TypeError: Cannot read properties of undefined (reading 'message')`! TypeScript's `useUnknownInCatchVariables` (enabled in strict mode) turns on the Hazmat protocol: every caught error is typed as `unknown`, forcing you to verify what you caught before touching it.",
+    breakdownTitle: "Four Principles of Type-Safe Error Handling:",
+    breakdownItems: [
+      {
+        title: "1. Why catch(err) is Typed as unknown",
+        desc: "JavaScript allows throwing literally any value at runtime; TypeScript cannot statically guarantee what will be thrown.",
+      },
+      {
+        title: "2. The Danger of (err as Error)",
+        desc: "Blindly asserting `as Error` crashes when third-party libraries, network layers, or promise rejections throw non-Error objects.",
+      },
+      {
+        title: "3. Narrowing with instanceof Error",
+        desc: "The standard JavaScript runtime check that safely proves an unknown value is an Error instance with `.message` and `.stack`.",
+      },
+      {
+        title: "4. Custom Error Classes & Type Predicates",
+        desc: "Extending Error with domain properties (status codes, error codes) and building custom type guards (`isApiError`).",
+      },
+    ],
+  },
+  part2: {
+    title: "Core Mechanics: Guarding Caught Exceptions",
+    intro: "Learn how to safely extract error details without unsafe type casting:",
+    cards: [
+      {
+        number: "01",
+        tag: "Top Type",
+        title: "unknown Catch Variable",
+        description:
+          "Under strict mode, `catch (err)` variables default to `unknown`, completely prohibiting unchecked property access.",
+        color: "purple",
+      },
+      {
+        number: "02",
+        tag: "Standard Guard",
+        title: "instanceof Error Check",
+        description:
+          "Safely narrows `unknown` to `Error`, proving to the compiler that `.message`, `.name`, and `.stack` are accessible.",
+        color: "cyan",
+      },
+      {
+        number: "03",
+        tag: "Universal Extractor",
+        title: "Fallback Extraction",
+        description:
+          "A robust helper that gracefully extracts messages from Error instances, strings, or arbitrary error objects.",
+        color: "emerald",
+      },
+    ],
+    rule: {
+      title: "💡 The Universal Catch Rule",
+      content:
+        "Never assume a caught exception is an `Error` instance. Always narrow `err: unknown` using `if (err instanceof Error)` or an error extraction helper function before reading `.message`.",
+    },
+  },
+  part3: {
+    title: "Step-by-Step Mental Model: Safe Exception Pipelines",
+    intro: "How to handle thrown exceptions robustly across real-world application boundaries:",
+    points: [
+      {
+        title: "1. The Wild West of JavaScript throw",
+        content:
+          "Any expression can be thrown in JavaScript. If a library writes `throw 'Database timeout'`, assuming `err.message` exists causes an immediate uncaught TypeError.",
+        codeSnippet: `try {\n  throw "Service unavailable"; // Threw a raw string!\n} catch (err: unknown) {\n  // ❌ (err as Error).message is undefined!\n  // console.log((err as any).message.toUpperCase()); // CRASH!\n}`,
+      },
+      {
+        title: "2. The Universal getErrorMessage Helper",
+        content:
+          "Every production TypeScript codebase should have a central helper function to safely extract a human-readable message from any unknown thrown entity.",
+        codeSnippet: `export function getErrorMessage(err: unknown): string {\n  if (err instanceof Error) return err.message;\n  if (typeof err === "string") return err;\n  return "An unexpected error occurred: " + JSON.stringify(err);\n}`,
+      },
+      {
+        title: "3. Custom Domain Error Classes",
+        content:
+          "Define domain-specific error classes that extend `Error` and add structured metadata (e.g. HTTP status, error code, tracking ID).",
+        codeSnippet: `class HttpError extends Error {\n  constructor(\n    message: string,\n    public readonly statusCode: number\n  ) {\n    super(message);\n    this.name = "HttpError";\n  }\n}`,
+      },
+      {
+        title: "4. Custom Error Type Guards",
+        content:
+          "When handling structured errors from external APIs or backend microservices that are not class instances, use custom type predicates.",
+        codeSnippet: `interface ApiErrorPayload { code: number; detail: string; }\n\nfunction isApiError(err: unknown): err is ApiErrorPayload {\n  return typeof err === "object" && err !== null && "code" in err && "detail" in err;\n}`,
+      },
+    ],
+  },
+  part4: {
+    title: "Anti-Patterns vs Clean Error Handling",
+    bad: {
+      title: "Unchecked Type Cast in Catch Block Crashing on Non-Error Throws",
+      code: `// ❌ Anti-pattern: blind casting in catch block
+async function fetchUser(id: string) {
+  try {
+    const res = await api.get('/users/' + id);
+    return res.data;
+  } catch (err) {
+    // If api.get threw a string or rejected with { status: 404 }...
+    // This crashes with: TypeError: Cannot read properties of undefined!
+    console.error("Error length:", (err as Error).message.length);
+    throw err;
+  }
+}`,
+      explanation:
+        "Casting `err as Error` without checking assumes the runtime value is an `Error` instance. If a string or object was thrown, `.message` is `undefined`, and accessing `.length` crashes the app.",
+    },
+    good: {
+      title: "Defensive Narrowing with Safe Fallbacks",
+      code: `// ✅ Idiomatic: safe error narrowing with instanceof and fallback
+async function fetchUser(id: string) {
+  try {
+    const res = await api.get('/users/' + id);
+    return res.data;
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error("Failed to fetch user:", err.message);
+    } else {
+      console.error("Unknown failure:", String(err));
+    }
+    throw err;
+  }
+}`,
+      explanation:
+        "Checking `err instanceof Error` guarantees that `.message` is safe to access. The `else` branch handles strings, numbers, or objects gracefully without crashing.",
+    },
+  },
+  part5: {
+    title: "Interactive Code Sandbox: Safe Error Handling Pipeline",
+    intro:
+      "Test a safe error extraction utility against various thrown values: an Error instance, a raw string, and a custom API error:",
+    starterCode: `// TS-29: Safe Error Handling with unknown
+// Demonstrating the Universal Error Extractor pattern
+
+class NetworkTimeoutError extends Error {
+  constructor(public readonly timeoutMs: number) {
+    super("Request timed out after " + timeoutMs + "ms");
+    this.name = "NetworkTimeoutError";
+  }
+}
+
+// Universal safe message extractor
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.name + ": " + error.message;
+  }
+  if (typeof error === "string") {
+    return "String Error: " + error;
+  }
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "message" in error &&
+    typeof (error as Record<string, unknown>).message === "string"
+  ) {
+    return "Object Error: " + String((error as Record<string, unknown>).message);
+  }
+  return "Unknown Error: " + String(error);
+}
+
+// Simulating safe execution with diverse thrown values
+function runSafely(actionName: string, action: () => void): void {
+  try {
+    action();
+    console.log(actionName + ": Succeeded!");
+  } catch (err: unknown) {
+    const safeMessage = getErrorMessage(err);
+    console.log(actionName + " caught -> " + safeMessage);
+  }
+}
+
+// 1. Throws custom Error instance
+runSafely("Task 1", () => {
+  throw new NetworkTimeoutError(5000);
+});
+
+// 2. Throws raw string
+runSafely("Task 2", () => {
+  throw "Gateway connection refused";
+});
+
+// 3. Throws structured object
+runSafely("Task 3", () => {
+  throw { code: 503, message: "Database undergoing scheduled backup" };
+});
+`,
+  },
+  part6: {
+    title: "Concept Check: Knowledge Assessment",
+    quiz: {
+      question:
+        "Why does TypeScript type `catch (err)` variables as `unknown` when `useUnknownInCatchVariables` is enabled?",
+      options: [
+        "Because JavaScript allows throwing any value at runtime (strings, numbers, objects), not just Error instances",
+        "Because the Error class is not supported in ES2022",
+        "Because catch blocks are compiled to WebAssembly",
+        "Because TypeScript cannot inspect try/catch blocks",
+      ],
+      correctIndex: 0,
+      explanation:
+        "In JavaScript, `throw 'oops'` or `throw 404` are completely valid. Typing `err` as `unknown` forces developers to defensively check its type before accessing properties like `.message`.",
+    },
+  },
+  part7: {
+    title: "Key Takeaways & What's Next",
+    takeaways: [
+      {
+        title: "1. unknown Catch Variable",
+        desc: "In strict mode, catch variables are typed as unknown to reflect JavaScript's untyped throw behavior.",
+      },
+      {
+        title: "2. The instanceof Guard",
+        desc: "Always use `if (err instanceof Error)` before accessing error.message or error.stack.",
+      },
+      {
+        title: "3. Universal Extraction",
+        desc: "Implement a centralized getErrorMessage(err: unknown) utility to handle all thrown shapes cleanly.",
+      },
+      {
+        title: "4. Custom Predicates",
+        desc: "Use custom type predicates (err is ApiError) to validate structured non-Error payloads safely.",
+      },
+    ],
+    nextLessonPreview: {
+      title: "TS-30: Type-Safe API Contracts & Immutability",
+      desc: "Master external API boundary validation, literal narrowing with as const, deep immutability, and schema enforcement.",
+    },
+  },
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// TS-30: Type-Safe API Contracts & Immutability
+// ────────────────────────────────────────────────────────────────────────────
+export const TS30_CONTENT: StandardLessonContent = {
+  slug: "ts30-api-contracts-immutability",
+  code: "TS-30",
+  title: "Type-Safe API Contracts & Immutability",
+  subtitle:
+    "Master external API boundary validation, literal narrowing with as const, deep immutability, and schema enforcement.",
+  sections: TYPESCRIPT_SECTIONS,
+  part1: {
+    title: "The Customs Border & Amber-Preserved Fossils",
+    bigPicture:
+      "Inside a sovereign country, citizens follow domestic laws and trade with standard currency. But at the international border, border patrol inspects every shipment coming off foreign cargo planes. They do not wave cargo through simply because the manifest says 'electronics' (`as ApiResponse`)—they inspect the crates. Once verified, rare artifacts are preserved inside hardened amber blocks (`as const`), making them completely immune to tampering, weathering, or accidental alteration. In TypeScript, code inside your modules is strictly typed, but external API responses arrive across the untrusted network border where backends can change schemas, return HTTP 500 JSON, or deliver `null` values. Type assertions (`as UserDto`) are fraudulent manifests. Real type safety requires validating data at the network boundary, while `as const` and deep readonly types lock your domain constants in amber.",
+    breakdownTitle: "Four Pillars of Boundary Safety and Immutability:",
+    breakdownItems: [
+      {
+        title: "1. The Network Boundary Illusion",
+        desc: "TypeScript types do not validate runtime JSON payloads. Writing `(await res.json()) as User` is an unchecked compile-time assumption.",
+      },
+      {
+        title: "2. Boundary Validation Guards",
+        desc: "Validating external data with runtime type predicates or schema libraries proves to the compiler that incoming data conforms to your types.",
+      },
+      {
+        title: "3. 'as const' Literal Narrowing",
+        desc: "Transforms mutable primitives and objects into deeply readonly, literal-typed configurations with zero type broadening.",
+      },
+      {
+        title: "4. DeepReadonly Immutability",
+        desc: "Recursive mapped types that freeze nested objects and arrays, preventing accidental mutation of shared application state.",
+      },
+    ],
+  },
+  part2: {
+    title: "Core Mechanics: Boundary Defenses & Immutability",
+    intro: "Learn how to establish strict data contracts and lock data structures against mutation:",
+    cards: [
+      {
+        number: "01",
+        tag: "Boundary Safety",
+        title: "Runtime Validation",
+        description:
+          "Never assert raw network responses. Use runtime type guards or schema validation before treating data as typed.",
+        color: "purple",
+      },
+      {
+        number: "02",
+        tag: "Literal Freezing",
+        title: "as const Narrowing",
+        description:
+          "Narrows values to literal types, transforms arrays to readonly fixed tuples, and prevents all property reassignment.",
+        color: "cyan",
+      },
+      {
+        number: "03",
+        tag: "Deep Freezing",
+        title: "Recursive Readonly",
+        description:
+          "Applies `readonly` to every nested child property throughout complex domain models and state trees.",
+        color: "emerald",
+      },
+    ],
+    rule: {
+      title: "💡 The Network Boundary Law",
+      content:
+        "Never trust external data at compile time. Always validate incoming network, localStorage, or file data with runtime checks or schema parsers before assigning it to strict TypeScript types.",
+    },
+  },
+  part3: {
+    title: "Step-by-Step Mental Model: From Network Border to Amber",
+    intro: "How to safely ingest untrusted payloads and protect core configuration state:",
+    points: [
+      {
+        title: "1. Why 'res.json() as User' Fails in Production",
+        content:
+          "Type assertions do not inspect network data. If the backend changes a field name, returns a 404 HTML page, or delivers `null`, the type assertion succeeds silently, causing runtime crashes later.",
+        codeSnippet: `// ❌ Catastrophic assumption:
+const response = await fetch("/api/user/10");
+const user = (await response.json()) as { id: string; name: string };
+// If API returned { error: "Not Found" }, user.name is undefined!
+// console.log(user.name.toUpperCase()); // TypeError!`,
+      },
+      {
+        title: "2. Boundary Type Predicate Validation",
+        content:
+          "A runtime type guard checks incoming properties before narrowing. If validation fails, the application rejects the payload cleanly before bad data corrupts state.",
+        codeSnippet: `interface UserDto { id: string; name: string; }\n\nfunction isUserDto(data: unknown): data is UserDto {\n  return (\n    typeof data === "object" && data !== null &&\n    "id" in data && typeof (data as any).id === "string" &&\n    "name" in data && typeof (data as any).name === "string"\n  );\n}`,
+      },
+      {
+        title: "3. Locking Values with 'as const'",
+        content:
+          "Appending `as const` instructs TypeScript to freeze the type: strings are narrowed to exact literals, arrays become fixed readonly tuples, and all properties become readonly.",
+        codeSnippet: `// Standard declaration (mutable, broadened to string[]):
+const HTTP_METHODS = ["GET", "POST", "PUT", "DELETE"]; // string[]
+
+// as const declaration (immutable, exact literal tuple):
+const FROZEN_METHODS = ["GET", "POST", "PUT", "DELETE"] as const;
+// readonly ["GET", "POST", "PUT", "DELETE"]`,
+      },
+      {
+        title: "4. The Recursive DeepReadonly Utility",
+        content:
+          "Standard `Readonly<T>` is shallow; nested objects remain mutable. A recursive mapped type enforces complete deep immutability.",
+        codeSnippet: `type DeepReadonly<T> = T extends Function\n  ? T\n  : T extends Array<infer U>\n  ? ReadonlyArray<DeepReadonly<U>>\n  : T extends object\n  ? { readonly [K in keyof T]: DeepReadonly<T[K]> }\n  : T;`,
+      },
+    ],
+  },
+  part4: {
+    title: "Anti-Patterns vs Clean Boundary Validation",
+    bad: {
+      title: "Blind Type Assertion and Mutable State Drift",
+      code: `// ❌ Anti-pattern: blind casting and mutable configuration
+async function loadConfig() {
+  const res = await fetch("/config.json");
+  // Asserts without checking!
+  const config = (await res.json()) as { apiUrl: string; retries: number };
+
+  // Dangerous mutation: changes shared state globally!
+  config.apiUrl = "http://compromised.com";
+  return config;
+}`,
+      explanation:
+        "Casting with `as` bypasses runtime safety. If the JSON payload has missing or corrupted fields, your application crashes downstream. Mutating the configuration creates unpredictable state bugs.",
+    },
+    good: {
+      title: "Validated Ingestion and Deeply Immutable State",
+      code: `// ✅ Idiomatic: validated ingestion and immutable configuration
+interface AppConfig {
+  readonly apiUrl: string;
+  readonly retries: number;
+}
+
+function parseConfig(raw: unknown): AppConfig {
+  if (
+    typeof raw === "object" && raw !== null &&
+    "apiUrl" in raw && typeof (raw as Record<string, unknown>).apiUrl === "string" &&
+    "retries" in raw && typeof (raw as Record<string, unknown>).retries === "number"
+  ) {
+    return Object.freeze({
+      apiUrl: (raw as Record<string, unknown>).apiUrl as string,
+      retries: (raw as Record<string, unknown>).retries as number,
+    });
+  }
+  throw new Error("Invalid application configuration payload");
+}`,
+      explanation:
+        "Validating the raw payload at the network boundary guarantees data integrity. Freezing the object guarantees it can never be mutated after ingestion.",
+    },
+  },
+  part5: {
+    title: "Interactive Code Sandbox: API Boundary & Immutability",
+    intro:
+      "Explore how boundary validation guards and as const work together to ensure bulletproof data integrity:",
+    starterCode: `// TS-30: Type-Safe API Contracts & Immutability
+// Practice boundary validation and deep immutability
+
+// 1. Immutable API route configuration
+const API_CONFIG = {
+  baseUrl: "https://api.learncraft.dev",
+  endpoints: {
+    auth: "/v1/auth",
+    courses: "/v1/courses",
+    quizzes: "/v1/quizzes",
+  },
+  rateLimit: {
+    maxRequests: 100,
+    windowMs: 60000,
+  },
+} as const;
+
+// 2. Strict API contract with Discriminated Union
+interface CourseItem {
+  readonly id: string;
+  readonly title: string;
+  readonly lessonsCount: number;
+}
+
+type ApiResponse<T> =
+  | { readonly success: true; readonly data: T }
+  | { readonly success: false; readonly error: string };
+
+// 3. Boundary validator simulating an HTTP response
+function handleApiResponse(raw: unknown): void {
+  // Defensive boundary validation
+  if (typeof raw !== "object" || raw === null) {
+    console.log("Malformed response: expected an object");
+    return;
+  }
+
+  const response = raw as ApiResponse<CourseItem[]>;
+
+  if (response.success) {
+    console.log("Success! Courses count:", response.data.length);
+    response.data.forEach((course) => {
+      console.log(" - [" + course.id + "] " + course.title);
+    });
+  } else {
+    console.log("API Error:", response.error);
+  }
+}
+
+// Test with valid API response
+handleApiResponse({
+  success: true,
+  data: [
+    { id: "ts-101", title: "Mastering TypeScript", lessonsCount: 32 },
+    { id: "js-201", title: "Modern JavaScript Deep Dive", lessonsCount: 30 },
+  ],
+});
+
+// Test with error response
+handleApiResponse({
+  success: false,
+  error: "Unauthorized: Invalid API Token",
+});
+`,
+  },
+  part6: {
+    title: "Concept Check: Knowledge Assessment",
+    quiz: {
+      question:
+        "What does appending `as const` to `const STATUSES = ['active', 'paused', 'archived'] as const;` do?",
+      options: [
+        "It narrows the type from `string[]` to a readonly tuple `readonly ['active', 'paused', 'archived']`",
+        "It converts the array into a Set at runtime",
+        "It encrypts the strings to prevent inspection in devtools",
+        "It permits adding new statuses using STATUSES.push()",
+      ],
+      correctIndex: 0,
+      explanation:
+        "`as const` instructs the compiler to narrow literal values (preventing broadening to `string`) and marks the array as `readonly`, forbidding mutation methods like `.push()`.",
+    },
+  },
+  part7: {
+    title: "Key Takeaways & What's Next",
+    takeaways: [
+      {
+        title: "1. The Boundary Illusion",
+        desc: "TypeScript types do not validate runtime JSON; never blindly assert network payloads with as Type.",
+      },
+      {
+        title: "2. Validate at Ingestion",
+        desc: "Use runtime type predicates or schema libraries to verify external data before assigning to typed variables.",
+      },
+      {
+        title: "3. as const Immutability",
+        desc: "Use as const to lock domain constants into deeply readonly literal types with zero broadening.",
+      },
+      {
+        title: "4. DeepReadonly Protection",
+        desc: "Apply recursive mapped types to guarantee deep immutability across complex state trees.",
+      },
+    ],
+    nextLessonPreview: {
+      title: "Stage 9: Debugging & Best Practices (TS-31 – TS-32)",
+      desc: "Advance to Stage 9 to master compiler error diagnostics, anti-patterns refactoring, and capstone project preparation.",
+    },
+  },
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// TS-31: Deciphering Complex Compiler Errors
+// ────────────────────────────────────────────────────────────────────────────
+export const TS31_CONTENT: StandardLessonContent = {
+  slug: "ts31-debugging-compiler-errors",
+  code: "TS-31",
+  title: "Deciphering Complex Compiler Errors",
+  subtitle:
+    "Master decoding deep TypeScript error traces, reading bottom-up diagnostics, resolving excess property checks, and solving union assignability mismatches.",
+  sections: TYPESCRIPT_SECTIONS,
+  part1: {
+    title: "The Medical Diagnostic MRI: Finding the Blocked Artery",
+    bigPicture:
+      "When a patient visits an emergency room with chest discomfort, the top of the chart reads 'Acute Discomfort'—a broad, generic description. A skilled physician does not treat the broad label with guesswork; they review the detailed MRI scan, drilling down layer by layer through muscle and tissue until they locate the microscopic blocked coronary artery at the very bottom of the scan. In TypeScript, when you write code with nested objects, generics, or conditional types, a single mistake can trigger an intimidating 12-line error cascade: `Type 'X' is not assignable to type 'Y'... The types of 'user.profile.settings' are incompatible... Type 'string' is not assignable to type 'number'`. Beginners panic at the top line and throw up their hands, resorting to unsafe `any` or `// @ts-ignore`. Professional engineers know the diagnostic secret: *Always read TypeScript errors from the bottom up!* The innermost, bottom line is the blocked artery—it names the exact property and the exact mismatched type.",
+    breakdownTitle: "Four Principles of TypeScript Error Diagnostics:",
+    breakdownItems: [
+      {
+        title: "1. The Hierarchical Error Tree",
+        desc: "Top lines describe the broad contextual expression; the innermost bottom line pinpoints the microscopic type contradiction.",
+      },
+      {
+        title: "2. Excess Property Checks",
+        desc: "Fresh object literals are strictly audited to catch typos, preventing undeclared fields from slipping into interfaces.",
+      },
+      {
+        title: "3. Union Assignability Mismatches",
+        desc: "When passing data to unions, TypeScript explains which specific variant failed assignability and why.",
+      },
+      {
+        title: "4. Nullable Contradictions (T | undefined)",
+        desc: "Under strictNullChecks, missing values cannot masquerade as concrete types; resolve them with guards or nullish coalescing (??).",
+      },
+    ],
+  },
+  part2: {
+    title: "Core Mechanics: Anatomy of a Compiler Trace",
+    intro: "Learn how the compiler structures error messages from high-level context down to the leaf cause:",
+    cards: [
+      {
+        number: "01",
+        tag: "Diagnostic Rule",
+        title: "Bottom-Up Reading",
+        description:
+          "Skip the intimidating outer lines; jump straight to the most indented bottom line to find the exact mismatched property.",
+        color: "purple",
+      },
+      {
+        number: "02",
+        tag: "Strict Audit",
+        title: "Excess Property Checks",
+        description:
+          "Flags misspelled or unexpected properties on direct object literals, protecting against silent domain bugs.",
+        color: "cyan",
+      },
+      {
+        number: "03",
+        tag: "Control Flow",
+        title: "Defensive Narrowing",
+        description:
+          "Resolves `T | undefined` errors cleanly using runtime if-checks or default values without resorting to unsafe casting.",
+        color: "emerald",
+      },
+    ],
+    rule: {
+      title: "💡 The Bottom-Up Reading Law",
+      content:
+        "When faced with a complex, multi-line TypeScript error trace, scroll immediately to the final indented line. The bottom line pinpoints the exact property name and the incompatible primitive type causing the failure.",
+    },
+  },
+  part3: {
+    title: "Step-by-Step Mental Model: Debugging Real Error Traces",
+    intro: "How to systematically dissect and resolve the 4 most common TypeScript compiler errors:",
+    points: [
+      {
+        title: "1. Dissecting Nested Property Mismatches",
+        content:
+          "In a multi-level object, TypeScript prints an indented stack. The top line says 'Type A is not assignable to Type B'. The bottom line says 'Type string is not assignable to type number'.",
+        codeSnippet: `interface AppSettings {\n  server: { port: number; host: string; };\n}\n\n// Error trace points down to: server.port\n// Type 'string' is not assignable to type 'number'.\nconst settings: AppSettings = {\n  server: { port: "8080", host: "localhost" }, // Look at bottom line: port should be number!\n};`,
+      },
+      {
+        title: "2. The Excess Property Check Trap",
+        content:
+          "Direct object literals are checked for excess properties to catch typos. If you assign `{ id: '1', usrName: 'Ada' }` to an interface with `username`, TypeScript catches the typo immediately.",
+        codeSnippet: `interface User { id: string; username: string; }\n\n// ❌ Error: Object literal may only specify known properties, and 'usrName' does not exist in type 'User'. Did you mean 'username'?\nconst u: User = { id: "1", usrName: "ada" };`,
+      },
+      {
+        title: "3. Resolving 'Type | undefined' Incompatibilities",
+        content:
+          "Under strictNullChecks, an optional property `bio?: string` has type `string | undefined`. Passing it to a function requiring `string` fails. Resolve it with the nullish coalescing operator (`??`).",
+        codeSnippet: `function printBio(bio: string): void { console.log(bio.toUpperCase()); }\n\nconst profile: { bio?: string } = {};\n// ❌ printBio(profile.bio); // Error: Type 'undefined' is not assignable to 'string'\n// ✅ Clean resolution:\nprintBio(profile.bio ?? "No biography available.");`,
+      },
+      {
+        title: "4. Using Type Hole Inspection in Your IDE",
+        content:
+          "When debugging complex types, you can hover over variables in VS Code or assign a value to a dummy variable `const _test: never = myValue;` to view the exact computed type in the compiler output.",
+        codeSnippet: `// Type Hole Technique: forces compiler to display the exact evaluated type\n// const _inspect: never = complexEvaluatedObject;`,
+      },
+    ],
+  },
+  part4: {
+    title: "Anti-Patterns vs Clean Diagnostic Debugging",
+    bad: {
+      title: "Silencing Compiler Errors with @ts-ignore or as any",
+      code: `// ❌ Anti-pattern: sweeping error traces under the rug
+interface PaymentRequest {
+  amountCents: number;
+  currency: "USD" | "EUR";
+}
+
+function process(req: PaymentRequest) { /* ... */ }
+
+// Developer saw complex error and took the shortcut:
+// @ts-ignore: Too lazy to read the bottom line
+process({ amountCents: "5000", currency: "USD" });
+// Crashes in banking backend: calculated amount is string concatenation!`,
+      explanation:
+        "Using `@ts-ignore` or `as any` silences the compiler, blinding you to legitimate bugs. In this case, passing a string for `amountCents` breaks currency arithmetic at runtime.",
+    },
+    good: {
+      title: "Reading the Bottom Line and Fixing the Contradiction",
+      code: `// ✅ Idiomatic: read the bottom line and correct the data type
+interface PaymentRequest {
+  amountCents: number;
+  currency: "USD" | "EUR";
+}
+
+function process(req: PaymentRequest) { /* ... */ }
+
+// Compiler reported: Type 'string' is not assignable to type 'number' on 'amountCents'.
+// Fixed cleanly by passing a real number:
+process({ amountCents: 5000, currency: "USD" });`,
+      explanation:
+        "Reading the bottom line of the error trace revealed that `amountCents` required a number. Fixing the data type took 5 seconds and preserved 100% type safety.",
+    },
+  },
+  part5: {
+    title: "Interactive Code Sandbox: Diagnostic Dissection & Clean Resolution",
+    intro:
+      "Explore how resolving excess property checks, optional values, and union mismatches creates robust, self-healing code:",
+    starterCode: `// TS-31: Deciphering Complex Compiler Errors
+// Practice diagnosing and resolving common compiler errors
+
+interface DatabaseCredentials {
+  host: string;
+  port: number;
+  ssl: boolean;
+  timeoutMs?: number;
+}
+
+interface ServiceConfig {
+  serviceName: string;
+  database: DatabaseCredentials;
+  environment: "development" | "staging" | "production";
+}
+
+function initializeService(config: ServiceConfig): void {
+  // 1. Safe handling of optional timeoutMs (no undefined mismatch)
+  const timeout = config.database.timeoutMs ?? 5000;
+
+  console.log("Service Initialized:", config.serviceName);
+  console.log("Environment:", config.environment);
+  console.log("Database Host:", config.database.host + ":" + config.database.port);
+  console.log("SSL Enabled:", config.database.ssl);
+  console.log("Effective Timeout:", timeout + "ms");
+}
+
+// Clean configuration adhering strictly to all nested constraints:
+const productionConfig: ServiceConfig = {
+  serviceName: "AuthMicroservice",
+  environment: "production",
+  database: {
+    host: "db.production.internal",
+    port: 5432,
+    ssl: true,
+    timeoutMs: 10000,
+  },
+};
+
+initializeService(productionConfig);
+`,
+  },
+  part6: {
+    title: "Concept Check: Knowledge Assessment",
+    quiz: {
+      question:
+        "When TypeScript outputs a multi-line nested error message, where is the specific root cause of the incompatibility located?",
+      options: [
+        "At the very bottom (innermost line) of the trace, which identifies the exact leaf property and conflicting types",
+        "At the very top line only, which should be the only line read",
+        "Exclusively in the tsconfig.json file",
+        "In the node_modules folder",
+      ],
+      correctIndex: 0,
+      explanation:
+        "TypeScript error messages are hierarchical trees. The top line summarizes the high-level operation, while each indented line drills deeper into nested structures until the bottom line pinpoints the exact leaf contradiction.",
+    },
+  },
+  part7: {
+    title: "Key Takeaways & What's Next",
+    takeaways: [
+      {
+        title: "1. Read Bottom-Up",
+        desc: "Always scroll to the innermost line of a compiler error trace to find the exact property and type conflict.",
+      },
+      {
+        title: "2. Excess Property Checks",
+        desc: "Direct object literals reject unknown properties to prevent typos and unintended fields.",
+      },
+      {
+        title: "3. Non-Nullable Narrowing",
+        desc: "Resolve Type | undefined mismatches defensively with nullish coalescing (??) or control-flow if guards.",
+      },
+      {
+        title: "4. No @ts-ignore Shortcuts",
+        desc: "Never silence errors with @ts-ignore or any; understand and resolve the compiler's diagnostic.",
+      },
+    ],
+    nextLessonPreview: {
+      title: "TS-32: Clean Type Architecture & Smells",
+      desc: "Master idiomatic type design principles, avoid over-engineering type gymnastics, eliminate type smells, and prepare for production capstones.",
+    },
+  },
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// TS-32: Clean Type Architecture & Smells
+// ────────────────────────────────────────────────────────────────────────────
+export const TS32_CONTENT: StandardLessonContent = {
+  slug: "ts32-type-architecture-smells",
+  code: "TS-32",
+  title: "Clean Type Architecture & Smells",
+  subtitle:
+    "Master idiomatic type design principles, avoid over-engineering type gymnastics, eliminate type smells, and prepare for production capstones.",
+  sections: TYPESCRIPT_SECTIONS,
+  part1: {
+    title: "The Roman Structural Arch vs The Rube Goldberg Machine",
+    bigPicture:
+      "A Rube Goldberg machine uses a rolling billiard ball to tip a candle that burns a string that drops a bowling ball that finally flips a light switch. It is a dazzling spectacle of mechanical complexity, but if a single gear jams, the entire apparatus breaks and nobody on the team knows how to fix it. A Roman structural arch, by contrast, uses clean geometry and interlocking stones to bear tons of weight for two millennia with zero moving parts. In TypeScript, developers who have just learned conditional types, `infer`, and template literals often succumb to 'Type Gymnastics Syndrome': authoring 40-line recursive type puzzles that slow down the compiler, bewilder coworkers, and make simple features impossible to maintain. Professional TypeScript architecture is the Roman arch: simple, robust, self-documenting, and focused on making impossible states unrepresentable.",
+    breakdownTitle: "Four Pillars of Production Type Architecture:",
+    breakdownItems: [
+      {
+        title: "1. Making Impossible States Unrepresentable",
+        desc: "Model complex state machines with discriminated unions so invalid combinations can never compile.",
+      },
+      {
+        title: "2. Single Source of Truth",
+        desc: "Derive types from runtime values (as const + typeof) to guarantee zero schema drift between code and types.",
+      },
+      {
+        title: "3. Eliminating Type Gymnastics",
+        desc: "Favor readable interfaces, composition, and simple unions over brittle recursive type puzzles.",
+      },
+      {
+        title: "4. Capstone Synthesis",
+        desc: "Harmonizing generics, exhaustiveness checks, immutability, and strict compiler settings into scalable architectures.",
+      },
+    ],
+  },
+  part2: {
+    title: "Core Mechanics: Identifying and Refactoring Type Smells",
+    intro: "Learn how to spot common type anti-patterns and refactor them into clean, self-documenting architectures:",
+    cards: [
+      {
+        number: "01",
+        tag: "Smell: Flag Soup",
+        title: "Boolean Flag Overload",
+        description:
+          "Multiple booleans (isLoading, isError, isSuccess) create 8+ unhandled states; replace with a discriminated union.",
+        color: "purple",
+      },
+      {
+        number: "02",
+        tag: "Smell: Drift",
+        title: "Duplicated Contracts",
+        description:
+          "Manually duplicating types alongside runtime objects causes schema drift; derive with `as const` and `typeof`.",
+        color: "cyan",
+      },
+      {
+        number: "03",
+        tag: "Smell: Gymnastics",
+        title: "Over-Complicated Types",
+        description:
+          "Deep recursive types slow down editor autocomplete; simplify domain contracts for maximum team velocity.",
+        color: "emerald",
+      },
+    ],
+    rule: {
+      title: "💡 The Readability Primacy Rule",
+      content:
+        "Types exist to serve human developers and eliminate runtime bugs, not to push compiler recursion limits. If a type requires more than 3 lines of complex conditional pattern-matching to model business logic, simplify your domain model.",
+    },
+  },
+  part3: {
+    title: "Step-by-Step Mental Model: Architectural Refactoring",
+    intro: "Transforming brittle, bug-prone typing patterns into bulletproof production architectures:",
+    points: [
+      {
+        title: "1. Refactoring Boolean Flag Soup",
+        content:
+          "A state with `{ isLoading: boolean; isError: boolean; data?: User; error?: string }` allows impossible states like `isLoading: true` AND `data: User` populated simultaneously. A discriminated union eliminates all invalid combinations.",
+        codeSnippet: `// ❌ Boolean Flag Soup (allows impossible states):\ninterface BadState {\n  isLoading: boolean;\n  isError: boolean;\n  data?: User;\n  error?: string;\n}\n\n// ✅ Discriminated Union (impossible states unrepresentable):\ntype CleanState =\n  | { status: "idle" }\n  | { status: "loading" }\n  | { status: "success"; data: User }\n  | { status: "error"; error: string };`,
+      },
+      {
+        title: "2. Value-Driven Types (Zero Drift)",
+        content:
+          "Instead of writing an interface and an object independently, define the runtime object with `as const` and extract the type automatically with `typeof`.",
+        codeSnippet: `export const USER_ROLES = ["admin", "editor", "viewer"] as const;\n\n// Derived directly from the single source of truth:\nexport type UserRole = (typeof USER_ROLES)[number]; // "admin" | "editor" | "viewer"`,
+      },
+      {
+        title: "3. Exhaustive Handling with the never Guard",
+        content:
+          "Ensure that every switch statement handling domain events or state transitions is protected by an exhaustive `assertNever` check, guaranteeing that future additions to the union trigger compile-time errors until handled.",
+        codeSnippet: `function handleState(state: CleanState): void {\n  switch (state.status) {\n    case "idle": return;\n    case "loading": return showSpinner();\n    case "success": return renderData(state.data);\n    case "error": return showError(state.error);\n    default: assertNever(state);\n  }\n}`,
+      },
+      {
+        title: "4. Architectural Readiness for the Capstone Project",
+        content:
+          "You have now mastered all core tenets of professional TypeScript: static inference, generics with keyof, discriminated unions, utility types, strict tsconfig flags, and safe error handling. You are ready to build the production Capstone!",
+      },
+    ],
+  },
+  part4: {
+    title: "Anti-Patterns vs Clean Type Architecture",
+    bad: {
+      title: "Boolean Flag Soup and Manual Type Drift",
+      code: `// ❌ Anti-pattern: multiple boolean flags and duplicated route types
+interface FetchStatus {
+  isLoading: boolean;
+  hasError: boolean;
+  data?: { id: string; name: string };
+  errorMessage?: string;
+}
+
+// What if isLoading is true AND data is present?
+// What if hasError is false, but errorMessage is "Not Found"?
+// Impossible states are completely permitted!`,
+      explanation:
+        "Boolean flag soup creates combinatorial bugs where conflicting states can be active at the same time. UI components frequently show spinners and error banners simultaneously.",
+    },
+    good: {
+      title: "Discriminated State Machine with Single Source of Truth",
+      code: `// ✅ Idiomatic: discriminated union making impossible states impossible
+type FetchStatus =\n  | { status: "idle" }\n  | { status: "loading" }\n  | { status: "success"; data: { id: string; name: string } }\n  | { status: "error"; error: string };\n\nfunction renderUI(state: FetchStatus) {\n  switch (state.status) {\n    case "idle": return "Ready to search";\n    case "loading": return "Loading results...";\n    case "success": return "Found: " + state.data.name;\n    case "error": return "Error: " + state.error;\n  }\n}`,
+      explanation:
+        "Every state is mutually exclusive. In `case 'success'`, `state.data` is guaranteed to exist. In `case 'error'`, `state.error` is guaranteed to exist. Impossible states can never compile.",
+    },
+  },
+  part5: {
+    title: "Interactive Code Sandbox: Production Entity Store & State Machine",
+    intro:
+      "Explore a comprehensive synthesis of professional TypeScript patterns: generic stores, discriminated state machines, and exhaustive checks:",
+    starterCode: `// TS-32: Clean Type Architecture & Smells
+// A production-grade State Machine and Generic Entity Store
+
+// 1. Generic base constraint for entities
+interface BaseEntity {
+  id: string;
+  createdAt: number;
+}
+
+// 2. Concrete domain entity
+interface UserAccount extends BaseEntity {
+  email: string;
+  role: "admin" | "member";
+}
+
+// 3. Discriminated state machine
+type StoreState<T> =
+  | { status: "uninitialized" }
+  | { status: "syncing" }
+  | { status: "ready"; entities: ReadonlyMap<string, T> }
+  | { status: "error"; message: string };
+
+// 4. In-Memory Generic Store implementation
+class GenericEntityStore<T extends BaseEntity> {
+  private state: StoreState<T> = { status: "uninitialized" };
+
+  initialize(items: T[]): void {
+    const map = new Map<string, T>();
+    items.forEach((item) => map.set(item.id, item));
+    this.state = { status: "ready", entities: map };
+  }
+
+  getSummary(): string {
+    switch (this.state.status) {
+      case "uninitialized":
+        return "Store is waiting for data.";
+      case "syncing":
+        return "Store is currently synchronizing with server...";
+      case "ready":
+        return "Store active with " + this.state.entities.size + " entities.";
+      case "error":
+        return "Store error: " + this.state.message;
+    }
+  }
+}
+
+// Instantiate store
+const userStore = new GenericEntityStore<UserAccount>();
+console.log("Initial State:", userStore.getSummary());
+
+userStore.initialize([
+  { id: "usr-1", email: "ada@learncraft.dev", role: "admin", createdAt: Date.now() },
+  { id: "usr-2", email: "alan@learncraft.dev", role: "member", createdAt: Date.now() },
+]);
+
+console.log("Post-Init State:", userStore.getSummary());
+console.log("🎓 Congratulations! You have completed all 32 TypeScript lessons!");
+`,
+  },
+  part6: {
+    title: "Concept Check: Knowledge Assessment",
+    quiz: {
+      question:
+        "Why is representing UI state as a Discriminated Union superior to using multiple boolean flags (like `isLoading`, `isError`, `isSuccess`)?",
+      options: [
+        "It makes impossible states unrepresentable, ensuring conflicting states (e.g. loading and error simultaneously) can never occur",
+        "It reduces the size of the compiled JavaScript bundle",
+        "It allows modifying state without type checking",
+        "It runs asynchronously in browser Web Workers",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Multiple boolean flags create 2^n possible combinations, most of which are invalid or contradictory. Discriminated unions enforce mutually exclusive state variants, ensuring only valid states can ever compile.",
+    },
+  },
+  part7: {
+    title: "Key Takeaways & What's Next",
+    takeaways: [
+      {
+        title: "1. Impossible States Unrepresentable",
+        desc: "Design state machines with discriminated unions to mathematically eliminate invalid state combinations.",
+      },
+      {
+        title: "2. Single Source of Truth",
+        desc: "Derive types from runtime constants (as const + typeof) to guarantee zero schema drift across your app.",
+      },
+      {
+        title: "3. Avoid Type Gymnastics",
+        desc: "Prioritize clear interfaces and simple unions over brittle recursive type puzzles.",
+      },
+      {
+        title: "4. Capstone Project Ready",
+        desc: "You have mastered all 32 lessons and are ready to architect the final Type-Safe Data Store capstone project!",
+      },
+    ],
+    nextLessonPreview: {
+      title: "Capstone: Type-Safe In-Memory Data Store",
+      desc: "Apply your complete TypeScript mastery to build a production-grade, zero-dependency generic query and validation engine.",
+    },
+  },
+};
+
+// ────────────────────────────────────────────────────────────────────────────
 // Registry of Handcrafted Lessons
 // ────────────────────────────────────────────────────────────────────────────
 export const TYPESCRIPT_LESSONS_CONTENT: Record<string, StandardLessonContent> = {
@@ -6719,6 +7894,11 @@ export const TYPESCRIPT_LESSONS_CONTENT: Record<string, StandardLessonContent> =
   "ts25-modules-type-imports": TS25_CONTENT,
   "ts26-tsconfig-strict-mode": TS26_CONTENT,
   "ts27-declarations-type-erasure": TS27_CONTENT,
+  "ts28-assertions-vs-satisfies": TS28_CONTENT,
+  "ts29-safe-error-handling": TS29_CONTENT,
+  "ts30-api-contracts-immutability": TS30_CONTENT,
+  "ts31-debugging-compiler-errors": TS31_CONTENT,
+  "ts32-type-architecture-smells": TS32_CONTENT,
 };
 
 /**
