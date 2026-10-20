@@ -48,7 +48,7 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
     expect(byPrefix?.code).toBe("TS-02");
   });
 
-  it("verifies all handcrafted lessons in Stages 1, 2, 3, 4, 5 & 6 (TS-01 through TS-24) meet strict pedagogical structure", () => {
+  it("verifies all handcrafted lessons in Stages 1 through 7 (TS-01 through TS-27) meet strict pedagogical structure", () => {
     const handcraftedSlugs = [
       "ts01-mental-model",
       "ts02-primitives-inference",
@@ -74,6 +74,9 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
       "ts22-conditional-types-infer",
       "ts23-mapped-template-types",
       "ts24-utility-types",
+      "ts25-modules-type-imports",
+      "ts26-tsconfig-strict-mode",
+      "ts27-declarations-type-erasure",
     ];
 
     for (const slug of handcraftedSlugs) {
@@ -120,8 +123,8 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
     }
   });
 
-  it("verifies dedicated module quizzes for Stages 1, 2, 3, 4, 5 & 6 are registered and resolvable", () => {
-    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBeGreaterThanOrEqual(24);
+  it("verifies dedicated module quizzes for Stages 1 through 7 are registered and resolvable", () => {
+    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBeGreaterThanOrEqual(27);
 
     for (const quiz of TYPESCRIPT_MODULE_QUIZZES) {
       expect(quiz.trackKey).toBe("typescript");

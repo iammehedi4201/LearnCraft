@@ -1685,4 +1685,199 @@ u.fullName = "Grace Hopper";`,
       },
     ],
   },
+  // ──────────────────────────────────────────────────────────────────────────
+  // TS-25: ES Modules & Type-Only Imports
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    id: "quiz-typescript-ts25",
+    trackKey: "typescript",
+    trackTitle: "TypeScript",
+    lessonSlug: "ts25-modules-type-imports",
+    lessonCode: "TS-25",
+    lessonTitle: "ES Modules & Type-Only Imports",
+    description: "Master ES module imports/exports, type-only imports (import type), and circular dependency avoidance.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "ts25-q1",
+        type: "multiple_choice",
+        title: "The import type Erasure Guarantee",
+        prompt: "What happens when a file uses `import type { User } from './user';` when compiled to JavaScript?",
+        options: [
+          "The import statement is completely eliminated from the emitted JavaScript output, preventing unwanted side effects or runtime dependencies",
+          "It emits `const { User } = require('./user');`",
+          "It throws a runtime ReferenceError if User is not exported as a default",
+          "It bundles the User type definition as a global window property"
+        ],
+        correctAnswer: 0,
+        explanation: "`import type` informs the compiler that the imported item is exclusively a static type. It is 100% erased during compilation, ensuring zero runtime code or module side-effects.",
+        hint: "Do type-only imports leave any trace in the emitted JavaScript bundle?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts25-q2",
+        type: "multiple_choice",
+        title: "Inline Type Qualifiers",
+        prompt: "In modern TypeScript (4.5+), how can you import both a runtime class and a type interface from the same module in a single import statement?",
+        options: [
+          "import { UserService, type UserConfig } from './user-service';",
+          "import { UserService, @type UserConfig } from './user-service';",
+          "import UserService, { as type UserConfig } from './user-service';",
+          "import [UserService, UserConfig as type] from './user-service';"
+        ],
+        correctAnswer: 0,
+        explanation: "Inline type qualifiers (`import { ConcreteClass, type TypeOnly } from './mod'`) permit importing runtime values alongside erased types in a single statement without separate lines.",
+        hint: "Which keyword can precede an individual identifier inside the curly braces?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts25-q3",
+        type: "multiple_choice",
+        title: "Breaking Circular Dependencies",
+        prompt: "Why does `import type` prevent runtime circular dependency deadlocks between mutually dependent modules?",
+        options: [
+          "Because type-only imports disappear upon compilation, breaking the runtime module evaluation cycle completely in the emitted JavaScript",
+          "Because TypeScript uses lazy loading for all circular modules",
+          "Because types are resolved after window.onload fires",
+          "Because the JavaScript engine prioritizes types over functions"
+        ],
+        correctAnswer: 0,
+        explanation: "At runtime, circular dependencies deadlock when Module A executes Module B before Module A finishes defining its exports. Since `import type` is completely erased, no runtime module cycle exists in JavaScript.",
+        hint: "Does a module cycle exist if one of the imports is completely removed by the compiler?",
+        hintCostXP: 5,
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────────────────────────────────
+  // TS-26: tsconfig.json & Strict Flags
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    id: "quiz-typescript-ts26",
+    trackKey: "typescript",
+    trackTitle: "TypeScript",
+    lessonSlug: "ts26-tsconfig-strict-mode",
+    lessonCode: "TS-26",
+    lessonTitle: "tsconfig.json & Strict Flags",
+    description: "Master compiler configuration, strict mode flags (strictNullChecks, noImplicitAny), and compilation targets.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "ts26-q1",
+        type: "multiple_choice",
+        title: "The strict Umbrella Flag",
+        prompt: "What does setting `\"strict\": true` in `tsconfig.json` do?",
+        options: [
+          "It turns on a comprehensive suite of strict type-checking flags, including noImplicitAny, strictNullChecks, and strictFunctionTypes",
+          "It stops code from running in non-V8 browsers",
+          "It converts all JavaScript files into WebAssembly",
+          "It prevents using the let keyword"
+        ],
+        correctAnswer: 0,
+        explanation: "`\"strict\": true` enables the complete family of strict type-checking flags, establishing the highest level of compile-time safety and type soundness.",
+        hint: "Is strict a single check or a master switch for multiple type-checking rules?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts26-q2",
+        type: "multiple_choice",
+        title: "Enforcing strictNullChecks",
+        prompt: "With `\"strictNullChecks\": true`, what happens if you attempt to assign `null` or `undefined` to a variable typed as `string`?",
+        options: [
+          "TypeScript reports a compile-time error: Type 'null' is not assignable to type 'string'",
+          "The assignment succeeds without error because null is a subtype of string in all modes",
+          "The variable is coerced to an empty string ''",
+          "JavaScript throws a TypeError during compilation"
+        ],
+        correctAnswer: 0,
+        explanation: "Under strictNullChecks, `null` and `undefined` have their own distinct types and cannot be assigned to concrete types like `string` unless explicitly part of a union (`string | null`).",
+        hint: "Can null be passed to a pure string parameter when strictNullChecks is true?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts26-q3",
+        type: "multiple_choice",
+        title: "target vs module Options",
+        prompt: "What is the difference between the `\"target\"` and `\"module\"` compiler options in `tsconfig.json`?",
+        options: [
+          "`target` controls which ECMAScript JavaScript version syntax (e.g. ES2022) is emitted, while `module` controls which module format (e.g. NodeNext, ESNext, CommonJS) is used",
+          "`target` is for Node.js, while `module` is for browsers only",
+          "`target` sets the CPU architecture, while `module` sets the operating system",
+          "`target` and `module` are interchangeable aliases"
+        ],
+        correctAnswer: 0,
+        explanation: "`target` controls JavaScript language syntax emission (e.g. arrow functions, async/await, optional chaining downleveling), while `module` determines how imports/exports are generated.",
+        hint: "Which option controls ES syntax version downleveling vs import/export system?",
+        hintCostXP: 5,
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────────────────────────────────
+  // TS-27: Declaration Files & Type Erasure
+  // ──────────────────────────────────────────────────────────────────────────
+  {
+    id: "quiz-typescript-ts27",
+    trackKey: "typescript",
+    trackTitle: "TypeScript",
+    lessonSlug: "ts27-declarations-type-erasure",
+    lessonCode: "TS-27",
+    lessonTitle: "Declaration Files & Type Erasure",
+    description: "Master declaration files (.d.ts), ambient types (declare), definitely typed (@types), and runtime type erasure.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "ts27-q1",
+        type: "multiple_choice",
+        title: "Purpose of .d.ts Declaration Files",
+        prompt: "What is the primary role of a declaration file ending in `.d.ts`?",
+        options: [
+          "To provide type information and ambient definitions for JavaScript libraries without containing any executable runtime code",
+          "To execute initialization scripts before the web page renders",
+          "To compile TypeScript code into Docker containers",
+          "To store unit tests for the TypeScript compiler"
+        ],
+        correctAnswer: 0,
+        explanation: "Declaration files (`.d.ts`) describe the shape of existing JavaScript code (ambient declarations) purely for the TypeScript compiler. They produce zero runtime JavaScript code.",
+        hint: "Do .d.ts files contain executable runtime logic or pure type declarations?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts27-q2",
+        type: "multiple_choice",
+        title: "The declare Keyword",
+        prompt: "When do you use the `declare` keyword in TypeScript (e.g. `declare const __API_KEY__: string;`)?",
+        options: [
+          "To inform TypeScript that a variable, function, or global object exists in the runtime environment (e.g. injected by a CDN, bundler, or script tag) without declaring its implementation in TypeScript",
+          "To declare a new variable and allocate memory for it in JavaScript",
+          "To force TypeScript to compile a variable into a native C++ module",
+          "To create a React hook"
+        ],
+        correctAnswer: 0,
+        explanation: "`declare` creates ambient declarations: it promises the compiler that a symbol will exist at runtime, instructing TypeScript to type-check access to it without generating any code.",
+        hint: "Does `declare` emit any JavaScript code into the final build?",
+        hintCostXP: 5,
+      },
+      {
+        id: "ts27-q3",
+        type: "multiple_choice",
+        title: "The Type Erasure Principle",
+        prompt: "Which of the following TypeScript constructs exists in the emitted runtime JavaScript code after compilation?",
+        options: [
+          "JavaScript class and method definitions",
+          "Interface declarations",
+          "Type alias definitions",
+          "Type-level parameter constraints (extends)"
+        ],
+        correctAnswer: 0,
+        explanation: "Interfaces, type aliases, and type annotations are completely erased during compilation. Only runtime construct features like classes, functions, and variables are emitted into the JavaScript bundle.",
+        hint: "Which of these constructs has actual runtime behavior in pure JavaScript?",
+        hintCostXP: 5,
+      },
+    ],
+  },
 ];

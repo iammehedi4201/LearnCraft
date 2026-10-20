@@ -5984,6 +5984,711 @@ console.log("Electronics catalog count:", counts.electronics);
 };
 
 // ────────────────────────────────────────────────────────────────────────────
+// TS-25: ES Modules & Type-Only Imports
+// ────────────────────────────────────────────────────────────────────────────
+export const TS25_CONTENT: StandardLessonContent = {
+  slug: "ts25-modules-type-imports",
+  code: "TS-25",
+  title: "ES Modules & Type-Only Imports",
+  subtitle:
+    "Master ES module imports and exports, type-only imports (import type), inline type qualifiers, and circular dependency avoidance.",
+  sections: TYPESCRIPT_SECTIONS,
+  part1: {
+    title: "The Construction Blueprint: Erasable Pencil Marks vs Concrete Beams",
+    bigPicture:
+      "When building a modern skyscraper, crane operators only lift and transport physical materials: steel beams, concrete slabs, and heavy plumbing fixtures. The architect's layout marks, laser guidelines, and blueprint elevation notes are critical for the construction crew to position items accurately, but the crane never attempts to load pencil marks onto a flatbed truck. In JavaScript, runtime modules are the physical steel beams that the JS engine must load, execute, and link in memory. TypeScript types are the architect's pencil marks. If you import an interface using a standard import statement, bundlers and runtime engines may mistakenly treat it as a real runtime dependency, bundling empty files or deadlocking in circular dependency loops. `import type` and `export type` explicitly tell the compiler: 'This is purely a pencil mark. Strip this import completely from the emitted JavaScript!'",
+    breakdownTitle: "Four Pillars of Modern TypeScript Modularity:",
+    breakdownItems: [
+      {
+        title: "1. The Zero-Emission Guarantee",
+        desc: "`import type` guarantees that the import statement is 100% eliminated from the compiled JavaScript output, generating zero runtime bundle overhead.",
+      },
+      {
+        title: "2. Inline Type Qualifiers",
+        desc: "Modern TypeScript allows mixing runtime values and compile-time types cleanly in a single line: `import { Service, type Config } from './service';`.",
+      },
+      {
+        title: "3. Circular Dependency Elimination",
+        desc: "Cycles between modules (A imports B, B imports A) crash at runtime. Replacing type dependencies with `import type` completely breaks the runtime evaluation cycle.",
+      },
+      {
+        title: "4. Bundler & Tree-Shaking Hygiene",
+        desc: "Prevents modern bundlers (Vite, Webpack, Rollup) from retaining ghost chunks or executing unintended module side-effects when importing types.",
+      },
+    ],
+  },
+  part2: {
+    title: "Core Mechanics: Type-Only Imports vs Value Imports",
+    intro: "Understand how TypeScript compiles and optimizes imports across build boundaries:",
+    cards: [
+      {
+        number: "01",
+        tag: "Erasure",
+        title: "import type Syntax",
+        description:
+          "Declares that every imported item from the module is strictly a type. Emits zero JavaScript lines into the final bundle.",
+        color: "purple",
+      },
+      {
+        number: "02",
+        tag: "Ergonomics",
+        title: "Inline Type Qualifiers",
+        description:
+          "Enables importing concrete classes/functions alongside erased interfaces without duplicating import declarations across files.",
+        color: "cyan",
+      },
+      {
+        number: "03",
+        tag: "Safety",
+        title: "verbatimModuleSyntax",
+        description:
+          "Strict compiler setting that enforces unambiguous import statements, preventing subtle transpile-only tooling miscompilations.",
+        color: "emerald",
+      },
+    ],
+    rule: {
+      title: "💡 The Module Erasure Law",
+      content:
+        "Whenever an imported identifier is exclusively used in type positions (type annotations, generic parameters, interface extensions), use `import type` or the inline `type` keyword. This guarantees zero runtime side-effects and completely eliminates circular dependency deadlocks.",
+    },
+  },
+  part3: {
+    title: "Step-by-Step Mental Model: The Module Lifecycle",
+    intro: "How TypeScript and JavaScript collaborate during module loading and execution:",
+    points: [
+      {
+        title: "1. Static Analysis in Your Editor",
+        content:
+          "TypeScript resolves module specifiers and verifies exported contracts across your codebase. When you import an interface, autocomplete and type validation activate immediately.",
+        codeSnippet: `// Type-only import: purely for compiler validation\nimport type { UserRole, Permission } from "./auth-types";\n\nconst adminRole: UserRole = "admin";`,
+      },
+      {
+        title: "2. The Type-Strip Phase (tsc Compilation)",
+        content:
+          "During compilation, the TypeScript compiler checks every import. Statements marked with `import type` are completely removed. If a file only imported types, no `import` or `require` call is emitted in JavaScript.",
+        codeSnippet: `// Source TypeScript:\nimport type { UserProfile } from "./user";\nimport { renderAvatar } from "./ui";\n\n// Emitted JavaScript:\nimport { renderAvatar } from "./ui";\n// Note: UserProfile import has vanished completely!`,
+      },
+      {
+        title: "3. Inline Type Modifiers (TypeScript 4.5+)",
+        content:
+          "Before TS 4.5, importing both a class and an interface required two separate import statements from the same path. Inline modifiers allow co-locating values and types in a single statement cleanly.",
+        codeSnippet: `// Single import combining value (AuthService) and erased type (SessionToken)\nimport { AuthService, type SessionToken } from "./services/auth";`,
+      },
+      {
+        title: "4. Breaking Circular Module Deadlocks",
+        content:
+          "If Module A imports Module B, and Module B imports Module A, JavaScript evaluates one before the other finishes exports, resulting in `undefined` errors. Since `import type` is erased, no runtime module cycle exists in JavaScript.",
+        codeSnippet: `// In Order.ts: uses Customer type\nimport type { Customer } from "./Customer"; // Erased at runtime! No cycle.\n\n// In Customer.ts: creates Order at runtime\nimport { createOrder } from "./Order"; // Clean single-direction runtime dependency!`,
+      },
+    ],
+  },
+  part4: {
+    title: "Anti-Patterns vs Clean Idiomatic Imports",
+    bad: {
+      title: "Value Imports for Types Causing Circular Runtime Deadlocks",
+      code: `// ❌ Anti-pattern: standard value import for a pure type\n// If order-service.ts imports user-service.ts at runtime, this causes a deadlock!\nimport { UserAccount } from "./user-service";\n\nexport function calculateDiscount(user: UserAccount): number {\n  return user.isVip ? 0.2 : 0;\n}`,
+      explanation:
+        "Using a standard import for `UserAccount` causes the bundler to emit a runtime `import` or `require` call. If `user-service.ts` also imports from this file, JavaScript deadlocks at runtime and crashes with `TypeError: Cannot read properties of undefined`.",
+    },
+    good: {
+      title: "Explicit Type-Only Import with Zero Runtime Footprint",
+      code: `// ✅ Idiomatic: explicit import type completely erased at build time\nimport type { UserAccount } from "./user-service";\n\nexport function calculateDiscount(user: UserAccount): number {\n  return user.isVip ? 0.2 : 0;\n}`,
+      explanation:
+        "Because `UserAccount` is imported with `import type`, the entire import statement vanishes from the emitted JavaScript. The runtime evaluation cycle is broken, and bundle size remains minimal.",
+    },
+  },
+  part5: {
+    title: "Interactive Code Sandbox: Module Contracts & Type Modifiers",
+    intro:
+      "Explore how TypeScript distinguishes between runtime JavaScript values and compile-time types within modules:",
+    starterCode: `// TS-25: ES Modules & Type-Only Imports
+// Simulated module demonstrating value exports and erased type exports
+
+// Simulated types module (erased at runtime)
+type UserRole = "superadmin" | "manager" | "member";
+
+interface AccountProfile {
+  id: string;
+  name: string;
+  role: UserRole;
+  isActive: boolean;
+}
+
+// Simulated runtime value module
+class UserPermissionManager {
+  private allowedRoles: Set<UserRole>;
+
+  constructor(allowedRoles: UserRole[]) {
+    this.allowedRoles = new Set(allowedRoles);
+  }
+
+  canAccessAdminPanel(account: AccountProfile): boolean {
+    return account.isActive && this.allowedRoles.has(account.role);
+  }
+}
+
+// Simulated consumer file:
+// In a multi-file project, this would be:
+// import { UserPermissionManager, type AccountProfile, type UserRole } from "./security";
+
+const securityManager = new UserPermissionManager(["superadmin", "manager"]);
+
+const staffMember: AccountProfile = {
+  id: "usr-402",
+  name: "Marcus Aurelius",
+  role: "manager",
+  isActive: true,
+};
+
+const hasAccess = securityManager.canAccessAdminPanel(staffMember);
+
+console.log("Account:", staffMember.name);
+console.log("Role:", staffMember.role);
+console.log("Admin Panel Access Granted:", hasAccess);
+`,
+  },
+  part6: {
+    title: "Concept Check: Knowledge Assessment",
+    quiz: {
+      question:
+        "What happens to the statement `import type { AppTheme } from './theme';` when compiled to JavaScript?",
+      options: [
+        "The import statement is completely erased, leaving zero runtime JavaScript code or module side-effects",
+        "It compiles to `const { AppTheme } = require('./theme');`",
+        "It imports the theme file lazily when window.onload fires",
+        "It throws a runtime ReferenceError if AppTheme is not a concrete JavaScript class",
+      ],
+      correctIndex: 0,
+      explanation:
+        "`import type` guarantees complete compile-time erasure. The compiler verifies the type during development, but emits zero JavaScript code for that import in the final bundle.",
+    },
+  },
+  part7: {
+    title: "Key Takeaways & What's Next",
+    takeaways: [
+      {
+        title: "1. Zero Runtime Cost",
+        desc: "import type is 100% eliminated by the compiler, leaving no trace in the emitted JavaScript output.",
+      },
+      {
+        title: "2. Inline Type Qualifiers",
+        desc: "Use `import { Value, type ErasedType }` to import runtime values alongside erased types cleanly on one line.",
+      },
+      {
+        title: "3. Break Circular Cycles",
+        desc: "Eliminate circular module evaluation deadlocks by converting type-only dependencies into import type.",
+      },
+      {
+        title: "4. Bundler Optimization",
+        desc: "Guarantees bundlers don't include unused files or run unwanted module side-effects for static types.",
+      },
+    ],
+    nextLessonPreview: {
+      title: "TS-26: tsconfig.json & Strict Flags",
+      desc: "Master compiler configuration, strict mode flags (strictNullChecks, noImplicitAny), and compilation targets.",
+    },
+  },
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// TS-26: tsconfig.json & Strict Flags
+// ────────────────────────────────────────────────────────────────────────────
+export const TS26_CONTENT: StandardLessonContent = {
+  slug: "ts26-tsconfig-strict-mode",
+  code: "TS-26",
+  title: "tsconfig.json & Strict Flags",
+  subtitle:
+    "Master compiler configuration, strict mode flags (strictNullChecks, noImplicitAny), compilation targets, and module resolution.",
+  sections: TYPESCRIPT_SECTIONS,
+  part1: {
+    title: "The Building Code: Safety Inspection Checklist vs Cutting Corners",
+    bigPicture:
+      "Imagine two construction companies building high-rise towers. Company A builds in an unregulated district where inspectors never check foundation depth, load capacities, or electrical grounding. The building goes up rapidly, but the first storm causes water leaks, electrical fires, and structural collapse. Company B follows the International Building Code with a mandatory 50-point inspection checklist: every structural pillar is load-tested, every wire is insulated, and emergency exits are certified. In TypeScript, `tsconfig.json` is your project's architectural building code. Setting `\"strict\": true` activates the ultimate safety inspection checklist: it forbids silent `any` types, bans unvetted `null` assignments, and forces your team to handle every possible edge case before code ever ships to production.",
+    breakdownTitle: "Core Compiler Capabilities Governed by tsconfig.json:",
+    breakdownItems: [
+      {
+        title: "1. The 'strict': true Master Switch",
+        desc: "Enables the complete suite of strict checks, including strictNullChecks, noImplicitAny, strictFunctionTypes, and strictPropertyInitialization.",
+      },
+      {
+        title: "2. strictNullChecks (The Billion-Dollar Shield)",
+        desc: "Separates null and undefined into distinct types that cannot be assigned to strings, numbers, or objects without an explicit union.",
+      },
+      {
+        title: "3. noImplicitAny",
+        desc: "Prohibits variables and function parameters whose types cannot be inferred from silently falling back to the unsafe 'any' type.",
+      },
+      {
+        title: "4. target vs module",
+        desc: "target controls ECMAScript language syntax downleveling (e.g. ES2022), while module controls import/export emission format (NodeNext, ESNext).",
+      },
+    ],
+  },
+  part2: {
+    title: "Core Mechanics: Compiler Flags & Type Soundness",
+    intro: "Learn how tsconfig.json options safeguard your codebase against runtime errors:",
+    cards: [
+      {
+        number: "01",
+        tag: "Master Switch",
+        title: "\"strict\": true",
+        description:
+          "Activates all fundamental type-checking flags at once, delivering maximum static verification and catching subtle regressions early.",
+        color: "purple",
+      },
+      {
+        number: "02",
+        tag: "Null Safety",
+        title: "strictNullChecks",
+        description:
+          "Prevents 'Cannot read properties of undefined' crashes by making null and undefined distinct, non-assignable types.",
+        color: "cyan",
+      },
+      {
+        number: "03",
+        tag: "Emission",
+        title: "target & module",
+        description:
+          "Directs how modern TypeScript syntax compiles into standard JavaScript for Node.js or browser execution environments.",
+        color: "emerald",
+      },
+    ],
+    rule: {
+      title: "💡 The Strict Mode Imperative",
+      content:
+        "Always start every new TypeScript project with `\"strict\": true`. Migrating a large existing codebase to strict mode later requires hundreds of refactoring edits, whereas starting in strict mode guarantees every single line of code is safe from the very first commit.",
+    },
+  },
+  part3: {
+    title: "Step-by-Step Mental Model: The Strict Inspection Engine",
+    intro: "How key compiler flags transform code verification at development time:",
+    points: [
+      {
+        title: "1. Without strictNullChecks (Dangerous Loose Mode)",
+        content:
+          "In loose mode, null and undefined are valid values for EVERY type. Writing `let name: string = null` compiles without error. If you subsequently call `name.toLowerCase()`, your application crashes in production with a TypeError.",
+        codeSnippet: `// ❌ In loose mode (strictNullChecks: false):
+let user: { name: string } = null; // Silently accepted!
+user.name.toUpperCase(); // Crashes with TypeError at runtime!`,
+      },
+      {
+        title: "2. With strictNullChecks: true (Bulletproof Safety)",
+        content:
+          "Under strictNullChecks, null and undefined are concrete, distinct types. To allow a value to be missing, you must explicitly declare a union (`string | null`), forcing callers to narrow the value before accessing properties.",
+        codeSnippet: `// ✅ Under strictNullChecks: true:
+let user: { name: string } | null = null;
+// user.name; // Compile error: 'user' is possibly 'null'!
+
+if (user !== null) {
+  console.log(user.name.toUpperCase()); // Safe! Narrowed to { name: string }
+}`,
+      },
+      {
+        title: "3. The noImplicitAny Protection",
+        content:
+          "Without this flag, function parameters without type annotations silently fall back to `any`, effectively turning off type checking for that variable. `noImplicitAny` forces explicit contracts.",
+        codeSnippet: `// ❌ Under noImplicitAny: false:
+function calculate(x) { return x * 2; } // x is silently 'any'
+
+// ✅ Under noImplicitAny: true:
+// Error: Parameter 'x' implicitly has an 'any' type.
+function calculate(x: number): number { return x * 2; }`,
+      },
+      {
+        title: "4. noUncheckedIndexedAccess (The Pro Flag)",
+        content:
+          "By default, indexing an array `arr[0]` produces type `T`, even if the array is empty! Enabling `noUncheckedIndexedAccess` changes the type to `T | undefined`, forcing you to verify the element actually exists.",
+        codeSnippet: `// With noUncheckedIndexedAccess: true:
+const items: string[] = [];
+const first = items[0]; // Type is: string | undefined (not string!)
+
+if (first !== undefined) {
+  console.log(first.toUpperCase());
+}`,
+      },
+    ],
+  },
+  part4: {
+    title: "Anti-Patterns vs Clean Configuration",
+    bad: {
+      title: "Loose tsconfig with Loose Null and Implicit Any Checks",
+      code: `// ❌ Dangerous tsconfig.json configuration
+{
+  "compilerOptions": {
+    "target": "ES5",
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false
+  }
+}`,
+      explanation:
+        "Disabling strict mode strips away TypeScript's core guarantees. Developers can pass `null` anywhere, function parameters silently degrade to `any`, and runtime crashes slip right past the compiler into production.",
+    },
+    good: {
+      title: "Production-Grade Strict tsconfig.json Configuration",
+      code: `// ✅ Production-grade modern tsconfig.json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true
+  }
+}`,
+      explanation:
+        "Setting `\"strict\": true` activates the complete family of strict type checks. Adding `noUncheckedIndexedAccess` provides ultimate defense against index-out-of-bounds runtime errors.",
+    },
+  },
+  part5: {
+    title: "Interactive Code Sandbox: Strict Type Safety & Null Defense",
+    intro:
+      "Practice writing code that complies with strict mode checks, handling nullable values and optional records safely:",
+    starterCode: `// TS-26: tsconfig.json & Strict Flags
+// Demonstrating strict mode patterns (strictNullChecks & noImplicitAny)
+
+interface UserProfile {
+  id: string;
+  displayName: string;
+  bio?: string;
+  phoneNumber: string | null;
+}
+
+function formatUserContact(profile: UserProfile): string {
+  // 1. Safe handling of nullable phoneNumber (strictNullChecks)
+  let contactInfo: string;
+  if (profile.phoneNumber !== null) {
+    contactInfo = "Phone: " + profile.phoneNumber;
+  } else {
+    contactInfo = "No phone number provided";
+  }
+
+  // 2. Safe handling of optional bio with nullish coalescing
+  const userBio = profile.bio ?? "Member has not written a bio yet.";
+
+  return profile.displayName + " | " + contactInfo + " | " + userBio;
+}
+
+// 3. Simulating safe dictionary lookup (noUncheckedIndexedAccess)
+const userDirectory: Record<string, UserProfile> = {
+  "user-1": {
+    id: "user-1",
+    displayName: "Ada Lovelace",
+    bio: "First computer programmer",
+    phoneNumber: "+1-555-0192",
+  },
+};
+
+const queryId = "user-1";
+const foundUser = userDirectory[queryId]; // string | undefined under strict checks
+
+if (foundUser !== undefined) {
+  console.log("Found User:", formatUserContact(foundUser));
+} else {
+  console.log("User not found in directory.");
+}
+`,
+  },
+  part6: {
+    title: "Concept Check: Knowledge Assessment",
+    quiz: {
+      question:
+        "Under `\"strictNullChecks\": true`, what happens if you assign `null` to a variable declared as `let title: string`?",
+      options: [
+        "TypeScript reports a compile-time error: Type 'null' is not assignable to type 'string'",
+        "The assignment succeeds without error because null is a subtype of string in all modes",
+        "The variable title is automatically coerced to an empty string ''",
+        "JavaScript throws a runtime SyntaxError during compilation",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Under `strictNullChecks`, `null` and `undefined` are independent types. They cannot be assigned to `string`, `number`, or other concrete types unless explicitly declared as a union (`string | null`).",
+    },
+  },
+  part7: {
+    title: "Key Takeaways & What's Next",
+    takeaways: [
+      {
+        title: "1. The strict Umbrella",
+        desc: "\"strict\": true turns on noImplicitAny, strictNullChecks, and other critical verification flags in one go.",
+      },
+      {
+        title: "2. The Null Defense",
+        desc: "strictNullChecks eliminates the 'billion-dollar mistake' by requiring explicit null unions and narrowing.",
+      },
+      {
+        title: "3. noImplicitAny Requirement",
+        desc: "Prevents parameters from silently decaying to any, ensuring complete type coverage across functions.",
+      },
+      {
+        title: "4. target vs module",
+        desc: "target defines the JavaScript version syntax emitted; module defines the import/export module format.",
+      },
+    ],
+    nextLessonPreview: {
+      title: "TS-27: Declaration Files & Type Erasure",
+      desc: "Master declaration files (.d.ts), ambient types (declare), DefinitelyTyped (@types), and runtime type erasure.",
+    },
+  },
+};
+
+// ────────────────────────────────────────────────────────────────────────────
+// TS-27: Declaration Files & Type Erasure
+// ────────────────────────────────────────────────────────────────────────────
+export const TS27_CONTENT: StandardLessonContent = {
+  slug: "ts27-declarations-type-erasure",
+  code: "TS-27",
+  title: "Declaration Files & Type Erasure",
+  subtitle:
+    "Master declaration files (.d.ts), ambient types (declare), DefinitelyTyped (@types), and runtime type erasure.",
+  sections: TYPESCRIPT_SECTIONS,
+  part1: {
+    title: "The Passport Visa Stamp: Describing Reality Without Creating It",
+    bigPicture:
+      "When you travel internationally, border control stamps a visa into your passport. The visa stamp does not build the hotel you stay in, nor does it lay the railroad tracks you ride on—it simply describes who you are, what permissions you have, and which borders you are authorized to cross. In TypeScript, `.d.ts` declaration files are that visa stamp. When your project consumes an external JavaScript library (such as Lodash, Stripe, or a browser API) that was written without TypeScript, TypeScript has no native way to know what functions or properties exist. A `.d.ts` declaration file uses ambient `declare` statements to describe the library's shapes, parameter types, and return contracts for the compiler—without emitting a single byte of executable JavaScript code.",
+    breakdownTitle: "Four Core Pillars of Type Declarations and Erasure:",
+    breakdownItems: [
+      {
+        title: "1. Declaration Files (.d.ts)",
+        desc: "Pure type specification files containing zero runtime JavaScript executable code. They provide type information across package boundaries.",
+      },
+      {
+        title: "2. The 'declare' Keyword",
+        desc: "Promises the TypeScript compiler that a variable, function, or global object will exist in the runtime environment (injected by CDN, browser, or bundler).",
+      },
+      {
+        title: "3. DefinitelyTyped & @types",
+        desc: "The massive community-maintained repository of .d.ts declaration packages providing type support for existing JavaScript npm libraries.",
+      },
+      {
+        title: "4. The Type Erasure Principle",
+        desc: "TypeScript interfaces, type aliases, and type annotations disappear 100% at compile time. Only standard JavaScript executable code remains.",
+      },
+    ],
+  },
+  part2: {
+    title: "Core Mechanics: Ambient Declarations & Type Erasure",
+    intro: "Learn how declaration files bridge JavaScript libraries and TypeScript projects:",
+    cards: [
+      {
+        number: "01",
+        tag: "Ambient Types",
+        title: ".d.ts Files",
+        description:
+          "Provide compile-time type descriptions for plain JavaScript libraries, enabling autocomplete, validation, and refactoring.",
+        color: "purple",
+      },
+      {
+        number: "02",
+        tag: "Environment",
+        title: "The declare Keyword",
+        description:
+          "Informs TypeScript of globally injected runtime variables (window globals, process.env, CDN scripts) without generating code.",
+        color: "cyan",
+      },
+      {
+        number: "03",
+        tag: "Performance",
+        title: "Pure Type Erasure",
+        description:
+          "Guarantees that TypeScript types impose zero runtime memory overhead or execution slowdown in production.",
+        color: "emerald",
+      },
+    ],
+    rule: {
+      title: "💡 The Declaration Boundary Rule",
+      content:
+        "Never write executable logic inside a `.d.ts` declaration file! Declaration files only contain type annotations, `declare` statements, interfaces, and type aliases. Any runtime JavaScript code placed inside a `.d.ts` file is ignored or invalid.",
+    },
+  },
+  part3: {
+    title: "Step-by-Step Mental Model: Ambient Types to Runtime Erasure",
+    intro: "How ambient declarations provide compile-time safety for runtime JavaScript:",
+    points: [
+      {
+        title: "1. Ambient Global Variables with 'declare'",
+        content:
+          "When a third-party analytics script or bundler injects a global variable onto `window`, TypeScript doesn't know it exists and flags an error. The `declare` keyword tells TypeScript: 'Trust me, this exists at runtime.'",
+        codeSnippet: `// In an env.d.ts file:
+declare const __APP_VERSION__: string;
+declare const __API_BASE_URL__: string;
+
+// In your application code:
+console.log("App Version:", __APP_VERSION__); // Safe! TypeScript knows it is a string.`,
+      },
+      {
+        title: "2. Declaration Files (.d.ts) for Libraries",
+        content:
+          "When you publish a TypeScript library, enabling `\"declaration\": true` in `tsconfig.json` instructs `tsc` to emit `.d.ts` files alongside compiled `.js` files. Consumers get full autocomplete without needing your original `.ts` source.",
+        codeSnippet: `// Emitted math-utils.d.ts:
+export declare function add(a: number, b: number): number;
+export declare function multiply(a: number, b: number): number;
+export declare interface MathConfig { precision: number; }`,
+      },
+      {
+        title: "3. DefinitelyTyped (@types/* Packages)",
+        content:
+          "When an npm package is authored in pure JavaScript (like `lodash` or `express`), running `npm i -D @types/lodash` installs community-crafted `.d.ts` files into `node_modules/@types/`, giving you instant type safety.",
+        codeSnippet: `// TypeScript looks in node_modules/@types/lodash/index.d.ts
+import debounce from "lodash/debounce";
+// Autocomplete and parameter validation work seamlessly!`,
+      },
+      {
+        title: "4. The Type Erasure Proof",
+        content:
+          "Interfaces, type aliases, and type annotations do not exist in JavaScript. If you try to inspect an interface with `instanceof`, JavaScript throws a ReferenceError. Always remember: types are compile-time phantoms.",
+        codeSnippet: `interface User { id: string; }
+const u: User = { id: "1" };
+
+// ❌ Error: 'User' only refers to a type, but is being used as a value here!
+// console.log(u instanceof User);`,
+      },
+    ],
+  },
+  part4: {
+    title: "Anti-Patterns vs Clean Ambient Declarations",
+    bad: {
+      title: "Attempting Runtime Introspection on Erased Interfaces",
+      code: `// ❌ Anti-pattern: attempting to check a TypeScript interface at runtime
+interface PaymentPayload {
+  amount: number;
+  currency: string;
+}
+
+function processPayment(data: unknown) {
+  // Crashes with: ReferenceError: PaymentPayload is not defined!
+  // TypeScript interfaces do not exist in emitted JavaScript!
+  if (data instanceof PaymentPayload) {
+    console.log(data.amount);
+  }
+}`,
+      explanation:
+        "Interfaces are 100% erased during compilation. Calling `instanceof` on an interface causes a fatal `ReferenceError` at runtime in the browser or Node.js because the identifier was erased from the bundle.",
+    },
+    good: {
+      title: "Using Runtime Type Guards alongside Compile-Time Declarations",
+      code: `// ✅ Idiomatic: runtime validation function guarding the compile-time type
+interface PaymentPayload {
+  amount: number;
+  currency: string;
+}
+
+function isPaymentPayload(data: unknown): data is PaymentPayload {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "amount" in data &&
+    typeof (data as { amount: unknown }).amount === "number" &&
+    "currency" in data &&
+    typeof (data as { currency: unknown }).currency === "string"
+  );
+}
+
+function processPayment(data: unknown) {
+  if (isPaymentPayload(data)) {
+    console.log("Safe payment amount:", data.amount); // Type narrowed safely!
+  }
+}`,
+      explanation:
+        "A custom type predicate (`data is PaymentPayload`) performs real runtime JavaScript validation while giving TypeScript's static type checker the proof it needs to narrow the type safely.",
+    },
+  },
+  part5: {
+    title: "Interactive Code Sandbox: Ambient Contracts & Type Erasure",
+    intro:
+      "Explore how ambient type declarations and runtime guards work together to ensure complete type safety:",
+    starterCode: `// TS-27: Declaration Files & Type Erasure
+// Demonstrating ambient declarations and runtime validation
+
+// 1. Ambient declaration simulated for a global analytics provider
+interface AnalyticsPayload {
+  eventName: string;
+  timestamp: number;
+  properties: Record<string, string | number | boolean>;
+}
+
+// 2. Runtime type guard function proving the shape of incoming data
+function isValidAnalyticsEvent(raw: unknown): raw is AnalyticsPayload {
+  if (typeof raw !== "object" || raw === null) return false;
+
+  const candidate = raw as Record<string, unknown>;
+  return (
+    typeof candidate.eventName === "string" &&
+    typeof candidate.timestamp === "number" &&
+    typeof candidate.properties === "object" &&
+    candidate.properties !== null
+  );
+}
+
+// 3. Processing untrusted external data (e.g. from an incoming webhook or CDN)
+function trackEvent(input: unknown): void {
+  if (isValidAnalyticsEvent(input)) {
+    // Inside this block, TypeScript knows input is AnalyticsPayload!
+    console.log("Tracking verified event:", input.eventName);
+    console.log("Event Timestamp:", new Date(input.timestamp).toISOString());
+    console.log("Properties:", input.properties);
+  } else {
+    console.log("Invalid analytics payload received. Event dropped.");
+  }
+}
+
+// Test with valid event
+trackEvent({
+  eventName: "user_completed_lesson",
+  timestamp: Date.now(),
+  properties: { lessonCode: "TS-27", score: 100 },
+});
+
+// Test with invalid event
+trackEvent({ eventName: 42 });
+`,
+  },
+  part6: {
+    title: "Concept Check: Knowledge Assessment",
+    quiz: {
+      question:
+        "Which of the following TypeScript constructs is emitted into the runtime JavaScript bundle after compilation?",
+      options: [
+        "A standard JavaScript class with constructor and methods",
+        "An interface declaration (`interface User { id: string }`)",
+        "A type alias (`type Status = 'open' | 'closed'`)",
+        "An ambient declaration (`declare const __VERSION__: string;`)",
+      ],
+      correctIndex: 0,
+      explanation:
+        "Classes are standard ECMAScript runtime constructs, so TypeScript emits executable JavaScript class code for them. Interfaces, type aliases, and ambient declarations are completely erased at compile time.",
+    },
+  },
+  part7: {
+    title: "Key Takeaways & What's Next",
+    takeaways: [
+      {
+        title: "1. Pure Type Erasure",
+        desc: "Interfaces, type aliases, and ambient declarations leave 0 bytes of code in emitted JavaScript.",
+      },
+      {
+        title: "2. The declare Keyword",
+        desc: "declare creates ambient promises that a global or module exists without creating runtime memory.",
+      },
+      {
+        title: "3. .d.ts Declaration Files",
+        desc: "Declaration files describe external JavaScript APIs for the compiler across package boundaries.",
+      },
+      {
+        title: "4. DefinitelyTyped Ecosystem",
+        desc: "@types packages allow seamless, fully-typed consumption of pure JavaScript npm libraries.",
+      },
+    ],
+    nextLessonPreview: {
+      title: "Stage 8: Practical TypeScript Patterns (TS-28 – TS-30)",
+      desc: "Advance to Stage 8 to master type assertions vs satisfies, safe catch error handling with unknown, and type-safe API contracts.",
+    },
+  },
+};
+
+// ────────────────────────────────────────────────────────────────────────────
 // Registry of Handcrafted Lessons
 // ────────────────────────────────────────────────────────────────────────────
 export const TYPESCRIPT_LESSONS_CONTENT: Record<string, StandardLessonContent> = {
@@ -6011,6 +6716,9 @@ export const TYPESCRIPT_LESSONS_CONTENT: Record<string, StandardLessonContent> =
   "ts22-conditional-types-infer": TS22_CONTENT,
   "ts23-mapped-template-types": TS23_CONTENT,
   "ts24-utility-types": TS24_CONTENT,
+  "ts25-modules-type-imports": TS25_CONTENT,
+  "ts26-tsconfig-strict-mode": TS26_CONTENT,
+  "ts27-declarations-type-erasure": TS27_CONTENT,
 };
 
 /**
