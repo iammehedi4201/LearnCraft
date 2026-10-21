@@ -10,6 +10,7 @@
 import { ModuleQuiz } from "./quiz-types";
 import { JAVASCRIPT_MODULE_QUIZZES } from "./javascript-quizzes";
 import { TYPESCRIPT_MODULE_QUIZZES } from "./typescript-quizzes";
+import { OOP_MODULE_QUIZZES } from "./oop-quizzes";
 
 export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
   // ──────────────────────────────────────────────────────────────────────────
@@ -20,6 +21,10 @@ export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
   // TYPESCRIPT CURRICULUM QUIZZES
   // ──────────────────────────────────────────────────────────────────────────
   ...TYPESCRIPT_MODULE_QUIZZES,
+  // ──────────────────────────────────────────────────────────────────────────
+  // OBJECT-ORIENTED PROGRAMMING (OOP) CURRICULUM QUIZZES
+  // ──────────────────────────────────────────────────────────────────────────
+  ...OOP_MODULE_QUIZZES,
   // ──────────────────────────────────────────────────────────────────────────
   // NEXT.JS: NX-01 — The App Router Architecture
   // ──────────────────────────────────────────────────────────────────────────

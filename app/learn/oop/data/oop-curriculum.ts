@@ -471,9 +471,27 @@ export function getStages(): StageMeta[] {
 }
 
 export function getLessonBySlug(slug: string): LessonMeta | undefined {
-  return getAllLessons().find(
+  const normalized = slug.toLowerCase().trim();
+  const all = getAllLessons();
+
+  // 1. Exact slug match
+  const exactSlug = all.find((l) => l.slug.toLowerCase() === normalized);
+  if (exactSlug) return exactSlug;
+
+  // 2. Exact code match (e.g. "OOP-01" or "oop-01" or "oop01")
+  const exactCode = all.find(
     (l) =>
-      l.slug === slug || l.path.endsWith(`/${slug}`) || l.path.includes(slug),
+      l.code.toLowerCase() === normalized ||
+      l.code.toLowerCase().replace("-", "") === normalized.replace("-", ""),
+  );
+  if (exactCode) return exactCode;
+
+  // 3. Prefix or path match (e.g. "oop01" prefix of "oop01-why-oop")
+  return all.find(
+    (l) =>
+      l.slug.toLowerCase().startsWith(normalized) ||
+      l.path.endsWith(`/${normalized}`) ||
+      l.path.includes(normalized),
   );
 }
 
