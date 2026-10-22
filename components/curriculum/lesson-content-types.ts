@@ -22,6 +22,7 @@ export interface LessonContentCard {
   tag: string;
   title: string;
   description: string;
+  codeSnippet?: string;
   color?: "purple" | "emerald" | "amber" | "cyan" | "rose" | "indigo" | "blue" | string;
 }
 

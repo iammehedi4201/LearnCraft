@@ -34,6 +34,24 @@ import {
 import { recordActivity } from "@/lib/gamification";
 import { PartStepper } from "./PartStepper";
 
+function renderFormattedText(text?: string): React.ReactNode {
+  if (!text) return null;
+  const parts = text.split(/`([^`]+)`/g);
+  if (parts.length === 1) return text;
+  return parts.map((part, i) =>
+    i % 2 === 1 ? (
+      <code
+        key={i}
+        className="px-1.5 py-0.5 rounded bg-white/[0.08] text-purple-300 font-mono text-[11px] sm:text-xs border border-white/[0.08]"
+      >
+        {part}
+      </code>
+    ) : (
+      part
+    )
+  );
+}
+
 export interface DataDrivenLessonViewProps {
   trackKey: string;
   trackTitle: string;
@@ -167,8 +185,20 @@ export function DataDrivenLessonView({
           // (Only triggers for conceptual reading parts; interactive sandbox & quiz require explicit action)
           const mapped = getSectionByDomId(domId);
           const secId = mapped?.section?.id;
+          const secIdx = mapped?.index ?? -1;
 
-          if (secId && secId !== "part5" && secId !== "part7" && !completedSections.has(secId)) {
+          // Sequential check: cannot complete reading for a section if previous sections are not completed!
+          const canReadComplete =
+            secIdx >= 0 &&
+            sections.slice(0, secIdx).every((s) => completedSections.has(s.id));
+
+          if (
+            secId &&
+            secId !== "part5" &&
+            secId !== "part7" &&
+            !completedSections.has(secId) &&
+            canReadComplete
+          ) {
             const isMostlyVisible =
               entry.isIntersecting &&
               (entry.intersectionRatio >= 0.55 ||
@@ -359,7 +389,7 @@ export function DataDrivenLessonView({
             <ul className="text-xs sm:text-sm text-slate-300 space-y-2.5 list-disc pl-5">
               {content.part1.breakdownItems.map((item, idx) => (
                 <li key={idx}>
-                  <strong className="text-white">{item.title}:</strong> {item.desc}
+                  <strong className="text-white">{item.title}:</strong> {renderFormattedText(item.desc)}
                 </li>
               ))}
             </ul>
@@ -414,7 +444,7 @@ export function DataDrivenLessonView({
                     {concept.name}
                   </div>
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    {concept.desc}
+                    {renderFormattedText(concept.desc)}
                   </p>
                 </div>
                 {concept.codeSnippet && (
@@ -453,8 +483,18 @@ export function DataDrivenLessonView({
                   </div>
                 </div>
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  {card.description}
+                  {renderFormattedText(card.description)}
                 </p>
+                {card.codeSnippet && (
+                  <div className="pt-2">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Example</span>
+                    </div>
+                    <pre className="text-xs bg-black/60 p-3 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto leading-relaxed">
+                      {card.codeSnippet}
+                    </pre>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -465,7 +505,7 @@ export function DataDrivenLessonView({
             <strong className="text-white">
               {content.part2.rule.title}:
             </strong>{" "}
-            {content.part2.rule.content}
+            {renderFormattedText(content.part2.rule.content)}
           </div>
         )}
       </section>
@@ -548,10 +588,10 @@ export function DataDrivenLessonView({
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  {pt.content}
+                  {renderFormattedText(pt.content)}
                 </p>
                 {pt.codeSnippet && (
-                  <pre className="text-xs bg-black/50 p-4 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto mt-2">
+                  <pre className="text-xs bg-black/50 p-4 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto mt-2 leading-relaxed">
                     {pt.codeSnippet}
                   </pre>
                 )}
@@ -633,7 +673,7 @@ export function DataDrivenLessonView({
                 </pre>
               </div>
               <p className="text-xs text-rose-300/80 leading-relaxed">
-                {badComparison.explanation}
+                {renderFormattedText(badComparison.explanation)}
               </p>
             </div>
           )}
@@ -650,7 +690,7 @@ export function DataDrivenLessonView({
                 </pre>
               </div>
               <p className="text-xs text-emerald-300/80 leading-relaxed">
-                {goodComparison.explanation}
+                {renderFormattedText(goodComparison.explanation)}
               </p>
             </div>
           )}
@@ -759,7 +799,7 @@ export function DataDrivenLessonView({
                   <strong className="text-white text-xs sm:text-sm block">
                     {item.title}
                   </strong>
-                  <p className="text-xs text-slate-400">{item.desc}</p>
+                  <p className="text-xs text-slate-400">{renderFormattedText(item.desc)}</p>
                 </div>
               ))}
             </div>

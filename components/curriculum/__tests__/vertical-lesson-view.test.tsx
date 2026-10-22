@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { PartStepper } from "../PartStepper";
 import { DataDrivenLessonView } from "../DataDrivenLessonView";
+import { sanitizeSequentialCompleted } from "../use-lesson-progress";
 
 // Mock next-auth
 vi.mock("next-auth/react", () => ({
@@ -206,3 +207,38 @@ describe("DataDrivenLessonView Single Vertical Layout", () => {
     expect(html).toContain("href=\"/learn/javascript/js02-variables\"");
   });
 });
+
+describe("sanitizeSequentialCompleted — Contiguous Progress Engine", () => {
+  const sections = [
+    { id: "part1", label: "Part 1" },
+    { id: "part2", label: "Part 2" },
+    { id: "part3", label: "Part 3" },
+    { id: "part4", label: "Part 4" },
+    { id: "part5", label: "Part 5" },
+    { id: "part6", label: "Part 6" },
+    { id: "part7", label: "Part 7" },
+  ];
+
+  it("prunes out-of-order anomalies such as part6 being marked before part3, 4, 5", () => {
+    const input = ["part1", "part2", "part6"];
+    const result = sanitizeSequentialCompleted(input, sections);
+
+    // Only part1 and part2 are retained; part6 is pruned out because part3 was not completed!
+    expect(Array.from(result)).toEqual(["part1", "part2"]);
+  });
+
+  it("returns empty set when initial section is missing even if later sections exist", () => {
+    const input = ["part6", "part7"];
+    const result = sanitizeSequentialCompleted(input, sections);
+
+    expect(Array.from(result)).toEqual([]);
+  });
+
+  it("preserves fully contiguous progress from part1 through part7", () => {
+    const input = ["part1", "part2", "part3", "part4", "part5", "part6", "part7"];
+    const result = sanitizeSequentialCompleted(input, sections);
+
+    expect(Array.from(result)).toEqual(input);
+  });
+});
+

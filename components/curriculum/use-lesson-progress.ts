@@ -16,6 +16,28 @@ import { useSession } from "next-auth/react";
 import { LessonSectionItem } from "./lesson-content-types";
 import { recordActivity } from "@/lib/gamification";
 
+/**
+ * Ensures completed sections are contiguous and sequential.
+ * In a structured curriculum, a learner cannot complete step 6 if step 3, 4, or 5 is uncompleted.
+ * Prunes any out-of-order anomalies from old storage or accidental scroll triggers.
+ */
+export function sanitizeSequentialCompleted(
+  completed: Iterable<string> | null | undefined,
+  sections: LessonSectionItem[]
+): Set<string> {
+  if (!completed) return new Set();
+  const set = completed instanceof Set ? completed : new Set(completed);
+  const result = new Set<string>();
+  for (const s of sections) {
+    if (set.has(s.id)) {
+      result.add(s.id);
+    } else {
+      break;
+    }
+  }
+  return result;
+}
+
 export interface UseLessonProgressProps {
   trackKey: string;
   lessonSlug: string;
@@ -79,10 +101,7 @@ export function useLessonProgress({
         if (raw) {
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed.completedSections)) {
-            const valid = parsed.completedSections.filter((id: string) =>
-              sections.some((s) => s.id === id)
-            );
-            return new Set(valid);
+            return sanitizeSequentialCompleted(parsed.completedSections, sections);
           }
         }
       } catch {}
@@ -125,10 +144,9 @@ export function useLessonProgress({
           const resolved = resolveId(parsed.activeSection);
           if (resolved) localActive = resolved;
           if (Array.isArray(parsed.completedSections)) {
-            localCompleted = new Set(
-              parsed.completedSections.filter((id: string) =>
-                sections.some((s) => s.id === id)
-              )
+            localCompleted = sanitizeSequentialCompleted(
+              parsed.completedSections,
+              sections
             );
           }
           localIsDone = Boolean(parsed.isCompleted);
@@ -147,11 +165,12 @@ export function useLessonProgress({
                     localIsDone = true;
                     localCompleted = new Set(sections.map((s) => s.id));
                   } else if (Array.isArray(dbEntry.completedModules)) {
-                    dbEntry.completedModules.forEach((m: string) => {
-                      if (sections.some((s) => s.id === m)) {
-                        localCompleted.add(m);
-                      }
-                    });
+                    const dbCompleted = sanitizeSequentialCompleted(
+                      dbEntry.completedModules,
+                      sections
+                    );
+                    const merged = new Set([...localCompleted, ...dbCompleted]);
+                    localCompleted = sanitizeSequentialCompleted(merged, sections);
                   }
                 }
               }
@@ -159,6 +178,27 @@ export function useLessonProgress({
           } catch {
             // Offline fallback
           }
+        }
+
+        // Synchronize sanitized sequential progress back to localStorage if sanitized removed gaps
+        if (raw) {
+          try {
+            const parsed = JSON.parse(raw);
+            if (
+              Array.isArray(parsed.completedSections) &&
+              parsed.completedSections.length !== localCompleted.size
+            ) {
+              localStorage.setItem(
+                storageKey,
+                JSON.stringify({
+                  activeSection: localActive,
+                  completedSections: Array.from(localCompleted),
+                  isCompleted: localIsDone,
+                  updatedAt: Date.now(),
+                })
+              );
+            }
+          } catch {}
         }
 
         if (isMounted) {
@@ -229,17 +269,34 @@ export function useLessonProgress({
       if (!validId) return;
 
       const previousId = activeSectionRef.current;
+      activeSectionRef.current = validId;
       setActiveSection(validId);
 
       setCompletedSections((prev) => {
-        const next = new Set(prev);
-        if (previousId) next.add(previousId);
+        // Only mark previous complete if navigation is sequential forward step-by-step
+        // (i.e. moving from index N to N+1 where all prior sections 0..N are done)
+        const prevIdx = sections.findIndex((s) => s.id === previousId);
+        const nextIdx = sections.findIndex((s) => s.id === validId);
+
+        let next = prev;
+        if (previousId && prevIdx >= 0 && nextIdx === prevIdx + 1) {
+          const canCompletePrev = sections
+            .slice(0, prevIdx)
+            .every((s) => prev.has(s.id));
+          if (canCompletePrev && !prev.has(previousId)) {
+            next = new Set(prev);
+            next.add(previousId);
+          }
+        }
 
         const allDone = sections.length > 0 && next.size >= sections.length;
-        if (allDone) {
+        if (allDone && !isLessonCompleted) {
           setIsLessonCompleted(true);
           onLessonCompleted?.(lessonSlug);
-          recordActivity("lesson_complete", `Completed lesson: ${lessonSlug}`, { lessonSlug, trackKey });
+          recordActivity("lesson_complete", `Completed lesson: ${lessonSlug}`, {
+            lessonSlug,
+            trackKey,
+          });
         }
 
         try {
@@ -260,12 +317,13 @@ export function useLessonProgress({
     },
     [
       resolveId,
-      sections.length,
+      sections,
       lessonSlug,
       saveProgressToServer,
       storageKey,
       onLessonCompleted,
       trackKey,
+      isLessonCompleted,
     ]
   );
 
@@ -287,7 +345,7 @@ export function useLessonProgress({
     [resolveId, sections]
   );
 
-  // 3c. Mark single section complete (independent completion tracking)
+  // 3c. Mark single section complete (sequential completion tracking)
   const markSectionComplete = useCallback(
     (targetIdOrIndex: string | number) => {
       let targetId: string | null = null;
@@ -299,8 +357,22 @@ export function useLessonProgress({
 
       if (!targetId) return;
 
+      const targetIdx = sections.findIndex((s) => s.id === targetId);
+      if (targetIdx === -1) return;
+
       setCompletedSections((prev) => {
         if (prev.has(targetId!)) return prev;
+
+        // Ensure learner has completed all preceding parts sequentially!
+        // A learner cannot complete part N if part N-1 is not complete!
+        const canComplete = sections
+          .slice(0, targetIdx)
+          .every((s) => prev.has(s.id));
+
+        if (!canComplete) {
+          // Cannot complete out of order
+          return prev;
+        }
 
         const next = new Set(prev);
         next.add(targetId!);
