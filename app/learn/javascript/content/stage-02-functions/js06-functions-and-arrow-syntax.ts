@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js06FunctionsAndArrowSyntaxContent: StandardLessonContent = {
-  "slug": "js06-functions-and-arrow-syntax",
-  "code": "JS-06",
-  "title": "Functions: Packaging Reusable Logic & Arrow Syntax",
-  "subtitle": "Write reusable blocks of code with parameters, return values, default parameters, and concise modern arrow functions.",
-  "sections": [
+  slug: "js06-functions-and-arrow-syntax",
+  code: "JS-06",
+  title: "Writing and Calling Functions",
+  subtitle: "Write modular reusable logic, pass parameters with default values, and master arrow functions with implicit returns.",
+  sections: [
     {
-      "id": "part1",
-      "label": "Packaging Code",
-      "icon": "📦",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Reusable Logic",
+      icon: "📦",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Declarations vs Arrows",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Declarations vs Arrows",
+      icon: "⚡",
+      tag: "SYNTAX"
     },
     {
-      "id": "part3",
-      "label": "Implicit Returns & AI Traps",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "Implicit Return Rules",
+      icon: "🎯",
+      tag: "RULES"
     },
     {
-      "id": "part4",
-      "label": "Missing Return Bug",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Undefined Return Bug",
+      icon: "⚠️",
+      tag: "TRAPS"
     },
     {
-      "id": "part5",
-      "label": "Functions Playground",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Functions Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Summary Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Why Functions Exist",
-    "bigPicture": "A function is a reusable machine that takes inputs (parameters), performs work, and returns an output. Instead of rewriting identical code in multiple places, you write the function once and call it whenever needed.",
-    "analogy": "Think of a function like a kitchen blender. You load ingredients into the top (parameters), press blend (execution), and pour out a smoothie (return value).",
-    "diagram": "Inputs: (price = 100, taxRate = 0.08)\n                 |\n                 v\n+-----------------------------------+\n|  calculateTax(price, taxRate)     |  --> Function Body\n+-----------------------------------+\n                 |\n                 v\nOutput: 8",
-    "breakdownTitle": "Function Building Blocks",
-    "breakdownItems": [
+  part1: {
+    title: "Why Functions Exist",
+    bigPicture: "Functions package reusable code into named blocks that accept inputs (parameters), perform calculations, and return a result.",
+    analogy: "Like a recipe: you define the steps once, and you can prepare it with different ingredients whenever you want.",
+    diagram: "Input arguments: (price = 100, taxRate = 0.08)\n                       |\n                       v\n+---------------------------------------------+\n|  calculateTax(price, taxRate)               |\n|  return price * taxRate;                    |\n+---------------------------------------------+\n                       |\n                       v\nReturned output: 8",
+    breakdownTitle: "Key Function Concepts",
+    breakdownItems: [
       {
-        "title": "Parameters vs Arguments",
-        "desc": "Parameters are the variable placeholders in the function definition. Arguments are the actual values passed in when calling it."
+        title: "Parameters vs Arguments",
+        desc: "Parameters are the variable placeholders in the definition. Arguments are the concrete values passed during invocation."
       },
       {
-        "title": "The return Statement",
-        "desc": "Sends a calculated value back to the caller. Without a return statement, functions return undefined by default."
+        title: "The return Keyword",
+        desc: "Stops execution and sends a value back. If return is omitted, JavaScript functions return undefined."
       },
       {
-        "title": "Modern Arrow Syntax (=>)",
-        "desc": "A concise way to write functions that is widely used for one-liners, callbacks, and modern React code."
+        title: "Default Parameters",
+        desc: "Provide fallback values automatically when arguments are undefined or omitted."
       }
     ]
   },
-  "part2": {
-    "title": "Function Syntax & Arrow Functions",
-    "intro": "Compare traditional function declarations with modern arrow functions.",
-    "cards": [
+  part2: {
+    title: "Function Declaration vs Arrow Syntax",
+    intro: "Two primary ways to define functions in modern JavaScript.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Classic",
-        "title": "Function Declaration",
-        "description": "Declared with the function keyword. They are hoisted and can be called before their definition.",
-        "codeSnippet": "function add(a, b) {\n  return a + b;\n}\nconsole.log(\"Sum:\", add(10, 5)); // Output: Sum: 15",
-        "color": "emerald"
+        number: "01",
+        tag: "Classic",
+        title: "Function Declaration",
+        description: "Uses the function keyword and is hoisted to the top of its scope.",
+        codeSnippet: "function calculateTotal(subtotal, tax = 0.1) {\n  return subtotal + (subtotal * tax);\n}\nconsole.log(calculateTotal(100)); // Output: 110",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Modern",
-        "title": "Arrow Function",
-        "description": "Stored in a variable using the `=>` syntax. Ideal for concise expressions and callbacks.",
-        "codeSnippet": "const multiply = (a, b) => a * b;\nconsole.log(\"Product:\", multiply(4, 5)); // Output: Product: 20",
-        "color": "cyan"
+        number: "02",
+        tag: "Concise",
+        title: "Arrow Function (=>)",
+        description: "Modern, compact syntax commonly stored in a const variable.",
+        codeSnippet: "const double = (n) => n * 2;\nconsole.log(double(15)); // Output: 30",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Defaults",
-        "title": "Default Parameters",
-        "description": "Provide fallback values directly in the parameter list when arguments are missing.",
-        "codeSnippet": "function greet(name = \"Guest\") {\n  return \"Welcome, \" + name + \"!\";\n}\nconsole.log(greet());        // Output: Welcome, Guest!\nconsole.log(greet(\"Sarah\")); // Output: Welcome, Sarah!",
-        "color": "purple"
+        number: "03",
+        tag: "Multiple Args",
+        title: "Multi-parameter Arrow",
+        description: "Parentheses are required when declaring two or more parameters.",
+        codeSnippet: "const formatUser = (name, role = \"guest\") => `${name} (${role})`;\nconsole.log(formatUser(\"Maya\", \"admin\")); // Output: Maya (admin)",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Single Responsibility Principle",
-      "content": "Keep each function focused on doing one job well. Use clear action verbs for names like `calculateTotal`, `isValid`, or `formatName`."
+    rule: {
+      title: "Arrow Implicit Return Rule",
+      content: "An arrow function only returns implicitly if there are NO curly braces {}. As soon as you add curly braces, you MUST write an explicit return statement."
     }
   },
-  "part3": {
-    "title": "Arrow Returns & Reading AI Code",
-    "intro": "Understand implicit returns and avoid the most common bugs found in AI-generated arrow functions.",
-    "points": [
+  part3: {
+    title: "Implicit Returns & Curly Braces",
+    intro: "Understand the exact syntax rules for arrow function returns.",
+    points: [
       {
-        "title": "1. Curly Braces Require 'return'",
-        "content": "When an arrow function has curly braces, you must write the `return` keyword explicitly. Without curly braces, the expression is returned automatically.",
-        "codeSnippet": "// With curly braces: explicit return required\nconst doubleWithBlock = (x) => {\n  return x * 2;\n};\nconsole.log(doubleWithBlock(5)); // Output: 10\n\n// Without curly braces: implicit return\nconst doubleConcise = (x) => x * 2;\nconsole.log(doubleConcise(5)); // Output: 10"
+        title: "1. One-line Implicit Return",
+        content: "Omit curly braces to evaluate the single expression and return its value automatically.",
+        codeSnippet: "const square = (x) => x * x;\nconsole.log(square(6)); // Output: 36"
       },
       {
-        "title": "2. The AI Curly Brace Bug",
-        "content": "A very frequent AI mistake is wrapping an expression in curly braces without the `return` keyword. The function executes, but quietly returns `undefined`.",
-        "codeSnippet": "// ❌ Common AI Bug: returns undefined!\nconst calculateTax = (price) => { price * 0.1; };\nconsole.log(\"Bug result:\", calculateTax(100)); // Output: Bug result: undefined\n\n// ✅ Clean Fix: remove braces or add return\nconst calculateTaxFixed = (price) => price * 0.1;\nconsole.log(\"Fixed result:\", calculateTaxFixed(100)); // Output: Fixed result: 10"
+        title: "2. Block Body Requires Explicit Return",
+        content: "If your function requires multiple statements, wrap the body in curly braces and include return.",
+        codeSnippet: "const calculateDiscount = (price, isVip) => {\n  const rate = isVip ? 0.2 : 0.05;\n  return price * (1 - rate);\n};\nconsole.log(calculateDiscount(100, true)); // Output: 80"
       },
       {
-        "title": "3. Returning Objects from Arrows",
-        "content": "To return an object literal implicitly from a one-liner, wrap the object in parentheses so JavaScript does not confuse it with a function body block.",
-        "codeSnippet": "// Wrap object in parentheses for implicit return:\nconst createUser = (id, name) => ({ id, name, active: true });\n\nconst user = createUser(101, \"Alex\");\nconsole.log(user);\n// Output: { id: 101, name: 'Alex', active: true }"
+        title: "3. Returning Object Literals Implicitly",
+        content: "Wrap object curly braces in parentheses `({})` so JavaScript does not confuse them with a function block.",
+        codeSnippet: "const createItem = (id, label) => ({ id, label });\nconsole.log(createItem(1, \"Book\")); // Output: { id: 1, label: 'Book' }"
       }
     ]
   },
-  "part4": {
-    "title": "Missing Return vs Proper Value Flow",
-    "bad": {
-      "title": "❌ Accidental Undefined Return",
-      "code": "// Bug: Curly braces without return\nconst getDiscount = (price) => {\n  price * 0.2; // Calculated, but never returned!\n};\n\nconst saved = getDiscount(100);\nconsole.log(\"Saved amount:\", saved); \n// Output: Saved amount: undefined",
-      "explanation": "Whenever you open curly braces in an arrow function, JavaScript requires the `return` keyword. Without it, the function returns undefined."
+  part4: {
+    title: "Classic Arrow Trap: Accidental Undefined Return",
+    bad: {
+      title: "❌ Curly Braces Without return Keyword",
+      code: "const add = (a, b) => {\n  a + b; // Bug: Curly braces create a block, but return is missing!\n};\nconsole.log(add(5, 5)); // Output: undefined",
+      explanation: "Adding curly braces turns off implicit return. Because there is no return statement, the function returns undefined."
     },
-    "good": {
-      "title": "✅ Clear and Explicit Return",
-      "code": "// Solution A: Explicit return statement\nconst getDiscount = (price) => {\n  return price * 0.2;\n};\n\n// Solution B: Concise implicit return\nconst getDiscountQuick = (price) => price * 0.2;\n\nconsole.log(\"Saved A:\", getDiscount(100));      // Output: Saved A: 20\nconsole.log(\"Saved B:\", getDiscountQuick(100)); // Output: Saved B: 20",
-      "explanation": "Either omit curly braces for a clean 1-line return, or write an explicit `return` inside the block."
+    good: {
+      title: "✅ Either Omit Braces OR Add return",
+      code: "// Option A: Implicit return (no braces)\nconst addA = (a, b) => a + b;\n\n// Option B: Explicit return with block\nconst addB = (a, b) => {\n  return a + b;\n};\nconsole.log(addA(5, 5)); // Output: 10\nconsole.log(addB(5, 5)); // Output: 10",
+      explanation: "Either omit curly braces entirely for one-line expressions, or include an explicit return inside the block."
     }
   },
-  "part5": {
-    "title": "Interactive Functions Sandbox",
-    "intro": "Experiment with function declarations, arrow functions, and default parameters in the live editor.",
-    "starterCode": "// 1. Traditional function:\nfunction calculateTotal(price, taxRate = 0.08) {\n  return price + (price * taxRate);\n}\n\n// 2. Arrow function:\nconst formatCurrency = (amount) => \"$\" + amount.toFixed(2);\n\n// 3. Test execution:\nconst bill = calculateTotal(50);\nconsole.log(\"Total Bill:\", formatCurrency(bill));\n\n// PRACTICE:\n// 1. Write an arrow function 'square' that takes a number n and returns n * n.\n// 2. Call square(7) and log the result to the console.\n"
+  part5: {
+    title: "Functions Sandbox",
+    intro: "Practice writing arrow functions with default parameters and implicit returns.",
+    starterCode: "// 1. One-line arrow with implicit return:\nconst celsiusToFahrenheit = (c) => (c * 9/5) + 32;\n\n// 2. Multi-line arrow with default parameter:\nconst createGreeting = (name, greeting = \"Hello\") => {\n  const formatted = `${greeting}, ${name}!`;\n  return formatted;\n};\n\nconsole.log(\"100C in F:\", celsiusToFahrenheit(100));\nconsole.log(createGreeting(\"Sarah\"));\nconsole.log(createGreeting(\"Alex\", \"Welcome back\"));\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Functions & Arrow Syntax",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Functions",
+    takeaways: [
       {
-        "title": "Declarations vs Arrows",
-        "desc": "Function declarations are hoisted; arrow functions are concise and great for callbacks."
+        title: "Arrow Implicit Returns",
+        desc: "Without curly braces, arrow functions automatically return the single expression."
       },
       {
-        "title": "Curly Braces Rule",
-        "desc": "Curly braces in arrow functions always require an explicit return statement."
+        title: "Curly Braces Require return",
+        desc: "If curly braces {} are present, you must write return or undefined is returned."
       },
       {
-        "title": "Implicit Object Returns",
-        "desc": "Wrap object literals in parentheses ({ id, name }) when returning them from a one-liner."
+        title: "Default Parameters",
+        desc: "Provide fallback values (param = defaultValue) when arguments are omitted."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "What does `const fn = (n) => { n * 2; };` return when called as `fn(5)`?",
-      "options": [
-        "10",
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "What does `const calc = (x) => { x * 2; }; console.log(calc(4));` output?",
+      options: [
+        "8",
         "undefined",
-        "Error: Invalid syntax",
-        "null"
+        "TypeError",
+        "4"
       ],
-      "correctIndex": 1,
-      "explanation": "Because curly braces `{}` are used without a `return` keyword, the calculation runs but the function returns `undefined`."
+      correctIndex: 1,
+      explanation: "Because curly braces `{}` were used without an explicit `return` keyword, the function body executes the expression and returns `undefined` by default."
     }
   }
 };

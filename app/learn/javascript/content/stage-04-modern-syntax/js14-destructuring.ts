@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js14DestructuringContent: StandardLessonContent = {
-  "slug": "js14-destructuring",
-  "code": "JS-14",
-  "title": "Destructuring: Unpacking Objects & Arrays",
-  "subtitle": "Extract values cleanly from objects and arrays with destructuring, renaming, and default values.",
-  "sections": [
+  slug: "js14-destructuring",
+  code: "JS-14",
+  title: "Destructuring Objects and Arrays",
+  subtitle: "Extract properties from objects and elements from arrays into distinct variables with concise, readable syntax.",
+  sections: [
     {
-      "id": "part1",
-      "label": "Unpacking Data",
-      "icon": "📦",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Destructuring Basics",
+      icon: "📦",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Objects vs Arrays",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Object & Array Syntax",
+      icon: "⚡",
+      tag: "SYNTAX"
     },
     {
-      "id": "part3",
-      "label": "Parameters & AI Traps",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "Defaults & Renaming",
+      icon: "🏷️",
+      tag: "PATTERNS"
     },
     {
-      "id": "part4",
-      "label": "Missing Property Crash",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Null Destructuring Trap",
+      icon: "⚠️",
+      tag: "DEBUGGING"
     },
     {
-      "id": "part5",
-      "label": "Destructuring Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Destructuring Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Summary Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Unpacking Values Cleanly",
-    "bigPicture": "Destructuring syntax allows you to unpack values from arrays or properties from objects into distinct variables in a single, concise line of code.",
-    "analogy": "Think of destructuring like opening a shipment box and placing the items immediately onto designated shelves, rather than pulling them out one by one.",
-    "diagram": "const user = { name: \"Alex\", role: \"admin\", points: 85 };\n\n// Destructuring:\nconst { name, role } = user;\n// name = \"Alex\", role = \"admin\"",
-    "breakdownTitle": "Destructuring Features",
-    "breakdownItems": [
+  part1: {
+    title: "Unpacking Values with Destructuring",
+    bigPicture: "Destructuring is a concise syntax that allows you to extract multiple properties from objects or elements from arrays into individual variables in a single statement.",
+    analogy: "Like unpacking a delivery box: instead of taking out the whole box every time you need an item, you pull out and label the exact items you want on your desk.",
+    diagram: "+-------------------------------------------+\n| Object: { name: \"Sarah\", role: \"Admin\" }  |\n+-------------------------------------------+\n                     |\n    const { name, role } = user;\n                     |\n                     v\nname = \"Sarah\"             role = \"Admin\"",
+    breakdownTitle: "Key Destructuring Concepts",
+    breakdownItems: [
       {
-        "title": "Object Destructuring",
-        "desc": "Pulls properties out of objects matching their key names."
+        title: "Object Destructuring by Key Name",
+        desc: "Extracts values matching the exact property key names inside curly braces {}."
       },
       {
-        "title": "Array Destructuring",
-        "desc": "Extracts values from arrays in order of position."
+        title: "Array Destructuring by Position",
+        desc: "Extracts values based on their index order inside square brackets []."
       },
       {
-        "title": "Default Fallbacks",
-        "desc": "Assigns default values if a property is missing or undefined."
+        title: "Default Fallback Values",
+        desc: "Provide fallback values automatically if a property is undefined in the source data."
       }
     ]
   },
-  "part2": {
-    "title": "Destructuring Patterns",
-    "intro": "Compare object destructuring, array destructuring, and property renaming.",
-    "cards": [
+  part2: {
+    title: "Core Destructuring Syntax",
+    intro: "Two primary syntaxes for unpacking objects and arrays.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Objects",
-        "title": "Object Destructuring",
-        "description": "Extract properties by name directly into variables.",
-        "codeSnippet": "const config = { host: \"localhost\", port: 3000 };\nconst { host, port } = config;\nconsole.log(\"Listening:\", host, port); // Output: Listening: localhost 3000",
-        "color": "emerald"
+        number: "01",
+        tag: "Objects",
+        title: "Object Destructuring",
+        description: "Matches variable names directly to property keys.",
+        codeSnippet: "const user = { id: 101, username: \"AlexDev\" };\nconst { id, username } = user;\nconsole.log(id, username); // Output: 101 AlexDev",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Arrays",
-        "title": "Array Destructuring",
-        "description": "Extract items in sequential order from an array.",
-        "codeSnippet": "const coords = [40.71, -74.00];\nconst [lat, lng] = coords;\nconsole.log(\"Latitude:\", lat); // Output: Latitude: 40.71",
-        "color": "cyan"
+        number: "02",
+        tag: "Arrays",
+        title: "Array Destructuring",
+        description: "Assigns variables according to item order, skipping positions with commas.",
+        codeSnippet: "const coordinates = [40.7128, -74.0060];\nconst [latitude, longitude] = coordinates;\nconsole.log(latitude, longitude); // Output: 40.7128 -74.0060",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Rename",
-        "title": "Renaming Variables",
-        "description": "Assign properties to new variable names using a colon `key: newName`.",
-        "codeSnippet": "const api = { data: [1, 2] };\nconst { data: userList } = api;\nconsole.log(userList); // Output: [ 1, 2 ]",
-        "color": "purple"
+        number: "03",
+        tag: "Functions",
+        title: "Function Parameter Destructuring",
+        description: "Unpack object properties directly in the function argument list.",
+        codeSnippet: "function printBadge({ name, role = \"Member\" }) {\n  return `${name} - ${role}`;\n}\nconsole.log(printBadge({ name: \"Maya\" })); // Output: Maya - Member",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Clean Parameter Rule",
-      "content": "Destructure function arguments directly in the signature: `function log({ id, name })`."
+    rule: {
+      title: "Syntax Rule",
+      content: "Use curly braces { ... } to destructure objects by key. Use square brackets [ ... ] to destructure arrays by position."
     }
   },
-  "part3": {
-    "title": "Parameter Destructuring & Reading AI Code",
-    "intro": "Destructure function arguments and use default values to prevent undefined errors.",
-    "points": [
+  part3: {
+    title: "Renaming Variables & Setting Defaults",
+    intro: "Customize extracted variable names and handle missing values cleanly.",
+    points: [
       {
-        "title": "1. Parameter Destructuring with Defaults",
-        "content": "Destructure incoming object options directly in function parameter lists and provide fallbacks.",
-        "codeSnippet": "function sendEmail({ to, subject, priority = \"normal\" }) {\n  console.log(\"Sending to: \" + to + \" [Priority: \" + priority + \"]\");\n}\n\nsendEmail({ to: \"sam@learncraft.dev\", subject: \"Welcome!\" });\n// Output: Sending to: sam@learncraft.dev [Priority: normal]"
+        title: "1. Renaming Properties (oldName: newName)",
+        content: "Rename extracted variables to avoid name collisions in the local scope.",
+        codeSnippet: "const apiResponse = { user_name: \"jdoe\" };\nconst { user_name: username } = apiResponse;\nconsole.log(username); // Output: jdoe"
       },
       {
-        "title": "2. Skipping Array Elements",
-        "content": "Use commas without variable names to skip unwanted positions in array destructuring.",
-        "codeSnippet": "const rgb = [255, 128, 0];\n// Skip green (second item):\nconst [r, , b] = rgb;\nconsole.log(\"Red:\", r, \"Blue:\", b); // Output: Red: 255 Blue: 0"
+        title: "2. Setting Default Values",
+        content: "Assign fallback values if the property is undefined in the source object.",
+        codeSnippet: "const settings = { theme: \"dark\" };\nconst { theme, fontSize = 14 } = settings;\nconsole.log(theme, fontSize); // Output: dark 14"
       },
       {
-        "title": "3. Safe Nested Destructuring",
-        "content": "Provide a default empty object `= {}` when destructuring nested properties so missing data does not crash the app.",
-        "codeSnippet": "const payload = {};\n// Safe: defaults to empty object if profile is missing\nconst { profile: { name = \"Guest\" } = {} } = payload;\nconsole.log(\"Profile name:\", name); // Output: Profile name: Guest"
+        title: "3. Skipping Array Items",
+        content: "Use commas without identifiers to ignore elements you do not need.",
+        codeSnippet: "const rgb = [255, 128, 0];\nconst [red, , blue] = rgb; // Skip green\nconsole.log(red, blue); // Output: 255 0"
       }
     ]
   },
-  "part4": {
-    "title": "Destructuring Undefined Crash",
-    "bad": {
-      "title": "❌ Destructuring null or undefined",
-      "code": "function printUser(user) {\n  // Bug: If user is undefined, destructuring crashes!\n  const { name, email } = user;\n  console.log(name, email);\n}\n\nprintUser(); // TypeError: Cannot destructure property 'name' of undefined",
-      "explanation": "Attempting to destructure `undefined` or `null` throws a fatal `TypeError`."
+  part4: {
+    title: "Common Pitfall: Destructuring null or undefined",
+    bad: {
+      title: "❌ Destructuring null Without a Fallback",
+      code: "const response = null;\n// Bug: Throws fatal TypeError!\n// const { data } = response;\n// TypeError: Cannot destructure property 'data' of null",
+      explanation: "Attempting to destructure null or undefined crashes the program because primitives cannot be unpacked."
     },
-    "good": {
-      "title": "✅ Default Parameter Fallback",
-      "code": "// Safe: defaults to empty object if no argument is passed\nfunction printUser(user = {}) {\n  const { name = \"Anonymous\", email = \"none\" } = user;\n  console.log(\"User:\", name, \"| Email:\", email);\n}\n\nprintUser(); // Output: User: Anonymous | Email: none",
-      "explanation": "Provide a default `= {}` in the parameter list to ensure destructuring always receives a valid object."
+    good: {
+      title: "✅ Provide a Fallback Object Default ({})",
+      code: "const response = null;\n// Safe: Default fallback empty object prevents crashes\nconst { data } = response || {};\nconsole.log(data); // Output: undefined",
+      explanation: "Using response || {} ensures there is always a valid object to destructure from."
     }
   },
-  "part5": {
-    "title": "Interactive Destructuring Sandbox",
-    "intro": "Practice object and array destructuring in the live editor.",
-    "starterCode": "// 1. Object destructuring with renaming and default:\nconst userProfile = {\n  id: 101,\n  username: \"alex_dev\",\n  roles: [\"admin\", \"editor\"],\n};\n\nconst { username: handle, roles: [primaryRole] } = userProfile;\nconsole.log(\"Handle:\", handle);\nconsole.log(\"Primary Role:\", primaryRole);\n\n// PRACTICE:\n// Destructure 'id' and a fallback 'theme = \"dark\"' from userProfile.\n"
+  part5: {
+    title: "Destructuring Sandbox",
+    intro: "Practice unpacking objects, renaming properties, and setting fallback defaults.",
+    starterCode: "const serverConfig = {\n  host: \"db.internal.net\",\n  port: 5432,\n  auth: { user: \"postgres\" }\n};\n\n// 1. Destructure with default:\nconst { host, port, timeout = 3000 } = serverConfig;\n\n// 2. Destructure and rename:\nconst { host: dbHost } = serverConfig;\n\nconsole.log(\"Host:\", host, \"Port:\", port, \"Timeout:\", timeout);\nconsole.log(\"Renamed host variable:\", dbHost);\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Destructuring",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Destructuring",
+    takeaways: [
       {
-        "title": "Unpack on Assignment",
-        "desc": "Extract multiple properties in a single readable line."
+        title: "Object vs Array",
+        desc: "Objects destructure by key name; arrays destructure by positional order."
       },
       {
-        "title": "Default Fallbacks",
-        "desc": "Assign fallback values with = in case properties are missing."
+        title: "Renaming and Defaults",
+        desc: "Use key: alias to rename; use key = fallback to provide default values."
       },
       {
-        "title": "Clean Signatures",
-        "desc": "Destructure function arguments directly in parameter lists."
+        title: "Protect Against null",
+        desc: "Always provide a fallback (obj || {}) when destructuring data from APIs."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "How do you rename a property `originalKey` to `newKey` during object destructuring?",
-      "options": [
-        "const { originalKey as newKey } = obj;",
-        "const { originalKey: newKey } = obj;",
-        "const { originalKey -> newKey } = obj;",
-        "const { newKey = originalKey } = obj;"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "In `const { a: first, b = 10 } = { a: 5 };`, what are the values of `first` and `b`?",
+      options: [
+        "first = 5, b = 10",
+        "first = undefined, b = 10",
+        "first = 5, b = undefined",
+        "SyntaxError: Invalid renaming syntax"
       ],
-      "correctIndex": 1,
-      "explanation": "In object destructuring, `key: newName` specifies the existing object property on the left and the new variable name on the right."
+      correctIndex: 0,
+      explanation: "Property `a` is extracted and renamed to `first` with value 5. Property `b` does not exist in the source object, so it receives its default fallback value 10."
     }
   }
 };

@@ -414,6 +414,62 @@ export function useLessonProgress({
     ]
   );
 
+  // 3d. Mark all sections up to a specific index complete (smooth continuous scroll progress)
+  const markSectionsUpToIndex = useCallback(
+    (targetIndex: number) => {
+      if (targetIndex < 0 || targetIndex >= sections.length) return;
+
+      setCompletedSections((prev) => {
+        let changed = false;
+        const next = new Set(prev);
+
+        for (let i = 0; i <= targetIndex; i++) {
+          const sec = sections[i];
+          if (sec && !next.has(sec.id)) {
+            next.add(sec.id);
+            changed = true;
+          }
+        }
+
+        if (!changed) return prev;
+
+        const allDone = sections.length > 0 && next.size >= sections.length;
+        if (allDone && !isLessonCompleted) {
+          setIsLessonCompleted(true);
+          onLessonCompleted?.(lessonSlug);
+          recordActivity("lesson_complete", `Completed lesson: ${lessonSlug}`, {
+            lessonSlug,
+            trackKey,
+          });
+        }
+
+        try {
+          localStorage.setItem(
+            storageKey,
+            JSON.stringify({
+              activeSection: activeSectionRef.current,
+              completedSections: Array.from(next),
+              isCompleted: allDone,
+              updatedAt: Date.now(),
+            })
+          );
+        } catch {}
+
+        saveProgressToServer(activeSectionRef.current, Array.from(next), allDone);
+        return next;
+      });
+    },
+    [
+      sections,
+      isLessonCompleted,
+      onLessonCompleted,
+      lessonSlug,
+      trackKey,
+      storageKey,
+      saveProgressToServer,
+    ]
+  );
+
   // 4. Compute index & percentage
   const currentIndex = sections.findIndex((s) => s.id === activeSection);
   const safeCurrentIndex = currentIndex === -1 ? 0 : currentIndex;
@@ -486,6 +542,7 @@ export function useLessonProgress({
     handleSectionChange,
     setActiveSectionId,
     markSectionComplete,
+    markSectionsUpToIndex,
     completeLesson,
     handlePrev,
     handleNext,

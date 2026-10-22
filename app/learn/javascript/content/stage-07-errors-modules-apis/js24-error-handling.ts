@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js24ErrorHandlingContent: StandardLessonContent = {
-  "slug": "js24-error-handling",
-  "code": "JS-24",
-  "title": "Error Handling: try / catch, throw & Custom Errors",
-  "subtitle": "Catch runtime exceptions gracefully, throw descriptive errors, and create custom error classes.",
-  "sections": [
+  slug: "js24-error-handling",
+  code: "JS-24",
+  title: "Handling Errors with try and catch",
+  subtitle: "Intercept runtime exceptions gracefully with try/catch, run cleanup with finally, and throw descriptive Error objects.",
+  sections: [
     {
-      "id": "part1",
-      "label": "Defensive Architecture",
-      "icon": "🛡️",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Handling Errors",
+      icon: "🛡️",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "try / catch / finally",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "try / catch Syntax",
+      icon: "⚡",
+      tag: "SYNTAX"
     },
     {
-      "id": "part3",
-      "label": "Custom Errors & AI",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "Throwing Errors",
+      icon: "⚠️",
+      tag: "PATTERNS"
     },
     {
-      "id": "part4",
-      "label": "Swallowed Errors Bug",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Silent Failure Bug",
+      icon: "🕳️",
+      tag: "DEBUGGING"
     },
     {
-      "id": "part5",
-      "label": "Errors Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Errors Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Summary Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Anticipating the Unexpected",
-    "bigPicture": "Errors are a normal part of software development. Proper error handling intercepts unexpected failures (network drops, invalid input) and allows your application to recover smoothly without crashing.",
-    "analogy": "Think of error handling like the circuit breaker in your house. When a power surge occurs, the breaker trips safely rather than burning down the wiring.",
-    "diagram": "try {\n  // Risky operation: JSON parsing, network call...\n} catch (error) {\n  // Graceful recovery: log error, show user notification\n} finally {\n  // Cleanup: close modal, stop loading spinner\n}",
-    "breakdownTitle": "Error Handling Constructs",
-    "breakdownItems": [
+  part1: {
+    title: "Intercepting Runtime Exceptions",
+    bigPicture: "Uncaught errors crash JavaScript programs immediately. The try/catch statement allows your code to anticipate failures and recover gracefully without terminating execution.",
+    analogy: "Like a safety net beneath an acrobat: if the acrobat slips (an error is thrown), the net catches them safely, allowing the show to continue.",
+    diagram: "+-------------------------------------------+\n| try {                                     |\n|   riskyOperation(); // May throw an error |\n| } catch (err) {                           |\n|   handleError(err); // Safe recovery      |\n| } finally {                               |\n|   cleanup();        // Always runs        |\n+-------------------------------------------+",
+    breakdownTitle: "Error Handling Components",
+    breakdownItems: [
       {
-        "title": "try Block",
-        "desc": "Wraps code that might throw an exception."
+        title: "try Block",
+        desc: "Contains the statements that might throw an exception during execution."
       },
       {
-        "title": "catch Block",
-        "desc": "Executes only if an error is thrown inside the try block."
+        title: "catch (error) Block",
+        desc: "Executes only if an error is thrown in the try block, receiving the Error object."
       },
       {
-        "title": "finally Block",
-        "desc": "Always executes regardless of whether an error was thrown."
+        title: "finally Block",
+        desc: "Always executes after try and catch have completed, ideal for closing connections and cleaning up."
       }
     ]
   },
-  "part2": {
-    "title": "Error Constructs in Action",
-    "intro": "Compare throwing errors, catching exceptions, and finally cleanup.",
-    "cards": [
+  part2: {
+    title: "try, catch, and finally Syntax",
+    intro: "The fundamental blocks for graceful exception management.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Throw",
-        "title": "throw new Error()",
-        "description": "Interrupts execution with a descriptive error object containing a stack trace.",
-        "codeSnippet": "function checkAge(age) {\n  if (age < 18) throw new Error(\"Must be 18+\");\n  return \"Access granted\";\n}\ntry { checkAge(15); } catch (e) { console.error(e.message); }",
-        "color": "rose"
+        number: "01",
+        tag: "Safety",
+        title: "try / catch Statement",
+        description: "Catches runtime exceptions and prevents the script from crashing.",
+        codeSnippet: "try {\n  const parsed = JSON.parse(\"{ invalid-json }\");\n} catch (err) {\n  console.log(\"Caught error:\", err.message);\n}\n// Output: Caught error: Expected property name or '}'...",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Catch",
-        "title": "try / catch Blocks",
-        "description": "Captures exceptions and prevents the entire application from crashing.",
-        "codeSnippet": "try {\n  JSON.parse(\"invalid json{\");\n} catch (err) {\n  console.log(\"Safely caught:\", err.name); // Output: Safely caught: SyntaxError\n}",
-        "color": "emerald"
+        number: "02",
+        tag: "Throw",
+        title: "throw new Error()",
+        description: "Generate explicit error exceptions with descriptive messages.",
+        codeSnippet: "function setAge(age) {\n  if (age < 0) throw new Error(\"Age cannot be negative\");\n  return age;\n}\n// setAge(-5); // Throws Error: Age cannot be negative",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Finally",
-        "title": "finally Cleanup",
-        "description": "Guaranteed to run whether the code succeeded or threw an error.",
-        "codeSnippet": "let loading = true;\ntry { console.log(\"Loading...\"); }\nfinally { loading = false; console.log(\"Loading flag reset:\", loading); }",
-        "color": "purple"
+        number: "03",
+        tag: "Cleanup",
+        title: "finally Block",
+        description: "Guaranteed to run whether an error was thrown or not.",
+        codeSnippet: "let loading = true;\ntry {\n  // fetch data\n} finally {\n  loading = false; // Guaranteed cleanup!\n}\nconsole.log(\"Loading complete:\", loading); // Output: false",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Never Throw Strings",
-      "content": "Always throw instances of `new Error('msg')`, never plain strings like `throw 'err'`."
+    rule: {
+      title: "Error Object Rule",
+      content: "Always throw Error objects (throw new Error('msg')) rather than plain strings or numbers, so the runtime captures a complete stack trace."
     }
   },
-  "part3": {
-    "title": "Custom Errors & Reading AI Code",
-    "intro": "Subclass Error to create domain-specific errors and handle them selectively.",
-    "points": [
+  part3: {
+    title: "Inspecting Error Objects",
+    intro: "Properties available on standard Error instances.",
+    points: [
       {
-        "title": "1. Domain-Specific Custom Error Classes",
-        "content": "Extend `Error` to create custom error classes like `ValidationError` or `AuthError`.",
-        "codeSnippet": "class ValidationError extends Error {\n  constructor(message) {\n    super(message);\n    this.name = \"ValidationError\";\n  }\n}\n\ntry {\n  throw new ValidationError(\"Email address format invalid\");\n} catch (err) {\n  console.log(err.name + \": \" + err.message);\n  // Output: ValidationError: Email address format invalid\n}"
+        title: "1. error.name and error.message",
+        content: "Error objects contain the error type name (e.g. TypeError, ReferenceError) and a descriptive message.",
+        codeSnippet: "try {\n  null.f();\n} catch (err) {\n  console.log(err.name);    // Output: TypeError\n  console.log(err.message); // Output: Cannot read properties of null\n}"
       },
       {
-        "title": "2. Differentiating Errors with instanceof",
-        "content": "Inspect the error instance in your catch block to provide specialized handling for different failure types.",
-        "codeSnippet": "try {\n  throw new TypeError(\"Missing required argument\");\n} catch (err) {\n  if (err instanceof TypeError) {\n    console.log(\"Handled TypeError specifically\");\n  } else {\n    console.log(\"Generic error:\", err.message);\n  }\n}\n// Output: Handled TypeError specifically"
+        title: "2. Re-throwing Errors",
+        content: "If a catch block encounters an unexpected error it cannot handle, re-throw it so callers know.",
+        codeSnippet: "try {\n  riskyWork();\n} catch (err) {\n  if (err instanceof TypeError) {\n    // Handle type error locally\n  } else {\n    throw err; // Re-throw unknown errors\n  }\n}"
       },
       {
-        "title": "3. Re-throwing Unexpected Errors",
-        "content": "If a catch block catches an error it does not know how to handle, re-throw it so outer handlers can process it.",
-        "codeSnippet": "try {\n  // Unknown fatal error:\n  throw new ReferenceError(\"Critical system failure\");\n} catch (err) {\n  if (err instanceof SyntaxError) {\n    console.log(\"Recovered from syntax error\");\n  } else {\n    // Re-throw unknown errors:\n    console.log(\"Re-throwing unexpected error:\", err.name);\n  }\n}"
+        title: "3. Async Error Handling",
+        content: "Wrap awaited asynchronous calls in try/catch to intercept rejected promises cleanly.",
+        codeSnippet: "async function loadData() {\n  try {\n    const res = await Promise.reject(new Error(\"Timeout\"));\n  } catch (err) {\n    console.log(\"Async error:\", err.message);\n  }\n}\nloadData(); // Output: Async error: Timeout"
       }
     ]
   },
-  "part4": {
-    "title": "Swallowing Errors Silently",
-    "bad": {
-      "title": "❌ Empty Catch Block Swallows Errors",
-      "code": "try {\n  performCriticalDatabaseWrite();\n} catch (err) {\n  // Bug: Empty catch block hides critical bugs!\n  // The app continues in a corrupt state with zero logs!\n}",
-      "explanation": "Empty catch blocks hide bugs completely, making production failures almost impossible to diagnose."
+  part4: {
+    title: "Common Pitfall: Empty Catch Blocks (Silent Swallowing)",
+    bad: {
+      title: "❌ Swallowing Errors Silently with an Empty Catch",
+      code: "try {\n  const config = JSON.parse(rawServerData);\n} catch (err) {\n  // Bug: Empty catch block hides errors completely!\n  // System fails later without any error logs to diagnose\n}",
+      explanation: "Empty catch blocks hide critical errors, making debugging impossible when data corruption occurs."
     },
-    "good": {
-      "title": "✅ Log and Handle Errors Explicitly",
-      "code": "try {\n  performCriticalDatabaseWrite();\n} catch (err) {\n  console.error(\"Database write failed:\", err.message);\n  notifyAdmin(err);\n  showUserFeedback(\"Unable to save changes. Please try again.\");\n}",
-      "explanation": "Always log the error, inform the user, and take appropriate recovery action."
+    good: {
+      title: "✅ Log or Handle the Error Explicitly",
+      code: "try {\n  const config = JSON.parse(rawServerData);\n} catch (err) {\n  console.error(\"[Config Parse Failed]:\", err.message);\n  // Safe fallback default:\n  config = { env: \"production\" };\n}",
+      explanation: "Always log the error message or assign a safe fallback value so system state remains healthy."
     }
   },
-  "part5": {
-    "title": "Interactive Errors Sandbox",
-    "intro": "Experiment with throwing custom errors and handling them in try/catch/finally blocks.",
-    "starterCode": "class PaymentError extends Error {\n  constructor(message) {\n    super(message);\n    this.name = \"PaymentError\";\n  }\n}\n\nfunction processPayment(amount) {\n  if (amount <= 0) {\n    throw new PaymentError(\"Amount must be greater than zero\");\n  }\n  return \"Processed payment of $\" + amount;\n}\n\ntry {\n  console.log(processPayment(-10));\n} catch (err) {\n  if (err instanceof PaymentError) {\n    console.log(\"Payment Error Caught:\", err.message);\n  }\n} finally {\n  console.log(\"Transaction audit log completed.\");\n}\n"
+  part5: {
+    title: "Error Handling Sandbox",
+    intro: "Practice validating arguments and throwing custom errors with try/catch.",
+    starterCode: "function transferMoney(sender, recipient, amount) {\n  if (!sender || !recipient) {\n    throw new Error(\"Both sender and recipient are required\");\n  }\n  if (amount <= 0) {\n    throw new Error(\"Transfer amount must be greater than 0\");\n  }\n  return `Transferred $${amount} from ${sender} to ${recipient}`;\n}\n\ntry {\n  console.log(transferMoney(\"Alice\", \"Bob\", 50));\n  console.log(transferMoney(\"Alice\", \"Bob\", -10)); // Will throw\n} catch (err) {\n  console.error(\"Transaction rejected:\", err.message);\n} finally {\n  console.log(\"Audit log updated.\");\n}\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Error Handling",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Error Handling",
+    takeaways: [
       {
-        "title": "Throw Error Objects",
-        "desc": "Always throw new Error() so stack traces are preserved."
+        title: "Prevent Fatal Crashes",
+        desc: "try/catch intercepts runtime exceptions without halting program execution."
       },
       {
-        "title": "Never Catch Silently",
-        "desc": "Never leave catch blocks empty; log and notify appropriately."
+        title: "Always Throw Error Instances",
+        desc: "Use throw new Error() so stack traces and error metadata are properly preserved."
       },
       {
-        "title": "finally Guarantees Cleanup",
-        "desc": "Use finally blocks to close connections and reset loading states."
+        title: "finally Guarantees Cleanup",
+        desc: "Use finally to close resources, reset spinners, or release locks."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "Why should you throw `new Error(\"msg\")` instead of `throw \"msg\"`?",
-      "options": [
-        "Error objects automatically capture a full stack trace for debugging",
-        "String errors are illegal in modern browsers and throw syntax errors",
-        "Error objects run faster in V8",
-        "String errors take up 10x more memory"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "Which block in a try/catch/finally statement is guaranteed to run regardless of whether an error occurred?",
+      options: [
+        "The catch block",
+        "The finally block",
+        "The try block",
+        "None of them"
       ],
-      "correctIndex": 0,
-      "explanation": "`new Error()` instantiates an Error object that captures a complete call stack trace, showing the exact file and line number where the problem originated."
+      correctIndex: 1,
+      explanation: "The finally block always executes after try and catch have finished, making it the ideal location for cleanup code like closing connections and resetting loading states."
     }
   }
 };

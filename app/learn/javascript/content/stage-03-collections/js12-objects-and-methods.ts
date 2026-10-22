@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js12ObjectsAndMethodsContent: StandardLessonContent = {
-  "slug": "js12-objects-and-methods",
-  "code": "JS-12",
-  "title": "Objects & Methods: Key-Value Data Modeling",
-  "subtitle": "Model complex real-world entities using JavaScript objects, property access, and object methods.",
-  "sections": [
+  slug: "js12-objects-and-methods",
+  code: "JS-12",
+  title: "Working with Objects",
+  subtitle: "Structure structured data with key-value pairs, access dynamic properties using bracket notation, and define object methods.",
+  sections: [
     {
-      "id": "part1",
-      "label": "Entities & Models",
-      "icon": "🏛️",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Object Structure",
+      icon: "📦",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Keys, Values & Methods",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Property Access",
+      icon: "⚡",
+      tag: "SYNTAX"
     },
     {
-      "id": "part3",
-      "label": "Dynamic Access & AI Traps",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "Methods & Shorthands",
+      icon: "⚙️",
+      tag: "METHODS"
     },
     {
-      "id": "part4",
-      "label": "Missing Key Access",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Dynamic Key Pitfall",
+      icon: "⚠️",
+      tag: "DEBUGGING"
     },
     {
-      "id": "part5",
-      "label": "Objects Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Objects Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Summary Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Modeling Real-World Entities",
-    "bigPicture": "Objects allow you to group related properties and functions together under a single entity. While arrays store ordered lists of items, objects store labeled key-value pairs.",
-    "analogy": "Think of an object like an ID card. It has labeled fields: `Name`, `Age`, `Occupation`, and `Photo`. You look up fields by their label name.",
-    "diagram": "const user = {\n  id: 101,          --> Key: id,          Value: 101\n  name: \"Alex\",     --> Key: name,        Value: \"Alex\"\n  role: \"admin\",    --> Key: role,        Value: \"admin\"\n  login() { ... }   --> Key: login,       Value: function\n};",
-    "breakdownTitle": "Object Fundamentals",
-    "breakdownItems": [
+  part1: {
+    title: "Structuring Data with Objects",
+    bigPicture: "Objects are collections of key-value pairs enclosed in curly braces {}. They group related properties and behaviors together into a single structured entity.",
+    analogy: "Like an identity card: the card has named fields like Name, Age, and Occupation, each holding a corresponding value.",
+    diagram: "+-------------------------------------------+\n| Object: user                              |\n| name: \"Alex\"                              |\n| role: \"Admin\"                             |\n| loginCount: 42                            |\n| logDetails(): method                      |\n+-------------------------------------------+",
+    breakdownTitle: "Object Fundamentals",
+    breakdownItems: [
       {
-        "title": "Keys & Values",
-        "desc": "Keys are string identifiers; values can be any data type, including functions and nested objects."
+        title: "Keys and Values",
+        desc: "Keys (properties) are strings or symbols that identify values stored in the object."
       },
       {
-        "title": "Dot vs Bracket Notation",
-        "desc": "Use `user.name` for static keys; use `user[keyVar]` for dynamic variables."
+        title: "Dot vs Bracket Notation",
+        desc: "Dot notation (user.name) is preferred for static keys; bracket notation (user[key]) is required for dynamic keys."
       },
       {
-        "title": "Object Methods",
-        "desc": "Functions stored directly on an object that operate on its data."
+        title: "Methods",
+        desc: "Functions stored as properties inside an object are called methods."
       }
     ]
   },
-  "part2": {
-    "title": "Object Syntax & Access Patterns",
-    "intro": "Create objects, access properties, and invoke object methods.",
-    "cards": [
+  part2: {
+    title: "Reading and Writing Properties",
+    intro: "Understand when to use dot notation vs dynamic bracket notation.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Literal",
-        "title": "Object Literal ({})",
-        "description": "Define key-value pairs separated by commas inside curly braces.",
-        "codeSnippet": "const profile = {\n  username: \"alex99\",\n  followers: 240,\n  verified: true,\n};\nconsole.log(profile.username); // Output: alex99",
-        "color": "emerald"
+        number: "01",
+        tag: "Dot Notation",
+        title: "Dot Access",
+        description: "The standard way to read and write properties with known, valid identifier names.",
+        codeSnippet: "const user = { name: \"Maya\", level: 3 };\nconsole.log(user.name); // Output: Maya\nuser.level = 4; // Update property\nconsole.log(user.level); // Output: 4",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Dynamic",
-        "title": "Bracket Notation",
-        "description": "Access properties dynamically when the key name is stored in a variable.",
-        "codeSnippet": "const metric = \"followers\";\nconsole.log(profile[metric]); // Output: 240",
-        "color": "cyan"
+        number: "02",
+        tag: "Bracket Notation",
+        title: "Dynamic Bracket Access",
+        description: "Evaluates variables or strings containing spaces and special characters.",
+        codeSnippet: "const book = { \"book-title\": \"Modern JS\" };\nconsole.log(book[\"book-title\"]); // Output: Modern JS\n\nconst keyName = \"author\";\nbook[keyName] = \"Sarah\";\nconsole.log(book.author); // Output: Sarah",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Methods",
-        "title": "Object Methods",
-        "description": "Functions attached to objects to perform actions on their data.",
-        "codeSnippet": "const greeter = {\n  name: \"LearnCraft\",\n  greet() {\n    return \"Welcome to \" + this.name;\n  }\n};\nconsole.log(greeter.greet()); // Output: Welcome to LearnCraft",
-        "color": "purple"
+        number: "03",
+        tag: "Methods",
+        title: "Object Methods",
+        description: "Define actions directly on the object using modern method shorthand.",
+        codeSnippet: "const robot = {\n  model: \"RX-9\",\n  greet() {\n    return \"Greetings from \" + this.model;\n  }\n};\nconsole.log(robot.greet()); // Output: Greetings from RX-9",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Dot Notation by Default",
-      "content": "Use dot notation `obj.prop` whenever possible. Reserve bracket notation `obj[prop]` for dynamic keys."
+    rule: {
+      title: "Notation Choice",
+      content: "Use dot notation by default. Switch to bracket notation only when the property name is stored in a variable or contains hyphens/spaces."
     }
   },
-  "part3": {
-    "title": "Dynamic Properties & Reading AI Code",
-    "intro": "Learn to safely check property existence and inspect object keys.",
-    "points": [
+  part3: {
+    title: "Modern Object Shorthands & Utilities",
+    intro: "Write clean, readable objects with ES6 features and standard utilities.",
+    points: [
       {
-        "title": "1. Dynamic Property Evaluation",
-        "content": "Use bracket notation when reading properties from user input, function parameters, or URL queries.",
-        "codeSnippet": "function getStat(user, statKey) {\n  return user[statKey]; // Evaluates the variable statKey\n}\n\nconst athlete = { speed: 92, stamina: 88 };\nconsole.log(\"Speed:\", getStat(athlete, \"speed\")); // Output: Speed: 92"
+        title: "Property Value Shorthand",
+        content: "If the variable name matches the property key name, you can write the identifier just once.",
+        codeSnippet: "const title = \"Architect\";\nconst salary = 120000;\n// Instead of { title: title, salary: salary }:\nconst job = { title, salary };\nconsole.log(job); // Output: { title: 'Architect', salary: 120000 }"
       },
       {
-        "title": "2. Verifying Key Existence",
-        "content": "Use the `in` operator to check if a property exists on an object before reading it.",
-        "codeSnippet": "const settings = { darkMode: true, fontSize: 16 };\nconsole.log(\"darkMode\" in settings);    // Output: true\nconsole.log(\"notifications\" in settings); // Output: false"
+        title: "Object.keys(), Object.values(), Object.entries()",
+        content: "Extract arrays of keys, values, or key-value pairs to iterate over objects cleanly.",
+        codeSnippet: "const stats = { wins: 10, losses: 2 };\nconsole.log(Object.keys(stats));   // Output: ['wins', 'losses']\nconsole.log(Object.values(stats)); // Output: [10, 2]\nconsole.log(Object.entries(stats)); // Output: [['wins', 10], ['losses', 2]]"
       },
       {
-        "title": "3. Inspecting Keys with Object.keys",
-        "content": "Use `Object.keys()` to extract an array of all property names on an object for looping.",
-        "codeSnippet": "const config = { host: \"localhost\", port: 3000 };\nconst keys = Object.keys(config);\nconsole.log(\"Config keys:\", keys); // Output: Config keys: [ 'host', 'port' ]"
+        title: "Computed Property Names",
+        content: "Compute property keys dynamically using square brackets inside the object literal.",
+        codeSnippet: "const prefix = \"api_\";\nconst config = {\n  [prefix + \"timeout\"]: 5000\n};\nconsole.log(config.api_timeout); // Output: 5000"
       }
     ]
   },
-  "part4": {
-    "title": "Undefined Property TypeError",
-    "bad": {
-      "title": "❌ Reading Properties of Undefined",
-      "code": "const user = { name: \"Alex\" };\n// Bug: user.address is undefined!\n// Reading .city on undefined throws TypeError!\nconsole.log(user.address.city); // TypeError: Cannot read properties of undefined",
-      "explanation": "Accessing a missing key returns `undefined`. Attempting to access a nested key on `undefined` causes a fatal application crash."
+  part4: {
+    title: "Common Pitfall: Dot Access with Dynamic Variables",
+    bad: {
+      title: "❌ Using Dot Notation with a Variable Name",
+      code: "const field = \"email\";\nconst user = { email: \"user@test.com\" };\n// Bug: user.field looks for literal property named 'field', NOT 'email'!\nconsole.log(user.field); // Output: undefined",
+      explanation: "Dot notation treats the text after the dot as literal. It does not evaluate the variable field."
     },
-    "good": {
-      "title": "✅ Safe Optional Chaining (?.)",
-      "code": "const user = { name: \"Alex\" };\n// Safe: ?. stops and returns undefined without crashing\nconsole.log(user.address?.city); // Output: undefined (no crash!)",
-      "explanation": "Use optional chaining `?.` to safely navigate nested properties when intermediate objects might be missing."
+    good: {
+      title: "✅ Use Bracket Notation for Variables",
+      code: "const field = \"email\";\nconst user = { email: \"user@test.com\" };\n// Correct: user[field] evaluates field -> user[\"email\"]\nconsole.log(user[field]); // Output: user@test.com",
+      explanation: "Bracket notation evaluates expressions and variables, accessing the property whose name matches the variable's value."
     }
   },
-  "part5": {
-    "title": "Interactive Objects Sandbox",
-    "intro": "Create objects, write methods, and access keys dynamically.",
-    "starterCode": "// 1. Create a task object:\nconst task = {\n  id: 101,\n  title: \"Build Login Component\",\n  status: \"In Progress\",\n  complete() {\n    this.status = \"Done\";\n    return \"Task marked as \" + this.status;\n  },\n};\n\nconsole.log(\"Initial status:\", task.status);\nconsole.log(task.complete());\nconsole.log(\"Updated status:\", task.status);\n"
+  part5: {
+    title: "Objects Sandbox",
+    intro: "Practice creating objects with shorthand syntax and accessing dynamic properties.",
+    starterCode: "const make = \"Tesla\";\nconst model = \"Model 3\";\n\nconst car = {\n  make,\n  model,\n  mileage: 15000,\n  drive(miles) {\n    this.mileage += miles;\n    return `${this.make} ${this.model} now has ${this.mileage} miles.`;\n  }\n};\n\nconsole.log(car.drive(250));\nconsole.log(\"Object keys:\", Object.keys(car));\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Objects & Methods",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Objects",
+    takeaways: [
       {
-        "title": "Key-Value Pairs",
-        "desc": "Objects model structured real-world data with named labels."
+        title: "Dot vs Bracket Access",
+        desc: "Use dot notation for static properties; use bracket notation for dynamic variable keys."
       },
       {
-        "title": "Dot vs Brackets",
-        "desc": "Use dot notation for static keys, brackets for variable keys."
+        title: "Shorthand Syntax",
+        desc: "Use property and method shorthands to eliminate redundant boilerplate code."
       },
       {
-        "title": "Use Optional Chaining",
-        "desc": "Prevent TypeError crashes when reading nested properties with ?."
+        title: "Object Utilities",
+        desc: "Use Object.keys(), Object.values(), and Object.entries() to inspect and iterate objects."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "When should bracket notation `obj[key]` be used instead of dot notation `obj.key`?",
-      "options": [
-        "When the property name is stored inside a variable",
-        "When the object has more than 10 properties",
-        "Only inside class constructors",
-        "Only when reading numbers"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "If `const key = \"score\"; const data = { score: 100 };`, what does `data.key` return?",
+      options: [
+        "100",
+        "undefined",
+        "\"score\"",
+        "TypeError"
       ],
-      "correctIndex": 0,
-      "explanation": "Bracket notation evaluates the expression inside the brackets, allowing you to access properties dynamically using variables."
+      correctIndex: 1,
+      explanation: "Dot notation does not evaluate variables; it looks for a property literally named `key`. Since `data` has no property named `key`, it returns `undefined`. Use `data[key]` to access 100."
     }
   }
 };

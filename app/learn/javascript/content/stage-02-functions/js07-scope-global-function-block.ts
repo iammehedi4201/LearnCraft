@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js07ScopeGlobalFunctionBlockContent: StandardLessonContent = {
-  "slug": "js07-scope-global-function-block",
-  "code": "JS-07",
-  "title": "Scope & Lexical Environment: Block, Function & Global",
-  "subtitle": "Understand how variables are isolated in blocks, how functions create scopes, and how the scope chain works.",
-  "sections": [
+  slug: "js07-scope-global-function-block",
+  code: "JS-07",
+  title: "How Scope Works",
+  subtitle: "Master lexical scoping, inside-out scope chain lookup, variable shadowing, and why block-scoped let/const prevents leaks.",
+  sections: [
     {
-      "id": "part1",
-      "label": "Scope Hierarchy",
-      "icon": "🌐",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Lexical Scope Model",
+      icon: "🌐",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Block vs Function",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "The Three Scope Tiers",
+      icon: "📐",
+      tag: "MECHANICS"
     },
     {
-      "id": "part3",
-      "label": "Scope Chain & AI Bugs",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "The Scope Chain",
+      icon: "🔗",
+      tag: "LOOKUP CHAIN"
     },
     {
-      "id": "part4",
-      "label": "Variable Leak Bug",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Variable Shadowing & var Leak",
+      icon: "⚠️",
+      tag: "TRAPS"
     },
     {
-      "id": "part5",
-      "label": "Scope Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Scope Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Core Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Where Do Variables Live?",
-    "bigPicture": "Scope determines where variables are accessible in your code. Proper scoping prevents variables from colliding and accidentally overwriting each other.",
-    "analogy": "Think of scope like security badges in a building. Visitors in the lobby (global) cannot enter private offices (blocks), but staff in private offices can see the lobby.",
-    "diagram": "[ Global Scope: appTitle = \"LearnCraft\" ]\n       |\n       +---> [ Function Scope: user = \"Alex\" ]\n              |\n              +---> [ Block Scope: tempToken = \"xyz123\" ]\n                    (tempToken cannot escape this block!)",
-    "breakdownTitle": "Three Levels of Scope",
-    "breakdownItems": [
+  part1: {
+    title: "How Lexical Scope Works",
+    bigPicture: "Scope determines where variables are accessible in your code. JavaScript uses lexical scoping: accessibility is determined strictly by the physical location where variables and blocks are written in the source code.",
+    analogy: "Think of one-way tinted glass: someone inside a room can look out and see everything in the hallway, but people outside in the hallway cannot see inside your room.",
+    diagram: "+---------------------------------------------------+\n| GLOBAL SCOPE                                      |\n| const site = \"LearnCraft\";                         |\n|                                                   |\n|   +---------------------------------------------+ |\n|   | FUNCTION SCOPE: loadUser()                  | |\n|   | const userId = 42;                          | |\n|   |                                             | |\n|   |   +---------------------------------------+ | |\n|   |   | BLOCK SCOPE: if (isAdmin) { ... }     | | |\n|   |   | const token = \"XYZ-999\";              | | |\n|   |   | (token is trapped inside this block!) | | |\n|   |   +---------------------------------------+ | |\n|   +---------------------------------------------+ |\n+---------------------------------------------------+",
+    breakdownTitle: "Scope Rules",
+    breakdownItems: [
       {
-        "title": "Block Scope (let & const)",
-        "desc": "Variables declared inside curly braces `{}` are trapped inside that block."
+        title: "Lexical Scoping",
+        desc: "Scope is determined at author time when you write the code, based on the nesting of blocks and functions."
       },
       {
-        "title": "Function Scope",
-        "desc": "Variables declared inside a function cannot be accessed outside the function."
+        title: "Inside-Out Visibility",
+        desc: "Code inside an inner block can see and access variables declared in outer parent scopes. Outer code cannot access inner variables."
       },
       {
-        "title": "Global Scope",
-        "desc": "Variables declared outside all functions and blocks, accessible everywhere."
+        title: "Block vs Function Isolation",
+        desc: "const and let are bound to the nearest enclosing curly braces {}. var ignores blocks and leaks to the enclosing function."
       }
     ]
   },
-  "part2": {
-    "title": "Scope Levels in Action",
-    "intro": "Understand how block scope, function scope, and global scope isolate variables.",
-    "cards": [
+  part2: {
+    title: "The Three Tiers of Scope in JavaScript",
+    intro: "Understand the three distinct boundaries where variables live in memory.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Block",
-        "title": "Block Scope ({})",
-        "description": "Variables declared with `let` or `const` inside `{}` cannot leak outside.",
-        "codeSnippet": "if (true) {\n  const secret = \"private-key-123\";\n  console.log(\"Inside block:\", secret);\n}\n// console.log(secret); // ReferenceError: secret is not defined",
-        "color": "emerald"
+        number: "01",
+        tag: "Global",
+        title: "Global Scope",
+        description: "Variables declared outside of any function or curly braces. Accessible anywhere in the application.",
+        codeSnippet: "const APP_NAME = \"LearnCraft\";\n\nfunction showApp() {\n  console.log(APP_NAME); // Can access global\n}\nshowApp(); // Output: LearnCraft",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Function",
-        "title": "Function Scope",
-        "description": "Functions create an isolated scope for their parameters and local variables.",
-        "codeSnippet": "function calculateTax(amount) {\n  const taxRate = 0.08;\n  return amount * taxRate;\n}\nconsole.log(calculateTax(100)); // Output: 8\n// console.log(taxRate); // ReferenceError: taxRate is not defined",
-        "color": "cyan"
+        number: "02",
+        tag: "Function",
+        title: "Function Scope",
+        description: "Variables declared inside a function body cannot be accessed from outside that function.",
+        codeSnippet: "function generateToken() {\n  const secret = \"jwt_secret_123\";\n  return secret;\n}\n\ngenerateToken();\n// console.log(secret); // ReferenceError: secret is not defined",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Lookup",
-        "title": "Scope Chain",
-        "description": "JavaScript looks upward through parent scopes to find variables.",
-        "codeSnippet": "const globalApp = \"LearnCraft\";\nfunction showBanner() {\n  const page = \"Home\";\n  console.log(globalApp + \" - \" + page); // Output: LearnCraft - Home\n}\nshowBanner();",
-        "color": "purple"
+        number: "03",
+        tag: "Block",
+        title: "Block Scope (let / const)",
+        description: "Variables declared with let or const inside any { ... } block (if, for, while) are trapped inside.",
+        codeSnippet: "if (true) {\n  const blockVar = \"Protected inside if block\";\n}\n// console.log(blockVar); // ReferenceError: blockVar is not defined",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Principle of Least Privilege",
-      "content": "Declare variables in the narrowest scope possible. Keep global variables to an absolute minimum."
+    rule: {
+      title: "The One-Way Rule of Scope",
+      content: "Inner scopes can look outward to their parent scopes. Outer scopes can NEVER reach inward into a child function or block."
     }
   },
-  "part3": {
-    "title": "Scope Chain & Reading AI Code",
-    "intro": "Trace variable lookup and avoid variable shadowing bugs.",
-    "points": [
+  part3: {
+    title: "The Scope Chain: Inside-Out Lookup",
+    intro: "Step-by-step resolution of variable identifiers by the JavaScript engine.",
+    points: [
       {
-        "title": "1. Upward Lookup Chain",
-        "content": "Inner scopes can read variables from parent scopes, but parent scopes cannot reach down into child scopes.",
-        "codeSnippet": "const brand = \"LearnCraft\";\n\nfunction printReceipt(item, price) {\n  const formattedPrice = \"$\" + price;\n  // Can access brand, item, and formattedPrice:\n  console.log(brand + \": \" + item + \" for \" + formattedPrice);\n}\n\nprintReceipt(\"Pro Membership\", 29);\n// Output: LearnCraft: Pro Membership for $29"
+        title: "1. Check Current Local Scope",
+        content: "When a variable name is read, the engine first searches the immediate current block or function environment.",
+        codeSnippet: "function checkLocal() {\n  const val = \"local\";\n  console.log(val); // Step 1: Found immediately in local scope -> 'local'\n}\ncheckLocal(); // Output: local"
       },
       {
-        "title": "2. Variable Shadowing Caution",
-        "content": "When an inner variable shares the same name as an outer variable, it shadows the outer one, which can cause confusion.",
-        "codeSnippet": "const theme = \"dark\";\n\nfunction renderCard() {\n  const theme = \"light\"; // Shadows the outer theme!\n  console.log(\"Card theme:\", theme); // Output: Card theme: light\n}\n\nrenderCard();\nconsole.log(\"Global theme:\", theme); // Output: Global theme: dark"
+        title: "2. Climb to Enclosing Parent Scope",
+        content: "If the variable is not in the local scope, the engine moves up to the enclosing parent scope and checks there.",
+        codeSnippet: "const globalGreeting = \"Hello\";\nfunction outer() {\n  function inner() {\n    // Not in inner -> climbs up to global scope\n    console.log(globalGreeting);\n  }\n  inner();\n}\nouter(); // Output: Hello"
       },
       {
-        "title": "3. Accidental Global Leaks",
-        "content": "Assigning to an undeclared variable without `const` or `let` accidentally creates a global variable in sloppy mode.",
-        "codeSnippet": "function setConfig() {\n  // ❌ Accidental global leak (missing const/let):\n  // apiEndpoint = \"https://api.dev\";\n  \n  // ✅ Clean local declaration:\n  const apiEndpoint = \"https://api.dev\";\n  console.log(\"Configured:\", apiEndpoint);\n}\nsetConfig();"
+        title: "3. Reaching the Top (ReferenceError)",
+        content: "If the engine climbs all the way up to the Global Scope and still cannot find the variable, it throws a fatal ReferenceError.",
+        codeSnippet: "function findNonExistent() {\n  // console.log(unknownData);\n  // ReferenceError: unknownData is not defined\n}\nfindNonExistent();"
       }
     ]
   },
-  "part4": {
-    "title": "Accidental Variable Leaks with var",
-    "bad": {
-      "title": "❌ var Leaks Outside Block Scope",
-      "code": "for (var i = 0; i < 3; i++) {\n  // Loop work...\n}\n\n// Bug: i leaked out into the outer scope!\nconsole.log(\"Leaked counter:\", i); // Output: Leaked counter: 3",
-      "explanation": "`var` ignores block `{}` scope, leaking variables into the enclosing function or global scope and causing accidental collisions."
+  part4: {
+    title: "Common Traps: Variable Shadowing & var Leaks",
+    bad: {
+      title: "❌ var Leaks Out of Block Scopes",
+      code: "if (true) {\n  var leakedSecret = \"Exposed outside!\";\n}\n// var does NOT respect block scope {}\nconsole.log(leakedSecret); // Output: Exposed outside! (Pollutes scope)",
+      explanation: "var ignores curly braces and leaks variables into the enclosing function or global scope, causing hard-to-track bugs."
     },
-    "good": {
-      "title": "✅ let Stays Safely Contained",
-      "code": "for (let i = 0; i < 3; i++) {\n  // Loop work...\n}\n\n// i is safely isolated to the loop block\n// console.log(i); // ReferenceError: i is not defined\nconsole.log(\"Loop completed cleanly!\"); // Output: Loop completed cleanly!",
-      "explanation": "`let` and `const` are strictly block-scoped, ensuring loop counters and temporary variables cannot leak."
+    good: {
+      title: "✅ const & let Respect Block Scope",
+      code: "if (true) {\n  const safeSecret = \"Protected inside!\";\n  console.log(safeSecret); // Output: Protected inside!\n}\n// safeSecret is inaccessible out here, keeping code modular\n// console.log(safeSecret); // ReferenceError (Safe!)",
+      explanation: "Using const and let locks the variable within its block, preventing accidental data leaks and scope pollution."
     }
   },
-  "part5": {
-    "title": "Interactive Scope Sandbox",
-    "intro": "Observe how variables in different scopes behave in the live editor.",
-    "starterCode": "// 1. Global variable:\nconst appVersion = \"1.0.0\";\n\nfunction startSession(userId) {\n  // 2. Function-scoped variable:\n  const sessionId = \"sess_\" + userId;\n  \n  if (true) {\n    // 3. Block-scoped variable:\n    const token = \"auth_tok_abc\";\n    console.log(\"Inside block - Version:\", appVersion);\n    console.log(\"Inside block - Session:\", sessionId);\n    console.log(\"Inside block - Token:\", token);\n  }\n}\n\nstartSession(42);\n"
+  part5: {
+    title: "Scope Chain & Shadowing Sandbox",
+    intro: "Observe how inner variables shadow outer variables with the same name, and how scope lookup resolves.",
+    starterCode: "const role = \"Global Guest\";\n\nfunction dashboard() {\n  // Shadowing: inner variable hides the outer 'role'\n  const role = \"Dashboard Manager\";\n\n  if (true) {\n    const role = \"Block Admin\";\n    console.log(\"1. Inside block scope:\", role);\n  }\n\n  console.log(\"2. Inside function scope:\", role);\n}\n\ndashboard();\nconsole.log(\"3. In global scope:\", role);\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Scope & Lexical Environment",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Scope",
+    takeaways: [
       {
-        "title": "Block Scoping",
-        "desc": "let and const are confined inside their surrounding curly braces {}."
+        title: "Lexical Scoping",
+        desc: "Scope is determined by where variables are physically written in code."
       },
       {
-        "title": "Upward Lookup",
-        "desc": "Functions can access variables from outer parent scopes, but not vice versa."
+        title: "Inside-Out Lookup",
+        desc: "The engine searches the scope chain from inside out, throwing ReferenceError if not found."
       },
       {
-        "title": "Avoid Globals",
-        "desc": "Keep variables local to prevent accidental name collisions."
+        title: "Block Isolation with const/let",
+        desc: "Always use const and let to ensure variables remain safely contained within their blocks."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "What happens when you attempt to log `item` outside of `if (true) { const item = 10; }`?",
-      "options": [
-        "It prints 10",
-        "It prints undefined",
-        "ReferenceError: item is not defined",
-        "It prints null"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "What happens if a function tries to access a variable declared with `const` inside one of its child `if` blocks?",
+      options: [
+        "It successfully reads the value because parent scopes can see inside child blocks",
+        "It throws a ReferenceError because outer scopes cannot reach inside child block scopes",
+        "It returns undefined instead of throwing an error",
+        "It creates a new global variable with the same name automatically"
       ],
-      "correctIndex": 2,
-      "explanation": "Because `item` is declared with `const` inside a block `{}`, it is block-scoped and cannot be accessed outside the block."
+      correctIndex: 1,
+      explanation: "Block scope is strictly one-way: code inside the block can look outward, but code outside the block cannot access variables declared inside with const or let."
     }
   }
 };

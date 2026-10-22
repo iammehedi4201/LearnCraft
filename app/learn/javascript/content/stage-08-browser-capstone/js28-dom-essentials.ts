@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js28DomEssentialsContent: StandardLessonContent = {
-  "slug": "js28-dom-essentials",
-  "code": "JS-28",
-  "title": "DOM Essentials: Selecting & Modifying Elements",
-  "subtitle": "Interact with webpage HTML elements using querySelector, textContent, and classList.",
-  "sections": [
+  slug: "js28-dom-essentials",
+  code: "JS-28",
+  title: "Finding and Changing HTML Elements",
+  subtitle: "Query HTML elements with querySelector, update text and attributes safely, and avoid dangerous innerHTML injection vulnerabilities.",
+  sections: [
     {
-      "id": "part1",
-      "label": "The DOM Tree",
-      "icon": "🌳",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "The DOM Tree",
+      icon: "🌳",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Selecting & Updating",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Querying & Modifying",
+      icon: "⚡",
+      tag: "SYNTAX"
     },
     {
-      "id": "part3",
-      "label": "XSS Prevention & AI",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "classList & Attributes",
+      icon: "🎨",
+      tag: "STYLING"
     },
     {
-      "id": "part4",
-      "label": "innerHTML XSS Bug",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "innerHTML XSS Trap",
+      icon: "⚠️",
+      tag: "SECURITY"
     },
     {
-      "id": "part5",
-      "label": "DOM Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "DOM Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Summary Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "The Bridge to the Webpage",
-    "bigPicture": "The DOM (Document Object Model) is a tree representation of your HTML webpage in browser memory. JavaScript uses the DOM to read, create, update, and delete elements dynamically in real time.",
-    "analogy": "Think of HTML like a printed blueprint of a building. The DOM is the actual live building constructed in memory. JavaScript is the renovation crew that repaints walls and adds rooms dynamically.",
-    "diagram": "document\n   |\n   +---> document.querySelector(\"#header\")\n           |\n           +---> .textContent = \"Updated Title\"\n           +---> .classList.add(\"highlight\")",
-    "breakdownTitle": "DOM Core APIs",
-    "breakdownItems": [
+  part1: {
+    title: "The Document Object Model (DOM)",
+    bigPicture: "The DOM is an object tree representation of the HTML document created by the browser. JavaScript uses the DOM API to query elements, modify text, and update styles dynamically.",
+    analogy: "Like a building directory: the HTML is the physical building, and the DOM is the computerized map at the entrance that allows you to locate any room and change its signage.",
+    diagram: "+-------------------------------------------+\n| document                                  |\n|   └── html                                |\n|        ├── head                           |\n|        └── body                           |\n|             ├── h1#title (\"LearnCraft\")   |\n|             └── button.btn (\"Submit\")     |\n+-------------------------------------------+",
+    breakdownTitle: "DOM Essentials",
+    breakdownItems: [
       {
-        "title": "querySelector()",
-        "desc": "Selects the first matching element using standard CSS selectors (`#id`, `.class`)."
+        title: "querySelector & querySelectorAll",
+        desc: "Find elements using standard CSS selectors (#id, .class, tag)."
       },
       {
-        "title": "textContent",
-        "desc": "Safely reads or writes text inside an element without security risks."
+        title: "textContent for Safe Text",
+        desc: "Safely reads and writes plain text inside an element without interpreting HTML tags."
       },
       {
-        "title": "classList",
-        "desc": "Adds, removes, or toggles CSS styling classes on elements."
+        title: "classList for Dynamic Styling",
+        desc: "Add, remove, or toggle CSS classes cleanly without touching raw class strings."
       }
     ]
   },
-  "part2": {
-    "title": "DOM Methods in Action",
-    "intro": "Select elements and modify text and styling classes safely.",
-    "cards": [
+  part2: {
+    title: "Selecting and Updating Elements",
+    intro: "Modern methods for finding elements and updating their content.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Selection",
-        "title": "querySelector()",
-        "description": "Finds the first matching element in the DOM tree.",
-        "codeSnippet": "// const btn = document.querySelector(\"#submit-btn\");\n// const item = document.querySelector(\".active-item\");\nconsole.log(\"Element selected using standard CSS selector\");",
-        "color": "emerald"
+        number: "01",
+        tag: "Select",
+        title: "querySelector()",
+        description: "Returns the first element matching any valid CSS selector.",
+        codeSnippet: "// Select by ID, class, or tag:\nconst titleEl = document.querySelector(\"#main-title\");\nconst submitBtn = document.querySelector(\"button.primary\");",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Text",
-        "title": "textContent Property",
-        "description": "Safely updates plain text without interpreting HTML tags.",
-        "codeSnippet": "const heading = { textContent: \"\" };\nheading.textContent = \"Welcome to LearnCraft!\";\nconsole.log(heading.textContent); // Output: Welcome to LearnCraft!",
-        "color": "cyan"
+        number: "02",
+        tag: "Text",
+        title: "textContent",
+        description: "Updates the text inside an element safely without parsing HTML.",
+        codeSnippet: "const heading = document.querySelector(\"h1\");\nheading.textContent = \"Welcome to LearnCraft!\";\n// Output: Sets plain text safely",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Styles",
-        "title": "classList.toggle()",
-        "description": "Adds a class if missing, removes it if present.",
-        "codeSnippet": "const classes = new Set([\"card\"]);\nclasses.add(\"expanded\");\nconsole.log(\"Class list:\", [...classes].join(\" \")); // Output: Class list: card expanded",
-        "color": "purple"
+        number: "03",
+        tag: "Classes",
+        title: "classList API",
+        description: "Manipulates CSS classes cleanly with add, remove, and toggle.",
+        codeSnippet: "const card = document.querySelector(\".card\");\ncard.classList.add(\"active\");\ncard.classList.remove(\"hidden\");\ncard.classList.toggle(\"highlight\");",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Never Use innerHTML for User Input",
-      "content": "Always use `textContent` to display user input. Using `innerHTML` opens your app to dangerous Cross-Site Scripting (XSS) attacks."
+    rule: {
+      title: "Security Rule",
+      content: "Never insert untrusted user input using innerHTML. Always use textContent to prevent Cross-Site Scripting (XSS) attacks."
     }
   },
-  "part3": {
-    "title": "Safe DOM Manipulation & Reading AI Code",
-    "intro": "Avoid security bugs and null pointer crashes when interacting with the DOM.",
-    "points": [
+  part3: {
+    title: "Attributes, Creation & Multiple Elements",
+    intro: "Working with lists of elements and HTML attributes.",
+    points: [
       {
-        "title": "1. Preventing XSS Attacks with textContent",
-        "content": "`textContent` escapes special characters, preventing hackers from injecting malicious `<script>` tags into your pages.",
-        "codeSnippet": "const untrustedInput = \"<img src='x' onerror='alert(1)'>\";\n\nconst safeElement = { textContent: \"\" };\nsafeElement.textContent = untrustedInput; // Treated as harmless literal text\nconsole.log(\"Escaped safe text:\", safeElement.textContent);"
+        title: "1. querySelectorAll() and NodeLists",
+        content: "querySelectorAll returns all matching elements as a NodeList that supports forEach.",
+        codeSnippet: "const buttons = document.querySelectorAll(\".btn\");\nbuttons.forEach(btn => {\n  btn.classList.add(\"rounded\");\n});"
       },
       {
-        "title": "2. Verifying Element Existence",
-        "content": "If `querySelector` fails to find an element, it returns `null`. Check that the element exists before modifying it.",
-        "codeSnippet": "const badge = null; // Simulating element not found in DOM\n\nif (badge) {\n  badge.textContent = \"Active\";\n} else {\n  console.log(\"Element was null, avoided TypeError crash!\");\n}"
+        title: "2. Setting Attributes Safely",
+        content: "Use setAttribute() or direct property assignment to set href, disabled, or data attributes.",
+        codeSnippet: "const link = document.querySelector(\"a\");\nlink.setAttribute(\"target\", \"_blank\");\nlink.href = \"https://learncraft.dev\";"
       },
       {
-        "title": "3. Creating New Elements with createElement",
-        "content": "Build new elements with `document.createElement()`, configure them safely, and append them to the DOM.",
-        "codeSnippet": "function createListItem(text) {\n  const item = { tagName: \"LI\", textContent: text };\n  return item;\n}\n\nconst newItem = createListItem(\"Master JavaScript DOM\");\nconsole.log(\"Created element:\", newItem.tagName, newItem.textContent);\n// Output: Created element: LI Master JavaScript DOM"
+        title: "3. Creating Elements with document.createElement()",
+        content: "Create new elements in memory and append them into the live document.",
+        codeSnippet: "const newBadge = document.createElement(\"span\");\nnewBadge.textContent = \"NEW\";\nnewBadge.classList.add(\"badge\");\ndocument.body.appendChild(newBadge);"
       }
     ]
   },
-  "part4": {
-    "title": "innerHTML Cross-Site Scripting (XSS)",
-    "bad": {
-      "title": "❌ Using innerHTML with Untrusted User Input",
-      "code": "const userComment = \"<script>stealCookies()</script>\";\n// Danger: innerHTML interprets user text as executable code!\ndocument.querySelector(\"#comments\").innerHTML = userComment;",
-      "explanation": "`innerHTML` executes HTML and scripts provided by users, exposing your site to session hijacking and account theft."
+  part4: {
+    title: "Common Pitfall: The innerHTML XSS Vulnerability",
+    bad: {
+      title: "❌ Using innerHTML with User Input (XSS Injection)",
+      code: "const userBio = \"<img src=x onerror=alert('Hacked!')>\";\n// Bug: innerHTML parses and executes malicious script tags and event handlers!\nconst container = document.querySelector(\"#bio-container\");\ncontainer.innerHTML = userBio; // XSS Vulnerability!",
+      explanation: "Using innerHTML with untrusted user input executes arbitrary JavaScript inside the victim's browser session."
     },
-    "good": {
-      "title": "✅ Safe textContent Escapes Input",
-      "code": "const userComment = \"<script>stealCookies()</script>\";\n// Safe: textContent renders literal characters without executing\nconst commentEl = { textContent: \"\" };\ncommentEl.textContent = userComment;\nconsole.log(\"Rendered safely as raw text:\", commentEl.textContent);",
-      "explanation": "`textContent` safely treats all incoming data as plain text, neutralising any potential script injection."
+    good: {
+      title: "✅ Use textContent to Neutralize HTML Tags",
+      code: "const userBio = \"<img src=x onerror=alert('Hacked!')>\";\nconst container = document.querySelector(\"#bio-container\");\n// Safe: Treats all characters as plain text literal, neutralizing scripts\ncontainer.textContent = userBio;\n// Output displays literal '<img...>' without running code!",
+      explanation: "textContent treats input strictly as raw text, automatically neutralizing malicious HTML and JavaScript injections."
     }
   },
-  "part5": {
-    "title": "Interactive DOM Sandbox",
-    "intro": "Simulate DOM element manipulation and classList management in the editor.",
-    "starterCode": "// Simulating DOM node manipulation:\nconst cardElement = {\n  id: \"product-101\",\n  textContent: \"Old Price: $100\",\n  classes: new Set([\"card\", \"theme-light\"]),\n  \n  updatePrice(newPrice) {\n    this.textContent = \"Special Price: $\" + newPrice;\n    this.classes.add(\"discounted\");\n  },\n};\n\nconsole.log(\"Initial text:\", cardElement.textContent);\ncardElement.updatePrice(79);\nconsole.log(\"Updated text:\", cardElement.textContent);\nconsole.log(\"Updated classes:\", [...cardElement.classes].join(\" \"));\n"
+  part5: {
+    title: "DOM Essentials Simulator Sandbox",
+    intro: "Simulate querying and mutating a DOM element's text and class list.",
+    starterCode: "// Simulated DOM element node:\nconst mockElement = {\n  id: \"status-pill\",\n  textContent: \"Pending\",\n  classes: new Set([\"badge\"]),\n  classList: {\n    add(c) { mockElement.classes.add(c); },\n    remove(c) { mockElement.classes.delete(c); },\n    contains(c) { return mockElement.classes.has(c); }\n  }\n};\n\n// 1. Update text content safely:\nmockElement.textContent = \"Verified\";\n\n// 2. Update styles with classList:\nmockElement.classList.remove(\"badge-pending\");\nmockElement.classList.add(\"badge-success\");\n\nconsole.log(\"Updated text:\", mockElement.textContent);\nconsole.log(\"Updated classes:\", Array.from(mockElement.classes));\n"
   },
-  "part6": {
-    "title": "Key Takeaways: DOM Essentials",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: DOM Essentials",
+    takeaways: [
       {
-        "title": "Live Document Tree",
-        "desc": "The DOM represents live HTML in browser memory for JavaScript to update."
+        title: "querySelector",
+        desc: "Find any element using CSS selectors (#id, .class, element)."
       },
       {
-        "title": "Use textContent",
-        "desc": "Always prefer textContent over innerHTML to prevent XSS security vulnerabilities."
+        title: "textContent for Safety",
+        desc: "Always prefer textContent over innerHTML to protect against XSS injections."
       },
       {
-        "title": "Manage Classes",
-        "desc": "Use classList.add, remove, and toggle for styling instead of raw className strings."
+        title: "classList API",
+        desc: "Use classList.add/remove/toggle for clean CSS state management."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "Why is `element.textContent = userText;` preferred over `element.innerHTML = userText;`?",
-      "options": [
-        "textContent is 50x faster in all browsers",
-        "textContent prevents XSS vulnerabilities by treating input as raw text rather than executable HTML",
-        "innerHTML is deprecated in modern JavaScript",
-        "textContent automatically formats text with CSS"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "Why is `element.textContent` preferred over `element.innerHTML` when inserting user input?",
+      options: [
+        "Because textContent executes faster on mobile devices",
+        "Because textContent treats input strictly as plain text, preventing Cross-Site Scripting (XSS) attacks",
+        "Because innerHTML is deprecated in modern browsers",
+        "Because textContent automatically applies CSS styles"
       ],
-      "correctIndex": 1,
-      "explanation": "`textContent` escapes input, ensuring that characters like `<` and `>` are displayed as plain characters rather than executed as HTML or scripts."
+      correctIndex: 1,
+      explanation: "Using `textContent` ensures that any `<script>` tags or malicious HTML are rendered as plain text strings rather than executed as code, neutralizing XSS vulnerabilities."
     }
   }
 };

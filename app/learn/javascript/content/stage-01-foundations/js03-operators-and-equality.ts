@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js03OperatorsAndEqualityContent: StandardLessonContent = {
-  "slug": "js03-operators-and-equality",
-  "code": "JS-03",
-  "title": "Operators & Equality: Strict vs Loose Comparison",
-  "subtitle": "Master strict equality (===), avoid automatic type coercion traps, and use logical operators safely.",
-  "sections": [
+  slug: "js03-operators-and-equality",
+  code: "JS-03",
+  title: "Comparing Values with == and ===",
+  subtitle: "Understand why automatic type coercion causes critical bugs, how JavaScript converts values behind the scenes, and why strict equality (===) is mandatory.",
+  sections: [
     {
-      "id": "part1",
-      "label": "Equality Overview",
-      "icon": "⚖️",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Strict vs Loose Equality",
+      icon: "⚖️",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "=== vs ==",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Coercion Mechanics",
+      icon: "🔄",
+      tag: "MECHANICS"
     },
     {
-      "id": "part3",
-      "label": "Coercion Traps & AI Code",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "Coercion Traps Traced",
+      icon: "🧠",
+      tag: "STEP BY STEP"
     },
     {
-      "id": "part4",
-      "label": "Loose Equality Bugs",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Falsy Auth Bug",
+      icon: "⚠️",
+      tag: "DEBUGGING"
     },
     {
-      "id": "part5",
-      "label": "Operators Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Equality Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Core Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Comparing Values Safely",
-    "bigPicture": "Comparing values is at the heart of all programming decisions. JavaScript provides both strict comparison (`===`) and loose comparison (`==`). Understanding the difference prevents critical bugs.",
-    "analogy": "Strict equality (`===`) checks both the ticket number and the seat section. Loose equality (`==`) tries to force different tickets to match, often letting the wrong person in.",
-    "diagram": "5 === 5    --> true   (Same value, same type)\n5 === \"5\"  --> false  (Number vs String: rejected!)\n5 == \"5\"   --> true   (Coerced into same type: dangerous!)",
-    "breakdownTitle": "Comparison Operators",
-    "breakdownItems": [
+  part1: {
+    title: "Why Loose Equality (==) Is Dangerous",
+    bigPicture: "JavaScript provides two equality operators: strict equality (===) and loose equality (==). Loose equality attempts to convert both operands to the same type before comparing, causing unpredictable bugs.",
+    analogy: "Strict equality (===) checks both identity and passport stamp. Loose equality (==) tries to guess who you are by transforming your clothes, frequently letting unauthorized data pass through.",
+    diagram: "+---------------------------------------------------+\n|  STRICT (===): Check Type First                   |\n|  42 === \"42\"  --> Types differ (number vs string) |\n|                   --> Immediately returns FALSE   |\n+---------------------------------------------------+\n|  LOOSE (==): Implicit Coercion Algorithm          |\n|  42 == \"42\"   --> Converts string \"42\" to number  |\n|                   --> 42 == 42 --> Returns TRUE   |\n+---------------------------------------------------+",
+    breakdownTitle: "Comparison Rules",
+    breakdownItems: [
       {
-        "title": "Strict Equality (===)",
-        "desc": "Compares both value and data type without any automatic conversion."
+        title: "Strict Equality (===)",
+        desc: "Compares type and value. If the types do not match, it instantly returns false without converting anything."
       },
       {
-        "title": "Strict Inequality (!==)",
-        "desc": "Checks that either the value or the data type does not match."
+        title: "Loose Equality (==)",
+        desc: "Executes the Abstract Equality Comparison Algorithm, automatically converting types (string to number, boolean to number)."
       },
       {
-        "title": "Loose Equality (==)",
-        "desc": "Converts types behind the scenes before comparing, creating unpredictable results."
+        title: "Strict Inequality (!==)",
+        desc: "Always pair with ===. Checks that either the value or the type is different."
       }
     ]
   },
-  "part2": {
-    "title": "Strict vs Loose Equality",
-    "intro": "Compare how strict equality and loose equality evaluate different values.",
-    "cards": [
+  part2: {
+    title: "How Implicit Coercion Works",
+    intro: "Learn how the JavaScript engine converts values when using loose equality.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Safe",
-        "title": "Strict Equality (===)",
-        "description": "Returns true only when both operands have identical types and identical values.",
-        "codeSnippet": "console.log(42 === 42);   // Output: true\nconsole.log(42 === \"42\"); // Output: false (number !== string)",
-        "color": "emerald"
+        number: "01",
+        tag: "To Number",
+        title: "String to Number Conversion",
+        description: "When comparing a number and a string with ==, the engine coerces the string into a number.",
+        codeSnippet: "console.log(100 === \"100\"); // Output: false (Strict: type safe)\nconsole.log(100 == \"100\");  // Output: true  (Loose: coerces \"100\" -> 100)",
+        color: "rose"
       },
       {
-        "number": "02",
-        "tag": "Dangerous",
-        "title": "Loose Equality (==)",
-        "description": "Forces operands into a shared type before comparing, causing confusing bugs.",
-        "codeSnippet": "console.log(42 == \"42\");  // Output: true (string coerced to number)\nconsole.log(0 == false);   // Output: true (confusing automatic match!)",
-        "color": "rose"
+        number: "02",
+        tag: "Booleans",
+        title: "Boolean to Number Conversion",
+        description: "In loose comparison, true is converted to 1 and false is converted to 0.",
+        codeSnippet: "console.log(true == 1);     // Output: true (true -> 1)\nconsole.log(false == 0);    // Output: true (false -> 0)\nconsole.log(false === 0);   // Output: false (boolean !== number)",
+        color: "amber"
       },
       {
-        "number": "03",
-        "tag": "Logic",
-        "title": "Logical Operators",
-        "description": "Combine boolean conditions using AND (`&&`), OR (`||`), and NOT (`!`).",
-        "codeSnippet": "const isReady = true;\nconst hasAccess = false;\nconsole.log(isReady && hasAccess); // Output: false\nconsole.log(isReady || hasAccess); // Output: true",
-        "color": "purple"
+        number: "03",
+        tag: "null / undefined",
+        title: "null & undefined Special Case",
+        description: "null loosely equals undefined and nothing else in JavaScript (neither equals 0 or false).",
+        codeSnippet: "console.log(null == undefined); // Output: true\nconsole.log(null === undefined); // Output: false\nconsole.log(null == 0);         // Output: false",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "The Strict Equality Rule",
-      "content": "Always use `===` and `!==`. Never use `==` or `!=` in modern JavaScript."
+    rule: {
+      title: "Production Rule",
+      content: "Always use strict equality (===) and strict inequality (!==). Never use loose equality (==) in modern production code."
     }
   },
-  "part3": {
-    "title": "Coercion Traps & AI Code Reading",
-    "intro": "Learn to spot hidden type conversion bugs in both human and AI-generated code.",
-    "points": [
+  part3: {
+    title: "Step-by-Step Coercion Traps",
+    intro: "Trace how the engine calculates seemingly impossible loose equality results.",
+    points: [
       {
-        "title": "1. The String Plus Number Trap",
-        "content": "The `+` operator concatenates if either side is a string. Other operators like `-` and `*` convert to numbers.",
-        "codeSnippet": "console.log(\"10\" + 5); // Output: \"105\" (string concatenation!)\nconsole.log(\"10\" - 5); // Output: 5 (subtraction coerces to number)\nconsole.log(\"10\" * 2); // Output: 20 (multiplication coerces to number)"
+        title: "Trap 1: Why 0 == \"\" is true",
+        content: "The engine sees a number and a string. It converts the empty string \"\" into a number using Number(\"\"), which evaluates to 0. Then 0 == 0 evaluates to true.",
+        codeSnippet: "console.log(0 == \"\");   // Output: true\nconsole.log(0 === \"\");  // Output: false (number !== string)"
       },
       {
-        "title": "2. Explicit Conversion Over Coercion",
-        "content": "Always convert values explicitly with `Number()` or `String()` so intent is crystal clear.",
-        "codeSnippet": "const rawPrice = \"50\";\nconst shipping = 10;\n\n// Safe explicit math:\nconst total = Number(rawPrice) + shipping;\nconsole.log(\"Total price:\", total); // Output: Total price: 60"
+        title: "Trap 2: Why false == \"0\" is true",
+        content: "Step 1: The boolean false is converted to number 0. Step 2: The comparison is now 0 == \"0\". Step 3: The string \"0\" is converted to number 0. Step 4: 0 == 0 is true.",
+        codeSnippet: "console.log(false == \"0\");  // Output: true\nconsole.log(false === \"0\"); // Output: false"
       },
       {
-        "title": "3. Truthy & Falsy Values",
-        "content": "JavaScript evaluates values in boolean contexts. `0`, `\"\"`, `null`, `undefined`, and `NaN` are all falsy.",
-        "codeSnippet": "console.log(Boolean(0));        // Output: false\nconsole.log(Boolean(\"\"));       // Output: false\nconsole.log(Boolean(\"Alex\"));   // Output: true\nconsole.log(Boolean(100));      // Output: true"
+        title: "Trap 3: Transitivity Breakdown",
+        content: "In normal logic, if A == B and B == C, then A == C. In JavaScript loose equality, this breaks: \"0\" == 0 is true, and 0 == \"\" is true, but \"0\" == \"\" is false!",
+        codeSnippet: "console.log(\"0\" == 0);  // true\nconsole.log(0 == \"\");   // true\nconsole.log(\"0\" == \"\");  // Output: false (strings compared directly!)"
       }
     ]
   },
-  "part4": {
-    "title": "Loose Equality Trap",
-    "bad": {
-      "title": "❌ Loose Equality Matching Unexpected Types",
-      "code": "const userInput = \"0\";\n// Bug: \"0\" == false is true!\nif (userInput == false) {\n  console.log(\"User denied access!\"); // Runs unexpectedly!\n}",
-      "explanation": "Loose equality converts `\"0\"` and `false` to `0`, making them equal. This introduces security and logic flaws."
+  part4: {
+    title: "Real-World Bug: Loose Equality Security Hole",
+    bad: {
+      title: "❌ Loose Equality Allows Bypassing Checks",
+      code: "function verifyCoupon(inputCode) {\n  // Bug: Loose equality matches unexpected inputs\n  const secretPromo = 0;\n  if (inputCode == secretPromo) {\n    return \"50% Discount Applied!\";\n  }\n  return \"Invalid Coupon\";\n}\n\n// User passes empty string \"\" or false:\nconsole.log(verifyCoupon(\"\")); // Output: \"50% Discount Applied!\" (BUG!)",
+      explanation: "Because \"\" == 0 evaluates to true under loose equality, users accidentally receive unauthorized promotional discounts."
     },
-    "good": {
-      "title": "✅ Strict Equality Comparison",
-      "code": "const userInput = \"0\";\n// Clean: Checks value AND type\nif (userInput === \"false\") {\n  console.log(\"User denied access!\");\n} else {\n  console.log(\"User input recorded:\", userInput); // Output: User input recorded: 0\n}",
-      "explanation": "Strict equality (`===`) checks that both the type and the value match, preventing accidental type coercion."
+    good: {
+      title: "✅ Strict Equality Enforces Exact Value & Type",
+      code: "function verifyCoupon(inputCode) {\n  // Safe: Requires exact type and exact value\n  const secretPromo = 0;\n  if (inputCode === secretPromo) {\n    return \"50% Discount Applied!\";\n  }\n  return \"Invalid Coupon\";\n}\n\nconsole.log(verifyCoupon(\"\")); // Output: \"Invalid Coupon\"\nconsole.log(verifyCoupon(0));  // Output: \"50% Discount Applied!\"",
+      explanation: "Strict equality rejects empty string \"\" immediately because string does not match number, preventing security vulnerabilities."
     }
   },
-  "part5": {
-    "title": "Interactive Operators Sandbox",
-    "intro": "Observe how strict equality and explicit conversion behave in real code.",
-    "starterCode": "// 1. Strict equality check:\nconsole.log(\"10 === 10:\", 10 === 10);\nconsole.log(\"10 === '10':\", 10 === \"10\");\n\n// 2. Safe explicit conversion:\nconst quantity = \"5\";\nconst pricePerUnit = 20;\nconst totalCost = Number(quantity) * pricePerUnit;\nconsole.log(\"Total cost:\", totalCost);\n\n// 3. Logical combinations:\nconst isMember = true;\nconst hasCoupon = false;\nconsole.log(\"Discount eligible:\", isMember || hasCoupon);\n"
+  part5: {
+    title: "Equality & Coercion Sandbox",
+    intro: "Test different comparisons between numbers, strings, and booleans with === vs ==.",
+    starterCode: "// 1. Compare number vs string:\nconsole.log(\"Strict 42 === '42':\", 42 === \"42\");\nconsole.log(\"Loose 42 == '42':\", 42 == \"42\");\n\n// 2. Coercion surprises:\nconsole.log(\"0 == '':\", 0 == \"\");\nconsole.log(\"false == '0':\", false == \"0\");\nconsole.log(\"null == undefined:\", null == undefined);\n\n// 3. Recommended strict practice:\nconst userRole = \"admin\";\nconsole.log(\"Is Admin:\", userRole === \"admin\");\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Operators & Equality",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Equality & Coercion",
+    takeaways: [
       {
-        "title": "Always use ===",
-        "desc": "Strict equality prevents unexpected type coercion bugs."
+        title: "Strict Equality Always",
+        desc: "=== checks value and type without converting, preventing subtle bugs."
       },
       {
-        "title": "Beware of + with Strings",
-        "desc": "Adding a number to a string concatenates instead of doing math."
+        title: "Coercion Is Unpredictable",
+        desc: "Loose equality (==) coerces types, causing 0 == \"\" and false == \"0\" to be true."
       },
       {
-        "title": "Convert Explicitly",
-        "desc": "Use Number(value) or String(value) to make your code clear and predictable."
+        title: "Security & Bug Prevention",
+        desc: "Using === protects against unintended truthy/falsy matches in form inputs and API payloads."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "What is the output of `console.log(\"20\" + 5)` in JavaScript?",
-      "options": [
-        "25",
-        "\"205\"",
-        "NaN",
-        "TypeError"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "Why does `false == \"0\"` evaluate to true in JavaScript?",
+      options: [
+        "Because JavaScript treats all strings as booleans first",
+        "Because both false and \"0\" are coerced to the number 0 before comparison",
+        "Because \"0\" is an empty string in memory",
+        "Because loose equality ignores all punctuation marks"
       ],
-      "correctIndex": 1,
-      "explanation": "When either operand of the `+` operator is a string, JavaScript converts the other operand to a string and concatenates them, producing `\"205\"`."
+      correctIndex: 1,
+      explanation: "Under the loose equality algorithm, false is coerced to the number 0, and the string \"0\" is also coerced to the number 0. Since 0 equals 0, the result is true."
     }
   }
 };

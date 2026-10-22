@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js09CallbacksAndHigherOrderFunctionsContent: StandardLessonContent = {
-  "slug": "js09-callbacks-and-higher-order-functions",
-  "code": "JS-09",
-  "title": "Callbacks & Higher-Order Functions: Passing Logic",
-  "subtitle": "Treat functions as values, pass callbacks to customize behavior, and master higher-order function patterns.",
-  "sections": [
+  slug: "js09-callbacks-and-higher-order-functions",
+  code: "JS-09",
+  title: "Using Callback Functions",
+  subtitle: "Understand how JavaScript treats functions as values, pass callbacks to customize behavior, and master higher-order functions.",
+  sections: [
     {
-      "id": "part1",
-      "label": "First-Class Functions",
-      "icon": "🧩",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "First-Class Functions",
+      icon: "🎖️",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Higher-Order Patterns",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Callbacks in Action",
+      icon: "📞",
+      tag: "MECHANICS"
     },
     {
-      "id": "part3",
-      "label": "Pure Callbacks & AI Code",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "Execution Flow",
+      icon: "🧠",
+      tag: "FLOW TRACE"
     },
     {
-      "id": "part4",
-      "label": "Callback Hell vs Clean Code",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Immediate Invocation Bug",
+      icon: "⚠️",
+      tag: "TRAPS"
     },
     {
-      "id": "part5",
-      "label": "Callbacks Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Callbacks Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Core Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Functions as First-Class Values",
-    "bigPicture": "In JavaScript, functions are values just like numbers or strings. You can store them in variables, pass them into other functions as arguments (callbacks), and return them from functions.",
-    "analogy": "Think of a higher-order function like a power drill, and callbacks like interchangeable drill bits. The drill provides the motor; you swap bits to perform different tasks.",
-    "diagram": "processData(data, callbackFunction)\n                     |\n                     v\n             Calls callback(item)\n                     |\n                     v\n          Returns customized result",
-    "breakdownTitle": "Core Concepts",
-    "breakdownItems": [
+  part1: {
+    title: "Functions as First-Class Citizens",
+    bigPicture: "In JavaScript, functions are first-class values. Just like numbers, strings, and objects, functions can be assigned to variables, passed as arguments into other functions, and returned from functions.",
+    analogy: "Think of a callback like handing someone your phone number. You don't call yourself right now; you hand them the number so they can call you back when their task is ready.",
+    diagram: "+---------------------------------------------------+\n| 1. Define Callback: const double = (x) => x * 2;  |\n+---------------------------------------------------+\n                         |\n                         v (Passed as value)\n+---------------------------------------------------+\n| 2. Higher-Order Function: transformArray(arr, fn) |\n|    Executes fn(item) for each element in arr      |\n+---------------------------------------------------+\n                         |\n                         v\n[10, 20, 30] transformed by double() --> [20, 40, 60]",
+    breakdownTitle: "Core Definitions",
+    breakdownItems: [
       {
-        "title": "Callback Function",
-        "desc": "A function passed as an argument to another function to be executed later."
+        title: "Higher-Order Function (HOF)",
+        desc: "A function that receives another function as an argument, OR returns a new function as its output."
       },
       {
-        "title": "Higher-Order Function",
-        "desc": "A function that takes another function as an argument or returns a function."
+        title: "Callback Function",
+        desc: "The function that is passed into the HOF to be invoked (called back) during or after execution."
       },
       {
-        "title": "Separation of Concerns",
-        "desc": "Separates the generic algorithm (looping, fetching) from the specific business logic."
+        title: "Declarative Flexibility",
+        desc: "HOFs separate the mechanics of iteration or scheduling from the specific business logic you want executed."
       }
     ]
   },
-  "part2": {
-    "title": "Higher-Order Function Patterns",
-    "intro": "See how passing functions simplifies common programming patterns.",
-    "cards": [
+  part2: {
+    title: "How Higher-Order Functions Work",
+    intro: "Observe how passing function references creates adaptable, reusable abstractions.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Callback",
-        "title": "Passing Functions",
-        "description": "Pass a named or anonymous function directly into another function's parameter list.",
-        "codeSnippet": "function runTwice(fn) {\n  fn();\n  fn();\n}\nrunTwice(() => console.log(\"Hello!\"));\n// Output:\n// Hello!\n// Hello!",
-        "color": "emerald"
+        number: "01",
+        tag: "HOF",
+        title: "Accepting a Callback",
+        description: "A function takes an action as a parameter and invokes it with its internal data.",
+        codeSnippet: "function repeatAction(times, callback) {\n  for (let i = 1; i <= times; i++) {\n    callback(i);\n  }\n}\nrepeatAction(3, (step) => console.log(\"Step:\", step));\n// Output:\n// Step: 1\n// Step: 2\n// Step: 3",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Transform",
-        "title": "Data Transformation",
-        "description": "Apply a custom transformation function to each item in a dataset.",
-        "codeSnippet": "function transformText(text, formatter) {\n  return formatter(text);\n}\nconst shout = (s) => s.toUpperCase() + \"!\";\nconsole.log(transformText(\"ready\", shout)); // Output: READY!",
-        "color": "cyan"
+        number: "02",
+        tag: "Transform",
+        title: "Custom Transformations",
+        description: "Swap the callback to change how data is processed without rewriting the loop logic.",
+        codeSnippet: "function processScore(score, formatFn) {\n  return formatFn(score);\n}\nconst asPercent = (s) => s + \"%\";\nconst asPoints = (s) => s + \" pts\";\nconsole.log(processScore(95, asPercent)); // Output: 95%\nconsole.log(processScore(95, asPoints));  // Output: 95 pts",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Filter",
-        "title": "Predicate Callbacks",
-        "description": "Pass a function that returns true or false to select specific items.",
-        "codeSnippet": "function keepIf(arr, predicate) {\n  const result = [];\n  for (const item of arr) {\n    if (predicate(item)) result.push(item);\n  }\n  return result;\n}\nconsole.log(keepIf([1, 6, 3, 8], (n) => n > 5)); // Output: [ 6, 8 ]",
-        "color": "purple"
+        number: "03",
+        tag: "Async",
+        title: "Asynchronous Callbacks",
+        description: "Browser APIs like setTimeout execute callbacks after a delay or user event.",
+        codeSnippet: "console.log(\"Starting...\");\nsetTimeout(() => {\n  console.log(\"Callback executed after 500ms!\");\n}, 500);\n// Output:\n// Starting...\n// (500ms later) Callback executed after 500ms!",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Pure Callbacks Rule",
-      "content": "Callbacks should take inputs and return outputs without mutating variables in the outer scope."
+    rule: {
+      title: "Passing by Reference Rule",
+      content: "When passing a callback, pass only the function's name (reference). Do NOT add parentheses () unless you explicitly want to call it immediately during the setup call."
     }
   },
-  "part3": {
-    "title": "Callbacks in Practice & Reading AI Code",
-    "intro": "Learn to write clean callbacks and avoid the pyramid of callback nesting.",
-    "points": [
+  part3: {
+    title: "Step-by-Step Callback Execution Flow",
+    intro: "Trace how control transfers between the caller, the higher-order function, and the callback.",
+    points: [
       {
-        "title": "1. Passing Functions as Arguments",
-        "content": "Remember to pass the function reference `fn`, not the result of calling it `fn()`, unless you specifically want to pass its return value.",
-        "codeSnippet": "function notifyUser(name, sendEmail) {\n  console.log(\"Preparing notification for:\", name);\n  sendEmail(name); // Executes the callback\n}\n\nconst sendWelcome = (user) => console.log(\"Welcome email sent to:\", user);\nnotifyUser(\"Alex\", sendWelcome); // Notice: sendWelcome, NOT sendWelcome()\n// Output:\n// Preparing notification for: Alex\n// Welcome email sent to: Alex"
+        title: "Step 1: Passing the Function Pointer",
+        content: "When you pass a function name as an argument, JavaScript passes a reference to that function in memory, not its return value.",
+        codeSnippet: "function logAlert(message) {\n  console.log(\"[ALERT]:\", message);\n}\nfunction runSecurityCheck(notifier) {\n  notifier(\"Unauthorized access detected\");\n}\nrunSecurityCheck(logAlert); // Output: [ALERT]: Unauthorized access detected"
       },
       {
-        "title": "2. Inline Anonymous Callbacks",
-        "content": "Use arrow functions inline when the callback logic is small and only used in that one place.",
-        "codeSnippet": "const numbers = [10, 20, 30];\n\n// Clean 1-line inline callback:\nconst doubled = numbers.map(n => n * 2);\nconsole.log(\"Doubled:\", doubled); // Output: Doubled: [ 20, 40, 60 ]"
+        title: "Step 2: Synchronous Callback Flow",
+        content: "Synchronous callbacks run immediately within the caller's stack frame before the higher-order function returns.",
+        codeSnippet: "const items = [1, 2, 3];\n// The callback executes 3 times synchronously\nitems.forEach(item => console.log(item * 10));\n// Output: 10, 20, 30"
       },
       {
-        "title": "3. Keeping Callbacks Pure",
-        "content": "Avoid side effects inside callbacks. A callback should compute and return data rather than modifying external variables.",
-        "codeSnippet": "const prices = [15, 25, 40];\n\n// ✅ Pure callback: computes new value cleanly\nconst formatted = prices.map(p => \"$\" + p.toFixed(2));\nconsole.log(formatted); // Output: [ '$15.00', '$25.00', '$40.00' ]"
+        title: "Step 3: Returning Functions from Functions",
+        content: "Higher-order functions can also configure and return new specialized functions.",
+        codeSnippet: "function createLogger(moduleName) {\n  return (msg) => console.log(`[${moduleName}] ${msg}`);\n}\nconst authLog = createLogger(\"AUTH\");\nauthLog(\"User logged in\"); // Output: [AUTH] User logged in"
       }
     ]
   },
-  "part4": {
-    "title": "Callback Hell vs Flat Callbacks",
-    "bad": {
-      "title": "❌ Deep Callback Nesting (Callback Hell)",
-      "code": "// Nested callbacks create pyramid of doom\ngetUser(userId, (user) => {\n  getOrders(user.id, (orders) => {\n    getOrderDetails(orders[0].id, (details) => {\n      console.log(\"Order details loaded:\", details);\n    });\n  });\n});",
-      "explanation": "Nesting callbacks inside callbacks makes error handling painful and code unreadable."
+  part4: {
+    title: "The Classic Misconception: Passing fn vs fn()",
+    bad: {
+      title: "❌ Immediate Invocation with Parentheses ()",
+      code: "function notifyUser() {\n  return \"Notification sent!\";\n}\n\n// Bug: notifyUser() with parentheses runs IMMEDIATELY!\n// Passes the return string \"Notification sent!\" instead of the function\n// setTimeout(notifyUser(), 1000); // TypeError: callback must be a function!",
+      explanation: "Adding parentheses executes the function immediately right now, passing its return value instead of passing the function itself as a callback."
     },
-    "good": {
-      "title": "✅ Named Functions or Modern Promises",
-      "code": "// Named functions keep each step flat and testable:\nfunction handleDetails(details) {\n  console.log(\"Order details loaded:\", details);\n}\n\nfunction handleOrders(orders) {\n  getOrderDetails(orders[0].id, handleDetails);\n}\n\nfunction handleUser(user) {\n  getOrders(user.id, handleOrders);\n}",
-      "explanation": "Breaking nested callbacks into named functions flattens execution and makes each piece reusable and testable."
+    good: {
+      title: "✅ Pass the Function Reference Without ()",
+      code: "function notifyUser() {\n  console.log(\"Notification sent!\");\n}\n\n// Correct: Pass the function identifier itself\nsetTimeout(notifyUser, 1000);\n\n// Or wrap in an inline arrow callback if passing arguments:\nsetTimeout(() => notifyUser(), 1000);",
+      explanation: "Pass the function reference by name without parentheses, so the host function can invoke it at the appropriate time."
     }
   },
-  "part5": {
-    "title": "Interactive Callbacks Sandbox",
-    "intro": "Experiment with higher-order functions and callback parameters in the editor.",
-    "starterCode": "// 1. Higher-order function:\nfunction processNumbers(nums, operation) {\n  const output = [];\n  for (const n of nums) {\n    output.push(operation(n));\n  }\n  return output;\n}\n\n// 2. Test with different callbacks:\nconst baseNums = [1, 2, 3, 4];\nconst squared = processNumbers(baseNums, (x) => x * x);\nconst tripled = processNumbers(baseNums, (x) => x * 3);\n\nconsole.log(\"Squared:\", squared);\nconsole.log(\"Tripled:\", tripled);\n"
+  part5: {
+    title: "Callbacks Sandbox",
+    intro: "Build a filter function that takes an array and a test predicate callback function.",
+    starterCode: "function customFilter(list, predicateFn) {\n  const matching = [];\n  for (const item of list) {\n    // Invoke the callback on each element:\n    if (predicateFn(item)) {\n      matching.push(item);\n    }\n  }\n  return matching;\n}\n\nconst numbers = [5, 12, 8, 130, 44, 9];\n\n// 1. Filter even numbers:\nconst isEven = (n) => n % 2 === 0;\nconsole.log(\"Even numbers:\", customFilter(numbers, isEven));\n\n// 2. Filter numbers greater than 20 with an inline arrow callback:\nconst over20 = customFilter(numbers, (n) => n > 20);\nconsole.log(\"Numbers > 20:\", over20);\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Callbacks & Higher-Order Functions",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Callbacks & HOFs",
+    takeaways: [
       {
-        "title": "Functions as Values",
-        "desc": "Functions can be stored in variables and passed into other functions as arguments."
+        title: "First-Class Functions",
+        desc: "Functions can be stored in variables, passed into functions, and returned like any value."
       },
       {
-        "title": "Reference vs Call",
-        "desc": "Pass the function name (fn) to be called later, not fn() which calls it immediately."
+        title: "Higher-Order Functions",
+        desc: "Functions that take or return other functions to create reusable, customizable workflows."
       },
       {
-        "title": "Pure Callbacks",
-        "desc": "Design callbacks to transform and return data without mutating external state."
+        title: "Don't Add Parentheses",
+        desc: "Pass function references by name (handleClick) instead of calling them immediately (handleClick())."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "What is a higher-order function in JavaScript?",
-      "options": [
-        "A function that runs faster than regular functions",
-        "A function that takes a function as an argument or returns a function",
-        "A function that can only be called from inside a class",
-        "A function that automatically converts strings to numbers"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "What is the result of writing `setTimeout(greetUser(), 1000)` instead of `setTimeout(greetUser, 1000)`?",
+      options: [
+        "greetUser is executed after a 2-second delay instead of 1 second",
+        "greetUser is invoked immediately when the line runs, and its return value is passed to setTimeout",
+        "JavaScript automatically pauses the script until the function finishes",
+        "It triggers an infinite loop inside the Call Stack"
       ],
-      "correctIndex": 1,
-      "explanation": "A higher-order function is defined as any function that accepts another function as an argument, returns a function, or both."
+      correctIndex: 1,
+      explanation: "The parentheses `()` cause `greetUser()` to be called immediately on that line. Whatever it returns is passed to `setTimeout`, causing an error if the return value is not a function."
     }
   }
 };

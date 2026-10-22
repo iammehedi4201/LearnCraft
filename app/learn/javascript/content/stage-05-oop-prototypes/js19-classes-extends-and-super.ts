@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js19ClassesExtendsAndSuperContent: StandardLessonContent = {
-  "slug": "js19-classes-extends-and-super",
-  "code": "JS-19",
-  "title": "Classes: Modern OOP with extends, super & Private Fields",
-  "subtitle": "Write modern object-oriented code using classes, constructor functions, inheritance, and private fields.",
-  "sections": [
+  slug: "js19-classes-extends-and-super",
+  code: "JS-19",
+  title: "Working with Classes",
+  subtitle: "Write clean object-oriented code with ES6 class syntax, inheritance with extends, and initialize derived classes with super().",
+  sections: [
     {
-      "id": "part1",
-      "label": "Class Syntax",
-      "icon": "🏛️",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Classes & Prototypes",
+      icon: "🏛️",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Inheritance & super",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Class Syntax & Methods",
+      icon: "⚡",
+      tag: "SYNTAX"
     },
     {
-      "id": "part3",
-      "label": "Private Fields & AI",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "extends & super()",
+      icon: "🧬",
+      tag: "INHERITANCE"
     },
     {
-      "id": "part4",
-      "label": "Missing super() Bug",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Missing super() Bug",
+      icon: "⚠️",
+      tag: "DEBUGGING"
     },
     {
-      "id": "part5",
-      "label": "Classes Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Classes Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Summary Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Modern Class Architecture",
-    "bigPicture": "ES6 classes provide a clean, readable syntax for creating blueprints of objects. Under the hood, classes still use prototypes, but eliminate verbose constructor boilerplate.",
-    "analogy": "Think of a class like an architectural blueprint for a house. The blueprint defines rooms and doors; you use `new House()` to build real houses from it.",
-    "diagram": "class Vehicle { ... }\n        |\n        +---> class Car extends Vehicle {\n                constructor(brand) {\n                  super(\"Car\"); // Calls Vehicle constructor\n                }\n              }",
-    "breakdownTitle": "Class Capabilities",
-    "breakdownItems": [
+  part1: {
+    title: "ES6 Classes: Prototypes Under the Hood",
+    bigPicture: "ES6 class syntax provides a clean, familiar syntax for object-oriented programming. Under the hood, classes still use JavaScript's prototypal inheritance model.",
+    analogy: "A class is like an architectural blueprint for a house: the constructor sets up the unique rooms (properties), and class methods are the shared plumbing and electrical connections (prototype).",
+    diagram: "class User { ... }                 Under the Hood:\n-------------------------------    ----------------------------------\nconstructor(name) { ... }    -->   function User(name) { ... }\nlogin() { ... }              -->   User.prototype.login = function()",
+    breakdownTitle: "Class Architecture",
+    breakdownItems: [
       {
-        "title": "constructor()",
-        "desc": "The initialization method called automatically when creating instances with `new`."
+        title: "The constructor() Method",
+        desc: "Executes automatically when creating a new instance with new. Initializes own instance properties on this."
       },
       {
-        "title": "extends & super()",
-        "desc": "`extends` inherits from a parent class; `super()` calls the parent constructor."
+        title: "Class Methods on Prototype",
+        desc: "Methods defined in a class body are placed automatically onto the prototype, avoiding function duplication."
       },
       {
-        "title": "Private Fields (#)",
-        "desc": "Enforces true privacy; fields starting with `#` cannot be accessed from outside."
+        title: "Private Fields (#)",
+        desc: "Prefixing a field with # makes it strictly private and inaccessible outside the class body."
       }
     ]
   },
-  "part2": {
-    "title": "Class Syntax & Inheritance",
-    "intro": "Create classes, inherit with `extends`, and encapsulate private fields.",
-    "cards": [
+  part2: {
+    title: "Defining Classes and Private Fields",
+    intro: "Modern syntax for constructors, methods, and encapsulation.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Blueprint",
-        "title": "Basic Class",
-        "description": "Define constructors and instance methods with clean syntax.",
-        "codeSnippet": "class User {\n  constructor(name) { this.name = name; }\n  sayHello() { return \"Hi, \" + this.name; }\n}\nconst user = new User(\"Alex\");\nconsole.log(user.sayHello()); // Output: Hi, Alex",
-        "color": "emerald"
+        number: "01",
+        tag: "Class",
+        title: "Class Definition",
+        description: "Defines constructors and shared prototype methods in one readable block.",
+        codeSnippet: "class Account {\n  constructor(owner) {\n    this.owner = owner;\n  }\n  greet() {\n    return `Welcome, ${this.owner}`;\n  }\n}\nconst acc = new Account(\"Alex\");\nconsole.log(acc.greet()); // Output: Welcome, Alex",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Inheritance",
-        "title": "extends & super()",
-        "description": "Inherit parent behavior and call the parent constructor.",
-        "codeSnippet": "class Admin extends User {\n  constructor(name) {\n    super(name);\n    this.role = \"admin\";\n  }\n}\nconst admin = new Admin(\"Maria\");\nconsole.log(admin.sayHello(), admin.role); // Output: Hi, Maria admin",
-        "color": "cyan"
+        number: "02",
+        tag: "Private",
+        title: "Private Fields (#field)",
+        description: "True language-enforced encapsulation that cannot be read or modified outside the class.",
+        codeSnippet: "class Wallet {\n  #balance = 0;\n  deposit(amount) { this.#balance += amount; }\n  getBalance() { return this.#balance; }\n}\nconst w = new Wallet();\nw.deposit(50);\nconsole.log(w.getBalance()); // Output: 50\n// console.log(w.#balance); // SyntaxError!",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Private",
-        "title": "Private Fields (#)",
-        "description": "Hide internal state with the `#` prefix for true encapsulation.",
-        "codeSnippet": "class BankAccount {\n  #balance = 100;\n  getBalance() { return this.#balance; }\n}\nconst acc = new BankAccount();\nconsole.log(acc.getBalance()); // Output: 100",
-        "color": "purple"
+        number: "03",
+        tag: "Static",
+        title: "Static Methods",
+        description: "Methods attached to the class constructor itself rather than instances.",
+        codeSnippet: "class MathUtils {\n  static cube(n) { return n * n * n; }\n}\nconsole.log(MathUtils.cube(3)); // Output: 27",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "super() First Rule",
-      "content": "Always call `super()` before accessing `this` inside a subclass constructor."
+    rule: {
+      title: "new Invocation Invariant",
+      content: "Classes must always be called with the new keyword (e.g. new User()). Calling a class like a regular function throws a TypeError."
     }
   },
-  "part3": {
-    "title": "Private Fields & Reading AI Code",
-    "intro": "Master true class encapsulation and method overriding.",
-    "points": [
+  part3: {
+    title: "Inheritance with extends & super()",
+    intro: "Derive child classes from parent classes cleanly.",
+    points: [
       {
-        "title": "1. Calling super() in Derived Classes",
-        "content": "In subclasses, JavaScript requires `super()` to initialize the parent before `this` can be referenced.",
-        "codeSnippet": "class Animal {\n  constructor(name) { this.name = name; }\n}\n\nclass Dog extends Animal {\n  constructor(name, breed) {\n    super(name); // Must be first!\n    this.breed = breed;\n  }\n}\n\nconst dog = new Dog(\"Rex\", \"Shepherd\");\nconsole.log(dog.name, dog.breed); // Output: Rex Shepherd"
+        title: "1. The extends Keyword",
+        content: "extends sets up the prototype chain between the parent and child classes.",
+        codeSnippet: "class Animal {\n  constructor(name) { this.name = name; }\n  eat() { return `${this.name} is eating.`; }\n}\nclass Dog extends Animal {}\nconst dog = new Dog(\"Buddy\");\nconsole.log(dog.eat()); // Output: Buddy is eating."
       },
       {
-        "title": "2. Truly Private State with #",
-        "content": "Private fields cannot be read or modified outside the class, preventing external code from corrupting internal state.",
-        "codeSnippet": "class Wallet {\n  #funds = 50;\n  \n  deposit(amount) {\n    if (amount > 0) this.#funds += amount;\n  }\n  \n  get balance() {\n    return this.#funds;\n  }\n}\n\nconst w = new Wallet();\nw.deposit(25);\nconsole.log(\"Wallet balance:\", w.balance); // Output: Wallet balance: 75"
+        title: "2. The super() Constructor Call",
+        content: "In derived classes, super() invokes the parent class constructor to initialize inherited properties.",
+        codeSnippet: "class Dog extends Animal {\n  constructor(name, breed) {\n    super(name); // Calls Animal constructor\n    this.breed = breed;\n  }\n}\nconst pup = new Dog(\"Rover\", \"Golden\");\nconsole.log(pup.name, pup.breed); // Output: Rover Golden"
       },
       {
-        "title": "3. Static Class Methods",
-        "content": "Static methods are called on the class itself, not on instances. Ideal for factory methods and utility helpers.",
-        "codeSnippet": "class MathHelper {\n  static square(n) {\n    return n * n;\n  }\n}\n\nconsole.log(MathHelper.square(5)); // Output: 25"
+        title: "3. Overriding and super.method()",
+        content: "Child classes can override parent methods and call the parent version with super.method().",
+        codeSnippet: "class LoudDog extends Dog {\n  eat() {\n    return super.eat() + \" Enthusiastically!\";\n  }\n}\nconst loud = new LoudDog(\"Max\", \"Husky\");\nconsole.log(loud.eat()); // Output: Max is eating. Enthusiastically!"
       }
     ]
   },
-  "part4": {
-    "title": "Accessing this Before super()",
-    "bad": {
-      "title": "❌ Accessing this Before super()",
-      "code": "class Employee extends User {\n  constructor(name, role) {\n    // Bug: Accessing this before calling super()!\n    this.role = role;\n    super(name);\n  }\n}\n\n// Throws: ReferenceError: Must call super constructor before using 'this'",
-      "explanation": "Subclasses do not own `this` until `super()` has executed and initialized the parent class."
+  part4: {
+    title: "Common Pitfall: Using this Before super() in Subclasses",
+    bad: {
+      title: "❌ Accessing this Before super()",
+      code: "class AdminUser extends User {\n  constructor(name, role) {\n    // Bug: Must call super() first!\n    // this.role = role; // ReferenceError: Must call super constructor before accessing 'this'\n    // super(name);\n  }\n}",
+      explanation: "In JavaScript derived classes, the parent constructor allocates the instance object for this. Accessing this before super() throws a fatal ReferenceError."
     },
-    "good": {
-      "title": "✅ Call super() First",
-      "code": "class Employee extends User {\n  constructor(name, role) {\n    super(name); // Initialized parent first!\n    this.role = role; // Now safe to use this\n  }\n}\n\nconst emp = new Employee(\"Sam\", \"Developer\");\nconsole.log(emp.name, emp.role); // Output: Sam Developer",
-      "explanation": "Always call `super(...)` on the first line of subclass constructors."
+    good: {
+      title: "✅ Call super() Before Accessing this",
+      code: "class AdminUser extends User {\n  constructor(name, role) {\n    super(name); // Initializes 'this' from parent first!\n    this.role = role; // Safe to use 'this' now\n  }\n}\nconst admin = new AdminUser(\"Sarah\", \"SuperAdmin\");\nconsole.log(admin.name, admin.role); // Output: Sarah SuperAdmin",
+      explanation: "Always call super() as the very first statement in a derived class constructor."
     }
   },
-  "part5": {
-    "title": "Interactive Classes Sandbox",
-    "intro": "Create classes, extend subclasses, and use private fields.",
-    "starterCode": "class Task {\n  #completed = false;\n  \n  constructor(title) {\n    this.title = title;\n  }\n  \n  complete() {\n    this.#completed = true;\n  }\n  \n  getStatus() {\n    return this.title + \" is \" + (this.#completed ? \"Done\" : \"Pending\");\n  }\n}\n\nconst myTask = new Task(\"Write Documentation\");\nconsole.log(myTask.getStatus());\nmyTask.complete();\nconsole.log(myTask.getStatus());\n"
+  part5: {
+    title: "Classes Sandbox",
+    intro: "Build a base Vehicle class and extend it with a Car subclass using extends and super().",
+    starterCode: "class Vehicle {\n  constructor(make, model) {\n    this.make = make;\n    this.model = model;\n  }\n  getInfo() {\n    return `${this.make} ${this.model}`;\n  }\n}\n\nclass ElectricCar extends Vehicle {\n  constructor(make, model, batteryCapacity) {\n    super(make, model); // Call parent constructor\n    this.batteryCapacity = batteryCapacity;\n  }\n  getInfo() {\n    return `${super.getInfo()} (${this.batteryCapacity} kWh)`;\n  }\n}\n\nconst ev = new ElectricCar(\"Tesla\", \"Model Y\", 75);\nconsole.log(ev.getInfo());\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Classes & OOP",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Classes & OOP",
+    takeaways: [
       {
-        "title": "Class Blueprint",
-        "desc": "Classes provide clean OOP syntax built on top of JavaScript prototypes."
+        title: "Sugar Over Prototypes",
+        desc: "Classes offer a clean OOP syntax while delegating to prototypes under the hood."
       },
       {
-        "title": "Call super() First",
-        "desc": "Subclasses must call super() before accessing this in their constructors."
+        title: "super() Initializes this",
+        desc: "Derived class constructors must call super() before accessing this."
       },
       {
-        "title": "Private Fields with #",
-        "desc": "Use #fieldName to create truly private variables inside classes."
+        title: "Private Fields with #",
+        desc: "Use #fieldName to encapsulate private state securely within the class body."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "What happens if a subclass constructor accesses `this.prop` before calling `super()`?",
-      "options": [
-        "It throws a ReferenceError",
-        "It silently assigns to the global object",
-        "It defaults to undefined without error",
-        "It converts the class to an arrow function"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "What happens if a child class constructor accesses `this.property` before calling `super()`?",
+      options: [
+        "It sets the property to undefined",
+        "It throws a ReferenceError because the instance object has not yet been initialized by the parent",
+        "It creates a new prototype link automatically",
+        "It calls the parent constructor silently in the background"
       ],
-      "correctIndex": 0,
-      "explanation": "JavaScript enforces that derived constructors must call `super()` before accessing `this`. Accessing `this` beforehand throws a `ReferenceError`."
+      correctIndex: 1,
+      explanation: "In derived classes, `this` is created by the parent class constructor. Accessing `this` before calling `super()` results in a fatal `ReferenceError`."
     }
   }
 };

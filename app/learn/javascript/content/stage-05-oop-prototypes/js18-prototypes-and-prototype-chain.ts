@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js18PrototypesAndPrototypeChainContent: StandardLessonContent = {
-  "slug": "js18-prototypes-and-prototype-chain",
-  "code": "JS-18",
-  "title": "Prototypes & The Prototype Chain: Delegation",
-  "subtitle": "Understand prototypal inheritance, how JavaScript looks up methods, and the prototype chain.",
-  "sections": [
+  slug: "js18-prototypes-and-prototype-chain",
+  code: "JS-18",
+  title: "How Prototypes Work",
+  subtitle: "Understand JavaScript's prototypal inheritance model, step-by-step prototype chain property lookups, and memory-efficient shared methods.",
+  sections: [
     {
-      "id": "part1",
-      "label": "Prototypal Model",
-      "icon": "🧬",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Prototypal Inheritance",
+      icon: "🧬",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Prototype Mechanics",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "The Prototype Link",
+      icon: "🔗",
+      tag: "MECHANICS"
     },
     {
-      "id": "part3",
-      "label": "Delegation & AI Traps",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "Chain Lookup Traversal",
+      icon: "🪜",
+      tag: "LOOKUP CHAIN"
     },
     {
-      "id": "part4",
-      "label": "Prototype Pollution Bug",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Method Duplication Memory Trap",
+      icon: "⚠️",
+      tag: "DEBUGGING"
     },
     {
-      "id": "part5",
-      "label": "Prototypes Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Prototypes Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Core Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Inheritance Through Delegation",
-    "bigPicture": "JavaScript does not copy methods into objects. Instead, every object has an internal link to a prototype object. If a property is missing on an object, JavaScript searches up the chain.",
-    "analogy": "Think of a prototype like asking an assistant for a tool. If they don't have it on their desk, they look in the department storage room, and finally in the central warehouse.",
-    "diagram": "dog (Own properties: name = \"Rex\")\n  |\n  +---> Linked to: Animal.prototype (Methods: speak, eat)\n          |\n          +---> Linked to: Object.prototype (toString, hasOwnProperty)\n                  |\n                  +---> Linked to: null (End of chain)",
-    "breakdownTitle": "Prototype Concepts",
-    "breakdownItems": [
+  part1: {
+    title: "How JavaScript Inherits: Prototypes",
+    bigPicture: "Unlike traditional languages that copy blueprints using classical inheritance, JavaScript uses prototypal inheritance: objects delegate lookups to other objects via hidden prototype links.",
+    analogy: "Like borrowing a tool from a neighbor: if you don't own a ladder in your garage, you check your neighbor's garage. If they don't have it, you check the community shed, until you either find it or reach the end of the neighborhood.",
+    diagram: "+---------------------------------------------------+\n| user1: { name: \"Alex\" }                           |\n| [[Prototype]] (__proto__)                         |\n+---------------------------------------------------+\n                         |\n                         v\n+---------------------------------------------------+\n| User.prototype: { login: function() { ... } }     |\n| [[Prototype]] (__proto__)                         |\n+---------------------------------------------------+\n                         |\n                         v\n+---------------------------------------------------+\n| Object.prototype: { hasOwnProperty, toString }   |\n| [[Prototype]] (__proto__) --> null (End of chain) |\n+---------------------------------------------------+",
+    breakdownTitle: "Prototypal Core Concepts",
+    breakdownItems: [
       {
-        "title": "Shared Memory",
-        "desc": "Methods defined on prototypes exist in memory once and are shared by all instances."
+        title: "The [[Prototype]] Hidden Link",
+        desc: "Every JavaScript object holds an internal reference pointing to another object known as its prototype."
       },
       {
-        "title": "Prototype Lookup",
-        "desc": "JavaScript walks up the prototype chain until it finds the property or hits null."
+        title: "Dynamic Delegation",
+        desc: "When reading a property, if it does not exist on the child object, the engine automatically checks its prototype chain."
       },
       {
-        "title": "Object.create()",
-        "desc": "Creates a brand-new object with its prototype explicitly set to an existing object."
+        title: "Memory Efficiency",
+        desc: "Methods defined on a prototype are shared across millions of instances rather than copied into every single object."
       }
     ]
   },
-  "part2": {
-    "title": "Prototypal Delegation Patterns",
-    "intro": "Create prototype links and inspect inherited properties.",
-    "cards": [
+  part2: {
+    title: "Prototype Mechanics in Action",
+    intro: "Step through how constructors link prototypes and how instances inherit methods.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Object.create",
-        "title": "Explicit Prototype Link",
-        "description": "Create an object that inherits properties directly from another object.",
-        "codeSnippet": "const animal = { eats: true };\nconst rabbit = Object.create(animal);\nrabbit.jumps = true;\nconsole.log(rabbit.eats); // Output: true (inherited!)",
-        "color": "emerald"
+        number: "01",
+        tag: "Constructor",
+        title: "Constructor Function",
+        description: "Functions have a prototype property where shared methods are defined.",
+        codeSnippet: "function Device(brand) {\n  this.brand = brand;\n}\nDevice.prototype.turnOn = function() {\n  return `${this.brand} is powered on.`;\n};\nconst phone = new Device(\"Pixel\");\nconsole.log(phone.turnOn()); // Output: Pixel is powered on.",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Constructor",
-        "title": "Constructor Prototypes",
-        "description": "Attach shared methods to constructor functions via `.prototype`.",
-        "codeSnippet": "function User(name) { this.name = name; }\nUser.prototype.sayHi = function() {\n  return \"Hi, \" + this.name;\n};\nconst u = new User(\"Alex\");\nconsole.log(u.sayHi()); // Output: Hi, Alex",
-        "color": "cyan"
+        number: "02",
+        tag: "Inheritance",
+        title: "Shared Method Reference",
+        description: "All instances share the exact same method function reference in memory.",
+        codeSnippet: "const d1 = new Device(\"Apple\");\nconst d2 = new Device(\"Sony\");\nconsole.log(d1.turnOn === d2.turnOn); // Output: true (Same memory address!)",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Own Props",
-        "title": "Object.hasOwn()",
-        "description": "Check if a property is directly on the object rather than its prototype.",
-        "codeSnippet": "const obj = Object.create({ shared: true });\nobj.mine = 123;\nconsole.log(Object.hasOwn(obj, \"mine\"));   // Output: true\nconsole.log(Object.hasOwn(obj, \"shared\")); // Output: false",
-        "color": "purple"
+        number: "03",
+        tag: "Inspection",
+        title: "Object.getPrototypeOf()",
+        description: "Inspect the prototype of any object cleanly using the standard API.",
+        codeSnippet: "const proto = Object.getPrototypeOf(phone);\nconsole.log(proto === Device.prototype); // Output: true",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Never Modify Built-in Prototypes",
-      "content": "Never add methods to `Array.prototype` or `Object.prototype`. It breaks libraries and causes collisions."
+    rule: {
+      title: "Lookup Invariant",
+      content: "Properties are searched from child to parent up the prototype chain until found. If the chain ends at null without a match, undefined is returned."
     }
   },
-  "part3": {
-    "title": "Prototypes in Practice & Reading AI Code",
-    "intro": "Understand how built-in JavaScript methods work through prototype delegation.",
-    "points": [
+  part3: {
+    title: "Step-by-Step Prototype Chain Traversal",
+    intro: "Trace how the engine resolves property lookups through the chain.",
+    points: [
       {
-        "title": "1. Why Array Methods Exist on All Arrays",
-        "content": "Every array you create inherits from `Array.prototype`. That is why methods like `.map()` and `.filter()` are available without copying code.",
-        "codeSnippet": "const numbers = [1, 2, 3];\nconsole.log(numbers.hasOwnProperty(\"map\")); // Output: false\nconsole.log(Array.prototype.hasOwnProperty(\"map\")); // Output: true"
+        title: "Step 1: Check Own Properties",
+        content: "The engine first inspects the instance's own properties. If present, it returns immediately without checking prototypes.",
+        codeSnippet: "const vehicle = { wheels: 4 };\nconsole.log(vehicle.hasOwnProperty(\"wheels\")); // Output: true\nconsole.log(vehicle.wheels); // Output: 4"
       },
       {
-        "title": "2. Prototype Chain Lookup Order",
-        "content": "If an object has its own property with the same name as a prototype method, the own property shadows the prototype method.",
-        "codeSnippet": "const base = { greeting: \"Hello from base\" };\nconst child = Object.create(base);\nchild.greeting = \"Hello from child\"; // Shadows prototype\n\nconsole.log(child.greeting); // Output: Hello from child"
+        title: "Step 2: Traverse to Parent Prototype",
+        content: "If the property is missing on the instance, the engine steps up to the object's prototype (__proto__).",
+        codeSnippet: "const arr = [1, 2, 3];\n// arr has no own 'map' property; it delegates to Array.prototype:\nconsole.log(arr.hasOwnProperty(\"map\")); // Output: false\nconsole.log(arr.map(x => x * 2)); // Output: [2, 4, 6]"
       },
       {
-        "title": "3. Top of the Chain is Object.prototype",
-        "content": "All objects trace upward to `Object.prototype`, which eventually points to `null`.",
-        "codeSnippet": "const empty = {};\nconst proto1 = Object.getPrototypeOf(empty);\nconsole.log(proto1 === Object.prototype); // Output: true\n\nconst proto2 = Object.getPrototypeOf(proto1);\nconsole.log(proto2); // Output: null (end of chain!)"
+        title: "Step 3: Object.prototype and null Termination",
+        content: "All standard objects eventually link to Object.prototype. Its prototype is null, which signals the absolute end of the chain.",
+        codeSnippet: "console.log(Object.getPrototypeOf(Object.prototype)); // Output: null (Chain end)"
       }
     ]
   },
-  "part4": {
-    "title": "Polluting Global Prototypes",
-    "bad": {
-      "title": "❌ Modifying Built-in Array.prototype",
-      "code": "// Danger: Global prototype pollution!\nArray.prototype.last = function() {\n  return this[this.length - 1];\n};\n\n// Breaks third-party libraries and for...in loops!",
-      "explanation": "Modifying built-in prototypes causes conflicts across npm libraries and can break loops that expect standard properties."
+  part4: {
+    title: "Common Pitfall: Method Duplication in Constructors",
+    bad: {
+      title: "❌ Defining Methods Directly Inside the Constructor",
+      code: "function HeavyUser(name) {\n  this.name = name;\n  // Bug: Every new instance creates a brand new function copy in Heap!\n  this.save = function() {\n    return \"Saving \" + this.name;\n  };\n}\nconst u1 = new HeavyUser(\"Alex\");\nconst u2 = new HeavyUser(\"Sam\");\nconsole.log(u1.save === u2.save); // Output: false (Wastes Heap memory for 10,000 users!)",
+      explanation: "Attaching methods inside the constructor allocates a duplicate function in memory for every instance, wasting memory at scale."
     },
-    "good": {
-      "title": "✅ Standalone Utility Functions",
-      "code": "// Clean: Standalone helper function\nfunction getLast(arr) {\n  return arr.at(-1);\n}\n\nconst list = [10, 20, 30];\nconsole.log(getLast(list)); // Output: 30",
-      "explanation": "Keep utility functions standalone to prevent global prototype pollution."
+    good: {
+      title: "✅ Attach Shared Methods to the Prototype",
+      code: "function HeavyUser(name) {\n  this.name = name;\n}\n// Safe: 1 single function in memory shared by all instances\nHeavyUser.prototype.save = function() {\n  return \"Saving \" + this.name;\n};\nconst u1 = new HeavyUser(\"Alex\");\nconst u2 = new HeavyUser(\"Sam\");\nconsole.log(u1.save === u2.save); // Output: true (1 shared function)",
+      explanation: "Putting methods on the prototype ensures all instances delegate to a single shared function, optimizing memory efficiency."
     }
   },
-  "part5": {
-    "title": "Interactive Prototypes Sandbox",
-    "intro": "Inspect the prototype chain of objects and arrays in the live editor.",
-    "starterCode": "// 1. Prototype delegation:\nconst machine = {\n  powered: true,\n  status() {\n    return \"Machine powered: \" + this.powered;\n  },\n};\n\nconst robot = Object.create(machine);\nrobot.name = \"Unit-01\";\n\nconsole.log(\"Robot name:\", robot.name);\nconsole.log(\"Robot status:\", robot.status());\nconsole.log(\"Has own 'powered':\", Object.hasOwn(robot, \"powered\"));\n"
+  part5: {
+    title: "Prototypes Sandbox",
+    intro: "Inspect the prototype chain and add shared methods to a constructor prototype.",
+    starterCode: "function Account(holder, balance) {\n  this.holder = holder;\n  this.balance = balance;\n}\n\n// 1. Add shared method to prototype:\nAccount.prototype.deposit = function(amount) {\n  this.balance += amount;\n  return `${this.holder} new balance: $${this.balance}`;\n};\n\nconst acc1 = new Account(\"Alex\", 100);\nconst acc2 = new Account(\"Jordan\", 500);\n\nconsole.log(acc1.deposit(50));\nconsole.log(acc2.deposit(200));\n\n// Verify shared reference in memory:\nconsole.log(\"Are methods identical in memory?\", acc1.deposit === acc2.deposit);\nconsole.log(\"Prototype of acc1 is Account.prototype?\", Object.getPrototypeOf(acc1) === Account.prototype);\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Prototypes & Delegation",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Prototypes",
+    takeaways: [
       {
-        "title": "Delegation, Not Copying",
-        "desc": "JavaScript walks up the prototype chain to find missing properties."
+        title: "Prototypal Delegation",
+        desc: "JavaScript objects delegate missing property lookups to their prototype link."
       },
       {
-        "title": "Shared in Memory",
-        "desc": "Prototype methods are stored once and shared across all instances."
+        title: "Memory Efficiency",
+        desc: "Methods defined on prototypes are created once and shared across all instances."
       },
       {
-        "title": "Never Pollute",
-        "desc": "Never modify built-in prototypes like Array.prototype."
+        title: "The Chain Ends at null",
+        desc: "Lookups climb through Object.prototype to null, returning undefined if not found."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "When you call `arr.filter(...)`, where is the `filter` method actually defined?",
-      "options": [
-        "Directly inside each individual array instance",
-        "On Array.prototype",
-        "Inside the global window object",
-        "Inside JSON.stringify"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "What happens when you access `user.toString()` if `user` does not have an own `toString` property?",
+      options: [
+        "JavaScript throws an immediate ReferenceError",
+        "The engine climbs the prototype chain to Object.prototype, finds `toString`, and executes it",
+        "It automatically returns the string '[object Object]' without checking prototypes",
+        "The engine creates a new `toString` property on `user` and sets it to null"
       ],
-      "correctIndex": 1,
-      "explanation": "Array methods like `filter`, `map`, and `slice` are defined once on `Array.prototype` and shared by all array instances through delegation."
+      correctIndex: 1,
+      explanation: "Because `user` does not have its own `toString` property, the JavaScript engine traverses up the prototype chain until it finds `toString` on `Object.prototype`."
     }
   }
 };

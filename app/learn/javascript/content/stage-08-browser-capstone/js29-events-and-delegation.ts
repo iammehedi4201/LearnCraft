@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js29EventsAndDelegationContent: StandardLessonContent = {
-  "slug": "js29-events-and-delegation",
-  "code": "JS-29",
-  "title": "Events & Delegation: Bubbling & Event Handlers",
-  "subtitle": "Respond to clicks and form submissions, master event bubbling, and use event delegation for high performance.",
-  "sections": [
+  slug: "js29-events-and-delegation",
+  code: "JS-29",
+  title: "Handling User Events",
+  subtitle: "Master the 3 phases of event propagation, understand event.target vs event.currentTarget, and scale event listeners with Event Delegation.",
+  sections: [
     {
-      "id": "part1",
-      "label": "User Interaction",
-      "icon": "🖱️",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Event Propagation",
+      icon: "🌊",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Event Listeners",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Event Delegation",
+      icon: "🎯",
+      tag: "PATTERNS"
     },
     {
-      "id": "part3",
-      "label": "Delegation & AI Traps",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "target vs currentTarget",
+      icon: "🔍",
+      tag: "MECHANICS"
     },
     {
-      "id": "part4",
-      "label": "Form Refresh Bug",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Listener Memory Leak",
+      icon: "⚠️",
+      tag: "DEBUGGING"
     },
     {
-      "id": "part5",
-      "label": "Events Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Events Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Core Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Responding to User Actions",
-    "bigPicture": "Events are signals fired by the browser when the user interacts with the page (clicks, keystrokes, form submissions). Using `addEventListener`, your JavaScript listens for these signals and runs responsive logic.",
-    "analogy": "Think of an event listener like a doorbell. It sits silently on the wall. When a guest presses the button (event), the chime rings (callback function).",
-    "diagram": "User clicks button\n        |\n        v\n[ Event Dispatched: \"click\" ]\n        |\n        v (Bubbles upward through parents)\n[ Parent Container catches event via Delegation ]",
-    "breakdownTitle": "Event System Mechanics",
-    "breakdownItems": [
+  part1: {
+    title: "How Browser Events Travel: The 3 Phases",
+    bigPicture: "When a user clicks on an element in the browser, the event does not just fire on that single element. It travels through the entire DOM tree in three distinct phases: Capturing (down), Target, and Bubbling (up).",
+    analogy: "Like dropping a pebble into a pond: the pebble sinks down through the water to the bottom (capturing), touches the sand (target), and ripples bubble all the way back up to the surface (bubbling).",
+    diagram: "+--------------------------------------------------------+\n| 1. CAPTURING PHASE: window -> document -> body -> div  |\n+--------------------------------------------------------+\n                           |\n                           v\n+--------------------------------------------------------+\n| 2. TARGET PHASE: Fires on the clicked <button>         |\n+--------------------------------------------------------+\n                           |\n                           v\n+--------------------------------------------------------+\n| 3. BUBBLING PHASE: button -> div -> body -> document   |\n|    (99% of event listeners listen here by default)     |\n+--------------------------------------------------------+",
+    breakdownTitle: "Propagation Components",
+    breakdownItems: [
       {
-        "title": "addEventListener()",
-        "desc": "Attaches an event handler function to an element without overwriting existing handlers."
+        title: "Event Bubbling (Default)",
+        desc: "After reaching the target, the event bubbles upward through every parent ancestor all the way to window."
       },
       {
-        "title": "Event Bubbling",
-        "desc": "An event triggered on an inner child bubbles upward through each ancestor element."
+        title: "event.stopPropagation()",
+        desc: "Stops the event from traveling further up or down the DOM tree."
       },
       {
-        "title": "Event Delegation",
-        "desc": "Placing a single listener on a parent container to manage all child items efficiently."
+        title: "event.preventDefault()",
+        desc: "Prevents the default browser action (like following a hyperlink or submitting a form reload)."
       }
     ]
   },
-  "part2": {
-    "title": "Event Listener Patterns",
-    "intro": "Attach listeners, prevent default behavior, and delegate events.",
-    "cards": [
+  part2: {
+    title: "The Event Delegation Pattern",
+    intro: "Why attaching 1 listener to a parent element outperforms attaching 1,000 listeners to children.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Listener",
-        "title": "addEventListener()",
-        "description": "Listen for clicks, inputs, or keypresses with clean callback functions.",
-        "codeSnippet": "// btn.addEventListener(\"click\", (e) => {\n//   console.log(\"Clicked:\", e.target);\n// });\nconsole.log(\"Event listener pattern configured\");",
-        "color": "emerald"
+        number: "01",
+        tag: "Delegation",
+        title: "Single Parent Listener",
+        description: "Attach one listener on the parent container (like <ul>) and let clicks bubble up to it.",
+        codeSnippet: "const list = document.querySelector(\"#todo-list\");\nlist.addEventListener(\"click\", (e) => {\n  if (e.target.matches(\".delete-btn\")) {\n    e.target.closest(\"li\").remove();\n  }\n});",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Delegation",
-        "title": "Event Delegation",
-        "description": "Listen on a common parent container and use `e.target.closest()`.",
-        "codeSnippet": "function onContainerClick(e) {\n  const btn = e.target.closest(\".action-btn\");\n  if (btn) console.log(\"Button clicked:\", btn.dataset.action);\n}",
-        "color": "cyan"
+        number: "02",
+        tag: "Dynamic Elements",
+        title: "Handles Future Elements",
+        description: "New items added to the list dynamically work immediately without attaching new listeners.",
+        codeSnippet: "// Newly appended items are automatically handled by the parent listener!\nconst newItem = document.createElement(\"li\");\nnewItem.innerHTML = 'New task <button class=\"delete-btn\">X</button>';\nlist.appendChild(newItem);",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Default",
-        "title": "preventDefault()",
-        "description": "Stops default browser actions like form submission page reloads.",
-        "codeSnippet": "function handleSubmit(e) {\n  e.preventDefault(); // Prevents full page reload!\n  console.log(\"Form processed in JavaScript\");\n}",
-        "color": "purple"
+        number: "03",
+        tag: "Cleanup",
+        title: "removeEventListener()",
+        description: "Remove listeners to prevent memory leaks when components unmount.",
+        codeSnippet: "function onScroll() { console.log(\"scrolling\"); }\nwindow.addEventListener(\"scroll\", onScroll);\n// Cleanup later:\nwindow.removeEventListener(\"scroll\", onScroll);",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Event Delegation Rule",
-      "content": "For dynamic lists or tables with many items, attach one listener to the parent container instead of one listener per item."
+    rule: {
+      title: "Delegation Rule",
+      content: "Whenever you have a list of recurring elements (table rows, list items, card grids), attach a single delegated event listener on the parent container instead of individual listeners on each child."
     }
   },
-  "part3": {
-    "title": "Event Bubbling & Reading AI Code",
-    "intro": "Understand bubbling and use delegation to handle dynamically added items.",
-    "points": [
+  part3: {
+    title: "event.target vs event.currentTarget",
+    intro: "Understand the crucial distinction between the element clicked and the element listening.",
+    points: [
       {
-        "title": "1. The Power of Event Delegation",
-        "content": "When you add new items to a list dynamically, event delegation automatically works for the new items with zero extra listeners.",
-        "codeSnippet": "function simulateDelegation(clickedClass, itemId) {\n  if (clickedClass === \"delete-btn\") {\n    console.log(\"Deleting item #\" + itemId);\n  }\n}\n\nsimulateDelegation(\"delete-btn\", 42); // Output: Deleting item #42"
+        title: "1. event.target (The Clicked Element)",
+        content: "event.target is the innermost element that the user physically clicked on (e.g. the <span> or <i> icon inside a button).",
+        codeSnippet: "button.addEventListener(\"click\", (e) => {\n  console.log(e.target); // The actual icon or span clicked\n});"
       },
       {
-        "title": "2. The Form Submit Default Trap",
-        "content": "HTML forms refresh the entire browser page on submit by default. Always call `e.preventDefault()` inside submit listeners.",
-        "codeSnippet": "function onFormSubmit(event) {\n  event.preventDefault(); // Stops full page reload\n  console.log(\"Form validated and handled with JavaScript fetch\");\n}\n\nonFormSubmit({ preventDefault: () => {} });\n// Output: Form validated and handled with JavaScript fetch"
+        title: "2. event.currentTarget (The Listener Element)",
+        content: "event.currentTarget is the element to which the event listener was explicitly attached (e.g. the <button> itself).",
+        codeSnippet: "button.addEventListener(\"click\", (e) => {\n  console.log(e.currentTarget); // The <button> element owning this listener\n});"
       },
       {
-        "title": "3. Stopping Propagation with e.stopPropagation()",
-        "content": "Use `e.stopPropagation()` when you want an event to stop bubbling up to parent listeners.",
-        "codeSnippet": "function onDropdownItemClick(e) {\n  e.stopPropagation(); // Prevents closing parent modal\n  console.log(\"Selected item without bubbling to parent\");\n}\n\nonDropdownItemClick({ stopPropagation: () => {} });\n// Output: Selected item without bubbling to parent"
+        title: "3. event.target.closest()",
+        content: "Use closest() in delegated handlers to find the target element even if the user clicked an icon inside it.",
+        codeSnippet: "list.addEventListener(\"click\", (e) => {\n  const btn = e.target.closest(\".action-btn\");\n  if (btn) {\n    console.log(\"Action triggered for item ID:\", btn.dataset.id);\n  }\n});"
       }
     ]
   },
-  "part4": {
-    "title": "Missing preventDefault Refreshes Page",
-    "bad": {
-      "title": "❌ Form Submit Triggers Full Page Reload",
-      "code": "// Bug: Missing e.preventDefault()!\nform.addEventListener(\"submit\", () => {\n  // Page reloads immediately! All JavaScript state is wiped out!\n  saveUserData();\n});",
-      "explanation": "By default, submitting a form refreshes the page, wiping all state and aborting pending JavaScript network requests."
+  part4: {
+    title: "The Performance Pitfall: 1,000 Redundant Event Listeners",
+    bad: {
+      title: "❌ Attaching Event Listeners Inside a Loop (Memory Waste)",
+      code: "const allItems = document.querySelectorAll(\".list-item\");\n// Bug: Attaches 1,000 separate function listeners in Heap memory!\n// Does NOT work for any new items appended later!\nallItems.forEach(item => {\n  item.addEventListener(\"click\", () => {\n    console.log(\"Clicked:\", item.id);\n  });\n});",
+      explanation: "Attaching listeners to every child consumes memory and fails to respond to new elements added dynamically to the DOM."
     },
-    "good": {
-      "title": "✅ preventDefault Keeps Page Interactive",
-      "code": "form.addEventListener(\"submit\", (e) => {\n  e.preventDefault(); // Prevents page reload!\n  saveUserData(); // Executes cleanly\n});",
-      "explanation": "`e.preventDefault()` keeps the current page alive so JavaScript can handle submission seamlessly in the background."
+    good: {
+      title: "✅ One Delegated Listener on the Parent Container",
+      code: "const container = document.querySelector(\"#item-container\");\n// Safe: 1 single listener in memory handles all present AND future items!\ncontainer.addEventListener(\"click\", (e) => {\n  const item = e.target.closest(\".list-item\");\n  if (item) {\n    console.log(\"Clicked:\", item.id);\n  }\n});",
+      explanation: "Event delegation leverages bubbling, keeping memory footprint minimal and handling dynamic elements effortlessly."
     }
   },
-  "part5": {
-    "title": "Interactive Events Sandbox",
-    "intro": "Experiment with event handler logic and event delegation in the live editor.",
-    "starterCode": "// Simulating event delegation on a task list:\nfunction handleTaskListAction(event) {\n  const { action, taskId } = event;\n  \n  if (action === \"toggle\") {\n    console.log(\"Task #\" + taskId + \" toggled\");\n  } else if (action === \"delete\") {\n    console.log(\"Task #\" + taskId + \" deleted\");\n  }\n}\n\n// Simulating clicks on different delegated items:\nhandleTaskListAction({ action: \"toggle\", taskId: 101 });\nhandleTaskListAction({ action: \"delete\", taskId: 102 });\n"
+  part5: {
+    title: "Event Delegation Simulator Sandbox",
+    intro: "Observe simulated event bubbling and delegation across parent and child nodes.",
+    starterCode: "// Simulated DOM event bubbling simulation:\nfunction simulateClick(targetName, parentContainer) {\n  const event = {\n    target: targetName,\n    currentTarget: parentContainer.name,\n    stopped: false,\n    stopPropagation() { this.stopped = true; }\n  };\n  \n  console.log(`[Event Bubbles]: Click on '${event.target}' bubbled to '${event.currentTarget}'`);\n  \n  if (event.target.includes(\"delete\")) {\n    console.log(\"--> Delegated action: Deleted item!\");\n  }\n}\n\nsimulateClick(\"button.delete-btn\", { name: \"ul#task-list\" });\nsimulateClick(\"span.task-title\", { name: \"ul#task-list\" });\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Events & Delegation",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Events & Delegation",
+    takeaways: [
       {
-        "title": "Event Bubbling",
-        "desc": "Events travel up from target elements to parent containers."
+        title: "Event Bubbling",
+        desc: "Events propagate up from the target element through all ancestor nodes to window."
       },
       {
-        "title": "Event Delegation",
-        "desc": "Attach one listener to a parent element to handle dynamic children cleanly."
+        title: "target vs currentTarget",
+        desc: "target is the exact clicked node; currentTarget is the node holding the listener."
       },
       {
-        "title": "Call preventDefault()",
-        "desc": "Always call e.preventDefault() on form submissions to stop full page reloads."
+        title: "Scale with Delegation",
+        desc: "Attach 1 listener to parent containers to handle thousands of dynamic child items cleanly."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "Why is event delegation beneficial when managing a list of 500 interactive items?",
-      "options": [
-        "It attaches only 1 event listener to the parent instead of 500 individual listeners, saving memory",
-        "It forces all click events to run synchronously",
-        "It converts click events into promises automatically",
-        "It prevents CSS styles from being applied"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "What is the difference between `event.target` and `event.currentTarget`?",
+      options: [
+        "They are completely identical in all situations",
+        "`event.target` is the element that triggered the event, while `event.currentTarget` is the element where the event listener is attached",
+        "`event.currentTarget` is always the window object",
+        "`event.target` only works for keyboard events"
       ],
-      "correctIndex": 0,
-      "explanation": "Event delegation leverages event bubbling to handle clicks on hundreds of items using a single parent listener, dramatically reducing memory usage and handling newly added items automatically."
+      correctIndex: 1,
+      explanation: "`event.target` is the actual innermost DOM element that received the user's click, while `event.currentTarget` is the element that registered the event listener currently executing."
     }
   }
 };

@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js23TheEventLoopContent: StandardLessonContent = {
-  "slug": "js23-the-event-loop",
-  "code": "JS-23",
-  "title": "The Event Loop: Call Stack, Microtasks & Macrotasks",
-  "subtitle": "Understand how JavaScript coordinates synchronous execution, promise microtasks, and timer macrotasks.",
-  "sections": [
+  slug: "js23-the-event-loop",
+  code: "JS-23",
+  title: "How the Event Loop Works",
+  subtitle: "Master the internal concurrency model of the Event Loop, understand Microtask Queue vs Task Queue priority, and prevent thread starvation.",
+  sections: [
     {
-      "id": "part1",
-      "label": "Event Loop Anatomy",
-      "icon": "🎡",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Event Loop Architecture",
+      icon: "🔄",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Queues & Priorities",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Microtasks vs Macrotasks",
+      icon: "⚖️",
+      tag: "PRIORITY"
     },
     {
-      "id": "part3",
-      "label": "Execution Order & AI",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "Prediction Challenge",
+      icon: "🧠",
+      tag: "STEP BY STEP"
     },
     {
-      "id": "part4",
-      "label": "Starvation Pitfall",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Microtask Starvation",
+      icon: "⚠️",
+      tag: "DEBUGGING"
     },
     {
-      "id": "part5",
-      "label": "Event Loop Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Event Loop Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Core Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "The Heartbeat of JavaScript",
-    "bigPicture": "The Event Loop is the underlying engine mechanism that monitors the Call Stack and the Task Queues. When the Call Stack is completely empty, the Event Loop takes waiting callbacks and pushes them onto the stack.",
-    "analogy": "Think of an air traffic controller. The runway (Call Stack) can only handle one plane at a time. The controller empties the emergency landing strip first (Microtasks), before letting regular flights take off (Macrotasks).",
-    "diagram": "[ Call Stack ]  <--- Currently executing\n      ^\n      |  (When Call Stack is empty!)\n[ Microtask Queue ]  <--- Promises, queueMicrotask (HIGHEST PRIORITY)\n      ^\n      |  (When Microtasks are completely drained!)\n[ Macrotask Queue ]  <--- setTimeout, setInterval (LOWER PRIORITY)",
-    "breakdownTitle": "The Three Execution Stages",
-    "breakdownItems": [
+  part1: {
+    title: "The Heartbeat of JavaScript Concurrency",
+    bigPicture: "The Event Loop is an endless loop running inside the JavaScript engine. Its sole job is to monitor the Call Stack and determine exactly when queued tasks and promises are allowed to execute.",
+    analogy: "Like an airport runway controller: the runway (Call Stack) can only hold one airplane at a time. The controller prioritizes urgent medical flights (Microtasks) before clearing scheduled commercial passenger flights (Macrotasks).",
+    diagram: "+---------------------------------------------------+\n|  1. CALL STACK: Runs synchronous code until empty |\n+---------------------------------------------------+\n                          |\n                          v\n+---------------------------------------------------+\n|  2. MICROTASKS: Drain ALL Promises & microtasks   |\n|     (Runs until Microtask Queue is completely 0!) |\n+---------------------------------------------------+\n                          |\n                          v\n+---------------------------------------------------+\n|  3. BROWSER RENDER: Repaints UI updates           |\n+---------------------------------------------------+\n                          |\n                          v\n+---------------------------------------------------+\n|  4. TASK QUEUE: Runs ONE Macrotask (setTimeout)   |\n+---------------------------------------------------+\n                          |\n                          +--> REPEAT LOOP FOREVER",
+    breakdownTitle: "Queue Priorities",
+    breakdownItems: [
       {
-        "title": "1. The Call Stack",
-        "desc": "Executes synchronous code immediately in last-in, first-out order."
+        title: "Call Stack (Immediate)",
+        desc: "Synchronous statements run immediately and run to completion without interruption."
       },
       {
-        "title": "2. Microtask Queue (High Priority)",
-        "desc": "Holds Promise callbacks and `queueMicrotask`. Must be completely empty before timers run."
+        title: "Microtask Queue (High Priority)",
+        desc: "Promise.then, queueMicrotask, MutationObserver. The engine empties the entire microtask queue before touching macrotasks."
       },
       {
-        "title": "3. Macrotask Queue (Lower Priority)",
-        "desc": "Holds `setTimeout`, `setInterval`, and I/O callbacks."
+        title: "Task Queue (Normal Priority)",
+        desc: "setTimeout, setInterval, I/O callbacks, and DOM event handlers. Only one task is executed per Event Loop tick."
       }
     ]
   },
-  "part2": {
-    "title": "Task Queues & Priorities",
-    "intro": "Observe how microtasks take priority over macrotasks.",
-    "cards": [
+  part2: {
+    title: "Microtasks vs Macrotasks in Detail",
+    intro: "Step through how different async APIs are prioritized by the Event Loop.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Stack",
-        "title": "Call Stack (Sync)",
-        "description": "Runs immediately. Blocks everything else until finished.",
-        "codeSnippet": "console.log(\"1. Synchronous statement\");\n// Output: 1. Synchronous statement",
-        "color": "emerald"
+        number: "01",
+        tag: "Microtask",
+        title: "Microtask (Promise.then)",
+        description: "Executes immediately after the current synchronous script, before any macrotasks or UI renders.",
+        codeSnippet: "Promise.resolve().then(() => {\n  console.log(\"Microtask: High Priority\");\n});",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Microtask",
-        "title": "Microtasks (Promises)",
-        "description": "Executes immediately after the call stack empties, before timers.",
-        "codeSnippet": "Promise.resolve().then(() => {\n  console.log(\"3. Microtask callback\");\n});",
-        "color": "cyan"
+        number: "02",
+        tag: "Macrotask",
+        title: "Macrotask (setTimeout)",
+        description: "Enqueued in the Task Queue. Runs only after all pending microtasks have finished.",
+        codeSnippet: "setTimeout(() => {\n  console.log(\"Macrotask: Normal Priority\");\n}, 0);",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Macrotask",
-        "title": "Macrotasks (Timers)",
-        "description": "Executes only after all synchronous code and microtasks finish.",
-        "codeSnippet": "setTimeout(() => {\n  console.log(\"4. Macrotask callback\");\n}, 0);",
-        "color": "purple"
+        number: "03",
+        tag: "Native API",
+        title: "queueMicrotask()",
+        description: "Standard API to schedule an explicit microtask without creating a Promise.",
+        codeSnippet: "queueMicrotask(() => {\n  console.log(\"Explicit microtask executed\");\n});",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Microtasks First Rule",
-      "content": "The Event Loop will always drain ALL pending microtasks before executing a single macrotask."
+    rule: {
+      title: "The Drain Rule",
+      content: "The Event Loop will NEVER pick a Macrotask (setTimeout) from the Task Queue until the Microtask Queue is 100% drained and empty."
     }
   },
-  "part3": {
-    "title": "Tracing Execution Order & Interview Questions",
-    "intro": "Master the classic event loop interview puzzle with crystal clear tracing.",
-    "points": [
+  part3: {
+    title: "The Classic Event Loop Prediction Challenge",
+    intro: "Trace how the engine sequences logs across the Call Stack, Microtasks, and Macrotasks.",
+    points: [
       {
-        "title": "1. The Classic Event Loop Order Puzzle",
-        "content": "Trace code by sorting statements into: Synchronous -> Microtasks (Promises) -> Macrotasks (Timers).",
-        "codeSnippet": "console.log(\"1. Sync Start\");\n\nsetTimeout(() => console.log(\"4. Timer Macrotask\"), 0);\n\nPromise.resolve().then(() => console.log(\"3. Promise Microtask\"));\n\nconsole.log(\"2. Sync End\");\n\n// Output Order:\n// 1. Sync Start\n// 2. Sync End\n// 3. Promise Microtask\n// 4. Timer Macrotask"
+        title: "The Canonical Interview Snippet",
+        content: "What is the exact output order of this code?\n\nconsole.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);",
+        codeSnippet: "console.log(1);\nsetTimeout(() => console.log(2), 0);\nPromise.resolve().then(() => console.log(3));\nconsole.log(4);\n// Output:\n// 1\n// 4\n// 3\n// 2"
       },
       {
-        "title": "2. Microtasks Spawning Microtasks",
-        "content": "If a microtask schedules another microtask, the new microtask runs before any macrotasks can execute.",
-        "codeSnippet": "Promise.resolve().then(() => {\n  console.log(\"Microtask A\");\n  return Promise.resolve().then(() => console.log(\"Microtask B\"));\n});\nsetTimeout(() => console.log(\"Macrotask\"), 0);\n\n// Microtask A and B BOTH run before Macrotask!"
+        title: "Step-by-Step Reasoned Trace",
+        content: "Step 1: console.log(1) runs on Call Stack -> prints 1.\nStep 2: setTimeout(..., 0) queues 2 into the Task Queue.\nStep 3: Promise.then queues 3 into the Microtask Queue.\nStep 4: console.log(4) runs on Call Stack -> prints 4.\nStep 5: Call Stack empty! Drain Microtask Queue -> prints 3.\nStep 6: Microtasks empty! Run one Macrotask -> prints 2.",
+        codeSnippet: "// Order: Synchronous (1, 4) -> Microtasks (3) -> Macrotasks (2)"
       },
       {
-        "title": "3. queueMicrotask() Utility",
-        "content": "Use standard `queueMicrotask(fn)` when you need logic to run asynchronously before the browser repaints.",
-        "codeSnippet": "console.log(\"Sync A\");\nqueueMicrotask(() => console.log(\"Microtask B\"));\nconsole.log(\"Sync C\");\n// Output: Sync A -> Sync C -> Microtask B"
+        title: "Browser Frame Rendering",
+        content: "Browser paints and animation frames (requestAnimationFrame) occur after microtasks drain and before subsequent macrotasks.",
+        codeSnippet: "requestAnimationFrame(() => {\n  console.log(\"Rendering frame\");\n});"
       }
     ]
   },
-  "part4": {
-    "title": "Microtask Starvation",
-    "bad": {
-      "title": "❌ Microtask Queue Starves Event Loop",
-      "code": "// Bug: Infinite recursive microtasks\nfunction recurse() {\n  Promise.resolve().then(recurse);\n}\nrecurse();\n// Call stack and timers NEVER run! Page freezes completely!",
-      "explanation": "Because the Event Loop drains all microtasks before doing anything else, recursive microtasks starve the main thread, freezing the UI."
+  part4: {
+    title: "The Danger of Microtask Starvation",
+    bad: {
+      title: "❌ Infinite Microtask Recursion Freezes the Page",
+      code: "function starver() {\n  // Bug: Scheduling microtasks recursively drains the queue indefinitely!\n  // Because microtasks are prioritized, Macrotasks & UI never run!\n  Promise.resolve().then(starver);\n}\n// starver(); // UI completely freezes! Page becomes unresponsive!",
+      explanation: "Because the Event Loop empties the entire microtask queue before rendering or running macrotasks, a recursive microtask starves the browser indefinitely."
     },
-    "good": {
-      "title": "✅ Use setTimeout to Yield Control",
-      "code": "// Clean: setTimeout yields back to the browser and rendering\nfunction scheduleBatch() {\n  setTimeout(() => {\n    console.log(\"Batch processed cleanly\");\n  }, 0);\n}\nscheduleBatch();",
-      "explanation": "`setTimeout` queues a macrotask, allowing the browser to paint frames and handle user clicks between iterations."
+    good: {
+      title: "✅ Use Macrotasks (setTimeout) to Yield Control",
+      code: "function safeBatch(n) {\n  if (n <= 0) return;\n  console.log(\"Processing batch:\", n);\n  // Safe: setTimeout yields to browser rendering before running next batch\n  setTimeout(() => safeBatch(n - 1), 0);\n}\nsafeBatch(3);",
+      explanation: "Using setTimeout yields control back to the Event Loop, allowing the browser to paint updates and handle user input between batches."
     }
   },
-  "part5": {
-    "title": "Interactive Event Loop Sandbox",
-    "intro": "Observe the exact execution order of stack, microtasks, and macrotasks in the live editor.",
-    "starterCode": "console.log(\"1. Synchronous Step 1\");\n\nsetTimeout(() => {\n  console.log(\"4. Macrotask (setTimeout 0ms)\");\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log(\"3. Microtask (Promise .then)\");\n});\n\nconsole.log(\"2. Synchronous Step 2\");\n"
+  part5: {
+    title: "Event Loop Simulator Sandbox",
+    intro: "Step through Call Stack, Microtask, and Macrotask execution order in the sandbox.",
+    starterCode: "console.log(\"[1] Synchronous Script Start\");\n\nsetTimeout(() => {\n  console.log(\"[5] Macrotask (setTimeout 0ms)\");\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log(\"[3] Microtask 1 (Promise)\");\n}).then(() => {\n  console.log(\"[4] Microtask 2 (Chained Promise)\");\n});\n\nconsole.log(\"[2] Synchronous Script End\");\n"
   },
-  "part6": {
-    "title": "Key Takeaways: The Event Loop",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: The Event Loop",
+    takeaways: [
       {
-        "title": "Call Stack First",
-        "desc": "Synchronous code runs to completion before any queue is checked."
+        title: "Call Stack Runs First",
+        desc: "All synchronous statements execute to completion before any queued callback runs."
       },
       {
-        "title": "Microtasks Over Timers",
-        "desc": "Promise callbacks always execute before setTimeout callbacks."
+        title: "Microtasks Drain First",
+        desc: "Promises and microtasks always run before macrotasks (setTimeout) and UI repaints."
       },
       {
-        "title": "Yield with Timers",
-        "desc": "Use setTimeout when you need to let the browser repaint between heavy tasks."
+        title: "Prevent Starvation",
+        desc: "Never run endless recursive microtasks; yield using setTimeout to keep UI responsive."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "In what order will `console.log(\"A\")`, `setTimeout(() => console.log(\"B\"), 0)`, and `Promise.resolve().then(() => console.log(\"C\"))` execute?",
-      "options": [
-        "A -> C -> B",
-        "A -> B -> C",
-        "C -> A -> B",
-        "B -> C -> A"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "Given: `console.log('A'); setTimeout(() => console.log('B'), 0); Promise.resolve().then(() => console.log('C'));` — what is the output?",
+      options: [
+        "A, B, C",
+        "A, C, B",
+        "C, A, B",
+        "B, C, A"
       ],
-      "correctIndex": 0,
-      "explanation": "`A` is synchronous and runs immediately. `C` is a microtask (Promise) and runs as soon as the stack is empty. `B` is a macrotask (timer) and runs last."
+      correctIndex: 1,
+      explanation: "'A' runs immediately on the Call Stack. The Promise callback 'C' is queued in the Microtask Queue. 'B' is queued in the Task Queue. Because microtasks have higher priority than task queues, 'C' executes before 'B', giving 'A, C, B'."
     }
   }
 };

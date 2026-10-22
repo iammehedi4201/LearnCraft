@@ -1,177 +1,177 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const js04ConditionalLogicContent: StandardLessonContent = {
-  "slug": "js04-conditional-logic",
-  "code": "JS-04",
-  "title": "Conditional Logic: if/else, Guard Clauses & Ternary",
-  "subtitle": "Make decisions in code with if/else statements, flatten complex logic with guard clauses, and use ternary operators cleanly.",
-  "sections": [
+  slug: "js04-conditional-logic",
+  code: "JS-04",
+  title: "Making Decisions with if and else",
+  subtitle: "Control program flow with if/else statements, flatten nested logic using guard clauses, and write concise ternary expressions.",
+  sections: [
     {
-      "id": "part1",
-      "label": "Branching Logic",
-      "icon": "🔀",
-      "tag": "FOUNDATION"
+      id: "part1",
+      label: "Branching Logic",
+      icon: "🔀",
+      tag: "FOUNDATION"
     },
     {
-      "id": "part2",
-      "label": "Conditionals Syntax",
-      "icon": "⚡",
-      "tag": "SYNTAX"
+      id: "part2",
+      label: "Conditionals Syntax",
+      icon: "⚡",
+      tag: "SYNTAX"
     },
     {
-      "id": "part3",
-      "label": "Guard Clauses & AI Traps",
-      "icon": "🧠",
-      "tag": "PRACTICAL"
+      id: "part3",
+      label: "Guard Clauses",
+      icon: "🛡️",
+      tag: "PATTERNS"
     },
     {
-      "id": "part4",
-      "label": "Deep Nesting Bug",
-      "icon": "⚠️",
-      "tag": "DEBUGGING"
+      id: "part4",
+      label: "Deep Nesting Trap",
+      icon: "⚠️",
+      tag: "DEBUGGING"
     },
     {
-      "id": "part5",
-      "label": "Conditionals Sandbox",
-      "icon": "🚀",
-      "tag": "SANDBOX"
+      id: "part5",
+      label: "Conditionals Sandbox",
+      icon: "🚀",
+      tag: "PRACTICE"
     },
     {
-      "id": "part6",
-      "label": "Key Takeaways",
-      "icon": "🎓",
-      "tag": "SUMMARY"
+      id: "part6",
+      label: "Summary Takeaways",
+      icon: "🎓",
+      tag: "SUMMARY"
     },
     {
-      "id": "part7",
-      "label": "Knowledge Check",
-      "icon": "🎯",
-      "tag": "QUIZ"
+      id: "part7",
+      label: "Knowledge Check",
+      icon: "🎯",
+      tag: "ASSESSMENT"
     }
   ],
-  "part1": {
-    "title": "Controlling Execution with Conditions",
-    "bigPicture": "Real-world applications adapt to data. Conditional logic allows your program to choose between different execution paths depending on user actions and system state.",
-    "analogy": "Think of conditionals like a railway switch. Depending on whether the signal is green or red, the train safely continues down track A or track B.",
-    "diagram": "              [ Condition: score >= 80 ]\n                     /          \\\n            True    /            \\   False\n                   v              v\n     console.log(\"Pass\")    console.log(\"Retake\")",
-    "breakdownTitle": "Decision Making Tools",
-    "breakdownItems": [
+  part1: {
+    title: "Controlling Execution with Conditions",
+    bigPicture: "Conditional statements allow your program to make decisions and execute different blocks of code based on whether a condition is true or false.",
+    analogy: "Like a traffic signal: if the light is green you proceed, else you stop.",
+    diagram: "        [ Condition: balance >= 50 ]\n               /             \\\n       True   /               \\  False\n             v                 v\n    \"Purchase Approved\"    \"Insufficient Funds\"",
+    breakdownTitle: "Decision Tools",
+    breakdownItems: [
       {
-        "title": "if / else",
-        "desc": "The fundamental branching structure for choosing between execution blocks."
+        title: "if / else",
+        desc: "Executes a block of code when a condition is true, and an optional else block when false."
       },
       {
-        "title": "Guard Clauses",
-        "desc": "Returning early from functions when errors or invalid data are encountered."
+        title: "Guard Clauses",
+        desc: "Return early from a function when invalid conditions are met, eliminating nested if blocks."
       },
       {
-        "title": "Ternary Operator (? :)",
-        "desc": "A compact one-line expression for choosing between two values."
+        title: "Ternary Operator (? :)",
+        desc: "A compact single-line expression to choose between two values based on a condition."
       }
     ]
   },
-  "part2": {
-    "title": "Decision Structures in JavaScript",
-    "intro": "Compare `if / else`, ternary operators, and switch statements.",
-    "cards": [
+  part2: {
+    title: "Core Conditional Structures",
+    intro: "Use if/else for blocks of code and ternary expressions for assigning values.",
+    cards: [
       {
-        "number": "01",
-        "tag": "Standard",
-        "title": "if / else Statement",
-        "description": "Executes code blocks based on whether the condition evaluates to true or false.",
-        "codeSnippet": "const balance = 120;\nif (balance >= 50) {\n  console.log(\"Purchase approved!\"); // Output: Purchase approved!\n} else {\n  console.log(\"Insufficient funds.\");\n}",
-        "color": "emerald"
+        number: "01",
+        tag: "Standard",
+        title: "if / else Statement",
+        description: "Executes code blocks based on a boolean condition.",
+        codeSnippet: "const score = 85;\nif (score >= 60) {\n  console.log(\"Passed\"); // Output: Passed\n} else {\n  console.log(\"Needs retake\");\n}",
+        color: "emerald"
       },
       {
-        "number": "02",
-        "tag": "Concise",
-        "title": "Ternary Operator (? :)",
-        "description": "A compact single-line expression for assigning values conditionally.",
-        "codeSnippet": "const age = 20;\nconst status = age >= 18 ? \"Adult\" : \"Minor\";\nconsole.log(\"Status:\", status); // Output: Status: Adult",
-        "color": "cyan"
+        number: "02",
+        tag: "One-liner",
+        title: "Ternary Operator (? :)",
+        description: "Evaluates condition ? valueIfTrue : valueIfFalse.",
+        codeSnippet: "const isMember = true;\nconst discount = isMember ? 0.2 : 0.0;\nconsole.log(discount); // Output: 0.2",
+        color: "cyan"
       },
       {
-        "number": "03",
-        "tag": "Multi-branch",
-        "title": "Switch Statement",
-        "description": "Cleanly compares a single variable against multiple exact match cases.",
-        "codeSnippet": "const role = \"admin\";\nswitch (role) {\n  case \"admin\":\n    console.log(\"Full control\"); // Output: Full control\n    break;\n  default:\n    console.log(\"Standard access\");\n}",
-        "color": "purple"
+        number: "03",
+        tag: "Multiple Cases",
+        title: "else if Ladder",
+        description: "Tests multiple sequential conditions in order.",
+        codeSnippet: "const status = \"pending\";\nif (status === \"active\") {\n  console.log(\"Online\");\n} else if (status === \"pending\") {\n  console.log(\"Awaiting approval\"); // Output: Awaiting approval\n} else {\n  console.log(\"Offline\");\n}",
+        color: "purple"
       }
     ],
-    "rule": {
-      "title": "Keep It Flat Rule",
-      "content": "Avoid nesting `if` statements inside other `if` statements. Use guard clauses to exit early instead."
+    rule: {
+      title: "Clarity Rule",
+      content: "Use standard if/else for actions and statements. Use the ternary operator only for simple value assignments."
     }
   },
-  "part3": {
-    "title": "Guard Clauses & AI Code Reading",
-    "intro": "Clean up messy nested conditionals using guard clauses and early returns.",
-    "points": [
+  part3: {
+    title: "Writing Clean Guard Clauses",
+    intro: "Guard clauses check failure conditions first and return immediately, keeping code flat and readable.",
+    points: [
       {
-        "title": "1. Guard Clauses for Clean Flow",
-        "content": "Validate input requirements at the start of the function and return immediately if invalid. The rest of your code stays flat and easy to read.",
-        "codeSnippet": "function registerUser(email, password) {\n  if (!email) return \"Error: Email required\";\n  if (!password || password.length < 6) return \"Error: Password too short\";\n  \n  return \"User registered successfully!\";\n}\n\nconsole.log(registerUser(\"test@test.com\", \"123456\")); \n// Output: User registered successfully!"
+        title: "1. Check Invalid Conditions First",
+        content: "Validate required arguments at the very top of the function and exit immediately if invalid.",
+        codeSnippet: "function processPayment(amount) {\n  if (amount <= 0) return \"Invalid amount\";\n  return \"Charging: $\" + amount;\n}\nconsole.log(processPayment(-5)); // Output: Invalid amount"
       },
       {
-        "title": "2. The AI Nested Ternary Trap",
-        "content": "AI tools often write chained ternary operators `a ? b : c ? d : e`. These are very difficult to read. Replace them with clear `if / else` statements.",
-        "codeSnippet": "// ❌ Hard to read:\n// const badge = score > 90 ? \"Gold\" : score > 75 ? \"Silver\" : \"Bronze\";\n\n// ✅ Clean and readable:\nfunction getBadge(score) {\n  if (score > 90) return \"Gold\";\n  if (score > 75) return \"Silver\";\n  return \"Bronze\";\n}\nconsole.log(\"Badge earned:\", getBadge(82)); // Output: Badge earned: Silver"
+        title: "2. Eliminate Else After Return",
+        content: "If an if block returns, you do not need an else block below it because execution has already stopped.",
+        codeSnippet: "function checkStock(count) {\n  if (count === 0) return \"Out of stock\";\n  return \"In stock: \" + count;\n}\nconsole.log(checkStock(5)); // Output: In stock: 5"
       },
       {
-        "title": "3. Truthy Checks for Input Validation",
-        "content": "Use truthy checks to verify that objects, strings, and arrays exist before reading their properties.",
-        "codeSnippet": "function greetUser(user) {\n  if (!user || !user.name) {\n    return \"Hello, Guest!\";\n  }\n  return \"Hello, \" + user.name + \"!\";\n}\n\nconsole.log(greetUser(null)); // Output: Hello, Guest!\nconsole.log(greetUser({ name: \"Sarah\" })); // Output: Hello, Sarah!"
+        title: "3. Avoid Deep Nesting",
+        content: "Flattening nested ifs with guard clauses makes code easy to read from top to bottom.",
+        codeSnippet: "function register(email, password) {\n  if (!email) return \"Email required\";\n  if (!password) return \"Password required\";\n  return \"Account created for \" + email;\n}\nconsole.log(register(\"user@test.com\", \"secret\")); // Output: Account created for user@test.com"
       }
     ]
   },
-  "part4": {
-    "title": "Nested Pyramid of Doom",
-    "bad": {
-      "title": "❌ Deeply Nested Conditionals",
-      "code": "function processOrder(order) {\n  if (order) {\n    if (order.items.length > 0) {\n      if (order.hasPaid) {\n        console.log(\"Shipping order...\");\n      } else {\n        console.log(\"Payment required\");\n      }\n    } else {\n      console.log(\"Empty cart\");\n    }\n  } else {\n    console.log(\"No order found\");\n  }\n}",
-      "explanation": "Deep nesting creates a 'pyramid of doom' where edge cases are pushed far down and logic is hard to follow."
+  part4: {
+    title: "Common Pitfall: Deeply Nested if / else (Pyramid of Doom)",
+    bad: {
+      title: "❌ Nested if Statements",
+      code: "function canBorrow(user) {\n  if (user) {\n    if (user.isActive) {\n      if (user.books < 3) {\n        return true;\n      } else {\n        return false;\n      }\n    } else {\n      return false;\n    }\n  } else {\n    return false;\n  }\n}",
+      explanation: "Deeply nested conditions create cognitive overload and make bugs difficult to spot."
     },
-    "good": {
-      "title": "✅ Flat Guard Clauses",
-      "code": "function processOrder(order) {\n  if (!order) return \"No order found\";\n  if (order.items.length === 0) return \"Empty cart\";\n  if (!order.hasPaid) return \"Payment required\";\n\n  return \"Shipping order...\";\n}\n\nconsole.log(processOrder({ items: [\"Book\"], hasPaid: true }));\n// Output: Shipping order...",
-      "explanation": "Guard clauses handle errors up front and return early, leaving the happy path clean and un-nested."
+    good: {
+      title: "✅ Flattened with Early Returns (Guard Clauses)",
+      code: "function canBorrow(user) {\n  if (!user) return false;\n  if (!user.isActive) return false;\n  if (user.books >= 3) return false;\n  return true;\n}\nconsole.log(canBorrow({ isActive: true, books: 1 })); // Output: true",
+      explanation: "Guard clauses exit early on failure conditions, keeping the happy path flat and easy to follow."
     }
   },
-  "part5": {
-    "title": "Interactive Conditionals Sandbox",
-    "intro": "Test guard clauses and conditional branching in the sandbox.",
-    "starterCode": "// 1. Guard clause function:\nfunction calculateDiscount(cartTotal, isMember) {\n  if (cartTotal <= 0) return 0;\n  if (!isMember) return 0;\n  \n  return cartTotal * 0.15; // 15% discount for members\n}\n\nconst discount = calculateDiscount(100, true);\nconsole.log(\"Member Discount:\", discount);\n\n// 2. Ternary assignment:\nconst isShippingFree = discount > 10 ? \"Free Shipping\" : \"$5 Shipping\";\nconsole.log(\"Shipping Status:\", isShippingFree);\n"
+  part5: {
+    title: "Conditionals Sandbox",
+    intro: "Test conditional logic, guard clauses, and ternary operators.",
+    starterCode: "function evaluateApplication(score, hasExperience) {\n  // 1. Guard clause:\n  if (score < 50) return \"Rejected: score too low\";\n\n  // 2. Ternary operator:\n  const level = hasExperience ? \"Senior\" : \"Junior\";\n\n  // 3. Main decision:\n  return \"Accepted as \" + level;\n}\n\nconsole.log(evaluateApplication(40, true));\nconsole.log(evaluateApplication(85, true));\nconsole.log(evaluateApplication(90, false));\n"
   },
-  "part6": {
-    "title": "Key Takeaways: Conditional Logic",
-    "takeaways": [
+  part6: {
+    title: "Key Takeaways: Conditionals",
+    takeaways: [
       {
-        "title": "Return Early",
-        "desc": "Use guard clauses at the top of functions to keep logic flat and clean."
+        title: "Use if/else for Logic",
+        desc: "Branches execution based on boolean condition evaluations."
       },
       {
-        "title": "Simple Ternaries Only",
-        "desc": "Use ternary operators only for simple 1-line value assignments."
+        title: "Guard Clauses Flatten Code",
+        desc: "Return early on invalid inputs to eliminate deeply nested pyramid structures."
       },
       {
-        "title": "Check Before Accessing",
-        "desc": "Verify that objects and variables exist before accessing their properties."
+        title: "Ternary for Simple Values",
+        desc: "Use condition ? a : b only for single-line assignments, not complex logic."
       }
     ]
   },
-  "part7": {
-    "title": "Knowledge Check Quiz",
-    "quiz": {
-      "question": "Why are guard clauses preferred over deeply nested `if / else` blocks?",
-      "options": [
-        "They run 10x faster in the browser",
-        "They handle invalid cases early and keep code flat and readable",
-        "They prevent variables from using computer memory",
-        "They automatically convert strings to numbers"
+  part7: {
+    title: "Knowledge Check Quiz",
+    quiz: {
+      question: "What is the primary benefit of using guard clauses in a function?",
+      options: [
+        "They make the JavaScript engine execute math faster",
+        "They return early on edge cases, flattening nested if/else blocks for better readability",
+        "They automatically convert loose equality to strict equality",
+        "They prevent variables from being reassigned"
       ],
-      "correctIndex": 1,
-      "explanation": "Guard clauses handle edge cases and invalid conditions at the top of a function, keeping the main happy path flat and easy to read."
+      correctIndex: 1,
+      explanation: "Guard clauses check for errors or exit conditions at the top of a function and return early, preventing deeply nested if/else pyramids."
     }
   }
 };

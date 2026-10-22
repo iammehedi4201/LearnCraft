@@ -102,9 +102,10 @@ export function DataDrivenLessonView({
     completedSections,
     currentIndex,
     progressPercent,
-    isLessonCompleted,
+    isLessonCompleted: _isLessonCompleted,
     setActiveSectionId,
     markSectionComplete,
+    markSectionsUpToIndex,
     completeLesson,
     getStepState,
   } = useLessonProgress({
@@ -152,11 +153,9 @@ export function DataDrivenLessonView({
     }
   }, []);
 
-  // 2. IntersectionObserver: Sticky scroll-spy & 1.5s reading timer completion
+  // 2. IntersectionObserver: Sticky scroll-spy & natural sequential progress tracking
   useEffect(() => {
     if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
-
-    const timers: Record<string, NodeJS.Timeout> = {};
 
     const getSectionByDomId = (domId: string) => {
       const match = domId.match(/^part-(\d+)$/);
@@ -180,68 +179,33 @@ export function DataDrivenLessonView({
             bestVisibleHeight = intersectionHeight;
             bestCandidateDomId = domId;
           }
-
-          // Reading completion tracking: 60% visible for 1.5s
-          // (Only triggers for conceptual reading parts; interactive sandbox & quiz require explicit action)
-          const mapped = getSectionByDomId(domId);
-          const secId = mapped?.section?.id;
-          const secIdx = mapped?.index ?? -1;
-
-          // Sequential check: cannot complete reading for a section if previous sections are not completed!
-          const canReadComplete =
-            secIdx >= 0 &&
-            sections.slice(0, secIdx).every((s) => completedSections.has(s.id));
-
-          if (
-            secId &&
-            secId !== "part5" &&
-            secId !== "part7" &&
-            !completedSections.has(secId) &&
-            canReadComplete
-          ) {
-            const isMostlyVisible =
-              entry.isIntersecting &&
-              (entry.intersectionRatio >= 0.55 ||
-                entry.intersectionRect.height / (window.innerHeight || 800) >= 0.5);
-
-            if (isMostlyVisible) {
-              if (!timers[domId]) {
-                timers[domId] = setTimeout(() => {
-                  markSectionComplete(secId);
-                  delete timers[domId];
-                }, 1500);
-              }
-            } else {
-              if (timers[domId]) {
-                clearTimeout(timers[domId]);
-                delete timers[domId];
-              }
-            }
-          }
         }
 
-        // Update active section only when changed (Performance requirement)
+        // Update active section and advance progress smoothly as learner scrolls
         if (bestCandidateDomId) {
           const mapped = getSectionByDomId(bestCandidateDomId);
-          if (mapped?.section && mapped.section.id !== activeSectionRef.current) {
-            setActiveSectionId(mapped.section.id);
-            try {
-              if (window.location.hash !== `#${bestCandidateDomId}`) {
-                window.history.replaceState(null, "", `#${bestCandidateDomId}`);
-              }
-            } catch {}
+          if (mapped?.section) {
+            if (mapped.section.id !== activeSectionRef.current) {
+              setActiveSectionId(mapped.section.id);
+              try {
+                if (window.location.hash !== `#${bestCandidateDomId}`) {
+                  window.history.replaceState(null, "", `#${bestCandidateDomId}`);
+                }
+              } catch {}
+            }
+            // Mark all parts up to the currently reached section as completed
+            markSectionsUpToIndex(mapped.index);
           }
         }
       },
       {
         root: null,
-        // Match the sticky stepper height (~66px) when scrolling through sections
-        rootMargin: "-80px 0px -40% 0px",
-        threshold: [0, 0.25, 0.55, 0.75, 1.0],
+        rootMargin: "-60px 0px -20% 0px",
+        threshold: [0, 0.1, 0.25, 0.5, 0.75, 1.0],
       }
     );
 
-    // Observe all 7 sections
+    // Observe all sections
     for (let i = 1; i <= sections.length; i++) {
       const el = document.getElementById(`part-${i}`);
       if (el) {
@@ -251,9 +215,8 @@ export function DataDrivenLessonView({
 
     return () => {
       observer.disconnect();
-      Object.values(timers).forEach((t) => clearTimeout(t));
     };
-  }, [sections, completedSections, markSectionComplete, setActiveSectionId]);
+  }, [sections, markSectionsUpToIndex, setActiveSectionId]);
 
   // Global custom event navigation listener for shortcuts
   useEffect(() => {
@@ -927,37 +890,23 @@ export function DataDrivenLessonView({
 
   // ─── End of Page: Single "Next lesson →" button ─────────────────────────────
   const renderEndOfPageCTA = () => {
-    const allPartsCompleted =
-      sections.length > 0 && completedSections.size >= sections.length;
-    const canProceed = isLessonCompleted || allPartsCompleted;
     const nextLessonUrl = nextLesson ? `${trackHref}/${nextLesson.slug}` : trackHref;
 
     return (
       <div className="pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="text-xs text-slate-400">
-          {canProceed ? (
-            <span className="text-emerald-400 font-medium flex items-center gap-1.5">
-              <span>✓</span> All {sections.length} parts completed! Ready for the next lesson.
-            </span>
-          ) : (
-            <span>
-              Complete all {sections.length} parts to unlock the next lesson ({completedSections.size}/{sections.length} completed).
-            </span>
-          )}
+          <span className="text-emerald-400 font-medium flex items-center gap-1.5">
+            <span>✓</span> All {sections.length} parts completed! Ready for the next lesson.
+          </span>
         </div>
 
         {nextLesson ? (
           <Link
             href={nextLessonUrl}
             onClick={() => {
-              if (canProceed) completeLesson();
+              completeLesson();
             }}
-            aria-disabled={!canProceed}
-            className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
-              canProceed
-                ? "bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
-                : "bg-white/[0.06] text-slate-500 border border-white/[0.06] cursor-not-allowed opacity-60"
-            }`}
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
           >
             <span>Next lesson →</span>
           </Link>
@@ -965,14 +914,9 @@ export function DataDrivenLessonView({
           <button
             type="button"
             onClick={() => {
-              if (canProceed) completeLesson();
+              completeLesson();
             }}
-            disabled={!canProceed}
-            className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 ${
-              canProceed
-                ? "bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
-                : "bg-white/[0.06] text-slate-500 border border-white/[0.06] cursor-not-allowed opacity-60"
-            }`}
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
           >
             <span>Complete Course 🎓</span>
           </button>
