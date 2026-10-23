@@ -121,9 +121,9 @@ export const JS_RELATED_TOPICS: RelatedTopicMeta[] = [
   {
     id: "rel-oop",
     title: "Object-Oriented Programming (OOP)",
-    desc: "Master the 4 pillars, SOLID principles, design patterns, and enterprise system design.",
+    desc: "Master classes, encapsulation, inheritance, interfaces, polymorphism, and dependency injection in TypeScript.",
     badge: "Architecture",
-    path: "/learn/oop",
+    path: "/learn/typescript",
   },
   {
     id: "rel-react",

@@ -1,8 +1,8 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const ts18FindAndFixTypeErrorsContent: StandardLessonContent = {
-  slug: "ts18-find-and-fix-type-errors",
-  code: "TS-18",
+  slug: "ts21-find-and-fix-type-errors",
+  code: "TS-21",
   title: "Find and Fix Type Errors",
   subtitle: "Read compiler diagnostics to identify mismatches and fix root causes cleanly.",
   difficulty: "Moderate",

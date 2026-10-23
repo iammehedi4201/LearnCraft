@@ -1,8 +1,8 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const ts17CheckApiDataContent: StandardLessonContent = {
-  slug: "ts17-check-api-data",
-  code: "TS-17",
+  slug: "ts20-check-api-data",
+  code: "TS-20",
   title: "Check API Data Before Trusting It",
   subtitle: "Protect your app from runtime mismatches by validating untrusted external data.",
   difficulty: "Difficult",

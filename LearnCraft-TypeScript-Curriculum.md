@@ -328,14 +328,23 @@ type User = {
   email: string;
 };
 
+// 1. Pick: Choose specific fields
 type UserPreview = Pick<User, "id" | "name">;
-type UserUpdate = Partial<Pick<User, "name" | "email">>;
+
+// 2. Partial: Make all fields optional
+type UserUpdate = Partial<User>;
+
+// 3. Omit: Remove specific fields
+type NewUser = Omit<User, "id">;
+
+// 4. Record: Key-value dictionary
+type UserMap = Record<number, User>;
 ```
 
-- `Pick` keeps the fields you name.
-- `Partial` makes the chosen fields optional.
-- `Omit` removes fields you name.
-- `Record` describes an object with a set of key and value types.
+- `Pick`: Keeps only the fields you name.
+- `Partial`: Makes fields optional (adds `?`).
+- `Omit`: Removes fields you name (leaves everything else).
+- `Record`: Describes a key-value dictionary (e.g. mapping number IDs to User objects).
 
 You do not need to memorize every utility type. Learn the common ones and learn to recognize them in existing code.
 
@@ -343,28 +352,220 @@ You do not need to memorize every utility type. Learn the common ones and learn 
 
 **Simple answer:** Use `Partial`, applied to the fields the form can update. For example, `type UserUpdate = Partial<Pick<User, "name" | "email">>`. That makes both fields optional for an update.
 
-## Lesson 14: Classes and `implements`
-**Difficulty: Moderate**
+---
 
-A class groups data and methods together. TypeScript can check that a class follows the shape described by an interface by using `implements`.
+# Part 4: Object-Oriented Programming (OOP)
+
+## Lesson 14: Classes, Objects, and Constructors
+**Difficulty: Easy**
+
+A **class** is a blueprint for creating objects. An **object** is an instance created from that blueprint. A **constructor** is a special function that runs automatically when creating an object using `new`, initializing its properties.
 
 ```ts
-interface HasId {
-  id: number;
+class User {
+  name: string;
+  role: string;
+
+  constructor(name: string, role: string) {
+    this.name = name;
+    this.role = role;
+  }
+
+  introduce(): string {
+    return `${this.name} is a ${this.role}.`;
+  }
 }
 
-class Product implements HasId {
-  constructor(public id: number, public name: string) {}
-}
+const user1 = new User("Rina", "Designer");
+console.log(user1.introduce()); // "Rina is a Designer."
 ```
 
-The class has the `id` field required by `HasId`. TypeScript reports an error if a required part is missing. You will see classes in some projects, but not every application needs to use them.
+**How it works:**
+- `class User` defines the structure and available methods.
+- `constructor(name, role)` runs when `new User(...)` is called and assigns values to `this.name` and `this.role`.
+- `user1` is a concrete instance holding its own distinct data.
+
+**Scenario:** You need to model shopping cart items with a name and price, and display each item's details. How would you structure this using a class and constructor?
+
+**Simple answer:** Create a `CartItem` class with `name` and `price` properties, assign them inside `constructor(name: string, price: number)`, and add a `display()` method that returns the item details.
+
+## Lesson 15: Access Modifiers and Encapsulation
+**Difficulty: Moderate**
+
+**Access modifiers** control who can view or modify class properties and methods:
+- `public`: Accessible from anywhere (this is the default in TypeScript).
+- `private`: Accessible only inside the class itself.
+- `protected`: Accessible inside the class and any child classes that inherit from it.
+- `readonly`: Value can only be assigned during initialization and cannot be changed later.
+
+**Encapsulation** means hiding internal state and requiring all changes to go through validated methods, protecting your data from accidental corruption.
+
+TypeScript also provides **parameter properties**: adding `public`, `private`, or `readonly` directly in the constructor parameters automatically creates and assigns the property in one line.
+
+```ts
+class BankAccount {
+  // 'private' protects balance from direct outside modification
+  private balance: number = 0;
+
+  // Parameter property: declares and assigns accountNumber in one line
+  constructor(public readonly accountNumber: string) {}
+
+  deposit(amount: number): void {
+    if (amount <= 0) {
+      console.log("Deposit amount must be positive.");
+      return;
+    }
+    this.balance += amount;
+  }
+
+  getBalance(): number {
+    return this.balance;
+  }
+}
+
+const account = new BankAccount("ACC-101");
+account.deposit(250);
+console.log(account.getBalance()); // 250
+
+// ❌ TypeScript error: Cannot directly access private property
+// account.balance = -100;
+```
+
+**Common mistake:** Making all fields `public`. If `balance` was public, outside code could write `account.balance = -500`, bypassing validation. Using `private` guarantees that all balance changes pass through the validated `deposit()` method.
+
+**Scenario:** A user profile should allow anyone to read the user's ID, but only the class itself should be able to update their hashed password. How would you declare these two properties?
+
+**Simple answer:** Declare the user ID as `public readonly id: string`, and declare the password as `private passwordHash: string`.
+
+## Lesson 16: Inheritance, Interfaces, and Abstract Classes
+**Difficulty: Moderate**
+
+**Inheritance** lets a child class reuse code from a parent class using `extends`. The child calls `super()` to run the parent's constructor, and can override methods to provide specialized behavior.
+
+**Interfaces and Abstract Classes** both define contracts for what classes must do:
+- **`interface`**: Defines method signatures and property types with **no** implementation. A class uses `implements MyInterface`.
+- **`abstract class`**: A base class that cannot be instantiated directly with `new`. It can provide both shared completed methods and `abstract` methods that child classes must implement.
+
+```ts
+// 1. Interface Contract
+interface Logger {
+  log(message: string): void;
+}
+
+// 2. Abstract Base Class (Shared logic + required abstract method)
+abstract class BaseNotifier implements Logger {
+  constructor(public senderName: string) {}
+
+  // Shared completed method
+  log(message: string): void {
+    console.log(`[${this.senderName}] Audit: ${message}`);
+  }
+
+  // Abstract method: Child classes MUST provide this
+  abstract send(recipient: string, message: string): void;
+}
+
+// 3. Child Class inheriting from the abstract class
+class EmailNotifier extends BaseNotifier {
+  constructor(senderName: string, public emailServer: string) {
+    super(senderName); // Calls BaseNotifier's constructor
+  }
+
+  // Implementing the required abstract method
+  send(recipient: string, message: string): void {
+    this.log(`Sending email to ${recipient}`);
+    console.log(`Email dispatched via ${this.emailServer}: "${message}"`);
+  }
+}
+
+const email = new EmailNotifier("LearnCraft Support", "smtp.provider.com");
+email.send("rina@example.com", "Welcome to TypeScript OOP!");
+```
+
+**When to use which:**
+- Use an **`interface`** when you only need a type contract with no shared implementation.
+- Use an **`abstract class`** when multiple child classes need to share common base code alongside required abstract methods.
 
 **Scenario:** Several classes must have an `id` number. How could an interface help you check that each class follows this rule?
 
 **Simple answer:** Create an interface such as `interface HasId { id: number }`, then have each class use `implements HasId`. TypeScript will report an error if a class does not provide the required `id` number.
 
-## Lesson 15: Modules and Type Imports
+## Lesson 17: Polymorphism, Composition, and Dependency Injection
+**Difficulty: Difficult**
+
+These three concepts work together to create flexible, maintainable applications:
+
+1. **Polymorphism** (*"Many shapes"*): The ability to treat different classes that share the same interface interchangeably.
+2. **Composition**: Building systems by having classes contain instances of other classes ("has-a" relationship) rather than deep inheritance chains ("is-a" relationship).
+3. **Dependency Injection**: Instead of a class creating its own helper objects with `new Helper()`, the class receives those helpers through its `constructor`.
+
+**Why Dependency Injection is needed:**
+When a class creates its own dependencies with `new`, it is tightly locked to that specific implementation. You cannot easily swap it, configure it, or replace it with a mock during testing.
+
+```ts
+// 1. The Interface (Contract)
+interface PaymentProcessor {
+  processPayment(amount: number): boolean;
+}
+
+// 2. Polymorphic Implementation A
+class StripeProcessor implements PaymentProcessor {
+  processPayment(amount: number): boolean {
+    console.log(`Charged $${amount} via Stripe.`);
+    return true;
+  }
+}
+
+// 3. Polymorphic Implementation B (e.g. for testing)
+class MockProcessor implements PaymentProcessor {
+  processPayment(amount: number): boolean {
+    console.log(`[TEST MOCK] Simulated payment of $${amount}.`);
+    return true;
+  }
+}
+
+// 4. Composition & Dependency Injection
+class OrderService {
+  // Dependency Injection: OrderService receives the processor via constructor
+  // Composition: OrderService 'has a' PaymentProcessor
+  constructor(private readonly paymentProcessor: PaymentProcessor) {}
+
+  checkout(orderId: string, total: number): void {
+    console.log(`Starting checkout for order ${orderId}...`);
+    const success = this.paymentProcessor.processPayment(total);
+    if (success) {
+      console.log(`Order ${orderId} successfully completed!`);
+    }
+  }
+}
+
+// In production:
+const realService = new OrderService(new StripeProcessor());
+realService.checkout("ORD-1", 120);
+
+// In automated tests: Swap with the mock without changing OrderService!
+const testService = new OrderService(new MockProcessor());
+testService.checkout("ORD-2", 50);
+```
+
+**Step-by-step walkthrough:**
+1. `PaymentProcessor` acts as the shared contract.
+2. `OrderService` does not hardcode `new StripeProcessor()`. Instead, it accepts any object satisfying `PaymentProcessor` through its constructor parameters.
+3. This is **Dependency Injection**: dependencies are provided from the outside.
+4. This is **Composition**: `OrderService` uses a processor to do the work.
+5. This is **Polymorphism**: `checkout()` works with both `StripeProcessor` and `MockProcessor` without changing a single line of `OrderService`.
+
+**Common mistake:** Creating dependencies inside the constructor (`this.processor = new StripeProcessor()`). This permanently couples `OrderService` to Stripe. Always pass dependencies in through constructor parameters.
+
+**Scenario:** You have a `NotificationService` that needs to send SMS messages. How can you apply dependency injection so you can easily test it without sending real text messages?
+
+**Simple answer:** Define an interface `SmsProvider` with a `sendSms()` method. Make `NotificationService` receive `SmsProvider` through its constructor. In production, pass a real SMS service; in tests, pass a mock provider.
+
+---
+
+# Part 5: Understand TypeScript in Real Projects
+
+## Lesson 18: Modules and Type Imports
 **Difficulty: Moderate**
 
 Modules let you keep related code in separate files. You can export a type from one file and import it where it is needed instead of copying the same type definition.
@@ -394,11 +595,7 @@ export function greet(user: User): string {
 
 **Simple answer:** All three files use the same definition, so the type stays consistent. If the `User` shape changes, we update it in one place instead of trying to keep several copies in sync.
 
----
-
-# Part 4: Understand TypeScript in Real Projects
-
-## Lesson 16: Promises and `async` Functions
+## Lesson 19: Promises and `async` Functions
 **Difficulty: Moderate**
 
 An `async` function returns a Promise. `Promise<string>` means the Promise will provide a string if it succeeds. `await` lets you wait for the Promise's result inside an async function.
@@ -420,7 +617,7 @@ async function showName(): Promise<void> {
 
 **Simple answer:** The server response takes time, so the function returns a Promise that will provide a string later. `string` would describe a value available right away, not the Promise used for an async result.
 
-## Lesson 17: Check API Data Before Trusting It
+## Lesson 20: Check API Data Before Trusting It
 **Difficulty: Difficult**
 
 TypeScript can describe the data you expect from an API, but it cannot guarantee that the server actually sent that data. Data from outside your application must be checked at runtime before you trust its shape.
@@ -465,7 +662,7 @@ For larger apps, a reusable validation function or a validation library can make
 
 **Simple answer:** Code may expect `id` to be a number and then fail or behave incorrectly when it receives text. TypeScript checks our code before it runs, but it does not automatically check the real API response. We must validate the data when it arrives.
 
-## Lesson 18: Find and Fix Type Errors
+## Lesson 21: Find and Fix Type Errors
 **Difficulty: Moderate**
 
 A type error usually means a value does not match what the code expects. Read the error and find the mismatch instead of hiding it.

@@ -4,7 +4,7 @@ export const js20DomEventsContent: StandardLessonContent = {
   slug: "js20-dom-events",
   code: "JS-20",
   title: "DOM Events",
-  subtitle: "Select elements from the Document Object Model and listen for user interactions.",
+  subtitle: "How JavaScript makes webpages interactive: Find it, Listen for clicks, and Change the text.",
   difficulty: "Moderate",
   scenario: {
     question: "A button is visible, but clicking it does nothing. What would you check?",
@@ -21,115 +21,148 @@ export const js20DomEventsContent: StandardLessonContent = {
   ],
   part1: {
     title: "DOM Events",
-    bigPicture: "The DOM is the browser's object representation of the page. JavaScript can find page elements and respond to events such as clicks, typing, and form submission.",
-    codeSnippet: "<button id=\"helloButton\">Say hello</button>\n<p id=\"message\"></p>\n\n<script>\n  const button = document.querySelector(\"#helloButton\");\n  const message = document.querySelector(\"#message\");\n\n  button.addEventListener(\"click\", () => {\n    message.textContent = \"Hello!\";\n  });\n</script>",
-    breakdownTitle: "Core Foundations",
+    bigPicture: "The DOM is simply your webpage turned into JavaScript. It gives you a 3-step superpower: Find an element on the screen, Listen for user clicks or typing, and Change what is displayed.",
+    codeSnippet: `<button id="helloButton">Say hello</button>
+<p id="message"></p>
+
+<script>
+  // 1. Find the elements on the page
+  const button = document.querySelector("#helloButton");
+  const message = document.querySelector("#message");
+
+  // 2. Listen for the user's click
+  button.addEventListener("click", () => {
+    // 3. Change what is on screen!
+    message.textContent = "Hello from JavaScript!";
+  });
+</script>`,
+    breakdownTitle: "The 3-Step Recipe to Interactive Pages",
     breakdownItems: [
       {
-            "title": "document.querySelector",
-            "desc": "Finds HTML elements on the page using standard CSS selectors (#id, .class)."
+        title: "1. Find it (document.querySelector)",
+        desc: "Point to an element on the page using its ID (like #helloButton) or class name.",
       },
       {
-            "title": "addEventListener",
-            "desc": "Attaches callback functions to listen for events like \"click\", \"input\", and \"submit\"."
+        title: "2. Listen for it (addEventListener)",
+        desc: "Tell the browser what user action to wait for: 'click', 'input', or 'submit'.",
       },
       {
-            "title": "textContent",
-            "desc": "Safely modifies the visible text of an element without creating XSS vulnerabilities."
-      }
-],
+        title: "3. Change it (textContent)",
+        desc: "Change the text inside an element so the user sees the new result on screen.",
+      },
+    ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      title: "DOM Timing Rule",
-      content: "Always make sure DOM elements exist before querying them or attaching event listeners.",
+      title: "The 3-Step Interactivity Recipe",
+      content: "1. Find the element with querySelector. 2. Listen for user actions with addEventListener. 3. Change the page with textContent.",
     },
     cards: [
       {
-            "number": "01",
-            "tag": "SELECTION",
-            "title": "document.querySelector",
-            "description": "Finds HTML elements on the page using standard CSS selectors (#id, .class).",
-            "color": "purple"
+        number: "01",
+        tag: "STEP 1: FIND IT",
+        title: "document.querySelector",
+        description: "Finds an HTML element on the page, like a button, input box, or heading.",
+        color: "purple",
       },
       {
-            "number": "02",
-            "tag": "INTERACTION",
-            "title": "addEventListener",
-            "description": "Attaches callback functions to listen for events like \"click\", \"input\", and \"submit\".",
-            "color": "cyan"
+        number: "02",
+        tag: "STEP 2: LISTEN",
+        title: "addEventListener",
+        description: "Waits for the user to do something, like clicking a button or typing text.",
+        color: "cyan",
       },
       {
-            "number": "03",
-            "tag": "UPDATING",
-            "title": "textContent",
-            "description": "Safely modifies the visible text of an element without creating XSS vulnerabilities.",
-            "color": "emerald"
-      }
-],
+        number: "03",
+        tag: "STEP 3: CHANGE",
+        title: "textContent",
+        description: "Changes the text inside an element so the user sees the new result instantly.",
+        color: "emerald",
+      },
+    ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how to think about this in everyday code, followed by a realistic scenario:",
+    intro: "Here is how the browser connects user actions to your code:",
     points: [
       {
-            "title": "1. The DOM represents your HTML",
-            "content": "Browsers turn HTML into a tree of JavaScript objects called the DOM that code can inspect and modify."
+        title: "1. HTML becomes interactive",
+        content: "HTML by itself is static. JavaScript brings it to life by responding whenever a user clicks, hovers, or types.",
       },
       {
-            "title": "2. Select elements with querySelector",
-            "content": "document.querySelector(\"#btn\") finds an element by ID, returning the element object or null if not found."
+        title: "2. Common user events",
+        content: "You can listen for different events: 'click' for buttons, 'input' when typing in a text field, and 'submit' when submitting forms.",
       },
       {
-            "title": "3. Listen with addEventListener",
-            "content": "button.addEventListener(\"click\", handler) registers your callback to run whenever the user clicks."
-      }
-],
+        title: "3. The element must exist first",
+        content: "JavaScript cannot find a button that hasn't appeared on the page yet. Place your <script> at the bottom of the body so elements load first.",
+      },
+    ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Common Mistake",
-      code: "// Script placed in <head> without waiting for DOM:\nconst btn = document.querySelector(\"#btn\"); // null!\n// TypeError: Cannot read property \"addEventListener\" of null\nbtn.addEventListener(\"click\", () => {});",
-      explanation: "Querying elements before the HTML has parsed returns null and crashes.",
+      title: "Running Script Before Elements Exist",
+      code: `// ❌ If <script> runs in <head> before HTML loads:\nconst button = document.querySelector("#btn"); // null!\n// TypeError: Cannot read property 'addEventListener' of null\nbutton.addEventListener("click", () => {});`,
+      explanation: "The button doesn't exist on the page yet, so querySelector returns null and crashes.",
     },
     good: {
-      title: "Recommended Approach",
-      code: "// Run after DOM elements exist:\nconst btn = document.querySelector(\"#btn\");\nif (btn) {\n  btn.addEventListener(\"click\", () => {\n    console.log(\"Handled successfully\");\n  });\n}",
-      explanation: "Verifying the element exists before adding event listeners prevents null reference crashes.",
+      title: "Place Script at the Bottom",
+      code: `// ✅ Put script at the bottom of <body> or check first:\nconst button = document.querySelector("#btn");\nif (button) {\n  button.addEventListener("click", () => {\n    console.log("Button clicked!");\n  });\n}`,
+      explanation: "Placing scripts at the bottom ensures the HTML elements are on screen before JavaScript looks for them.",
     },
   },
   part5: {
     title: "Interactive Code Sandbox",
-    intro: "Practice this concept directly in the browser playground:",
-    starterCode: "// JS-20: DOM Events\nconst btn = typeof document !== \"undefined\" ? document.querySelector(\"#helloButton\") : null;\nif (btn) {\n  btn.addEventListener(\"click\", () => {\n    console.log(\"Button clicked!\");\n  });\n  console.log(\"Event listener attached successfully\");\n} else {\n  console.log(\"Simulating DOM event registration in sandbox\");\n}",
+    intro: "Test the 3-step DOM event flow:",
+    starterCode: `// JS-20: DOM Events in 3 Simple Steps
+
+// Step 1: Find the button (simulated on page)
+console.log("Step 1: Finding element with document.querySelector('#btn')");
+
+// Step 2: Attach event listener
+console.log("Step 2: Listening for 'click' with addEventListener");
+
+// Step 3: Run code when user clicks!
+function onButtonClick() {
+  const newText = "Hello! Button was clicked!";
+  console.log("Step 3: Updating textContent ->", newText);
+  return newText;
+}
+
+onButtonClick();`,
   },
   part6: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "What method is used to listen for user events on a DOM element?",
-      options: ["element.attachEvent()","element.addEventListener()","element.listen()","element.on()"],
-      correctIndex: 1,
-      explanation: "addEventListener() is the standard modern DOM method for attaching event handlers to elements.",
+      question: "What are the 3 steps to make a webpage button interactive with JavaScript?",
+      options: [
+        "1. Find it (querySelector), 2. Listen for clicks (addEventListener), 3. Update the page (textContent)",
+        "1. Restart browser, 2. Add CSS, 3. Refresh",
+        "1. Use var, 2. Set timer, 3. Create loop",
+        "1. Download HTML, 2. Upload file, 3. Close tab",
+      ],
+      correctIndex: 0,
+      explanation: "The core DOM recipe is: select the element with querySelector, attach a listener with addEventListener, and update the element when clicked.",
     },
   },
   part7: {
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-            "title": "Element Discovery",
-            "desc": "Use document.querySelector to find elements by selector."
+        title: "1. Find with querySelector",
+        desc: "Point to any HTML element using its ID like #btn or class name.",
       },
       {
-            "title": "Event Registration",
-            "desc": "addEventListener binds callbacks to user actions."
+        title: "2. Listen with addEventListener",
+        desc: "Wait for user actions like 'click' without freezing the webpage.",
       },
       {
-            "title": "Existence Check",
-            "desc": "Always verify elements are in the DOM before attaching listeners."
-      }
-],
+        title: "3. Change with textContent",
+        desc: "Change what the user sees on screen immediately.",
+      },
+    ],
     nextLessonPreview: {
       title: "JSON, fetch(), and API Responses",
       desc: "Learn how web apps communicate with external backends and handle JSON responses.",

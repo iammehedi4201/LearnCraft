@@ -12,13 +12,13 @@ import { TYPESCRIPT_MODULE_QUIZZES } from "../quiz/typescript-quizzes";
 import { getQuizBySlug } from "../quiz/quiz-registry";
 
 describe("TypeScript Curriculum Integrity & Health Suite", () => {
-  it("contains exactly 4 stages and 18 authoritative lessons in curriculum", () => {
-    expect(TYPESCRIPT_STAGES.length).toBe(4);
+  it("contains exactly 5 stages and 21 authoritative lessons in curriculum", () => {
+    expect(TYPESCRIPT_STAGES.length).toBe(5);
     const lessons = getAllLessons();
-    expect(lessons.length).toBe(18);
+    expect(lessons.length).toBe(21);
   });
 
-  it("ensures all 18 lessons have unique codes and slugs", () => {
+  it("ensures all 21 lessons have unique codes and slugs", () => {
     const lessons = getAllLessons();
     const codes = new Set<string>();
     const slugs = new Set<string>();
@@ -30,8 +30,8 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
       slugs.add(lesson.slug);
     }
 
-    expect(codes.size).toBe(18);
-    expect(slugs.size).toBe(18);
+    expect(codes.size).toBe(21);
+    expect(slugs.size).toBe(21);
   });
 
   it("verifies that getLessonBySlug resolves slugs, codes, legacy aliases, and prefixes correctly", () => {
@@ -52,7 +52,7 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
     expect(byPrefix?.code).toBe("TS-02");
   });
 
-  it("verifies all 18 handcrafted lessons across all 4 Stages (TS-01 through TS-18) meet strict pedagogical structure", () => {
+  it("verifies all 21 handcrafted lessons across all 5 Stages (TS-01 through TS-21) meet strict pedagogical structure", () => {
     const handcraftedSlugs = [
       "ts01-what-typescript-does",
       "ts02-type-annotations-inference",
@@ -67,14 +67,17 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
       "ts11-type-assertions",
       "ts12-generics",
       "ts13-common-utility-types",
-      "ts14-classes-and-implements",
-      "ts15-modules-and-type-imports",
-      "ts16-promises-and-async-functions",
-      "ts17-check-api-data",
-      "ts18-find-and-fix-type-errors",
+      "ts14-classes-and-objects",
+      "ts15-access-modifiers-encapsulation",
+      "ts16-inheritance-abstract-classes",
+      "ts17-polymorphism-composition-di",
+      "ts18-modules-and-type-imports",
+      "ts19-promises-and-async-functions",
+      "ts20-check-api-data",
+      "ts21-find-and-fix-type-errors",
     ];
 
-    expect(handcraftedSlugs.length).toBe(18);
+    expect(handcraftedSlugs.length).toBe(21);
 
     for (const slug of handcraftedSlugs) {
       expect(TYPESCRIPT_LESSONS_CONTENT[slug], `Missing handcrafted registry entry for ${slug}`).toBeDefined();
@@ -136,8 +139,8 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
     }
   });
 
-  it("verifies dedicated module quizzes for all 18 lessons across all 4 Stages are registered and resolvable", () => {
-    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBe(18);
+  it("verifies dedicated module quizzes for all 21 lessons across all 5 Stages are registered and resolvable", () => {
+    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBe(21);
 
     for (const quiz of TYPESCRIPT_MODULE_QUIZZES) {
       expect(quiz.trackKey).toBe("typescript");

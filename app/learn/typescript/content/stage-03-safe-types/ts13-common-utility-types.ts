@@ -21,123 +21,176 @@ export const ts13CommonUtilityTypesContent: StandardLessonContent = {
   ],
   part1: {
     title: "Common Utility Types",
-    bigPicture: "Utility types help you create a type from an existing type, so you do not need to repeat the same fields.",
-    codeSnippet: "type User = {\n  id: number;\n  name: string;\n  email: string;\n};\n\ntype UserPreview = Pick<User, \"id\" | \"name\">;\ntype UserUpdate = Partial<Pick<User, \"name\" | \"email\">>;",
+    bigPicture: "Utility types help you create new types from existing types so you never have to repeat the same fields by hand.",
+    codeSnippet: `type User = {
+  id: number;
+  name: string;
+  email: string;
+};
+
+// 1. Pick: Choose specific fields
+type UserPreview = Pick<User, "id" | "name">;
+
+// 2. Partial: Make all fields optional
+type UserUpdate = Partial<User>;
+
+// 3. Omit: Remove specific fields
+type NewUser = Omit<User, "id">;
+
+// 4. Record: Key-value dictionary
+type UserMap = Record<number, User>;`,
     breakdownTitle: "Core Foundations",
     breakdownItems: [
       {
-            "title": "Pick<T, Keys>",
-            "desc": "Constructs a type by picking a specific subset of properties from type T."
+        title: "Pick<T, Keys>",
+        desc: "Constructs a type by picking only the specified properties from type T.",
       },
       {
-            "title": "Partial<T>",
-            "desc": "Constructs a type with all properties of T set to optional."
+        title: "Partial<T>",
+        desc: "Constructs a type with all properties of T set to optional (adds ? to each field).",
       },
       {
-            "title": "Omit<T, Keys>",
-            "desc": "Constructs a type by picking all properties from T and then removing Keys."
+        title: "Omit<T, Keys>",
+        desc: "Constructs a type with all properties from T except the ones you remove.",
       },
       {
-            "title": "Record<K, V>",
-            "desc": "Constructs an object type whose property keys are K and property values are V."
-      }
-],
+        title: "Record<K, V>",
+        desc: "Constructs an object type whose keys are of type K and values are of type V.",
+      },
+    ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      "title": "Core Utility Types Overview",
-      "content": "- `Pick` keeps the fields you name. - `Partial` makes the chosen fields optional. - `Omit` removes fields you name. - `Record` describes an object with a set of key and value types. You do not need to memorize every utility type. Learn the common ones and learn to recognize them in existing code."
-},
+      title: "Core Utility Types Overview",
+      content: "- `Pick` keeps the fields you name. - `Partial` makes fields optional. - `Omit` removes fields you name. - `Record` describes an object dictionary. Learn to use these built-in helpers instead of recreating types manually.",
+    },
     cards: [
       {
         number: "01",
-        tag: "CORE PRINCIPLE",
-        title: "Pick<T, Keys>",
-        description: "Constructs a type by picking a specific subset of properties from type T.",
+        tag: "PICK & OMIT",
+        title: "Pick & Omit",
+        description: "Pick chooses only the fields you want. Omit removes the fields you do not want (like leaving out IDs or passwords).",
         color: "purple",
       },
       {
         number: "02",
-        tag: "USAGE RULE",
+        tag: "PARTIAL",
         title: "Partial<T>",
-        description: "Constructs a type with all properties of T set to optional.",
+        description: "Turns all properties into optional fields with '?', perfect for update forms and patch requests.",
         color: "cyan",
       },
       {
         number: "03",
-        tag: "PRACTICAL VALUE",
-        title: "Omit<T, Keys>",
-        description: "Constructs a type by picking all properties from T and then removing Keys.",
+        tag: "RECORD",
+        title: "Record<K, V>",
+        description: "Defines key-value dictionary objects, like mapping user IDs (number) to User objects.",
         color: "emerald",
       },
     ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how to think about this in everyday code, followed by a realistic scenario:",
+    intro: "Here is how each utility type fits into real applications, followed by a realistic scenario:",
     points: [
-          {
-                "title": "1. Handy built-in shortcuts",
-                "content": "TypeScript gives you helper types like `Partial`, `Pick`, and `Omit` so you don't have to duplicate type definitions."
-          },
-          {
-                "title": "2. Partial makes fields optional",
-                "content": "`Partial<User>` makes every field optional, which is great for forms where a user only updates one or two fields."
-          },
-          {
-                "title": "3. Pick and Omit choose fields",
-                "content": "Use `Pick` to keep only the fields you need, and `Omit` to leave out sensitive fields like passwords."
-          }
+      {
+        title: "1. Pick and Omit for fine-tuning fields",
+        content: "Use `Pick<User, 'id' | 'name'>` when a card only displays summary info. Use `Omit<User, 'id'>` when a registration form accepts user data before an ID is created.",
+      },
+      {
+        title: "2. Partial makes edits flexible",
+        content: "`Partial<User>` makes every field optional. When a user edits their profile, they might only change their name without sending their email again.",
+      },
+      {
+        title: "3. Record creates structured dictionaries",
+        content: "`Record<number, User>` models a lookup map where every key is a number ID and its value is a full User object.",
+      },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      "title": "Duplicating Types Manually",
-      "code": "type User = { id: number; name: string; email: string };\n\n// Manually copied - will easily fall out of sync when User changes!\ntype UserPreview = { id: number; name: string };",
-      "explanation": "Copying fields by hand causes drift and maintenance bugs when the base model evolves."
-},
+      title: "Duplicating Types Manually",
+      code: `type User = { id: number; name: string; email: string };
+
+// ❌ Manually typed duplicates fall out of sync when User changes!
+type NewUser = { name: string; email: string };
+type UserMap = { [id: number]: { id: number; name: string; email: string } };`,
+      explanation: "Copying fields by hand causes drift and maintenance bugs when the base model evolves.",
+    },
     good: {
-      "title": "Deriving Types with Built-in Utilities",
-      "code": "type User = { id: number; name: string; email: string };\n\n// Clean, single source of truth:\ntype UserPreview = Pick<User, \"id\" | \"name\">;\ntype UserUpdate = Partial<User>;",
-      "explanation": "Utility types keep your data models connected to their single source of truth."
-},
+      title: "Deriving Types with Built-in Utilities",
+      code: `type User = { id: number; name: string; email: string };
+
+// ✅ Clean, single source of truth:
+type NewUser = Omit<User, "id">;
+type UserMap = Record<number, User>;`,
+      explanation: "Utility types keep your data models connected to their single source of truth.",
+    },
   },
   part5: {
     title: "Interactive Code Sandbox",
-    intro: "Test and run this TypeScript code live in the editor:",
-    starterCode: "// Lesson 13: Common Utility Types\ntype User = {\n  id: number;\n  name: string;\n  email: string;\n};\n\ntype UserPreview = Pick<User, \"id\" | \"name\">;\ntype UserUpdate = Partial<Pick<User, \"name\" | \"email\">>;\n\nconst preview: UserPreview = { id: 1, name: \"Rina\" };\nconst update: UserUpdate = { email: \"new@example.com\" };\n\nconsole.log(\"Preview:\", preview);\nconsole.log(\"Update:\", update);\n",
+    intro: "Test and run all four utility types live in the editor:",
+    starterCode: `// Lesson 13: Common Utility Types
+type User = {
+  id: number;
+  name: string;
+  email: string;
+};
+
+// 1. Pick: Choose specific fields
+type UserPreview = Pick<User, "id" | "name">;
+const preview: UserPreview = { id: 1, name: "Rina" };
+
+// 2. Partial: Make fields optional
+type UserUpdate = Partial<User>;
+const update: UserUpdate = { email: "new@example.com" };
+
+// 3. Omit: Remove the 'id' field
+type NewUser = Omit<User, "id">;
+const newUser: NewUser = { name: "Mehedi", email: "mehedi@example.com" };
+
+// 4. Record: Dictionary of Users by ID
+type UserMap = Record<number, User>;
+const userLookup: UserMap = {
+  101: { id: 101, name: "Rina", email: "rina@example.com" },
+  102: { id: 102, name: "Mehedi", email: "mehedi@example.com" }
+};
+
+console.log("Pick:", preview);
+console.log("Partial:", update);
+console.log("Omit:", newUser);
+console.log("Record:", userLookup[101]);`,
   },
   part6: {
     title: "Knowledge Check Quiz",
     quiz: {
-      "question": "What does `Partial<User>` do in TypeScript?",
-      "options": [
-            "Makes every property in User optional",
-            "Removes all properties from User",
-            "Makes every property in User readonly",
-            "Picks only the first two properties of User"
+      question: "What does `Partial<User>` do in TypeScript?",
+      options: [
+        "Makes every property in User optional",
+        "Removes all properties from User",
+        "Makes every property in User readonly",
+        "Picks only the first two properties of User",
       ],
-      "correctIndex": 0,
-      "explanation": "`Partial<T>` wraps all properties of type T in `?`, making every property optional."
-},
+      correctIndex: 0,
+      explanation: "`Partial<T>` wraps all properties of type T in `?`, making every property optional.",
+    },
   },
   part7: {
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-            "title": "Utility Types",
-            "desc": "Built-in helpers that create new types from existing types without repetition."
+        title: "Utility Types",
+        desc: "Built-in helpers that create new types from existing types without repetition.",
       },
       {
-            "title": "Common Tools",
-            "desc": "Pick selects fields, Omit removes fields, and Partial makes fields optional."
+        title: "Pick & Omit",
+        desc: "Pick keeps the fields you want; Omit removes the fields you do not want.",
       },
       {
-            "title": "Maintainability",
-            "desc": "Keeps types connected to their single source of truth."
-      }
-],
+        title: "Partial & Record",
+        desc: "Partial makes fields optional; Record creates typed key-value dictionary maps.",
+      },
+    ],
   },
 };

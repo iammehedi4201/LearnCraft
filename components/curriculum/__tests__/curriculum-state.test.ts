@@ -338,7 +338,7 @@ const tsCourse = getTypeScriptCourse();
 
   it("4.1: Brand-new user (0 lessons completed)", () => {
     const state = getCurriculumState(tsCourse, { completedLessonIds: [], prereqConfirmed: false });
-    assert(state.totalLessonsCount === 18, `Total lessons should be 18, got ${state.totalLessonsCount}`);
+    assert(state.totalLessonsCount === 21, `Total lessons should be 21, got ${state.totalLessonsCount}`);
     assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
     assert(state.phases[0].doneSteps === 0, `Phase 1 done steps should be 0, got ${state.phases[0].doneSteps}`);
@@ -383,17 +383,17 @@ const tsCourse = getTypeScriptCourse();
     console.log("  ✓ 4.3 Authoritative TypeScript Phase 1 full completion & Phase 2 unlock verified");
   });
 
-  it("4.4: User completes all 4 phases (all 18 lessons) -> Capstone unlocks!", () => {
-    const all18Slugs = getAllLessons().map((l) => l.slug);
+  it("4.4: User completes all 5 phases (all 21 lessons) -> Capstone unlocks!", () => {
+    const all21Slugs = getAllLessons().map((l) => l.slug);
   
-    const state = getCurriculumState(tsCourse, { completedLessonIds: all18Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 18, `Completed count should be 18, got ${state.completedLessonsCount}`);
-    assert(state.completedPhases.length === 4, `All 4 phases should be completed, got ${state.completedPhases.length}`);
+    const state = getCurriculumState(tsCourse, { completedLessonIds: all21Slugs, prereqConfirmed: true });
+    assert(state.completedLessonsCount === 21, `Completed count should be 21, got ${state.completedLessonsCount}`);
+    assert(state.completedPhases.length === 5, `All 5 phases should be completed, got ${state.completedPhases.length}`);
     assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
     assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);
     assert(state.isCourseComplete === true, "Course should be marked complete");
-    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 4 phases");
-    console.log("  ✓ 4.4 All 4 phases finished -> Capstone successfully unlocked verified!");
+    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 5 phases");
+    console.log("  ✓ 4.4 All 5 phases finished -> Capstone successfully unlocked verified!");
   });
 
 

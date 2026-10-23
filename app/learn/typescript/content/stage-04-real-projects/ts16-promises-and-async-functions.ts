@@ -1,8 +1,8 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const ts16PromisesAndAsyncFunctionsContent: StandardLessonContent = {
-  slug: "ts16-promises-and-async-functions",
-  code: "TS-16",
+  slug: "ts19-promises-and-async-functions",
+  code: "TS-19",
   title: "Promises and async Functions",
   subtitle: "Model asynchronous values with Promise<T> and async/await syntax.",
   difficulty: "Moderate",

@@ -713,10 +713,10 @@ export const NEXTJS_RELATED_TOPICS: NextjsRelatedTopicMeta[] = [
   },
   {
     id: "rel-oop",
-    title: "OOP Fundamentals",
-    desc: "SOLID principles and design patterns.",
+    title: "TypeScript OOP",
+    desc: "Object-oriented architecture and design patterns in TypeScript.",
     badge: "Architecture",
-    path: "/learn/oop",
+    path: "/learn/typescript",
   },
 ];
 

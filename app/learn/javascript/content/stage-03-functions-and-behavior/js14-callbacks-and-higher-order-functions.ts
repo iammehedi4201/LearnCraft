@@ -4,7 +4,7 @@ export const js14CallbacksAndHigherOrderFunctionsContent: StandardLessonContent 
   slug: "js14-callbacks-and-higher-order-functions",
   code: "JS-14",
   title: "Callbacks and Higher-Order Functions",
-  subtitle: "Pass functions as values to build flexible workflows and handle events.",
+  subtitle: "A higher-order function accepts a function; a callback is the function you pass in.",
   difficulty: "Moderate",
   scenario: {
     question: "A button should run some code when the user clicks it. Why might a developer pass a function to an event listener instead of running the code immediately?",
@@ -21,115 +21,130 @@ export const js14CallbacksAndHigherOrderFunctionsContent: StandardLessonContent 
   ],
   part1: {
     title: "Callbacks and Higher-Order Functions",
-    bigPicture: "A callback is a function passed to another function to be called later or as part of its work. A higher-order function takes a function as an argument or returns a function.",
-    codeSnippet: "function processName(name, callback) {\n  callback(name);\n}\n\nprocessName(\"Rina\", (value) => {\n  console.log(`Hello, ${value}`);\n});\n// Hello, Rina",
-    breakdownTitle: "Core Foundations",
+    bigPicture: "A higher-order function accepts a function as an argument (or returns one). A callback is the function passed in to be called.",
+    codeSnippet: `// Higher-Order Function: accepts an 'operation' function
+function calculate(a, b, operation) {
+  return operation(a, b);
+}
+
+// Callbacks: the functions passed in to do the work
+function add(x, y) { return x + y; }
+function multiply(x, y) { return x * y; }
+
+console.log(calculate(10, 5, add));      // 15
+console.log(calculate(10, 5, multiply)); // 50`,
+    breakdownTitle: "Two Core Roles",
     breakdownItems: [
       {
-            "title": "First-Class Functions",
-            "desc": "Functions in JavaScript can be assigned to variables, passed as arguments, and returned."
+        title: "1. Higher-Order Function (The Receiver)",
+        desc: "The function that takes another function as a parameter (like calculate, filter, or setTimeout).",
       },
       {
-            "title": "Callbacks",
-            "desc": "Functions supplied to run later in response to events, timers, or array iterations."
+        title: "2. Callback Function (The Passed Function)",
+        desc: "The function you hand over to be executed (like add, multiply, or an arrow function).",
       },
       {
-            "title": "Higher-Order Functions",
-            "desc": "Functions like map, filter, or custom helpers that take or return other functions."
-      }
-],
+        title: "3. Pass by Name",
+        desc: "Pass calculate(10, 5, add) without () so it runs when calculate decides, not immediately.",
+      },
+    ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      title: "Callback Principle",
-      content: "Pass functions by reference without parentheses so they execute when the event happens, not immediately.",
+      title: "The Callback Rule",
+      content: "Pass callbacks by name without () so they execute when needed, not on the spot.",
     },
     cards: [
       {
-            "number": "01",
-            "tag": "FIRST-CLASS VALUES",
-            "title": "First-Class Functions",
-            "description": "Functions in JavaScript can be assigned to variables, passed as arguments, and returned.",
-            "color": "purple"
+        number: "01",
+        tag: "THE RECEIVER",
+        title: "Higher-Order Function",
+        description: "A function that takes another function as an argument. Example: calculate, map, setTimeout.",
+        color: "purple",
       },
       {
-            "number": "02",
-            "tag": "DEFERRED WORK",
-            "title": "Callbacks",
-            "description": "Functions supplied to run later in response to events, timers, or array iterations.",
-            "color": "cyan"
+        number: "02",
+        tag: "THE WORKER",
+        title: "Callback Function",
+        description: "The function you pass into another function to do a specific job. Example: add, multiply.",
+        color: "cyan",
       },
       {
-            "number": "03",
-            "tag": "ABSTRACTION",
-            "title": "Higher-Order Functions",
-            "description": "Functions like map, filter, or custom helpers that take or return other functions.",
-            "color": "emerald"
-      }
-],
+        number: "03",
+        tag: "THE REASON",
+        title: "Functions are Values",
+        description: "Functions can be passed around just like numbers or strings. That is why callbacks work.",
+        color: "emerald",
+      },
+    ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how to think about this in everyday code, followed by a realistic scenario:",
+    intro: "Two functions working together as a team:",
     points: [
       {
-            "title": "1. Functions are values",
-            "content": "In JavaScript, functions can be passed into other functions just like numbers, strings, or objects."
+        title: "1. Manager & Worker",
+        content: "calculate is the manager that sets up the calculation; add is the worker that performs it.",
       },
       {
-            "title": "2. Callbacks run at the right time",
-            "content": "A callback is not called immediately; it is handed over to run when an event happens, a timer finishes, or an item is processed."
+        title: "2. Built-in Examples",
+        content: "In numbers.filter(n => n > 2), filter is higher-order and n => n > 2 is the callback. In setTimeout(sayHi, 1000), setTimeout is higher-order and sayHi is the callback.",
       },
       {
-            "title": "3. Powers modern JavaScript",
-            "content": "Array methods (map, filter), browser event listeners (click), and timers (setTimeout) all rely on callbacks."
-      }
-],
+        title: "3. Reusability",
+        content: "Write the higher-order function once, and change what it does by passing different callbacks.",
+      },
+    ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Common Mistake",
-      code: "function handleClick() { console.log(\"Clicked!\"); }\n// Bug: Calling the function immediately with ():\n// button.addEventListener(\"click\", handleClick()); // Runs at startup, not on click!",
-      explanation: "Adding () calls the function right away instead of passing it as a callback reference.",
+      title: "Accidentally Invoking with ()",
+      code: `function add(x, y) { return x + y; }\nfunction calculate(a, b, operation) { return operation(a, b); }\n\n// ❌ Wrong: add(5, 5) runs immediately and passes 10 (a number!)\n// calculate(5, 5, add(5, 5)); // TypeError: operation is not a function`,
+      explanation: "Adding () calls the function immediately instead of passing it as a callback.",
     },
     good: {
-      title: "Recommended Approach",
-      code: "function handleClick() { console.log(\"Clicked!\"); }\n// Correct: Pass the function reference without ():\n// button.addEventListener(\"click\", handleClick);",
-      explanation: "Passing the function by name lets the runtime invoke it when the event occurs.",
+      title: "Pass the Function Name",
+      code: `function add(x, y) { return x + y; }\nfunction calculate(a, b, operation) { return operation(a, b); }\n\n// ✅ Correct: Pass 'add' by name without ()\nconsole.log(calculate(5, 5, add)); // 10`,
+      explanation: "Passing add without parentheses hands over the function so calculate can run it.",
     },
   },
   part5: {
     title: "Interactive Code Sandbox",
-    intro: "Practice this concept directly in the browser playground:",
-    starterCode: "// JS-14: Callbacks and Higher-Order Functions\nfunction processUser(id, callback) {\n  const user = { id, name: \"Rina\" };\n  return callback(user);\n}\n\nconst greeting = processUser(101, (u) => `Hello, ${u.name}!`);\nconsole.log(greeting);",
+    intro: "Run the calculate higher-order function with different callbacks:",
+    starterCode: `// JS-14: Callbacks and Higher-Order Functions\nfunction calculate(a, b, operation) {\n  return operation(a, b);\n}\n\nfunction add(x, y) { return x + y; }\nfunction multiply(x, y) { return x * y; }\n\nconsole.log("Add:", calculate(10, 5, add));           // 15\nconsole.log("Multiply:", calculate(10, 5, multiply)); // 50\nconsole.log("Subtract:", calculate(10, 5, (x, y) => x - y)); // 5`,
   },
   part6: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "What is a higher-order function in JavaScript?",
-      options: ["A function that runs faster than other functions in V8","A function that takes another function as an argument, or returns a function","A function that can only be called from an HTML event","A function defined inside an async block"],
-      correctIndex: 1,
-      explanation: "A higher-order function is any function that accepts a function as an argument, returns a function, or both.",
+      question: "In the expression calculate(10, 5, add), which function is the Higher-Order Function and which is the Callback?",
+      options: [
+        "calculate is the Higher-Order Function; add is the Callback",
+        "add is the Higher-Order Function; calculate is the Callback",
+        "Both calculate and add are Callback functions",
+        "Neither; higher-order functions only exist in array methods",
+      ],
+      correctIndex: 0,
+      explanation: "calculate is the higher-order function because it accepts a function. add is the callback because it is passed in to be executed.",
     },
   },
   part7: {
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-            "title": "First-Class Citizens",
-            "desc": "Functions can be treated like any other variable value."
+        title: "Higher-Order Function",
+        desc: "Takes a function as an argument or returns one (The Manager).",
       },
       {
-            "title": "Deferred Execution",
-            "desc": "Callbacks execute when the caller decides, not immediately."
+        title: "Callback Function",
+        desc: "The function passed in to be executed (The Worker).",
       },
       {
-            "title": "Pass by Reference",
-            "desc": "Pass function names without parentheses to avoid premature invocation."
-      }
-],
+        title: "Pass without ()",
+        desc: "Pass the name like add, not add(), so it runs at the right time.",
+      },
+    ],
     nextLessonPreview: {
       title: "Closures",
       desc: "Discover how inner functions remember variables from their outer scope.",

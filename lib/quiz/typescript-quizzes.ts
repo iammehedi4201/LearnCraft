@@ -846,10 +846,10 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
     "id": "quiz-typescript-ts14",
     "trackKey": "typescript",
     "trackTitle": "TypeScript",
-    "lessonSlug": "ts14-classes-and-implements",
+    "lessonSlug": "ts14-classes-and-objects",
     "lessonCode": "TS-14",
-    "lessonTitle": "Classes and implements",
-    "description": "Assess your understanding of classes and interface contract enforcement.",
+    "lessonTitle": "Classes, Objects, and Constructors",
+    "description": "Assess your understanding of classes, objects, and constructor initialization.",
     "passingScore": 75,
     "baseXpReward": 30,
     "perfectScoreBonusXp": 15,
@@ -857,7 +857,169 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
       {
         "id": "ts14-q1",
         "type": "multiple_choice",
-        "title": "Ensuring Classes Have id",
+        "title": "Role of a Constructor",
+        "prompt": "What is the primary role of a constructor in a TypeScript class?",
+        "options": [
+          "To initialize an object's properties when a new instance is created",
+          "To delete the class from computer memory",
+          "To convert TypeScript types into HTML elements",
+          "To prevent any new instances from being created"
+        ],
+        "correctAnswer": 0,
+        "explanation": "The constructor is a special method that executes automatically when 'new' is called to initialize property values.",
+        "hint": "Think about how objects are initialized when created.",
+        "hintCostXP": 5
+      },
+      {
+        "id": "ts14-q2",
+        "type": "code_output",
+        "title": "Class Instance Creation",
+        "prompt": "What will `user.introduce()` return in the following code?",
+        "codeSnippet": "class User {\n  constructor(public name: string, public role: string) {}\n  introduce() { return `${this.name} is a ${this.role}.`; }\n}\nconst user = new User(\"Rina\", \"Designer\");",
+        "language": "typescript",
+        "options": [
+          "\"Rina is a Designer.\"",
+          "\"undefined is a undefined.\"",
+          "\"User is a User.\"",
+          "TypeScript Error"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Calling `new User('Rina', 'Designer')` sets the instance properties, which are accessed via `this` in `introduce()`.",
+        "hint": "The constructor sets the instance fields.",
+        "hintCostXP": 5
+      },
+      {
+        "id": "ts14-q3",
+        "type": "multiple_choice",
+        "title": "Blueprint vs Instance",
+        "prompt": "What is the relationship between a class and an object in TypeScript?",
+        "options": [
+          "A class is a blueprint, and an object is an instance created from that blueprint",
+          "A class and an object are completely identical and interchangeable terms",
+          "An object is a compiler error produced by a class",
+          "A class can only exist inside a browser console"
+        ],
+        "correctAnswer": 0,
+        "explanation": "The class defines the structure and behaviors, while objects are distinct instances created using the `new` keyword.",
+        "hint": "Think of a house blueprint vs a real house.",
+        "hintCostXP": 5
+      }
+    ]
+  },
+  {
+    "id": "quiz-typescript-ts15",
+    "trackKey": "typescript",
+    "trackTitle": "TypeScript",
+    "lessonSlug": "ts15-access-modifiers-encapsulation",
+    "lessonCode": "TS-15",
+    "lessonTitle": "Access Modifiers and Encapsulation",
+    "description": "Test your mastery of public, private, protected, readonly, and encapsulation.",
+    "passingScore": 75,
+    "baseXpReward": 30,
+    "perfectScoreBonusXp": 15,
+    "questions": [
+      {
+        "id": "ts15-q1",
+        "type": "multiple_choice",
+        "title": "Access Modifier Visibility",
+        "prompt": "Which access modifier allows a property to be accessed only within its class and child classes that inherit from it?",
+        "options": [
+          "protected",
+          "private",
+          "public",
+          "readonly"
+        ],
+        "correctAnswer": 0,
+        "explanation": "'protected' allows access inside the declaring class and its subclasses, but prevents access from outside callers.",
+        "hint": "Subclasses can see it, but outsiders cannot.",
+        "hintCostXP": 5
+      },
+      {
+        "id": "ts15-q2",
+        "type": "code_output",
+        "title": "Parameter Properties Shortcut",
+        "prompt": "What does `constructor(public readonly id: string)` do in TypeScript?",
+        "codeSnippet": "class Item {\n  constructor(public readonly id: string) {}\n}",
+        "language": "typescript",
+        "options": [
+          "Automatically declares the property, assigns it from the argument, and marks it read-only",
+          "Throws a syntax error because readonly cannot be used in constructors",
+          "Creates a private static property",
+          "Deletes the property when the constructor finishes"
+        ],
+        "correctAnswer": 0,
+        "explanation": "TypeScript parameter properties automatically declare and assign the property in one concise line.",
+        "hint": "It combines declaration, assignment, and modifiers in 1 step.",
+        "hintCostXP": 5
+      },
+      {
+        "id": "ts15-q3",
+        "type": "multiple_choice",
+        "title": "Why Encapsulation Matters",
+        "prompt": "Why should sensitive state like a bank balance be marked `private`?",
+        "options": [
+          "To prevent outside code from bypassing validation and directly setting invalid values (like negative balances)",
+          "To make the code run twice as fast in the browser",
+          "Because TypeScript does not support public numbers",
+          "To encrypt the data on the computer's hard drive"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Encapsulation hides internal state and forces mutations to go through validated methods, maintaining data invariants.",
+        "hint": "It protects against invalid direct modifications.",
+        "hintCostXP": 5
+      }
+    ]
+  },
+  {
+    "id": "quiz-typescript-ts16",
+    "trackKey": "typescript",
+    "trackTitle": "TypeScript",
+    "lessonSlug": "ts16-inheritance-abstract-classes",
+    "lessonCode": "TS-16",
+    "lessonTitle": "Inheritance, Interfaces, and Abstract Classes",
+    "description": "Assess your understanding of extends, super(), interfaces, and abstract base classes.",
+    "passingScore": 75,
+    "baseXpReward": 30,
+    "perfectScoreBonusXp": 15,
+    "questions": [
+      {
+        "id": "ts16-q1",
+        "type": "multiple_choice",
+        "title": "Interface vs Abstract Class",
+        "prompt": "What is the key difference between an interface and an abstract class?",
+        "options": [
+          "An interface has zero implementation code; an abstract class can provide both shared implemented methods and abstract methods",
+          "An interface can be instantiated with `new`; an abstract class cannot",
+          "Interfaces only work in JavaScript; abstract classes only work in TypeScript",
+          "There is no difference between them"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Interfaces are purely compile-time contracts, while abstract classes can contain reusable concrete implementations alongside abstract method contracts.",
+        "hint": "Abstract classes can contain real implemented methods.",
+        "hintCostXP": 5
+      },
+      {
+        "id": "ts16-q2",
+        "type": "code_output",
+        "title": "super() in Constructors",
+        "prompt": "What is the purpose of `super(model)` in a child class constructor?",
+        "codeSnippet": "class Car { constructor(public model: string) {} }\nclass ElectricCar extends Car {\n  constructor(model: string, public battery: number) {\n    super(model);\n  }\n}",
+        "language": "typescript",
+        "options": [
+          "It invokes the parent class constructor to initialize inherited properties",
+          "It cancels the child class constructor",
+          "It converts the class into an interface",
+          "It makes the child class run asynchronously"
+        ],
+        "correctAnswer": 0,
+        "explanation": "In derived classes, `super()` calls the constructor of the parent class and must be called before accessing `this`.",
+        "hint": "super() calls the parent constructor.",
+        "hintCostXP": 5
+      },
+      {
+        "id": "ts16-q3",
+        "type": "multiple_choice",
+        "title": "Enforcing Contracts with implements",
         "prompt": "Several classes must have an `id` number. How could an interface help check that each class follows this rule?",
         "options": [
           "Create `interface HasId { id: number }` and have each class use `implements HasId`",
@@ -869,49 +1031,79 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
         "explanation": "Declaring `implements HasId` instructs TypeScript to verify that every conforming class provides the required id number.",
         "hint": "Think about the scenario answer: implements HasId.",
         "hintCostXP": 5
-      },
+      }
+    ]
+  },
+  {
+    "id": "quiz-typescript-ts17",
+    "trackKey": "typescript",
+    "trackTitle": "TypeScript",
+    "lessonSlug": "ts17-polymorphism-composition-di",
+    "lessonCode": "TS-17",
+    "lessonTitle": "Polymorphism, Composition, and Dependency Injection",
+    "description": "Evaluate your architectural design with polymorphic types, composition, and dependency injection.",
+    "passingScore": 75,
+    "baseXpReward": 30,
+    "perfectScoreBonusXp": 15,
+    "questions": [
       {
-        "id": "ts14-q2",
-        "type": "code_output",
-        "title": "Parameter Properties Shortcut",
-        "prompt": "In `class Product { constructor(public id: number, public name: string) {} }`, what does `public` in the constructor parameters do?",
-        "codeSnippet": "class Product {\n  constructor(public id: number, public name: string) {}\n}",
-        "language": "typescript",
+        "id": "ts17-q1",
+        "type": "multiple_choice",
+        "title": "Benefit of Dependency Injection",
+        "prompt": "Why is passing dependencies through a constructor better than hardcoding `new Service()` inside a class?",
         "options": [
-          "Automatically declares and assigns the properties on the class instance",
-          "Makes the parameters accessible only inside the constructor body",
-          "Converts the parameters into static class methods",
-          "Exports the class to global scope"
+          "It decouples the class, making it easy to swap implementations and pass mock objects during automated tests",
+          "It forces TypeScript to execute code synchronously",
+          "It eliminates the need for any interfaces",
+          "It compresses the output JavaScript bundle"
         ],
         "correctAnswer": 0,
-        "explanation": "TypeScript parameter properties automatically create and initialize class members from constructor arguments.",
-        "hint": "It avoids writing `this.id = id;` manually.",
+        "explanation": "Constructor dependency injection decouples classes from concrete implementations, making systems modular, configurable, and easily testable.",
+        "hint": "Think about testing: how do you pass mock services?",
         "hintCostXP": 5
       },
       {
-        "id": "ts14-q3",
-        "type": "multiple_choice",
-        "title": "When to Use Classes",
-        "prompt": "Is every TypeScript application required to use classes?",
+        "id": "ts17-q2",
+        "type": "code_output",
+        "title": "Polymorphic Swapping",
+        "prompt": "In `class OrderService { constructor(private p: PaymentProcessor) {} }`, why can you pass either `StripeProcessor` or `MockProcessor`?",
+        "codeSnippet": "interface PaymentProcessor { pay(n: number): void; }\nclass StripeProcessor implements PaymentProcessor { pay(n: number) {} }\nclass MockProcessor implements PaymentProcessor { pay(n: number) {} }\nclass OrderService { constructor(private p: PaymentProcessor) {} }",
+        "language": "typescript",
         "options": [
-          "No; classes are helpful in object-oriented codebases, but functions and plain objects are also widely used",
-          "Yes; TypeScript cannot compile functions without an enclosing class",
-          "Yes; classes are mandatory for type checking to work",
-          "No; classes were removed in TypeScript 5"
+          "Because both classes implement the shared `PaymentProcessor` interface contract (Polymorphism)",
+          "Because TypeScript ignores parameter types inside constructors",
+          "Because OrderService inherits from both classes simultaneously",
+          "Because MockProcessor is a built-in TypeScript keyword"
         ],
         "correctAnswer": 0,
-        "explanation": "Classes are a tool for grouping data and methods, but modern TypeScript also thrives on pure functions and object types.",
-        "hint": "Follow your project's architectural style.",
+        "explanation": "Polymorphism allows any object satisfying the `PaymentProcessor` interface to be used interchangeably by `OrderService`.",
+        "hint": "Both classes satisfy the shared interface.",
+        "hintCostXP": 5
+      },
+      {
+        "id": "ts17-q3",
+        "type": "multiple_choice",
+        "title": "Composition vs Inheritance",
+        "prompt": "What does 'composition over inheritance' mean in practical software design?",
+        "options": [
+          "Building complex behavior by having objects contain other objects ('has-a') instead of building deep inheritance trees ('is-a')",
+          "Writing code exclusively with functions and no objects",
+          "Never using any interfaces in a project",
+          "Replacing classes with global variables"
+        ],
+        "correctAnswer": 0,
+        "explanation": "Composition builds flexibility by assembling small, focused components rather than creating rigid class hierarchies.",
+        "hint": "'has-a' vs 'is-a'.",
         "hintCostXP": 5
       }
     ]
   },
   {
-    "id": "quiz-typescript-ts15",
+    "id": "quiz-typescript-ts18",
     "trackKey": "typescript",
     "trackTitle": "TypeScript",
-    "lessonSlug": "ts15-modules-and-type-imports",
-    "lessonCode": "TS-15",
+    "lessonSlug": "ts18-modules-and-type-imports",
+    "lessonCode": "TS-18",
     "lessonTitle": "Modules and Type Imports",
     "description": "Evaluate your modular architecture and type-only import skills.",
     "passingScore": 75,
@@ -919,7 +1111,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
     "perfectScoreBonusXp": 15,
     "questions": [
       {
-        "id": "ts15-q1",
+        "id": "ts18-q1",
         "type": "multiple_choice",
         "title": "Sharing Types Across Files",
         "prompt": "Three files need the same `User` type. Why is importing it from one shared file better than defining it in all three files?",
@@ -935,7 +1127,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
         "hintCostXP": 5
       },
       {
-        "id": "ts15-q2",
+        "id": "ts18-q2",
         "type": "code_output",
         "title": "import type Behavior",
         "prompt": "What happens to `import type { User } from './types'` during compilation to JavaScript?",
@@ -953,7 +1145,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
         "hintCostXP": 5
       },
       {
-        "id": "ts15-q3",
+        "id": "ts18-q3",
         "type": "multiple_choice",
         "title": "Circular Dependency Prevention",
         "prompt": "How can `import type` help avoid circular dependency runtime errors?",
@@ -971,11 +1163,11 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
     ]
   },
   {
-    "id": "quiz-typescript-ts16",
+    "id": "quiz-typescript-ts19",
     "trackKey": "typescript",
     "trackTitle": "TypeScript",
-    "lessonSlug": "ts16-promises-and-async-functions",
-    "lessonCode": "TS-16",
+    "lessonSlug": "ts19-promises-and-async-functions",
+    "lessonCode": "TS-19",
     "lessonTitle": "Promises and async Functions",
     "description": "Verify your ability to type asynchronous workflows and Promises.",
     "passingScore": 75,
@@ -983,7 +1175,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
     "perfectScoreBonusXp": 15,
     "questions": [
       {
-        "id": "ts16-q1",
+        "id": "ts19-q1",
         "type": "multiple_choice",
         "title": "Promise<string> vs string Return",
         "prompt": "A function loads a user's name from a server. Why is its return type `Promise<string>` instead of simply `string`?",
@@ -999,7 +1191,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
         "hintCostXP": 5
       },
       {
-        "id": "ts16-q2",
+        "id": "ts19-q2",
         "type": "code_output",
         "title": "Awaiting Promises",
         "prompt": "What is the type of `const name` in the following code?",
@@ -1017,7 +1209,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
         "hintCostXP": 5
       },
       {
-        "id": "ts16-q3",
+        "id": "ts19-q3",
         "type": "multiple_choice",
         "title": "Non-Returning Async Functions",
         "prompt": "What return type should be given to an `async` function that returns no value?",
@@ -1035,11 +1227,11 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
     ]
   },
   {
-    "id": "quiz-typescript-ts17",
+    "id": "quiz-typescript-ts20",
     "trackKey": "typescript",
     "trackTitle": "TypeScript",
-    "lessonSlug": "ts17-check-api-data",
-    "lessonCode": "TS-17",
+    "lessonSlug": "ts20-check-api-data",
+    "lessonCode": "TS-20",
     "lessonTitle": "Check API Data Before Trusting It",
     "description": "Master runtime boundary validation for external API payloads.",
     "passingScore": 75,
@@ -1047,7 +1239,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
     "perfectScoreBonusXp": 15,
     "questions": [
       {
-        "id": "ts17-q1",
+        "id": "ts20-q1",
         "type": "multiple_choice",
         "title": "Mismatched Server Data Risk",
         "prompt": "Your app expects an API response with numeric `id`, but the server sometimes sends `id` as text. What could go wrong, and why is a TypeScript type alone not enough?",
@@ -1063,7 +1255,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
         "hintCostXP": 5
       },
       {
-        "id": "ts17-q2",
+        "id": "ts20-q2",
         "type": "code_output",
         "title": "The data as User Trap",
         "prompt": "Why is `const data = (await res.json()) as User;` considered risky for external data?",
@@ -1081,7 +1273,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
         "hintCostXP": 5
       },
       {
-        "id": "ts17-q3",
+        "id": "ts20-q3",
         "type": "multiple_choice",
         "title": "Safe Boundary Handling",
         "prompt": "What is the recommended first step when parsing untrusted external JSON data?",
@@ -1099,11 +1291,11 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
     ]
   },
   {
-    "id": "quiz-typescript-ts18",
+    "id": "quiz-typescript-ts21",
     "trackKey": "typescript",
     "trackTitle": "TypeScript",
-    "lessonSlug": "ts18-find-and-fix-type-errors",
-    "lessonCode": "TS-18",
+    "lessonSlug": "ts21-find-and-fix-type-errors",
+    "lessonCode": "TS-21",
     "lessonTitle": "Find and Fix Type Errors",
     "description": "Diagnose compiler errors accurately and fix root causes cleanly.",
     "passingScore": 75,
@@ -1111,7 +1303,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
     "perfectScoreBonusXp": 15,
     "questions": [
       {
-        "id": "ts18-q1",
+        "id": "ts21-q1",
         "type": "multiple_choice",
         "title": "AI Suggests as any",
         "prompt": "AI suggests adding `as any` to make a compiler error disappear. What would you investigate before accepting that fix?",
@@ -1127,7 +1319,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
         "hintCostXP": 5
       },
       {
-        "id": "ts18-q2",
+        "id": "ts21-q2",
         "type": "code_output",
         "title": "Fixing Call Site Mismatches",
         "prompt": "Given `function welcome(name: string): string { return `Welcome, ${name}`; }`, how do you correctly fix `welcome(42)`?",
@@ -1145,7 +1337,7 @@ export const TYPESCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
         "hintCostXP": 5
       },
       {
-        "id": "ts18-q3",
+        "id": "ts21-q3",
         "type": "multiple_choice",
         "title": "5 Steps to Resolving Type Errors",
         "prompt": "What is the first step when diagnosing a TypeScript compiler error?",

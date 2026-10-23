@@ -1,8 +1,8 @@
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const ts15ModulesAndTypeImportsContent: StandardLessonContent = {
-  slug: "ts15-modules-and-type-imports",
-  code: "TS-15",
+  slug: "ts18-modules-and-type-imports",
+  code: "TS-18",
   title: "Modules and Type Imports",
   subtitle: "Organize code across files and use import type for type-only dependencies.",
   difficulty: "Moderate",

@@ -146,7 +146,7 @@ const typescriptStages: RoadmapStage[] = TYPESCRIPT_STAGES.map((stage) => ({
 // OOP — derived from oop-curriculum
 // ─────────────────────────────────────────────────────────────
 
-const oopStages: RoadmapStage[] = OOP_STAGES.map((stage) => ({
+export const oopStages: RoadmapStage[] = OOP_STAGES.map((stage) => ({
   id: stage.id,
   stageNumber: stage.stageNumber,
   name: stage.name,
@@ -468,29 +468,15 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     id: "typescript",
     slug: "typescript",
     title: "TypeScript",
-    description: "Strict Static Typing, Generics & Utility Types",
+    description: "Strict Static Typing, Object-Oriented Programming (OOP) & Generics",
     icon: "🔷",
     category: "language",
     level: "beginner-advanced",
     status: "available",
-    totalLessons: 32,
+    totalLessons: 21,
     stages: typescriptStages,
     learnPath: "/learn/typescript",
     badgeColor: "bg-blue-500/15 text-blue-400 border-blue-500/30",
-  },
-  {
-    id: "oop",
-    slug: "oop",
-    title: "OOP Fundamentals",
-    description: "Object-Oriented Architecture, Classes & SOLID Principles",
-    icon: "🧩",
-    category: "language",
-    level: "beginner-advanced",
-    status: "available",
-    totalLessons: 16,
-    stages: oopStages,
-    learnPath: "/learn/oop",
-    badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   },
   {
     id: "react",

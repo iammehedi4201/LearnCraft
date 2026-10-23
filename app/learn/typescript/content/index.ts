@@ -20,9 +20,15 @@ import {
   ts11TypeAssertionsContent,
   ts12GenericsContent,
   ts13CommonUtilityTypesContent,
-  ts14ClassesAndImplementsContent,
   ts15ModulesAndTypeImportsContent,
 } from "./stage-03-safe-types";
+
+import {
+  ts14ClassesAndObjectsContent,
+  ts15AccessModifiersEncapsulationContent,
+  ts16InheritanceAbstractClassesContent,
+  ts17PolymorphismCompositionDiContent,
+} from "./stage-04-oop";
 
 import {
   ts16PromisesAndAsyncFunctionsContent,
@@ -33,10 +39,11 @@ import {
 export * from "./stage-01-basics";
 export * from "./stage-02-describe-data";
 export * from "./stage-03-safe-types";
+export * from "./stage-04-oop";
 export * from "./stage-04-real-projects";
 
 export const ALL_TYPESCRIPT_LESSONS: Record<string, StandardLessonContent> = {
-  // ── Authoritative 18 Lessons (Curriculum Source of Truth) ──
+  // ── Authoritative 21 Lessons (Curriculum Source of Truth) ──
   "ts01-what-typescript-does": ts01WhatTypeScriptDoesContent,
   "ts02-type-annotations-inference": ts02TypeAnnotationsInferenceContent,
   "ts03-basic-types-arrays": ts03BasicTypesArraysContent,
@@ -50,13 +57,26 @@ export const ALL_TYPESCRIPT_LESSONS: Record<string, StandardLessonContent> = {
   "ts11-type-assertions": ts11TypeAssertionsContent,
   "ts12-generics": ts12GenericsContent,
   "ts13-common-utility-types": ts13CommonUtilityTypesContent,
-  "ts14-classes-and-implements": ts14ClassesAndImplementsContent,
+
+  // Dedicated OOP Phase (TS-14 to TS-17)
+  "ts14-classes-and-objects": ts14ClassesAndObjectsContent,
+  "ts15-access-modifiers-encapsulation": ts15AccessModifiersEncapsulationContent,
+  "ts16-inheritance-abstract-classes": ts16InheritanceAbstractClassesContent,
+  "ts17-polymorphism-composition-di": ts17PolymorphismCompositionDiContent,
+
+  // Real Projects Phase (TS-18 to TS-21)
+  "ts18-modules-and-type-imports": ts15ModulesAndTypeImportsContent,
+  "ts19-promises-and-async-functions": ts16PromisesAndAsyncFunctionsContent,
+  "ts20-check-api-data": ts17CheckApiDataContent,
+  "ts21-find-and-fix-type-errors": ts18FindAndFixTypeErrorsContent,
+
+  // ── Backward-Compatible Aliases to Preserve Student Notes, Bookmarks & Quizzes ──
+  "ts14-classes-and-implements": ts14ClassesAndObjectsContent,
   "ts15-modules-and-type-imports": ts15ModulesAndTypeImportsContent,
   "ts16-promises-and-async-functions": ts16PromisesAndAsyncFunctionsContent,
   "ts17-check-api-data": ts17CheckApiDataContent,
   "ts18-find-and-fix-type-errors": ts18FindAndFixTypeErrorsContent,
 
-  // ── Legacy Aliases to Preserve Student Progress, Notes, Bookmarks & Quizzes ──
   "ts01-mental-model": ts01WhatTypeScriptDoesContent,
   "ts02-primitives-inference": ts02TypeAnnotationsInferenceContent,
   "ts03-arrays-tuples": ts03BasicTypesArraysContent,
@@ -74,9 +94,9 @@ export const ALL_TYPESCRIPT_LESSONS: Record<string, StandardLessonContent> = {
   "ts15-generic-interfaces": ts12GenericsContent,
   "ts16-generic-constraints": ts12GenericsContent,
   "ts17-generics-keyof": ts12GenericsContent,
-  "ts18-class-access-modifiers": ts14ClassesAndImplementsContent,
-  "ts19-parameter-properties": ts14ClassesAndImplementsContent,
-  "ts20-abstract-classes": ts14ClassesAndImplementsContent,
+  "ts18-class-access-modifiers": ts15AccessModifiersEncapsulationContent,
+  "ts19-parameter-properties": ts15AccessModifiersEncapsulationContent,
+  "ts20-abstract-classes": ts16InheritanceAbstractClassesContent,
   "ts21-indexed-access-typeof": ts13CommonUtilityTypesContent,
   "ts22-conditional-types-infer": ts12GenericsContent,
   "ts23-mapped-template-types": ts13CommonUtilityTypesContent,

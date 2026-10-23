@@ -372,22 +372,35 @@ In `combined`, spread puts the array's items into a new array. In the function, 
 ## Lesson 14: Callbacks and Higher-Order Functions
 **Difficulty: Moderate**
 
-A callback is a function passed to another function to be called later or as part of its work. A higher-order function takes a function as an argument or returns a function.
+A **higher-order function** is a function that accepts another function as an argument, or returns a function. A **callback** is the function that you pass in to be called.
+
+Think of them as a team: the higher-order function is the **manager**, and the callback is the **worker**.
 
 ```js
-function processName(name, callback) {
-  callback(name);
+// Higher-Order Function: accepts an 'operation' function
+function calculate(a, b, operation) {
+  return operation(a, b);
 }
 
-processName("Rina", (value) => {
-  console.log(`Hello, ${value}`);
-});
-// Hello, Rina
+// Callbacks: the actual work to perform
+function add(x, y) {
+  return x + y;
+}
+
+function multiply(x, y) {
+  return x * y;
+}
+
+// calculate is the higher-order function. add and multiply are the callbacks!
+console.log(calculate(10, 5, add));      // 15
+console.log(calculate(10, 5, multiply)); // 50
 ```
 
-The arrow function is passed in as the callback. `processName` calls it with the name.
+`calculate` is written once. You can change what it does simply by passing a different callback function (`add`, `multiply`, or an inline arrow function).
 
-Callbacks are used in array methods, event handlers, timers, and asynchronous code.
+You already see callbacks every day in JavaScript:
+- **Array methods:** In `numbers.filter(n => n > 2)`, `filter()` is the higher-order function, and `n => n > 2` is the callback.
+- **Timers:** In `setTimeout(sayHello, 1000)`, `setTimeout` is the higher-order function, and `sayHello` is the callback.
 
 **Scenario:** A button should run some code when the user clicks it. Why might a developer pass a function to an event listener instead of running the code immediately?
 
@@ -525,59 +538,75 @@ Step by step:
 ## Lesson 19: The Event Loop: A Basic View
 **Difficulty: Difficult**
 
-JavaScript often runs one piece of synchronous code at a time in a given execution thread. The event loop helps the runtime handle scheduled work, such as Promise callbacks and timers, without making a long-running operation block all future work in the same way a synchronous wait would.
+JavaScript can do only one thing at a time. The **Event Loop** is the manager that decides what runs next.
+
+It follows a simple 3-step priority:
+1. **Normal code runs first** (immediate).
+2. **Promises run second** (VIP line).
+3. **Timers run last** (waiting line).
 
 ```js
-console.log("A");
+console.log("Start");
 
-setTimeout(() => console.log("B"), 0);
+setTimeout(() => {
+  console.log("Timer");
+}, 0);
 
-Promise.resolve().then(() => console.log("C"));
+Promise.resolve().then(() => {
+  console.log("Promise");
+});
 
-console.log("D");
-// A
-// D
-// C
-// B
+console.log("End");
+// Output:
+// Start
+// End
+// Promise
+// Timer
 ```
 
 Step by step:
-1. `A` is printed first because normal synchronous code runs immediately.
-2. The timer callback is scheduled.
-3. The Promise callback is scheduled as a microtask.
-4. `D` is printed before scheduled callbacks run.
-5. The Promise callback (`C`) runs before the timer callback (`B`) in this example.
+1. `Start` and `End` are normal code. They run first immediately.
+2. The `Promise` callback has VIP priority, so it runs right after normal code finishes.
+3. The `Timer` callback was placed in the waiting line, so it runs last.
 
-The timer delay of `0` does not mean the callback runs immediately.
+A `0` millisecond delay in `setTimeout` does not mean "run right now"—it just means "join the waiting line."
 
 **Scenario:** A developer expects a `setTimeout(..., 0)` callback to run before the next line, but it does not. Why?
 
-**Simple answer:** The timer callback is scheduled to run later, after the current synchronous code finishes. A zero delay does not make it run immediately.
+**Simple answer:** The timer callback is placed in the waiting line. It only runs after the current normal code finishes. A zero delay does not skip the line.
 
 **Interview question:** In this example, why does the Promise callback run before the timer callback?
 
-**Simple interview answer:** Promise callbacks run as microtasks. After the current synchronous code finishes, microtasks are processed before timer callbacks in this example.
+**Simple interview answer:** Promise callbacks have VIP priority (microtasks). After normal code finishes, JavaScript processes Promises before looking at timer callbacks.
 
 ## Lesson 20: DOM Events
 **Difficulty: Moderate**
 
-The DOM is the browser's object representation of the page. JavaScript can find page elements and respond to events such as clicks, typing, and form submission.
+The **DOM** is simply your webpage turned into JavaScript. It gives JavaScript a simple 3-step superpower to make pages interactive:
+1. **Find it:** Point to an element on the screen (`document.querySelector`).
+2. **Listen for it:** Wait for the user to click or type (`addEventListener`).
+3. **Change it:** Update what is on screen (`textContent`).
 
 ```html
 <button id="helloButton">Say hello</button>
 <p id="message"></p>
 
 <script>
+  // 1. Find the elements
   const button = document.querySelector("#helloButton");
   const message = document.querySelector("#message");
 
+  // 2. Listen for clicks
   button.addEventListener("click", () => {
-    message.textContent = "Hello!";
+    // 3. Change the text on screen!
+    message.textContent = "Hello from JavaScript!";
   });
 </script>
 ```
 
-When the button is clicked, the event listener runs and updates the paragraph. This example assumes the script runs after those elements exist in the page.
+When the user clicks the button, the callback function runs and changes the paragraph text.
+
+Always make sure the HTML button exists before JavaScript looks for it (put your `<script>` at the bottom of the page).
 
 **Scenario:** A button is visible, but clicking it does nothing. What would you check?
 
