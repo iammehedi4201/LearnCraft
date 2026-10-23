@@ -13,6 +13,8 @@ import { TYPESCRIPT_MODULE_QUIZZES } from "./typescript-quizzes";
 import { OOP_MODULE_QUIZZES } from "./oop-quizzes";
 import { JAVASCRIPT_LEGACY_SLUG_MAP } from "@/app/learn/javascript/data/javascript-curriculum";
 import { TYPESCRIPT_LEGACY_SLUG_MAP } from "@/app/learn/typescript/data/typescript-curriculum";
+import { NEXTJS_MODULE_QUIZZES } from "./nextjs-quizzes";
+import { NEXTJS_LEGACY_SLUG_MAP } from "@/app/learn/nextjs/data/nextjs-curriculum";
 
 export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
   // ──────────────────────────────────────────────────────────────────────────
@@ -28,116 +30,9 @@ export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
   // ──────────────────────────────────────────────────────────────────────────
   ...OOP_MODULE_QUIZZES,
   // ──────────────────────────────────────────────────────────────────────────
-  // NEXT.JS: NX-01 — The App Router Architecture
+  // NEXT.JS CURRICULUM QUIZZES
   // ──────────────────────────────────────────────────────────────────────────
-  {
-    id: "quiz-nextjs-nx01",
-    trackKey: "nextjs",
-    trackTitle: "Next.js",
-    lessonSlug: "nx01-app-router",
-    lessonCode: "NX-01",
-    lessonTitle: "The App Router Architecture",
-    description: "Evaluate your mental model of React Server Components, layout re-rendering rules, and server/client boundary execution in Next.js 15.",
-    passingScore: 75,
-    baseXpReward: 30,
-    perfectScoreBonusXp: 15,
-    questions: [
-      {
-        id: "nx01-q1",
-        type: "multiple_choice",
-        title: "Layout state",
-        prompt: "In the Next.js App Router, how does layout state behave when a user navigates between sibling child routes (e.g. from /dashboard/analytics to /dashboard/settings)?",
-        options: [
-          "The parent layout fully unmounts and remounts with brand-new state",
-          "The layout preserves its React state and DOM structure without re-rendering",
-          "The layout re-executes only on the client while preserving server caches",
-          "The layout is re-fetched via SSR and overwrites previous client state",
-        ],
-        correctAnswer: 1,
-        explanation: "Next.js App Router layouts are state-preserving. When navigating between sibling routes inside the same layout, the layout does not unmount or lose its state; only the changing children page slots are swapped.",
-        hint: "Think about why tabs and sidebar state don't collapse or reset when browsing subpages.",
-        hintCostXP: 5,
-      },
-      {
-        id: "nx01-q2",
-        type: "code_output",
-        title: "Server execution",
-        prompt: "Predict the terminal vs browser console output when this Server Component renders during initial page load:",
-        codeSnippet: `// app/feed/page.tsx (Server Component)
-export default async function FeedPage() {
-  console.log("SERVER_LOG: Fetching user timeline");
-  return (
-    <main>
-      <h1>Activity Feed</h1>
-    </main>
-  );
-}`,
-        language: "tsx",
-        options: [
-          "Logged in BOTH Server terminal and Browser DevTools console",
-          "Logged ONLY in the Node.js/Server terminal; 0 client logs",
-          "Logged ONLY in the Browser DevTools console after hydration",
-          "Triggers a runtime build error because console.log is banned in Server Components",
-        ],
-        correctAnswer: 1,
-        explanation: "By default, components inside the App Router are React Server Components (RSC). They execute strictly on the server during request/build time. Their JavaScript bundle is never shipped to the client, so their console logs only appear in the server terminal.",
-        hint: "Server Components do not bundle their code or runtime execution into the client browser bundle.",
-        hintCostXP: 5,
-      },
-      {
-        id: "nx01-q3",
-        type: "code_output",
-        title: "Boundary hydration",
-        prompt: "What will be rendered and logged given this boundary hierarchy?",
-        codeSnippet: `// app/components/Counter.tsx
-"use client";
-import { useState } from "react";
-
-export function Counter({ initialCount }: { initialCount: number }) {
-  const [count, setCount] = useState(() => {
-    console.log("INIT_COUNT:", initialCount);
-    return initialCount;
-  });
-  return <button>{count}</button>;
-}
-
-// app/page.tsx (Server Component)
-import { Counter } from "./components/Counter";
-
-export default function Page() {
-  console.log("PAGE_SERVER");
-  return <Counter initialCount={42} />;
-}`,
-        language: "tsx",
-        options: [
-          "Server terminal: 'PAGE_SERVER' and 'INIT_COUNT: 42' | Browser console: 'INIT_COUNT: 42'",
-          "Server terminal: 'PAGE_SERVER' only | Browser console: 'PAGE_SERVER' and 'INIT_COUNT: 42'",
-          "Server terminal: 'INIT_COUNT: 42' only | Browser console: 'PAGE_SERVER'",
-          "Browser console: 'INIT_COUNT: 42' only (Server logs nothing)",
-        ],
-        correctAnswer: 0,
-        explanation: "Client Components ('use client') undergo SSR on the server first before being hydrated in the browser. Therefore, Counter initializes on the server (logging INIT_COUNT: 42 in the server terminal) AND then hydrates on the client (logging INIT_COUNT: 42 in browser console). Page.tsx is pure RSC and logs only on the server.",
-        hint: "Remember: 'use client' does NOT mean 'client-only'. Client components still pre-render on the server during initial HTML generation!",
-        hintCostXP: 5,
-      },
-      {
-        id: "nx01-q4",
-        type: "multiple_choice",
-        title: "Route Groups",
-        prompt: "What is the primary architectural purpose of Route Groups with parentheses like `app/(marketing)/about/page.tsx` and `app/(dashboard)/settings/page.tsx`?",
-        options: [
-          "They define nested URL pathname segments like /marketing/about",
-          "They organize routes and allow multiple nested layouts without affecting the URL path",
-          "They enforce authentication middleware boundaries at the file-system level",
-          "They make the contained pages run exclusively as Edge Functions",
-        ],
-        correctAnswer: 1,
-        explanation: "Parentheses in route groups (e.g. `(marketing)`) omit the folder name from the URL path. This allows developers to organize routes logically and assign distinct root layouts without altering the clean URL structure.",
-        hint: "The folder name surrounded by parentheses is stripped from the browser URL address.",
-        hintCostXP: 5,
-      },
-    ],
-  },
+  ...NEXTJS_MODULE_QUIZZES,
 
   // ──────────────────────────────────────────────────────────────────────────
   // REACT: RC-01 — Thinking in React & Modern Mental Models
@@ -303,6 +198,8 @@ export function getQuizBySlug(trackKey: string, lessonSlug: string): ModuleQuiz 
     resolvedSlug = JAVASCRIPT_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
   } else if (normTrack === "typescript" && TYPESCRIPT_LEGACY_SLUG_MAP[resolvedSlug]) {
     resolvedSlug = TYPESCRIPT_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
+  } else if (normTrack === "nextjs" && NEXTJS_LEGACY_SLUG_MAP[resolvedSlug]) {
+    resolvedSlug = NEXTJS_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
   }
 
   // 1. Check exact match in curated registry

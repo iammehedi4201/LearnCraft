@@ -1,6 +1,7 @@
 import {
   getAllNextjsLessons,
   NEXTJS_STAGES,
+  NEXTJS_LEGACY_SLUG_MAP,
   NextjsLessonMeta,
   NextjsStageMeta,
 } from "./nextjs-curriculum";
@@ -255,29 +256,30 @@ export function saveProgress(progress: Partial<NextjsProgress>): void {
   );
 }
 
-export function isLessonComplete(slugOrCode: string): boolean {
-  if (!slugOrCode) return false;
-  const p = getProgress();
+export function resolveCanonicalNextjsSlug(slugOrCode: string): string {
+  if (!slugOrCode) return slugOrCode;
+  const norm = slugOrCode.toLowerCase();
+  if (NEXTJS_LEGACY_SLUG_MAP[norm]) {
+    return NEXTJS_LEGACY_SLUG_MAP[norm];
+  }
   const all = getAllNextjsLessons();
-  const matchedLesson = all.find(
+  const matched = all.find(
     (l) =>
       l.slug === slugOrCode ||
       l.code === slugOrCode ||
-      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
-      l.code.toLowerCase() === slugOrCode.toLowerCase()
+      l.slug.toLowerCase() === norm ||
+      l.code.toLowerCase() === norm
   );
+  return matched?.slug || slugOrCode;
+}
+
+export function isLessonComplete(slugOrCode: string): boolean {
+  if (!slugOrCode) return false;
+  const canonical = resolveCanonicalNextjsSlug(slugOrCode);
+  const p = getProgress();
 
   return p.completedLessons.some((item) => {
-    const norm = item.toLowerCase();
-    if (norm === slugOrCode.toLowerCase()) return true;
-    if (
-      matchedLesson &&
-      (norm === matchedLesson.slug.toLowerCase() ||
-        norm === matchedLesson.code.toLowerCase())
-    ) {
-      return true;
-    }
-    return false;
+    return resolveCanonicalNextjsSlug(item) === canonical;
   });
 }
 
@@ -422,11 +424,7 @@ export function getCompletionByStage(stageId: string): {
   const { completedLessons } = getProgress();
   const completed = stage.lessons.filter((l) =>
     completedLessons.some(
-      (c) =>
-        c === l.slug ||
-        c === l.code ||
-        c.toLowerCase() === l.slug.toLowerCase() ||
-        c.toLowerCase() === l.code.toLowerCase()
+      (c) => resolveCanonicalNextjsSlug(c) === l.slug
     )
   ).length;
 

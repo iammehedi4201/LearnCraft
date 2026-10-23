@@ -322,7 +322,29 @@ export const KNOWN_LESSONS: Record<string, { code: string; name: string; topicId
   "/learn/nestjs/nj26-scheduling": { code: "NJ-26", name: "Task Scheduling & Cron Jobs", topicId: "nestjs" },
   "/learn/nestjs/nj27-caching": { code: "NJ-27", name: "Redis Caching & Performance", topicId: "nestjs" },
 
-  // Next.js Lessons
+  // Next.js Canonical Lessons (NX-01 through NX-20)
+  "/learn/nextjs/nx01-what-is-nextjs": { code: "NX-01", name: "What Is Next.js?", topicId: "nextjs" },
+  "/learn/nextjs/nx02-app-folder-and-routes": { code: "NX-02", name: "The App Folder and File-Based Routing", topicId: "nextjs" },
+  "/learn/nextjs/nx03-pages-and-layouts": { code: "NX-03", name: "Pages and Shared Layouts", topicId: "nextjs" },
+  "/learn/nextjs/nx04-moving-between-pages-with-link": { code: "NX-04", name: "Moving Between Pages with Next.js Link", topicId: "nextjs" },
+  "/learn/nextjs/nx05-dynamic-routes": { code: "NX-05", name: "Dynamic Routes and URL Parameters", topicId: "nextjs" },
+  "/learn/nextjs/nx06-server-and-client-components": { code: "NX-06", name: "Server Components vs Client Components", topicId: "nextjs" },
+  "/learn/nextjs/nx07-client-side-interaction": { code: "NX-07", name: "Adding Interactivity with Client Components", topicId: "nextjs" },
+  "/learn/nextjs/nx08-fetching-data-server-component": { code: "NX-08", name: "Fetching Data in a Server Component", topicId: "nextjs" },
+  "/learn/nextjs/nx09-url-and-search-parameters": { code: "NX-09", name: "URL Parameters and Search Parameters", topicId: "nextjs" },
+  "/learn/nextjs/nx10-loading-ui": { code: "NX-10", name: "Loading UI with Suspense and Skeletons", topicId: "nextjs" },
+  "/learn/nextjs/nx11-missing-pages-and-errors": { code: "NX-11", name: "Handling Missing Pages and Errors", topicId: "nextjs" },
+  "/learn/nextjs/nx12-forms-and-server-actions": { code: "NX-12", name: "Forms and Server Actions", topicId: "nextjs" },
+  "/learn/nextjs/nx13-route-handlers": { code: "NX-13", name: "Custom API Endpoints with Route Handlers", topicId: "nextjs" },
+  "/learn/nextjs/nx14-revalidating-data": { code: "NX-14", name: "Revalidating Cached Data", topicId: "nextjs" },
+  "/learn/nextjs/nx15-page-titles-and-metadata": { code: "NX-15", name: "Page Titles and Metadata for SEO", topicId: "nextjs" },
+  "/learn/nextjs/nx16-images-and-static-files": { code: "NX-16", name: "Optimizing Images and Static Files", topicId: "nextjs" },
+  "/learn/nextjs/nx17-environment-variables-and-secrets": { code: "NX-17", name: "Environment Variables and Secrets", topicId: "nextjs" },
+  "/learn/nextjs/nx18-authentication-and-authorization": { code: "NX-18", name: "Authentication and Protected Routes", topicId: "nextjs" },
+  "/learn/nextjs/nx19-validating-user-input": { code: "NX-19", name: "Validating User Input Safely", topicId: "nextjs" },
+  "/learn/nextjs/nx20-debugging-nextjs-problems": { code: "NX-20", name: "Debugging Common Next.js Problems", topicId: "nextjs" },
+
+  // Next.js Legacy Slugs (Backward Compatibility)
   "/learn/nextjs/nx01-app-router": { code: "NX-01", name: "App Router Fundamentals", topicId: "nextjs" },
   "/learn/nextjs/nx02-routing": { code: "NX-02", name: "File-Based Routing", topicId: "nextjs" },
   "/learn/nextjs/nx03-server-client": { code: "NX-03", name: "Server vs Client Components", topicId: "nextjs" },

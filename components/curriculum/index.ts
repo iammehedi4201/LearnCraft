@@ -17,3 +17,4 @@ export * from "./UnifiedLessonNavBar";
 export * from "./ModuleAssessmentCta";
 export * from "./PartStepper";
 export * from "./CurriculumCardCode";
+export * from "./CurriculumCodeBlock";
