@@ -12,13 +12,13 @@ import { NEXTJS_MODULE_QUIZZES } from "../quiz/nextjs-quizzes";
 import { getQuizBySlug } from "../quiz/quiz-registry";
 
 describe("Next.js Curriculum Integrity & Health Suite", () => {
-  it("contains exactly 5 stages and 20 authoritative lessons in curriculum", () => {
+  it("contains exactly 5 stages and 21 authoritative lessons in curriculum", () => {
     expect(NEXTJS_STAGES.length).toBe(5);
     const lessons = getAllNextjsLessons();
-    expect(lessons.length).toBe(20);
+    expect(lessons.length).toBe(21);
   });
 
-  it("ensures all 20 lessons have unique codes and slugs", () => {
+  it("ensures all 21 lessons have unique codes and slugs", () => {
     const lessons = getAllNextjsLessons();
     const codes = new Set<string>();
     const slugs = new Set<string>();
@@ -30,8 +30,8 @@ describe("Next.js Curriculum Integrity & Health Suite", () => {
       slugs.add(lesson.slug);
     }
 
-    expect(codes.size).toBe(20);
-    expect(slugs.size).toBe(20);
+    expect(codes.size).toBe(21);
+    expect(slugs.size).toBe(21);
   });
 
   it("verifies that getNextjsLessonBySlug resolves slugs, codes, legacy aliases, and prefixes correctly", () => {
@@ -52,7 +52,7 @@ describe("Next.js Curriculum Integrity & Health Suite", () => {
     expect(byPrefix?.code).toBe("NX-02");
   });
 
-  it("verifies all 20 handcrafted lessons across all 5 Stages (NX-01 through NX-20) meet strict pedagogical structure", () => {
+  it("verifies all 21 handcrafted lessons across all 5 Stages (NX-01 through NX-21) meet strict pedagogical structure", () => {
     const handcraftedSlugs = [
       "nx01-what-is-nextjs",
       "nx02-app-folder-and-routes",
@@ -74,9 +74,10 @@ describe("Next.js Curriculum Integrity & Health Suite", () => {
       "nx18-authentication-and-authorization",
       "nx19-validating-user-input",
       "nx20-debugging-nextjs-problems",
+      "nx21-website-performance-optimization",
     ];
 
-    expect(handcraftedSlugs.length).toBe(20);
+    expect(handcraftedSlugs.length).toBe(21);
 
     for (const slug of handcraftedSlugs) {
       expect(NEXTJS_LESSONS_CONTENT[slug], `Missing handcrafted registry entry for ${slug}`).toBeDefined();
@@ -105,12 +106,13 @@ describe("Next.js Curriculum Integrity & Health Suite", () => {
       expect(content.scenario?.question.length).toBeGreaterThan(10);
       expect(content.scenario?.answer.length).toBeGreaterThan(10);
 
-      // Interview questions where included (Lessons 6, 12, 13, 18)
+      // Interview questions where included (Lessons 6, 12, 13, 18, 21)
       if ([
         "nx06-server-and-client-components",
         "nx12-forms-and-server-actions",
         "nx13-route-handlers",
         "nx18-authentication-and-authorization",
+        "nx21-website-performance-optimization",
       ].includes(slug)) {
         expect(content.interviewQuestion, `Missing interview question on ${slug}`).toBeDefined();
         expect(content.interviewQuestion?.question.length).toBeGreaterThan(10);
@@ -140,8 +142,8 @@ describe("Next.js Curriculum Integrity & Health Suite", () => {
     }
   });
 
-  it("verifies dedicated module quizzes for all 20 lessons across all 5 Stages are registered and resolvable", () => {
-    expect(NEXTJS_MODULE_QUIZZES.length).toBe(20);
+  it("verifies dedicated module quizzes for all 21 lessons across all 5 Stages are registered and resolvable", () => {
+    expect(NEXTJS_MODULE_QUIZZES.length).toBe(21);
 
     for (const quiz of NEXTJS_MODULE_QUIZZES) {
       expect(quiz.trackKey).toBe("nextjs");

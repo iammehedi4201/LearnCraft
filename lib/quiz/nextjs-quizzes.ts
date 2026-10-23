@@ -2,8 +2,8 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * NEXT.JS CURRICULUM QUIZZES — LearnCraft
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * Authoritative, high-yield module quizzes for all 20 lessons in the
- * Next.js App Router track (NX-01 through NX-20).
+ * Authoritative, high-yield module quizzes for all 21 lessons in the
+ * Next.js App Router track (NX-01 through NX-21).
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
@@ -1441,6 +1441,76 @@ export async function deleteCourse(courseId: string) {
         correctAnswer: 0,
         explanation: "Systematic debugging starts by reading the top of the error stack trace to identify the exact file, line number, and component boundary that caused the failure.",
         hint: "Follow the practical debugging checklist from Lesson 20.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── NX-21: Website Performance Optimization ──
+  {
+    id: "quiz-nextjs-nx21",
+    trackKey: "nextjs",
+    trackTitle: "Next.js",
+    lessonSlug: "nx21-website-performance-optimization",
+    lessonCode: "NX-21",
+    lessonTitle: "Website Performance Optimization",
+    description: "Assess your knowledge of Core Web Vitals, next/image optimization, parallel data loading with Promise.all, and server-side pagination.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "nx21-q1",
+        type: "multiple_choice",
+        title: "Measuring Real Performance",
+        prompt: "Why should you never measure Core Web Vitals (LCP, INP, CLS) or run Lighthouse in 'next dev' development mode?",
+        options: [
+          "Development mode includes source maps, hot-reload scripts, unminified bundles, and unoptimized code that artificially slow down performance",
+          "Development mode disables CSS styling completely so scores are zero",
+          "Lighthouse refuses to run on localhost under any circumstance",
+          "Development mode is actually faster than production builds, making scores deceptively high",
+        ],
+        correctAnswer: 0,
+        explanation: "Always measure performance against a production build using 'npm run build && npm run start'. Development mode includes hot reload and unminified bundles that distort benchmarks.",
+        hint: "Always build and start a production server before running audits.",
+        hintCostXP: 5,
+      },
+      {
+        id: "nx21-q2",
+        type: "code_output",
+        title: "Eliminating Data Waterfalls",
+        prompt: "In this Server Component, how long does data loading take if fetchReviews takes 300ms and fetchAnalytics takes 400ms?",
+        codeSnippet: `// app/course/page.tsx
+const [reviews, analytics] = await Promise.all([
+  fetchReviews(),
+  fetchAnalytics(),
+]);`,
+        language: "tsx",
+        options: [
+          "Approximately 400ms (they run concurrently in parallel)",
+          "700ms (they run sequentially one after another)",
+          "1200ms (each fetch retries 3 times automatically)",
+          "0ms (Next.js executes them during compile time only)",
+        ],
+        correctAnswer: 0,
+        explanation: "Using Promise.all executes both asynchronous fetches in parallel, so the total waiting time equals the slowest request (~400ms) rather than their sum (700ms).",
+        hint: "Parallel execution runs simultaneously, bounded by the slowest task.",
+        hintCostXP: 5,
+      },
+      {
+        id: "nx21-q3",
+        type: "multiple_choice",
+        title: "Scaling Heavy Datasets",
+        prompt: "A course page has 2,000 student reviews and a heavy 2MB interactive analytics chart. What are the best optimization steps?",
+        options: [
+          "Paginate reviews on the server (e.g. take: 20) and dynamically lazy load the heavy chart with next/dynamic or React Suspense",
+          "Fetch all 2,000 reviews at once and hide 1,980 with CSS 'display: none'",
+          "Convert the entire page into a Client Component with useEffect",
+          "Remove the database and store all reviews in a client-side localStorage cookie",
+        ],
+        correctAnswer: 0,
+        explanation: "Server-side pagination (take: 20) keeps payloads small and fast. Lazy loading heavy interactive widgets delays JavaScript downloading until needed, drastically reducing INP and initial bundle size.",
+        hint: "Think about what needs to be in the initial payload vs loaded on demand.",
         hintCostXP: 5,
       },
     ],

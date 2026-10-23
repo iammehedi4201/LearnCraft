@@ -170,7 +170,7 @@ export const NEXTJS_STAGE_5_CAPSTONE: NextjsCapstoneProjectMeta = {
   badge: "🏆 Master Capstone",
   xpReward: 250,
   estimatedMinutes: 50,
-  prerequisites: ["NX-15", "NX-16", "NX-17", "NX-18", "NX-19", "NX-20"],
+  prerequisites: ["NX-15", "NX-16", "NX-17", "NX-18", "NX-19", "NX-20", "NX-21"],
   skillsTaught: [
     "Page Metadata & SEO Cards",
     "next/image Media Optimization",
@@ -178,6 +178,7 @@ export const NEXTJS_STAGE_5_CAPSTONE: NextjsCapstoneProjectMeta = {
     "Authentication vs Authorization Enforcement",
     "Server-Side Input Validation",
     "App Router Debugging Checklist",
+    "Website Performance Optimization & Core Web Vitals",
   ],
   stepsCount: 4,
 };
@@ -430,10 +431,10 @@ export const NEXTJS_STAGES: NextjsStageMeta[] = [
   {
     id: "stage-5",
     stageNumber: 5,
-    name: "Page Details and Project Safety",
-    subtitle: "Metadata, Media Optimization, Security, Validation & Debugging",
-    milestone: "Secure application configuration, enforce authentication permissions, and debug App Router problems.",
-    description: "Set SEO metadata, optimize images with next/image, protect server secrets, distinguish authentication from authorization, validate user inputs, and debug runtime errors.",
+    name: "Performance Optimization and Safety",
+    subtitle: "Performance, Metadata, Media Optimization, Security, Validation & Debugging",
+    milestone: "Optimize performance metrics, secure configuration, enforce authorization permissions, and debug App Router problems.",
+    description: "Diagnose Core Web Vitals, optimize media, set SEO metadata, isolate server secrets, distinguish authentication from authorization, validate user inputs, and resolve runtime errors.",
     theme: {
       badge: "bg-ds-highlighted-lighter text-ds-highlighted-dark border-ds-stroke-soft",
       dot: "bg-ds-highlighted-base",
@@ -515,6 +516,18 @@ export const NEXTJS_STAGES: NextjsStageMeta[] = [
         estimatedMinutes: 25,
         prerequisite: "Stages 1 through 5",
       },
+      {
+        code: "NX-21",
+        stepNumber: 7,
+        slug: "nx21-website-performance-optimization",
+        name: "Website Performance Optimization",
+        desc: "Diagnose Core Web Vitals, eliminate waterfalls, optimize media with next/image, and enforce server-side database pagination.",
+        path: "/learn/nextjs/nx21-website-performance-optimization",
+        tag: "PROFESSIONAL",
+        difficulty: "Difficult",
+        estimatedMinutes: 25,
+        prerequisite: "NX-16 (Images and Static Files) & NX-20 (Debugging Next.js Problems)",
+      },
     ],
   },
 ];
@@ -563,12 +576,12 @@ export const NEXTJS_PROGRESSION_PHASES: NextjsProgressionPhaseMeta[] = [
   {
     id: "details-safety",
     phaseNumber: 5,
-    label: "Page Details & Safety",
+    label: "Performance Optimization",
     tag: "PHASE 05",
-    desc: "Configure metadata, optimize images, secure secrets, enforce authorization, validate inputs, and debug errors.",
-    scope: "Lessons NX-15 → NX-20 + Master Capstone",
+    desc: "Configure metadata, optimize media, isolate secrets, enforce authorization, validate inputs, debug errors, and optimize website performance.",
+    scope: "Lessons NX-15 → NX-21 + Master Capstone",
     icon: "shield",
-    lessonCodes: ["NX-15", "NX-16", "NX-17", "NX-18", "NX-19", "NX-20"],
+    lessonCodes: ["NX-15", "NX-16", "NX-17", "NX-18", "NX-19", "NX-20", "NX-21"],
   },
 ];
 
@@ -577,6 +590,7 @@ export const NEXTJS_PROGRESSION_PHASES: NextjsProgressionPhaseMeta[] = [
 // ─────────────────────────────────────────────────────────────
 
 export const NEXTJS_LEGACY_SLUG_MAP: Record<string, string> = {
+  "nx21-performance-optimization": "nx21-website-performance-optimization",
   "nx01-app-router": "nx01-what-is-nextjs",
   "nx02-navigation": "nx04-moving-between-pages-with-link",
   "nx02-routing": "nx02-app-folder-and-routes",

@@ -428,7 +428,7 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     category: "frontend",
     level: "beginner-advanced",
     status: "available",
-    totalLessons: 20,
+    totalLessons: 21,
     stages: nextjsStages,
     learnPath: "/learn/nextjs",
     badgeColor: "bg-ds-feature-lighter text-ds-feature-dark border-ds-feature-light",

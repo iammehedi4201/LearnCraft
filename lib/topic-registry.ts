@@ -343,6 +343,7 @@ export const KNOWN_LESSONS: Record<string, { code: string; name: string; topicId
   "/learn/nextjs/nx18-authentication-and-authorization": { code: "NX-18", name: "Authentication and Protected Routes", topicId: "nextjs" },
   "/learn/nextjs/nx19-validating-user-input": { code: "NX-19", name: "Validating User Input Safely", topicId: "nextjs" },
   "/learn/nextjs/nx20-debugging-nextjs-problems": { code: "NX-20", name: "Debugging Common Next.js Problems", topicId: "nextjs" },
+  "/learn/nextjs/nx21-website-performance-optimization": { code: "NX-21", name: "Website Performance Optimization", topicId: "nextjs" },
 
   // Next.js Legacy Slugs (Backward Compatibility)
   "/learn/nextjs/nx01-app-router": { code: "NX-01", name: "App Router Fundamentals", topicId: "nextjs" },
@@ -365,6 +366,7 @@ export const KNOWN_LESSONS: Record<string, { code: string; name: string; topicId
   "/learn/nextjs/nx18-caching": { code: "NX-18", name: "Next.js Caching Architecture", topicId: "nextjs" },
   "/learn/nextjs/nx19-env": { code: "NX-19", name: "Environment Variables & Security", topicId: "nextjs" },
   "/learn/nextjs/nx20-deployment": { code: "NX-20", name: "Vercel & Docker Deployment", topicId: "nextjs" },
+  "/learn/nextjs/nx21-performance-optimization": { code: "NX-21", name: "Website Performance Optimization", topicId: "nextjs" },
 
   // TanStack Query Lessons
   "/learn/tanstack/tq01-setup": { code: "TQ-01", name: "Setup & QueryClient Configuration", topicId: "tanstack" },

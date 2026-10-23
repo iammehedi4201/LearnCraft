@@ -550,7 +550,7 @@ describe("TEST SUITE 7: Authoritative Next.js Curriculum Progression", () => {
 
   it("7.1: Brand-new user (0 lessons completed)", () => {
     const state = getCurriculumState(nextjsCourse, { completedLessonIds: [], prereqConfirmed: false });
-    assert(state.totalLessonsCount === 20, `Total lessons should be 20, got ${state.totalLessonsCount}`);
+    assert(state.totalLessonsCount === 21, `Total lessons should be 21, got ${state.totalLessonsCount}`);
     assert(state.phases.length === 5, `Total phases should be 5, got ${state.phases.length}`);
     assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
@@ -593,12 +593,12 @@ describe("TEST SUITE 7: Authoritative Next.js Curriculum Progression", () => {
     console.log("  ✓ 7.3 Authoritative Next.js Phase 1 completion and Phase 2 unlock verified");
   });
 
-  it("7.4: User completes all 5 phases (all 20 lessons) -> Capstone unlocks!", () => {
-    const all20Slugs = getAllNextjsLessons().map((l) => l.slug);
-    assert(all20Slugs.length === 20, `Expected 20 Next.js lesson slugs, got ${all20Slugs.length}`);
+  it("7.4: User completes all 5 phases (all 21 lessons) -> Capstone unlocks!", () => {
+    const all21Slugs = getAllNextjsLessons().map((l) => l.slug);
+    assert(all21Slugs.length === 21, `Expected 21 Next.js lesson slugs, got ${all21Slugs.length}`);
   
-    const state = getCurriculumState(nextjsCourse, { completedLessonIds: all20Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 20, `Completed count should be 20, got ${state.completedLessonsCount}`);
+    const state = getCurriculumState(nextjsCourse, { completedLessonIds: all21Slugs, prereqConfirmed: true });
+    assert(state.completedLessonsCount === 21, `Completed count should be 21, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 5, `All 5 phases should be completed, got ${state.completedPhases.length}`);
     assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
     assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);

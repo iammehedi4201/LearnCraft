@@ -49,6 +49,7 @@ import {
   nx18AuthenticationAndAuthorizationContent,
   nx19ValidatingUserInputContent,
   nx20DebuggingNextjsProblemsContent,
+  nx21WebsitePerformanceOptimizationContent,
 } from "./stage-05-details-safety";
 
 export * from "./stage-01-basics";
@@ -80,13 +81,15 @@ export const ALL_NEXTJS_LESSONS: Record<string, StandardLessonContent> = {
   "nx13-route-handlers": nx13RouteHandlersContent,
   "nx14-revalidating-data": nx14RevalidatingDataContent,
 
-  // ── Stage 5: Page Details and Project Safety (NX-15 to NX-20) ──
+  // ── Stage 5: Performance Optimization and Safety (NX-15 to NX-21) ──
   "nx15-page-titles-and-metadata": nx15PageTitlesAndMetadataContent,
   "nx16-images-and-static-files": nx16ImagesAndStaticFilesContent,
   "nx17-environment-variables-and-secrets": nx17EnvironmentVariablesAndSecretsContent,
   "nx18-authentication-and-authorization": nx18AuthenticationAndAuthorizationContent,
   "nx19-validating-user-input": nx19ValidatingUserInputContent,
   "nx20-debugging-nextjs-problems": nx20DebuggingNextjsProblemsContent,
+  "nx21-website-performance-optimization": nx21WebsitePerformanceOptimizationContent,
+  "nx21-performance-optimization": nx21WebsitePerformanceOptimizationContent,
 
   // ── Backward-Compatible Legacy Aliases ──
   "nx01-app-router": nx01WhatIsNextjsContent,
