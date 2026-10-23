@@ -1,4 +1,4 @@
-import { getAllLessons, LessonMeta } from "./javascript-curriculum";
+import { getAllLessons, getLessonBySlug, LessonMeta } from "./javascript-curriculum";
 
 export interface JSProgress {
   completedLessons: string[];
@@ -208,14 +208,7 @@ export function saveProgress(progress: Partial<JSProgress>): void {
 export function isLessonComplete(slugOrCode: string): boolean {
   if (!slugOrCode) return false;
   const p = getProgress();
-  const all = getAllLessons();
-  const matchedLesson = all.find(
-    (l) =>
-      l.slug === slugOrCode ||
-      l.code === slugOrCode ||
-      l.slug.toLowerCase() === slugOrCode.toLowerCase() ||
-      l.code.toLowerCase() === slugOrCode.toLowerCase()
-  );
+  const matchedLesson = getLessonBySlug(slugOrCode);
 
   return p.completedLessons.some((item) => {
     const norm = item.toLowerCase();
@@ -227,20 +220,21 @@ export function isLessonComplete(slugOrCode: string): boolean {
     ) {
       return true;
     }
+    const itemLesson = getLessonBySlug(item);
+    if (
+      matchedLesson &&
+      itemLesson &&
+      itemLesson.slug.toLowerCase() === matchedLesson.slug.toLowerCase()
+    ) {
+      return true;
+    }
     return false;
   });
 }
 
 export async function markLessonComplete(slug: string): Promise<void> {
   if (!slug) return;
-  const all = getAllLessons();
-  const matched = all.find(
-    (l) =>
-      l.slug === slug ||
-      l.code === slug ||
-      l.slug.toLowerCase() === slug.toLowerCase() ||
-      l.code.toLowerCase() === slug.toLowerCase()
-  );
+  const matched = getLessonBySlug(slug);
   const canonicalSlug = matched?.slug || slug;
 
   const p = getProgress();
@@ -268,14 +262,7 @@ export async function markLessonComplete(slug: string): Promise<void> {
 
 export async function markLessonIncomplete(slug: string): Promise<void> {
   if (!slug) return;
-  const all = getAllLessons();
-  const matched = all.find(
-    (l) =>
-      l.slug === slug ||
-      l.code === slug ||
-      l.slug.toLowerCase() === slug.toLowerCase() ||
-      l.code.toLowerCase() === slug.toLowerCase()
-  );
+  const matched = getLessonBySlug(slug);
   const targetSlug = matched?.slug || slug;
   const targetCode = matched?.code;
 
@@ -284,6 +271,8 @@ export async function markLessonIncomplete(slug: string): Promise<void> {
     const norm = s.toLowerCase();
     if (norm === targetSlug.toLowerCase()) return false;
     if (targetCode && norm === targetCode.toLowerCase()) return false;
+    const mapped = getLessonBySlug(s);
+    if (mapped && mapped.slug.toLowerCase() === targetSlug.toLowerCase()) return false;
     return true;
   });
   saveProgress({ completedLessons: updated });

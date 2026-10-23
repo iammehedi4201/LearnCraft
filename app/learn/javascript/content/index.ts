@@ -2,16 +2,60 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * JAVASCRIPT CURRICULUM CONTENT REGISTRY
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * Clean modular folder structure organized into 8 sequential stages.
- * Each lesson has its own typed TypeScript file with separated code blocks,
- * syntax highlighting, runnable sandbox starter code, and knowledge quizzes.
+ * Authoritative 22-lesson JavaScript curriculum matching the LearnCraft
+ * curriculum source of truth across 4 sequential stages.
+ *
+ * Fully backward-compatible with all 30 legacy lesson slugs.
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
 import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
-// Re-export all stages
+// Stage 1: Foundations
+import {
+  js01WhatJavascriptDoesContent,
+  js02VariablesConstAndLetContent,
+  js03BasicValuesAndTypesContent,
+  js04ComparisonsAndStrictEqualityContent,
+  js05ConditionsAndTruthyFalsyContent,
+  js06LoopsContent,
+  js07FunctionsAndReturnValuesContent,
+  js08ScopeAndBlockScopeContent,
+} from "./stage-01-foundations";
+
+// Stage 2: Working with Data
+import {
+  js09ArraysAndCommonMethodsContent,
+  js10ObjectsDestructuringAndSpreadContent,
+  js11PrimitiveValuesVsObjectReferencesContent,
+  js12OptionalChainingAndNullishCoalescingContent,
+  js13SpreadVsRestContent,
+} from "./stage-02-working-with-data";
+
+// Stage 3: Functions and Behavior
+import {
+  js14CallbacksAndHigherOrderFunctionsContent,
+  js15ClosuresContent,
+  js16TheThisKeywordContent,
+  js17ErrorsAndDebuggingContent,
+} from "./stage-03-functions-and-behavior";
+
+// Stage 4: Async JavaScript and Real Applications
+import {
+  js18PromisesAndAsyncAwaitContent,
+  js19TheEventLoopABasicViewContent,
+  js20DomEventsContent,
+  js21JsonFetchAndApiResponsesContent,
+  js22JavascriptModulesContent,
+} from "./stage-04-async-and-applications";
+
+// Re-export all stage modules
 export * from "./stage-01-foundations";
+export * from "./stage-02-working-with-data";
+export * from "./stage-03-functions-and-behavior";
+export * from "./stage-04-async-and-applications";
+
+// Re-export old stages to preserve import integrity
 export * from "./stage-02-functions";
 export * from "./stage-03-collections";
 export * from "./stage-04-modern-syntax";
@@ -20,84 +64,87 @@ export * from "./stage-06-async-event-loop";
 export * from "./stage-07-errors-modules-apis";
 export * from "./stage-08-browser-capstone";
 
-// Import all individual lessons to build the authoritative content record
-import { js01HowJavascriptRunsContent } from "./stage-01-foundations/js01-how-javascript-runs";
-import { js02VariablesAndDataTypesContent } from "./stage-01-foundations/js02-variables-and-data-types";
-import { js03OperatorsAndEqualityContent } from "./stage-01-foundations/js03-operators-and-equality";
-import { js04ConditionalLogicContent } from "./stage-01-foundations/js04-conditional-logic";
-import { js05LoopsAndIterationContent } from "./stage-01-foundations/js05-loops-and-iteration";
-import { js06FunctionsAndArrowSyntaxContent } from "./stage-02-functions/js06-functions-and-arrow-syntax";
-import { js07ScopeGlobalFunctionBlockContent } from "./stage-02-functions/js07-scope-global-function-block";
-import { js08ClosuresContent } from "./stage-02-functions/js08-closures";
-import { js09CallbacksAndHigherOrderFunctionsContent } from "./stage-02-functions/js09-callbacks-and-higher-order-functions";
-import { js10ArraysAndIndexingContent } from "./stage-03-collections/js10-arrays-and-indexing";
-import { js11EssentialArrayMethodsContent } from "./stage-03-collections/js11-essential-array-methods";
-import { js12ObjectsAndMethodsContent } from "./stage-03-collections/js12-objects-and-methods";
-import { js13ObjectReferencesAndCopyingContent } from "./stage-03-collections/js13-object-references-and-copying";
-import { js14DestructuringContent } from "./stage-04-modern-syntax/js14-destructuring";
-import { js15SpreadAndRestOperatorsContent } from "./stage-04-modern-syntax/js15-spread-and-rest-operators";
-import { js16OptionalChainingAndNullishCoalescingContent } from "./stage-04-modern-syntax/js16-optional-chaining-and-nullish-coalescing";
-import { js17TheThisKeywordContent } from "./stage-05-oop-prototypes/js17-the-this-keyword";
-import { js18PrototypesAndPrototypeChainContent } from "./stage-05-oop-prototypes/js18-prototypes-and-prototype-chain";
-import { js19ClassesExtendsAndSuperContent } from "./stage-05-oop-prototypes/js19-classes-extends-and-super";
-import { js20SynchronousVsAsynchronousContent } from "./stage-06-async-event-loop/js20-synchronous-vs-asynchronous";
-import { js21PromisesAndChainingContent } from "./stage-06-async-event-loop/js21-promises-and-chaining";
-import { js22AsyncAwaitContent } from "./stage-06-async-event-loop/js22-async-await";
-import { js23TheEventLoopContent } from "./stage-06-async-event-loop/js23-the-event-loop";
-import { js24ErrorHandlingContent } from "./stage-07-errors-modules-apis/js24-error-handling";
-import { js25EsModulesContent } from "./stage-07-errors-modules-apis/js25-es-modules";
-import { js26WorkingWithJsonContent } from "./stage-07-errors-modules-apis/js26-working-with-json";
-import { js27TheFetchApiContent } from "./stage-07-errors-modules-apis/js27-the-fetch-api";
-import { js28DomEssentialsContent } from "./stage-08-browser-capstone/js28-dom-essentials";
-import { js29EventsAndDelegationContent } from "./stage-08-browser-capstone/js29-events-and-delegation";
-import { js30BrowserStorageAndDebuggingContent } from "./stage-08-browser-capstone/js30-browser-storage-and-debugging";
-
 export const JAVASCRIPT_LESSON_CONTENT: Record<string, StandardLessonContent> = {
-  "js01-how-javascript-runs": js01HowJavascriptRunsContent,
-  "js02-variables-and-data-types": js02VariablesAndDataTypesContent,
-  "js03-operators-and-equality": js03OperatorsAndEqualityContent,
-  "js04-conditional-logic": js04ConditionalLogicContent,
-  "js05-loops-and-iteration": js05LoopsAndIterationContent,
-  "js06-functions-and-arrow-syntax": js06FunctionsAndArrowSyntaxContent,
-  "js07-scope-global-function-block": js07ScopeGlobalFunctionBlockContent,
-  "js08-closures": js08ClosuresContent,
-  "js09-callbacks-and-higher-order-functions": js09CallbacksAndHigherOrderFunctionsContent,
-  "js10-arrays-and-indexing": js10ArraysAndIndexingContent,
-  "js11-essential-array-methods": js11EssentialArrayMethodsContent,
-  "js12-objects-and-methods": js12ObjectsAndMethodsContent,
-  "js13-object-references-and-copying": js13ObjectReferencesAndCopyingContent,
-  "js14-destructuring": js14DestructuringContent,
-  "js15-spread-and-rest-operators": js15SpreadAndRestOperatorsContent,
-  "js16-optional-chaining-and-nullish-coalescing": js16OptionalChainingAndNullishCoalescingContent,
-  "js17-the-this-keyword": js17TheThisKeywordContent,
-  "js18-prototypes-and-prototype-chain": js18PrototypesAndPrototypeChainContent,
-  "js19-classes-extends-and-super": js19ClassesExtendsAndSuperContent,
-  "js20-synchronous-vs-asynchronous": js20SynchronousVsAsynchronousContent,
-  "js21-promises-and-chaining": js21PromisesAndChainingContent,
-  "js22-async-await": js22AsyncAwaitContent,
-  "js23-the-event-loop": js23TheEventLoopContent,
-  "js24-error-handling": js24ErrorHandlingContent,
-  "js25-es-modules": js25EsModulesContent,
-  "js26-working-with-json": js26WorkingWithJsonContent,
-  "js27-the-fetch-api": js27TheFetchApiContent,
-  "js28-dom-essentials": js28DomEssentialsContent,
-  "js29-events-and-delegation": js29EventsAndDelegationContent,
-  "js30-browser-storage-and-debugging": js30BrowserStorageAndDebuggingContent,
+  // ── Authoritative 22 Lessons (Curriculum Source of Truth) ──
+  "js01-what-javascript-does": js01WhatJavascriptDoesContent,
+  "js02-variables-const-and-let": js02VariablesConstAndLetContent,
+  "js03-basic-values-and-types": js03BasicValuesAndTypesContent,
+  "js04-comparisons-and-strict-equality": js04ComparisonsAndStrictEqualityContent,
+  "js05-conditions-and-truthy-falsy": js05ConditionsAndTruthyFalsyContent,
+  "js06-loops": js06LoopsContent,
+  "js07-functions-and-return-values": js07FunctionsAndReturnValuesContent,
+  "js08-scope-and-block-scope": js08ScopeAndBlockScopeContent,
+  "js09-arrays-and-common-methods": js09ArraysAndCommonMethodsContent,
+  "js10-objects-destructuring-and-spread": js10ObjectsDestructuringAndSpreadContent,
+  "js11-primitive-values-vs-object-references": js11PrimitiveValuesVsObjectReferencesContent,
+  "js12-optional-chaining-and-nullish-coalescing": js12OptionalChainingAndNullishCoalescingContent,
+  "js13-spread-vs-rest": js13SpreadVsRestContent,
+  "js14-callbacks-and-higher-order-functions": js14CallbacksAndHigherOrderFunctionsContent,
+  "js15-closures": js15ClosuresContent,
+  "js16-the-this-keyword": js16TheThisKeywordContent,
+  "js17-errors-and-debugging": js17ErrorsAndDebuggingContent,
+  "js18-promises-and-async-await": js18PromisesAndAsyncAwaitContent,
+  "js19-the-event-loop-a-basic-view": js19TheEventLoopABasicViewContent,
+  "js20-dom-events": js20DomEventsContent,
+  "js21-json-fetch-and-api-responses": js21JsonFetchAndApiResponsesContent,
+  "js22-javascript-modules": js22JavascriptModulesContent,
+
+  // ── Backward-Compatible Legacy Aliases (Preserve Progress, Bookmarks & Notes) ──
+  "js01-how-javascript-runs": js01WhatJavascriptDoesContent,
+  "js02-variables-and-data-types": js02VariablesConstAndLetContent,
+  "js03-operators-and-equality": js04ComparisonsAndStrictEqualityContent,
+  "js04-conditional-logic": js05ConditionsAndTruthyFalsyContent,
+  "js05-loops-and-iteration": js06LoopsContent,
+  "js06-functions-and-arrow-syntax": js07FunctionsAndReturnValuesContent,
+  "js07-scope-global-function-block": js08ScopeAndBlockScopeContent,
+  "js08-closures": js15ClosuresContent,
+  "js09-callbacks-and-higher-order-functions": js14CallbacksAndHigherOrderFunctionsContent,
+  "js10-arrays-and-indexing": js09ArraysAndCommonMethodsContent,
+  "js11-essential-array-methods": js09ArraysAndCommonMethodsContent,
+  "js12-objects-and-methods": js10ObjectsDestructuringAndSpreadContent,
+  "js13-object-references-and-copying": js11PrimitiveValuesVsObjectReferencesContent,
+  "js14-destructuring": js10ObjectsDestructuringAndSpreadContent,
+  "js15-spread-and-rest-operators": js13SpreadVsRestContent,
+  "js16-optional-chaining-and-nullish-coalescing": js12OptionalChainingAndNullishCoalescingContent,
+  "js17-the-this-keyword": js16TheThisKeywordContent,
+  "js18-prototypes-and-prototype-chain": js16TheThisKeywordContent,
+  "js19-classes-extends-and-super": js16TheThisKeywordContent,
+  "js20-synchronous-vs-asynchronous": js18PromisesAndAsyncAwaitContent,
+  "js21-promises-and-chaining": js18PromisesAndAsyncAwaitContent,
+  "js22-async-await": js18PromisesAndAsyncAwaitContent,
+  "js23-the-event-loop": js19TheEventLoopABasicViewContent,
+  "js24-error-handling": js17ErrorsAndDebuggingContent,
+  "js25-es-modules": js22JavascriptModulesContent,
+  "js26-working-with-json": js21JsonFetchAndApiResponsesContent,
+  "js27-the-fetch-api": js21JsonFetchAndApiResponsesContent,
+  "js28-dom-essentials": js20DomEventsContent,
+  "js29-events-and-delegation": js20DomEventsContent,
+  "js30-browser-storage-and-debugging": js17ErrorsAndDebuggingContent,
 };
 
 /**
  * Legacy alias for test suites and existing consumers
  */
-export const JS_LESSONS_CONTENT: Record<string, any> = JAVASCRIPT_LESSON_CONTENT;
+export const JS_LESSONS_CONTENT: Record<string, StandardLessonContent> = JAVASCRIPT_LESSON_CONTENT;
 
 /**
- * Retrieve lesson content by slug with guaranteed fallback to the first lesson
+ * Retrieve lesson content by slug, code, or alias with guaranteed fallback to the first lesson
  */
-export function getJSLessonContent(slug: string): any {
-  const content = JAVASCRIPT_LESSON_CONTENT[slug];
-  if (!content) {
-    const firstSlug = Object.keys(JAVASCRIPT_LESSON_CONTENT)[0];
-    return JAVASCRIPT_LESSON_CONTENT[firstSlug];
+export function getJSLessonContent(slug: string): StandardLessonContent {
+  const normalized = slug.toLowerCase().trim();
+  if (JAVASCRIPT_LESSON_CONTENT[normalized]) {
+    return JAVASCRIPT_LESSON_CONTENT[normalized];
   }
-  return content;
+
+  // Match by lesson code (e.g., "JS-01", "js01")
+  const byCode = Object.values(JAVASCRIPT_LESSON_CONTENT).find(
+    (l) =>
+      l.code?.toLowerCase() === normalized ||
+      l.code?.toLowerCase().replace("-", "") === normalized.replace("-", "") ||
+      l.slug?.toLowerCase() === normalized
+  );
+  if (byCode) return byCode;
+
+  // Fallback to first authoritative lesson
+  return js01WhatJavascriptDoesContent;
 }

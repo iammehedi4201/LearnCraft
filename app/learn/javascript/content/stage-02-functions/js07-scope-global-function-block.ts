@@ -4,43 +4,43 @@ export const js07ScopeGlobalFunctionBlockContent: StandardLessonContent = {
   slug: "js07-scope-global-function-block",
   code: "JS-07",
   title: "How Scope Works",
-  subtitle: "Master lexical scoping, inside-out scope chain lookup, variable shadowing, and why block-scoped let/const prevents leaks.",
+  subtitle: "Understand variable visibility boundaries, why let and const stay inside curly braces, and how the one-way scope chain works.",
   sections: [
     {
       id: "part1",
-      label: "Lexical Scope Model",
-      icon: "🌐",
-      tag: "FOUNDATION"
+      label: "How Scope Works",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "The Three Scope Tiers",
-      icon: "📐",
-      tag: "MECHANICS"
+      label: "Three Scope Tiers",
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
       label: "The Scope Chain",
-      icon: "🔗",
-      tag: "LOOKUP CHAIN"
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "Variable Shadowing & var Leak",
-      icon: "⚠️",
-      tag: "TRAPS"
+      label: "Block Scope Leak",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Scope Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Core Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,36 +50,34 @@ export const js07ScopeGlobalFunctionBlockContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "How Lexical Scope Works",
-    bigPicture: "Scope determines where variables are accessible in your code. JavaScript uses lexical scoping: accessibility is determined strictly by the physical location where variables and blocks are written in the source code.",
-    analogy: "Think of one-way tinted glass: someone inside a room can look out and see everything in the hallway, but people outside in the hallway cannot see inside your room.",
-    diagram: "+---------------------------------------------------+\n| GLOBAL SCOPE                                      |\n| const site = \"LearnCraft\";                         |\n|                                                   |\n|   +---------------------------------------------+ |\n|   | FUNCTION SCOPE: loadUser()                  | |\n|   | const userId = 42;                          | |\n|   |                                             | |\n|   |   +---------------------------------------+ | |\n|   |   | BLOCK SCOPE: if (isAdmin) { ... }     | | |\n|   |   | const token = \"XYZ-999\";              | | |\n|   |   | (token is trapped inside this block!) | | |\n|   |   +---------------------------------------+ | |\n|   +---------------------------------------------+ |\n+---------------------------------------------------+",
-    breakdownTitle: "Scope Rules",
+    title: "How Scope Works",
+    bigPicture: "Scope controls where variables can be accessed. Variables created with `const` and `let` are block-scoped—visible inside their curly braces `{}` and inner children, but never accessible from outside.",
+    breakdownTitle: "Core Scope Principles",
     breakdownItems: [
       {
-        title: "Lexical Scoping",
-        desc: "Scope is determined at author time when you write the code, based on the nesting of blocks and functions."
+        title: "Block Scope (const & let)",
+        desc: "Variables are trapped inside the enclosing curly braces { } where they were defined."
       },
       {
-        title: "Inside-Out Visibility",
-        desc: "Code inside an inner block can see and access variables declared in outer parent scopes. Outer code cannot access inner variables."
+        title: "One-Way Visibility",
+        desc: "Inner functions can see variables in outer scopes, but outer scopes cannot reach inward."
       },
       {
-        title: "Block vs Function Isolation",
-        desc: "const and let are bound to the nearest enclosing curly braces {}. var ignores blocks and leaks to the enclosing function."
+        title: "ReferenceError",
+        desc: "Accessing an out-of-scope variable triggers an immediate ReferenceError."
       }
     ]
   },
   part2: {
-    title: "The Three Tiers of Scope in JavaScript",
-    intro: "Understand the three distinct boundaries where variables live in memory.",
+    title: "Global, Function, and Block Scope",
+    intro: "Understand where variables can and cannot be accessed.",
     cards: [
       {
         number: "01",
         tag: "Global",
         title: "Global Scope",
-        description: "Variables declared outside of any function or curly braces. Accessible anywhere in the application.",
-        codeSnippet: "const APP_NAME = \"LearnCraft\";\n\nfunction showApp() {\n  console.log(APP_NAME); // Can access global\n}\nshowApp(); // Output: LearnCraft",
+        description: "Variables declared outside of all functions and blocks. Accessible anywhere in the file.",
+        codeSnippet: "const APP_NAME = \"LearnCraft\";\nfunction printApp() {\n  console.log(APP_NAME); // Can read global variable\n}\nprintApp(); // Output: LearnCraft",
         color: "emerald"
       },
       {
@@ -87,91 +85,91 @@ export const js07ScopeGlobalFunctionBlockContent: StandardLessonContent = {
         tag: "Function",
         title: "Function Scope",
         description: "Variables declared inside a function body cannot be accessed from outside that function.",
-        codeSnippet: "function generateToken() {\n  const secret = \"jwt_secret_123\";\n  return secret;\n}\n\ngenerateToken();\n// console.log(secret); // ReferenceError: secret is not defined",
+        codeSnippet: "function createToken() {\n  const secret = \"12345\";\n  return secret;\n}\ncreateToken();\n// console.log(secret); // ReferenceError: secret is not defined",
         color: "cyan"
       },
       {
         number: "03",
         tag: "Block",
-        title: "Block Scope (let / const)",
-        description: "Variables declared with let or const inside any { ... } block (if, for, while) are trapped inside.",
-        codeSnippet: "if (true) {\n  const blockVar = \"Protected inside if block\";\n}\n// console.log(blockVar); // ReferenceError: blockVar is not defined",
+        title: "Block Scope ({ })",
+        description: "Variables declared with let or const inside { } (like if, for) are trapped inside.",
+        codeSnippet: "if (true) {\n  const message = \"Hello from inside if!\";\n  console.log(message);\n}\n// console.log(message); // ReferenceError: message is not defined",
         color: "purple"
       }
     ],
     rule: {
-      title: "The One-Way Rule of Scope",
+      title: "The One-Way Scope Rule",
       content: "Inner scopes can look outward to their parent scopes. Outer scopes can NEVER reach inward into a child function or block."
     }
   },
   part3: {
-    title: "The Scope Chain: Inside-Out Lookup",
-    intro: "Step-by-step resolution of variable identifiers by the JavaScript engine.",
+    title: "How the Scope Chain Searches for Variables",
+    intro: "Watch how JavaScript looks up variables step by step.",
     points: [
       {
-        title: "1. Check Current Local Scope",
-        content: "When a variable name is read, the engine first searches the immediate current block or function environment.",
-        codeSnippet: "function checkLocal() {\n  const val = \"local\";\n  console.log(val); // Step 1: Found immediately in local scope -> 'local'\n}\ncheckLocal(); // Output: local"
+        title: "1. Look in Current Local Block First",
+        content: "When you use a variable, JavaScript checks the current immediate block first.",
+        codeSnippet: "function test() {\n  const localVal = \"A\";\n  console.log(localVal); // Found locally -> 'A'\n}\ntest(); // Output: A"
       },
       {
-        title: "2. Climb to Enclosing Parent Scope",
-        content: "If the variable is not in the local scope, the engine moves up to the enclosing parent scope and checks there.",
-        codeSnippet: "const globalGreeting = \"Hello\";\nfunction outer() {\n  function inner() {\n    // Not in inner -> climbs up to global scope\n    console.log(globalGreeting);\n  }\n  inner();\n}\nouter(); // Output: Hello"
+        title: "2. Look Up to Enclosing Parent",
+        content: "If not found locally, JavaScript steps outward to the parent scope to check.",
+        codeSnippet: "const globalGreeting = \"Hello\";\nfunction greet() {\n  // Found by looking outward to parent scope:\n  console.log(globalGreeting);\n}\ngreet(); // Output: Hello"
       },
       {
-        title: "3. Reaching the Top (ReferenceError)",
-        content: "If the engine climbs all the way up to the Global Scope and still cannot find the variable, it throws a fatal ReferenceError.",
-        codeSnippet: "function findNonExistent() {\n  // console.log(unknownData);\n  // ReferenceError: unknownData is not defined\n}\nfindNonExistent();"
+        title: "3. ReferenceError if Not Found",
+        content: "If the search reaches the global scope and the variable does not exist, a ReferenceError is thrown.",
+        codeSnippet: "// console.log(unknownVariable);\n// ReferenceError: unknownVariable is not defined"
       }
     ]
   },
   part4: {
-    title: "Common Traps: Variable Shadowing & var Leaks",
+    title: "Common Trap: Accessing Block Variables Outside",
     bad: {
-      title: "❌ var Leaks Out of Block Scopes",
-      code: "if (true) {\n  var leakedSecret = \"Exposed outside!\";\n}\n// var does NOT respect block scope {}\nconsole.log(leakedSecret); // Output: Exposed outside! (Pollutes scope)",
-      explanation: "var ignores curly braces and leaks variables into the enclosing function or global scope, causing hard-to-track bugs."
+      title: "❌ Accessing Block-Scoped Variables Outside",
+      code: "if (true) {\n  const discount = 15;\n}\n// BUG: discount only exists inside the if block!\nconsole.log(discount);\n// ReferenceError: discount is not defined",
+      explanation: "Because discount was declared with const inside the { } block, it is destroyed as soon as the block ends."
     },
     good: {
-      title: "✅ const & let Respect Block Scope",
-      code: "if (true) {\n  const safeSecret = \"Protected inside!\";\n  console.log(safeSecret); // Output: Protected inside!\n}\n// safeSecret is inaccessible out here, keeping code modular\n// console.log(safeSecret); // ReferenceError (Safe!)",
-      explanation: "Using const and let locks the variable within its block, preventing accidental data leaks and scope pollution."
+      title: "✅ Declare in the Outer Scope with let",
+      code: "let discount = 0;\nif (true) {\n  discount = 15; // Reassign outer variable\n}\nconsole.log(\"Applied discount:\", discount);\n// Output: Applied discount: 15",
+      explanation: "Declare the variable in the outer scope using let if you need to use its value after the block finishes."
     }
   },
   part5: {
-    title: "Scope Chain & Shadowing Sandbox",
-    intro: "Observe how inner variables shadow outer variables with the same name, and how scope lookup resolves.",
-    starterCode: "const role = \"Global Guest\";\n\nfunction dashboard() {\n  // Shadowing: inner variable hides the outer 'role'\n  const role = \"Dashboard Manager\";\n\n  if (true) {\n    const role = \"Block Admin\";\n    console.log(\"1. Inside block scope:\", role);\n  }\n\n  console.log(\"2. Inside function scope:\", role);\n}\n\ndashboard();\nconsole.log(\"3. In global scope:\", role);\n"
+    title: "Interactive Code Playground",
+    intro: "Run this code to observe how inner blocks can read outer variables, and how variable shadowing works.",
+    starterCode: "const siteTheme = \"dark\";\n\nfunction renderProfile() {\n  const username = \"Alex\";\n\n  if (true) {\n    const badge = \"Pro Member\";\n    // Inner block can read its own variables AND outer variables:\n    console.log(\"User:\", username, \"| Badge:\", badge, \"| Theme:\", siteTheme);\n  }\n}\n\nrenderProfile();\nconsole.log(\"Global theme remains:\", siteTheme);\n"
   },
   part6: {
-    title: "Key Takeaways: Scope",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Lexical Scoping",
-        desc: "Scope is determined by where variables are physically written in code."
+        title: "let and const are Block-Scoped",
+        desc: "Variables stay trapped inside the curly braces { } where they were declared."
       },
       {
-        title: "Inside-Out Lookup",
-        desc: "The engine searches the scope chain from inside out, throwing ReferenceError if not found."
+        title: "Scope is One-Way",
+        desc: "Inside code can look out to parent scopes; outside code cannot reach in."
       },
       {
-        title: "Block Isolation with const/let",
-        desc: "Always use const and let to ensure variables remain safely contained within their blocks."
+        title: "Declare Outside to Share",
+        desc: "If you need a value outside an if or loop block, declare it with let before the block."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "What happens if a function tries to access a variable declared with `const` inside one of its child `if` blocks?",
+      question: "What happens if code outside an 'if' block tries to access a variable declared with 'const' inside that 'if' block?",
       options: [
+        "A ReferenceError is thrown because const variables are trapped inside the block",
         "It successfully reads the value because parent scopes can see inside child blocks",
-        "It throws a ReferenceError because outer scopes cannot reach inside child block scopes",
-        "It returns undefined instead of throwing an error",
-        "It creates a new global variable with the same name automatically"
+        "It returns null instead of throwing an error",
+        "It automatically converts the variable into a global variable"
       ],
-      correctIndex: 1,
-      explanation: "Block scope is strictly one-way: code inside the block can look outward, but code outside the block cannot access variables declared inside with const or let."
+      correctIndex: 0,
+      explanation: "const and let are strictly block-scoped. They exist only within the curly braces { } where they are declared. Accessing them from outside causes a ReferenceError."
     }
   }
 };

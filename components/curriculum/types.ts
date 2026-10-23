@@ -14,6 +14,7 @@ export type Lesson = {
   minutes?: number;
   requires?: string;
   href?: string;
+  aliases?: string[];
 };
 
 export type Phase = {

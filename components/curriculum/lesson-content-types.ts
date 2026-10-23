@@ -62,11 +62,24 @@ export interface LessonDeepDiveItem {
   bulletPoints?: string[];
 }
 
+export interface LessonScenario {
+  question: string;
+  answer: string;
+}
+
+export interface LessonInterviewQuestion {
+  question: string;
+  answer: string;
+}
+
 export interface StandardLessonContent {
   slug?: string;
   code?: string;
   title?: string;
   subtitle?: string;
+  difficulty?: "Easy" | "Moderate" | "Difficult" | string;
+  scenario?: LessonScenario;
+  interviewQuestion?: LessonInterviewQuestion;
   sections: LessonSectionItem[];
   part1?: {
     title?: string;
@@ -76,6 +89,7 @@ export interface StandardLessonContent {
     explanation?: string;
     analogy?: string;
     diagram?: string;
+    codeSnippet?: string;
   };
   part2?: {
     title?: string;

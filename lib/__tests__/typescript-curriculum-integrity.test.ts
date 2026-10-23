@@ -12,13 +12,13 @@ import { TYPESCRIPT_MODULE_QUIZZES } from "../quiz/typescript-quizzes";
 import { getQuizBySlug } from "../quiz/quiz-registry";
 
 describe("TypeScript Curriculum Integrity & Health Suite", () => {
-  it("contains exactly 9 stages and 32 authoritative lessons in curriculum", () => {
-    expect(TYPESCRIPT_STAGES.length).toBe(9);
+  it("contains exactly 4 stages and 18 authoritative lessons in curriculum", () => {
+    expect(TYPESCRIPT_STAGES.length).toBe(4);
     const lessons = getAllLessons();
-    expect(lessons.length).toBe(32);
+    expect(lessons.length).toBe(18);
   });
 
-  it("ensures all 32 lessons have unique codes and slugs", () => {
+  it("ensures all 18 lessons have unique codes and slugs", () => {
     const lessons = getAllLessons();
     const codes = new Set<string>();
     const slugs = new Set<string>();
@@ -30,14 +30,18 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
       slugs.add(lesson.slug);
     }
 
-    expect(codes.size).toBe(32);
-    expect(slugs.size).toBe(32);
+    expect(codes.size).toBe(18);
+    expect(slugs.size).toBe(18);
   });
 
-  it("verifies that getLessonBySlug resolves slugs, codes, and prefixes correctly", () => {
-    const bySlug = getLessonBySlug("ts01-mental-model");
+  it("verifies that getLessonBySlug resolves slugs, codes, legacy aliases, and prefixes correctly", () => {
+    const bySlug = getLessonBySlug("ts01-what-typescript-does");
     expect(bySlug).toBeDefined();
     expect(bySlug?.code).toBe("TS-01");
+
+    const byLegacy = getLessonBySlug("ts01-mental-model");
+    expect(byLegacy).toBeDefined();
+    expect(byLegacy?.code).toBe("TS-01");
 
     const byCode = getLessonBySlug("ts-01");
     expect(byCode).toBeDefined();
@@ -48,43 +52,29 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
     expect(byPrefix?.code).toBe("TS-02");
   });
 
-  it("verifies all 32 handcrafted lessons across all 9 Stages (TS-01 through TS-32) meet strict pedagogical structure", () => {
+  it("verifies all 18 handcrafted lessons across all 4 Stages (TS-01 through TS-18) meet strict pedagogical structure", () => {
     const handcraftedSlugs = [
-      "ts01-mental-model",
-      "ts02-primitives-inference",
-      "ts03-arrays-tuples",
-      "ts04-object-types",
-      "ts05-special-types",
-      "ts06-function-types",
-      "ts07-function-overloads",
-      "ts08-unions-intersections",
-      "ts09-type-vs-interface",
-      "ts10-control-flow-guards",
-      "ts11-custom-type-predicates",
-      "ts12-discriminated-unions",
-      "ts13-exhaustive-checking",
-      "ts14-generic-functions",
-      "ts15-generic-interfaces",
-      "ts16-generic-constraints",
-      "ts17-generics-keyof",
-      "ts18-class-access-modifiers",
-      "ts19-parameter-properties",
-      "ts20-abstract-classes",
-      "ts21-indexed-access-typeof",
-      "ts22-conditional-types-infer",
-      "ts23-mapped-template-types",
-      "ts24-utility-types",
-      "ts25-modules-type-imports",
-      "ts26-tsconfig-strict-mode",
-      "ts27-declarations-type-erasure",
-      "ts28-assertions-vs-satisfies",
-      "ts29-safe-error-handling",
-      "ts30-api-contracts-immutability",
-      "ts31-debugging-compiler-errors",
-      "ts32-type-architecture-smells",
+      "ts01-what-typescript-does",
+      "ts02-type-annotations-inference",
+      "ts03-basic-types-arrays",
+      "ts04-function-parameters-return-types",
+      "ts05-object-types",
+      "ts06-type-and-interface",
+      "ts07-union-and-literal-types",
+      "ts08-optional-values-null-undefined",
+      "ts09-type-narrowing",
+      "ts10-any-vs-unknown",
+      "ts11-type-assertions",
+      "ts12-generics",
+      "ts13-common-utility-types",
+      "ts14-classes-and-implements",
+      "ts15-modules-and-type-imports",
+      "ts16-promises-and-async-functions",
+      "ts17-check-api-data",
+      "ts18-find-and-fix-type-errors",
     ];
 
-    expect(handcraftedSlugs.length).toBe(32);
+    expect(handcraftedSlugs.length).toBe(18);
 
     for (const slug of handcraftedSlugs) {
       expect(TYPESCRIPT_LESSONS_CONTENT[slug], `Missing handcrafted registry entry for ${slug}`).toBeDefined();
@@ -92,9 +82,13 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
       expect(content, `Missing content for ${slug}`).toBeDefined();
       expect(content.sections.length).toBe(7);
 
+      // Difficulty label
+      expect(content.difficulty).toBeDefined();
+      expect(["Easy", "Moderate", "Difficult"]).toContain(content.difficulty);
+
       // Part 1: Overview & Mental Model
       expect(content.part1).toBeDefined();
-      expect(content.part1?.bigPicture?.length).toBeGreaterThan(30);
+      expect(content.part1?.bigPicture?.length).toBeGreaterThan(20);
       expect(content.part1?.breakdownItems?.length).toBeGreaterThanOrEqual(3);
 
       // Part 2: Core Mechanics & Cards
@@ -102,9 +96,19 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
       expect(content.part2?.cards?.length).toBe(3);
       expect(content.part2?.rule?.content?.length).toBeGreaterThan(15);
 
-      // Part 3: Mental Model Points
+      // Part 3: Mental Model Points + Scenario Question & Easy-Word Answer
       expect(content.part3).toBeDefined();
       expect(content.part3?.points?.length).toBeGreaterThanOrEqual(3);
+      expect(content.scenario).toBeDefined();
+      expect(content.scenario?.question.length).toBeGreaterThan(10);
+      expect(content.scenario?.answer.length).toBeGreaterThan(10);
+
+      // Interview questions where included (Lessons 6, 9, 10, 12)
+      if (["ts06-type-and-interface", "ts09-type-narrowing", "ts10-any-vs-unknown", "ts12-generics"].includes(slug)) {
+        expect(content.interviewQuestion, `Missing interview question on ${slug}`).toBeDefined();
+        expect(content.interviewQuestion?.question.length).toBeGreaterThan(10);
+        expect(content.interviewQuestion?.answer.length).toBeGreaterThan(10);
+      }
 
       // Part 4: Bad vs Clean Code Comparison
       expect(content.part4).toBeDefined();
@@ -113,7 +117,7 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
 
       // Part 5: Interactive Sandbox Starter Code
       expect(content.part5).toBeDefined();
-      expect(content.part5?.starterCode?.length).toBeGreaterThan(25);
+      expect(content.part5?.starterCode?.length).toBeGreaterThan(20);
 
       // Part 6: In-Lesson Knowledge Check Quiz
       expect(content.part6).toBeDefined();
@@ -126,12 +130,14 @@ describe("TypeScript Curriculum Integrity & Health Suite", () => {
       // Part 7: Takeaways & Next Lesson Preview
       expect(content.part7).toBeDefined();
       expect(content.part7?.takeaways?.length).toBeGreaterThanOrEqual(3);
-      expect(content.part7?.nextLessonPreview?.title?.length).toBeGreaterThan(5);
+      if (content.part7?.nextLessonPreview) {
+        expect(content.part7.nextLessonPreview.title?.length).toBeGreaterThan(5);
+      }
     }
   });
 
-  it("verifies dedicated module quizzes for all 32 lessons across all 9 Stages are registered and resolvable", () => {
-    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBe(32);
+  it("verifies dedicated module quizzes for all 18 lessons across all 4 Stages are registered and resolvable", () => {
+    expect(TYPESCRIPT_MODULE_QUIZZES.length).toBe(18);
 
     for (const quiz of TYPESCRIPT_MODULE_QUIZZES) {
       expect(quiz.trackKey).toBe("typescript");

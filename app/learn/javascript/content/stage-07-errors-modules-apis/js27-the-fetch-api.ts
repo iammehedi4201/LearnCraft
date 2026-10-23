@@ -4,43 +4,43 @@ export const js27TheFetchApiContent: StandardLessonContent = {
   slug: "js27-the-fetch-api",
   code: "JS-27",
   title: "Fetching Data with fetch",
-  subtitle: "Master network requests with fetch(), understand the two-step stream reading process, check response.ok, and abort requests with AbortController.",
+  subtitle: "Make GET and POST requests, send JSON payloads, check response.ok, and handle API errors.",
   sections: [
     {
       id: "part1",
-      label: "Fetch Mechanics",
-      icon: "🌐",
-      tag: "FOUNDATION"
+      label: "Fetching Data with fetch",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "The 2-Step Stream",
-      icon: "🌊",
-      tag: "STREAM READING"
+      label: "GET Requests",
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
-      label: "Headers & POST Requests",
-      icon: "📤",
-      tag: "PATTERNS"
+      label: "POST Requests & Headers",
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "The 404 Doesn't Reject Trap",
-      icon: "⚠️",
-      tag: "DEBUGGING"
+      label: "fetch HTTP Error Trap",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Fetch Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Core Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,128 +50,126 @@ export const js27TheFetchApiContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "How fetch() Communicates Over HTTP",
-    bigPicture: "The Fetch API allows JavaScript to communicate with remote web servers over HTTP. It returns a Promise that resolves to a Response object representing the server's reply.",
-    analogy: "Like sending a mail courier: fetch() dispatches your letter. The courier returns when the remote office acknowledges receipt (headers arrive), and then delivers the full package contents (body stream) in a second step.",
-    diagram: "+---------------------------------------------------+\n| 1. const response = await fetch(\"/api/user\");     |\n|    --> Promise resolves when HEADERS arrive!      |\n|    --> Status code (200, 404, 500) is now known!  |\n+---------------------------------------------------+\n                          |\n                          v\n+---------------------------------------------------+\n| 2. if (!response.ok) throw new Error(\"Failed!\");  |\n|    --> Verify status code is in 200-299 range!    |\n+---------------------------------------------------+\n                          |\n                          v\n+---------------------------------------------------+\n| 3. const data = await response.json();            |\n|    --> Second await: Reads and parses BODY stream |\n+---------------------------------------------------+",
-    breakdownTitle: "Fetch Fundamentals",
+    title: "Fetching Data with fetch",
+    bigPicture: "`fetch()` makes HTTP network requests. It is a two-step process: `await fetch(url)` gets the response headers, and `await res.json()` parses the data. Always check `if (!res.ok)`.",
+    breakdownTitle: "The Two-Step Fetch Rule",
     breakdownItems: [
       {
-        title: "The Two-Step Async Process",
-        desc: "First await resolves when HTTP headers arrive; second await (.json() or .text()) reads the incoming data body stream."
+        title: "Step 1: Wait for Response Headers",
+        desc: "fetch(url) returns a Response object containing HTTP status codes (200, 404, 500)."
       },
       {
-        title: "Network Error vs HTTP Error",
-        desc: "fetch() only rejects on network failures (offline, DNS failure, CORS). HTTP 404 and 500 do NOT reject!"
+        title: "Step 2: Parse JSON Body",
+        desc: "await response.json() parses the response stream into a JavaScript object."
       },
       {
-        title: "The response.ok Property",
-        desc: "A boolean shortcut indicating whether the HTTP status code falls in the successful 200–299 range."
+        title: "Check response.ok",
+        desc: "fetch does NOT reject on HTTP 404 or 500 error responses; check `res.ok` explicitly."
       }
     ]
   },
   part2: {
-    title: "The Two-Step Stream Reading Process",
-    intro: "Step through why fetching requires two sequential awaits.",
+    title: "Sending GET Requests with fetch and async/await",
+    intro: "Step through the canonical pattern for fetching data from REST APIs.",
     cards: [
       {
         number: "01",
-        tag: "Step 1",
-        title: "Headers Received",
-        description: "The initial fetch() promise resolves as soon as the HTTP headers are received from the server.",
-        codeSnippet: "const response = await fetch(\"https://api.com/users\");\nconsole.log(response.status); // e.g. 200\nconsole.log(response.ok);     // true if 200-299",
+        tag: "GET",
+        title: "Basic GET Request",
+        description: "Fetches data from an endpoint using the two-step await pattern.",
+        codeSnippet: "async function loadUser(id) {\n  const res = await fetch(`https://api.dev/users/${id}`);\n  const user = await res.json();\n  console.log(user.name);\n}",
         color: "emerald"
       },
       {
         number: "02",
-        tag: "Step 2",
-        title: "Body Stream Parsed",
-        description: "Calling response.json() streams the body bytes into memory and parses them as JSON.",
-        codeSnippet: "const data = await response.json();\nconsole.log(data); // Live JavaScript object",
+        tag: "Status",
+        title: "Checking response.ok",
+        description: "response.ok is true for HTTP 200-299, false for 404 or 500 errors.",
+        codeSnippet: "const res = await fetch(\"https://api.dev/items\");\nif (!res.ok) {\n  throw new Error(`HTTP Error: ${res.status}`);\n}\nconst items = await res.json();",
         color: "cyan"
       },
       {
         number: "03",
-        tag: "Abort",
-        title: "AbortController",
-        description: "Cancel slow or obsolete requests using an AbortController signal.",
-        codeSnippet: "const controller = new AbortController();\nfetch(url, { signal: controller.signal });\n// Cancel the request:\ncontroller.abort();",
+        tag: "Safety",
+        title: "Wrapping in try / catch",
+        description: "Catch network dropouts and API errors cleanly.",
+        codeSnippet: "try {\n  const res = await fetch(\"/api/profile\");\n  const data = await res.json();\n} catch (err) {\n  console.error(\"Network failure:\", err.message);\n}",
         color: "purple"
       }
     ],
     rule: {
-      title: "The response.ok Invariant",
-      content: "Never read response.json() without first checking if (response.ok) is true. If the server returned an error page, parsing JSON may fail or return unexpected error payloads."
+      title: "The HTTP Status Rule",
+      content: "response.ok is a boolean shortcut that checks if res.status is between 200 and 299 (successful HTTP status)."
     }
   },
   part3: {
-    title: "Sending Data: POST, Headers & Body",
-    intro: "Configure HTTP verbs and JSON payloads for creating or updating records.",
+    title: "Sending POST Requests with JSON Payloads",
+    intro: "Configure method, headers, and body when submitting data to an API.",
     points: [
       {
-        title: "1. Sending JSON with POST",
-        content: "Specify method: 'POST', set 'Content-Type': 'application/json', and stringify the payload object.",
-        codeSnippet: "async function createPost(newPost) {\n  const response = await fetch(\"/api/posts\", {\n    method: \"POST\",\n    headers: { \"Content-Type\": \"application/json\" },\n    body: JSON.stringify(newPost)\n  });\n  if (!response.ok) throw new Error(\"Post creation failed\");\n  return await response.json();\n}"
+        title: "1. The 3 POST Configuration Options",
+        content: "When creating resources, configure method: 'POST', Content-Type header, and JSON.stringify the body.",
+        codeSnippet: "async function createPost(postData) {\n  const res = await fetch(\"https://api.dev/posts\", {\n    method: \"POST\",\n    headers: { \"Content-Type\": \"application/json\" },\n    body: JSON.stringify(postData)\n  });\n  return await res.json();\n}"
       },
       {
-        title: "2. Setting Authorization Headers",
-        content: "Attach bearer tokens or API keys to the request headers to access protected endpoints.",
-        codeSnippet: "const res = await fetch(\"/api/profile\", {\n  headers: {\n    \"Authorization\": \"Bearer token_abc123\"\n  }\n});"
+        title: "2. Setting Content-Type",
+        content: "The 'Content-Type': 'application/json' header informs the server that the incoming body is JSON text.",
+        codeSnippet: "headers: { \"Content-Type\": \"application/json\" }"
       },
       {
-        title: "3. Text vs Blob vs JSON",
-        content: "Use response.text() for plain strings, response.blob() for images/files, and response.json() for structured APIs.",
-        codeSnippet: "const rawText = await response.text();\nconst imageBlob = await response.blob();"
+        title: "3. Inspecting the Created Resource",
+        content: "Successful POST requests typically return HTTP 201 Created along with the new record's generated ID.",
+        codeSnippet: "const newPost = await createPost({ title: \"Modern JS Guide\" });\nconsole.log(\"Created with ID:\", newPost.id);"
       }
     ]
   },
   part4: {
-    title: "The #1 Fetch Trap: 404 & 500 Do NOT Reject!",
+    title: "Common Trap: Assuming fetch Throws on 404 or 500 Responses",
     bad: {
-      title: "❌ Relying on catch() to Intercept HTTP 404 & 500",
-      code: "async function loadUser(id) {\n  try {\n    const response = await fetch(`/api/users/${id}`);\n    // Bug: If server returns 404 Not Found, catch() is NEVER called!\n    // fetch() resolves successfully with response.status = 404!\n    const user = await response.json(); // May crash or process 404 HTML body!\n    return user;\n  } catch (err) {\n    console.error(\"Only triggers on offline/network failure!\");\n  }\n}",
-      explanation: "fetch() treats any HTTP response as a successful network completion. It does NOT throw an error for 404 or 500 status codes."
+      title: "❌ Relying on try/catch Alone for 404 Errors",
+      code: "try {\n  // What if the user does NOT exist (HTTP 404 Not Found)?\n  const res = await fetch(\"/api/users/9999\");\n  // BUG: fetch did NOT throw! catch is skipped!\n  const user = await res.json();\n  console.log(user.name); // Crash or unexpected undefined!\n} catch (err) {\n  // Only runs on network disconnect or DNS failure!\n}",
+      explanation: "A 404 Not Found or 500 Server Error is still a successful HTTP communication! The server returned a valid response, so fetch() does NOT reject the promise."
     },
     good: {
-      title: "✅ Explicitly Check if (!response.ok)",
-      code: "async function loadUser(id) {\n  const response = await fetch(`/api/users/${id}`);\n  \n  // Safe: Explicitly check if status is outside 200-299:\n  if (!response.ok) {\n    throw new Error(`HTTP error! Status: ${response.status}`);\n  }\n  \n  return await response.json();\n}",
-      explanation: "Checking response.ok guarantees that 404 and 500 error codes throw an error before attempting to parse the body."
+      title: "✅ Always Check if (!res.ok)",
+      code: "try {\n  const res = await fetch(\"/api/users/9999\");\n  if (!res.ok) {\n    throw new Error(`User not found (Status: ${res.status})`);\n  }\n  const user = await res.json();\n  console.log(user.name);\n} catch (err) {\n  console.error(\"Handled error:\", err.message);\n}",
+      explanation: "Checking if (!res.ok) guarantees you catch 404 and 500 errors before attempting to use invalid data."
     }
   },
   part5: {
-    title: "Fetch API Simulator Sandbox",
-    intro: "Observe simulated HTTP request handling with status codes and response.ok verification.",
-    starterCode: "console.log(\"Dispatching network request to: /users/1\");\n\n// Simulated fetch demonstrating the two-step response handling:\nfunction mockFetch(url) {\n  return new Promise(resolve => {\n    setTimeout(() => {\n      const isFound = !url.includes(\"missing\");\n      resolve({\n        status: isFound ? 200 : 404,\n        ok: isFound,\n        json: () => Promise.resolve(isFound ? { id: 1, name: \"Sarah\" } : { error: \"Not found\" })\n      });\n    }, 100);\n  });\n}\n\nasync function fetchUserData(url) {\n  const res = await mockFetch(url);\n  console.log(`Status: ${res.status}, ok: ${res.ok}`);\n  \n  if (!res.ok) {\n    throw new Error(`Request failed with status ${res.status}`);\n  }\n  \n  return await res.json();\n}\n\nfetchUserData(\"/users/1\")\n  .then(user => console.log(\"User data:\", user))\n  .catch(err => console.error(err.message));\n"
+    title: "Interactive Code Playground",
+    intro: "Step through a safe data loading pattern that checks response.ok and parses the JSON response.",
+    starterCode: "// Simulating an API endpoint in the sandbox:\nasync function loadProductData(productId) {\n  try {\n    console.log(`Connecting to server for product #${productId}...`);\n    const response = await fetch(`https://api.dev/products/${productId}`);\n\n    if (!response.ok) {\n      throw new Error(`API returned error status: ${response.status}`);\n    }\n\n    const product = await response.json();\n    console.log(\"Successfully loaded product:\", product.title);\n    return product;\n  } catch (error) {\n    console.error(\"Fetch operation failed:\", error.message);\n    return null;\n  }\n}\n\nloadProductData(1);\n"
   },
   part6: {
-    title: "Key Takeaways: The Fetch API",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Two-Step Process",
-        desc: "First await resolves headers; second await (.json()) reads the response body stream."
+        title: "Two-Step Await Process",
+        desc: "First await fetch(url) for headers, then await res.json() for the parsed data."
       },
       {
-        title: "Check response.ok",
-        desc: "fetch() does not reject on 404 or 500; you must check if (!response.ok) manually."
+        title: "Always Verify response.ok",
+        desc: "fetch() does not reject on 404 or 500; you must check if (!res.ok) manually."
       },
       {
-        title: "POST Configurations",
-        desc: "Send JSON data with method: 'POST', 'Content-Type': 'application/json', and JSON.stringify()."
+        title: "POST Requires Headers and Body",
+        desc: "Specify method: 'POST', Content-Type: 'application/json', and JSON.stringify(body)."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "What happens if you make a `fetch()` call to a URL that returns an HTTP 404 Not Found status code?",
+      question: "Why must you check 'if (!response.ok)' after calling fetch()?",
       options: [
-        "The fetch() promise rejects immediately and triggers the catch() block",
-        "The fetch() promise resolves successfully with `response.ok === false` and `response.status === 404`",
-        "JavaScript terminates the script with an UncaughtHttpException",
-        "The browser retries the request indefinitely"
+        "Because fetch() does not reject its Promise on HTTP 404 or 500 errors",
+        "Because response.ok is required to open the internet connection",
+        "Because fetch() only works on secure HTTPS websites",
+        "It is not necessary; fetch() automatically throws an error on 404"
       ],
-      correctIndex: 1,
-      explanation: "The Fetch API only rejects on network failures (e.g., no internet connection). HTTP 404 is a valid HTTP response, so the promise resolves with `response.ok === false` and `response.status === 404`."
+      correctIndex: 0,
+      explanation: "fetch() only rejects its Promise if a network failure occurs (e.g., no internet or invalid domain). HTTP error codes like 404 Not Found or 500 Internal Server Error are valid responses, so you must inspect response.ok manually."
     }
   }
 };

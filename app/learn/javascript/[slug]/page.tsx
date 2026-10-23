@@ -23,7 +23,7 @@ import { markLessonComplete, isLessonComplete } from "../data/progress-store";
 export default function JSLessonPage(): JSX.Element {
   const params = useParams();
   const rawSlug = params?.slug as string;
-  const slug = rawSlug || "js01-how-js-runs";
+  const slug = rawSlug || "js01-what-javascript-does";
 
   const lesson = getLessonBySlug(slug) || getAllLessons()[0];
   const content = getJSLessonContent(slug);
@@ -42,6 +42,7 @@ export default function JSLessonPage(): JSX.Element {
         title: lesson.name,
         subtitle: lesson.desc,
         minutes: lesson.estimatedMinutes,
+        difficulty: lesson.difficulty,
       }}
       content={content as any}
       stageName={stage?.name}

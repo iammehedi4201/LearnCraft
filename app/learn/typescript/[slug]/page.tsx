@@ -23,7 +23,7 @@ import { markLessonComplete, isLessonComplete } from "../data/progress-store";
 export default function TypeScriptLessonPage(): JSX.Element {
   const params = useParams();
   const rawSlug = params?.slug as string;
-  const slug = rawSlug || "ts01-mental-model";
+  const slug = rawSlug || "ts01-what-typescript-does";
 
   const lesson = getLessonBySlug(slug) || getAllLessons()[0];
   const content = getTypeScriptLessonContent(slug);
@@ -42,6 +42,7 @@ export default function TypeScriptLessonPage(): JSX.Element {
         title: lesson.name,
         subtitle: lesson.desc,
         minutes: lesson.estimatedMinutes,
+        difficulty: lesson.difficulty,
       }}
       content={content as any}
       stageName={stage?.name}

@@ -4,43 +4,43 @@ export const js14DestructuringContent: StandardLessonContent = {
   slug: "js14-destructuring",
   code: "JS-14",
   title: "Destructuring Objects and Arrays",
-  subtitle: "Extract properties from objects and elements from arrays into distinct variables with concise, readable syntax.",
+  subtitle: "Extract properties from objects and items from arrays into standalone variables with renaming and fallback defaults.",
   sections: [
     {
       id: "part1",
-      label: "Destructuring Basics",
-      icon: "📦",
-      tag: "FOUNDATION"
+      label: "Destructuring Syntax",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "Object & Array Syntax",
-      icon: "⚡",
-      tag: "SYNTAX"
+      label: "Object Destructuring",
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
-      label: "Defaults & Renaming",
-      icon: "🏷️",
-      tag: "PATTERNS"
+      label: "Array & Parameter Unpacking",
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "Null Destructuring Trap",
-      icon: "⚠️",
-      tag: "DEBUGGING"
+      label: "Destructuring undefined",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Destructuring Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Summary Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,128 +50,126 @@ export const js14DestructuringContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "Unpacking Values with Destructuring",
-    bigPicture: "Destructuring is a concise syntax that allows you to extract multiple properties from objects or elements from arrays into individual variables in a single statement.",
-    analogy: "Like unpacking a delivery box: instead of taking out the whole box every time you need an item, you pull out and label the exact items you want on your desk.",
-    diagram: "+-------------------------------------------+\n| Object: { name: \"Sarah\", role: \"Admin\" }  |\n+-------------------------------------------+\n                     |\n    const { name, role } = user;\n                     |\n                     v\nname = \"Sarah\"             role = \"Admin\"",
-    breakdownTitle: "Key Destructuring Concepts",
+    title: "Destructuring Objects and Arrays",
+    bigPicture: "Destructuring lets you unpack properties from objects (`const { name } = user`) or values from arrays (`const [first] = items`) directly into distinct variables.",
+    breakdownTitle: "Key Destructuring Capabilities",
     breakdownItems: [
       {
-        title: "Object Destructuring by Key Name",
-        desc: "Extracts values matching the exact property key names inside curly braces {}."
+        title: "Clean and Concise",
+        desc: "Eliminates repetitive object property prefixes across your code."
       },
       {
-        title: "Array Destructuring by Position",
-        desc: "Extracts values based on their index order inside square brackets []."
+        title: "Renaming Variables",
+        desc: "Rename fields during extraction using syntax like `const { id: userId } = user`."
       },
       {
-        title: "Default Fallback Values",
-        desc: "Provide fallback values automatically if a property is undefined in the source data."
+        title: "Default Values",
+        desc: "Provide fallback values (`const { role = 'guest' } = user`) if a property is undefined."
       }
     ]
   },
   part2: {
-    title: "Core Destructuring Syntax",
-    intro: "Two primary syntaxes for unpacking objects and arrays.",
+    title: "Object Destructuring Syntax and Defaults",
+    intro: "Learn the core techniques for unpacking object properties.",
     cards: [
       {
         number: "01",
-        tag: "Objects",
-        title: "Object Destructuring",
-        description: "Matches variable names directly to property keys.",
-        codeSnippet: "const user = { id: 101, username: \"AlexDev\" };\nconst { id, username } = user;\nconsole.log(id, username); // Output: 101 AlexDev",
+        tag: "Basic",
+        title: "Property Unpacking",
+        description: "Variable names match the object keys enclosed in curly braces { }.",
+        codeSnippet: "const user = { name: \"Maya\", points: 250 };\nconst { name, points } = user;\nconsole.log(name, points); // Output: Maya 250",
         color: "emerald"
       },
       {
         number: "02",
-        tag: "Arrays",
-        title: "Array Destructuring",
-        description: "Assigns variables according to item order, skipping positions with commas.",
-        codeSnippet: "const coordinates = [40.7128, -74.0060];\nconst [latitude, longitude] = coordinates;\nconsole.log(latitude, longitude); // Output: 40.7128 -74.0060",
+        tag: "Renaming",
+        title: "Renaming with Colon (:)",
+        description: "Extract a property and assign it to a new local variable name.",
+        codeSnippet: "const apiResponse = { user_id: 1042 };\nconst { user_id: id } = apiResponse;\nconsole.log(id); // Output: 1042",
         color: "cyan"
       },
       {
         number: "03",
-        tag: "Functions",
-        title: "Function Parameter Destructuring",
-        description: "Unpack object properties directly in the function argument list.",
-        codeSnippet: "function printBadge({ name, role = \"Member\" }) {\n  return `${name} - ${role}`;\n}\nconsole.log(printBadge({ name: \"Maya\" })); // Output: Maya - Member",
+        tag: "Defaults",
+        title: "Fallback Default Values (=)",
+        description: "Specify a default value if the property is missing or undefined.",
+        codeSnippet: "const settings = { theme: \"dark\" };\nconst { theme, sound = \"enabled\" } = settings;\nconsole.log(theme, sound); // Output: dark enabled",
         color: "purple"
       }
     ],
     rule: {
-      title: "Syntax Rule",
-      content: "Use curly braces { ... } to destructure objects by key. Use square brackets [ ... ] to destructure arrays by position."
+      title: "Colon vs Equal Sign Rule",
+      content: "Use colon (key: newName) to RENAME a property. Use equal sign (key = defaultValue) to set a FALLBACK."
     }
   },
   part3: {
-    title: "Renaming Variables & Setting Defaults",
-    intro: "Customize extracted variable names and handle missing values cleanly.",
+    title: "Array and Function Parameter Destructuring",
+    intro: "Destructuring also works with array positions and function arguments.",
     points: [
       {
-        title: "1. Renaming Properties (oldName: newName)",
-        content: "Rename extracted variables to avoid name collisions in the local scope.",
-        codeSnippet: "const apiResponse = { user_name: \"jdoe\" };\nconst { user_name: username } = apiResponse;\nconsole.log(username); // Output: jdoe"
+        title: "1. Array Destructuring by Position",
+        content: "Values are unpacked based on their index order inside square brackets [ ].",
+        codeSnippet: "const coordinates = [40.7128, -74.0060];\nconst [latitude, longitude] = coordinates;\nconsole.log(\"Lat:\", latitude, \"Lng:\", longitude); // Output: Lat: 40.7128 Lng: -74.006"
       },
       {
-        title: "2. Setting Default Values",
-        content: "Assign fallback values if the property is undefined in the source object.",
-        codeSnippet: "const settings = { theme: \"dark\" };\nconst { theme, fontSize = 14 } = settings;\nconsole.log(theme, fontSize); // Output: dark 14"
+        title: "2. Function Parameter Destructuring",
+        content: "Unpack properties directly in function arguments (used constantly in React component props).",
+        codeSnippet: "function displayProduct({ title, price }) {\n  console.log(`${title} costs $${price}`);\n}\ndisplayProduct({ title: \"Keyboard\", price: 80 }); // Output: Keyboard costs $80"
       },
       {
-        title: "3. Skipping Array Items",
-        content: "Use commas without identifiers to ignore elements you do not need.",
-        codeSnippet: "const rgb = [255, 128, 0];\nconst [red, , blue] = rgb; // Skip green\nconsole.log(red, blue); // Output: 255 0"
+        title: "3. Skipping Unwanted Array Items",
+        content: "Use commas to skip index positions you don't need.",
+        codeSnippet: "const rgb = [255, 128, 0];\nconst [red, , blue] = rgb; // Skips green\nconsole.log(red, blue); // Output: 255 0"
       }
     ]
   },
   part4: {
-    title: "Common Pitfall: Destructuring null or undefined",
+    title: "Common Trap: Destructuring from undefined or null",
     bad: {
-      title: "❌ Destructuring null Without a Fallback",
-      code: "const response = null;\n// Bug: Throws fatal TypeError!\n// const { data } = response;\n// TypeError: Cannot destructure property 'data' of null",
-      explanation: "Attempting to destructure null or undefined crashes the program because primitives cannot be unpacked."
+      title: "❌ Unpacking a Missing or Null Object",
+      code: "let data; // data is undefined!\n// Destructuring from undefined throws a fatal TypeError!\nconst { title } = data;\n// TypeError: Cannot destructure property 'title' of 'undefined'",
+      explanation: "JavaScript cannot extract properties from undefined or null. If the source data is missing, the program crashes."
     },
     good: {
-      title: "✅ Provide a Fallback Object Default ({})",
-      code: "const response = null;\n// Safe: Default fallback empty object prevents crashes\nconst { data } = response || {};\nconsole.log(data); // Output: undefined",
-      explanation: "Using response || {} ensures there is always a valid object to destructure from."
+      title: "✅ Provide a Fallback Empty Object ({})",
+      code: "let data;\n// Safe: fall back to an empty object if data is undefined\nconst { title = \"Untitled\" } = data || {};\nconsole.log(title);\n// Output: Untitled (Safe and resilient!)",
+      explanation: "Using (data || {}) provides a safe object target so destructuring never throws an error."
     }
   },
   part5: {
-    title: "Destructuring Sandbox",
-    intro: "Practice unpacking objects, renaming properties, and setting fallback defaults.",
-    starterCode: "const serverConfig = {\n  host: \"db.internal.net\",\n  port: 5432,\n  auth: { user: \"postgres\" }\n};\n\n// 1. Destructure with default:\nconst { host, port, timeout = 3000 } = serverConfig;\n\n// 2. Destructure and rename:\nconst { host: dbHost } = serverConfig;\n\nconsole.log(\"Host:\", host, \"Port:\", port, \"Timeout:\", timeout);\nconsole.log(\"Renamed host variable:\", dbHost);\n"
+    title: "Interactive Code Playground",
+    intro: "Unpack API user profiles, rename identifiers, and apply default fallbacks.",
+    starterCode: "const serverResponse = {\n  status: \"success\",\n  payload: {\n    account_id: \"usr_882\",\n    name: \"Alex Chen\",\n    tier: \"Gold\"\n  }\n};\n\n// 1. Destructure top-level status and nested payload:\nconst { status, payload } = serverResponse;\n\n// 2. Destructure with renaming and defaults:\nconst { account_id: id, name, tier, role = \"Member\" } = payload;\n\nconsole.log(`[Status: ${status}] User: ${name} (ID: ${id}) | Tier: ${tier} | Role: ${role}`);\n"
   },
   part6: {
-    title: "Key Takeaways: Destructuring",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Object vs Array",
-        desc: "Objects destructure by key name; arrays destructure by positional order."
+        title: "Objects Use Key Names",
+        desc: "const { name, role } = obj matches properties by their key name."
       },
       {
-        title: "Renaming and Defaults",
-        desc: "Use key: alias to rename; use key = fallback to provide default values."
+        title: "Arrays Use Position",
+        desc: "const [first, second] = arr matches values by their index position."
       },
       {
-        title: "Protect Against null",
-        desc: "Always provide a fallback (obj || {}) when destructuring data from APIs."
+        title: "Always Guard Missing Data",
+        desc: "Use (data || {}) to prevent fatal crashes when destructuring optional API data."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "In `const { a: first, b = 10 } = { a: 5 };`, what are the values of `first` and `b`?",
+      question: "In the statement: const { count = 10 } = options; what does '= 10' represent?",
       options: [
-        "first = 5, b = 10",
-        "first = undefined, b = 10",
-        "first = 5, b = undefined",
-        "SyntaxError: Invalid renaming syntax"
+        "A default fallback value used if options.count is undefined",
+        "It renames the variable count to 10",
+        "It reassigns options.count to 10 permanently",
+        "A syntax error because equal signs cannot be used inside destructuring"
       ],
       correctIndex: 0,
-      explanation: "Property `a` is extracted and renamed to `first` with value 5. Property `b` does not exist in the source object, so it receives its default fallback value 10."
+      explanation: "The equal sign (=) specifies a default fallback value. If options.count is undefined or omitted, count will automatically default to 10."
     }
   }
 };

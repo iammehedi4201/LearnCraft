@@ -108,3 +108,43 @@ Difficulty: DIFFICULT.
 - Common Misconception: Explain why beginners get confused and how to avoid the trap.
 - Hard constraint: 300 to 450 words total.
 ```
+
+---
+
+## 5. The 32 Authoritative TypeScript Lessons Reference Table
+
+| Stage | Code | Title (2–6 Words) | Level | Focus & Depth |
+|---|---|---|---|---|
+| **1. Foundations** | TS-01 | How TypeScript Protects JavaScript | 🔴 Difficult | Static vs runtime, type erasure, tsc compilation |
+| | TS-02 | Type Annotations and Type Inference | 🟢 Easy | `string`, `number`, `boolean`, letting TS infer |
+| | TS-03 | Arrays and Tuples | 🟢 Easy | `T[]`, fixed-position `[A, B]`, `readonly` |
+| | TS-04 | Typing Objects and Optional Properties | 🟢 Easy | Object shapes, optional `?`, `readonly` keys |
+| | TS-05 | Special Types: any and unknown | 🟡 Moderate | `any` vs `unknown` safety, `void`, `never` |
+| **2. Functions & Composition** | TS-06 | Typing Functions and Return Values | 🟢 Easy | Parameter types, return inference, defaults |
+| | TS-07 | Writing Function Overloads | 🟡 Moderate | Multiple call signatures, 1 implementation |
+| | TS-08 | Union and Intersection Types | 🟡 Moderate | Union `\|` alternatives, intersection `&` merge |
+| | TS-09 | Type Aliases Versus Interfaces | 🟡 Moderate | Declaration merging, `extends` vs `&`, rule of thumb |
+| **3. Narrowing & Control Flow** | TS-10 | How Type Narrowing Works | 🔴 Difficult | Control flow analysis, `typeof`, `instanceof`, `in` |
+| | TS-11 | Writing Custom Type Guards | 🟡 Moderate | `val is Type` predicates, `.filter()` narrowing |
+| | TS-12 | Using Discriminated Unions | 🔴 Difficult | Tagged literal discriminant, impossible states |
+| | TS-13 | Exhaustive Checking with never | 🟡 Moderate | `switch` default never check, compile enforcement |
+| **4. Generics & Abstraction** | TS-14 | Writing Generic Functions | 🔴 Difficult | Type variables `<T>`, preserving return fidelity |
+| | TS-15 | Generic Interfaces and Types | 🟡 Moderate | Reusable containers (`ApiResponse<T>`, `Result<T, E>`) |
+| | TS-16 | Constraining Generics with extends | 🔴 Difficult | `<T extends HasId>`, preserving exact subtypes |
+| | TS-17 | Generics with keyof | 🔴 Difficult | `K extends keyof T`, type-safe property lookup `T[K]` |
+| **5. Classes & OO** | TS-18 | Class Fields and Access Modifiers | 🟢 Easy | `public`, `private`, `protected`, `readonly` |
+| | TS-19 | Constructor Parameter Properties | 🟢 Easy | `constructor(public name: string)` shorthand |
+| | TS-20 | Abstract Classes and Interfaces | 🟡 Moderate | Abstract blueprints, shared logic vs pure shapes |
+| **6. Advanced Types** | TS-21 | Indexed Access and typeof | 🟡 Moderate | `T[K]`, `T[number]`, deriving types with `typeof` |
+| | TS-22 | Conditional Types and infer | 🔴 Difficult | `T extends U ? X : Y`, extracting types with `infer` |
+| | TS-23 | Mapped Types and Template Literals | 🔴 Difficult | `[K in keyof T]`, `+`/`-` modifiers, template strings |
+| | TS-24 | Essential Utility Types | 🟡 Moderate | `Partial`, `Required`, `Readonly`, `Record`, `Pick`, `Omit` |
+| **7. Modules & Compilation** | TS-25 | Using Type-Only Imports | 🟢 Easy | `import type`, `export type`, preventing bloat |
+| | TS-26 | Configuring tsconfig and Strict Mode | 🟡 Moderate | `strict`, `strictNullChecks`, `noImplicitAny` |
+| | TS-27 | Declaration Files and Type Erasure | 🟡 Moderate | `.d.ts` files, `@types/*`, runtime erasure trap |
+| **8. Practical Patterns** | TS-28 | Type Assertions Versus satisfies | 🟡 Moderate | `as Type` risks vs `satisfies` safe validation |
+| | TS-29 | Handling Errors with unknown | 🟡 Moderate | `catch (err: unknown)`, `instanceof Error` guard |
+| | TS-30 | Typing API Responses Safely | 🔴 Difficult | `Promise<T>`, boundary trap, unvalidated JSON |
+| **9. Debugging & Smells** | TS-31 | Reading and Fixing Compiler Errors | 🔴 Difficult | Dissecting traces, bottom-up reading, expected vs got |
+| | TS-32 | Clean Type Architecture and Smells | 🟡 Moderate | Type smells, auditing AI-generated code, interviews |
+

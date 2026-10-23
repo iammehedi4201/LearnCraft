@@ -2,7 +2,12 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * JAVASCRIPT CURRICULUM — AUTHORITATIVE DATA LAYER
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * The complete, foundational JavaScript curriculum for LearnCraft.
+ * The complete, foundational JavaScript curriculum for LearnCraft based on
+ * the authoritative curriculum:
+ * Part 1: JavaScript Foundations (Lessons 1-8: JS-01 through JS-08)
+ * Part 2: Working with Data (Lessons 9-13: JS-09 through JS-13)
+ * Part 3: Functions and Behavior (Lessons 14-17: JS-14 through JS-17)
+ * Part 4: Async JavaScript & Real Applications (Lessons 18-22: JS-18 through JS-22)
  *
  * Core Philosophy: "JavaScript teaches JavaScript — only the main things."
  * Prepares learners for TypeScript, OOP, React, Node.js, and NestJS.
@@ -20,6 +25,7 @@ export interface LessonMeta {
   desc: string;
   path: string;
   tag: ContentTag;
+  difficulty: "Easy" | "Moderate" | "Difficult";
   estimatedMinutes: number;
   prerequisite?: string;
   stepNumber: number;
@@ -120,6 +126,13 @@ export const JS_RELATED_TOPICS: RelatedTopicMeta[] = [
     path: "/learn/oop",
   },
   {
+    id: "rel-react",
+    title: "React",
+    desc: "Build dynamic, declarative user interfaces with components, hooks, and modern state management.",
+    badge: "Frontend",
+    path: "/learn/react",
+  },
+  {
     id: "rel-nestjs",
     title: "NestJS",
     desc: "Enterprise backend architecture powered by dependency injection and modular design.",
@@ -134,7 +147,7 @@ export const JS_RELATED_TOPICS: RelatedTopicMeta[] = [
 
 export const JS_CAPSTONE: CapstoneProjectMeta = {
   id: "capstone-task-manager",
-  stageNumber: 8,
+  stageNumber: 4,
   slug: "task-workflow-manager",
   title: "Interactive Task & Workflow Manager",
   subtitle: "Final JavaScript Capstone Project",
@@ -143,7 +156,7 @@ export const JS_CAPSTONE: CapstoneProjectMeta = {
   badge: "🛠️ Capstone",
   xpReward: 300,
   estimatedMinutes: 60,
-  prerequisites: ["JS-11", "JS-16", "JS-22", "JS-27", "JS-30"],
+  prerequisites: ["JS-09", "JS-10", "JS-14", "JS-18", "JS-21", "JS-22"],
   skillsTaught: [
     "State management using Arrays & Objects",
     "DOM manipulation and dynamic UI rendering",
@@ -156,17 +169,17 @@ export const JS_CAPSTONE: CapstoneProjectMeta = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// 8 Stages (All 30 Comprehensive JavaScript Lessons)
+// 4 Stages (All 22 Authoritative JavaScript Lessons)
 // ─────────────────────────────────────────────────────────────
 
 export const JS_STAGES: StageMeta[] = [
   {
     id: "stage-1",
     stageNumber: 1,
-    name: "Foundations and Basics",
-    subtitle: "Runtimes, Variables, Types, Operators & Control Flow",
-    milestone: "Write your first JavaScript programs, store data safely, and control execution with logic.",
-    description: "Learn how JavaScript executes code, store information safely using let and const, avoid unexpected type conversion traps, and make decisions with if/else and loops.",
+    name: "JavaScript Foundations",
+    subtitle: "Runtimes, Variables, Types, Operators, Logic & Functions",
+    milestone: "Master JavaScript fundamentals: how code executes, variables, basic types, comparisons, conditionals, loops, functions, and block scope.",
+    description: "Learn where JavaScript runs, store information safely using const and let, compare values reliably with strict equality (===), control flow with conditionals and loops, package reusable functions, and master block scope.",
     theme: {
       badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
       dot: "bg-purple-400",
@@ -178,539 +191,433 @@ export const JS_STAGES: StageMeta[] = [
       {
         code: "JS-01",
         stepNumber: 1,
-        slug: "js01-how-javascript-runs",
-        name: "How JavaScript Runs Code",
-        desc: "Discover what JavaScript is, how computers run code line by line, and how to print messages and calculations with console.log().",
-        path: "/learn/javascript/js01-how-javascript-runs",
+        slug: "js01-what-javascript-does",
+        name: "What JavaScript Does",
+        desc: "Understand where JavaScript runs (browser vs Node.js) and what it is responsible for in modern web applications.",
+        path: "/learn/javascript/js01-what-javascript-does",
         tag: "CORE",
+        difficulty: "Easy",
         estimatedMinutes: 15,
         prerequisite: "None",
       },
       {
         code: "JS-02",
         stepNumber: 2,
-        slug: "js02-variables-and-data-types",
-        name: "Declaring Variables",
-        desc: "Learn how to store values in variables, when to use const vs let, and master the core data types (strings, numbers, and booleans).",
-        path: "/learn/javascript/js02-variables-and-data-types",
+        slug: "js02-variables-const-and-let",
+        name: "Variables: const and let",
+        desc: "Learn how to store values in memory using const and let, and why var is avoided in modern code.",
+        path: "/learn/javascript/js02-variables-const-and-let",
         tag: "CORE",
-        estimatedMinutes: 20,
+        difficulty: "Easy",
+        estimatedMinutes: 15,
         prerequisite: "JS-01",
       },
       {
         code: "JS-03",
         stepNumber: 3,
-        slug: "js03-operators-and-equality",
-        name: "Comparing Values with == and ===",
-        desc: "Perform calculations, compare values with strict equality (===), convert data types, and combine conditions with logic.",
-        path: "/learn/javascript/js03-operators-and-equality",
+        slug: "js03-basic-values-and-types",
+        name: "Basic Values and Types",
+        desc: "Master the primary JavaScript data types: string, number, boolean, null, undefined, and object.",
+        path: "/learn/javascript/js03-basic-values-and-types",
         tag: "CORE",
-        estimatedMinutes: 20,
+        difficulty: "Easy",
+        estimatedMinutes: 15,
         prerequisite: "JS-02",
       },
       {
         code: "JS-04",
         stepNumber: 4,
-        slug: "js04-conditional-logic",
-        name: "Making Decisions with if and else",
-        desc: "Teach your programs to make decisions: run code only when conditions are true, handle alternatives with else, and match multiple cases with switch.",
-        path: "/learn/javascript/js04-conditional-logic",
+        slug: "js04-comparisons-and-strict-equality",
+        name: "Comparisons and Strict Equality (=== vs ==)",
+        desc: "Compare values reliably with strict equality (===) and avoid silent type coercion bugs caused by loose equality (==).",
+        path: "/learn/javascript/js04-comparisons-and-strict-equality",
         tag: "CORE",
+        difficulty: "Moderate",
         estimatedMinutes: 20,
         prerequisite: "JS-03",
       },
       {
         code: "JS-05",
         stepNumber: 5,
-        slug: "js05-loops-and-iteration",
-        name: "Repeating Code with Loops",
-        desc: "Automate repetitive tasks: understand while loops, master counting with classic for loops, and control iteration with break and continue.",
-        path: "/learn/javascript/js05-loops-and-iteration",
+        slug: "js05-conditions-and-truthy-falsy",
+        name: "Conditions and Truthy/Falsy Values",
+        desc: "Make decisions with if/else statements and understand how JavaScript treats values in boolean contexts.",
+        path: "/learn/javascript/js05-conditions-and-truthy-falsy",
         tag: "CORE",
+        difficulty: "Easy",
         estimatedMinutes: 20,
         prerequisite: "JS-04",
       },
-    ],
-  },
-  {
-    id: "stage-2",
-    stageNumber: 2,
-    name: "Functions, Scope and Closures",
-    subtitle: "Reusable Blocks, Scope, Closures & Callbacks",
-    milestone: "Package reusable logic into functions, master scope boundaries, and harness closures.",
-    description: "Master parameters, return values, arrow functions, global vs block scope, closures with private memory, and higher-order callbacks.",
-    theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
-    },
-    lessons: [
       {
         code: "JS-06",
         stepNumber: 6,
-        slug: "js06-functions-and-arrow-syntax",
-        name: "Writing and Calling Functions",
-        desc: "Write reusable blocks of code: understand function declarations, pass parameters in, return results, and master concise modern arrow functions.",
-        path: "/learn/javascript/js06-functions-and-arrow-syntax",
+        slug: "js06-loops",
+        name: "Loops (for, while, for...of)",
+        desc: "Repeat actions safely and iterate over arrays and collections without creating infinite loops.",
+        path: "/learn/javascript/js06-loops",
         tag: "CORE",
+        difficulty: "Moderate",
         estimatedMinutes: 20,
         prerequisite: "JS-05",
       },
       {
         code: "JS-07",
         stepNumber: 7,
-        slug: "js07-scope-global-function-block",
-        name: "How Scope Works",
-        desc: "Understand variable visibility boundaries, why let and const stay inside curly braces, and how the one-way scope chain works.",
-        path: "/learn/javascript/js07-scope-global-function-block",
+        slug: "js07-functions-and-return-values",
+        name: "Functions and Return Values",
+        desc: "Package reusable logic into functions, accept parameters, and return calculated results.",
+        path: "/learn/javascript/js07-functions-and-return-values",
         tag: "CORE",
+        difficulty: "Moderate",
         estimatedMinutes: 20,
         prerequisite: "JS-06",
       },
       {
         code: "JS-08",
         stepNumber: 8,
-        slug: "js08-closures",
-        name: "How Closures Work",
-        desc: "Learn how inner functions remember variables from where they were created, even after the outer function has finished running.",
-        path: "/learn/javascript/js08-closures",
+        slug: "js08-scope-and-block-scope",
+        name: "Global, Function, and Block Scope",
+        desc: "Understand where variables live across global, function, and block scope, and why var is avoided in modern code.",
+        path: "/learn/javascript/js08-scope-and-block-scope",
         tag: "CORE",
-        estimatedMinutes: 25,
+        difficulty: "Moderate",
+        estimatedMinutes: 20,
         prerequisite: "JS-07",
-      },
-      {
-        code: "JS-09",
-        stepNumber: 9,
-        slug: "js09-callbacks-and-higher-order-functions",
-        name: "Using Callback Functions",
-        desc: "Treat functions as values: pass callback functions into other functions and manufacture custom functions dynamically.",
-        path: "/learn/javascript/js09-callbacks-and-higher-order-functions",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "JS-08",
       },
     ],
   },
   {
-    id: "stage-3",
-    stageNumber: 3,
-    name: "Arrays and Objects",
-    subtitle: "Ordered Lists, Key-Value Pairs, Array Methods & References",
-    milestone: "Manage complex data with arrays, objects, and powerful methods like map, filter, and reduce.",
-    description: "Learn how to store lists of items, manipulate objects, use declarative array methods, and understand reference copying.",
+    id: "stage-2",
+    stageNumber: 2,
+    name: "Working with Data",
+    subtitle: "Arrays, Objects, References, Nullish Operators & Spread/Rest",
+    milestone: "Organize, manipulate, and transform collections safely using arrays, objects, reference awareness, and modern syntax.",
+    description: "Store lists and transform them with array methods, model real-world entities with objects, understand primitive values vs object memory references, read nested fields safely with optional chaining, and master spread vs rest.",
     theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
+      badge: "bg-blue-500/10 text-blue-300 border-blue-500/20",
+      dot: "bg-blue-400",
+      border: "border-blue-500/30",
+      bgSubtle: "bg-blue-500/[0.03]",
+      textAccent: "text-blue-400",
     },
     lessons: [
       {
-        code: "JS-10",
-        stepNumber: 10,
-        slug: "js10-arrays-and-indexing",
-        name: "Working with Arrays",
-        desc: "Store ordered collections of data, access elements with zero-based indexing, read array length, and add or remove items using push, pop, and slice.",
-        path: "/learn/javascript/js10-arrays-and-indexing",
+        code: "JS-09",
+        stepNumber: 1,
+        slug: "js09-arrays-and-common-methods",
+        name: "Arrays and Common Methods",
+        desc: "Store ordered lists of data and transform them with map, filter, find, and forEach.",
+        path: "/learn/javascript/js09-arrays-and-common-methods",
         tag: "CORE",
-        estimatedMinutes: 20,
+        difficulty: "Moderate",
+        estimatedMinutes: 25,
+        prerequisite: "JS-08",
+      },
+      {
+        code: "JS-10",
+        stepNumber: 2,
+        slug: "js10-objects-destructuring-and-spread",
+        name: "Objects, Destructuring, and Spread",
+        desc: "Model real-world entities with key-value pairs, unpack fields cleanly, and copy objects immutably.",
+        path: "/learn/javascript/js10-objects-destructuring-and-spread",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 25,
         prerequisite: "JS-09",
       },
       {
         code: "JS-11",
-        stepNumber: 11,
-        slug: "js11-essential-array-methods",
-        name: "Transforming Arrays with map and filter",
-        desc: "Transform lists with map, keep matching items with filter, locate single items with find, and calculate totals with reduce.",
-        path: "/learn/javascript/js11-essential-array-methods",
+        stepNumber: 3,
+        slug: "js11-primitive-values-vs-object-references",
+        name: "Primitive Values vs. Object References",
+        desc: "Understand how JavaScript stores numbers/strings by value while objects and arrays share memory references.",
+        path: "/learn/javascript/js11-primitive-values-vs-object-references",
         tag: "CORE",
-        estimatedMinutes: 25,
+        difficulty: "Difficult",
+        estimatedMinutes: 20,
         prerequisite: "JS-10",
       },
       {
         code: "JS-12",
-        stepNumber: 12,
-        slug: "js12-objects-and-methods",
-        name: "Working with Objects",
-        desc: "Model real-world entities using labeled key-value pairs, understand dot vs bracket notation, and attach reusable methods.",
-        path: "/learn/javascript/js12-objects-and-methods",
+        stepNumber: 4,
+        slug: "js12-optional-chaining-and-nullish-coalescing",
+        name: "Optional Chaining (?.) and Nullish Coalescing (??)",
+        desc: "Read nested properties safely without crashing and set reliable fallback defaults for null or undefined.",
+        path: "/learn/javascript/js12-optional-chaining-and-nullish-coalescing",
         tag: "CORE",
-        estimatedMinutes: 20,
+        difficulty: "Easy",
+        estimatedMinutes: 15,
         prerequisite: "JS-11",
       },
       {
         code: "JS-13",
-        stepNumber: 13,
-        slug: "js13-object-references-and-copying",
-        name: "Object References and Copying",
-        desc: "Understand how objects live in memory, why copying variables creates shared references, and how to safely clone objects with spread and structuredClone.",
-        path: "/learn/javascript/js13-object-references-and-copying",
+        stepNumber: 5,
+        slug: "js13-spread-vs-rest",
+        name: "Spread vs. Rest",
+        desc: "Know when the three dots (...) unpack values into collections vs collect multiple items into a single array.",
+        path: "/learn/javascript/js13-spread-vs-rest",
         tag: "CORE",
+        difficulty: "Moderate",
         estimatedMinutes: 20,
         prerequisite: "JS-12",
       },
     ],
   },
   {
-    id: "stage-4",
-    stageNumber: 4,
-    name: "Modern JavaScript Syntax",
-    subtitle: "Destructuring, Spread/Rest, Optional Chaining & Nullish Coalescing",
-    milestone: "Write concise, modern JavaScript using ES6+ syntax used across all modern frameworks.",
-    description: "Unpack data with destructuring, merge collections with spread/rest, and safely navigate objects with optional chaining.",
+    id: "stage-3",
+    stageNumber: 3,
+    name: "Functions and Behavior",
+    subtitle: "Callbacks, Closures, Scoping, the this Keyword & Debugging",
+    milestone: "Deepen your function mastery with higher-order callbacks, persistent closures, execution contexts, and robust error handling.",
+    description: "Pass functions as arguments to build dynamic behaviors, understand how closures preserve variables across time, demystify what this points to, and catch exceptions safely with try/catch.",
     theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
+      badge: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
+      dot: "bg-emerald-400",
+      border: "border-emerald-500/30",
+      bgSubtle: "bg-emerald-500/[0.03]",
+      textAccent: "text-emerald-400",
     },
     lessons: [
       {
         code: "JS-14",
-        stepNumber: 14,
-        slug: "js14-destructuring",
-        name: "Destructuring Objects and Arrays",
-        desc: "Extract properties from objects and items from arrays into standalone variables with renaming and fallback defaults.",
-        path: "/learn/javascript/js14-destructuring",
+        stepNumber: 1,
+        slug: "js14-callbacks-and-higher-order-functions",
+        name: "Callbacks and Higher-Order Functions",
+        desc: "Pass functions as arguments to other functions to create dynamic, reusable behaviors and workflows.",
+        path: "/learn/javascript/js14-callbacks-and-higher-order-functions",
         tag: "CORE",
-        estimatedMinutes: 20,
+        difficulty: "Moderate",
+        estimatedMinutes: 25,
         prerequisite: "JS-13",
       },
       {
         code: "JS-15",
-        stepNumber: 15,
-        slug: "js15-spread-and-rest-operators",
-        name: "Using Spread and Rest",
-        desc: "Use the three dots (...) to unpack collections with spread and collect variable arguments with rest parameters.",
-        path: "/learn/javascript/js15-spread-and-rest-operators",
+        stepNumber: 2,
+        slug: "js15-closures",
+        name: "Closures",
+        desc: "Learn how functions remember their outer variables even after the outer function has finished executing.",
+        path: "/learn/javascript/js15-closures",
         tag: "CORE",
-        estimatedMinutes: 20,
+        difficulty: "Difficult",
+        estimatedMinutes: 25,
         prerequisite: "JS-14",
       },
       {
         code: "JS-16",
-        stepNumber: 16,
-        slug: "js16-optional-chaining-and-nullish-coalescing",
-        name: "Safe Property Access with ?. and ??",
-        desc: "Prevent runtime errors by safely navigating nested data with ?. and setting safe fallbacks with ?? without false-alarm bugs.",
-        path: "/learn/javascript/js16-optional-chaining-and-nullish-coalescing",
+        stepNumber: 3,
+        slug: "js16-the-this-keyword",
+        name: "The this Keyword (Practical Rules)",
+        desc: "Master the practical rules of what this points to: object methods vs arrow functions.",
+        path: "/learn/javascript/js16-the-this-keyword",
         tag: "CORE",
-        estimatedMinutes: 20,
+        difficulty: "Difficult",
+        estimatedMinutes: 25,
         prerequisite: "JS-15",
+      },
+      {
+        code: "JS-17",
+        stepNumber: 4,
+        slug: "js17-errors-and-debugging",
+        name: "Errors and Basic Debugging",
+        desc: "Handle exceptions safely with try...catch, inspect stack traces, and debug issues with console tools.",
+        path: "/learn/javascript/js17-errors-and-debugging",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 20,
+        prerequisite: "JS-16",
       },
     ],
   },
   {
-    id: "stage-5",
-    stageNumber: 5,
-    name: "Objects and Prototypes",
-    subtitle: "The 'this' Keyword, Prototype Chain, Classes, extends & super",
-    milestone: "Understand how JavaScript implements object-oriented behavior under the hood.",
-    description: "Learn what 'this' points to, how prototype property lookup works, and write clean modern classes with extends and super.",
+    id: "stage-4",
+    stageNumber: 4,
+    name: "Async JavaScript and Real Applications",
+    subtitle: "Promises, Async/Await, Event Loop, DOM Events, APIs & Modules",
+    milestone: "Connect JavaScript to the real world: asynchronous flow, browser events, network requests, and modular project architecture.",
+    description: "Write clean async code with Promises and async/await, understand the event loop and single-threaded execution, listen to browser DOM events, fetch external API JSON data, and modularize code with ES import/export.",
     theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
+      badge: "bg-amber-500/10 text-amber-300 border-amber-500/20",
+      dot: "bg-amber-400",
+      border: "border-amber-500/30",
+      bgSubtle: "bg-amber-500/[0.03]",
+      textAccent: "text-amber-400",
     },
+    capstone: JS_CAPSTONE,
     lessons: [
       {
-        code: "JS-17",
-        stepNumber: 17,
-        slug: "js17-the-this-keyword",
-        name: "How the this Keyword Works",
-        desc: "Learn how this gets its value dynamically at call time, how arrow functions borrow this, and how to avoid losing context in callbacks.",
-        path: "/learn/javascript/js17-the-this-keyword",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "JS-16",
-      },
-      {
         code: "JS-18",
-        stepNumber: 18,
-        slug: "js18-prototypes-and-prototype-chain",
-        name: "How Prototypes Work",
-        desc: "Understand how JavaScript objects share methods by delegating lookups up the prototype chain to save memory.",
-        path: "/learn/javascript/js18-prototypes-and-prototype-chain",
+        stepNumber: 1,
+        slug: "js18-promises-and-async-await",
+        name: "Promises and async / await",
+        desc: "Manage asynchronous operations cleanly without callback hell using Promises and async/await.",
+        path: "/learn/javascript/js18-promises-and-async-await",
         tag: "CORE",
+        difficulty: "Difficult",
         estimatedMinutes: 25,
         prerequisite: "JS-17",
       },
       {
         code: "JS-19",
-        stepNumber: 19,
-        slug: "js19-classes-extends-and-super",
-        name: "Working with Classes",
-        desc: "Write clean object-oriented code using the class blueprint syntax, constructors, extends for inheritance, and the super() rule.",
-        path: "/learn/javascript/js19-classes-extends-and-super",
+        stepNumber: 2,
+        slug: "js19-the-event-loop-a-basic-view",
+        name: "The Event Loop (A Basic View)",
+        desc: "Understand the single-threaded call stack, task queues, and how JavaScript stays responsive while waiting.",
+        path: "/learn/javascript/js19-the-event-loop-a-basic-view",
         tag: "CORE",
+        difficulty: "Difficult",
         estimatedMinutes: 25,
         prerequisite: "JS-18",
       },
-    ],
-  },
-  {
-    id: "stage-6",
-    stageNumber: 6,
-    name: "Async Code and Event Loop",
-    subtitle: "Promises, Async/Await, Non-blocking I/O & The Event Loop",
-    milestone: "Master asynchronous code execution, handle future values with Promises, and write async/await.",
-    description: "Understand why JS never freezes, work with Promises (.then/.catch), write linear async/await workflows, and understand the Event Loop.",
-    theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
-    },
-    lessons: [
       {
         code: "JS-20",
-        stepNumber: 20,
-        slug: "js20-synchronous-vs-asynchronous",
-        name: "How Async Code Works",
-        desc: "Learn how single-threaded JavaScript handles long tasks using timers and background Web APIs without freezing the browser.",
-        path: "/learn/javascript/js20-synchronous-vs-asynchronous",
+        stepNumber: 3,
+        slug: "js20-dom-events",
+        name: "Connecting JS to the Browser: DOM Events",
+        desc: "Listen to user interactions like clicks and input changes to make web pages interactive.",
+        path: "/learn/javascript/js20-dom-events",
         tag: "CORE",
+        difficulty: "Moderate",
         estimatedMinutes: 20,
         prerequisite: "JS-19",
       },
       {
         code: "JS-21",
-        stepNumber: 21,
-        slug: "js21-promises-and-chaining",
-        name: "Working with Promises",
-        desc: "Master Promise states (Pending, Fulfilled, Rejected), flat method chaining with .then(), and centralized error handling with .catch().",
-        path: "/learn/javascript/js21-promises-and-chaining",
+        stepNumber: 4,
+        slug: "js21-json-fetch-and-api-responses",
+        name: "Working with JSON, fetch, and API Responses",
+        desc: "Communicate with web servers: fetch external JSON data, parse responses, and handle HTTP errors.",
+        path: "/learn/javascript/js21-json-fetch-and-api-responses",
         tag: "CORE",
+        difficulty: "Difficult",
         estimatedMinutes: 25,
         prerequisite: "JS-20",
       },
       {
         code: "JS-22",
-        stepNumber: 22,
-        slug: "js22-async-await",
-        name: "Using async and await",
-        desc: "Write asynchronous code that reads cleanly like synchronous code using async, await, try/catch, and parallel Promise.all().",
-        path: "/learn/javascript/js22-async-await",
+        stepNumber: 5,
+        slug: "js22-javascript-modules",
+        name: "JavaScript Modules (import / export)",
+        desc: "Organize code into clean, maintainable files with export and import declarations.",
+        path: "/learn/javascript/js22-javascript-modules",
         tag: "CORE",
-        estimatedMinutes: 25,
+        difficulty: "Moderate",
+        estimatedMinutes: 20,
         prerequisite: "JS-21",
-      },
-      {
-        code: "JS-23",
-        stepNumber: 23,
-        slug: "js23-the-event-loop",
-        name: "How the Event Loop Works",
-        desc: "Understand execution priority under the hood: the Call Stack, VIP Microtasks (Promises), and Macrotasks (Timers).",
-        path: "/learn/javascript/js23-the-event-loop",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "JS-22",
-      },
-    ],
-  },
-  {
-    id: "stage-7",
-    stageNumber: 7,
-    name: "Errors, Modules and APIs",
-    subtitle: "Error Handling, ES Modules, JSON & The Fetch API",
-    milestone: "Catch errors gracefully, organize code with ES modules, and communicate with real REST APIs.",
-    description: "Use try/catch/finally for resilient apps, organize files with import/export, parse JSON data, and fetch data from HTTP APIs.",
-    theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
-    },
-    lessons: [
-      {
-        code: "JS-24",
-        stepNumber: 24,
-        slug: "js24-error-handling",
-        name: "Handling Errors with try and catch",
-        desc: "Prevent crashes using try/catch/finally, throw custom errors, and inspect error messages.",
-        path: "/learn/javascript/js24-error-handling",
-        tag: "CORE",
-        estimatedMinutes: 20,
-        prerequisite: "JS-23",
-      },
-      {
-        code: "JS-25",
-        stepNumber: 25,
-        slug: "js25-es-modules",
-        name: "Using ES Modules",
-        desc: "Split code into clean reusable files using named exports, default exports, and import statements.",
-        path: "/learn/javascript/js25-es-modules",
-        tag: "CORE",
-        estimatedMinutes: 20,
-        prerequisite: "JS-24",
-      },
-      {
-        code: "JS-26",
-        stepNumber: 26,
-        slug: "js26-working-with-json",
-        name: "Working with JSON",
-        desc: "Convert JavaScript objects to JSON text (stringify) and parse JSON text back to objects (parse).",
-        path: "/learn/javascript/js26-working-with-json",
-        tag: "CORE",
-        estimatedMinutes: 20,
-        prerequisite: "JS-25",
-      },
-      {
-        code: "JS-27",
-        stepNumber: 27,
-        slug: "js27-the-fetch-api",
-        name: "Fetching Data with fetch",
-        desc: "Make GET and POST requests, send JSON payloads, check response.ok, and handle API errors.",
-        path: "/learn/javascript/js27-the-fetch-api",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "JS-26",
-      },
-    ],
-  },
-  {
-    id: "stage-8",
-    stageNumber: 8,
-    name: "Browser JavaScript and Capstone",
-    subtitle: "DOM, Events, Event Delegation, LocalStorage & Final Project",
-    milestone: "Interact with the browser page, handle user events efficiently, and complete the Capstone App.",
-    description: "Learn DOM manipulation, event bubbling & delegation, persistent localStorage, DevTools debugging, and build the Capstone Project.",
-    theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
-    },
-    capstone: JS_CAPSTONE,
-    lessons: [
-      {
-        code: "JS-28",
-        stepNumber: 28,
-        slug: "js28-dom-essentials",
-        name: "Finding and Changing HTML Elements",
-        desc: "Select HTML elements with querySelector, update textContent, and toggle CSS classes dynamically.",
-        path: "/learn/javascript/js28-dom-essentials",
-        tag: "CORE",
-        estimatedMinutes: 20,
-        prerequisite: "JS-27",
-      },
-      {
-        code: "JS-29",
-        stepNumber: 29,
-        slug: "js29-events-and-delegation",
-        name: "Handling User Events",
-        desc: "Listen for clicks and inputs, manage event bubbling, and use event delegation for dynamic lists.",
-        path: "/learn/javascript/js29-events-and-delegation",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "JS-28",
-      },
-      {
-        code: "JS-30",
-        stepNumber: 30,
-        slug: "js30-browser-storage-and-debugging",
-        name: "Saving Data in the Browser",
-        desc: "Persist user data across browser refreshes with localStorage, and debug code with browser DevTools.",
-        path: "/learn/javascript/js30-browser-storage-and-debugging",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "JS-29",
       },
     ],
   },
 ];
 
+// ─────────────────────────────────────────────────────────────
+// 4 Progression Phases (Authoritative Curriculum Roadmap)
+// ─────────────────────────────────────────────────────────────
+
 export const JS_PROGRESSION_PHASES: ProgressionPhaseMeta[] = [
   {
-    id: "foundations",
+    id: "phase-1-foundations",
     phaseNumber: 1,
-    label: "Foundations and Basics",
+    label: "JavaScript Foundations",
     tag: "Phase 01",
-    desc: "Runtime, variables, let/const, types, operators, conditionals & loops",
+    desc: "Runtimes, variables, types, comparisons, conditionals, loops, functions & block scope",
     scope: "Core Syntax & Logic",
-    icon: "layers",
-    lessonCodes: ["JS-01", "JS-02", "JS-03", "JS-04", "JS-05"],
+    icon: "zap",
+    lessonCodes: [
+      "JS-01",
+      "JS-02",
+      "JS-03",
+      "JS-04",
+      "JS-05",
+      "JS-06",
+      "JS-07",
+      "JS-08",
+    ],
   },
   {
-    id: "functions-scope",
+    id: "phase-2-working-with-data",
     phaseNumber: 2,
-    label: "Functions, Scope and Closures",
+    label: "Working with Data",
     tag: "Phase 02",
-    desc: "Parameters, return values, arrow functions, block scope, closures & callbacks",
-    scope: "Execution & Memory",
-    icon: "zap",
-    lessonCodes: ["JS-06", "JS-07", "JS-08", "JS-09"],
-  },
-  {
-    id: "collections",
-    phaseNumber: 3,
-    label: "Arrays and Objects",
-    tag: "Phase 03",
-    desc: "Array indexing, map/filter/reduce, object properties, methods & reference copying",
-    scope: "Data Collections",
-    icon: "server",
-    lessonCodes: ["JS-10", "JS-11", "JS-12", "JS-13"],
-  },
-  {
-    id: "modern-syntax",
-    phaseNumber: 4,
-    label: "Modern JavaScript Syntax",
-    tag: "Phase 04",
-    desc: "Destructuring, spread/rest (...), optional chaining (?.) & nullish coalescing (??)",
-    scope: "Modern Productivity",
-    icon: "zap",
-    lessonCodes: ["JS-14", "JS-15", "JS-16"],
-  },
-  {
-    id: "oop-prototypes",
-    phaseNumber: 5,
-    label: "Objects and Prototypes",
-    tag: "Phase 05",
-    desc: "The this keyword, prototype chain, classes, constructors, extends & super",
-    scope: "Object Model",
-    icon: "shield",
-    lessonCodes: ["JS-17", "JS-18", "JS-19"],
-  },
-  {
-    id: "async-event-loop",
-    phaseNumber: 6,
-    label: "Async Code and Event Loop",
-    tag: "Phase 06",
-    desc: "Non-blocking I/O, Promises, async/await, call stack, microtasks & event loop",
-    scope: "Asynchronous Flow",
-    icon: "zap",
-    lessonCodes: ["JS-20", "JS-21", "JS-22", "JS-23"],
-  },
-  {
-    id: "errors-modules-apis",
-    phaseNumber: 7,
-    label: "Errors, Modules and APIs",
-    tag: "Phase 07",
-    desc: "Try/catch error handling, ES modules (import/export), JSON & the Fetch API",
-    scope: "Network & Modular Code",
-    icon: "server",
-    lessonCodes: ["JS-24", "JS-25", "JS-26", "JS-27"],
-  },
-  {
-    id: "browser-capstone",
-    phaseNumber: 8,
-    label: "Browser JavaScript and Capstone",
-    tag: "Phase 08",
-    desc: "DOM manipulation, event delegation, localStorage, DevTools & final project",
-    scope: "Mastery & Capstone",
+    desc: "Arrays, array methods, objects, references vs values, optional chaining, nullish coalescing & spread/rest",
+    scope: "Data Structures & Immutability",
     icon: "layers",
-    lessonCodes: ["JS-28", "JS-29", "JS-30"],
+    lessonCodes: [
+      "JS-09",
+      "JS-10",
+      "JS-11",
+      "JS-12",
+      "JS-13",
+    ],
+  },
+  {
+    id: "phase-3-functions-and-behavior",
+    phaseNumber: 3,
+    label: "Functions and Behavior",
+    tag: "Phase 03",
+    desc: "Callbacks, higher-order functions, closures, the this keyword & error handling",
+    scope: "Execution Context & Memory",
+    icon: "shield",
+    lessonCodes: [
+      "JS-14",
+      "JS-15",
+      "JS-16",
+      "JS-17",
+    ],
+  },
+  {
+    id: "phase-4-async-and-applications",
+    phaseNumber: 4,
+    label: "Async JavaScript & Real Applications",
+    tag: "Phase 04",
+    desc: "Promises, async/await, event loop, DOM events, fetch/JSON & ES modules",
+    scope: "Modern Application Architecture",
+    icon: "server",
+    lessonCodes: [
+      "JS-18",
+      "JS-19",
+      "JS-20",
+      "JS-21",
+      "JS-22",
+    ],
   },
 ];
+
+// ─────────────────────────────────────────────────────────────
+// Backward Compatibility: Legacy Slug & Code Aliases
+// Preserves all existing bookmarks, notes, quiz records, and progress
+// ─────────────────────────────────────────────────────────────
+
+export const JAVASCRIPT_LEGACY_SLUG_MAP: Record<string, string> = {
+  "js01-how-javascript-runs": "js01-what-javascript-does",
+  "js02-variables-and-data-types": "js02-variables-const-and-let",
+  "js03-operators-and-equality": "js04-comparisons-and-strict-equality",
+  "js04-conditional-logic": "js05-conditions-and-truthy-falsy",
+  "js05-loops-and-iteration": "js06-loops",
+  "js06-functions-and-arrow-syntax": "js07-functions-and-return-values",
+  "js07-scope-global-function-block": "js08-scope-and-block-scope",
+  "js08-closures": "js15-closures",
+  "js09-callbacks-and-higher-order-functions": "js14-callbacks-and-higher-order-functions",
+  "js10-arrays-and-indexing": "js09-arrays-and-common-methods",
+  "js11-essential-array-methods": "js09-arrays-and-common-methods",
+  "js12-objects-and-methods": "js10-objects-destructuring-and-spread",
+  "js13-object-references-and-copying": "js11-primitive-values-vs-object-references",
+  "js14-destructuring": "js10-objects-destructuring-and-spread",
+  "js15-spread-and-rest-operators": "js13-spread-vs-rest",
+  "js16-optional-chaining-and-nullish-coalescing": "js12-optional-chaining-and-nullish-coalescing",
+  "js17-the-this-keyword": "js16-the-this-keyword",
+  "js18-prototypes-and-prototype-chain": "js16-the-this-keyword",
+  "js19-classes-extends-and-super": "js16-the-this-keyword",
+  "js20-synchronous-vs-asynchronous": "js18-promises-and-async-await",
+  "js21-promises-and-chaining": "js18-promises-and-async-await",
+  "js22-async-await": "js18-promises-and-async-await",
+  "js23-the-event-loop": "js19-the-event-loop-a-basic-view",
+  "js24-error-handling": "js17-errors-and-debugging",
+  "js25-es-modules": "js22-javascript-modules",
+  "js26-working-with-json": "js21-json-fetch-and-api-responses",
+  "js27-the-fetch-api": "js21-json-fetch-and-api-responses",
+  "js28-dom-essentials": "js20-dom-events",
+  "js29-events-and-delegation": "js20-dom-events",
+  "js30-browser-storage-and-debugging": "js17-errors-and-debugging",
+};
 
 // ─────────────────────────────────────────────────────────────
 // Helper Functions
@@ -725,19 +632,29 @@ export function getStages(): StageMeta[] {
 }
 
 export function getLessonBySlug(slug: string): LessonMeta | undefined {
+  if (!slug) return undefined;
   const norm = slug.toLowerCase().trim();
-  const cleanNorm = norm.replace(/[^a-z0-9]/g, "");
 
-  // 1. Direct match on slug, path suffix, or substring
+  // 1. Check legacy slug map first to preserve bookmarks, notes, and quiz redirects
+  if (JAVASCRIPT_LEGACY_SLUG_MAP[norm]) {
+    const targetSlug = JAVASCRIPT_LEGACY_SLUG_MAP[norm];
+    const target = getAllLessons().find(
+      (l) => l.slug.toLowerCase() === targetSlug.toLowerCase()
+    );
+    if (target) return target;
+  }
+
+  // 2. Direct match on slug, path suffix, or substring
   const directMatch = getAllLessons().find(
     (l) =>
       l.slug.toLowerCase() === norm ||
       l.path.endsWith(`/${norm}`) ||
-      l.path.toLowerCase().includes(norm),
+      l.path.toLowerCase().includes(norm)
   );
   if (directMatch) return directMatch;
 
-  // 2. Match by normalized code (e.g. "js06" or "js-06") or slug prefix (e.g. "js06-functions")
+  // 3. Match by normalized code (e.g. "js01", "js-01", "JS-01") or prefix
+  const cleanNorm = norm.replace(/[^a-z0-9]/g, "");
   return getAllLessons().find((l) => {
     const lSlugNorm = l.slug.toLowerCase().replace(/[^a-z0-9]/g, "");
     const lCodeNorm = l.code.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -751,27 +668,23 @@ export function getLessonBySlug(slug: string): LessonMeta | undefined {
 
 export function getLessonByCode(code: string): LessonMeta | undefined {
   return getAllLessons().find(
-    (l) => l.code.toUpperCase() === code.toUpperCase(),
+    (l) => l.code.toUpperCase() === code.toUpperCase()
   );
 }
 
 export function getStageByLessonSlug(slug: string): StageMeta | undefined {
+  const lesson = getLessonBySlug(slug);
+  if (!lesson) return undefined;
   return JS_STAGES.find((stage) =>
-    stage.lessons.some(
-      (l) =>
-        l.slug === slug || l.path.endsWith(`/${slug}`) || l.path.includes(slug),
-    ),
+    stage.lessons.some((l) => l.slug === lesson.slug)
   );
 }
 
 export function getNextLesson(currentSlug: string): LessonMeta | null {
   const all = getAllLessons();
-  const index = all.findIndex(
-    (l) =>
-      l.slug === currentSlug ||
-      l.path.endsWith(`/${currentSlug}`) ||
-      l.path.includes(currentSlug),
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const index = all.findIndex((l) => l.slug === current.slug);
   if (index >= 0 && index < all.length - 1) {
     return all[index + 1];
   }
@@ -780,12 +693,9 @@ export function getNextLesson(currentSlug: string): LessonMeta | null {
 
 export function getPrevLesson(currentSlug: string): LessonMeta | null {
   const all = getAllLessons();
-  const index = all.findIndex(
-    (l) =>
-      l.slug === currentSlug ||
-      l.path.endsWith(`/${currentSlug}`) ||
-      l.path.includes(currentSlug),
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const index = all.findIndex((l) => l.slug === current.slug);
   if (index > 0) {
     return all[index - 1];
   }
@@ -837,6 +747,9 @@ export function getJavaScriptCourse(): Course {
           minutes: l.estimatedMinutes,
           requires: l.prerequisite,
           href: l.path,
+          aliases: Object.entries(JAVASCRIPT_LEGACY_SLUG_MAP)
+            .filter(([_, target]) => target === l.slug)
+            .map(([legacy]) => legacy),
         })),
     })),
   };

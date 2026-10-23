@@ -1,9 +1,9 @@
 /**
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * JAVASCRIPT CURATED MODULE QUIZZES REPOSITORY
+ * JAVASCRIPT CURRICULUM QUIZZES — LearnCraft
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * Authoritative, curriculum-aligned module quizzes for LearnCraft's JavaScript
- * learning track (JS-01 through JS-30).
+ * Authoritative, high-yield module quizzes for all 22 lessons in the
+ * JavaScript track (JS-01 through JS-22).
  *
  * Written in simple, clear, beginner-friendly English so that learners can
  * easily test their JavaScript understanding.
@@ -13,1947 +13,1481 @@
 import { ModuleQuiz } from "./quiz-types";
 
 export const JAVASCRIPT_MODULE_QUIZZES: ModuleQuiz[] = [
+  // ── JS-01: What JavaScript Does ───────────────────────────────────────────
   {
-    "id": "quiz-javascript-js01",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js01-how-javascript-runs",
-    "lessonCode": "JS-01",
-    "lessonTitle": "How JavaScript Works: Running Code, The Console & Sequential Steps",
-    "description": "Test your understanding of how JavaScript runs code line by line, using console.log() for output, and how expressions produce values.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
+    id: "quiz-javascript-js01",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js01-what-javascript-does",
+    lessonCode: "JS-01",
+    lessonTitle: "What JavaScript Does",
+    description: "Test your understanding of JavaScript runtimes (browser vs Node.js) and what JavaScript handles in web applications.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
       {
-        "id": "js01-q1",
-        "type": "multiple_choice",
-        "title": "Line-by-Line Execution",
-        "prompt": "How does JavaScript execute statements inside a script by default?",
-        "options": [
-          "It executes statements line by line from top to bottom in order",
-          "It runs lines in random order depending on computer speed",
-          "It starts at the bottom of the file and reads upward",
-          "It only executes lines that contain numbers"
+        id: "js01-q1",
+        type: "multiple_choice",
+        title: "Browser vs Node.js Environment",
+        prompt: "Why does the code `document.querySelector('button')` fail with a ReferenceError if executed in a standard Node.js script?",
+        options: [
+          "`document` is part of the Browser Web API for web pages; Node.js is a server runtime without a browser window or HTML page",
+          "Node.js only supports JavaScript written before 2015",
+          "`document` is a reserved keyword in Node.js that cannot be called as a function",
+          "You must install a compiler license to run DOM methods in Node.js",
         ],
-        "correctAnswer": 0,
-        "explanation": "JavaScript executes code sequentially from top to bottom. It finishes each line before moving to the next line.",
-        "hint": "Think about reading instructions from top to bottom.",
-        "hintCostXP": 5
+        correctAnswer: 0,
+        explanation: "The browser provides Web APIs like window and document to manipulate HTML elements. Node.js is a server runtime that interacts with files, servers, and databases, so it does not have a browser DOM document.",
+        hint: "Think about where web pages live versus where server scripts run.",
+        hintCostXP: 5,
       },
       {
-        "id": "js01-q2",
-        "type": "code_output",
-        "title": "Sequential Execution and Math Output",
-        "prompt": "Predict the exact console output of this sequential code execution:",
-        "codeSnippet": "console.log(\"Step A\");\nconsole.log(\"Sum:\", 10 + 5);\nconsole.log(\"Step B\");",
-        "language": "javascript",
-        "options": [
-          "'Step A', 'Sum: 15', 'Step B'",
-          "'Step A', 'Step B', 'Sum: 15'",
-          "'Sum: 15', 'Step A', 'Step B'",
-          "'Step A', 'Sum: 105', 'Step B'"
+        id: "js01-q2",
+        type: "code_output",
+        title: "Sequential Execution",
+        prompt: "What will this basic JavaScript script print to the console?",
+        codeSnippet: `console.log("Start");\nconsole.log(20 + 5);\nconsole.log("End");`,
+        language: "javascript",
+        options: [
+          "'Start', 25, 'End'",
+          "'Start', '205', 'End'",
+          "25, 'Start', 'End'",
+          "'Start', 'End', 25",
         ],
-        "correctAnswer": 0,
-        "explanation": "JavaScript runs line by line from top to bottom. Line 1 logs 'Step A', line 2 calculates 10 + 5 and logs 'Sum: 15', and line 3 logs 'Step B'.",
-        "hint": "Follow the execution line by line and note that 10 + 5 is calculated first.",
-        "hintCostXP": 5
+        correctAnswer: 0,
+        explanation: "JavaScript executes statements line by line. Line 1 prints 'Start', line 2 computes 20 + 5 = 25, and line 3 prints 'End'.",
+        hint: "Read line by line from top to bottom.",
+        hintCostXP: 5,
       },
       {
-        "id": "js01-q3",
-        "type": "multiple_choice",
-        "title": "Text in Quotes vs Unquoted Words",
-        "prompt": "Why does console.log(\"Welcome\") work correctly, but console.log(Welcome) causes an error?",
-        "options": [
-          "Quotes tell JavaScript that the text inside is a plain text string; without quotes, JavaScript looks for a variable or command named Welcome that does not exist",
-          "console.log only allows uppercase letters when words are unquoted",
-          "Unquoted words are automatically erased before the program runs",
-          "There is no difference; both lines run identically without any error"
+        id: "js01-q3",
+        type: "multiple_choice",
+        title: "Role of JavaScript",
+        prompt: "What is JavaScript's primary responsibility on a modern web page?",
+        options: [
+          "Adding interactivity, handling user events, updating data, and communicating with servers",
+          "Defining only the text content structure of an HTML page",
+          "Applying CSS visual style colors and margins to raw text",
+          "Formatting hard drives and installing operating systems",
         ],
-        "correctAnswer": 0,
-        "explanation": "Text must always be enclosed in quotes so JavaScript knows it is literal text (a string). Leaving off quotes causes JavaScript to search for a variable named Welcome, triggering a ReferenceError.",
-        "hint": "Quotes signal to JavaScript that you want to display literal words.",
-        "hintCostXP": 5
-      }
-    ]
+        correctAnswer: 0,
+        explanation: "HTML provides structure, CSS provides design styling, and JavaScript provides dynamic interactivity, logic, and network requests.",
+        hint: "HTML is structure, CSS is style, JavaScript is behavior.",
+        hintCostXP: 5,
+      },
+    ],
   },
+
+  // ── JS-02: Variables: const and let ───────────────────────────────────────
   {
-    "id": "quiz-javascript-js02",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js02-variables-and-data-types",
-    "lessonCode": "JS-02",
-    "lessonTitle": "Variables & Data Types: Storing Data with let & const",
-    "description": "Check your understanding of creating variables with const and let, preventing accidental reassignments, and identifying core data types.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
+    id: "quiz-javascript-js02",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js02-variables-const-and-let",
+    lessonCode: "JS-02",
+    lessonTitle: "Variables: const and let",
+    description: "Check your understanding of creating variables with const and let, preventing accidental reassignments, and avoiding var.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
       {
-        "id": "js02-q1",
-        "type": "multiple_choice",
-        "title": "const vs let best practice",
-        "prompt": "What is the recommended best practice when declaring variables in modern JavaScript?",
-        "options": [
-          "Default to const for values that stay constant, and use let only when a value needs to be reassigned",
-          "Use var for everything because it is the newest keyword",
-          "Always use let because const variables can never be read after creation",
-          "Never use keywords when creating variables"
+        id: "js02-q1",
+        type: "multiple_choice",
+        title: "const vs let best practice",
+        prompt: "What is the recommended best practice for declaring variables in modern JavaScript?",
+        options: [
+          "Use const by default for every value; use let only when you know the variable will be reassigned later",
+          "Always use let for everything and never use const",
+          "Use var for all variables because it has no boundaries",
+          "Alternate between const and let on every other line",
         ],
-        "correctAnswer": 0,
-        "explanation": "Using const by default makes code predictable and prevents accidental reassignment bugs. Use let only when a value genuinely needs reassignment (such as counters or scores).",
-        "hint": "Values that cannot change by accident make your code safe and predictable.",
-        "hintCostXP": 5
+        correctAnswer: 0,
+        explanation: "Defaulting to const makes code predictable by signaling that the variable reference will not change. Use let only when a value needs reassignment, such as a loop counter.",
+        hint: "Start with the safest keyword that prevents accidental reassignments.",
+        hintCostXP: 5,
       },
       {
-        "id": "js02-q2",
-        "type": "code_output",
-        "title": "Reassigning a const Variable",
-        "prompt": "What happens when you run this code?",
-        "codeSnippet": "const maxLives = 3;\nmaxLives = 5;\nconsole.log(maxLives);",
-        "language": "javascript",
-        "options": [
-          "It throws a TypeError because a const variable cannot be reassigned",
-          "It logs 5 to the console",
-          "It logs 3 because the new assignment is silently ignored",
-          "It logs undefined"
+        id: "js02-q2",
+        type: "code_output",
+        title: "Reassigning a const variable",
+        prompt: "What happens when JavaScript attempts to execute line 2 of this code?",
+        codeSnippet: `const total = 100;\ntotal = 150;\nconsole.log(total);`,
+        language: "javascript",
+        options: [
+          "A TypeError: Assignment to constant variable",
+          "It prints 150 without any error",
+          "It prints 100 and ignores the second assignment",
+          "It prints undefined",
         ],
-        "correctAnswer": 0,
-        "explanation": "Variables declared with const are locked. Reassigning a new value throws a TypeError: Assignment to constant variable.",
-        "hint": "Think about what the word 'constant' means.",
-        "hintCostXP": 5
+        correctAnswer: 0,
+        explanation: "Variables declared with const cannot be reassigned to a new value. Attempting to reassign total throws a TypeError.",
+        hint: "const means the identifier cannot be reassigned.",
+        hintCostXP: 5,
       },
       {
-        "id": "js02-q3",
-        "type": "code_output",
-        "title": "typeof Core Primitives",
-        "prompt": "What will this code log to the console?",
-        "codeSnippet": "const playerName = \"Sam\";\nconst userScore = 100;\nconst isOnline = true;\nconsole.log(typeof playerName, typeof userScore, typeof isOnline);",
-        "language": "javascript",
-        "options": [
-          "'string number boolean'",
-          "'text int bool'",
-          "'string int true'",
-          "'word number flag'"
+        id: "js02-q3",
+        type: "multiple_choice",
+        title: "Why avoid var in modern code",
+        prompt: "Why do modern JavaScript developers avoid using the old `var` keyword?",
+        options: [
+          "`var` ignores block boundaries `{ ... }` and can be used before declaration without throwing an error, causing subtle bugs",
+          "`var` was completely removed from JavaScript and causes a SyntaxError in browsers",
+          "`var` only works with numbers and cannot hold text strings",
+          "`var` is slower than const by 1000 times",
         ],
-        "correctAnswer": 0,
-        "explanation": "In JavaScript, text wrapped in quotes has type 'string', numbers have type 'number', and true/false values have type 'boolean'.",
-        "hint": "JavaScript uses 'string', 'number', and 'boolean' for its core types.",
-        "hintCostXP": 5
-      }
-    ]
+        correctAnswer: 0,
+        explanation: "var is function-scoped rather than block-scoped, so it leaks out of if-statements and loops, creating unexpected bugs.",
+        hint: "Think about scope leaks outside of curly braces.",
+        hintCostXP: 5,
+      },
+    ],
   },
+
+  // ── JS-03: Basic Values and Types ─────────────────────────────────────────
   {
-    "id": "quiz-javascript-js03",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js03-operators-and-equality",
-    "lessonCode": "JS-03",
-    "lessonTitle": "Operators, Comparisons & Type Conversion: The === Rule",
-    "description": "Check your understanding of math operators, comparison checks, why === is safer than ==, and combining conditions with logic.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
+    id: "quiz-javascript-js03",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js03-basic-values-and-types",
+    lessonCode: "JS-03",
+    lessonTitle: "Basic Values and Types",
+    description: "Evaluate your knowledge of JavaScript's primary data types, typeof checks, and null vs undefined.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
       {
-        "id": "js03-q1",
-        "type": "code_output",
-        "title": "Strict vs Loose Equality",
-        "prompt": "Predict the output of these two comparisons:",
-        "codeSnippet": "console.log(5 === \"5\");\nconsole.log(5 === 5);",
-        "language": "javascript",
-        "options": [
-          "false then true",
-          "true then true",
-          "false then false",
-          "true then false"
+        id: "js03-q1",
+        type: "multiple_choice",
+        title: "null vs undefined",
+        prompt: "What is the key difference between `null` and `undefined` in JavaScript?",
+        options: [
+          "`undefined` means a variable was declared but never given a value; `null` is an intentional value representing empty or nothing",
+          "`null` means an error happened; `undefined` means the computer ran out of memory",
+          "They are 100% identical and can always be used interchangeably without any distinction",
+          "`undefined` is a number while `null` is a string",
         ],
-        "correctAnswer": 0,
-        "explanation": "Strict equality (===) checks both value and type. Because 5 is a number and '5' is a string, 5 === '5' is false. 5 === 5 compares two identical numbers, so it is true.",
-        "hint": "Triple equals checks whether both the type and the value match exactly.",
-        "hintCostXP": 5
+        correctAnswer: 0,
+        explanation: "undefined is JavaScript's default uninitialized state. null is an intentional choice made by the programmer to signify 'intentionally empty'.",
+        hint: "One is the system default; the other is intentional.",
+        hintCostXP: 5,
       },
       {
-        "id": "js03-q2",
-        "type": "code_output",
-        "title": "Number + String Behavior",
-        "prompt": "What will this code print to the console?",
-        "codeSnippet": "const count = 10;\nconst label = \" items\";\nconsole.log(count + label);",
-        "language": "javascript",
-        "options": [
-          "'10 items'",
+        id: "js03-q2",
+        type: "code_output",
+        title: "typeof null quirk",
+        prompt: "What does `console.log(typeof null)` output in JavaScript?",
+        codeSnippet: `console.log(typeof null);`,
+        language: "javascript",
+        options: [
+          "'object'",
+          "'null'",
+          "'undefined'",
+          "'boolean'",
+        ],
+        correctAnswer: 0,
+        explanation: "In JavaScript, typeof null returning 'object' is a well-known historical bug dating back to the first 1995 implementation of the language.",
+        hint: "It is a famous historical quirk in JavaScript.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js03-q3",
+        type: "code_output",
+        title: "Template Literal Strings",
+        prompt: "What will this template literal print?",
+        codeSnippet: `const product = \"Laptop\";\nconst price = 800;\nconsole.log(\`\${product} costs $\${price}\`);`,
+        language: "javascript",
+        options: [
+          "'Laptop costs $800'",
+          "'${product} costs ${price}'",
+          "'Laptop costs price'",
+          "SyntaxError",
+        ],
+        correctAnswer: 0,
+        explanation: "Backticks (`) allow template literals with ${expression} interpolation, cleanly inserting variable values into strings.",
+        hint: "Expressions inside ${} are evaluated and embedded.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-04: Comparisons and Strict Equality ────────────────────────────────
+  {
+    id: "quiz-javascript-js04",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js04-comparisons-and-strict-equality",
+    lessonCode: "JS-04",
+    lessonTitle: "Comparisons and Strict Equality (=== vs ==)",
+    description: "Check your mastery of strict equality (===), loose equality (==), type coercion traps, and comparing NaN.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js04-q1",
+        type: "multiple_choice",
+        title: "Strict Equality vs Loose Equality",
+        prompt: "Why should you always prefer `===` over `==` in JavaScript?",
+        options: [
+          "`===` checks both value AND type without converting them; `==` performs silent type coercion which causes unexpected bugs",
+          "`===` is twice as fast to compile in modern browsers",
+          "`==` was deprecated and causes a runtime warning in Node.js",
+          "`===` converts both sides to numbers before comparing",
+        ],
+        correctAnswer: 0,
+        explanation: "Strict equality (===) requires that both the type and value match. Loose equality (==) tries to convert types behind the scenes (e.g. 0 == '' is true), leading to subtle bugs.",
+        hint: "Strict equality avoids silent type conversions.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js04-q2",
+        type: "code_output",
+        title: "Comparing String and Number with == vs ===",
+        prompt: "What will be printed to the console?",
+        codeSnippet: `console.log(5 == \"5\");\nconsole.log(5 === \"5\");`,
+        language: "javascript",
+        options: [
+          "true\nfalse",
+          "false\nfalse",
+          "true\ntrue",
+          "false\ntrue",
+        ],
+        correctAnswer: 0,
+        explanation: "5 == '5' is true because == coerces the string '5' to number 5. 5 === '5' is false because number is not the same type as string.",
+        hint: "Loose equality coerces; strict equality checks types first.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js04-q3",
+        type: "code_output",
+        title: "Checking for NaN",
+        prompt: "What does `NaN === NaN` evaluate to, and how should you test for NaN?",
+        codeSnippet: `console.log(NaN === NaN);\nconsole.log(Number.isNaN(NaN));`,
+        language: "javascript",
+        options: [
+          "false\ntrue",
+          "true\ntrue",
+          "false\nfalse",
+          "true\nfalse",
+        ],
+        correctAnswer: 0,
+        explanation: "NaN is the only value in JavaScript that is not equal to itself. Always use Number.isNaN(val) to check if a value is NaN.",
+        hint: "NaN is never equal to anything, including itself.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-05: Conditions and Truthy/Falsy ─────────────────────────────────────
+  {
+    id: "quiz-javascript-js05",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js05-conditions-and-truthy-falsy",
+    lessonCode: "JS-05",
+    lessonTitle: "Conditions and Truthy/Falsy Values",
+    description: "Test your understanding of boolean evaluation, the 6 falsy values, and branch logic.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js05-q1",
+        type: "multiple_choice",
+        title: "The 6 Falsy Values",
+        prompt: "Which of the following contains ONLY falsy values in JavaScript?",
+        options: [
+          "`false`, `0`, `\"\"`, `null`, `undefined`, `NaN`",
+          "`false`, `0`, `[]`, `{}`",
+          "`\"0\"`, `false`, `null`, `undefined`",
+          "`\"false\"`, `NaN`, `0`, `undefined`",
+        ],
+        correctAnswer: 0,
+        explanation: "The six falsy values in JavaScript are: false, 0, '' (empty string), null, undefined, and NaN. Empty objects {} and empty arrays [] are truthy!",
+        hint: "Empty objects and arrays are TRUTHY, not falsy.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js05-q2",
+        type: "code_output",
+        title: "Empty Array Truthiness",
+        prompt: "What will this code print?",
+        codeSnippet: `if ([]) {\n  console.log(\"Array is truthy\");\n} else {\n  console.log(\"Array is falsy\");\n}`,
+        language: "javascript",
+        options: [
+          "'Array is truthy'",
+          "'Array is falsy'",
+          "TypeError",
+          "undefined",
+        ],
+        correctAnswer: 0,
+        explanation: "All objects in JavaScript, including empty arrays [] and empty objects {}, are truthy. To test if an array has items, check array.length > 0.",
+        hint: "Objects and arrays in JavaScript are always truthy values.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js05-q3",
+        type: "code_output",
+        title: "Ternary operator",
+        prompt: "What is the value of `status` after executing this code?",
+        codeSnippet: `const score = 75;\nconst status = score >= 50 ? \"Passed\" : \"Failed\";\nconsole.log(status);`,
+        language: "javascript",
+        options: [
+          "'Passed'",
+          "'Failed'",
+          "true",
+          "75",
+        ],
+        correctAnswer: 0,
+        explanation: "The condition score >= 50 evaluates to true (75 >= 50), so the ternary operator evaluates and returns the first expression ('Passed').",
+        hint: "condition ? ifTrue : ifFalse",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-06: Loops ──────────────────────────────────────────────────────────
+  {
+    id: "quiz-javascript-js06",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js06-loops",
+    lessonCode: "JS-06",
+    lessonTitle: "Loops (for, while, for...of)",
+    description: "Assess your ability to iterate collections with for, while, and for...of, and avoid infinite loops.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js06-q1",
+        type: "multiple_choice",
+        title: "When to use for...of",
+        prompt: "What makes the `for...of` loop ideal when you need to read every element in an array?",
+        options: [
+          "It gives you each element value directly without needing index counters or array[i] lookups",
+          "It automatically sorts the array alphabetically before looping",
+          "It runs asynchronously in background web worker threads",
+          "It can only be used on objects with string keys",
+        ],
+        correctAnswer: 0,
+        explanation: "for (const item of array) iterates directly over values, making code concise and eliminating off-by-one index mistakes.",
+        hint: "Think about accessing item directly vs array[i].",
+        hintCostXP: 5,
+      },
+      {
+        id: "js06-q2",
+        type: "code_output",
+        title: "break statement in loops",
+        prompt: "What will this loop print to the console?",
+        codeSnippet: `const nums = [10, 20, 30, 40];\nfor (const n of nums) {\n  if (n === 30) break;\n  console.log(n);\n}`,
+        language: "javascript",
+        options: [
+          "10\n20",
+          "10\n20\n30",
+          "10\n20\n30\n40",
+          "30",
+        ],
+        correctAnswer: 0,
+        explanation: "When n reaches 30, the if condition triggers `break`, which immediately terminates the loop before 30 is printed.",
+        hint: "break exits the entire loop immediately.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js06-q3",
+        type: "multiple_choice",
+        title: "Preventing infinite while loops",
+        prompt: "What is the most common cause of an infinite while loop that freezes the browser?",
+        options: [
+          "Forgetting to update the loop condition variable inside the loop body (e.g. forgetting `i++`)",
+          "Using `const` outside the while loop",
+          "Having more than 5 lines of code inside the loop body",
+          "Printing messages with console.log inside the loop",
+        ],
+        correctAnswer: 0,
+        explanation: "A while loop repeats as long as its condition is true. If the loop body never changes the condition variable, the condition stays true forever.",
+        hint: "The condition must eventually become false.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-07: Functions and Return Values ─────────────────────────────────────
+  {
+    id: "quiz-javascript-js07",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js07-functions-and-return-values",
+    lessonCode: "JS-07",
+    lessonTitle: "Functions and Return Values",
+    description: "Evaluate your understanding of function declarations, parameters, arguments, return statements, and default return values.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js07-q1",
+        type: "code_output",
+        title: "Function with missing return statement",
+        prompt: "What does this function return when called?",
+        codeSnippet: `function logSum(a, b) {\n  const sum = a + b;\n}\nconst result = logSum(5, 10);\nconsole.log(result);`,
+        language: "javascript",
+        options: [
+          "undefined",
+          "15",
+          "null",
+          "0",
+        ],
+        correctAnswer: 0,
+        explanation: "If a JavaScript function finishes executing without an explicit `return` statement, it automatically returns `undefined`.",
+        hint: "No return keyword means the result is undefined.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js07-q2",
+        type: "multiple_choice",
+        title: "Parameters vs Arguments",
+        prompt: "What is the distinction between parameters and arguments in JavaScript?",
+        options: [
+          "Parameters are placeholder variable names in the function definition; arguments are the real values passed when calling the function",
+          "Arguments are for numbers; parameters are for strings",
+          "Parameters are only used in arrow functions; arguments are only used in regular functions",
+          "There is no difference; they are exact synonyms",
+        ],
+        correctAnswer: 0,
+        explanation: "Parameters are the named variables listed in a function's declaration. Arguments are the concrete values supplied when invoking the function.",
+        hint: "Definition = parameter, invocation = argument.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js07-q3",
+        type: "code_output",
+        title: "Default parameter values",
+        prompt: "What will this function call output?",
+        codeSnippet: `function greet(name = \"Guest\") {\n  return \"Hello, \" + name;\n}\nconsole.log(greet());`,
+        language: "javascript",
+        options: [
+          "'Hello, Guest'",
+          "'Hello, undefined'",
+          "'Hello, '",
+          "ReferenceError",
+        ],
+        correctAnswer: 0,
+        explanation: "When no argument is passed (or undefined is passed), JavaScript uses the default parameter value ('Guest').",
+        hint: "Default parameters take effect when the argument is omitted.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-08: Global, Function, and Block Scope ──────────────────────────────
+  {
+    id: "quiz-javascript-js08",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js08-scope-and-block-scope",
+    lessonCode: "JS-08",
+    lessonTitle: "Global, Function, and Block Scope",
+    description: "Check your knowledge of global scope, function scope, block scope with let and const, and why var is avoided.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js08-q1",
+        type: "code_output",
+        title: "Block Scope: let vs var",
+        prompt: "What will this code print to the console when accessing variables outside the if block?",
+        codeSnippet: `if (true) {\n  var oldStyle = "I leak outside";\n  let modernStyle = "I stay inside";\n}\nconsole.log(oldStyle);`,
+        language: "javascript",
+        options: [
+          "'I leak outside'",
+          "ReferenceError: oldStyle is not defined",
+          "undefined",
+          "TypeError",
+        ],
+        correctAnswer: 0,
+        explanation: "let and const are block-scoped to { }. var is function-scoped, so it leaks out of if blocks into the surrounding scope.",
+        hint: "var ignores block boundaries and leaks outside the if block.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js08-q2",
+        type: "code_output",
+        title: "Function Scope",
+        prompt: "What happens when you attempt to access a variable declared inside a function from outside?",
+        codeSnippet: `function greet() {\n  const message = "Hello";\n  console.log(message);\n}\ngreet();\nconsole.log(message);`,
+        language: "javascript",
+        options: [
+          "It prints 'Hello' then throws ReferenceError: message is not defined",
+          "It prints 'Hello' twice",
+          "It prints 'Hello' then undefined",
+          "It throws a SyntaxError",
+        ],
+        correctAnswer: 0,
+        explanation: "message is declared inside greet(), so it is scoped to that function. Attempting to access message from outside throws a ReferenceError.",
+        hint: "Function variables are private to that function.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js08-q3",
+        type: "multiple_choice",
+        title: "Global Scope Best Practice",
+        prompt: "Why should you use wider-scope or global variables sparingly in modern applications?",
+        options: [
+          "Too many shared variables can make code harder to understand and can cause accidental naming conflicts",
+          "Global variables are automatically erased after a function returns",
+          "JavaScript only allows 3 global variables per program",
+          "Global variables can only store numbers",
+        ],
+        correctAnswer: 0,
+        explanation: "Use wider-scope variables only when different parts of your code really need to share the value. Too many shared variables make code harder to reason about and increase naming collision risks.",
+        hint: "Think about shared state and naming collisions.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-09: Arrays and Common Methods ──────────────────────────────────────
+  {
+    id: "quiz-javascript-js09",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js09-arrays-and-common-methods",
+    lessonCode: "JS-09",
+    lessonTitle: "Arrays and Common Methods",
+    description: "Assess your ability to store lists and transform them with map, filter, find, and forEach.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js09-q1",
+        type: "multiple_choice",
+        title: "map vs filter vs forEach",
+        prompt: "Which array method should you use when you want to convert an array of prices into a brand-new array of formatted strings with '$'?",
+        options: [
+          "`.map()` because it transforms every element and returns a new array of the same length",
+          "`.filter()` because it checks if prices are valid",
+          "`.forEach()` because it always returns a transformed array",
+          "`.find()` because it locates the first matching price",
+        ],
+        correctAnswer: 0,
+        explanation: "`.map()` applies a transformation callback to every item and returns a new array with the results. `.forEach()` does not return a new array.",
+        hint: "Transforming 1:1 into a new array is the job of .map().",
+        hintCostXP: 5,
+      },
+      {
+        id: "js09-q2",
+        type: "code_output",
+        title: "Filtering numbers",
+        prompt: "What will `console.log(passed)` output?",
+        codeSnippet: `const scores = [45, 80, 92, 30];\nconst passed = scores.filter(s => s >= 50);\nconsole.log(passed);`,
+        language: "javascript",
+        options: [
+          "[80, 92]",
+          "[45, 30]",
+          "80",
+          "[true, false, true, false]",
+        ],
+        correctAnswer: 0,
+        explanation: ".filter() tests each item against the predicate. Only elements that return true (80 and 92) are included in the new array.",
+        hint: ".filter() retains items where the callback returns true.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js09-q3",
+        type: "code_output",
+        title: "find method when item is missing",
+        prompt: "What does `.find()` return if no element matches the condition?",
+        codeSnippet: `const users = [{ id: 1, name: \"A\" }, { id: 2, name: \"B\" }];\nconst found = users.find(u => u.id === 99);\nconsole.log(found);`,
+        language: "javascript",
+        options: [
+          "undefined",
+          "null",
+          "false",
+          "[]",
+        ],
+        correctAnswer: 0,
+        explanation: "If no element satisfies the testing function, `.find()` returns `undefined`.",
+        hint: "When not found, .find() returns undefined.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-10: Objects, Destructuring, and Spread ─────────────────────────────
+  {
+    id: "quiz-javascript-js10",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js10-objects-destructuring-and-spread",
+    lessonCode: "JS-10",
+    lessonTitle: "Objects, Destructuring, and Spread",
+    description: "Check your knowledge of object modeling, property access, destructuring syntax, and object spreading.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js10-q1",
+        type: "code_output",
+        title: "Object Destructuring",
+        prompt: "What will this destructuring assignment print to the console?",
+        codeSnippet: `const user = { name: \"Alex\", age: 28, role: \"Admin\" };\nconst { name, role } = user;\nconsole.log(name, role);`,
+        language: "javascript",
+        options: [
+          "'Alex' 'Admin'",
+          "'Alex' 28",
+          "undefined undefined",
+          "{ name: 'Alex', role: 'Admin' }",
+        ],
+        correctAnswer: 0,
+        explanation: "Destructuring extracts properties by matching key names from the object into local variables of the same name.",
+        hint: "Keys matching the variable names are unpacked.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js10-q2",
+        type: "code_output",
+        title: "Object Spread and Overriding Properties",
+        prompt: "What will `console.log(updated.status)` print?",
+        codeSnippet: `const task = { title: \"Fix bug\", status: \"open\" };\nconst updated = { ...task, status: \"closed\" };\nconsole.log(updated.status, task.status);`,
+        language: "javascript",
+        options: [
+          "'closed' 'open'",
+          "'closed' 'closed'",
+          "'open' 'open'",
+          "SyntaxError",
+        ],
+        correctAnswer: 0,
+        explanation: "Spread creates a copy of properties. Properties specified after the spread overwrite existing keys in the new object, leaving the original unchanged.",
+        hint: "Later properties overwrite earlier ones in object literals.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js10-q3",
+        type: "multiple_choice",
+        title: "Accessing missing object properties",
+        prompt: "What happens when you read a property that does not exist on an object (e.g. `user.nonExistentKey`)?",
+        options: [
+          "It returns `undefined` without throwing an error",
+          "It throws a ReferenceError and crashes the program",
+          "It returns `null`",
+          "It automatically creates the property with a value of false",
+        ],
+        correctAnswer: 0,
+        explanation: "Reading a non-existent property from a valid object returns `undefined` safely.",
+        hint: "Missing keys evaluate to undefined.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-11: Primitive Values vs Object References ──────────────────────────
+  {
+    id: "quiz-javascript-js11",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js11-primitive-values-vs-object-references",
+    lessonCode: "JS-11",
+    lessonTitle: "Primitive Values vs. Object References",
+    description: "Evaluate your understanding of values copied by value vs objects stored by reference in memory.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js11-q1",
+        type: "code_output",
+        title: "Object Reference Mutation",
+        prompt: "What does this code log to the console?",
+        codeSnippet: `const a = { count: 1 };\nconst b = a;\nb.count = 5;\nconsole.log(a.count);`,
+        language: "javascript",
+        options: [
+          "5",
+          "1",
+          "undefined",
+          "TypeError: Assignment to constant variable",
+        ],
+        correctAnswer: 0,
+        explanation: "Variables a and b hold references to the exact same object in memory. Mutating a property via b changes that shared object, so a.count is 5.",
+        hint: "b is not a copy; it references the same object as a.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js11-q2",
+        type: "code_output",
+        title: "Primitive Value Copying",
+        prompt: "What does this code log to the console?",
+        codeSnippet: `let x = 10;\nlet y = x;\ny = 20;\nconsole.log(x);`,
+        language: "javascript",
+        options: [
+          "10",
+          "20",
+          "undefined",
+          "ReferenceError",
+        ],
+        correctAnswer: 0,
+        explanation: "Numbers are primitive values copied by value. Reassigning y to 20 has zero effect on variable x.",
+        hint: "Primitives are independent value copies.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js11-q3",
+        type: "code_output",
+        title: "Comparing Objects with ===",
+        prompt: "What will `console.log(obj1 === obj2)` evaluate to?",
+        codeSnippet: `const obj1 = { id: 1 };\nconst obj2 = { id: 1 };\nconsole.log(obj1 === obj2);`,
+        language: "javascript",
+        options: [
+          "false",
+          "true",
+          "TypeError",
+          "undefined",
+        ],
+        correctAnswer: 0,
+        explanation: "Objects are compared by reference, not by content. Even though both have { id: 1 }, they reside at different memory addresses, so === evaluates to false.",
+        hint: "Two separate objects have two separate memory addresses.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-12: Optional Chaining and Nullish Coalescing ────────────────────────
+  {
+    id: "quiz-javascript-js12",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js12-optional-chaining-and-nullish-coalescing",
+    lessonCode: "JS-12",
+    lessonTitle: "Optional Chaining (?.) and Nullish Coalescing (??)",
+    description: "Assess your ability to read nested properties safely with ?. and provide fallbacks with ??.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js12-q1",
+        type: "code_output",
+        title: "Preventing TypeError with Optional Chaining",
+        prompt: "What does `user?.address?.city` evaluate to when address is undefined?",
+        codeSnippet: `const user = { name: \"Sarah\" };\nconsole.log(user?.address?.city);`,
+        language: "javascript",
+        options: [
+          "undefined",
+          "TypeError: Cannot read properties of undefined",
+          "null",
+          "\"\"",
+        ],
+        correctAnswer: 0,
+        explanation: "Optional chaining (?.) short-circuits and returns undefined if the property before ?. is null or undefined, avoiding a runtime TypeError.",
+        hint: "Optional chaining short-circuits gracefully to undefined.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js12-q2",
+        type: "code_output",
+        title: "Nullish Coalescing vs Logical OR with 0",
+        prompt: "What will be printed to the console?",
+        codeSnippet: `const count = 0;\nconsole.log(count || 10);\nconsole.log(count ?? 10);`,
+        language: "javascript",
+        options: [
+          "10\n0",
+          "0\n0",
+          "10\n10",
+          "0\n10",
+        ],
+        correctAnswer: 0,
+        explanation: "|| treats 0 as falsy and falls back to 10. ?? only falls back if the left side is null or undefined, preserving the valid number 0.",
+        hint: "?? only triggers on null or undefined, not 0.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js12-q3",
+        type: "multiple_choice",
+        title: "When to choose ?? over ||",
+        prompt: "Why is `??` preferred over `||` when setting default numbers (such as count or score)?",
+        options: [
+          "Because `0` is a valid score/number, and `||` would wrongly replace `0` with the default value",
+          "Because `??` executes twice as fast as `||`",
+          "Because `||` cannot be used with variables",
+          "Because `??` converts text into numbers automatically",
+        ],
+        correctAnswer: 0,
+        explanation: "0 is a falsy value. Using || replaces 0 with the default fallback. Using ?? preserves 0 because 0 is neither null nor undefined.",
+        hint: "0 is a meaningful numeric value that || erases.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-13: Spread vs Rest ─────────────────────────────────────────────────
+  {
+    id: "quiz-javascript-js13",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js13-spread-vs-rest",
+    lessonCode: "JS-13",
+    lessonTitle: "Spread vs. Rest",
+    description: "Evaluate your understanding of when `...` expands values (spread) versus collects values (rest).",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js13-q1",
+        type: "multiple_choice",
+        title: "Spread vs Rest definition",
+        prompt: "What is the key functional difference between Spread and Rest syntax in JavaScript?",
+        options: [
+          "Spread unpacks/expands items out of an array or object; Rest collects multiple items into a single array",
+          "Spread is only for numbers; Rest is only for strings",
+          "Spread works only in function declarations; Rest works only in function calls",
+          "There is no difference; they are two different names for the same exact operation",
+        ],
+        correctAnswer: 0,
+        explanation: "Spread (...) unpacks elements into a new array, object, or argument list. Rest (...) gathers multiple elements or arguments into an array.",
+        hint: "Spread unpacks; Rest gathers.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js13-q2",
+        type: "code_output",
+        title: "Rest parameter in function",
+        prompt: "What does this function print?",
+        codeSnippet: `function sumAll(...numbers) {\n  return numbers.reduce((acc, n) => acc + n, 0);\n}\nconsole.log(sumAll(10, 20, 30));`,
+        language: "javascript",
+        options: [
+          "60",
+          "[10, 20, 30]",
+          "10",
           "NaN",
-          "'items 10'",
-          "Throws a TypeError"
         ],
-        "correctAnswer": 0,
-        "explanation": "When the + operator is used between a number and a string, JavaScript converts the number to text and joins them together, resulting in '10 items'.",
-        "hint": "The + operator joins text when at least one side is a string.",
-        "hintCostXP": 5
+        correctAnswer: 0,
+        explanation: "...numbers collects all passed arguments into an array [10, 20, 30]. The reduce sums them up to 60.",
+        hint: "The rest parameter collects all arguments into an array.",
+        hintCostXP: 5,
       },
       {
-        "id": "js03-q3",
-        "type": "code_output",
-        "title": "Logical AND (&&) Combination",
-        "prompt": "What will this logical check output to the console?",
-        "codeSnippet": "const userAge = 20;\nconst hasTicket = true;\nconst canEnter = userAge >= 18 && hasTicket;\nconsole.log(canEnter);",
-        "language": "javascript",
-        "options": [
+        id: "js13-q3",
+        type: "code_output",
+        title: "Array Spread",
+        prompt: "What will `console.log(combined)` output?",
+        codeSnippet: `const a = [1, 2];\nconst b = [3, 4];\nconst combined = [...a, ...b];\nconsole.log(combined);`,
+        language: "javascript",
+        options: [
+          "[1, 2, 3, 4]",
+          "[[1, 2], [3, 4]]",
+          "[1, 2, [3, 4]]",
+          "10",
+        ],
+        correctAnswer: 0,
+        explanation: "...a and ...b unpack their elements into the new array literal, producing [1, 2, 3, 4].",
+        hint: "Spread flattens one level of elements into the new array.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-14: Callbacks and Higher-Order Functions ───────────────────────────
+  {
+    id: "quiz-javascript-js14",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js14-callbacks-and-higher-order-functions",
+    lessonCode: "JS-14",
+    lessonTitle: "Callbacks and Higher-Order Functions",
+    description: "Assess your ability to pass functions as arguments, receive callbacks, and create higher-order functions.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js14-q1",
+        type: "multiple_choice",
+        title: "Definition of Higher-Order Function",
+        prompt: "What defines a Higher-Order Function in JavaScript?",
+        options: [
+          "A function that accepts another function as an argument, or returns a function as its result",
+          "A function that has more than 100 lines of code",
+          "A function that must be declared with the `async` keyword",
+          "A function that runs with administrator privileges",
+        ],
+        correctAnswer: 0,
+        explanation: "Higher-order functions are functions that operate on other functions, either by taking them as arguments (callbacks) or by returning them.",
+        hint: "Functions are first-class values that can be passed or returned.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js14-q2",
+        type: "code_output",
+        title: "Passing Callback Function",
+        prompt: "What will be printed to the console?",
+        codeSnippet: `function doMath(x, y, operation) {\n  return operation(x, y);\n}\nconst multiply = (a, b) => a * b;\nconsole.log(doMath(4, 5, multiply));`,
+        language: "javascript",
+        options: [
+          "20",
+          "9",
+          "undefined",
+          "TypeError: operation is not a function",
+        ],
+        correctAnswer: 0,
+        explanation: "multiply is passed as a callback into doMath, which invokes it as operation(4, 5), returning 4 * 5 = 20.",
+        hint: "multiply is executed inside doMath with 4 and 5.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js14-q3",
+        type: "multiple_choice",
+        title: "Passing function reference vs invoking immediately",
+        prompt: "What is the difference between passing `myFunction` and passing `myFunction()` as a callback?",
+        options: [
+          "`myFunction` passes the function reference to be called later; `myFunction()` calls the function immediately and passes its return value",
+          "`myFunction()` is the modern ES6 syntax for passing callbacks",
+          "`myFunction` causes a syntax error if passed without parentheses",
+          "There is no difference; JavaScript treats both identically",
+        ],
+        correctAnswer: 0,
+        explanation: "Adding () executes the function immediately at that line. To pass a callback for later execution, pass the function name without parentheses.",
+        hint: "Parentheses () execute a function immediately.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-15: Closures ───────────────────────────────────────────────────────
+  {
+    id: "quiz-javascript-js15",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js15-closures",
+    lessonCode: "JS-15",
+    lessonTitle: "Closures",
+    description: "Check your mastery of closures, retained lexical scope, and state encapsulation.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js15-q1",
+        type: "multiple_choice",
+        title: "What is a closure",
+        prompt: "In simple words, what is a closure in JavaScript?",
+        options: [
+          "A function that remembers variables from where it was created, even after that outer function has finished executing",
+          "A keyword used to close database connections",
+          "A syntax error caused by forgetting a closing curly brace `}`",
+          "A special loop that runs backwards from the end of an array",
+        ],
+        correctAnswer: 0,
+        explanation: "A closure is the combination of a function and the lexical environment within which that function was declared, retaining access to outer variables.",
+        hint: "Functions pack their surrounding backpack of variables.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js15-q2",
+        type: "code_output",
+        title: "Counter closure function",
+        prompt: "What will this counter code output?",
+        codeSnippet: `function makeCounter() {\n  let count = 0;\n  return () => {\n    count++;\n    return count;\n  };\n}\nconst counter = makeCounter();\nconsole.log(counter(), counter());`,
+        language: "javascript",
+        options: [
+          "1 2",
+          "1 1",
+          "0 1",
+          "undefined undefined",
+        ],
+        correctAnswer: 0,
+        explanation: "The returned arrow function retains a persistent reference to the `count` variable. Each invocation increments that same private variable.",
+        hint: "The inner function increments the persistent private variable.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js15-q3",
+        type: "code_output",
+        title: "Independent closure scopes",
+        prompt: "What will be printed when creating two separate counter instances?",
+        codeSnippet: `function createScore() {\n  let score = 100;\n  return () => score += 10;\n}\nconst player1 = createScore();\nconst player2 = createScore();\nplayer1();\nconsole.log(player1(), player2());`,
+        language: "javascript",
+        options: [
+          "120 110",
+          "120 120",
+          "110 110",
+          "100 100",
+        ],
+        correctAnswer: 0,
+        explanation: "Each call to createScore() creates a brand new scope with its own distinct `score` variable. Player1 was called twice (110 then 120); player2 was called once (110).",
+        hint: "Each makeScore call creates an independent closure instance.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-16: The this Keyword ───────────────────────────────────────────────
+  {
+    id: "quiz-javascript-js16",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js16-the-this-keyword",
+    lessonCode: "JS-16",
+    lessonTitle: "The this Keyword (Practical Rules)",
+    description: "Assess your ability to predict what this refers to in object methods vs arrow functions.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js16-q1",
+        type: "code_output",
+        title: "this inside regular object method",
+        prompt: "What does calling `user.greet()` output?",
+        codeSnippet: `const user = {\n  name: \"Maria\",\n  greet() {\n    return \"Hi, \" + this.name;\n  }\n};\nconsole.log(user.greet());`,
+        language: "javascript",
+        options: [
+          "'Hi, Maria'",
+          "'Hi, undefined'",
+          "'Hi, window'",
+          "TypeError",
+        ],
+        correctAnswer: 0,
+        explanation: "When invoked as user.greet(), `this` refers to the object before the dot (`user`), so `this.name` evaluates to 'Maria'.",
+        hint: "The object to the left of the dot is what 'this' points to.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js16-q2",
+        type: "code_output",
+        title: "Arrow functions and this",
+        prompt: "Why does an arrow function method behave differently for `this`?",
+        codeSnippet: `const bot = {\n  name: \"Robo\",\n  sayName: () => {\n    return this.name;\n  }\n};\nconsole.log(bot.sayName());`,
+        language: "javascript",
+        options: [
+          "undefined (or empty in browser window scope) because arrow functions do not have their own this",
+          "'Robo'",
+          "TypeError: sayName is not a function",
+          "'bot'",
+        ],
+        correctAnswer: 0,
+        explanation: "Arrow functions do not bind their own `this`. They inherit `this` from the enclosing outer lexical scope where the object was created.",
+        hint: "Arrow functions inherit 'this' from their surrounding scope.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js16-q3",
+        type: "multiple_choice",
+        title: "Best practice for object methods",
+        prompt: "What is the recommended rule for declaring methods on objects?",
+        options: [
+          "Use standard method shorthand `method() { ... }` on objects when you need `this`; use arrow functions inside callbacks to preserve that `this`",
+          "Never use `this` in any JavaScript code under any circumstances",
+          "Always use arrow functions for top-level object methods",
+          "Store `this` in a global variable named `self`",
+        ],
+        correctAnswer: 0,
+        explanation: "Object methods should use standard function syntax so `this` references the object. Nested callbacks inside those methods can use arrow functions to preserve that same `this`.",
+        hint: "Standard methods get object binding; arrow callbacks retain it.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-17: Errors and Debugging ───────────────────────────────────────────
+  {
+    id: "quiz-javascript-js17",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js17-errors-and-debugging",
+    lessonCode: "JS-17",
+    lessonTitle: "Errors and Basic Debugging",
+    description: "Evaluate your understanding of try...catch exception handling, Error objects, and debugging tools.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js17-q1",
+        type: "code_output",
+        title: "try...catch recovery",
+        prompt: "What will this code print to the console?",
+        codeSnippet: `try {\n  JSON.parse(\"invalid json\");\n} catch (err) {\n  console.log(\"Caught error\");\n}\nconsole.log(\"App continues\");`,
+        language: "javascript",
+        options: [
+          "'Caught error'\n'App continues'",
+          "SyntaxError and the program crashes immediately",
+          "'App continues'",
+          "undefined",
+        ],
+        correctAnswer: 0,
+        explanation: "JSON.parse throws a SyntaxError on invalid input. The catch block intercepts the error, allowing the script to log 'Caught error' and continue running.",
+        hint: "try...catch prevents unhandled exceptions from crashing the app.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js17-q2",
+        type: "multiple_choice",
+        title: "Throwing custom errors",
+        prompt: "How should you signal an invalid state in your own functions?",
+        options: [
+          "Throw an Error object: `throw new Error(\"Invalid quantity\");`",
+          "Print a console.warn message and return 0",
+          "Reboot the browser tab",
+          "Delete the variable from memory",
+        ],
+        correctAnswer: 0,
+        explanation: "Throwing `new Error('message')` creates a formal exception with a message and stack trace that callers can catch and handle.",
+        hint: "Use throw new Error(...) to signal invalid conditions.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js17-q3",
+        type: "code_output",
+        title: "finally block execution",
+        prompt: "When does code inside a `finally` block run?",
+        codeSnippet: `let cleaned = false;\ntry {\n  throw new Error(\"Fail\");\n} catch (e) {\n  // handle\n} finally {\n  cleaned = true;\n}\nconsole.log(cleaned);`,
+        language: "javascript",
+        options: [
           "true",
           "false",
           "undefined",
-          "20"
+          "Error: Fail",
         ],
-        "correctAnswer": 0,
-        "explanation": "userAge >= 18 evaluates to true, and hasTicket is true. Because both sides of && are true, canEnter is true.",
-        "hint": "The && operator requires both sides to be true.",
-        "hintCostXP": 5
-      }
-    ]
+        correctAnswer: 0,
+        explanation: "The `finally` block ALWAYS runs after `try` and `catch`, whether an error occurred or not, making it ideal for cleanup actions.",
+        hint: "finally executes unconditionally after try/catch.",
+        hintCostXP: 5,
+      },
+    ],
   },
-  {
-    "id": "quiz-javascript-js04",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js04-conditional-logic",
-    "lessonCode": "JS-04",
-    "lessonTitle": "Conditional Logic: Making Decisions with if, else & switch",
-    "description": "Test your understanding of branching logic, ternary operators, and switch statements with break.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js04-q1",
-        "type": "multiple_choice",
-        "title": "Ternary Operator Syntax",
-        "prompt": "What does the ternary operator (? :) do in JavaScript?",
-        "options": [
-          "It defines a loop that repeats three times",
-          "It provides a concise one-line if/else expression that evaluates to a value",
-          "It compares three numbers for equality",
-          "It throws an error if a condition is false"
-        ],
-        "correctAnswer": 1,
-        "explanation": "The ternary operator condition ? valueIfTrue : valueIfFalse evaluates a condition and directly returns one of two values.",
-        "hint": "Think: condition ? trueResult : falseResult",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js04-q2",
-        "type": "code_output",
-        "title": "Switch Statement Fall-Through",
-        "prompt": "What is logged to the console by this switch statement?",
-        "codeSnippet": "const grade = \"B\";\nlet result = \"\";\nswitch (grade) {\n  case \"A\":\n    result += \"Great \";\n  case \"B\":\n    result += \"Good \";\n  case \"C\":\n    result += \"Pass\";\n    break;\n  default:\n    result = \"Unknown\";\n}\nconsole.log(result);",
-        "language": "javascript",
-        "options": [
-          "'Good '",
-          "'Good Pass'",
-          "'Great Good Pass'",
-          "'Pass'"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Because case 'B' lacks a break statement, execution falls through into case 'C', adding 'Pass' before reaching break.",
-        "hint": "Watch out for missing break statements in switch cases.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js04-q3",
-        "type": "code_output",
-        "title": "Chained if / else if Evaluation",
-        "prompt": "What will this code log to the console?",
-        "codeSnippet": "const score = 82;\nlet grade = \"\";\nif (score >= 90) {\n  grade = \"A\";\n} else if (score >= 80) {\n  grade = \"B\";\n} else {\n  grade = \"C\";\n}\nconsole.log(grade);",
-        "language": "javascript",
-        "options": [
-          "'B'",
-          "'A'",
-          "'C'",
-          "'A B'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "82 >= 90 is false, so it checks score >= 80. 82 >= 80 is true, so grade is set to 'B' and all remaining else blocks are skipped.",
-        "hint": "JavaScript checks from top to bottom and stops at the first true match.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js05",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js05-loops-and-iteration",
-    "lessonCode": "JS-05",
-    "lessonTitle": "Loops & Iteration: Repeating Work Without Repeating Code",
-    "description": "Test your understanding of while loops, for loops, break, continue, and avoiding infinite loops.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js05-q1",
-        "type": "code_output",
-        "title": "Classic for Loop Counting",
-        "prompt": "What will this counting loop output to the console?",
-        "codeSnippet": "let result = \"\";\nfor (let i = 1; i <= 3; i++) {\n  result += i + \" \";\n}\nconsole.log(result.trim());",
-        "language": "javascript",
-        "options": [
-          "'1 2 3'",
-          "'1 2'",
-          "'0 1 2 3'",
-          "'3 2 1'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "The loop starts with i = 1, runs while i <= 3, and increments i by 1 each round, logging '1 2 3'.",
-        "hint": "Notice that the loop starts at 1 and stops when i becomes greater than 3.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js05-q2",
-        "type": "code_output",
-        "title": "Break and Continue in a Counting Loop",
-        "prompt": "What will this loop calculate and output?",
-        "codeSnippet": "let sum = 0;\nfor (let i = 1; i <= 5; i++) {\n  if (i === 2) continue;\n  if (i === 4) break;\n  sum += i;\n}\nconsole.log(sum);",
-        "language": "javascript",
-        "options": [
-          "4",
-          "6",
-          "10",
-          "1"
-        ],
-        "correctAnswer": 0,
-        "explanation": "i=1: sum becomes 1. i=2: continue skips adding 2. i=3: sum becomes 1 + 3 = 4. i=4: break immediately exits the loop. The final sum is 4.",
-        "hint": "continue skips to the next number; break exits the loop immediately.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js05-q3",
-        "type": "multiple_choice",
-        "title": "Preventing Infinite Loops",
-        "prompt": "What causes a while loop to become an infinite loop that freezes the browser?",
-        "options": [
-          "Using let instead of const for the counter variable",
-          "The condition never becomes false because the counter or variable is never updated inside the loop",
-          "Writing more than 5 lines of code inside the loop body",
-          "Using a console.log statement inside the loop"
-        ],
-        "correctAnswer": 1,
-        "explanation": "A while loop runs as long as its condition is true. If the loop body never changes the tested variable, the condition stays true forever, causing an infinite loop.",
-        "hint": "Every loop must have a path to make its condition false.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js06",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js06-functions-and-arrow-syntax",
-    "lessonCode": "JS-06",
-    "lessonTitle": "Functions: Packaging Reusable Logic & Arrow Syntax",
-    "description": "Assess your understanding of function declarations, arrow functions, default parameters, and return values.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js06-q1",
-        "type": "code_output",
-        "title": "Arrow Function with Default Parameter",
-        "prompt": "Predict the output of these two function calls:",
-        "codeSnippet": "const multiply = (a, b = 2) => a * b;\nconsole.log(multiply(5));\nconsole.log(multiply(5, 4));",
-        "language": "javascript",
-        "options": [
-          "10 then 20",
-          "NaN then 20",
-          "undefined then 20",
-          "10 then 10"
-        ],
-        "correctAnswer": 0,
-        "explanation": "When b is omitted, the default parameter b = 2 is used (5 * 2 = 10). When 4 is provided, it calculates 5 * 4 = 20.",
-        "hint": "Default parameters activate only when the argument is omitted.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js06-q2",
-        "type": "multiple_choice",
-        "title": "Parameters vs Arguments",
-        "prompt": "What is the difference between a parameter and an argument in JavaScript?",
-        "options": [
-          "Parameters are the placeholder variable names in the function definition; arguments are the real values passed when calling the function",
-          "Arguments are only numbers, while parameters are only strings",
-          "Parameters are only used in arrow functions; arguments are only used in regular functions",
-          "There is no difference; both words mean the exact same thing"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Parameters are defined in the function signature (like a, b). Arguments are the actual values passed in during an invocation (like 5, 10).",
-        "hint": "Think: parameter = placeholder, argument = actual value.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js06-q3",
-        "type": "code_output",
-        "title": "Missing Return Statement",
-        "prompt": "What will be printed when calling a function that has no return statement?",
-        "codeSnippet": "function recordScore(points) {\n  const updated = points + 10;\n}\nconst scoreResult = recordScore(50);\nconsole.log(scoreResult);",
-        "language": "javascript",
-        "options": [
-          "undefined",
-          "60",
-          "0",
-          "null"
-        ],
-        "correctAnswer": 0,
-        "explanation": "In JavaScript, any function that finishes executing without an explicit return statement returns undefined by default.",
-        "hint": "If a function doesn't use the return keyword, what does JavaScript return?",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js07",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js07-scope-global-function-block",
-    "lessonCode": "JS-07",
-    "lessonTitle": "Scope: Where Variables Live (Global, Function & Block)",
-    "description": "Verify your understanding of block scope, variable shadowing, and the scope chain.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js07-q1",
-        "type": "multiple_choice",
-        "title": "Block Scope",
-        "prompt": "Which pair of keywords respects block scope enclosed by curly braces {}?",
-        "options": [
-          "var and function",
-          "let and const",
-          "var and let",
-          "global and window"
-        ],
-        "correctAnswer": 1,
-        "explanation": "let and const are block-scoped. Variables declared with them inside { } cannot be accessed from outside that block.",
-        "hint": "These two modern keywords keep variables locked inside their curly braces.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js07-q2",
-        "type": "code_output",
-        "title": "Variable Shadowing",
-        "prompt": "What is logged by the following code?",
-        "codeSnippet": "const role = \"member\";\nfunction checkAccess() {\n  const role = \"admin\";\n  return role;\n}\nconsole.log(checkAccess() + \" | \" + role);",
-        "language": "javascript",
-        "options": [
-          "'admin | admin'",
-          "'admin | member'",
-          "'member | member'",
-          "ReferenceError: role is already declared"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Inside checkAccess, the local role shadows the outer role. Outside the function, the global role remains 'member'.",
-        "hint": "Inner scopes can create local variables with the same name without altering outer variables.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js07-q3",
-        "type": "multiple_choice",
-        "title": "Scope Chain Direction",
-        "prompt": "How does JavaScript look for variables along the scope chain?",
-        "options": [
-          "From outside scopes downward into inner functions",
-          "From the current inner scope outward toward parent scopes and global scope",
-          "Randomly across all files in the project",
-          "Only in the global scope"
-        ],
-        "correctAnswer": 1,
-        "explanation": "JavaScript searches from the inside out: it checks the local scope first, then parent function scopes, and finally the global scope.",
-        "hint": "Think of looking out through one-way glass: you can see outward, but outside cannot see inward.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js08",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js08-closures",
-    "lessonCode": "JS-08",
-    "lessonTitle": "Closures: How Functions Remember Their Birthplace",
-    "description": "Test your understanding of how functions remember variables from where they were created.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js08-q1",
-        "type": "code_output",
-        "title": "Counter Function Output",
-        "prompt": "What will this code log to the console?",
-        "codeSnippet": "function makeCounter() {\n  let count = 0;\n  return () => ++count;\n}\n\nconst c1 = makeCounter();\nconst c2 = makeCounter();\n\nconsole.log(c1(), c1(), c2());",
-        "language": "javascript",
-        "options": [
-          "'1 2 1'",
-          "'1 2 3'",
-          "'1 1 1'",
-          "'0 1 0'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Each call to makeCounter() creates a new function with its own private 'count' variable. Because c1 and c2 have separate private memory, c1 reaches 2 while c2 starts fresh at 1, outputting: 1 2 1.",
-        "hint": "Each time you call makeCounter(), it gets its own separate counter variable.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js08-q2",
-        "type": "multiple_choice",
-        "title": "What is a Closure?",
-        "prompt": "What is a closure in JavaScript?",
-        "options": [
-          "A command used to close a network socket or browser window",
-          "A function that remembers the variables from the place where it was created, even after the outer function has finished running",
-          "An error thrown when a script fails to load",
-          "A method that converts an object into text"
-        ],
-        "correctAnswer": 1,
-        "explanation": "A closure happens when a function remembers the variables from the place where it was created, even after the outer function has finished running.",
-        "hint": "Think of a function carrying a backpack of variables from where it was born.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js08-q3",
-        "type": "code_output",
-        "title": "Adder Function Factory",
-        "prompt": "What will this closure factory calculate and output?",
-        "codeSnippet": "function makeAdder(x) {\n  return function(y) {\n    return x + y;\n  };\n}\nconst addTen = makeAdder(10);\nconsole.log(addTen(5));",
-        "language": "javascript",
-        "options": [
-          "15",
-          "50",
-          "10",
-          "undefined"
-        ],
-        "correctAnswer": 0,
-        "explanation": "makeAdder(10) returns an inner function that remembers x = 10 in its closure. Calling addTen(5) computes 10 + 5 = 15.",
-        "hint": "The returned function adds its argument to the remembered x value.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js09",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js09-callbacks-and-higher-order-functions",
-    "lessonCode": "JS-09",
-    "lessonTitle": "Callbacks & Higher-Order Functions: Functions as Data",
-    "description": "Test your comprehension of higher-order functions and passing functions as data.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js09-q1",
-        "type": "multiple_choice",
-        "title": "First-Class Functions",
-        "prompt": "What does it mean that functions are 'first-class citizens' in JavaScript?",
-        "options": [
-          "Functions can only be created by administrators",
-          "Functions can be assigned to variables, passed as arguments, and returned from other functions",
-          "Functions execute faster than standard code blocks",
-          "Functions cannot be modified once defined"
-        ],
-        "correctAnswer": 1,
-        "explanation": "In JavaScript, functions are values just like numbers or strings. You can pass them into functions and return them dynamically.",
-        "hint": "Functions can be treated just like any ordinary variable or data value.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js09-q2",
-        "type": "code_output",
-        "title": "Higher-Order Function Output",
-        "prompt": "What is the output of this code?",
-        "codeSnippet": "function calculate(a, b, operation) {\n  return operation(a, b);\n}\nconst multiply = (x, y) => x * y;\nconsole.log(calculate(6, 4, multiply));",
-        "language": "javascript",
-        "options": [
-          "24",
-          "10",
-          "undefined",
-          "NaN"
-        ],
-        "correctAnswer": 0,
-        "explanation": "calculate calls multiply(6, 4), which computes 6 * 4 = 24.",
-        "hint": "The calculate function runs the multiply callback with arguments 6 and 4.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js09-q3",
-        "type": "multiple_choice",
-        "title": "Passing a Function vs Calling It",
-        "prompt": "When passing a function as a callback (e.g. calculate(5, 3, add)), why do we write 'add' instead of 'add(5, 3)'?",
-        "options": [
-          "Writing add(5, 3) would pass an invalid syntax error",
-          "Writing 'add' passes the function itself so calculate can invoke it; writing 'add(5, 3)' would call it immediately and pass its return value (8)",
-          "Parentheses are optional in all JavaScript function calls",
-          "Higher-order functions only accept anonymous functions"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Adding parentheses () calls the function immediately. Leaving off parentheses passes the function itself so the receiving function can run it.",
-        "hint": "Think: pass the function vs run the function right now.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js10",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js10-arrays-and-indexing",
-    "lessonCode": "JS-10",
-    "lessonTitle": "Arrays & Indexing: Managing Ordered Lists",
-    "description": "Evaluate your understanding of zero-based array indexing, array length, push, pop, and safe slicing.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js10-q1",
-        "type": "multiple_choice",
-        "title": "Zero-Based Indexing and Length",
-        "prompt": "If an array contains 4 items (items.length === 4), what is the index of the very last item in that array?",
-        "options": [
-          "4",
-          "3",
-          "0",
-          "undefined"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Because JavaScript arrays start counting indices at 0, the items sit at slots 0, 1, 2, and 3. The last item is always at index items.length - 1 (4 - 1 = 3).",
-        "hint": "The 4 items are stored at slots 0, 1, 2, 3.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js10-q2",
-        "type": "code_output",
-        "title": "Array push and pop",
-        "prompt": "What will this code print to the console?",
-        "codeSnippet": "const tasks = [\"Write tests\", \"Fix bugs\"];\ntasks.push(\"Deploy app\");\nconst completed = tasks.pop();\nconsole.log(tasks.length + \" | \" + completed);",
-        "language": "javascript",
-        "options": [
-          "'2 | Deploy app'",
-          "'3 | Deploy app'",
-          "'2 | Fix bugs'",
-          "'3 | Write tests'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "tasks.push('Deploy app') adds a 3rd item. Then tasks.pop() removes and returns that last item ('Deploy app'), leaving 2 items in tasks.",
-        "hint": "push adds to the end, pop removes and returns the last item.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js10-q3",
-        "type": "multiple_choice",
-        "title": "Safe Copying with slice()",
-        "prompt": "What happens to the original array when you call const subset = original.slice(0, 2)?",
-        "options": [
-          "The first two items are deleted from the original array",
-          "The original array remains completely untouched, and slice() returns a new array with the selected items",
-          "The original array is converted into a string",
-          "slice() modifies the original array in place"
-        ],
-        "correctAnswer": 1,
-        "explanation": "array.slice(start, end) is non-destructive. It extracts a shallow copy of the requested elements into a fresh array without altering the original array.",
-        "hint": "slice makes a safe copy; it does not cut items out of the original list.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js11",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js11-essential-array-methods",
-    "lessonCode": "JS-11",
-    "lessonTitle": "Essential Array Methods: map, filter, find & reduce",
-    "description": "Check your knowledge of transforming lists with map, selecting with filter, looking up items with find, and calculating totals with reduce.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js11-q1",
-        "type": "code_output",
-        "title": "Chaining filter and map",
-        "prompt": "What will this chained array pipeline print?",
-        "codeSnippet": "const numbers = [1, 2, 3, 4, 5];\nconst result = numbers\n  .filter(n => n % 2 === 0)\n  .map(n => n * 10);\nconsole.log(result);",
-        "language": "javascript",
-        "options": [
-          "[20, 40]",
-          "[10, 20, 30, 40, 50]",
-          "[2, 4]",
-          "[60]"
-        ],
-        "correctAnswer": 0,
-        "explanation": "filter(n => n % 2 === 0) keeps only the even numbers [2, 4]. Then map(n => n * 10) multiplies each remaining number by 10, producing [20, 40].",
-        "hint": "Filter for even numbers first, then multiply those numbers by 10.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js11-q2",
-        "type": "multiple_choice",
-        "title": "find() vs filter()",
-        "prompt": "What is the key difference between array.find() and array.filter()?",
-        "options": [
-          "find() returns the first matching item directly (or undefined), whereas filter() returns an array of all matching items",
-          "find() modifies the original array, while filter() does not",
-          "filter() only works on numbers, while find() only works on strings",
-          "There is no difference; they are identical aliases"
-        ],
-        "correctAnswer": 0,
-        "explanation": "find() stops searching as soon as it finds the first element that satisfies the condition and returns that single item. filter() checks all elements and returns an array of matches.",
-        "hint": "One returns a single element directly; the other returns an array.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js11-q3",
-        "type": "code_output",
-        "title": "Calculating totals with reduce",
-        "prompt": "What number will this reduce accumulator calculate?",
-        "codeSnippet": "const cart = [\n  { price: 10 },\n  { price: 25 },\n  { price: 15 }\n];\nconst total = cart.reduce((runningSum, item) => runningSum + item.price, 0);\nconsole.log(total);",
-        "language": "javascript",
-        "options": [
-          "50",
-          "25",
-          "0",
-          "NaN"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Starting with 0: 0 + 10 = 10, then 10 + 25 = 35, and finally 35 + 15 = 50. The final accumulated sum is 50.",
-        "hint": "Add up the prices starting from initial value 0: 0 + 10 + 25 + 15.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js12",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js12-objects-and-methods",
-    "lessonCode": "JS-12",
-    "lessonTitle": "Objects & Methods: Key-Value Pairs & Behaviors",
-    "description": "Test your understanding of object properties, dot notation vs bracket notation, object methods, and const object mutability.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js12-q1",
-        "type": "multiple_choice",
-        "title": "When to Use Bracket Notation",
-        "prompt": "When MUST you use bracket notation (user[field]) instead of dot notation (user.field)?",
-        "options": [
-          "When the property name is stored inside a variable or contains spaces/hyphens",
-          "Whenever the object has more than 3 properties",
-          "Only when reading numbers from an object",
-          "Dot notation is deprecated; bracket notation is always required"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Dot notation only works for fixed, valid JavaScript identifiers. If the property key is stored in a variable (e.g. const key = 'email') or has special characters, bracket notation is required.",
-        "hint": "Think: user[variableKey] evaluates the variable.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js12-q2",
-        "type": "code_output",
-        "title": "Updating Properties in a const Object",
-        "prompt": "What will this code print to the console?",
-        "codeSnippet": "const product = { name: \"Desk\", price: 200 };\nproduct.price = 250;\nproduct[\"inStock\"] = true;\nconsole.log(product.price + \" | \" + product.inStock);",
-        "language": "javascript",
-        "options": [
-          "'250 | true'",
-          "'200 | undefined'",
-          "TypeError: Assignment to constant variable",
-          "'250 | undefined'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Declaring an object with const prevents reassigning the variable product to a different object, but the internal properties can be freely updated or added.",
-        "hint": "const locks the variable reference, not the properties inside.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js12-q3",
-        "type": "multiple_choice",
-        "title": "Inspecting Properties with Object.keys()",
-        "prompt": "What does Object.keys(obj) return?",
-        "options": [
-          "An array containing all the property names (keys) of the object",
-          "A single string with all keys separated by commas",
-          "The number of properties in the object as a number",
-          "A deep clone of the object"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Object.keys(obj) returns an array of strings representing all the enumerable property keys defined on the object.",
-        "hint": "It returns an array of strings: the names of the keys.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js13",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js13-object-references-and-copying",
-    "lessonCode": "JS-13",
-    "lessonTitle": "Object References & Copying: References, Shallow vs Deep Cloning",
-    "description": "Check your grasp of memory references, the shared reference trap, shallow copy with spread, and native deep cloning with structuredClone.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js13-q1",
-        "type": "code_output",
-        "title": "The Shared Reference Trap",
-        "prompt": "What will this code output to the console?",
-        "codeSnippet": "const a = { count: 10 };\nconst b = a;\nb.count = 25;\nconsole.log(a.count);",
-        "language": "javascript",
-        "options": [
-          "10",
-          "25",
-          "undefined",
-          "NaN"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Assigning const b = a copies the memory reference (pointer), not the object. Both a and b point to the exact same object in memory, so modifying b.count modifies a.count.",
-        "hint": "Both variables point to the exact same object in memory.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js13-q2",
-        "type": "multiple_choice",
-        "title": "Shallow Copy Limitations",
-        "prompt": "Why is the spread operator ({ ...user }) considered a SHALLOW copy rather than a deep copy?",
-        "options": [
-          "It copies top-level properties into a new object, but any nested objects or arrays are still shared by reference",
-          "It only copies the first property and ignores the rest",
-          "It converts all numbers into strings",
-          "It only works on arrays, not objects"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Spread ({ ...user }) creates a new outer object, but if user has nested properties (like user.address = { city: 'Paris' }), the nested object is still shared by memory reference.",
-        "hint": "Shallow means only 1 layer deep.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js13-q3",
-        "type": "multiple_choice",
-        "title": "Native Deep Cloning with structuredClone",
-        "prompt": "Which modern built-in JavaScript function creates a true deep clone of an object, including all nested objects and arrays?",
-        "options": [
-          "Object.assign()",
-          "structuredClone()",
-          "Object.freeze()",
-          "JSON.clone()"
-        ],
-        "correctAnswer": 1,
-        "explanation": "structuredClone() is the standard modern JavaScript function built into browsers and Node.js to create a complete, recursive deep clone of complex objects.",
-        "hint": "It has 'clone' in its name and is a native global function.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js14",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js14-destructuring",
-    "lessonCode": "JS-14",
-    "lessonTitle": "Destructuring: Unpacking Objects & Arrays with Ease",
-    "description": "Assess your skill with object extraction, variable renaming with colons, fallback defaults, and array destructuring.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js14-q1",
-        "type": "code_output",
-        "title": "Object Destructuring with Defaults",
-        "prompt": "What will this code print to the console?",
-        "codeSnippet": "const user = { name: \"Alex\" };\nconst { name, role = \"guest\" } = user;\nconsole.log(name + \" is a \" + role);",
-        "language": "javascript",
-        "options": [
-          "'Alex is a guest'",
-          "'Alex is a undefined'",
-          "'guest is a Alex'",
-          "ReferenceError: role is not defined"
-        ],
-        "correctAnswer": 0,
-        "explanation": "name is extracted from user ('Alex'). Because user has no role property, it takes the fallback default value 'guest'.",
-        "hint": "Default values activate when the property is undefined.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js14-q2",
-        "type": "multiple_choice",
-        "title": "Renaming in Object Destructuring",
-        "prompt": "How do you rename a property from 'id' to 'userId' while destructuring an object?",
-        "options": [
-          "const { id as userId } = obj;",
-          "const { id: userId } = obj;",
-          "const { id -> userId } = obj;",
-          "const { userId = id } = obj;"
-        ],
-        "correctAnswer": 1,
-        "explanation": "In JavaScript object destructuring, the colon syntax { sourceKey: newVariableName } extracts sourceKey and assigns it to newVariableName.",
-        "hint": "Use colon (:), like { id: userId }.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js14-q3",
-        "type": "code_output",
-        "title": "Array Destructuring with Skipped Positions",
-        "prompt": "What will this array destructuring code output?",
-        "codeSnippet": "const coords = [10, 20, 30];\nconst [x, , z] = coords;\nconsole.log(x + \",\" + z);",
-        "language": "javascript",
-        "options": [
-          "'10,20'",
-          "'10,30'",
-          "'20,30'",
-          "'10,undefined'"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Leaving an empty space between commas [x, , z] skips the second element (20), assigning x=10 and z=30.",
-        "hint": "An empty comma slot skips that position in array destructuring.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js15",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js15-spread-and-rest-operators",
-    "lessonCode": "JS-15",
-    "lessonTitle": "Spread & Rest Operators: Expanding and Gathering (...)",
-    "description": "Understand the twin roles of the three dots (...): Rest parameters gathering arguments and Spread expanding collections.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js15-q1",
-        "type": "multiple_choice",
-        "title": "Rest vs Spread Purpose",
-        "prompt": "What is the key difference between Rest parameters and the Spread operator?",
-        "options": [
-          "Rest gathers multiple values into a single array; Spread unpacks an array into individual values",
-          "Rest is only for strings; Spread is only for numbers",
-          "Rest only works in React; Spread only works in Node.js",
-          "They are identical synonyms with no behavioral differences"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Rest (...args in a function parameter) gathers multiple arguments into one array. Spread (...arr in a function call or array literal) expands an array into individual elements.",
-        "hint": "Rest gathers items into an array; Spread unpacks an array into individual items.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js15-q2",
-        "type": "code_output",
-        "title": "Object Spread Merging Precedence",
-        "prompt": "What is logged when merging objects with spread?",
-        "codeSnippet": "const defaults = { theme: \"light\", zoom: 100 };\nconst userPrefs = { theme: \"dark\" };\nconst config = { ...defaults, ...userPrefs };\nconsole.log(config.theme + \" | \" + config.zoom);",
-        "language": "javascript",
-        "options": [
-          "'dark | 100'",
-          "'light | 100'",
-          "'dark | undefined'",
-          "SyntaxError: Duplicate property"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Properties spread further to the right overwrite earlier properties with the same name. userPrefs.theme ('dark') overrides defaults.theme ('light').",
-        "hint": "Properties on the right win when merging objects with spread.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js15-q3",
-        "type": "multiple_choice",
-        "title": "Rest Parameter Placement Rule",
-        "prompt": "Where must a Rest parameter (...rest) be placed in a function's parameter list?",
-        "options": [
-          "As the very first parameter",
-          "As the very last parameter",
-          "Anywhere in the parameter list",
-          "A function can have multiple rest parameters"
-        ],
-        "correctAnswer": 1,
-        "explanation": "A rest parameter gathers all remaining arguments, so it must always be the last parameter in the function declaration.",
-        "hint": "It gathers the 'rest' of the arguments, so nothing can come after it.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js16",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js16-optional-chaining-and-nullish-coalescing",
-    "lessonCode": "JS-16",
-    "lessonTitle": "Optional Chaining (?.) & Nullish Coalescing (??)",
-    "description": "Verify your mastery of safe property navigation (?.) and precise null/undefined fallbacks (??) without false-alarm bugs.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js16-q1",
-        "type": "multiple_choice",
-        "title": "Optional Chaining Behavior",
-        "prompt": "What does user?.address?.city return if user.address is null or undefined?",
-        "options": [
-          "It throws a TypeError: Cannot read property 'city' of undefined",
-          "undefined (without throwing an error)",
-          "null",
-          "false"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Optional chaining (?.) short-circuits and safely returns undefined as soon as any part of the chain is null or undefined, preventing runtime crashes.",
-        "hint": "It safely returns undefined instead of throwing a crash.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js16-q2",
-        "type": "code_output",
-        "title": "Nullish Coalescing (??) vs Logical OR (||)",
-        "prompt": "What will this code log to the console?",
-        "codeSnippet": "const score = 0;\nconst res1 = score || 10;\nconst res2 = score ?? 10;\nconsole.log(res1 + \" | \" + res2);",
-        "language": "javascript",
-        "options": [
-          "'10 | 0'",
-          "'0 | 0'",
-          "'10 | 10'",
-          "'0 | 10'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Logical OR (||) treats 0 as falsy, so it falls back to 10. Nullish coalescing (??) only falls back on null or undefined, preserving the valid value 0.",
-        "hint": "0 is a valid number, but it is falsy in boolean expressions.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js16-q3",
-        "type": "multiple_choice",
-        "title": "Optional Function Invocation",
-        "prompt": "How do you safely call a callback function that might not have been provided?",
-        "options": [
-          "callback?()",
-          "callback?.()",
-          "callback!().",
-          "call(callback)"
-        ],
-        "correctAnswer": 1,
-        "explanation": "The syntax callback?.() checks if callback exists before executing it, cleanly skipping the call if callback is null or undefined.",
-        "hint": "It uses question-mark dot parentheses: ?.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js17",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js17-the-this-keyword",
-    "lessonCode": "JS-17",
-    "lessonTitle": "The this Keyword: Who Called Me?",
-    "description": "Check your understanding of the 'this' keyword: method calls, arrow functions, and how 'this' gets its value dynamically at call time.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js17-q1",
-        "type": "code_output",
-        "title": "The Dot Rule at Call Time",
-        "prompt": "Predict what will be logged when this method is called:",
-        "codeSnippet": "const robot = {\n  model: \"T-800\",\n  identify() {\n    return \"Model: \" + this.model;\n  }\n};\nconsole.log(robot.identify());",
-        "language": "javascript",
-        "options": [
-          "'Model: T-800'",
-          "'Model: undefined'",
-          "TypeError: cannot read property model of undefined",
-          "'Model: Object'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Because robot is immediately to the left of the dot at call time (robot.identify()), 'this' points directly to the robot object.",
-        "hint": "Look immediately to the left of the dot when the function is called.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js17-q2",
-        "type": "multiple_choice",
-        "title": "Arrow Functions and this",
-        "prompt": "Why should you avoid using Arrow Functions for object methods?",
-        "options": [
-          "Arrow functions execute too slowly",
-          "Arrow functions do not have their own 'this'; they borrow 'this' from the outer scope where they were created",
-          "Arrow functions cannot return strings",
-          "Arrow functions can only be called once"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Arrow functions do not create their own 'this'. When used as an object method, 'this' refers to the outer scope (e.g. window or module exports) rather than the object instance.",
-        "hint": "Arrow functions borrow 'this' directly from the code around them.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js17-q3",
-        "type": "code_output",
-        "title": "Explicit Binding with .call()",
-        "prompt": "What will this explicit binding snippet log?",
-        "codeSnippet": "function greet() {\n  return \"Hello, \" + this.name;\n}\nconst user = { name: \"Aria\" };\nconsole.log(greet.call(user));",
-        "language": "javascript",
-        "options": [
-          "'Hello, Aria'",
-          "'Hello, undefined'",
-          "TypeError: greet is not a function",
-          "'Hello, user'"
-        ],
-        "correctAnswer": 0,
-        "explanation": ".call(user) executes the function immediately, explicitly setting 'this' to the user object.",
-        "hint": ".call() binds 'this' to the first argument and invokes immediately.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js18",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js18-prototypes-and-prototype-chain",
-    "lessonCode": "JS-18",
-    "lessonTitle": "Prototypes & The Prototype Chain: Inheritance Under the Hood",
-    "description": "Test your understanding of object prototypes, method delegation, and property lookup across the chain.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js18-q1",
-        "type": "multiple_choice",
-        "title": "Prototype Delegation Mechanism",
-        "prompt": "What happens when you access a property on an object that does NOT exist directly on that object?",
-        "options": [
-          "JavaScript immediately throws a PropertyNotFoundError crash",
-          "JavaScript looks up the prototype chain to see if the property exists on the object's prototype",
-          "JavaScript creates the property and sets it to null",
-          "The object is deleted from memory"
-        ],
-        "correctAnswer": 1,
-        "explanation": "If JavaScript cannot find a property directly on an object, it automatically looks at the object's prototype to find it. This lets multiple objects share the same helper methods without duplicating them in memory.",
-        "hint": "It delegates the lookup to the object's prototype.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js18-q2",
-        "type": "code_output",
-        "title": "Object.create Prototype Link",
-        "prompt": "What is printed by this prototype delegation snippet?",
-        "codeSnippet": "const parent = { role: \"standard\", greet() { return \"Hi\"; } };\nconst child = Object.create(parent);\nchild.role = \"super\";\nconsole.log(child.role + \" | \" + child.greet());",
-        "language": "javascript",
-        "options": [
-          "'super | Hi'",
-          "'standard | Hi'",
-          "'super | undefined'",
-          "TypeError: child.greet is not a function"
-        ],
-        "correctAnswer": 0,
-        "explanation": "child has its own direct role ('super'). When child.greet() is called, greet is missing on child, so it delegates up to parent.greet() and returns 'Hi'.",
-        "hint": "child overrides role, but borrows greet from parent.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js18-q3",
-        "type": "multiple_choice",
-        "title": "Checking Direct Properties",
-        "prompt": "How can you verify whether a property exists directly on an object rather than on its prototype chain?",
-        "options": [
-          "Object.hasOwn(obj, prop) or obj.hasOwnProperty(prop)",
-          "prop in obj",
-          "obj[prop] !== undefined",
-          "typeof obj.prop === 'direct'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Object.hasOwn(obj, prop) specifically checks if the property belongs directly to the object itself rather than being inherited from its prototype.",
-        "hint": "Look for 'hasOwn' or 'hasOwnProperty'.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js19",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js19-classes-extends-and-super",
-    "lessonCode": "JS-19",
-    "lessonTitle": "ES6 Classes, Constructors & Inheritance: Clean Object-Oriented JS",
-    "description": "Test your understanding of modern JavaScript classes, constructors, inheritance with extends, and calling super().",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js19-q1",
-        "type": "multiple_choice",
-        "title": "The super() Rule in Subclasses",
-        "prompt": "In a subclass constructor that uses 'extends', why must you call super() before accessing 'this'?",
-        "options": [
-          "super() is optional and only recommended for logging",
-          "super() calls the parent constructor to initialize the instance foundation before 'this' can be accessed",
-          "super() converts the class to an arrow function",
-          "super() binds event listeners automatically"
-        ],
-        "correctAnswer": 1,
-        "explanation": "In JavaScript, derived class instances are initialized by the parent constructor. Calling super() runs the parent constructor; accessing 'this' before super() throws a ReferenceError.",
-        "hint": "The parent constructor must initialize the object before the child can use 'this'.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js19-q2",
-        "type": "code_output",
-        "title": "Method Overriding with super",
-        "prompt": "What will this class hierarchy log?",
-        "codeSnippet": "class Vehicle {\n  start() { return \"Engine on\"; }\n}\nclass Car extends Vehicle {\n  start() { return super.start() + \", Seatbelt buckled\"; }\n}\nconst myCar = new Car();\nconsole.log(myCar.start());",
-        "language": "javascript",
-        "options": [
-          "'Engine on, Seatbelt buckled'",
-          "'Engine on'",
-          "'Seatbelt buckled'",
-          "TypeError: super.start is not a function"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Car overrides start(), but calls super.start() to reuse the parent's logic before adding ', Seatbelt buckled'.",
-        "hint": "super.methodName() invokes the parent class's version of that method.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js19-q3",
-        "type": "multiple_choice",
-        "title": "Classes Under the Hood",
-        "prompt": "What is an ES6 class under the hood in JavaScript?",
-        "options": [
-          "A completely separate memory architecture unrelated to prototypes",
-          "A cleaner, modern blueprint syntax built on top of JavaScript's prototype system",
-          "A compiled C++ binary structure",
-          "A plain JSON object"
-        ],
-        "correctAnswer": 1,
-        "explanation": "ES6 classes provide a cleaner, more readable syntax, but under the hood they still create standard constructor functions and prototype chains.",
-        "hint": "Classes provide cleaner syntax over JavaScript prototypes.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js20",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js20-synchronous-vs-asynchronous",
-    "lessonCode": "JS-20",
-    "lessonTitle": "Synchronous vs Asynchronous: Why JavaScript Never Freezes",
-    "description": "Test your understanding of why waiting tasks run in the background with setTimeout instead of freezing your page.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js20-q1",
-        "type": "multiple_choice",
-        "title": "The Single Thread and Blocking",
-        "prompt": "What happens in a browser tab if a synchronous function runs a heavy calculation for 10 seconds?",
-        "options": [
-          "The browser automatically moves it to another thread and the UI stays responsive",
-          "The entire page freezes, buttons stop responding, and animations halt because the main thread is blocked",
-          "The calculation is paused and rescheduled for night time",
-          "The browser restarts immediately"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Because JavaScript's single main thread runs both your script and the UI rendering loop, heavy synchronous work blocks all user interactions and rendering.",
-        "hint": "Single thread means only one task can execute on the main thread at a time.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js20-q2",
-        "type": "code_output",
-        "title": "Execution Order with setTimeout",
-        "prompt": "In what order are the numbers logged by this code?",
-        "codeSnippet": "console.log(1);\nsetTimeout(() => console.log(2), 0);\nconsole.log(3);",
-        "language": "javascript",
-        "options": [
-          "1, 2, 3",
-          "1, 3, 2",
-          "2, 1, 3",
-          "3, 1, 2"
-        ],
-        "correctAnswer": 1,
-        "explanation": "1 logs first. setTimeout hands the timer callback to the browser background. 3 logs next. Once all synchronous code finishes, 2 logs last.",
-        "hint": "Synchronous code on the call stack always runs before task queue callbacks.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js20-q3",
-        "type": "multiple_choice",
-        "title": "Role of Web APIs",
-        "prompt": "Where do timers (setTimeout) and network calls (fetch) actually wait while your JavaScript code continues running?",
-        "options": [
-          "Inside the Call Stack",
-          "In the browser/runtime Web APIs environment outside the JavaScript engine thread",
-          "In the CPU register",
-          "In the HTML document"
-        ],
-        "correctAnswer": 1,
-        "explanation": "The browser's host environment (Web APIs in browsers, libuv in Node.js) handles waiting for timers and network packets in background threads without blocking JavaScript.",
-        "hint": "The host runtime provides background threads for waiting operations.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js21",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js21-promises-and-chaining",
-    "lessonCode": "JS-21",
-    "lessonTitle": "Promises: Managing Future Values with .then() & .catch()",
-    "description": "Test your understanding of Promises: pending, fulfilled, and rejected states, and chaining with .then() and .catch().",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js21-q1",
-        "type": "code_output",
-        "title": "Promise .then Chaining Pipeline",
-        "prompt": "What will be printed to the console by this Promise chain?",
-        "codeSnippet": "Promise.resolve(5)\n  .then(val => val * 2)\n  .then(val => val + 3)\n  .then(val => console.log(val));",
-        "language": "javascript",
-        "options": [
-          "13",
-          "10",
-          "5",
-          "NaN"
-        ],
-        "correctAnswer": 0,
-        "explanation": "5 is resolved; the first .then multiplies by 2 (10); the second .then adds 3 (13); the third logs 13.",
-        "hint": "Follow the value through each step of the pipeline: 5 -> *2 -> +3.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js21-q2",
-        "type": "multiple_choice",
-        "title": "Handling Errors in Promise Chains",
-        "prompt": "Where does execution jump if an error is thrown inside the first .then() of a Promise chain?",
-        "options": [
-          "It ignores the error and continues to the next .then() with null",
-          "It skips all subsequent .then() callbacks and jumps directly to the nearest .catch() handler",
-          "It restarts the entire script from line 1",
-          "It pauses execution for 5 seconds and retries"
-        ],
-        "correctAnswer": 1,
-        "explanation": "When an exception occurs or a promise rejects, JavaScript skips remaining .then() handlers until it finds the nearest .catch() handler in the chain.",
-        "hint": ".catch() captures errors thrown anywhere above it in the chain.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js21-q3",
-        "type": "code_output",
-        "title": "Promise.all Results Handling",
-        "prompt": "What will Promise.all log when running these tasks together?",
-        "codeSnippet": "const p1 = Promise.resolve(\"A\");\nconst p2 = Promise.resolve(\"B\");\nPromise.all([p1, p2]).then(results => console.log(results.join(\"-\")));",
-        "language": "javascript",
-        "options": [
-          "'A-B'",
-          "'AB'",
-          "'A'",
-          "'undefined-undefined'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Promise.all waits for all promises in the array to resolve and delivers their results as an array ['A', 'B']. .join('-') outputs 'A-B'.",
-        "hint": "Promise.all delivers an array of all resolved values.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js22",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js22-async-await",
-    "lessonCode": "JS-22",
-    "lessonTitle": "Async/Await: Clean Asynchronous Workflows",
-    "description": "Verify your ability to use async/await, handle errors with try/catch, and avoid sequential waterfalls.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js22-q1",
-        "type": "multiple_choice",
-        "title": "Async Function Return Value",
-        "prompt": "What does an 'async' function ALWAYS return, even if you return a plain value like return 42?",
-        "options": [
-          "A number (42)",
-          "A Promise that resolves to that value",
-          "A callback function",
-          "undefined"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Every async function automatically wraps its return value in a Promise (e.g. Promise.resolve(42)).",
-        "hint": "Async functions always return Promises.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js22-q2",
-        "type": "multiple_choice",
-        "title": "Parallel Execution with Promise.all",
-        "prompt": "If you need to fetch users and products at the same time and neither depends on the other, how should you run them?",
-        "options": [
-          "await each sequentially: await getUsers(); await getProducts();",
-          "Run them simultaneously with Promise.all([getUsers(), getProducts()])",
-          "Create a while loop that waits for both",
-          "Use two separate script tags"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Awaiting them one by one creates an async waterfall where each request waits for the previous one. Promise.all initiates all requests simultaneously.",
-        "hint": "Promise.all fires independent asynchronous tasks in parallel.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js22-q3",
-        "type": "code_output",
-        "title": "Catching Rejected Promises in async/await",
-        "prompt": "What will this async function print to the console?",
-        "codeSnippet": "async function test() {\n  try {\n    await Promise.reject(new Error(\"Network timeout\"));\n    console.log(\"Success!\");\n  } catch (err) {\n    console.log(\"Caught: \" + err.message);\n  }\n}\ntest();",
-        "language": "javascript",
-        "options": [
-          "'Success!'",
-          "'Caught: Network timeout'",
-          "Uncaught Promise Rejection error",
-          "Nothing is printed"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Awaiting a rejected promise throws an exception inside the async function, jumping directly into the catch block.",
-        "hint": "await unwraps rejections as standard thrown exceptions.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js23",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js23-the-event-loop",
-    "lessonCode": "JS-23",
-    "lessonTitle": "The Event Loop: Call Stack & Task Queues",
-    "description": "Understand how JavaScript runs code on the Call Stack and handles background tasks with microtasks (Promises) and macrotasks (Timers).",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js23-q1",
-        "type": "code_output",
-        "title": "Microtask vs Macrotask Order",
-        "prompt": "In what exact order will the numbers 1, 2, 3, 4 be logged to the console?",
-        "codeSnippet": "console.log(1);\n\nsetTimeout(() => {\n  console.log(4);\n}, 0);\n\nPromise.resolve().then(() => {\n  console.log(3);\n});\n\nconsole.log(2);",
-        "language": "javascript",
-        "options": [
-          "1, 2, 3, 4",
-          "1, 4, 3, 2",
-          "1, 2, 4, 3",
-          "3, 1, 2, 4"
-        ],
-        "correctAnswer": 0,
-        "explanation": "1. Synchronous code on the Call Stack runs first: prints 1, then 2.\n2. When the Call Stack empties, the Microtask Queue drains: prints 3.\n3. The Event Loop advances to the Macrotask Queue: prints 4.\nFinal order: 1, 2, 3, 4.",
-        "hint": "Synchronous first -> Microtasks (Promises) second -> Macrotasks (setTimeout) third.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js23-q2",
-        "type": "multiple_choice",
-        "title": "Microtask Queue Drain Rule",
-        "prompt": "When does the Event Loop check and process the Macrotask Queue (timers)?",
-        "options": [
-          "Only after the Call Stack is empty AND the Microtask Queue is completely drained",
-          "Simultaneously on a separate background thread",
-          "Before executing any synchronous functions",
-          "Every 100 milliseconds regardless of other tasks"
-        ],
-        "correctAnswer": 0,
-        "explanation": "The engine never advances to the next Macrotask until the Call Stack is empty and all pending Microtasks (promises) have completely finished running.",
-        "hint": "Microtasks have VIP priority over Macrotasks.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js23-q3",
-        "type": "code_output",
-        "title": "Zero-Millisecond Timeout Behavior",
-        "prompt": "What does setTimeout(fn, 0) do in JavaScript?",
-        "codeSnippet": "console.log(\"A\");\nsetTimeout(() => console.log(\"C\"), 0);\nconsole.log(\"B\");",
-        "language": "javascript",
-        "options": [
-          "Logs A, B, C",
-          "Logs A, C, B",
-          "Logs C, A, B",
-          "Throws an error because delay cannot be zero"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Code on the Call Stack runs first (A, B). When it clears, queued macrotask callbacks (C) run next.",
-        "hint": "Timers always wait for the Call Stack to empty.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js24",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js24-error-handling",
-    "lessonCode": "JS-24",
-    "lessonTitle": "Error Handling: try, catch, finally & throw",
-    "description": "Test your mastery of structured error handling, unconditional finally blocks, and throwing custom Error objects.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js24-q1",
-        "type": "code_output",
-        "title": "The Unconditional finally Block",
-        "prompt": "What will be printed to the console by the following code?",
-        "codeSnippet": "let log = \"A\";\ntry {\n  log += \"-B\";\n  throw new Error(\"Oops\");\n} catch (err) {\n  log += \"-C\";\n} finally {\n  log += \"-D\";\n}\nconsole.log(log);",
-        "language": "javascript",
-        "options": [
-          "'A-B-C-D'",
-          "'A-B-D'",
-          "'A-B-C'",
-          "'A-C-D'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "The try block runs ('A-B'), throws an error which redirects control to catch ('-C'), and finally ALWAYS runs at the end ('-D'). Result: 'A-B-C-D'.",
-        "hint": "The finally block executes no matter what happens inside try or catch.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js24-q2",
-        "type": "multiple_choice",
-        "title": "The Danger of Empty catch Blocks",
-        "prompt": "Why is an empty catch block (catch (err) {}) considered a dangerous anti-pattern in JavaScript?",
-        "options": [
-          "It causes an immediate SyntaxError in modern browser engines",
-          "It swallows the error into a black hole, hiding bugs and making debugging nearly impossible",
-          "It permanently stops the finally block from executing",
-          "It automatically redirects the browser to an error page"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Empty catch blocks swallow errors silently with zero logs, leaving developers and users unaware of why a feature broke.",
-        "hint": "Think about what happens when an error occurs and nobody logs or handles it.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js24-q3",
-        "type": "code_output",
-        "title": "Execution Halting on Throw",
-        "prompt": "What is logged when calling validateInput(-5)?",
-        "codeSnippet": "function validateInput(num) {\n  try {\n    if (num < 0) {\n      throw new Error(\"Negative numbers not allowed\");\n    }\n    console.log(\"Valid:\", num);\n  } catch (error) {\n    console.log(\"Caught:\", error.message);\n  }\n}\nvalidateInput(-5);",
-        "language": "javascript",
-        "options": [
-          "'Valid: -5' followed by 'Caught: Negative numbers not allowed'",
-          "'Caught: Negative numbers not allowed'",
-          "'Caught: undefined'",
-          "The script crashes and logs nothing"
-        ],
-        "correctAnswer": 1,
-        "explanation": "When throw executes, the rest of the try block is immediately abandoned. Control jumps straight into catch, so 'Valid: -5' is never reached.",
-        "hint": "Does code after a throw statement in a try block continue running?",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js25",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js25-es-modules",
-    "lessonCode": "JS-25",
-    "lessonTitle": "ES Modules: Organizing Code with import & export",
-    "description": "Assess your understanding of ES module isolation, default vs named exports, and import syntax.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js25-q1",
-        "type": "multiple_choice",
-        "title": "Importing Default vs Named Exports",
-        "prompt": "Given a module file that exports both a default class and named constants: 'export default class App {}' and 'export const VERSION = \"1.0\";', which import syntax is correct?",
-        "options": [
-          "import { App, VERSION } from './app.js';",
-          "import App, { VERSION } from './app.js';",
-          "import App, VERSION from './app.js';",
-          "import { default as App, VERSION } from './app.js' only"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Default exports are imported WITHOUT curly braces (App), whereas named exports REQUIRE curly braces ({ VERSION }). Combining them yields 'import App, { VERSION } from ...'.",
-        "hint": "Curly braces are reserved exclusively for named exports.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js25-q2",
-        "type": "multiple_choice",
-        "title": "Module Scope Isolation",
-        "prompt": "What is the primary scoping advantage of ES Modules over traditional script tags?",
-        "options": [
-          "Variables declared inside a module are private to that file and do not pollute the global window scope",
-          "All module variables are automatically stored in the user's localStorage",
-          "Modules run in background Web Workers automatically",
-          "Modules turn all functions into asynchronous Promises"
-        ],
-        "correctAnswer": 0,
-        "explanation": "Every ES Module has its own top-level scope. Top-level variables remain private unless explicitly exported, eliminating global naming collisions.",
-        "hint": "Think about global variables vs file-level private scopes.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js25-q3",
-        "type": "code_output",
-        "title": "Renaming Imports with 'as'",
-        "prompt": "What does this code output when importing with an alias?",
-        "codeSnippet": "// Inside stringUtils.js:\n// export const clean = (str) => str.trim().toUpperCase();\n\n// Inside main.js:\nimport { clean as sanitize } from './stringUtils.js';\nconsole.log(sanitize(\"   learncraft   \"));",
-        "language": "javascript",
-        "options": [
-          "'   LEARNCRAFT   '",
-          "'LEARNCRAFT'",
-          "TypeError: sanitize is not a function",
-          "'learncraft'"
-        ],
-        "correctAnswer": 1,
-        "explanation": "The 'as' keyword renames the imported 'clean' function to 'sanitize' locally, which trims the outer whitespace and converts the text to uppercase.",
-        "hint": "The function trims whitespace and converts to uppercase.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js26",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js26-working-with-json",
-    "lessonCode": "JS-26",
-    "lessonTitle": "Working with JSON: Parsing and Serializing Data",
-    "description": "Evaluate your skills in serializing data with JSON.stringify, defensive JSON.parse techniques, and JSON format rules.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js26-q1",
-        "type": "code_output",
-        "title": "Serialization Omission Rules",
-        "prompt": "What is the output of JSON.stringify on the following object?",
-        "codeSnippet": "const person = {\n  name: \"Sam\",\n  age: 26,\n  greet: function() { return \"Hi!\"; },\n  nickname: undefined\n};\nconsole.log(JSON.stringify(person));",
-        "language": "javascript",
-        "options": [
-          "'{\"name\":\"Sam\",\"age\":26,\"greet\":\"Hi!\",\"nickname\":null}'",
-          "'{\"name\":\"Sam\",\"age\":26}'",
-          "'{\"name\":\"Sam\",\"age\":26,\"nickname\":undefined}'",
-          "Throws a TypeError because functions cannot be passed to stringify"
-        ],
-        "correctAnswer": 1,
-        "explanation": "JSON.stringify automatically strips out functions, undefined values, and Symbols from objects because JSON is a data-only format that cannot represent executable code.",
-        "hint": "What happens to functions and undefined properties during stringification?",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js26-q2",
-        "type": "multiple_choice",
-        "title": "Strict JSON Syntax Requirements",
-        "prompt": "Which of the following text strings is VALID JSON that can be parsed with JSON.parse() without throwing a SyntaxError?",
-        "options": [
-          "{ 'title': 'Book', 'pages': 300 }",
-          "{ \"title\": \"Book\", \"pages\": 300, }",
-          "{\"title\": \"Book\", \"pages\": 300}",
-          "{ title: \"Book\", pages: 300 }"
-        ],
-        "correctAnswer": 2,
-        "explanation": "In valid JSON, all keys MUST be enclosed in double quotes (not single quotes, not unquoted), and trailing commas after the last property are strictly forbidden.",
-        "hint": "Look for double quotes on all keys and no trailing commas.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js26-q3",
-        "type": "multiple_choice",
-        "title": "Handling Malformed JSON Safely",
-        "prompt": "What happens if you execute JSON.parse('malformed string') without wrapping it in a try/catch block?",
-        "options": [
-          "It returns undefined and the program continues running",
-          "It returns null and logs an internal warning",
-          "It throws a synchronous SyntaxError that halts program execution if uncaught",
-          "The browser prompts the user to enter valid JSON"
-        ],
-        "correctAnswer": 2,
-        "explanation": "JSON.parse throws a synchronous SyntaxError whenever the input string is not valid JSON. Uncaught, it terminates the script.",
-        "hint": "JSON.parse is strict: bad format causes a synchronous exception.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js27",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js27-the-fetch-api",
-    "lessonCode": "JS-27",
-    "lessonTitle": "The Fetch API: Communicating with REST APIs",
-    "description": "Test your ability to make HTTP requests, handle response.ok guards, and send JSON payloads with POST.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js27-q1",
-        "type": "multiple_choice",
-        "title": "The #1 Fetch Trap: HTTP Error Statuses",
-        "prompt": "How does the fetch() API respond when a remote server returns an HTTP 404 (Not Found) or 500 (Internal Server Error) response?",
-        "options": [
-          "The fetch() Promise rejects immediately and jumps directly into the catch block",
-          "The fetch() Promise fulfills successfully; response.ok is set to false and response.status holds the error code",
-          "The browser automatically retries the request up to 3 times",
-          "A NetworkError is thrown synchronously"
-        ],
-        "correctAnswer": 1,
-        "explanation": "fetch() only rejects on real network failures (like lost internet connection or DNS errors). HTTP error status codes (like 404 or 500) fulfill successfully, but response.ok is false.",
-        "hint": "Does fetch reject on HTTP error status codes?",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js27-q2",
-        "type": "multiple_choice",
-        "title": "The Two-Step Promise Pattern",
-        "prompt": "Why are there two consecutive await statements in 'const res = await fetch(url); const data = await res.json();'?",
-        "options": [
-          "The first awaits DNS resolution; the second awaits HTTP handshake",
-          "The first awaits HTTP response headers and status; the second awaits downloading and parsing the streaming body as JSON",
-          "The second await is optional and only needed for POST requests",
-          "The first await reads from cache; the second reads from the network"
-        ],
-        "correctAnswer": 1,
-        "explanation": "The first Promise resolves as soon as the HTTP headers arrive (giving you res.status and res.ok). The second Promise (res.json()) streams the rest of the body packets and parses them into a JavaScript object.",
-        "hint": "The first step gets the response envelope; the second step reads and parses the stream.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js27-q3",
-        "type": "multiple_choice",
-        "title": "Sending JSON Payloads with POST",
-        "prompt": "When sending a POST request containing JSON data via fetch(), which HTTP header is required to inform the server of the payload format?",
-        "options": [
-          "'Accept': 'text/plain'",
-          "'Content-Type': 'application/json'",
-          "'Authorization': 'Bearer JSON'",
-          "'Data-Format': 'json-stream'"
-        ],
-        "correctAnswer": 1,
-        "explanation": "The 'Content-Type': 'application/json' header informs the backend server that the request body is formatted as a JSON string and should be parsed accordingly.",
-        "hint": "Content-Type specifies the media type of the resource being sent.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js28",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js28-dom-essentials",
-    "lessonCode": "JS-28",
-    "lessonTitle": "Browser DOM Essentials: Selecting & Modifying Elements",
-    "description": "Assess your ability to safely select and manipulate DOM elements, prevent XSS attacks, and manage dynamic CSS classes.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js28-q1",
-        "type": "multiple_choice",
-        "title": "Preventing Cross-Site Scripting (XSS)",
-        "prompt": "Why is element.textContent preferred over element.innerHTML when inserting user-generated text into the DOM?",
-        "options": [
-          "textContent renders text faster because it disables all CSS styling",
-          "textContent treats input strictly as plain text, escaping HTML tags and preventing malicious script execution (XSS)",
-          "innerHTML only works in older versions of Internet Explorer",
-          "textContent automatically converts text to uppercase"
-        ],
-        "correctAnswer": 1,
-        "explanation": "element.textContent treats all inserted content strictly as literal text. Any <script> or HTML tags provided by users are safely escaped as plain text, eliminating XSS vulnerabilities.",
-        "hint": "Think about how script tags behave when parsed as HTML versus plain text.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js28-q2",
-        "type": "code_output",
-        "title": "Managing CSS Classes with classList",
-        "prompt": "What will button.className be after running the following classList methods?",
-        "codeSnippet": "const btn = document.createElement(\"button\");\nbtn.classList.add(\"btn\", \"primary\");\nbtn.classList.toggle(\"active\");\nbtn.classList.remove(\"primary\");\nconsole.log(btn.className);",
-        "language": "javascript",
-        "options": [
-          "'btn active'",
-          "'btn primary active'",
-          "'btn'",
-          "'primary active'"
-        ],
-        "correctAnswer": 0,
-        "explanation": "The classes 'btn' and 'primary' are added. 'active' is toggled on. Then 'primary' is removed, leaving 'btn active'.",
-        "hint": "Follow each add, toggle, and remove operation in sequence.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js28-q3",
-        "type": "multiple_choice",
-        "title": "querySelector vs querySelectorAll",
-        "prompt": "What does document.querySelector('.card') return if there are five elements with the class 'card' on the page?",
-        "options": [
-          "An Array containing all five card elements",
-          "A NodeList containing all five card elements",
-          "Only the first matching card element in the document",
-          "It throws a DOMException because multiple matches exist"
-        ],
-        "correctAnswer": 2,
-        "explanation": "document.querySelector() returns only the first matching element found in tree order (or null if none exist). To retrieve all matches, use document.querySelectorAll().",
-        "hint": "querySelector returns one element; querySelectorAll returns a list.",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js29",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js29-events-and-delegation",
-    "lessonCode": "JS-29",
-    "lessonTitle": "Events, Event Listeners & Event Delegation",
-    "description": "Evaluate your skills in handling browser events, stopping form reloads with preventDefault, and implementing event delegation.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js29-q1",
-        "type": "multiple_choice",
-        "title": "The Memory Advantage of Event Delegation",
-        "prompt": "Why is Event Delegation preferred over attaching individual event listeners to 500 list items in a loop?",
-        "options": [
-          "Browsers limit web pages to a maximum of 5 event listeners",
-          "Attaching one listener to a parent element saves significant memory and automatically handles dynamically added child items",
-          "Event delegation causes click events to run synchronously in background threads",
-          "Individual event listeners cannot read event.target"
-        ],
-        "correctAnswer": 1,
-        "explanation": "Event delegation leverages event bubbling by attaching one listener to the parent container. This drastically reduces memory overhead and automatically works for newly added children.",
-        "hint": "Think about memory consumption and dynamic elements.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js29-q2",
-        "type": "multiple_choice",
-        "title": "event.target vs event.currentTarget",
-        "prompt": "If a user clicks a <button> located inside a <div id='container'>, and a click listener is attached to the <div>, what are event.target and event.currentTarget?",
-        "options": [
-          "event.target is the <button>; event.currentTarget is the <div>",
-          "event.target is the <div>; event.currentTarget is the <button>",
-          "Both are always identical and reference the <div>",
-          "Both are always identical and reference the <button>"
-        ],
-        "correctAnswer": 0,
-        "explanation": "event.target is the deepest element that was actually clicked (the button). event.currentTarget is the element to which the event handler is attached (the div).",
-        "hint": "Target is who was clicked; currentTarget is who holds the listener.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js29-q3",
-        "type": "multiple_choice",
-        "title": "Stopping Default Browser Behavior",
-        "prompt": "What does calling event.preventDefault() inside a form submit event handler do?",
-        "options": [
-          "It clears all input fields in the form",
-          "It prevents the browser from reloading the entire webpage so JavaScript can handle submission asynchronously",
-          "It stops event bubbling to parent elements",
-          "It closes the browser window"
-        ],
-        "correctAnswer": 1,
-        "explanation": "By default, submitting an HTML form reloads the page or navigates to a new URL. Calling event.preventDefault() stops this default action, allowing JavaScript to process the form.",
-        "hint": "What does a form submission normally do to a web page?",
-        "hintCostXP": 5
-      }
-    ]
-  },
-  {
-    "id": "quiz-javascript-js30",
-    "trackKey": "javascript",
-    "trackTitle": "JavaScript",
-    "lessonSlug": "js30-browser-storage-and-debugging",
-    "lessonCode": "JS-30",
-    "lessonTitle": "Browser Storage (localStorage) & DevTools Debugging",
-    "description": "Test your understanding of persistent storage with localStorage, JSON serialization rules, and DevTools debugging.",
-    "passingScore": 75,
-    "baseXpReward": 30,
-    "perfectScoreBonusXp": 15,
-    "questions": [
-      {
-        "id": "js30-q1",
-        "type": "code_output",
-        "title": "The [object Object] localStorage Trap",
-        "prompt": "What is stored in localStorage if you execute localStorage.setItem('user', { name: 'Alex' }); without stringifying?",
-        "codeSnippet": "const user = { name: \"Alex\" };\nlocalStorage.setItem(\"user\", user);\nconsole.log(localStorage.getItem(\"user\"));",
-        "language": "javascript",
-        "options": [
-          "'{\"name\":\"Alex\"}'",
-          "'[object Object]'",
-          "SyntaxError",
-          "null"
-        ],
-        "correctAnswer": 1,
-        "explanation": "localStorage only stores strings. If you pass an object directly, JavaScript converts it using toString(), storing the useless string '[object Object]'. Always use JSON.stringify!",
-        "hint": "Objects default to '[object Object]' when converted to strings.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js30-q2",
-        "type": "multiple_choice",
-        "title": "localStorage vs sessionStorage",
-        "prompt": "What is the key difference between localStorage and sessionStorage in the browser?",
-        "options": [
-          "localStorage data persists indefinitely even after closing the browser; sessionStorage data is cleared when the tab closes",
-          "localStorage can store binary files while sessionStorage only stores strings",
-          "sessionStorage is shared between all domains and tabs simultaneously",
-          "localStorage is only available on desktop computers"
-        ],
-        "correctAnswer": 0,
-        "explanation": "localStorage persists across browser sessions and computer reboots until explicitly cleared, whereas sessionStorage is scoped to the current browser tab and is deleted when the tab closes.",
-        "hint": "Think about lifespan: persistent forever vs lifespan of the current tab.",
-        "hintCostXP": 5
-      },
-      {
-        "id": "js30-q3",
-        "type": "multiple_choice",
-        "title": "The debugger Statement",
-        "prompt": "What does placing the 'debugger;' keyword inside your JavaScript code do when DevTools is open?",
-        "options": [
-          "It deletes all variables currently in memory",
-          "It pauses script execution like a breakpoint so you can step through lines and inspect variables",
-          "It prints the entire program to the printer",
-          "It automatically fixes any syntax errors"
-        ],
-        "correctAnswer": 1,
-        "explanation": "The debugger; statement acts as a code-defined breakpoint. If browser DevTools is open, execution pauses at that line, allowing you to inspect the call stack, scope, and variable values.",
-        "hint": "It pauses execution like a breakpoint.",
-        "hintCostXP": 5
-      }
-    ]
-  }
 
+  // ── JS-18: Promises and async/await ───────────────────────────────────────
+  {
+    id: "quiz-javascript-js18",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js18-promises-and-async-await",
+    lessonCode: "JS-18",
+    lessonTitle: "Promises and async / await",
+    description: "Check your mastery of asynchronous flows, Promise states, and writing readable code with async/await.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js18-q1",
+        type: "multiple_choice",
+        title: "The 3 states of a Promise",
+        prompt: "What are the three possible states of a JavaScript Promise?",
+        options: [
+          "`pending`, `fulfilled` (resolved), and `rejected`",
+          "`waiting`, `running`, and `finished`",
+          "`open`, `closed`, and `failed`",
+          "`queued`, `blocked`, and `cleared`",
+        ],
+        correctAnswer: 0,
+        explanation: "A Promise starts as pending, then transitions permanently to either fulfilled (with a value) or rejected (with an error).",
+        hint: "Pending initially, then either fulfilled or rejected.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js18-q2",
+        type: "code_output",
+        title: "async function return value",
+        prompt: "What does calling an `async` function always return?",
+        codeSnippet: `async function getData() {\n  return 42;\n}\nconst result = getData();\nconsole.log(result instanceof Promise);`,
+        language: "javascript",
+        options: [
+          "true",
+          "false",
+          "42",
+          "undefined",
+        ],
+        correctAnswer: 0,
+        explanation: "Any function declared with `async` automatically wraps its return value in a Promise.",
+        hint: "Async functions always return a Promise.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js18-q3",
+        type: "multiple_choice",
+        title: "Handling async/await errors",
+        prompt: "What is the standard way to handle rejections or errors when using `await`?",
+        options: [
+          "Wrap the `await` statement inside a standard `try...catch` block",
+          "Use a while loop until the Promise resolves",
+          "Add an if statement checking if the Promise is null",
+          "Async functions cannot throw errors",
+        ],
+        correctAnswer: 0,
+        explanation: "When an awaited Promise rejects, JavaScript throws an exception that can be caught cleanly with a standard try...catch block.",
+        hint: "Combine await with try...catch for error handling.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-19: The Event Loop: A Basic View ───────────────────────────────────
+  {
+    id: "quiz-javascript-js19",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js19-the-event-loop-a-basic-view",
+    lessonCode: "JS-19",
+    lessonTitle: "The Event Loop (A Basic View)",
+    description: "Assess your mental model of the single-threaded call stack, task queues, and microtask priority.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js19-q1",
+        type: "code_output",
+        title: "Call stack vs setTimeout execution order",
+        prompt: "In what order will the console messages appear?",
+        codeSnippet: `console.log(\"1\");\nsetTimeout(() => console.log(\"2\"), 0);\nconsole.log(\"3\");`,
+        language: "javascript",
+        options: [
+          "1\n3\n2",
+          "1\n2\n3",
+          "2\n1\n3",
+          "3\n1\n2",
+        ],
+        correctAnswer: 0,
+        explanation: "1 and 3 run synchronously on the call stack. setTimeout registers a callback in the task queue, which only runs AFTER the call stack has completely cleared.",
+        hint: "Synchronous code runs first before any task callbacks.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js19-q2",
+        type: "multiple_choice",
+        title: "Single-Threaded nature of JavaScript",
+        prompt: "What does it mean that JavaScript execution is 'single-threaded'?",
+        options: [
+          "JavaScript has one call stack and can only execute one line of code at any single instant in time",
+          "JavaScript can only open one file at a time",
+          "JavaScript programs can only run on single-core computers",
+          "Only one user can visit a website at a time",
+        ],
+        correctAnswer: 0,
+        explanation: "The JavaScript main thread has a single call stack. Long-running synchronous calculations block the thread and freeze user interactions.",
+        hint: "One line at a time on one main thread.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js19-q3",
+        type: "code_output",
+        title: "Microtasks vs Macrotasks",
+        prompt: "What is the output order when mixing Promises and setTimeout?",
+        codeSnippet: `console.log(\"A\");\nsetTimeout(() => console.log(\"B\"), 0);\nPromise.resolve().then(() => console.log(\"C\"));\nconsole.log(\"D\");`,
+        language: "javascript",
+        options: [
+          "A\nD\nC\nB",
+          "A\nB\nC\nD",
+          "A\nD\nB\nC",
+          "C\nB\nA\nD",
+        ],
+        correctAnswer: 0,
+        explanation: "A and D run synchronously. Then microtasks (Promise.then 'C') run before macrotasks (setTimeout 'B'). Output is A, D, C, B.",
+        hint: "Microtasks (Promises) drain before macrotasks (timers).",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-20: DOM Events ─────────────────────────────────────────────────────
+  {
+    id: "quiz-javascript-js20",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js20-dom-events",
+    lessonCode: "JS-20",
+    lessonTitle: "Connecting JS to the Browser: DOM Events",
+    description: "Check your understanding of addEventListener, event objects, and user interactions in the browser.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js20-q1",
+        type: "multiple_choice",
+        title: "Modern Event Listening",
+        prompt: "What is the recommended method to attach a click listener to a DOM element in modern JavaScript?",
+        options: [
+          "`button.addEventListener('click', handleClick);`",
+          "`button.onclick = handleClick;` (legacy inline property)",
+          "`<button onclick=\"handleClick()\">` in HTML",
+          "`button.attachEvent('onclick', handleClick);`",
+        ],
+        correctAnswer: 0,
+        explanation: "addEventListener allows adding multiple listeners to the same element without overwriting existing ones and keeps JavaScript separated from HTML.",
+        hint: "addEventListener is the standard modern API.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js20-q2",
+        type: "multiple_choice",
+        title: "event.preventDefault()",
+        prompt: "Why would you call `event.preventDefault()` inside a form 'submit' event listener?",
+        options: [
+          "To stop the browser from performing a full page reload so your JavaScript can handle the submission with fetch",
+          "To erase all user inputs immediately",
+          "To prevent the user from typing capital letters",
+          "To close the browser tab automatically",
+        ],
+        correctAnswer: 0,
+        explanation: "By default, submitting a form refreshes the page and navigates to the action URL. preventDefault() stops this default navigation.",
+        hint: "Prevents default browser page reload on submit.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js20-q3",
+        type: "multiple_choice",
+        title: "event.target vs event.currentTarget",
+        prompt: "In a DOM event callback, what does `event.target` represent?",
+        options: [
+          "The actual element that triggered or was clicked to start the event",
+          "The server URL where data will be sent",
+          "The CSS class of the parent element",
+          "The keyboard key that was pressed",
+        ],
+        correctAnswer: 0,
+        explanation: "event.target references the exact element where the event originated (for example, the specific button clicked inside a form).",
+        hint: "The element that was clicked.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-21: JSON, fetch(), and API Responses ───────────────────────────────
+  {
+    id: "quiz-javascript-js21",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js21-json-fetch-and-api-responses",
+    lessonCode: "JS-21",
+    lessonTitle: "Working with JSON, fetch, and API Responses",
+    description: "Evaluate your ability to fetch API data, parse JSON, check response.ok, and handle HTTP errors.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js21-q1",
+        type: "multiple_choice",
+        title: "Checking response.ok with fetch",
+        prompt: "Why does `fetch('/api/item')` NOT automatically throw an error on an HTTP 404 or 500 status code?",
+        options: [
+          "`fetch` only rejects on network failures (e.g. offline/DNS error); you must check `response.ok` manually for HTTP error status codes",
+          "Because 404 is considered a successful response by all web standards",
+          "Because fetch automatically retries 500 errors until they succeed",
+          "Because JSON ignores HTTP status codes",
+        ],
+        correctAnswer: 0,
+        explanation: "fetch() resolves successfully whenever a server responds, even with 404 or 500. Always check `if (!response.ok) throw new Error(...)`.",
+        hint: "fetch() only rejects if the network fails completely.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js21-q2",
+        type: "code_output",
+        title: "JSON.parse vs JSON.stringify",
+        prompt: "What will `console.log(typeof parsed)` output?",
+        codeSnippet: `const jsonStr = '{\"name\":\"LearnCraft\",\"lessons\":22}';\nconst parsed = JSON.parse(jsonStr);\nconsole.log(typeof parsed, parsed.lessons);`,
+        language: "javascript",
+        options: [
+          "'object' 22",
+          "'string' 22",
+          "'undefined' 22",
+          "SyntaxError",
+        ],
+        correctAnswer: 0,
+        explanation: "JSON.parse converts the raw JSON string into a live JavaScript object, so typeof parsed is 'object' and parsed.lessons is 22.",
+        hint: "JSON.parse transforms a string into an object.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js21-q3",
+        type: "multiple_choice",
+        title: "Parsing the response body",
+        prompt: "Why do you need to `await response.json()` after receiving a fetch Response object?",
+        options: [
+          "Because reading the HTTP response body stream is an asynchronous operation that returns a Promise",
+          "Because response.json() connects to an external encryption server",
+          "Because JavaScript variables cannot store text without awaiting",
+          "Because JSON files require a separate password verification step",
+        ],
+        correctAnswer: 0,
+        explanation: "The response headers arrive first. Reading and parsing the streaming response body stream takes time and returns a Promise.",
+        hint: "Streaming response bodies resolve asynchronously.",
+        hintCostXP: 5,
+      },
+    ],
+  },
+
+  // ── JS-22: JavaScript Modules ─────────────────────────────────────────────
+  {
+    id: "quiz-javascript-js22",
+    trackKey: "javascript",
+    trackTitle: "JavaScript",
+    lessonSlug: "js22-javascript-modules",
+    lessonCode: "JS-22",
+    lessonTitle: "JavaScript Modules (import / export)",
+    description: "Assess your ability to structure modular code with named exports, default exports, and import statements.",
+    passingScore: 75,
+    baseXpReward: 30,
+    perfectScoreBonusXp: 15,
+    questions: [
+      {
+        id: "js22-q1",
+        type: "multiple_choice",
+        title: "Named vs Default Exports",
+        prompt: "What is the primary difference between a named export and a default export in ES modules?",
+        options: [
+          "A file can have multiple named exports imported with `{ name }`, but only ONE default export imported without curly braces",
+          "Named exports are for numbers; default exports are for functions",
+          "Default exports can only be used in Node.js, not browsers",
+          "Named exports are automatically global across all files",
+        ],
+        correctAnswer: 0,
+        explanation: "A module can export multiple named items (`export const a = 1; export const b = 2;`) imported as `import { a, b } from './file'`. It can have only one default export (`export default ...`) imported without braces.",
+        hint: "Multiple named exports inside {}, one default without {}.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js22-q2",
+        type: "multiple_choice",
+        title: "Module Scoping",
+        prompt: "How does variable scope behave inside an ES module file?",
+        options: [
+          "Every variable declared in a module is private to that file unless explicitly shared with `export`",
+          "All variables in every module automatically pollute the global window object",
+          "Variables in modules are shared across all open browser tabs",
+          "Modules cannot declare variables",
+        ],
+        correctAnswer: 0,
+        explanation: "Modules have their own module scope. Variables do not leak into the global scope unless explicitly exported and imported.",
+        hint: "Variables are private to the module unless exported.",
+        hintCostXP: 5,
+      },
+      {
+        id: "js22-q3",
+        type: "multiple_choice",
+        title: "Renaming imports with 'as'",
+        prompt: "How can you resolve a naming conflict if two different modules export a function with the same name `calculate`?",
+        options: [
+          "`import { calculate as calculateTax } from './tax.js';`",
+          "`import { calculate = calculateTax } from './tax.js';`",
+          "`import { calculate -> calculateTax } from './tax.js';`",
+          "Rename your computer's operating system user profile",
+        ],
+        correctAnswer: 0,
+        explanation: "The `as` keyword allows renaming imported bindings locally to prevent naming conflicts: `import { calculate as calculateTax } from './tax.js';`.",
+        hint: "Use 'as' to alias an imported identifier.",
+        hintCostXP: 5,
+      },
+    ],
+  },
 ];

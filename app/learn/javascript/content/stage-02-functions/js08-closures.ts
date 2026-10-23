@@ -4,43 +4,43 @@ export const js08ClosuresContent: StandardLessonContent = {
   slug: "js08-closures",
   code: "JS-08",
   title: "How Closures Work",
-  subtitle: "Master closures to create private state, write factory functions, and understand how functions remember the lexical environment where they were created.",
+  subtitle: "Learn how inner functions remember variables from where they were created, even after the outer function has finished running.",
   sections: [
     {
       id: "part1",
-      label: "Closure Mental Model",
-      icon: "🔒",
-      tag: "FOUNDATION"
+      label: "How Closures Work",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "Lexical Backpack & Memory",
-      icon: "🎒",
-      tag: "ENGINE MECHANICS"
+      label: "Closure Patterns",
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
-      label: "Practical Use Cases",
-      icon: "🏭",
-      tag: "PATTERNS"
+      label: "Remembering State",
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "The Loop Closure Trap",
-      icon: "⚠️",
-      tag: "DEBUGGING"
+      label: "Shared State Misconception",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Closures Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Core Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,128 +50,126 @@ export const js08ClosuresContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "Functions with a Memory",
-    bigPicture: "A closure is created when an inner function remembers variables from its outer enclosing scope, even after the outer function has finished executing and its stack frame has been popped off the Call Stack.",
-    analogy: "Think of an inner function carrying a backpack. Wherever that function travels in your code, it brings along its backpack containing all variables that were in scope when the function was born.",
-    diagram: "+-------------------------------------------------------+\n| 1. createCounter() is invoked:                        |\n|    let count = 0;                                     |\n|    returns function increment()                       |\n+-------------------------------------------------------+\n| 2. createCounter() finishes & pops off Call Stack!    |\n+-------------------------------------------------------+\n| 3. BUT increment() holds reference to [[Environment]] |\n|    Memory Heap keeps 'count' alive!                   |\n|    counterA(); // count = 1                           |\n|    counterA(); // count = 2 (Persisted in memory!)    |\n+-------------------------------------------------------+",
-    breakdownTitle: "Closure Architecture",
+    title: "How Closures Work",
+    bigPicture: "A closure happens when an inner function remembers and keeps access to variables from its parent function, even after the parent function has finished executing.",
+    breakdownTitle: "Why Closures Matter",
     breakdownItems: [
       {
-        title: "Outer Function Returns",
-        desc: "Normally when a function completes, its local variables are discarded by Garbage Collection."
+        title: "Persistent State",
+        desc: "Functions can remember values across multiple calls without needing global variables."
       },
       {
-        title: "Active Reference Retained",
-        desc: "Because the returned inner function references outer variables, the engine preserves that memory environment."
+        title: "Data Privacy",
+        desc: "Keeps internal variables private so outside code cannot accidentally overwrite them."
       },
       {
-        title: "Encapsulated Private State",
-        desc: "Outside code has zero direct access to modify closed-over variables; only the exposed functions can touch them."
+        title: "Foundation of Modern Libraries",
+        desc: "Frameworks like React use closures under the hood to maintain state in hooks (like useState)."
       }
     ]
   },
   part2: {
-    title: "How the JavaScript Engine Manages Closures",
-    intro: "Step through how closures retain memory and create independent state instances.",
+    title: "Practical Closure Patterns",
+    intro: "Here are the two most common ways developers use closures.",
     cards: [
       {
         number: "01",
         tag: "Private State",
-        title: "Data Encapsulation",
-        description: "Variables declared inside the outer function cannot be accessed or corrupted globally.",
-        codeSnippet: "function createBankAccount(initialBalance) {\n  let balance = initialBalance; // Private!\n  return {\n    getBalance: () => balance,\n    deposit: (amount) => { balance += amount; }\n  };\n}\nconst account = createBankAccount(100);\naccount.deposit(50);\nconsole.log(account.getBalance()); // Output: 150",
+        title: "Private Variable Protection",
+        description: "Variables declared inside the outer function can only be modified through exposed methods.",
+        codeSnippet: "function createWallet(initialBalance) {\n  let balance = initialBalance; // Private!\n  return {\n    addFunds: (amount) => { balance += amount; },\n    getBalance: () => balance\n  };\n}\nconst myWallet = createWallet(50);\nmyWallet.addFunds(20);\nconsole.log(myWallet.getBalance()); // Output: 70",
         color: "emerald"
       },
       {
         number: "02",
-        tag: "Factory",
-        title: "Function Factory",
-        description: "Generate specialized functions pre-configured with custom outer parameters.",
-        codeSnippet: "function makeMultiplier(factor) {\n  return (number) => number * factor;\n}\nconst triple = makeMultiplier(3);\nconst quadruple = makeMultiplier(4);\nconsole.log(triple(10));     // Output: 30\nconsole.log(quadruple(10));  // Output: 40",
+        tag: "Function Factory",
+        title: "Custom Function Generators",
+        description: "Create specialized helper functions configured with preset outer parameters.",
+        codeSnippet: "function makeMultiplier(factor) {\n  return (number) => number * factor;\n}\nconst double = makeMultiplier(2);\nconst triple = makeMultiplier(3);\nconsole.log(double(10)); // Output: 20\nconsole.log(triple(10)); // Output: 30",
         color: "cyan"
       },
       {
         number: "03",
-        tag: "Isolation",
-        title: "Independent Instances",
-        description: "Every call to the outer function creates a completely independent closure environment.",
-        codeSnippet: "function makeCounter() {\n  let count = 0;\n  return () => ++count;\n}\nconst counter1 = makeCounter();\nconst counter2 = makeCounter();\nconsole.log(counter1()); // Output: 1\nconsole.log(counter1()); // Output: 2\nconsole.log(counter2()); // Output: 1 (Isolated!)",
+        tag: "Independent",
+        title: "Isolated Instances",
+        description: "Every call to the outer function creates a completely independent copy of private state.",
+        codeSnippet: "function createCounter() {\n  let count = 0;\n  return () => ++count;\n}\nconst counterA = createCounter();\nconst counterB = createCounter();\nconsole.log(counterA()); // Output: 1\nconsole.log(counterB()); // Output: 1 (Separate state!)",
         color: "purple"
       }
     ],
     rule: {
-      title: "The Closure Memory Invariant",
-      content: "As long as an inner function reference exists and can be called, the JavaScript garbage collector will NOT destroy the outer variables it closes over."
+      title: "The Closure Rule",
+      content: "An inner function always has access to the variables of its outer function, even after the outer function has returned."
     }
   },
   part3: {
-    title: "Step-by-Step Closure Mechanics",
-    intro: "Understand why closures are one of the most powerful paradigms in JavaScript.",
+    title: "Step-by-Step: How Closures Remember State",
+    intro: "Trace exactly what happens when a closure is created and executed.",
     points: [
       {
-        title: "1. The [[Environment]] Property",
-        content: "When a function is declared, the engine attaches a hidden [[Environment]] link pointing to the current lexical environment. This link never changes.",
-        codeSnippet: "const prefix = \"ID:\";\nfunction makeIdGenerator() {\n  let id = 100;\n  return () => `${prefix} ${++id}`;\n}\nconst nextId = makeIdGenerator();\nconsole.log(nextId()); // Output: ID: 101"
+        title: "Step 1: Outer Function Runs",
+        content: "createCounter() is called. It creates a local variable let count = 0 and returns an inner arrow function.",
+        codeSnippet: "function createCounter() {\n  let count = 0; // Local variable created\n  return () => { count++; return count; };\n}"
       },
       {
-        title: "2. Stateful Event Handlers & Callbacks",
-        content: "Closures allow callbacks and event listeners in the browser to remember user interaction state across clicks.",
-        codeSnippet: "function setupButton(buttonName) {\n  let clickCount = 0;\n  return function handleClick() {\n    clickCount++;\n    return `${buttonName} clicked ${clickCount} times`;\n  };\n}\nconst onSaveClick = setupButton(\"SaveButton\");\nconsole.log(onSaveClick()); // Output: SaveButton clicked 1 times\nconsole.log(onSaveClick()); // Output: SaveButton clicked 2 times"
+        title: "Step 2: Outer Function Finishes",
+        content: "Normally, local variables are erased when a function finishes. But here, the inner function still needs 'count'. JavaScript keeps 'count' alive in memory!",
+        codeSnippet: "const counter = createCounter();\n// createCounter() has finished, but counter still holds 'count'"
       },
       {
-        title: "3. Powering React Hooks",
-        content: "React's useState hook works by taking advantage of closures: component functions re-run, but state is preserved in an outer closure maintained by React.",
-        codeSnippet: "// Conceptual illustration of useState via closures:\nfunction createStore(initialValue) {\n  let state = initialValue;\n  const getState = () => state;\n  const setState = (newVal) => { state = newVal; };\n  return [getState, setState];\n}\nconst [count, setCount] = createStore(0);\nsetCount(5);\nconsole.log(count()); // Output: 5"
+        title: "Step 3: Calling the Inner Function Later",
+        content: "When counter() is called, it increments that preserved 'count' variable and returns the updated number.",
+        codeSnippet: "console.log(counter()); // Output: 1\nconsole.log(counter()); // Output: 2"
       }
     ]
   },
   part4: {
-    title: "The Classic Trap: Closures in Loops (var vs let)",
+    title: "Common Trap: Sharing State Across Separate Instances",
     bad: {
-      title: "❌ var Shares a Single Binding Across Iterations",
-      code: "function runVarLoop() {\n  const callbacks = [];\n  // Bug: var has function scope! Only ONE 'i' variable exists\n  for (var i = 0; i < 3; i++) {\n    callbacks.push(() => i);\n  }\n  // When called later, loop has finished and i is 3!\n  return callbacks.map(fn => fn());\n}\nconsole.log(runVarLoop()); // Output: [3, 3, 3] (Unexpected!)",
-      explanation: "Because var does not have block scope, all 3 callbacks close over the exact same variable i, which is 3 by the time the callbacks are executed."
+      title: "❌ Assuming Separate Closures Share Variables",
+      code: "function makeCounter() {\n  let count = 0;\n  return () => ++count;\n}\nconst counter1 = makeCounter();\nconst counter2 = makeCounter();\ncounter1(); // count in counter1 becomes 1\n// Mistake: Expecting counter2() to return 2!\nconsole.log(counter2()); // Output: 1",
+      explanation: "Each call to makeCounter() creates a completely new, separate closure with its own independent count variable."
     },
     good: {
-      title: "✅ let Creates a Fresh Lexical Binding Per Iteration",
-      code: "function runLetLoop() {\n  const callbacks = [];\n  // Safe: let has block scope! A fresh 'i' is created per iteration\n  for (let i = 0; i < 3; i++) {\n    callbacks.push(() => i);\n  }\n  return callbacks.map(fn => fn());\n}\nconsole.log(runLetLoop()); // Output: [0, 1, 2] (Correct!)",
-      explanation: "In modern JavaScript, let creates a new scoped binding for every iteration of the loop, so each closure captures its own snapshot."
+      title: "✅ Understand Each Instance Has Its Own Memory",
+      code: "const counter1 = makeCounter();\nconst counter2 = makeCounter();\ncounter1(); // counter1 is at 1\ncounter1(); // counter1 is at 2\nconsole.log(counter2()); // Output: 1 (Independent from counter1)",
+      explanation: "Each instance maintains its own private variables without interfering with other instances."
     }
   },
   part5: {
-    title: "Interactive Closures Sandbox",
-    intro: "Build a secure bank account balance with deposit and withdraw methods using closures.",
-    starterCode: "function createWallet(owner, startingFunds) {\n  // Private variable:\n  let funds = startingFunds;\n\n  return {\n    getOwner: () => owner,\n    checkBalance: () => `$${funds}`,\n    addCash: (amount) => {\n      funds += amount;\n      return `Added $${amount}. New balance: $${funds}`;\n    }\n  };\n}\n\nconst myWallet = createWallet(\"Alex\", 50);\nconsole.log(myWallet.checkBalance());\nconsole.log(myWallet.addCash(25));\nconsole.log(myWallet.checkBalance());\n\n// Notice: funds is private and cannot be directly reassigned!\n// myWallet.funds = 1000000; // Has zero effect on real funds\nconsole.log(\"Balance after tamper attempt:\", myWallet.checkBalance());\n"
+    title: "Interactive Code Playground",
+    intro: "Step through this interactive bank account closure. Notice how balance cannot be altered from outside.",
+    starterCode: "function createBankAccount(customerName, initialDeposit) {\n  let balance = initialDeposit; // Private variable!\n\n  return {\n    deposit(amount) {\n      balance += amount;\n      console.log(`[${customerName}] Deposited $${amount}. New balance: $${balance}`);\n    },\n    checkBalance() {\n      return balance;\n    }\n  };\n}\n\nconst myAccount = createBankAccount(\"Maya\", 100);\nmyAccount.deposit(50);\nmyAccount.deposit(25);\nconsole.log(\"Final verified balance:\", myAccount.checkBalance());\n"
   },
   part6: {
-    title: "Key Takeaways: Closures",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Memory Retention",
-        desc: "Inner functions remember variables from their outer scope even after the outer function returns."
+        title: "Functions Remember Their Birthplace",
+        desc: "An inner function retains access to outer variables even after the outer function finishes."
       },
       {
-        title: "Private Encapsulation",
-        desc: "Closures hide internal variables from global access, allowing data privacy without classes."
+        title: "Enables Private State",
+        desc: "Closures prevent outside code from directly altering internal data."
       },
       {
-        title: "Always Use let in Loops",
-        desc: "let creates a new binding for every iteration, avoiding the classic var loop closure trap."
+        title: "Instances are Isolated",
+        desc: "Each call to the outer function creates its own fresh closure and variables."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "Why does an inner function have access to outer variables even after the outer function has returned?",
+      question: "What is a closure in JavaScript?",
       options: [
-        "Because JavaScript copies all variables into the global window object",
-        "Because the inner function retains a reference to the outer Lexical Environment in memory, preventing garbage collection",
-        "Because functions are re-executed from scratch every time they are called",
-        "Because variables declared in outer functions are automatically converted to global variables"
+        "A function that remembers variables from its outer enclosing scope even after the outer function has finished",
+        "A special method used to shut down the browser window",
+        "A syntax error caused by forgetting to close curly braces",
+        "A loop that terminates automatically when an array is empty"
       ],
-      correctIndex: 1,
-      explanation: "When an inner function is defined, it keeps an internal reference to its enclosing Lexical Environment. Because that environment is still reachable, the garbage collector preserves it in memory."
+      correctIndex: 0,
+      explanation: "A closure is created when an inner function references variables from its parent function. It keeps those variables alive in memory even after the parent function has completed execution."
     }
   }
 };

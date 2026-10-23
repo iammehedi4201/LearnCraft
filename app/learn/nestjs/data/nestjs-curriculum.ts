@@ -71,19 +71,19 @@ export interface PrerequisiteTopicMeta {
 export const NESTJS_PREREQUISITES: PrerequisiteTopicMeta[] = [
   {
     id: "prereq-ts",
-    title: "TypeScript Fundamentals",
-    desc: "Types, interfaces, generics, access modifiers, type narrowing, and async/await Promises.",
+    title: "TypeScript & Core OOP",
+    desc: "Types, interfaces, generics, access modifiers, parameter properties, dependency injection patterns, and async/await.",
     tag: "Required Foundation",
     badge: "TS",
     path: "/learn/typescript",
   },
   {
-    id: "prereq-oop",
-    title: "OOP Fundamentals",
-    desc: "Classes, constructors, parameter properties, inheritance, encapsulation & abstract classes.",
+    id: "prereq-node",
+    title: "Node.js Fundamentals",
+    desc: "Event loop, HTTP modules, asynchronous streams, npm packages, and backend runtime basics.",
     tag: "Required Foundation",
-    badge: "OOP",
-    path: "/learn/oop",
+    badge: "Node",
+    path: "/learn/nodejs",
   },
 ];
 

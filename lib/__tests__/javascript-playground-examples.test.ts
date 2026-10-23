@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { JS_LESSONS_CONTENT } from "../../app/learn/javascript/data/javascript-lesson-content";
+import { getAllLessons } from "../../app/learn/javascript/data/javascript-curriculum";
+import { getJSLessonContent } from "../../app/learn/javascript/data/javascript-lesson-content";
 import * as vm from "vm";
 
 function createPlaygroundSandbox() {
@@ -67,21 +68,23 @@ function createPlaygroundSandbox() {
 }
 
 describe("JavaScript Playground Code Examples Validation Suite", () => {
-  const lessonEntries = Object.entries(JS_LESSONS_CONTENT);
+  const authoritativeLessons = getAllLessons();
 
-  it("ensures all 30 lessons have non-empty executable starterCode in Part 5", () => {
-    expect(lessonEntries.length).toBe(30);
+  it("ensures all 22 lessons have non-empty executable starterCode in Part 5", () => {
+    expect(authoritativeLessons.length).toBe(22);
 
-    for (const [slug, lesson] of lessonEntries) {
-      expect(lesson.part5, `Missing part5 for ${slug}`).toBeDefined();
-      expect(lesson.part5.starterCode, `Missing starterCode for ${slug}`).toBeDefined();
-      expect(lesson.part5.starterCode.length, `Empty starterCode for ${slug}`).toBeGreaterThan(30);
+    for (const meta of authoritativeLessons) {
+      const lesson = getJSLessonContent(meta.slug);
+      expect(lesson.part5, `Missing part5 for ${meta.slug}`).toBeDefined();
+      expect(lesson.part5?.starterCode, `Missing starterCode for ${meta.slug}`).toBeDefined();
+      expect(lesson.part5?.starterCode?.length, `Empty starterCode for ${meta.slug}`).toBeGreaterThan(30);
     }
   });
 
-  for (const [slug, lesson] of lessonEntries) {
-    it(`executes ${lesson.code} starterCode in playground runtime without unhandled syntax or runtime errors`, () => {
-      const code = lesson.part5.starterCode;
+  for (const meta of authoritativeLessons) {
+    it(`executes ${meta.code} (${meta.slug}) starterCode in playground runtime without unhandled syntax or runtime errors`, async () => {
+      const lesson = getJSLessonContent(meta.slug);
+      const code = lesson.part5?.starterCode || "";
       const { sandbox, logs } = createPlaygroundSandbox();
 
       const context = vm.createContext(sandbox);
@@ -90,10 +93,13 @@ describe("JavaScript Playground Code Examples Validation Suite", () => {
       expect(() => {
         const script = new vm.Script(code);
         script.runInContext(context, { timeout: 1000 });
-      }, `Runtime execution failure in ${lesson.code} (${slug})`).not.toThrow();
+      }, `Runtime execution failure in ${meta.code} (${meta.slug})`).not.toThrow();
+
+      // Allow async functions / microtasks to settle
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       // Ensure that the script actually executed statements and produced console logs
-      expect(logs.length, `Expected console logs in ${lesson.code} (${slug})`).toBeGreaterThan(0);
+      expect(logs.length, `Expected console logs in ${meta.code} (${meta.slug})`).toBeGreaterThan(0);
     });
   }
 });

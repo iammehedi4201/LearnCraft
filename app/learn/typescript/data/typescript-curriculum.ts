@@ -2,9 +2,12 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * TYPESCRIPT CURRICULUM — AUTHORITATIVE DATA LAYER
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * Clean 9-Phase pedagogical progression from static typing foundations
- * to advanced type system mastery, generics, conditional types,
- * compiler configuration, and production type architecture.
+ * Clean 4-Part pedagogical progression based on LearnCraft's authoritative
+ * TypeScript curriculum:
+ * Part 1: TypeScript Basics (Lessons 1-4)
+ * Part 2: Describe Your Data (Lessons 5-9)
+ * Part 3: Work With Types Safely (Lessons 10-15)
+ * Part 4: Understand TypeScript in Real Projects (Lessons 16-18)
  *
  * Core Philosophy: "TypeScript teaches TypeScript."
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -21,6 +24,7 @@ export interface LessonMeta {
   desc: string;
   path: string;
   tag: ContentTag;
+  difficulty: "Easy" | "Moderate" | "Difficult";
   estimatedMinutes: number;
   prerequisite?: string;
   stepNumber: number;
@@ -107,11 +111,11 @@ export const TYPESCRIPT_PREREQUISITES: PrerequisiteTopicMeta[] = [
 
 export const TYPESCRIPT_RELATED_TOPICS: RelatedTopicMeta[] = [
   {
-    id: "rel-oop",
-    title: "OOP Fundamentals",
-    desc: "Design patterns, encapsulation, inheritance, SOLID, and domain modeling.",
-    badge: "Architecture",
-    path: "/learn/oop",
+    id: "rel-node",
+    title: "Node.js",
+    desc: "Modern backend runtime, asynchronous event loop, APIs, and microservices.",
+    badge: "Backend",
+    path: "/learn/nodejs",
   },
   {
     id: "rel-nestjs",
@@ -127,15 +131,6 @@ export const TYPESCRIPT_RELATED_TOPICS: RelatedTopicMeta[] = [
     badge: "Full-Stack",
     path: "/learn/nextjs",
   },
-  /*
-  {
-    id: "rel-tanstack",
-    title: "TanStack Query",
-    desc: "Type-safe asynchronous server state management, caching, and optimistic mutations.",
-    badge: "Frontend",
-    path: "/learn/tanstack",
-  },
-  */
 ];
 
 // ─────────────────────────────────────────────────────────────
@@ -144,7 +139,7 @@ export const TYPESCRIPT_RELATED_TOPICS: RelatedTopicMeta[] = [
 
 export const TYPESCRIPT_CAPSTONE: CapstoneProjectMeta = {
   id: "capstone-ts-engine",
-  stageNumber: 9,
+  stageNumber: 4,
   slug: "type-safe-data-store",
   title: "Type-Safe In-Memory Query Engine",
   subtitle: "Final Capstone Project",
@@ -153,7 +148,7 @@ export const TYPESCRIPT_CAPSTONE: CapstoneProjectMeta = {
   badge: "🛠️ Capstone",
   xpReward: 300,
   estimatedMinutes: 90,
-  prerequisites: ["TS-05", "TS-09", "TS-13", "TS-17", "TS-24", "TS-28"],
+  prerequisites: ["TS-04", "TS-07", "TS-09", "TS-12", "TS-15", "TS-17"],
   skillsTaught: [
     "Generic Entity Store Abstractions (<T extends { id: string }>) ",
     "Type-Safe Schema Validation with Discriminated Unions",
@@ -166,17 +161,18 @@ export const TYPESCRIPT_CAPSTONE: CapstoneProjectMeta = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// 9 Pedagogy Stages (All 32 Lessons)
+// 4 Authoritative Curriculum Stages (All 18 Lessons)
 // ─────────────────────────────────────────────────────────────
 
 export const TYPESCRIPT_STAGES: StageMeta[] = [
+  // ── PART 1: TypeScript Basics ──
   {
     id: "stage-1",
     stageNumber: 1,
-    name: "TypeScript Fundamentals",
-    subtitle: "Mental Model, Primitives & Special Types",
-    milestone: "Build a rock-solid mental model of static typing, annotations, and inference.",
-    description: "Understand why TypeScript exists, how the compiler analyzes code, primitive type annotations, tuples, and special types like unknown and never.",
+    name: "TypeScript Basics",
+    subtitle: "Types, Annotations, Primitives & Functions",
+    milestone: "Understand what TypeScript does, primitive types, and function contracts.",
+    description: "Learn why TypeScript exists, how types catch mistakes early, explicit annotations vs inference, arrays, and function parameter and return types.",
     theme: {
       badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
       dot: "bg-purple-400",
@@ -188,130 +184,143 @@ export const TYPESCRIPT_STAGES: StageMeta[] = [
       {
         code: "TS-01",
         stepNumber: 1,
-        slug: "ts01-mental-model",
-        name: "What is TypeScript? The Guardrail Mental Model",
-        desc: "Why TypeScript exists, how it relates to JavaScript, compile-time vs runtime, and type erasure.",
-        path: "/learn/typescript/ts01-mental-model",
+        slug: "ts01-what-typescript-does",
+        name: "What TypeScript Does",
+        desc: "TypeScript adds a type system to JavaScript to catch mistakes before code runs.",
+        path: "/learn/typescript/ts01-what-typescript-does",
         tag: "CORE",
-        estimatedMinutes: 20,
+        difficulty: "Easy",
+        estimatedMinutes: 10,
         prerequisite: "JavaScript Basics",
       },
       {
         code: "TS-02",
         stepNumber: 2,
-        slug: "ts02-primitives-inference",
-        name: "Basic Types & Type Inference",
-        desc: "Master primitive type annotations (string, number, boolean), understand automatic type inference, and decode type errors.",
-        path: "/learn/typescript/ts02-primitives-inference",
+        slug: "ts02-type-annotations-inference",
+        name: "Type Annotations and Type Inference",
+        desc: "Tell TypeScript the type you want or let inference deduce it from values automatically.",
+        path: "/learn/typescript/ts02-type-annotations-inference",
         tag: "CORE",
-        estimatedMinutes: 20,
-        prerequisite: "TS-01 (Mental Model)",
+        difficulty: "Easy",
+        estimatedMinutes: 10,
+        prerequisite: "TS-01 (What TypeScript Does)",
       },
       {
         code: "TS-03",
         stepNumber: 3,
-        slug: "ts03-arrays-tuples",
-        name: "Arrays, Tuples & Readonly Collections",
-        desc: "Type-safe arrays (string[], number[]), fixed-position tuples ([string, number]), and immutable readonly modifiers.",
-        path: "/learn/typescript/ts03-arrays-tuples",
+        slug: "ts03-basic-types-arrays",
+        name: "Basic Types and Arrays",
+        desc: "Common primitive types (string, number, boolean) and typed collection arrays (T[]).",
+        path: "/learn/typescript/ts03-basic-types-arrays",
         tag: "CORE",
-        estimatedMinutes: 25,
+        difficulty: "Easy",
+        estimatedMinutes: 10,
         prerequisite: "TS-02 (Type Annotations)",
       },
       {
         code: "TS-04",
         stepNumber: 4,
-        slug: "ts04-object-types",
-        name: "Object Types, Optional Fields & Readonly",
-        desc: "Define strict object shapes, handle optional properties with ?, protect immutable fields with readonly, and understand excess property checks.",
-        path: "/learn/typescript/ts04-object-types",
+        slug: "ts04-function-parameters-return-types",
+        name: "Function Parameters and Return Types",
+        desc: "Describe function input requirements, return types, and non-returning void actions.",
+        path: "/learn/typescript/ts04-function-parameters-return-types",
         tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "TS-03 (Arrays & Tuples)",
-      },
-      {
-        code: "TS-05",
-        stepNumber: 5,
-        slug: "ts05-special-types",
-        name: "Special Types: any, unknown, void & never",
-        desc: "Master the type hierarchy: top types (any vs unknown), bottom types (never), and function return void for safe data handling.",
-        path: "/learn/typescript/ts05-special-types",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "TS-04 (Object Types)",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-03 (Basic Types)",
       },
     ],
   },
+
+  // ── PART 2: Describe Your Data ──
   {
     id: "stage-2",
     stageNumber: 2,
-    name: "Functions & Type Composition",
-    subtitle: "Signatures, Unions, Intersections & Aliases",
-    milestone: "Write bulletproof function contracts and compose flexible data shapes.",
-    description: "Master function parameter typing, return inference, overloading, union types, intersection types, and the distinction between type and interface.",
+    name: "Describe Your Data",
+    subtitle: "Objects, Interfaces, Unions & Narrowing",
+    milestone: "Model application data structures and narrow multi-type values safely.",
+    description: "Define object shapes, compare type aliases and interfaces, enforce allowed literal states, handle null/undefined, and apply type narrowing.",
     theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
+      badge: "bg-blue-500/10 text-blue-300 border-blue-500/20",
+      dot: "bg-blue-400",
+      border: "border-blue-500/30",
+      bgSubtle: "bg-blue-500/[0.03]",
+      textAccent: "text-blue-400",
     },
     lessons: [
       {
-        code: "TS-06",
+        code: "TS-05",
         stepNumber: 1,
-        slug: "ts06-function-types",
-        name: "Function Signatures & Parameters",
-        desc: "Typing parameter contracts, return types, optional params (?), defaults, and rest parameter arrays.",
-        path: "/learn/typescript/ts06-function-types",
+        slug: "ts05-object-types",
+        name: "Object Types",
+        desc: "Describe required fields and optional properties with the ? modifier.",
+        path: "/learn/typescript/ts05-object-types",
         tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "TS-05 (Special Types)",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-04 (Function Types)",
+      },
+      {
+        code: "TS-06",
+        stepNumber: 2,
+        slug: "ts06-type-and-interface",
+        name: "type and interface",
+        desc: "Compare type aliases and interfaces for defining object contracts and unions.",
+        path: "/learn/typescript/ts06-type-and-interface",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-05 (Object Types)",
       },
       {
         code: "TS-07",
-        stepNumber: 2,
-        slug: "ts07-function-overloads",
-        name: "Function Overloading",
-        desc: "Master multiple call signatures backed by a single implementation for adaptive functions.",
-        path: "/learn/typescript/ts07-function-overloads",
-        tag: "BUILD",
-        estimatedMinutes: 25,
-        prerequisite: "TS-06 (Function Types)",
+        stepNumber: 3,
+        slug: "ts07-union-and-literal-types",
+        name: "Union Types and Literal Types",
+        desc: "Combine allowed types with | and enforce exact allowed literal values.",
+        path: "/learn/typescript/ts07-union-and-literal-types",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-06 (type & interface)",
       },
       {
         code: "TS-08",
-        stepNumber: 3,
-        slug: "ts08-unions-intersections",
-        name: "Union & Intersection Types",
-        desc: "Compose flexible types with union (|), combine object models with intersection (&), and enforce exact literal values.",
-        path: "/learn/typescript/ts08-unions-intersections",
+        stepNumber: 4,
+        slug: "ts08-optional-values-null-undefined",
+        name: "Optional Values, null, and undefined",
+        desc: "Make missing data visible and prevent runtime null reference errors.",
+        path: "/learn/typescript/ts08-optional-values-null-undefined",
         tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "TS-06 (Function Types)",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-07 (Unions)",
       },
       {
         code: "TS-09",
-        stepNumber: 4,
-        slug: "ts09-type-vs-interface",
-        name: "Type Aliases vs Interfaces",
-        desc: "Understand key differences: declaration merging, extends vs &, and practical decision rules for everyday code.",
-        path: "/learn/typescript/ts09-type-vs-interface",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "TS-08 (Unions & Intersections)",
+        stepNumber: 5,
+        slug: "ts09-type-narrowing",
+        name: "Type Narrowing",
+        desc: "Use runtime type guards (typeof, Array.isArray) to refine multi-type values safely.",
+        path: "/learn/typescript/ts09-type-narrowing",
+        tag: "BUILD",
+        difficulty: "Difficult",
+        estimatedMinutes: 20,
+        prerequisite: "TS-08 (Optional Values)",
       },
     ],
   },
+
+  // ── PART 3: Work With Types Safely ──
   {
     id: "stage-3",
     stageNumber: 3,
-    name: "Type Narrowing & Control Flow",
-    subtitle: "Guards, Predicates & Discriminated Unions",
-    milestone: "Master how TypeScript tracks types across branches of execution.",
-    description: "Learn control flow analysis, typeof, instanceof, custom user-defined type guards (is), discriminated unions, and exhaustiveness checking.",
+    name: "Work With Types Safely",
+    subtitle: "Safety Hierarchy, Generics, Utilities & Modules",
+    milestone: "Master unknown safety, type assertions, generic functions, and modules.",
+    description: "Understand any vs unknown, type assertions, reusable generics, common utility types, classes with implements, and module type imports.",
     theme: {
-      badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+      badge: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
       dot: "bg-emerald-400",
       border: "border-emerald-500/30",
       bgSubtle: "bg-emerald-500/[0.03]",
@@ -321,167 +330,86 @@ export const TYPESCRIPT_STAGES: StageMeta[] = [
       {
         code: "TS-10",
         stepNumber: 1,
-        slug: "ts10-control-flow-guards",
-        name: "Control Flow Analysis & Basic Guards",
-        desc: "How TypeScript narrows broad types using typeof, instanceof, equality, and truthiness.",
-        path: "/learn/typescript/ts10-control-flow-guards",
+        slug: "ts10-any-vs-unknown",
+        name: "any vs. unknown",
+        desc: "Differentiate turning off checks with any from safe uncertain handling with unknown.",
+        path: "/learn/typescript/ts10-any-vs-unknown",
         tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "TS-08 (Unions & Intersections)",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-09 (Type Narrowing)",
       },
       {
         code: "TS-11",
         stepNumber: 2,
-        slug: "ts11-custom-type-predicates",
-        name: "Custom Type Predicates",
-        desc: "Creating reusable type narrowing functions with 'value is Type' and asserts signatures.",
-        path: "/learn/typescript/ts11-custom-type-predicates",
-        tag: "BUILD",
-        estimatedMinutes: 25,
-        prerequisite: "TS-10 (Control Flow Guards)",
+        slug: "ts11-type-assertions",
+        name: "Type Assertions",
+        desc: "When `as Type` informs the compiler and why it does not validate runtime data.",
+        path: "/learn/typescript/ts11-type-assertions",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-10 (any vs unknown)",
       },
       {
         code: "TS-12",
         stepNumber: 3,
-        slug: "ts12-discriminated-unions",
-        name: "Discriminated Unions",
-        desc: "The single most powerful pattern: tagged unions with literal discriminant properties.",
-        path: "/learn/typescript/ts12-discriminated-unions",
+        slug: "ts12-generics",
+        name: "Generics",
+        desc: "Write reusable functions and abstractions that preserve exact input and output types.",
+        path: "/learn/typescript/ts12-generics",
         tag: "BUILD",
-        estimatedMinutes: 30,
-        prerequisite: "TS-10 (Control Flow Guards)",
+        difficulty: "Difficult",
+        estimatedMinutes: 20,
+        prerequisite: "TS-11 (Type Assertions)",
       },
       {
         code: "TS-13",
         stepNumber: 4,
-        slug: "ts13-exhaustive-checking",
-        name: "Exhaustive Checking with never",
-        desc: "Compile-time enforcement ensuring every union branch is handled in switch statements.",
-        path: "/learn/typescript/ts13-exhaustive-checking",
-        tag: "BUILD",
-        estimatedMinutes: 20,
-        prerequisite: "TS-12 (Discriminated Unions)",
+        slug: "ts13-common-utility-types",
+        name: "Common Utility Types",
+        desc: "Transform existing types using Pick, Partial, Omit, and Record without duplication.",
+        path: "/learn/typescript/ts13-common-utility-types",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-12 (Generics)",
       },
-    ],
-  },
-  {
-    id: "stage-4",
-    stageNumber: 4,
-    name: "Generics & Type Abstraction",
-    subtitle: "Reusable Types, Constraints & keyof",
-    milestone: "Write flexible, type-safe functions and data structures without losing type fidelity.",
-    description: "Understand the core problem generics solve, generic functions, generic interfaces, generic constraints (extends), and keyof property lookups.",
-    theme: {
-      badge: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
-      dot: "bg-cyan-400",
-      border: "border-cyan-500/30",
-      bgSubtle: "bg-cyan-500/[0.03]",
-      textAccent: "text-cyan-400",
-    },
-    lessons: [
       {
         code: "TS-14",
-        stepNumber: 1,
-        slug: "ts14-generic-functions",
-        name: "Generic Functions & Type Parameters",
-        desc: "The problem generics solve: Capturing and preserving relationship types with <T>.",
-        path: "/learn/typescript/ts14-generic-functions",
+        stepNumber: 5,
+        slug: "ts14-classes-and-implements",
+        name: "Classes and implements",
+        desc: "Group state and methods together while verifying interface contracts with implements.",
+        path: "/learn/typescript/ts14-classes-and-implements",
         tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "TS-09 (Type vs Interface)",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-13 (Utility Types)",
       },
       {
         code: "TS-15",
-        stepNumber: 2,
-        slug: "ts15-generic-interfaces",
-        name: "Generic Interfaces & Containers",
-        desc: "Building reusable generic structures like ApiResponse<T>, PaginatedList<T>, and Result<T, E>.",
-        path: "/learn/typescript/ts15-generic-interfaces",
-        tag: "BUILD",
-        estimatedMinutes: 25,
-        prerequisite: "TS-14 (Generic Functions)",
-      },
-      {
-        code: "TS-16",
-        stepNumber: 3,
-        slug: "ts16-generic-constraints",
-        name: "Generic Constraints (extends)",
-        desc: "Restricting type parameters to guarantee properties with <T extends HasId>.",
-        path: "/learn/typescript/ts16-generic-constraints",
-        tag: "BUILD",
-        estimatedMinutes: 25,
-        prerequisite: "TS-14 (Generic Functions)",
-      },
-      {
-        code: "TS-17",
-        stepNumber: 4,
-        slug: "ts17-generics-keyof",
-        name: "Generics with keyof & Property Lookup",
-        desc: "Combining K extends keyof T with T[K] for 100% type-safe object property access.",
-        path: "/learn/typescript/ts17-generics-keyof",
-        tag: "BUILD",
-        estimatedMinutes: 30,
-        prerequisite: "TS-16 (Generic Constraints)",
-      },
-    ],
-  },
-  {
-    id: "stage-5",
-    stageNumber: 5,
-    name: "Classes & Object-Oriented TypeScript",
-    subtitle: "Class Typing, Parameter Properties & Abstract Classes",
-    milestone: "Master TypeScript-specific class mechanics and type contracts.",
-    description: "Learn how TypeScript enhances classes with access modifiers, parameter properties, readonly fields, abstract classes, and interface implementation.",
-    theme: {
-      badge: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
-      dot: "bg-indigo-400",
-      border: "border-indigo-500/30",
-      bgSubtle: "bg-indigo-500/[0.03]",
-      textAccent: "text-indigo-400",
-    },
-    lessons: [
-      {
-        code: "TS-18",
-        stepNumber: 1,
-        slug: "ts18-class-access-modifiers",
-        name: "Class Fields & Access Modifiers",
-        desc: "public, private, protected, readonly, and the difference between TS private and JS #private.",
-        path: "/learn/typescript/ts18-class-access-modifiers",
+        stepNumber: 6,
+        slug: "ts15-modules-and-type-imports",
+        name: "Modules and Type Imports",
+        desc: "Organize code across files and use import type for zero-runtime type imports.",
+        path: "/learn/typescript/ts15-modules-and-type-imports",
         tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "TS-04 (Object Types)",
-      },
-      {
-        code: "TS-19",
-        stepNumber: 2,
-        slug: "ts19-parameter-properties",
-        name: "Parameter Properties & Getters/Setters",
-        desc: "Constructor parameter property shorthand and type-safe getter/setter accessors.",
-        path: "/learn/typescript/ts19-parameter-properties",
-        tag: "BUILD",
-        estimatedMinutes: 20,
-        prerequisite: "TS-18 (Class Access Modifiers)",
-      },
-      {
-        code: "TS-20",
-        stepNumber: 3,
-        slug: "ts20-abstract-classes",
-        name: "Abstract Classes & Interface Implementation",
-        desc: "abstract class vs interface: Base blueprint enforcement and polymorphism in TypeScript.",
-        path: "/learn/typescript/ts20-abstract-classes",
-        tag: "BUILD",
-        estimatedMinutes: 25,
-        prerequisite: "TS-18 (Class Access Modifiers)",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-14 (Classes)",
       },
     ],
   },
+
+  // ── PART 4: Understand TypeScript in Real Projects ──
   {
-    id: "stage-6",
-    stageNumber: 6,
-    name: "Advanced Type System",
-    subtitle: "Conditional Types, infer, Mapped Types & Utilities",
-    milestone: "Unlock the full expressive power of TypeScript's meta-programming type level.",
-    description: "Understand indexed access types, conditional types, infer keyword, mapped types, template literal types, and built-in utility types.",
+    id: "stage-4",
+    stageNumber: 4,
+    name: "Understand TypeScript in Real Projects",
+    subtitle: "Async Promises, Runtime API Validation & Debugging",
+    milestone: "Handle async data flows, validate external API responses, and resolve errors cleanly.",
+    description: "Model asynchronous values with Promise<T>, validate incoming server data at runtime, and read compiler diagnostics to fix type errors.",
     theme: {
       badge: "bg-amber-500/10 text-amber-300 border-amber-500/20",
       dot: "bg-amber-400",
@@ -491,289 +419,131 @@ export const TYPESCRIPT_STAGES: StageMeta[] = [
     },
     lessons: [
       {
-        code: "TS-21",
+        code: "TS-16",
         stepNumber: 1,
-        slug: "ts21-indexed-access-typeof",
-        name: "Indexed Access & typeof Types",
-        desc: "Lookup types (T[K]) and extracting types from existing runtime values using typeof.",
-        path: "/learn/typescript/ts21-indexed-access-typeof",
-        tag: "BUILD",
-        estimatedMinutes: 25,
-        prerequisite: "TS-17 (Generics with keyof)",
+        slug: "ts16-promises-and-async-functions",
+        name: "Promises and async Functions",
+        desc: "Model asynchronous values with Promise<T> and async/await syntax.",
+        path: "/learn/typescript/ts16-promises-and-async-functions",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-15 (Modules)",
       },
       {
-        code: "TS-22",
+        code: "TS-17",
         stepNumber: 2,
-        slug: "ts22-conditional-types-infer",
-        name: "Conditional Types & infer",
-        desc: "Type-level ternary expressions (T extends U ? X : Y) and pattern matching with infer R.",
-        path: "/learn/typescript/ts22-conditional-types-infer",
-        tag: "PROFESSIONAL",
-        estimatedMinutes: 35,
-        prerequisite: "TS-21 (Indexed Access & typeof)",
-      },
-      {
-        code: "TS-23",
-        stepNumber: 3,
-        slug: "ts23-mapped-template-types",
-        name: "Mapped Types & Template Literals",
-        desc: "Transforming object keys with [K in keyof T] and string pattern types with `${A}_${B}`.",
-        path: "/learn/typescript/ts23-mapped-template-types",
-        tag: "PROFESSIONAL",
-        estimatedMinutes: 30,
-        prerequisite: "TS-21 (Indexed Access & typeof)",
-      },
-      {
-        code: "TS-24",
-        stepNumber: 4,
-        slug: "ts24-utility-types",
-        name: "Built-in Utility Types",
-        desc: "Deep dive into Partial, Required, Readonly, Record, Pick, Omit, Exclude, and ReturnType.",
-        path: "/learn/typescript/ts24-utility-types",
-        tag: "CORE",
-        estimatedMinutes: 30,
-        prerequisite: "TS-21 (Indexed Access & typeof)",
-      },
-    ],
-  },
-  {
-    id: "stage-7",
-    stageNumber: 7,
-    name: "Modules, Configuration & Compilation",
-    subtitle: "tsconfig.json, Strict Mode & Type Erasure",
-    milestone: "Understand how the TypeScript compiler builds and validates real projects.",
-    description: "Master ES modules, import type, tsconfig.json compiler flags, strict mode benefits, declaration files (.d.ts), and the runtime erasure rule.",
-    theme: {
-      badge: "bg-teal-500/10 text-teal-300 border-teal-500/20",
-      dot: "bg-teal-400",
-      border: "border-teal-500/30",
-      bgSubtle: "bg-teal-500/[0.03]",
-      textAccent: "text-teal-400",
-    },
-    lessons: [
-      {
-        code: "TS-25",
-        stepNumber: 1,
-        slug: "ts25-modules-type-imports",
-        name: "ES Modules & Type-Only Imports",
-        desc: "Importing and exporting types cleanly with 'import type' and 'export type'.",
-        path: "/learn/typescript/ts25-modules-type-imports",
-        tag: "CORE",
+        slug: "ts17-check-api-data",
+        name: "Check API Data Before Trusting It",
+        desc: "Validate untrusted API data at runtime instead of assuming types validate live traffic.",
+        path: "/learn/typescript/ts17-check-api-data",
+        tag: "BUILD",
+        difficulty: "Difficult",
         estimatedMinutes: 20,
-        prerequisite: "TS-09 (Type vs Interface)",
+        prerequisite: "TS-16 (Promises)",
       },
       {
-        code: "TS-26",
-        stepNumber: 2,
-        slug: "ts26-tsconfig-strict-mode",
-        name: "tsconfig.json & Strict Flags",
-        desc: "Essential compiler options: target, module, strict, noImplicitAny, and strictNullChecks.",
-        path: "/learn/typescript/ts26-tsconfig-strict-mode",
-        tag: "PROFESSIONAL",
-        estimatedMinutes: 25,
-        prerequisite: "TS-25 (ES Modules)",
-      },
-      {
-        code: "TS-27",
+        code: "TS-18",
         stepNumber: 3,
-        slug: "ts27-declarations-type-erasure",
-        name: "Declaration Files & Type Erasure",
-        desc: "Ambient declarations (.d.ts), @types packages, and understanding that types disappear at runtime.",
-        path: "/learn/typescript/ts27-declarations-type-erasure",
+        slug: "ts18-find-and-fix-type-errors",
+        name: "Find and Fix Type Errors",
+        desc: "Read compiler diagnostics to identify mismatches and fix root causes without as any.",
+        path: "/learn/typescript/ts18-find-and-fix-type-errors",
         tag: "PROFESSIONAL",
-        estimatedMinutes: 25,
-        prerequisite: "TS-26 (tsconfig.json)",
+        difficulty: "Moderate",
+        estimatedMinutes: 15,
+        prerequisite: "TS-17 (API Data)",
       },
     ],
-  },
-  {
-    id: "stage-8",
-    stageNumber: 8,
-    name: "Practical TypeScript Patterns",
-    subtitle: "Real-World Typing, satisfies & Error Handling",
-    milestone: "Apply TypeScript to real application workflows without turning to unsafe escape hatches.",
-    description: "Learn type assertions vs the satisfies operator, safe catch error handling with unknown, typing API payloads, and immutability with as const.",
-    theme: {
-      badge: "bg-rose-500/10 text-rose-300 border-rose-500/20",
-      dot: "bg-rose-400",
-      border: "border-rose-500/30",
-      bgSubtle: "bg-rose-500/[0.03]",
-      textAccent: "text-rose-400",
-    },
-    lessons: [
-      {
-        code: "TS-28",
-        stepNumber: 1,
-        slug: "ts28-assertions-vs-satisfies",
-        name: "Type Assertions vs satisfies",
-        desc: "Why 'as Type' can lie to the compiler and how the 'satisfies' operator provides safe validation.",
-        path: "/learn/typescript/ts28-assertions-vs-satisfies",
-        tag: "BUILD",
-        estimatedMinutes: 25,
-        prerequisite: "TS-24 (Utility Types)",
-      },
-      {
-        code: "TS-29",
-        stepNumber: 2,
-        slug: "ts29-safe-error-handling",
-        name: "Safe Error Handling with unknown",
-        desc: "Why catch errors are typed as unknown and how to write custom error narrowing guards.",
-        path: "/learn/typescript/ts29-safe-error-handling",
-        tag: "BUILD",
-        estimatedMinutes: 25,
-        prerequisite: "TS-11 (Custom Type Predicates)",
-      },
-      {
-        code: "TS-30",
-        stepNumber: 3,
-        slug: "ts30-api-contracts-immutability",
-        name: "Type-Safe API Contracts & Immutability",
-        desc: "Modeling external network boundaries, deep readonly types, and 'as const' literal narrowing.",
-        path: "/learn/typescript/ts30-api-contracts-immutability",
-        tag: "BUILD",
-        estimatedMinutes: 30,
-        prerequisite: "TS-28 (Assertions vs satisfies)",
-      },
-    ],
-  },
-  {
-    id: "stage-9",
-    stageNumber: 9,
-    name: "Debugging & Best Practices",
-    subtitle: "Error Diagnostics, Code Smells & Interview Prep",
-    milestone: "Read complex error messages with ease and write clean, idiomatic, maintainable types.",
-    description: "Learn how to dissect compiler error traces, avoid over-engineering types, adhere to production type design principles, and prepare for interviews.",
-    theme: {
-      badge: "bg-purple-500/15 text-purple-300 border-purple-500/30",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
-    },
     capstone: TYPESCRIPT_CAPSTONE,
-    lessons: [
-      {
-        code: "TS-31",
-        stepNumber: 1,
-        slug: "ts31-debugging-compiler-errors",
-        name: "Deciphering Complex Compiler Errors",
-        desc: "How to read and dissect deep compiler error messages, type mismatches, and excess property checks.",
-        path: "/learn/typescript/ts31-debugging-compiler-errors",
-        tag: "PROFESSIONAL",
-        estimatedMinutes: 25,
-        prerequisite: "TS-26 (tsconfig.json)",
-      },
-      {
-        code: "TS-32",
-        stepNumber: 2,
-        slug: "ts32-type-architecture-smells",
-        name: "Clean Type Architecture & Smells",
-        desc: "Avoiding over-complicated types, self-documenting type design, interview questions, and capstone prep.",
-        path: "/learn/typescript/ts32-type-architecture-smells",
-        tag: "PROFESSIONAL",
-        estimatedMinutes: 30,
-        prerequisite: "TS-31 (Debugging Compiler Errors)",
-      },
-    ],
   },
 ];
 
 // ─────────────────────────────────────────────────────────────
-// 9 Sequential Progression Phases (Matching UI Stepper)
+// 4 Progression Phases
 // ─────────────────────────────────────────────────────────────
 
 export const TYPESCRIPT_PROGRESSION_PHASES: ProgressionPhaseMeta[] = [
   {
-    id: "fundamentals",
+    id: "basics",
     phaseNumber: 1,
-    label: "Fundamentals & Primitives",
+    label: "TypeScript Basics",
     tag: "Phase 01",
-    desc: "Static typing mental model, primitive types, arrays, tuples, objects & special types",
-    scope: "Language Basics & Types",
+    desc: "Type system mental model, annotations vs inference, basic types, and function contracts",
+    scope: "Foundational Syntax",
     icon: "zap",
-    lessonCodes: ["TS-01", "TS-02", "TS-03", "TS-04", "TS-05"],
+    lessonCodes: ["TS-01", "TS-02", "TS-03", "TS-04"],
   },
   {
-    id: "functions-composition",
+    id: "describe-data",
     phaseNumber: 2,
-    label: "Functions & Composition",
+    label: "Describe Your Data",
     tag: "Phase 02",
-    desc: "Function types, overloads, unions, intersections, and type vs interface",
-    scope: "Contracts & Signatures",
+    desc: "Object types, type vs interface, union & literal types, nullability, and narrowing",
+    scope: "Data Modeling",
     icon: "server",
-    lessonCodes: ["TS-06", "TS-07", "TS-08", "TS-09"],
+    lessonCodes: ["TS-05", "TS-06", "TS-07", "TS-08", "TS-09"],
   },
   {
-    id: "narrowing",
+    id: "safe-types",
     phaseNumber: 3,
-    label: "Narrowing & Control Flow",
+    label: "Work With Types Safely",
     tag: "Phase 03",
-    desc: "Type guards, user predicates, discriminated unions & exhaustiveness checking",
-    scope: "Control Flow Analysis",
+    desc: "any vs unknown, type assertions, generics, utility types, classes, and type imports",
+    scope: "Safe Abstractions",
     icon: "shield",
-    lessonCodes: ["TS-10", "TS-11", "TS-12", "TS-13"],
+    lessonCodes: ["TS-10", "TS-11", "TS-12", "TS-13", "TS-14", "TS-15"],
   },
   {
-    id: "generics",
+    id: "real-projects",
     phaseNumber: 4,
-    label: "Generics & Abstraction",
+    label: "Understand TypeScript in Real Projects",
     tag: "Phase 04",
-    desc: "Generic functions, generic interfaces, constraints (extends) & keyof",
-    scope: "Parametric Polymorphism",
+    desc: "Promises, async/await, runtime API validation, and debugging compiler diagnostics",
+    scope: "Production Architecture",
     icon: "layers",
-    lessonCodes: ["TS-14", "TS-15", "TS-16", "TS-17"],
-  },
-  {
-    id: "classes",
-    phaseNumber: 5,
-    label: "Classes & OO TypeScript",
-    tag: "Phase 05",
-    desc: "Class typing, access modifiers, parameter properties & abstract classes",
-    scope: "Class-Based Contracts",
-    icon: "server",
-    lessonCodes: ["TS-18", "TS-19", "TS-20"],
-  },
-  {
-    id: "advanced-types",
-    phaseNumber: 6,
-    label: "Advanced Type System",
-    tag: "Phase 06",
-    desc: "Indexed access, conditional types, infer, mapped types & utility types",
-    scope: "Type-Level Metaprogramming",
-    icon: "zap",
-    lessonCodes: ["TS-21", "TS-22", "TS-23", "TS-24"],
-  },
-  {
-    id: "compilation",
-    phaseNumber: 7,
-    label: "Modules & Compilation",
-    tag: "Phase 07",
-    desc: "ES modules, type-only imports, tsconfig.json, strict mode & declaration files",
-    scope: "Compiler & Project Setup",
-    icon: "layers",
-    lessonCodes: ["TS-25", "TS-26", "TS-27"],
-  },
-  {
-    id: "practical-patterns",
-    phaseNumber: 8,
-    label: "Practical Patterns",
-    tag: "Phase 08",
-    desc: "Assertions vs satisfies, safe error handling with unknown & API contracts",
-    scope: "Production Workflows",
-    icon: "shield",
-    lessonCodes: ["TS-28", "TS-29", "TS-30"],
-  },
-  {
-    id: "debugging-best-practices",
-    phaseNumber: 9,
-    label: "Debugging & Mastery",
-    tag: "Phase 09",
-    desc: "Deciphering compiler errors, clean type architecture, interview prep & Capstone",
-    scope: "Professional Polish & Capstone",
-    icon: "layers",
-    lessonCodes: ["TS-31", "TS-32"],
+    lessonCodes: ["TS-16", "TS-17", "TS-18"],
   },
 ];
+
+// ─────────────────────────────────────────────────────────────
+// Backward Compatibility: Legacy Slug & Code Aliases
+// ─────────────────────────────────────────────────────────────
+
+export const TYPESCRIPT_LEGACY_SLUG_MAP: Record<string, string> = {
+  "ts01-mental-model": "ts01-what-typescript-does",
+  "ts02-primitives-inference": "ts02-type-annotations-inference",
+  "ts03-arrays-tuples": "ts03-basic-types-arrays",
+  "ts04-object-types": "ts05-object-types",
+  "ts05-special-types": "ts10-any-vs-unknown",
+  "ts06-function-types": "ts04-function-parameters-return-types",
+  "ts07-function-overloads": "ts04-function-parameters-return-types",
+  "ts08-unions-intersections": "ts07-union-and-literal-types",
+  "ts09-type-vs-interface": "ts06-type-and-interface",
+  "ts10-control-flow-guards": "ts09-type-narrowing",
+  "ts11-custom-type-predicates": "ts09-type-narrowing",
+  "ts12-discriminated-unions": "ts07-union-and-literal-types",
+  "ts13-exhaustive-checking": "ts09-type-narrowing",
+  "ts14-generic-functions": "ts12-generics",
+  "ts15-generic-interfaces": "ts12-generics",
+  "ts16-generic-constraints": "ts12-generics",
+  "ts17-generics-keyof": "ts12-generics",
+  "ts18-class-access-modifiers": "ts14-classes-and-implements",
+  "ts19-parameter-properties": "ts14-classes-and-implements",
+  "ts20-abstract-classes": "ts14-classes-and-implements",
+  "ts21-indexed-access-typeof": "ts13-common-utility-types",
+  "ts22-conditional-types-infer": "ts12-generics",
+  "ts23-mapped-template-types": "ts13-common-utility-types",
+  "ts24-utility-types": "ts13-common-utility-types",
+  "ts25-modules-type-imports": "ts15-modules-and-type-imports",
+  "ts26-tsconfig-strict-mode": "ts18-find-and-fix-type-errors",
+  "ts27-declarations-type-erasure": "ts01-what-typescript-does",
+  "ts28-assertions-vs-satisfies": "ts11-type-assertions",
+  "ts29-safe-error-handling": "ts10-any-vs-unknown",
+  "ts30-api-contracts-immutability": "ts17-check-api-data",
+  "ts31-debugging-compiler-errors": "ts18-find-and-fix-type-errors",
+  "ts32-type-architecture-smells": "ts18-find-and-fix-type-errors",
+};
 
 // ─────────────────────────────────────────────────────────────
 // Helper Functions
@@ -788,10 +558,17 @@ export function getStages(): StageMeta[] {
 }
 
 export function getLessonBySlug(slug: string): LessonMeta | undefined {
+  if (!slug) return undefined;
   const norm = slug.toLowerCase().trim();
-  const cleanNorm = norm.replace(/[^a-z0-9]/g, "");
 
-  // 1. Direct match on slug, path suffix, or substring
+  // 1. Check legacy slug map first to preserve bookmarks, notes, and quiz redirects
+  if (TYPESCRIPT_LEGACY_SLUG_MAP[norm]) {
+    const targetSlug = TYPESCRIPT_LEGACY_SLUG_MAP[norm];
+    const target = getAllLessons().find((l) => l.slug.toLowerCase() === targetSlug.toLowerCase());
+    if (target) return target;
+  }
+
+  // 2. Direct match on slug, path suffix, or substring
   const directMatch = getAllLessons().find(
     (l) =>
       l.slug.toLowerCase() === norm ||
@@ -800,7 +577,8 @@ export function getLessonBySlug(slug: string): LessonMeta | undefined {
   );
   if (directMatch) return directMatch;
 
-  // 2. Match by normalized code (e.g. "ts01" or "ts-01") or slug prefix (e.g. "ts01-mental")
+  // 3. Match by normalized code (e.g. "ts01", "ts-01", "TS-01") or prefix
+  const cleanNorm = norm.replace(/[^a-z0-9]/g, "");
   return getAllLessons().find((l) => {
     const lSlugNorm = l.slug.toLowerCase().replace(/[^a-z0-9]/g, "");
     const lCodeNorm = l.code.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -819,22 +597,18 @@ export function getLessonByCode(code: string): LessonMeta | undefined {
 }
 
 export function getStageByLessonSlug(slug: string): StageMeta | undefined {
+  const lesson = getLessonBySlug(slug);
+  if (!lesson) return undefined;
   return TYPESCRIPT_STAGES.find((stage) =>
-    stage.lessons.some(
-      (l) =>
-        l.slug === slug || l.path.endsWith(`/${slug}`) || l.path.includes(slug),
-    ),
+    stage.lessons.some((l) => l.slug === lesson.slug),
   );
 }
 
 export function getNextLesson(currentSlug: string): LessonMeta | null {
   const all = getAllLessons();
-  const index = all.findIndex(
-    (l) =>
-      l.slug === currentSlug ||
-      l.path.endsWith(`/${currentSlug}`) ||
-      l.path.includes(currentSlug),
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const index = all.findIndex((l) => l.slug === current.slug);
   if (index >= 0 && index < all.length - 1) {
     return all[index + 1];
   }
@@ -843,12 +617,9 @@ export function getNextLesson(currentSlug: string): LessonMeta | null {
 
 export function getPrevLesson(currentSlug: string): LessonMeta | null {
   const all = getAllLessons();
-  const index = all.findIndex(
-    (l) =>
-      l.slug === currentSlug ||
-      l.path.endsWith(`/${currentSlug}`) ||
-      l.path.includes(currentSlug),
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const index = all.findIndex((l) => l.slug === current.slug);
   if (index > 0) {
     return all[index - 1];
   }
@@ -900,6 +671,9 @@ export function getTypeScriptCourse(): Course {
           minutes: l.estimatedMinutes,
           requires: l.prerequisite,
           href: l.path,
+          aliases: Object.entries(TYPESCRIPT_LEGACY_SLUG_MAP)
+            .filter(([_, target]) => target === l.slug)
+            .map(([legacy]) => legacy),
         })),
     })),
   };

@@ -4,43 +4,43 @@ export const js10ArraysAndIndexingContent: StandardLessonContent = {
   slug: "js10-arrays-and-indexing",
   code: "JS-10",
   title: "Working with Arrays",
-  subtitle: "Store ordered collections of data, access elements using zero-based indexing, and manage items with push, pop, and includes.",
+  subtitle: "Store ordered collections of data, access elements with zero-based indexing, read array length, and add or remove items using push, pop, and slice.",
   sections: [
     {
       id: "part1",
-      label: "Ordered Lists",
-      icon: "📋",
-      tag: "FOUNDATION"
+      label: "Working with Arrays",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "Array Basics",
-      icon: "⚡",
-      tag: "SYNTAX"
+      label: "Array Elements & Indexing",
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
-      label: "Essential Methods",
-      icon: "🛠️",
-      tag: "METHODS"
+      label: "Core Array Methods",
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "Off-by-One Trap",
-      icon: "⚠️",
-      tag: "DEBUGGING"
+      label: "Off-by-One Errors",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Arrays Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Summary Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,44 +50,42 @@ export const js10ArraysAndIndexingContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "Ordered Collections in JavaScript",
-    bigPicture: "An array is an ordered list of values enclosed in square brackets. Each item is stored at a numeric position called an index, starting at 0.",
-    analogy: "Like a row of numbered lockers starting at locker 0. To access what is inside, you open the locker using its number.",
-    diagram: "Indices:    [0]          [1]          [2]\nValues:  [\"React\",   \"Node.js\",   \"Postgres\"]\nLength:  3 elements (Last element is at index length - 1)",
+    title: "Working with Arrays",
+    bigPicture: "An array is an ordered list of items enclosed in square brackets `[]`. Elements are accessed using zero-based index numbers starting at `0`.",
     breakdownTitle: "Array Fundamentals",
     breakdownItems: [
       {
         title: "Zero-Based Indexing",
-        desc: "The first item in an array is at index 0. The second item is at index 1."
+        desc: "The first item is always at index 0, and the last is at array.length - 1."
       },
       {
         title: "The length Property",
-        desc: "Returns the total number of items in the array. The last item is at array[array.length - 1]."
+        desc: "Returns the total count of elements currently in the array."
       },
       {
-        title: "Dynamic Resizing",
-        desc: "JavaScript arrays automatically expand and shrink as elements are added or removed."
+        title: "Dynamic Sizing",
+        desc: "JavaScript arrays expand and shrink dynamically as you add or remove items."
       }
     ]
   },
   part2: {
-    title: "Accessing and Modifying Elements",
-    intro: "Use square bracket notation to read and write items by their index position.",
+    title: "Reading, Adding, and Updating Elements",
+    intro: "Use square brackets [ ] with an index number to read or modify elements.",
     cards: [
       {
         number: "01",
         tag: "Read",
         title: "Reading by Index",
         description: "Access any value using its zero-based position in square brackets.",
-        codeSnippet: "const tags = [\"frontend\", \"backend\", \"devops\"];\nconsole.log(tags[0]); // Output: frontend\nconsole.log(tags[2]); // Output: devops",
+        codeSnippet: "const skills = [\"JavaScript\", \"TypeScript\", \"React\"];\nconsole.log(skills[0]); // Output: JavaScript\nconsole.log(skills[2]); // Output: React",
         color: "emerald"
       },
       {
         number: "02",
         tag: "Write",
         title: "Updating Elements",
-        description: "Reassign any existing index position with a new value.",
-        codeSnippet: "const items = [\"alpha\", \"beta\"];\nitems[0] = \"ALPHA\"; // Mutate position 0\nconsole.log(items); // Output: ['ALPHA', 'beta']",
+        description: "Assign a new value directly to any existing index position.",
+        codeSnippet: "const items = [\"Alpha\", \"Beta\"];\nitems[0] = \"Omega\"; // Replace position 0\nconsole.log(items); // Output: ['Omega', 'Beta']",
         color: "cyan"
       },
       {
@@ -100,78 +98,78 @@ export const js10ArraysAndIndexingContent: StandardLessonContent = {
       }
     ],
     rule: {
-      title: "Out-of-Bounds Rule",
-      content: "Accessing an index that does not exist in the array returns undefined without throwing an error."
+      title: "Index Range Rule",
+      content: "Valid indices run from 0 to array.length - 1. Accessing an index outside this range returns undefined without crashing."
     }
   },
   part3: {
-    title: "Essential Array Operations",
-    intro: "Common methods to add, remove, and check elements in arrays.",
+    title: "Essential Array Methods (push, pop, includes)",
+    intro: "The most common tools for modifying and inspecting lists.",
     points: [
       {
-        title: "push() & pop() (End of Array)",
-        content: "push adds one or more items to the end. pop removes and returns the last item.",
-        codeSnippet: "const queue = [\"task1\"];\nqueue.push(\"task2\"); // ['task1', 'task2']\nconst last = queue.pop(); // removes 'task2'\nconsole.log(queue, \"Popped:\", last); // Output: ['task1'] Popped: task2"
+        title: "1. push() and pop()",
+        content: "push() adds one or more items to the very end of an array. pop() removes and returns the last item.",
+        codeSnippet: "const list = [\"task1\"];\nlist.push(\"task2\"); // Add to end\nconsole.log(list);   // Output: ['task1', 'task2']\nconst last = list.pop(); // Removes 'task2'\nconsole.log(last);   // Output: task2"
       },
       {
-        title: "includes() (Membership Check)",
-        content: "Returns true if an item exists in the array, using strict equality under the hood.",
-        codeSnippet: "const allowedRoles = [\"admin\", \"editor\"];\nconsole.log(allowedRoles.includes(\"admin\")); // Output: true\nconsole.log(allowedRoles.includes(\"guest\")); // Output: false"
+        title: "2. includes() for Membership Checks",
+        content: "Returns true if an item exists anywhere in the array, false otherwise.",
+        codeSnippet: "const roles = [\"admin\", \"editor\"];\nconsole.log(roles.includes(\"admin\")); // Output: true\nconsole.log(roles.includes(\"guest\")); // Output: false"
       },
       {
-        title: "indexOf() (Locate Position)",
-        content: "Returns the numeric index of the item, or -1 if the item is not found.",
-        codeSnippet: "const colors = [\"red\", \"green\", \"blue\"];\nconsole.log(colors.indexOf(\"green\")); // Output: 1\nconsole.log(colors.indexOf(\"purple\")); // Output: -1"
+        title: "3. slice() for Non-Destructive Sub-Arrays",
+        content: "Extracts a section of an array without modifying the original array.",
+        codeSnippet: "const numbers = [10, 20, 30, 40];\nconst middle = numbers.slice(1, 3);\nconsole.log(middle); // Output: [20, 30]"
       }
     ]
   },
   part4: {
-    title: "Common Pitfall: The Off-by-One Index Error",
+    title: "Common Trap: Off-by-One Index Errors",
     bad: {
-      title: "❌ Accessing array[array.length]",
-      code: "const fruits = [\"apple\", \"banana\", \"mango\"];\n// Bug: length is 3, but the last index is 2!\nconst lastItem = fruits[fruits.length];\nconsole.log(lastItem); // Output: undefined",
-      explanation: "Because indexing starts at 0, an array of length 3 has items at 0, 1, and 2. Reading index 3 looks past the end of the array."
+      title: "❌ Using array.length as an Index",
+      code: "const fruits = [\"apple\", \"banana\", \"cherry\"];\n// fruits.length is 3!\n// But the valid indices are 0, 1, 2!\nconsole.log(fruits[fruits.length]);\n// Output: undefined",
+      explanation: "Because indexing starts at 0, an array of length 3 has items at indices 0, 1, and 2. Index 3 does not exist and evaluates to undefined."
     },
     good: {
-      title: "✅ Use array[array.length - 1] or array.at(-1)",
-      code: "const fruits = [\"apple\", \"banana\", \"mango\"];\nconst lastItemA = fruits[fruits.length - 1];\nconst lastItemB = fruits.at(-1);\nconsole.log(lastItemA, lastItemB); // Output: mango mango",
-      explanation: "Subtract 1 from the length, or use modern array.at(-1) for clean negative indexing."
+      title: "✅ Subtract 1 or Use array.at(-1)",
+      code: "const fruits = [\"apple\", \"banana\", \"cherry\"];\nconsole.log(fruits[fruits.length - 1]); // Output: cherry\nconsole.log(fruits.at(-1));             // Output: cherry",
+      explanation: "array.length - 1 or the modern array.at(-1) safely accesses the last element."
     }
   },
   part5: {
-    title: "Arrays Sandbox",
-    intro: "Practice adding, removing, and reading elements by index.",
-    starterCode: "const techStack = [\"TypeScript\", \"React\", \"Node.js\"];\n\n// 1. Add an item:\ntechStack.push(\"PostgreSQL\");\n\n// 2. Read length and last item:\nconsole.log(\"Stack count:\", techStack.length);\nconsole.log(\"Last added:\", techStack.at(-1));\n\n// 3. Check membership:\nconsole.log(\"Has React?\", techStack.includes(\"React\"));\n"
+    title: "Interactive Code Playground",
+    intro: "Add items, check membership with includes(), and inspect the length of your array.",
+    starterCode: "const techStack = [\"JavaScript\", \"React\"];\n\n// 1. Add modern backend tools:\ntechStack.push(\"Node.js\");\ntechStack.push(\"PostgreSQL\");\n\nconsole.log(\"Complete stack:\", techStack);\nconsole.log(\"Total technologies:\", techStack.length);\nconsole.log(\"First technology:\", techStack[0]);\nconsole.log(\"Last technology:\", techStack.at(-1));\nconsole.log(\"Contains React:\", techStack.includes(\"React\"));\n"
   },
   part6: {
-    title: "Key Takeaways: Arrays",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Zero-Based Indexing",
-        desc: "The first item is always at index 0; the last is at index length - 1."
+        title: "Indexing Starts at 0",
+        desc: "The first item is always at index 0, and the last is at array.length - 1."
       },
       {
-        title: "push and pop",
-        desc: "push adds items to the end; pop removes the last item."
+        title: "push and pop Manage Ends",
+        desc: "Use push() to add items to the end and pop() to remove the last item."
       },
       {
-        title: "Clean Check with includes",
-        desc: "Use array.includes(item) to verify membership without manual loops."
+        title: "Use includes() to Search",
+        desc: "Check if an item exists cleanly with array.includes(item) returning true or false."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "For an array with 5 elements, what is the index of the last element?",
+      question: "In an array with 4 items: const colors = ['red', 'green', 'blue', 'yellow'], what is the index of the first item?",
       options: [
-        "5",
-        "4",
         "0",
-        "-1"
+        "1",
+        "-1",
+        "4"
       ],
-      correctIndex: 1,
-      explanation: "Because array indexing starts at 0, the 5 elements occupy indices 0, 1, 2, 3, and 4. The last element is at length - 1, which is index 4."
+      correctIndex: 0,
+      explanation: "JavaScript arrays are zero-indexed. The very first element is always located at index 0, so colors[0] gives 'red'."
     }
   }
 };

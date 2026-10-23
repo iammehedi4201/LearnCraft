@@ -4,43 +4,43 @@ export const js25EsModulesContent: StandardLessonContent = {
   slug: "js25-es-modules",
   code: "JS-25",
   title: "Using ES Modules",
-  subtitle: "Organize code into modular files with ES Modules, distinguish named vs default exports, and avoid global namespace pollution.",
+  subtitle: "Split code into clean reusable files using named exports, default exports, and import statements.",
   sections: [
     {
       id: "part1",
-      label: "Modular Code",
-      icon: "📦",
-      tag: "FOUNDATION"
+      label: "Using ES Modules",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "Named vs Default",
-      icon: "⚡",
-      tag: "SYNTAX"
+      label: "Named vs Default Exports",
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
-      label: "Renaming & Wildcards",
-      icon: "🏷️",
-      tag: "PATTERNS"
+      label: "Import Patterns",
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "Default Import Misconception",
-      icon: "⚠️",
-      tag: "DEBUGGING"
+      label: "Import Syntax Confusion",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Modules Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Summary Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,128 +50,126 @@ export const js25EsModulesContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "Breaking Large Programs into Modules",
-    bigPicture: "ES Modules (ESM) allow you to split JavaScript programs into separate files with their own private scope. You explicitly export public functions and import them where needed.",
-    analogy: "Like shipping containers: each container is sealed and isolated. Only the specific goods marked on the export manifest can be unloaded and used at another port.",
-    diagram: "+-----------------------------+       +-----------------------------+\n| mathUtils.js                |       | app.js                      |\n| export const add = (a, b)   | ----> | import { add } from './math'|\n| const privateSecret = 42;   |       | add(5, 10); // 15           |\n| (privateSecret stays hidden)|       |                             |\n+-----------------------------+       +-----------------------------+",
+    title: "Using ES Modules",
+    bigPicture: "ES Modules split code into clean, isolated files. Use named exports (`export const fn`) for utilities and default exports (`export default Component`) for main features.",
     breakdownTitle: "ES Module Fundamentals",
     breakdownItems: [
       {
-        title: "Module Scope Isolation",
-        desc: "Variables defined in a module are completely private to that file and cannot leak into the global scope."
+        title: "Named Exports (import { ... })",
+        desc: "Exports multiple functions or constants from a single file by exact name."
       },
       {
-        title: "Named Exports",
-        desc: "Export multiple values by name. The importer must use matching names inside curly braces { }."
+        title: "Default Exports (import Name)",
+        desc: "Exports one primary entity per file without needing curly braces."
       },
       {
-        title: "Default Export",
-        desc: "Each file can have at most one default export, imported without curly braces using any chosen name."
+        title: "File-Level Isolation",
+        desc: "Variables in a module remain strictly private unless explicitly marked with `export`."
       }
     ]
   },
   part2: {
-    title: "Named vs Default Exports in Code",
-    intro: "Two primary patterns for sharing functions and data across files.",
+    title: "Named Exports vs Default Exports",
+    intro: "Two ways to share code between files in JavaScript.",
     cards: [
       {
         number: "01",
         tag: "Named",
-        title: "Named Exports",
-        description: "Export multiple items by prefixing them with the export keyword.",
-        codeSnippet: "// In utils.js:\nexport const API_URL = \"https://api.com\";\nexport function formatDate(d) { return d.toISOString(); }\n\n// In main.js:\nimport { API_URL, formatDate } from \"./utils.js\";",
+        title: "Named Exports (Multiple)",
+        description: "Export multiple variables and functions by name from a utility file.",
+        codeSnippet: "// utils/math.js\nexport const add = (a, b) => a + b;\nexport const multiply = (a, b) => a * b;\n\n// app.js\nimport { add, multiply } from './utils/math.js';",
         color: "emerald"
       },
       {
         number: "02",
         tag: "Default",
-        title: "Default Export",
-        description: "Export the primary single entity of a file without curly braces.",
-        codeSnippet: "// In UserService.js:\nexport default class UserService {\n  static getAll() { return []; }\n}\n\n// In main.js:\nimport UserService from \"./UserService.js\";",
+        title: "Default Export (Single Primary)",
+        description: "Export the primary item from a file without curly braces.",
+        codeSnippet: "// components/Button.js\nexport default function Button() { return \"<button>\"; }\n\n// app.js\nimport Button from './components/Button.js';",
         color: "cyan"
       },
       {
         number: "03",
-        tag: "Combined",
-        title: "Combined Named & Default",
-        description: "Import the default export alongside named utilities in one statement.",
-        codeSnippet: "// Importing default and named exports together:\nimport UserService, { API_URL } from \"./UserService.js\";",
+        tag: "Rename",
+        title: "Renaming with 'as'",
+        description: "Rename imported identifiers to avoid name collisions.",
+        codeSnippet: "import { add as sumNumbers } from './utils/math.js';\nconsole.log(sumNumbers(10, 5)); // Output: 15",
         color: "purple"
       }
     ],
     rule: {
-      title: "Export Rule",
-      content: "Prefer named exports for utility libraries with multiple functions. Use default export only when a module has one clear primary responsibility (like a React component)."
+      title: "The Curly Braces Rule",
+      content: "Named imports REQUIRE curly braces: import { a, b }. Default imports NEVER use curly braces: import MyComponent."
     }
   },
   part3: {
-    title: "Renaming and Wildcard Imports",
-    intro: "Techniques for resolving import conflicts and bundling namespaces.",
+    title: "Importing and Re-exporting Modules",
+    intro: "Master module namespace imports and combined patterns.",
     points: [
       {
-        title: "1. Renaming with the 'as' Keyword",
-        content: "Rename imports locally if they collide with an existing variable name in your file.",
-        codeSnippet: "import { render as renderButton } from \"./Button.js\";\nimport { render as renderCard } from \"./Card.js\";\nrenderButton();\nrenderCard();"
+        title: "1. Namespace Import (* as namespace)",
+        content: "Import everything from a module into a single grouped namespace object.",
+        codeSnippet: "import * as MathOps from './utils/math.js';\n// Usage: MathOps.add(10, 2), MathOps.multiply(5, 5)"
       },
       {
-        title: "2. Wildcard Namespace Import (import * as)",
-        content: "Import all named exports from a file grouped under a single namespace object.",
-        codeSnippet: "import * as MathOps from \"./math.js\";\nconsole.log(MathOps.add(2, 3));\nconsole.log(MathOps.subtract(10, 4));"
+        title: "2. Combining Default and Named Imports",
+        content: "A file can export one default item alongside several named helpers.",
+        codeSnippet: "import React, { useState, useEffect } from 'react';\n// React is default; useState and useEffect are named!"
       },
       {
-        title: "3. Top-Level await in Modules",
-        content: "Modern ES modules support using await at the top level outside of any async function wrapper.",
-        codeSnippet: "// In modern ES modules:\nconst config = await fetch(\"/config.json\").then(r => r.json());\nexport { config };"
+        title: "3. Clean Tree-Shaking",
+        content: "Modern bundlers (like Vite and Next.js) automatically eliminate unused named exports from your final bundle, keeping load times fast.",
+        codeSnippet: "// If you only import { add }, multiply is not packaged into your bundle!"
       }
     ]
   },
   part4: {
-    title: "Common Pitfall: Mixing Up Named and Default Imports",
+    title: "Common Trap: Mixing Named and Default Import Syntax",
     bad: {
-      title: "❌ Wrapping Default Export in Curly Braces {}",
-      code: "// UserService.js has: export default class UserService { ... }\n\n// Bug: Using curly braces looks for a NAMED export called UserService!\n// import { UserService } from \"./UserService.js\"; // SyntaxError / undefined!",
-      explanation: "Curly braces {} are reserved for named exports. Wrapping a default export in curly braces causes an import failure."
+      title: "❌ Adding Braces to Default Imports (or omitting for named)",
+      code: "// Given: export default function User() {}\n// BUG: Adding curly braces to a default export!\nimport { User } from './User.js';\n// Error: SyntaxError or User is undefined",
+      explanation: "Curly braces are reserved strictly for named exports. Adding braces to a default import looks for a named export that doesn't exist."
     },
     good: {
-      title: "✅ Import Default Without Braces, Named With Braces",
-      code: "// Correct default import (no braces):\nimport UserService from \"./UserService.js\";\n\n// Correct named import (with braces):\nimport { formatDate } from \"./utils.js\";",
-      explanation: "Default exports are imported directly by identifier; named exports require curly braces."
+      title: "✅ No Braces for Default Exports",
+      code: "// Correct: No curly braces for default export:\nimport User from './User.js';\n\n// Correct: Use curly braces for named exports:\nimport { calculateTax } from './tax.js';",
+      explanation: "Default exports import cleanly without braces; named exports use curly braces."
     }
   },
   part5: {
-    title: "ES Modules Simulator Sandbox",
-    intro: "Observe how modular code packages public functions and keeps internal variables private.",
-    starterCode: "// Conceptual module simulation:\nconst PaymentModule = (() => {\n  const secretApiKey = \"sk_live_998877\"; // Private to module!\n\n  function processCharge(amount) {\n    return `Charged $${amount} via ${secretApiKey.slice(0, 7)}***`;\n  }\n\n  return { processCharge }; // Public named export\n})();\n\nconsole.log(PaymentModule.processCharge(150));\n// Notice: secretApiKey cannot be accessed directly:\nconsole.log(\"Direct secret access:\", PaymentModule.secretApiKey); // undefined\n"
+    title: "Interactive Code Playground",
+    intro: "Test simulated module export objects and observe how named utilities work together.",
+    starterCode: "// Simulating an exported utility module:\nconst StringModule = {\n  capitalize: (str) => str.charAt(0).toUpperCase() + str.slice(1),\n  truncate: (str, max) => str.length > max ? str.slice(0, max) + \"...\" : str\n};\n\n// Simulating importing specific functions:\nconst { capitalize, truncate } = StringModule;\n\nconsole.log(\"Capitalized name:\", capitalize(\"learncraft\"));\nconsole.log(\"Truncated snippet:\", truncate(\"JavaScript ES Modules guide\", 14));\n"
   },
   part6: {
-    title: "Key Takeaways: ES Modules",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "File-Level Scope",
-        desc: "Module files are strictly private; only items marked with export are accessible."
+        title: "Modules Organize Code",
+        desc: "Split logic into focused, single-purpose files using export and import."
       },
       {
         title: "Named vs Default",
-        desc: "Named exports require matching curly braces; default exports are imported directly."
+        desc: "Use { named } for multiple items; use default for the primary file component."
       },
       {
-        title: "Renaming with as",
-        desc: "Use import { original as alias } to resolve naming conflicts cleanly."
+        title: "Private by Default",
+        desc: "Variables stay private inside their file unless you explicitly export them."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "How do you import a module that was exported using `export default function calculate() {}`?",
+      question: "What is the correct syntax to import a default export from a file named 'Logger.js'?",
       options: [
-        "`import { calculate } from './calc.js';`",
-        "`import calculate from './calc.js';`",
-        "`import * from './calc.js';`",
-        "`require('./calc.js').calculate;`"
+        "import Logger from './Logger.js';",
+        "import { Logger } from './Logger.js';",
+        "import * as { Logger } from './Logger.js';",
+        "require(Logger) from './Logger.js';"
       ],
-      correctIndex: 1,
-      explanation: "Default exports are imported without curly braces: `import calculate from './calc.js';`. Any variable name can be chosen when importing a default export."
+      correctIndex: 0,
+      explanation: "Default exports are always imported without curly braces: import Logger from './Logger.js'. Curly braces are used exclusively for named exports."
     }
   }
 };

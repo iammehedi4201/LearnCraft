@@ -4,43 +4,43 @@ export const js28DomEssentialsContent: StandardLessonContent = {
   slug: "js28-dom-essentials",
   code: "JS-28",
   title: "Finding and Changing HTML Elements",
-  subtitle: "Query HTML elements with querySelector, update text and attributes safely, and avoid dangerous innerHTML injection vulnerabilities.",
+  subtitle: "Select HTML elements with querySelector, update textContent, and toggle CSS classes dynamically.",
   sections: [
     {
       id: "part1",
-      label: "The DOM Tree",
-      icon: "🌳",
-      tag: "FOUNDATION"
+      label: "Finding HTML Elements",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "Querying & Modifying",
-      icon: "⚡",
-      tag: "SYNTAX"
+      label: "Selecting & Updating",
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
-      label: "classList & Attributes",
-      icon: "🎨",
-      tag: "STYLING"
+      label: "Creating DOM Elements",
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "innerHTML XSS Trap",
-      icon: "⚠️",
-      tag: "SECURITY"
+      label: "Null Element Queries",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "DOM Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Summary Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,128 +50,126 @@ export const js28DomEssentialsContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "The Document Object Model (DOM)",
-    bigPicture: "The DOM is an object tree representation of the HTML document created by the browser. JavaScript uses the DOM API to query elements, modify text, and update styles dynamically.",
-    analogy: "Like a building directory: the HTML is the physical building, and the DOM is the computerized map at the entrance that allows you to locate any room and change its signage.",
-    diagram: "+-------------------------------------------+\n| document                                  |\n|   └── html                                |\n|        ├── head                           |\n|        └── body                           |\n|             ├── h1#title (\"LearnCraft\")   |\n|             └── button.btn (\"Submit\")     |\n+-------------------------------------------+",
-    breakdownTitle: "DOM Essentials",
+    title: "Finding and Changing HTML Elements",
+    bigPicture: "The DOM is the browser's live tree representation of HTML. Use `document.querySelector()` to select elements, `textContent` to update text, and `classList` to modify styles dynamically.",
+    breakdownTitle: "Key DOM Operations",
     breakdownItems: [
       {
-        title: "querySelector & querySelectorAll",
-        desc: "Find elements using standard CSS selectors (#id, .class, tag)."
+        title: "querySelector()",
+        desc: "Finds the first matching element using CSS selectors (`#id`, `.class`, tag name)."
       },
       {
-        title: "textContent for Safe Text",
-        desc: "Safely reads and writes plain text inside an element without interpreting HTML tags."
+        title: "textContent",
+        desc: "Safely reads or replaces text without opening cross-site scripting (XSS) risks."
       },
       {
-        title: "classList for Dynamic Styling",
-        desc: "Add, remove, or toggle CSS classes cleanly without touching raw class strings."
+        title: "classList",
+        desc: "Dynamically manages CSS classes with `.add()`, `.remove()`, and `.toggle()`."
       }
     ]
   },
   part2: {
-    title: "Selecting and Updating Elements",
-    intro: "Modern methods for finding elements and updating their content.",
+    title: "querySelector and Updating Element Content",
+    intro: "Step through the fundamental methods for interacting with HTML elements.",
     cards: [
       {
         number: "01",
-        tag: "Select",
-        title: "querySelector()",
+        tag: "Select One",
+        title: "document.querySelector()",
         description: "Returns the first element matching any valid CSS selector.",
-        codeSnippet: "// Select by ID, class, or tag:\nconst titleEl = document.querySelector(\"#main-title\");\nconst submitBtn = document.querySelector(\"button.primary\");",
+        codeSnippet: "const heading = document.querySelector(\"#main-title\");\nheading.textContent = \"Welcome to LearnCraft!\";\nconsole.log(heading.textContent);",
         color: "emerald"
       },
       {
         number: "02",
-        tag: "Text",
-        title: "textContent",
-        description: "Updates the text inside an element safely without parsing HTML.",
-        codeSnippet: "const heading = document.querySelector(\"h1\");\nheading.textContent = \"Welcome to LearnCraft!\";\n// Output: Sets plain text safely",
+        tag: "Select All",
+        title: "document.querySelectorAll()",
+        description: "Returns a list of all matching elements that you can loop through.",
+        codeSnippet: "const cards = document.querySelectorAll(\".card\");\ncards.forEach(card => card.classList.add(\"active\"));",
         color: "cyan"
       },
       {
         number: "03",
         tag: "Classes",
-        title: "classList API",
-        description: "Manipulates CSS classes cleanly with add, remove, and toggle.",
-        codeSnippet: "const card = document.querySelector(\".card\");\ncard.classList.add(\"active\");\ncard.classList.remove(\"hidden\");\ncard.classList.toggle(\"highlight\");",
+        title: "element.classList",
+        description: "Dynamically alter CSS styling by toggling classes.",
+        codeSnippet: "const btn = document.querySelector(\"button\");\nbtn.classList.toggle(\"dark-theme\");\nbtn.classList.add(\"btn-primary\");",
         color: "purple"
       }
     ],
     rule: {
-      title: "Security Rule",
-      content: "Never insert untrusted user input using innerHTML. Always use textContent to prevent Cross-Site Scripting (XSS) attacks."
+      title: "textContent vs innerHTML",
+      content: "Always use textContent when inserting user text to prevent XSS security vulnerabilities. Only use innerHTML when you intentionally want to parse raw HTML tags."
     }
   },
   part3: {
-    title: "Attributes, Creation & Multiple Elements",
-    intro: "Working with lists of elements and HTML attributes.",
+    title: "Creating and Modifying DOM Elements",
+    intro: "Dynamically generate new HTML elements on the fly.",
     points: [
       {
-        title: "1. querySelectorAll() and NodeLists",
-        content: "querySelectorAll returns all matching elements as a NodeList that supports forEach.",
-        codeSnippet: "const buttons = document.querySelectorAll(\".btn\");\nbuttons.forEach(btn => {\n  btn.classList.add(\"rounded\");\n});"
+        title: "1. document.createElement()",
+        content: "Creates a brand new element in memory before attaching it to the visible page.",
+        codeSnippet: "const newBadge = document.createElement(\"span\");\nnewBadge.textContent = \"PRO\";\nnewBadge.classList.add(\"badge\");"
       },
       {
-        title: "2. Setting Attributes Safely",
-        content: "Use setAttribute() or direct property assignment to set href, disabled, or data attributes.",
-        codeSnippet: "const link = document.querySelector(\"a\");\nlink.setAttribute(\"target\", \"_blank\");\nlink.href = \"https://learncraft.dev\";"
+        title: "2. appendChild() & append()",
+        content: "Attaches your newly created element into an existing container in the DOM.",
+        codeSnippet: "const container = document.querySelector(\"#profile\");\ncontainer.appendChild(newBadge);"
       },
       {
-        title: "3. Creating Elements with document.createElement()",
-        content: "Create new elements in memory and append them into the live document.",
-        codeSnippet: "const newBadge = document.createElement(\"span\");\nnewBadge.textContent = \"NEW\";\nnewBadge.classList.add(\"badge\");\ndocument.body.appendChild(newBadge);"
+        title: "3. Changing Element Attributes",
+        content: "Update image sources, links, or disabled states directly.",
+        codeSnippet: "const submitBtn = document.querySelector(\"#submit\");\nsubmitBtn.disabled = true; // Disables button during API call"
       }
     ]
   },
   part4: {
-    title: "Common Pitfall: The innerHTML XSS Vulnerability",
+    title: "Common Trap: Calling Methods on Null Elements",
     bad: {
-      title: "❌ Using innerHTML with User Input (XSS Injection)",
-      code: "const userBio = \"<img src=x onerror=alert('Hacked!')>\";\n// Bug: innerHTML parses and executes malicious script tags and event handlers!\nconst container = document.querySelector(\"#bio-container\");\ncontainer.innerHTML = userBio; // XSS Vulnerability!",
-      explanation: "Using innerHTML with untrusted user input executes arbitrary JavaScript inside the victim's browser session."
+      title: "❌ Selector Typo or Premature Execution",
+      code: "// If #submit-bttn is misspelled or script runs before HTML loads:\nconst btn = document.querySelector(\"#submit-bttn\"); // Returns null!\nbtn.classList.add(\"active\");\n// TypeError: Cannot read properties of null (reading 'classList')",
+      explanation: "If querySelector cannot find a matching element, it returns null. Trying to read properties on null crashes your script."
     },
     good: {
-      title: "✅ Use textContent to Neutralize HTML Tags",
-      code: "const userBio = \"<img src=x onerror=alert('Hacked!')>\";\nconst container = document.querySelector(\"#bio-container\");\n// Safe: Treats all characters as plain text literal, neutralizing scripts\ncontainer.textContent = userBio;\n// Output displays literal '<img...>' without running code!",
-      explanation: "textContent treats input strictly as raw text, automatically neutralizing malicious HTML and JavaScript injections."
+      title: "✅ Check That the Element Exists First",
+      code: "const btn = document.querySelector(\"#submit-bttn\");\nif (btn) {\n  btn.classList.add(\"active\");\n} else {\n  console.warn(\"Button element not found in DOM\");\n}",
+      explanation: "Always check if (element) or use optional chaining (btn?.classList.add(...)) before manipulating DOM nodes."
     }
   },
   part5: {
-    title: "DOM Essentials Simulator Sandbox",
-    intro: "Simulate querying and mutating a DOM element's text and class list.",
-    starterCode: "// Simulated DOM element node:\nconst mockElement = {\n  id: \"status-pill\",\n  textContent: \"Pending\",\n  classes: new Set([\"badge\"]),\n  classList: {\n    add(c) { mockElement.classes.add(c); },\n    remove(c) { mockElement.classes.delete(c); },\n    contains(c) { return mockElement.classes.has(c); }\n  }\n};\n\n// 1. Update text content safely:\nmockElement.textContent = \"Verified\";\n\n// 2. Update styles with classList:\nmockElement.classList.remove(\"badge-pending\");\nmockElement.classList.add(\"badge-success\");\n\nconsole.log(\"Updated text:\", mockElement.textContent);\nconsole.log(\"Updated classes:\", Array.from(mockElement.classes));\n"
+    title: "Interactive Code Playground",
+    intro: "Practice selecting elements, updating text content, and toggling CSS classes.",
+    starterCode: "// Selecting mock elements in the LearnCraft sandbox environment:\nconst cardTitle = document.querySelector(\".card-title\");\ncardTitle.textContent = \"Advanced JavaScript Fundamentals\";\n\n// Toggle interactive classes:\ncardTitle.classList.add(\"highlighted\");\nconsole.log(\"Updated element text:\", cardTitle.textContent);\n\n// Inspect multiple elements:\nconst items = document.querySelectorAll(\".list-item\");\nconsole.log(\"Found items count:\", items.length);\n"
   },
   part6: {
-    title: "Key Takeaways: DOM Essentials",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "querySelector",
-        desc: "Find any element using CSS selectors (#id, .class, element)."
+        title: "DOM Represents HTML in JS",
+        desc: "Use the DOM to dynamically read, change, add, or remove elements on the webpage."
       },
       {
-        title: "textContent for Safety",
-        desc: "Always prefer textContent over innerHTML to protect against XSS injections."
+        title: "Use querySelector",
+        desc: "Select elements with standard CSS selectors: #id, .class, or tag names."
       },
       {
-        title: "classList API",
-        desc: "Use classList.add/remove/toggle for clean CSS state management."
+        title: "Prefer textContent",
+        desc: "Use textContent for safe text updates without XSS security vulnerabilities."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "Why is `element.textContent` preferred over `element.innerHTML` when inserting user input?",
+      question: "Which property is the safest and recommended way to update the plain text displayed inside an HTML element?",
       options: [
-        "Because textContent executes faster on mobile devices",
-        "Because textContent treats input strictly as plain text, preventing Cross-Site Scripting (XSS) attacks",
-        "Because innerHTML is deprecated in modern browsers",
-        "Because textContent automatically applies CSS styles"
+        "textContent",
+        "innerHTML",
+        "outerHTML",
+        "document.write()"
       ],
-      correctIndex: 1,
-      explanation: "Using `textContent` ensures that any `<script>` tags or malicious HTML are rendered as plain text strings rather than executed as code, neutralizing XSS vulnerabilities."
+      correctIndex: 0,
+      explanation: "textContent safely sets the element's text without parsing it as HTML, which completely prevents Cross-Site Scripting (XSS) injection attacks."
     }
   }
 };

@@ -4,43 +4,43 @@ export const js20SynchronousVsAsynchronousContent: StandardLessonContent = {
   slug: "js20-synchronous-vs-asynchronous",
   code: "JS-20",
   title: "How Async Code Works",
-  subtitle: "Understand how JavaScript runs non-blocking asynchronous operations on a single thread using the Call Stack, Web APIs, and Task Queues.",
+  subtitle: "Understand how JavaScript runs non-blocking asynchronous operations on a single thread using timers and background APIs.",
   sections: [
     {
       id: "part1",
-      label: "Non-Blocking Architecture",
-      icon: "⏳",
-      tag: "FOUNDATION"
+      label: "How Async Works",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "The Moving Parts",
+      label: "Sync vs Async",
       icon: "⚙️",
-      tag: "ENGINE ARCHITECTURE"
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
-      label: "The setTimeout(0) Secret",
-      icon: "🧠",
-      tag: "STEP BY STEP"
+      label: "Async Execution Order",
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "Blocking Thread Trap",
-      icon: "⚠️",
-      tag: "DEBUGGING"
+      label: "setTimeout(0) Misconception",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Async Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Core Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,128 +50,126 @@ export const js20SynchronousVsAsynchronousContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "How Single-Threaded JavaScript Doesn't Freeze",
-    bigPicture: "JavaScript has only one main thread. If network requests or file reads ran synchronously, the entire browser would freeze until the request finished. Instead, JavaScript delegates waiting to the browser environment (Web APIs), keeping the main thread free.",
-    analogy: "Like ordering at a coffee shop: you place your order, receive a buzzer (callback), and step aside so the cashier can take the next customer. When your drink is ready, your buzzer rings and your coffee is handed over.",
-    diagram: "+--------------------------------------------------------+\n| 1. Call Stack: console.log(\"Start\");                   |\n|    --> Prints immediately                              |\n+--------------------------------------------------------+\n| 2. Call Stack: setTimeout(callback, 2000);             |\n|    --> Offloads timer to Web API in background!        |\n|    --> Call Stack is immediately FREE for next line!   |\n+--------------------------------------------------------+\n| 3. Call Stack: console.log(\"End\");                     |\n|    --> Prints immediately                              |\n+--------------------------------------------------------+\n| 4. (2000ms later) Web API pushes callback to Queue     |\n|    --> Event Loop pushes it to Stack when empty!       | \n+--------------------------------------------------------+",
-    breakdownTitle: "Async Architecture",
+    title: "How Async Code Works",
+    bigPicture: "JavaScript is single-threaded. Synchronous code blocks execution until finished, while asynchronous operations (like timers and network fetches) run in the background without freezing the UI.",
+    breakdownTitle: "Key Async Concepts",
     breakdownItems: [
       {
         title: "Synchronous (Blocking)",
-        desc: "Each statement must finish completely before the next statement begins. Heavy operations block user clicks and screen rendering."
+        desc: "Each line executes in order and blocks further progress until it finishes."
       },
       {
         title: "Asynchronous (Non-Blocking)",
-        desc: "Operations like timers, network requests, and disk reads are handled concurrently by browser/Node APIs in the background."
+        desc: "Long-running tasks are offloaded to background Web APIs, leaving the UI fast and responsive."
       },
       {
-        title: "The Callback Queue",
-        desc: "When an async operation finishes, its completion callback waits in a queue until the main Call Stack is completely clear."
+        title: "Single Main Thread",
+        desc: "Only one piece of JavaScript runs at a time, eliminating multithreading race condition issues."
       }
     ]
   },
   part2: {
-    title: "The Components of Asynchronous JavaScript",
-    intro: "Step through how the Call Stack and browser APIs cooperate.",
+    title: "Synchronous vs Asynchronous Operations",
+    intro: "Observe the difference between immediate execution and delayed callbacks.",
     cards: [
       {
         number: "01",
-        tag: "Call Stack",
-        title: "The Call Stack",
-        description: "Executes JavaScript code line by line. Can only do one task at a time.",
-        codeSnippet: "console.log(\"1: Call stack runs\");\nconsole.log(\"2: Call stack finishes\");\n// Output:\n// 1: Call stack runs\n// 2: Call stack finishes",
+        tag: "Synchronous",
+        title: "Synchronous Line by Line",
+        description: "Statements run sequentially in the order written, finishing each before moving forward.",
+        codeSnippet: "console.log(\"First\");\nconsole.log(\"Second\");\nconsole.log(\"Third\");\n// Output:\n// First\n// Second\n// Third",
         color: "emerald"
       },
       {
         number: "02",
-        tag: "Web APIs",
-        title: "Browser Web APIs",
-        description: "Background threads provided by the browser (timers, fetch, DOM events).",
-        codeSnippet: "// setTimeout is handled by the browser's timer thread:\nsetTimeout(() => {\n  console.log(\"Timer expired in Web API\");\n}, 1000);",
+        tag: "Asynchronous",
+        title: "Asynchronous Timer (setTimeout)",
+        description: "The timer counts down in the background while the rest of your program keeps running.",
+        codeSnippet: "console.log(\"A\");\nsetTimeout(() => {\n  console.log(\"B (after 100ms)\");\n}, 100);\nconsole.log(\"C\");\n// Output: A, C, B",
         color: "cyan"
       },
       {
         number: "03",
-        tag: "Task Queue",
-        title: "The Task Queue",
-        description: "Holds completed callbacks waiting to enter the Call Stack.",
-        codeSnippet: "console.log(\"A\");\nsetTimeout(() => console.log(\"B (from queue)\"), 0);\nconsole.log(\"C\");\n// Output: A, C, B (Queue must wait for stack to empty!)",
+        tag: "Callback",
+        title: "Handling the Result",
+        description: "A callback function is handed to the async operation to be called when the task completes.",
+        codeSnippet: "function delayedGreeting(name, callback) {\n  setTimeout(() => {\n    callback(`Welcome, ${name}!`);\n  }, 50);\n}\ndelayedGreeting(\"Alex\", console.log);",
         color: "purple"
       }
     ],
     rule: {
-      title: "The Non-Interruption Invariant",
-      content: "A callback waiting in the queue can NEVER interrupt code currently executing on the Call Stack. It must wait until the stack is completely empty."
+      title: "The Non-Blocking Rule",
+      content: "Never write heavy infinite loops or blocking operations on the main thread. Always use asynchronous APIs for network requests and delays."
     }
   },
   part3: {
-    title: "The Secret of setTimeout(..., 0)",
-    intro: "Why a zero-millisecond timer does not execute immediately.",
+    title: "Tracing Async Execution Order",
+    intro: "Step through how JavaScript schedules lines when asynchronous timers are involved.",
     points: [
       {
-        title: "1. Handed Off to Web API",
-        content: "Calling setTimeout(fn, 0) asks the browser to queue fn as soon as possible. But it still must go through the Web API and Task Queue.",
-        codeSnippet: "setTimeout(() => console.log(\"Async Timeout\"), 0);\nconsole.log(\"Synchronous Line\");\n// Output:\n// Synchronous Line\n// Async Timeout"
+        title: "Step 1: Synchronous Code Runs First",
+        content: "All immediate synchronous lines run to completion first.",
+        codeSnippet: "console.log(\"Step 1: Main program begins\");"
       },
       {
-        title: "2. The Call Stack Has Priority",
-        content: "Even with a delay of 0ms, the callback cannot run until all synchronous code in the current script has finished running.",
-        codeSnippet: "console.log(\"Start\");\nsetTimeout(() => console.log(\"Timeout callback\"), 0);\nfor (let i = 0; i < 3; i++) {\n  console.log(\"Loop item:\", i);\n}\nconsole.log(\"End\");\n// Output: Start, Loop 0, 1, 2, End, Timeout callback"
+        title: "Step 2: Timers are Offloaded to Background",
+        content: "When setTimeout is encountered, JavaScript tells the browser timer to start ticking and moves to the next line immediately.",
+        codeSnippet: "setTimeout(() => {\n  console.log(\"Step 3: Background timer finished\");\n}, 200);\nconsole.log(\"Step 2: Main program ends\");\n// Output: Step 1, Step 2, then Step 3!"
       },
       {
-        title: "3. Yielding the Thread",
-        content: "Developers historically used setTimeout(..., 0) to yield execution and allow browser rendering before continuing heavy calculations.",
-        codeSnippet: "// Defers calculation to let the browser paint updates:\nsetTimeout(() => {\n  // Run background calculation\n}, 0);"
+        title: "Step 3: Callbacks Wait in Line",
+        content: "When the timer completes, its callback waits in a queue until all currently running synchronous code has finished.",
+        codeSnippet: "// Even if the timer expires instantly, the current script finishes first!"
       }
     ]
   },
   part4: {
-    title: "Common Pitfall: Blocking the Main Thread with Synchronous Work",
+    title: "Common Trap: The setTimeout(..., 0) Misconception",
     bad: {
-      title: "❌ Heavy Synchronous Sleep Freezes the Entire Page",
-      code: "function synchronousSleep(ms) {\n  // Bug: Busy-wait loop hogs the Call Stack completely!\n  const start = Date.now();\n  while (Date.now() - start < ms) {\n    // Browser freezes! Clicks, animations, typing are blocked!\n  }\n}\nconsole.log(\"Before sleep\");\nsynchronousSleep(3000); // 3 seconds of frozen UI\nconsole.log(\"After sleep\");",
-      explanation: "A synchronous loop monopolizes the single Call Stack thread, completely freezing UI rendering and user interactions."
+      title: "❌ Expecting setTimeout(..., 0) to Run Immediately",
+      code: "console.log(\"1: Start\");\nsetTimeout(() => {\n  console.log(\"2: Timer with 0ms\");\n}, 0);\nconsole.log(\"3: End\");\n// Mistake: Expecting 1, 2, 3!",
+      explanation: "Even with 0 milliseconds, setTimeout sends its callback to the task queue. JavaScript will NEVER run a queued callback until the main synchronous script has completely finished."
     },
     good: {
-      title: "✅ Use Non-Blocking Asynchronous Timers",
-      code: "console.log(\"Before non-blocking timer\");\n// Safe: Browser timer thread waits in background, keeping page responsive\nsetTimeout(() => {\n  console.log(\"3 seconds elapsed non-blockingly!\");\n}, 3000);\nconsole.log(\"Page remains responsive and clickable!\");",
-      explanation: "Asynchronous timers offload the waiting period to the browser environment, allowing the main thread to remain fully responsive."
+      title: "✅ Understand the Actual Output: 1, 3, 2",
+      code: "console.log(\"1: Start\");\nsetTimeout(() => {\n  console.log(\"2: Timer with 0ms\");\n}, 0);\nconsole.log(\"3: End\");\n// Actual Output:\n// 1: Start\n// 3: End\n// 2: Timer with 0ms",
+      explanation: "Synchronous code always has priority over queued callbacks, regardless of the timer delay."
     }
   },
   part5: {
-    title: "Async vs Sync Sandbox",
-    intro: "Predict the exact order in which these logs will print before clicking Run.",
-    starterCode: "console.log(\"1. Synchronous First\");\n\nsetTimeout(() => {\n  console.log(\"4. Timer (0ms delay)\");\n}, 0);\n\nsetTimeout(() => {\n  console.log(\"5. Timer (100ms delay)\");\n}, 100);\n\nconsole.log(\"2. Synchronous Second\");\nconsole.log(\"3. Synchronous Third\");\n"
+    title: "Interactive Code Playground",
+    intro: "Run this code to see JavaScript finish synchronous execution before any timer callbacks fire.",
+    starterCode: "console.log(\"--- [1] Program execution started ---\");\n\n// Schedule a background task:\nsetTimeout(() => {\n  console.log(\"--- [3] Async timer callback executed! ---\");\n}, 100);\n\nconsole.log(\"--- [2] Synchronous code finished ---\");\n"
   },
   part6: {
-    title: "Key Takeaways: Sync vs Async",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Single Main Thread",
-        desc: "JavaScript executes one instruction at a time on its Call Stack."
+        title: "JavaScript is Single-Threaded",
+        desc: "Executes one task at a time on the main thread; long waits must be asynchronous."
       },
       {
-        title: "Non-Blocking Web APIs",
-        desc: "Timers and network requests wait in the browser background without blocking the UI."
+        title: "Async Doesn't Block",
+        desc: "Background tasks allow the rest of your code and UI to stay responsive."
       },
       {
-        title: "Queue Waits for Stack",
-        desc: "Queued callbacks cannot run until the Call Stack is completely clear of synchronous work."
+        title: "Synchronous Runs First",
+        desc: "All immediate synchronous lines finish before any queued callback can run."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "Why does `setTimeout(() => console.log('B'), 0)` execute after `console.log('A')`?",
+      question: "What is the output order of: console.log('A'); setTimeout(() => console.log('B'), 0); console.log('C');?",
       options: [
-        "Because setTimeout has a built-in minimum delay of 10 seconds",
-        "Because the callback is placed in the Task Queue and cannot run until the synchronous Call Stack is empty",
-        "Because JavaScript reverses the order of asynchronous functions",
-        "Because 'A' is stored in heap memory while 'B' is in stack memory"
+        "'A', 'C', 'B'",
+        "'A', 'B', 'C'",
+        "'B', 'A', 'C'",
+        "'C', 'B', 'A'"
       ],
-      correctIndex: 1,
-      explanation: "Even with a 0ms delay, `setTimeout` pushes its callback to the Task Queue. The Event Loop only moves items from the queue to the Call Stack after all synchronous statements have finished executing."
+      correctIndex: 0,
+      explanation: "JavaScript executes synchronous code first ('A', then 'C'). The setTimeout callback is placed in the task queue and only executes after the current synchronous code finishes ('B')."
     }
   }
 };

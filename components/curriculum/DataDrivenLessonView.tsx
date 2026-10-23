@@ -33,6 +33,7 @@ import {
 } from "./lesson-content-types";
 import { recordActivity } from "@/lib/gamification";
 import { PartStepper } from "./PartStepper";
+import { CurriculumCardCode } from "./CurriculumCardCode";
 
 function renderFormattedText(text?: string): React.ReactNode {
   if (!text) return null;
@@ -302,21 +303,46 @@ export function DataDrivenLessonView({
               <span>{sec.icon || "✨"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · CORE CONCEPT`}</span>
             </div>
-            {isCompleted && (
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
-                ✓ Read
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {(content.difficulty || lesson.difficulty) && (
+                <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border ${
+                  (content.difficulty || lesson.difficulty)?.toLowerCase() === "easy"
+                    ? "text-emerald-400 bg-emerald-500/15 border-emerald-500/25"
+                    : (content.difficulty || lesson.difficulty)?.toLowerCase() === "moderate"
+                    ? "text-amber-400 bg-amber-500/15 border-amber-500/25"
+                    : "text-rose-400 bg-rose-500/15 border-rose-500/25"
+                }`}>
+                  Difficulty: {(content.difficulty || lesson.difficulty)}
+                </span>
+              )}
+              {isCompleted && (
+                <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                  ✓ Read
+                </span>
+              )}
+            </div>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             {title}
-          </h2>
+          </h1>
           {explanation && (
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
               {explanation}
             </p>
           )}
         </div>
+
+        {/* Core Code Snippet */}
+        {content.part1?.codeSnippet && (
+          <div className="pt-2">
+            <CurriculumCardCode
+              code={content.part1.codeSnippet}
+              title="Code Example"
+              defaultWrap={true}
+              heightClass="min-h-[140px] max-h-[300px] h-auto"
+            />
+          </div>
+        )}
 
         {/* Real-World Analogy Callout Box */}
         {content.part1?.analogy && (
@@ -393,31 +419,31 @@ export function DataDrivenLessonView({
 
         {/* Concepts Grid */}
         {content.part2?.concepts && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4 items-stretch">
             {content.part2.concepts.map((concept, idx) => (
               <div
                 key={idx}
-                className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-3 flex flex-col justify-between hover:border-purple-500/30 transition-colors"
+                className="group relative p-5 rounded-2xl bg-[#090C14] border border-white/[0.08] hover:border-purple-500/30 flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/[0.03]"
               >
-                <div className="space-y-2">
-                  <div className="inline-block font-mono font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border text-purple-400 bg-purple-500/10 border-purple-500/20">
+                <div className="flex-1 flex flex-col mb-4">
+                  <div className="inline-block font-mono font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border text-purple-400 bg-purple-500/10 border-purple-500/20 w-fit mb-2">
                     Concept {idx + 1}
                   </div>
-                  <div className="text-base font-bold text-white">
+                  <h3 className="text-base font-bold text-white tracking-tight group-hover:text-purple-200 transition-colors">
                     {concept.name}
-                  </div>
-                  <p className="text-xs text-slate-300 leading-relaxed">
+                  </h3>
+                  <p className="text-xs text-slate-300 leading-relaxed mt-2">
                     {renderFormattedText(concept.desc)}
                   </p>
                 </div>
                 {concept.codeSnippet && (
-                  <div className="pt-2">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Example</span>
-                    </div>
-                    <pre className="text-xs bg-black/60 p-3 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto leading-relaxed">
-                      {concept.codeSnippet}
-                    </pre>
+                  <div className="mt-auto w-full pt-1">
+                    <CurriculumCardCode
+                      code={concept.codeSnippet}
+                      title="Example"
+                      defaultWrap={true}
+                      heightClass="h-[195px]"
+                    />
                   </div>
                 )}
               </div>
@@ -427,35 +453,37 @@ export function DataDrivenLessonView({
 
         {/* Standard Cards */}
         {content.part2?.cards && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-4 items-stretch">
             {content.part2.cards.map((card: LessonContentCard, idx: number) => (
               <div
                 key={idx}
-                className="p-5 rounded-2xl bg-[#090C14] border border-white/[0.06] space-y-2 flex flex-col justify-between hover:border-purple-500/30 transition-colors"
+                className="group relative p-5 rounded-2xl bg-[#090C14] border border-white/[0.08] hover:border-purple-500/30 flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/[0.03]"
               >
-                <div>
-                  <div
-                    className={`inline-block font-mono font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border mb-2 ${getTagColorClass(
-                      card.color
-                    )}`}
-                  >
-                    {card.number} · {card.tag}
-                  </div>
-                  <div className="text-base font-bold text-white">
-                    {card.title}
-                  </div>
-                </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  {renderFormattedText(card.description)}
-                </p>
-                {card.codeSnippet && (
-                  <div className="pt-2">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Example</span>
+                <div className="flex-1 flex flex-col mb-4">
+                  <div className="mb-2">
+                    <div
+                      className={`inline-block font-mono font-bold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded border mb-2 ${getTagColorClass(
+                        card.color
+                      )}`}
+                    >
+                      {card.number} · {card.tag}
                     </div>
-                    <pre className="text-xs bg-black/60 p-3 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto leading-relaxed">
-                      {card.codeSnippet}
-                    </pre>
+                    <h3 className="text-base font-bold text-white tracking-tight group-hover:text-purple-200 transition-colors">
+                      {card.title}
+                    </h3>
+                  </div>
+                  <p className="text-xs text-slate-300 leading-relaxed mt-1">
+                    {renderFormattedText(card.description)}
+                  </p>
+                </div>
+                {card.codeSnippet && (
+                  <div className="mt-auto w-full pt-1">
+                    <CurriculumCardCode
+                      code={card.codeSnippet}
+                      title="Example"
+                      defaultWrap={true}
+                      heightClass="h-[195px]"
+                    />
                   </div>
                 )}
               </div>
@@ -475,7 +503,7 @@ export function DataDrivenLessonView({
     );
   };
 
-  // ─── Part 3: Mental Model & Structure ──────────────────────────────────────
+  // ─── Part 3: How It Works in Practice ──────────────────────────────────────
   const renderPart3 = (sec: LessonSectionItem, index: number) => {
     const isCompleted = completedSections.has(sec.id);
     const domId = `part-${index + 1}`;
@@ -485,7 +513,7 @@ export function DataDrivenLessonView({
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
-              <span>{sec.icon || "🧠"}</span>
+              <span>{sec.icon || "🎯"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · DEEP DIVE & STRUCTURE`}</span>
             </div>
             {isCompleted && (
@@ -554,12 +582,72 @@ export function DataDrivenLessonView({
                   {renderFormattedText(pt.content)}
                 </p>
                 {pt.codeSnippet && (
-                  <pre className="text-xs bg-black/50 p-4 rounded-xl border border-white/[0.06] text-purple-300 font-mono overflow-x-auto mt-2 leading-relaxed">
-                    {pt.codeSnippet}
-                  </pre>
+                  <div className="pt-2">
+                    <CurriculumCardCode
+                      code={pt.codeSnippet}
+                      title="Code Breakdown"
+                      defaultWrap={true}
+                      heightClass="min-h-[140px] max-h-[260px] h-auto"
+                    />
+                  </div>
                 )}
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Real-World Scenario Question & Easy-Word Answer */}
+        {content.scenario && (
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-950/25 via-[#090C14] to-cyan-950/25 border border-purple-500/30 shadow-xl space-y-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/15 text-purple-300 text-xs font-mono font-bold border border-purple-500/30">
+                <span>🎯</span>
+                <span>REAL-WORLD SCENARIO</span>
+              </div>
+              {(content.difficulty || lesson.difficulty) && (
+                <span className="text-xs font-mono text-slate-400">
+                  Difficulty: <strong className="text-purple-300">{content.difficulty || lesson.difficulty}</strong>
+                </span>
+              )}
+            </div>
+            <div>
+              <h3 className="text-base sm:text-lg font-bold text-white leading-snug">
+                {renderFormattedText(content.scenario.question)}
+              </h3>
+            </div>
+            <div className="p-4 rounded-xl bg-purple-500/[0.08] border border-purple-500/25 space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-purple-300 uppercase tracking-wide">
+                <span>💡</span>
+                <span>Simple Answer</span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+                {renderFormattedText(content.scenario.answer)}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Common Interview Question & Easy-English Sample Answer */}
+        {content.interviewQuestion && (
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-950/25 via-[#090C14] to-purple-950/25 border border-amber-500/30 shadow-xl space-y-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 text-amber-300 text-xs font-mono font-bold border border-amber-500/30">
+              <span>💼</span>
+              <span>COMMON INTERVIEW QUESTION</span>
+            </div>
+            <div>
+              <h3 className="text-base sm:text-lg font-bold text-white leading-snug">
+                {renderFormattedText(content.interviewQuestion.question)}
+              </h3>
+            </div>
+            <div className="p-4 rounded-xl bg-amber-500/[0.08] border border-amber-500/25 space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-300 uppercase tracking-wide">
+                <span>💬</span>
+                <span>Sample Interview Answer (Easy English)</span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
+                {renderFormattedText(content.interviewQuestion.answer)}
+              </p>
+            </div>
           </div>
         )}
       </section>
@@ -623,19 +711,24 @@ export function DataDrivenLessonView({
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
           {/* Bad / Anti-Pattern */}
           {badComparison && (
-            <div className="p-5 rounded-2xl bg-rose-500/[0.03] border border-rose-500/30 space-y-3 flex flex-col justify-between">
-              <div className="space-y-3">
+            <div className="p-5 rounded-2xl bg-rose-500/[0.03] border border-rose-500/30 flex flex-col h-full justify-between">
+              <div className="space-y-3 flex-1 flex flex-col mb-3">
                 <div className="flex items-center gap-2 text-rose-400 font-bold text-xs uppercase tracking-wider">
                   <span>❌ {badComparison.title}</span>
                 </div>
-                <pre className="text-xs bg-[#090C14] p-3 rounded-xl border border-rose-500/20 overflow-x-auto text-slate-300 font-mono leading-relaxed">
-                  {badComparison.code}
-                </pre>
+                <div className="mt-auto pt-1 w-full">
+                  <CurriculumCardCode
+                    code={badComparison.code}
+                    title="Anti-Pattern"
+                    heightClass="h-[180px]"
+                    defaultWrap={true}
+                  />
+                </div>
               </div>
-              <p className="text-xs text-rose-300/80 leading-relaxed">
+              <p className="text-xs text-rose-300/80 leading-relaxed mt-auto">
                 {renderFormattedText(badComparison.explanation)}
               </p>
             </div>
@@ -643,16 +736,21 @@ export function DataDrivenLessonView({
 
           {/* Good / Production Grade */}
           {goodComparison && (
-            <div className="p-5 rounded-2xl bg-emerald-500/[0.03] border border-emerald-500/30 space-y-3 flex flex-col justify-between">
-              <div className="space-y-3">
+            <div className="p-5 rounded-2xl bg-emerald-500/[0.03] border border-emerald-500/30 flex flex-col h-full justify-between">
+              <div className="space-y-3 flex-1 flex flex-col mb-3">
                 <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
                   <span>✅ {goodComparison.title}</span>
                 </div>
-                <pre className="text-xs bg-[#090C14] p-3 rounded-xl border border-emerald-500/20 overflow-x-auto text-slate-300 font-mono leading-relaxed">
-                  {goodComparison.code}
-                </pre>
+                <div className="mt-auto pt-1 w-full">
+                  <CurriculumCardCode
+                    code={goodComparison.code}
+                    title="Production Solution"
+                    heightClass="h-[180px]"
+                    defaultWrap={true}
+                  />
+                </div>
               </div>
-              <p className="text-xs text-emerald-300/80 leading-relaxed">
+              <p className="text-xs text-emerald-300/80 leading-relaxed mt-auto">
                 {renderFormattedText(goodComparison.explanation)}
               </p>
             </div>
@@ -715,14 +813,10 @@ export function DataDrivenLessonView({
     );
   };
 
-  // ─── Part 6: Summary & Key Takeaways ──────────────────────────────────────
+  // ─── Part 6 / Takeaways Renderer ──────────────────────────────────────────
   const renderPart6 = (sec: LessonSectionItem, index: number) => {
-    const takeaways = content.part6?.takeaways || content.part7?.takeaways;
-    const title = content.part6?.takeaways
-      ? (content.part6?.title || sec.label || "Summary & Key Takeaways")
-      : content.part7?.title && !content.part7.title.toLowerCase().includes("quiz")
-      ? content.part7.title
-      : sec.label || "Summary & Key Takeaways";
+    const takeaways = (sec.id === "part7" ? content.part7?.takeaways : content.part6?.takeaways) || content.part6?.takeaways || content.part7?.takeaways;
+    const title = (sec.id === "part7" ? content.part7?.title : content.part6?.title) || sec.label || "Summary & Key Takeaways";
     const isCompleted = completedSections.has(sec.id);
     const domId = `part-${index + 1}`;
 
@@ -772,14 +866,10 @@ export function DataDrivenLessonView({
     );
   };
 
-  // ─── Part 7: Knowledge Check Quiz ──────────────────────────────────────────
+  // ─── Part 7 / Quiz Renderer ──────────────────────────────────────────────
   const renderPart7 = (sec: LessonSectionItem, index: number) => {
-    const quiz = content.part7?.quiz || content.part6?.quiz || (content as any).quiz;
-    const quizTitle = content.part7?.quiz
-      ? (content.part7?.title || sec.label || "Knowledge Check Quiz")
-      : content.part6?.quiz
-      ? (content.part6?.title || sec.label || "Knowledge Check Quiz")
-      : sec.label || "Knowledge Check Quiz";
+    const quiz = (sec.id === "part6" ? content.part6?.quiz : content.part7?.quiz) || content.part7?.quiz || content.part6?.quiz || (content as any).quiz;
+    const quizTitle = (sec.id === "part6" ? content.part6?.title : content.part7?.title) || sec.label || "Knowledge Check Quiz";
     const isCompleted = completedSections.has(sec.id);
     const domId = `part-${index + 1}`;
 
@@ -948,6 +1038,17 @@ export function DataDrivenLessonView({
             <span className="text-[10px] font-mono text-purple-300 font-bold bg-purple-500/15 px-2.5 py-0.5 rounded-full border border-purple-500/25">
               {lesson.code}
             </span>
+            {(content.difficulty || lesson.difficulty) && (
+              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${
+                (content.difficulty || lesson.difficulty)?.toLowerCase() === "easy"
+                  ? "text-emerald-400 bg-emerald-500/15 border-emerald-500/25"
+                  : (content.difficulty || lesson.difficulty)?.toLowerCase() === "moderate"
+                  ? "text-amber-400 bg-amber-500/15 border-amber-500/25"
+                  : "text-rose-400 bg-rose-500/15 border-rose-500/25"
+              }`}>
+                {(content.difficulty || lesson.difficulty)}
+              </span>
+            )}
             <span className="text-slate-300 font-semibold truncate max-w-[200px] sm:max-w-lg md:max-w-xl">
               {lesson.title}
             </span>
@@ -985,8 +1086,11 @@ export function DataDrivenLessonView({
               else if (sec.id === "part3") partNode = renderPart3(sec, idx);
               else if (sec.id === "part4") partNode = renderPart4(sec, idx);
               else if (sec.id === "part5") partNode = renderPart5(sec, idx);
-              else if (sec.id === "part6") partNode = renderPart6(sec, idx);
-              else if (sec.id === "part7") partNode = renderPart7(sec, idx);
+              else if (sec.id === "part6") {
+                partNode = content.part6?.quiz ? renderPart7(sec, idx) : renderPart6(sec, idx);
+              } else if (sec.id === "part7") {
+                partNode = content.part7?.takeaways ? renderPart6(sec, idx) : renderPart7(sec, idx);
+              }
 
               if (!partNode) return null;
 

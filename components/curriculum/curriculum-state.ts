@@ -59,7 +59,11 @@ export function getCurriculumState(
     if (cleanId && cleanId === cleanProgressId) return true;
 
     const cleanCode = lesson.code?.trim().toLowerCase();
-    if (cleanCode && cleanCode === cleanProgressId) return true;
+    if (cleanCode && (cleanCode === cleanProgressId || cleanCode.replace(/[^a-z0-9]/g, "") === cleanProgressId.replace(/[^a-z0-9]/g, ""))) return true;
+
+    if (lesson.aliases && lesson.aliases.some((a) => a.trim().toLowerCase() === cleanProgressId)) {
+      return true;
+    }
 
     if (lesson.href) {
       const slug = lesson.href.split("/").filter(Boolean).pop()?.toLowerCase();

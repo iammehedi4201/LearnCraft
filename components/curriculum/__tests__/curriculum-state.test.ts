@@ -338,57 +338,62 @@ const tsCourse = getTypeScriptCourse();
 
   it("4.1: Brand-new user (0 lessons completed)", () => {
     const state = getCurriculumState(tsCourse, { completedLessonIds: [], prereqConfirmed: false });
-    assert(state.totalLessonsCount === 32, `Total lessons should be 32, got ${state.totalLessonsCount}`);
+    assert(state.totalLessonsCount === 18, `Total lessons should be 18, got ${state.totalLessonsCount}`);
     assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
     assert(state.phases[0].doneSteps === 0, `Phase 1 done steps should be 0, got ${state.phases[0].doneSteps}`);
     assert(state.phases[0].lessons[0].status === "current", "Lesson 1 should be current");
-    assert(state.currentStepChip === "START HERE · STEP 1 OF 5", `Chip should be 'START HERE · STEP 1 OF 5', got '${state.currentStepChip}'`);
+    assert(state.currentStepChip === "START HERE · STEP 1 OF 4", `Chip should be 'START HERE · STEP 1 OF 4', got '${state.currentStepChip}'`);
     console.log("  ✓ 4.1 Authoritative TypeScript initial state verified");
   });
 
-  it("4.2: User completes Lesson 1 by slug", () => {
-    const state = getCurriculumState(tsCourse, { completedLessonIds: ["ts01-mental-model"], prereqConfirmed: true });
+  it("4.2: User completes Lesson 1 by slug or legacy alias", () => {
+    const state = getCurriculumState(tsCourse, { completedLessonIds: ["ts01-what-typescript-does"], prereqConfirmed: true });
     assert(state.completedLessonsCount === 1, `Completed count should be 1, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
     assert(state.phases[0].doneSteps === 1, `Phase 1 done steps should be 1, got ${state.phases[0].doneSteps}`);
     assert(state.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed");
     assert(state.phases[0].lessons[1].status === "current", "Lesson 2 should be current");
     assert(state.phases[0].lessons[2].status === "next", "Lesson 3 should be next");
-    assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 5", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 5', got '${state.currentStepChip}'`);
-    console.log("  ✓ 4.2 Authoritative TypeScript single lesson completion verified");
+    assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 4", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 4', got '${state.currentStepChip}'`);
+
+    // Verify backward compatibility with legacy completion slug
+    const stateLegacy = getCurriculumState(tsCourse, { completedLessonIds: ["ts01-mental-model"], prereqConfirmed: true });
+    assert(stateLegacy.completedLessonsCount === 1, `Legacy slug should match via aliases, got ${stateLegacy.completedLessonsCount}`);
+    assert(stateLegacy.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed via legacy alias");
+
+    console.log("  ✓ 4.2 Authoritative TypeScript single lesson completion & legacy alias verified");
   });
 
-  it("4.3: User completes all 5 lessons of Phase 1 (resolves user's screenshot scenario)", () => {
+  it("4.3: User completes all 4 lessons of Phase 1 -> Phase 2 unlocks", () => {
     const phase1Slugs = [
-      "ts01-mental-model",
-      "ts02-primitives-inference",
-      "ts03-arrays-tuples",
-      "ts04-object-types",
-      "ts05-special-types",
+      "ts01-what-typescript-does",
+      "ts02-type-annotations-inference",
+      "ts03-basic-types-arrays",
+      "ts04-function-parameters-return-types",
     ];
     const state = getCurriculumState(tsCourse, { completedLessonIds: phase1Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 5, `Completed count should be 5, got ${state.completedLessonsCount}`);
+    assert(state.completedLessonsCount === 4, `Completed count should be 4, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 1, `Completed phases should be 1, got ${state.completedPhases.length}`);
     assert(state.phases[0].status === "completed", "Phase 1 should be completed");
-    assert(state.phases[0].doneSteps === 5, "Phase 1 done steps should be 5");
+    assert(state.phases[0].doneSteps === 4, "Phase 1 done steps should be 4");
     assert(state.phases[1].status === "current", "Phase 2 should be unlocked and current");
-    assert(state.currentLesson?.code === "TS-06", `Current lesson should be TS-06, got ${state.currentLesson?.code}`);
-    assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 4", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 4', got '${state.currentStepChip}'`);
+    assert(state.currentLesson?.code === "TS-05", `Current lesson should be TS-05, got ${state.currentLesson?.code}`);
+    assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 5", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 5', got '${state.currentStepChip}'`);
     console.log("  ✓ 4.3 Authoritative TypeScript Phase 1 full completion & Phase 2 unlock verified");
   });
 
-  it("4.4: User completes all 9 phases (all 32 lessons) -> Capstone unlocks!", () => {
-    const all32Slugs = getAllLessons().map((l) => l.slug);
+  it("4.4: User completes all 4 phases (all 18 lessons) -> Capstone unlocks!", () => {
+    const all18Slugs = getAllLessons().map((l) => l.slug);
   
-    const state = getCurriculumState(tsCourse, { completedLessonIds: all32Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 32, `Completed count should be 32, got ${state.completedLessonsCount}`);
-    assert(state.completedPhases.length === 9, `All 9 phases should be completed, got ${state.completedPhases.length}`);
+    const state = getCurriculumState(tsCourse, { completedLessonIds: all18Slugs, prereqConfirmed: true });
+    assert(state.completedLessonsCount === 18, `Completed count should be 18, got ${state.completedLessonsCount}`);
+    assert(state.completedPhases.length === 4, `All 4 phases should be completed, got ${state.completedPhases.length}`);
     assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
     assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);
     assert(state.isCourseComplete === true, "Course should be marked complete");
-    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 9 phases");
-    console.log("  ✓ 4.4 All 9 phases finished -> Capstone successfully unlocked verified!");
+    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 4 phases");
+    console.log("  ✓ 4.4 All 4 phases finished -> Capstone successfully unlocked verified!");
   });
 
 
@@ -404,19 +409,19 @@ const jsCourse = getJavaScriptCourse();
 
   it("5.1: Brand-new user (0 lessons completed)", () => {
     const state = getCurriculumState(jsCourse, { completedLessonIds: [], prereqConfirmed: false });
-    assert(state.totalLessonsCount === 30, `Total lessons should be 30, got ${state.totalLessonsCount}`);
-    assert(state.phases.length === 8, `Total phases should be 8, got ${state.phases.length}`);
+    assert(state.totalLessonsCount === 22, `Total lessons should be 22, got ${state.totalLessonsCount}`);
+    assert(state.phases.length === 4, `Total phases should be 4, got ${state.phases.length}`);
     assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
     assert(state.phases[0].doneSteps === 0, `Phase 1 done steps should be 0, got ${state.phases[0].doneSteps}`);
     assert(state.phases[0].lessons[0].status === "current", "Lesson 1 should be current");
     assert(state.currentLesson?.code === "JS-01", `Current lesson code should be JS-01, got ${state.currentLesson?.code}`);
     assert(state.showPrerequisitesCard === true, "Prereq card should show on first visit");
-    assert(state.currentStepChip === "START HERE · STEP 1 OF 5", `Chip should be 'START HERE · STEP 1 OF 5', got '${state.currentStepChip}'`);
+    assert(state.currentStepChip === "START HERE · STEP 1 OF 8", `Chip should be 'START HERE · STEP 1 OF 8', got '${state.currentStepChip}'`);
     console.log("  ✓ 5.1 Authoritative JavaScript initial state verified");
   });
 
-  it("5.2: User completes single lesson by slug", () => {
+  it("5.2: User completes single lesson by slug (supporting legacy alias)", () => {
     const state = getCurriculumState(jsCourse, { completedLessonIds: ["js01-how-javascript-runs"], prereqConfirmed: true });
     assert(state.completedLessonsCount === 1, `Completed count should be 1, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
@@ -425,40 +430,43 @@ const jsCourse = getJavaScriptCourse();
     assert(state.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed");
     assert(state.phases[0].lessons[1].status === "current", "Lesson 2 should be current");
     assert(state.currentLesson?.code === "JS-02", `Current lesson should be JS-02, got ${state.currentLesson?.code}`);
-    assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 5", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 5', got '${state.currentStepChip}'`);
+    assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 8", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 8', got '${state.currentStepChip}'`);
     console.log("  ✓ 5.2 Authoritative JavaScript single lesson completion verified");
   });
 
-  it("5.3: User completes Phase 1 (5 lessons) -> Phase 2 unlocks", () => {
+  it("5.3: User completes Phase 1 (8 lessons) -> Phase 2 unlocks", () => {
     const phase1Slugs = [
-      "js01-how-javascript-runs",
-      "js02-variables-and-data-types",
-      "js03-operators-and-equality",
-      "js04-conditional-logic",
-      "js05-loops-and-iteration",
+      "js01-what-javascript-does",
+      "js02-variables-const-and-let",
+      "js03-basic-values-and-types",
+      "js04-comparisons-and-strict-equality",
+      "js05-conditions-and-truthy-falsy",
+      "js06-loops",
+      "js07-functions-and-return-values",
+      "js08-scope-and-block-scope",
     ];
     const state = getCurriculumState(jsCourse, { completedLessonIds: phase1Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 5, `Completed count should be 5, got ${state.completedLessonsCount}`);
+    assert(state.completedLessonsCount === 8, `Completed count should be 8, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 1, `Completed phases should be 1, got ${state.completedPhases.length}`);
     assert(state.phases[0].status === "completed", "Phase 1 should be completed");
     assert(state.phases[1].status === "current", "Phase 2 should be current");
-    assert(state.currentLesson?.code === "JS-06", `Current lesson should be JS-06, got ${state.currentLesson?.code}`);
-    assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 4", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 4', got '${state.currentStepChip}'`);
+    assert(state.currentLesson?.code === "JS-09", `Current lesson should be JS-09, got ${state.currentLesson?.code}`);
+    assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 5", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 5', got '${state.currentStepChip}'`);
     console.log("  ✓ 5.3 Authoritative JavaScript Phase 1 completion and Phase 2 unlock verified");
   });
 
-  it("5.4: User completes all 8 phases (all 30 lessons) -> Capstone unlocks!", () => {
-    const all30Slugs = getAllJSLessons().map((l) => l.slug);
-    assert(all30Slugs.length === 30, `Expected 30 JS lesson slugs, got ${all30Slugs.length}`);
+  it("5.4: User completes all 4 phases (all 22 lessons) -> Capstone unlocks!", () => {
+    const all22Slugs = getAllJSLessons().map((l) => l.slug);
+    assert(all22Slugs.length === 22, `Expected 22 JS lesson slugs, got ${all22Slugs.length}`);
   
-    const state = getCurriculumState(jsCourse, { completedLessonIds: all30Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 30, `Completed count should be 30, got ${state.completedLessonsCount}`);
-    assert(state.completedPhases.length === 8, `All 8 phases should be completed, got ${state.completedPhases.length}`);
+    const state = getCurriculumState(jsCourse, { completedLessonIds: all22Slugs, prereqConfirmed: true });
+    assert(state.completedLessonsCount === 22, `Completed count should be 22, got ${state.completedLessonsCount}`);
+    assert(state.completedPhases.length === 4, `All 4 phases should be completed, got ${state.completedPhases.length}`);
     assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
     assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);
     assert(state.isCourseComplete === true, "Course should be marked complete");
-    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 8 phases");
-    console.log("  ✓ 5.4 All 8 phases finished -> JavaScript Capstone successfully unlocked verified!");
+    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 4 phases");
+    console.log("  ✓ 5.4 All 4 phases finished -> JavaScript Capstone successfully unlocked verified!");
   });
 
 

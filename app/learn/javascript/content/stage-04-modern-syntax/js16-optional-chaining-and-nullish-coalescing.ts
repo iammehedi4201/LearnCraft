@@ -4,43 +4,43 @@ export const js16OptionalChainingAndNullishCoalescingContent: StandardLessonCont
   slug: "js16-optional-chaining-and-nullish-coalescing",
   code: "JS-16",
   title: "Safe Property Access with ?. and ??",
-  subtitle: "Navigate nested objects safely without runtime crashes using ?. and provide precise defaults with ?? without corrupting valid 0 or false values.",
+  subtitle: "Prevent runtime crashes by navigating nested data with ?. and setting safe fallbacks with ??.",
   sections: [
     {
       id: "part1",
-      label: "Safe Navigation",
-      icon: "🛡️",
-      tag: "FOUNDATION"
+      label: "?. and ?? Operators",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "?. and ?? Syntax",
-      icon: "⚡",
-      tag: "SYNTAX"
+      label: "Optional Chaining (?.)",
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
-      label: "?? vs || Difference",
-      icon: "⚖️",
-      tag: "COMPARISON"
+      label: "?? vs || Operator",
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "Falsy Zero Bug",
-      icon: "⚠️",
-      tag: "DEBUGGING"
+      label: "Falsy Overrides with ||",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Operators Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Summary Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,128 +50,126 @@ export const js16OptionalChainingAndNullishCoalescingContent: StandardLessonCont
     }
   ],
   part1: {
-    title: "Safe Data Access in Modern JavaScript",
-    bigPicture: "Modern JavaScript provides two operators to eliminate common runtime crashes: optional chaining (?.) stops evaluation if an intermediate property is null or undefined, and nullish coalescing (??) provides a fallback only when a value is nullish.",
-    analogy: "Optional chaining (?.) is like knocking on each door before opening it: if the room doesn't exist, you stop safely instead of walking off a cliff.",
-    diagram: "WITHOUT ?.:\nuser.address.street  --> If user.address is null --> CRASH: TypeError!\n\nWITH ?.:\nuser?.address?.street --> If address is null --> Returns undefined safely!",
-    breakdownTitle: "Modern Operators",
+    title: "Safe Property Access with ?. and ??",
+    bigPicture: "Optional chaining (`?.`) prevents fatal crashes by safely returning `undefined` when reading nested nullish values. Nullish coalescing (`??`) provides fallbacks specifically for `null` and `undefined`.",
+    breakdownTitle: "Modern Safe Operators",
     breakdownItems: [
       {
         title: "Optional Chaining (?.)",
-        desc: "Short-circuits to undefined if the reference before ?. is null or undefined, preventing fatal TypeErrors."
+        desc: "Short-circuits safely to undefined if the target object or property is null or undefined."
       },
       {
         title: "Nullish Coalescing (??)",
-        desc: "Returns the right-hand operand only if the left-hand operand is null or undefined."
+        desc: "Provides a default fallback only when a value is strictly null or undefined (not 0 or false)."
       },
       {
-        title: "Falsy Value Preservation",
-        desc: "Unlike ||, ?? preserves legitimate falsy values like 0, \"\", and false without replacing them."
+        title: "Safe Indexing & Calling",
+        desc: "Works with arrays (`items?.[0]`) and function calls (`callback?.()`)."
       }
     ]
   },
   part2: {
-    title: "Optional Chaining and Coalescing Syntax",
-    intro: "Two complementary operators for robust nested property access.",
+    title: "How Optional Chaining (?.) Prevents Crashes",
+    intro: "Two operators designed to handle missing and nullish data cleanly.",
     cards: [
       {
         number: "01",
-        tag: "Safe Read",
+        tag: "Chaining",
         title: "Optional Chaining (?.)",
-        description: "Safely reads deep nested properties without throwing errors.",
-        codeSnippet: "const user = { name: \"Alex\" };\n// address is undefined, but ?. prevents a crash:\nconsole.log(user?.address?.city); // Output: undefined",
+        description: "Safely reads nested properties without crashing if an intermediate key is missing.",
+        codeSnippet: "const user = { name: \"Maya\" };\n// address is missing, but doesn't crash:\nconsole.log(user.address?.city); // Output: undefined",
         color: "emerald"
       },
       {
         number: "02",
         tag: "Fallback",
         title: "Nullish Coalescing (??)",
-        description: "Provides fallback values only for null or undefined.",
-        codeSnippet: "const rawScore = null;\nconst finalScore = rawScore ?? 100;\nconsole.log(finalScore); // Output: 100",
+        description: "Returns the right-hand value only if the left-hand value is null or undefined.",
+        codeSnippet: "const serverPort = undefined;\nconst port = serverPort ?? 3000;\nconsole.log(port); // Output: 3000",
         color: "cyan"
       },
       {
         number: "03",
         tag: "Combined",
-        title: "Combined Safe Navigation",
-        description: "Pair ?. with ?? for safe deep reads with guaranteed fallbacks.",
-        codeSnippet: "const account = {};\nconst plan = account?.membership?.tier ?? \"Standard\";\nconsole.log(plan); // Output: Standard",
+        title: "Combining ?. and ??",
+        description: "Navigate safely and provide a fallback in a single readable line.",
+        codeSnippet: "const user = {};\nconst country = user.location?.country ?? \"Unknown\";\nconsole.log(country); // Output: Unknown",
         color: "purple"
       }
     ],
     rule: {
-      title: "Coalescing Rule",
-      content: "Use ?? instead of || when 0, false, or \"\" are legitimate valid values in your application."
+      title: "The Nullish Rule",
+      content: "Nullish means strictly null or undefined. Values like 0, false, and empty string \"\" are NOT nullish."
     }
   },
   part3: {
-    title: "Understanding ?? vs ||",
-    intro: "Why nullish coalescing replaces logical OR for default values.",
+    title: "Why Nullish Coalescing (??) is Safer Than OR (||)",
+    intro: "Understand the subtle bug caused by using || for default values.",
     points: [
       {
-        title: "1. The Logical OR (||) Behavior",
-        content: "|| checks for ANY falsy value: 0, \"\", false, null, undefined, or NaN.",
-        codeSnippet: "const cartItems = 0; // Legitimate valid count\nconsole.log(cartItems || 5); // Output: 5 (Bug: Overwrote valid 0!)"
+        title: "1. How || (OR) Treats Falsy Values",
+        content: "The || operator replaces ANY falsy value: false, 0, \"\", null, undefined. This causes bugs when 0 or false are valid user inputs!",
+        codeSnippet: "const userScore = 0; // Valid game score of zero\nconst score = userScore || 10; // BUG: 0 is falsy, so it replaces it with 10!\nconsole.log(score); // Output: 10 (Incorrect!)"
       },
       {
-        title: "2. The Nullish (??) Precision",
-        content: "?? triggers ONLY on null or undefined, preserving 0 and empty strings.",
-        codeSnippet: "const cartItems = 0;\nconsole.log(cartItems ?? 5); // Output: 0 (Preserved!)"
+        title: "2. How ?? (Nullish Coalescing) Solves This",
+        content: "?? only triggers on null and undefined. It respects 0, false, and empty strings.",
+        codeSnippet: "const userScore = 0;\nconst score = userScore ?? 10;\nconsole.log(score); // Output: 0 (Preserved correctly!)"
       },
       {
-        title: "3. Optional Method Calls (?.())",
-        content: "Safely call methods that might not exist on an object without throwing.",
-        codeSnippet: "const obj = {};\nconsole.log(obj.nonExistentMethod?.()); // Output: undefined (No crash!)"
+        title: "3. Safe Function and Array Access",
+        content: "Check if an optional callback or array exists before invoking or indexing.",
+        codeSnippet: "const data = null;\nconsole.log(data?.[0]); // Output: undefined (No crash)"
       }
     ]
   },
   part4: {
-    title: "Common Pitfall: The Falsy Zero Bug with ||",
+    title: "Common Trap: Overriding 0 or Empty Strings with ||",
     bad: {
-      title: "❌ Using || for Numerical Defaults",
-      code: "function setSpeed(speed) {\n  // Bug: If speed is 0 (stopped), 0 is falsy, so it defaults to 50!\n  return speed || 50;\n}\nconsole.log(setSpeed(0)); // Output: 50 (Car cannot stop!)",
-      explanation: "Logical OR treats 0 as falsy, accidentally overwriting a valid stopped vehicle speed with the default 50."
+      title: "❌ Using || to Set Default Options",
+      code: "function setVolume(vol) {\n  // Bug: If vol is 0 (mute), || replaces it with 50!\n  const activeVolume = vol || 50;\n  console.log(\"Volume:\", activeVolume);\n}\nsetVolume(0);\n// Output: Volume: 50 (User cannot mute audio!)",
+      explanation: "Because 0 is falsy, || mistakenly triggers the default, preventing users from setting a volume of 0."
     },
     good: {
-      title: "✅ Use ?? to Preserve Zero and False",
-      code: "function setSpeed(speed) {\n  // Safe: 0 is preserved; only null or undefined gets default 50\n  return speed ?? 50;\n}\nconsole.log(setSpeed(0));         // Output: 0 (Vehicle stopped)\nconsole.log(setSpeed(undefined)); // Output: 50",
-      explanation: "Nullish coalescing respects 0 as a valid numeric value, triggering only on missing data."
+      title: "✅ Use ?? to Allow 0 and false",
+      code: "function setVolume(vol) {\n  // Safe: Only replaces null or undefined!\n  const activeVolume = vol ?? 50;\n  console.log(\"Volume:\", activeVolume);\n}\nsetVolume(0);\n// Output: Volume: 0 (Correct!)",
+      explanation: "?? only applies the default fallback when vol is null or undefined."
     }
   },
   part5: {
-    title: "Safe Navigation Sandbox",
-    intro: "Test optional chaining and nullish coalescing with nested objects.",
-    starterCode: "const apiPayload = {\n  profile: {\n    settings: {\n      notificationsCount: 0,\n      soundEnabled: false\n    }\n  }\n};\n\n// 1. Safe nested read:\nconst userCity = apiPayload?.profile?.location?.city ?? \"Unknown City\";\n\n// 2. Preserving 0 and false:\nconst count = apiPayload.profile.settings.notificationsCount ?? 10;\nconst sound = apiPayload.profile.settings.soundEnabled ?? true;\n\nconsole.log(\"City:\", userCity);\nconsole.log(\"Notifications count:\", count); // Expected: 0\nconsole.log(\"Sound enabled:\", sound);       // Expected: false\n"
+    title: "Interactive Code Playground",
+    intro: "Test optional chaining and nullish coalescing on incomplete user profiles.",
+    starterCode: "const apiUser = {\n  id: 42,\n  name: \"Alex\",\n  preferences: {\n    theme: \"dark\",\n    unreads: 0 // Zero is valid unread count!\n  }\n};\n\n// 1. Safe access to missing nested contact data:\nconst phone = apiUser.contact?.phone ?? \"Not provided\";\nconsole.log(\"Phone number:\", phone);\n\n// 2. Testing ?? vs || on 0 unread messages:\nconsole.log(\"Unreads using ||:\", apiUser.preferences?.unreads || 5); // Buggy: replaces 0 with 5\nconsole.log(\"Unreads using ??:\", apiUser.preferences?.unreads ?? 5); // Correct: keeps 0\n"
   },
   part6: {
-    title: "Key Takeaways: Modern Safe Operators",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "?. Prevents Crashes",
-        desc: "Short-circuits to undefined if any property in the chain is null or undefined."
+        title: "?. Stops Crashes",
+        desc: "Use optional chaining obj?.prop to safely read nested data without TypeErrors."
       },
       {
-        title: "?? Preserves Falsy Values",
-        desc: "Fallbacks occur only for null or undefined, preserving 0, \"\", and false."
+        title: "?? for Safe Defaults",
+        desc: "Use ?? to provide defaults only when values are strictly null or undefined."
       },
       {
-        title: "Optional Method Calls",
-        desc: "Use obj.method?.() to invoke optional callbacks safely without crashing."
+        title: "Avoid || for Numbers & Booleans",
+        desc: "Do not use || for defaults when 0 or false are legitimate values in your application."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "What does `const count = 0; console.log(count ?? 10, count || 10);` output?",
+      question: "What is the result of the expression: 0 ?? 10?",
       options: [
-        "0 10",
-        "10 10",
-        "0 0",
-        "undefined 10"
+        "0, because ?? only falls back if the left value is null or undefined",
+        "10, because 0 is falsy",
+        "undefined, because numbers cannot be coalesced",
+        "NaN, because numbers and default values conflict"
       ],
       correctIndex: 0,
-      explanation: "`count ?? 10` returns `0` because 0 is not nullish (not null or undefined). `count || 10` returns `10` because 0 is a falsy value."
+      explanation: "The Nullish Coalescing operator (??) only checks for null and undefined. Because 0 is a defined number, it is preserved and returned."
     }
   }
 };

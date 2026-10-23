@@ -11,6 +11,8 @@ import { ModuleQuiz } from "./quiz-types";
 import { JAVASCRIPT_MODULE_QUIZZES } from "./javascript-quizzes";
 import { TYPESCRIPT_MODULE_QUIZZES } from "./typescript-quizzes";
 import { OOP_MODULE_QUIZZES } from "./oop-quizzes";
+import { JAVASCRIPT_LEGACY_SLUG_MAP } from "@/app/learn/javascript/data/javascript-curriculum";
+import { TYPESCRIPT_LEGACY_SLUG_MAP } from "@/app/learn/typescript/data/typescript-curriculum";
 
 export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
   // ──────────────────────────────────────────────────────────────────────────
@@ -294,13 +296,23 @@ console.log(5);`,
  * Retrieve a curated or dynamically generated quiz for any module in the platform
  */
 export function getQuizBySlug(trackKey: string, lessonSlug: string): ModuleQuiz | null {
+  const normTrack = trackKey.toLowerCase();
+  let resolvedSlug = lessonSlug.toLowerCase();
+
+  if (normTrack === "javascript" && JAVASCRIPT_LEGACY_SLUG_MAP[resolvedSlug]) {
+    resolvedSlug = JAVASCRIPT_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
+  } else if (normTrack === "typescript" && TYPESCRIPT_LEGACY_SLUG_MAP[resolvedSlug]) {
+    resolvedSlug = TYPESCRIPT_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
+  }
+
   // 1. Check exact match in curated registry
   const match = CURATED_MODULE_QUIZZES.find(
     (q) =>
-      q.trackKey.toLowerCase() === trackKey.toLowerCase() &&
-      (q.lessonSlug.toLowerCase() === lessonSlug.toLowerCase() ||
-        lessonSlug.toLowerCase().startsWith(q.lessonCode.toLowerCase().replace("-", "").toLowerCase()) ||
-        q.id.toLowerCase().includes(lessonSlug.toLowerCase()))
+      q.trackKey.toLowerCase() === normTrack &&
+      (q.lessonSlug.toLowerCase() === resolvedSlug ||
+        q.lessonSlug.toLowerCase() === lessonSlug.toLowerCase() ||
+        resolvedSlug.startsWith(q.lessonCode.toLowerCase().replace("-", "").toLowerCase()) ||
+        q.id.toLowerCase().includes(resolvedSlug))
   );
   if (match) return match;
 

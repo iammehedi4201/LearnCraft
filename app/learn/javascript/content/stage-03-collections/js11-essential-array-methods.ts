@@ -4,43 +4,43 @@ export const js11EssentialArrayMethodsContent: StandardLessonContent = {
   slug: "js11-essential-array-methods",
   code: "JS-11",
   title: "Transforming Arrays with map and filter",
-  subtitle: "Master declarative array transformations, understand the accumulator mechanics of reduce, and chain methods immutably.",
+  subtitle: "Transform lists with map, keep matching items with filter, locate single items with find, and calculate totals with reduce.",
   sections: [
     {
       id: "part1",
-      label: "Declarative Transformations",
-      icon: "🔄",
-      tag: "FOUNDATION"
+      label: "map & filter Methods",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
-      label: "map & filter",
-      icon: "⚡",
-      tag: "SYNTAX"
+      label: "map, filter & find",
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
-      label: "The reduce Mental Model",
-      icon: "🧠",
-      tag: "ACCUMULATOR"
+      label: "Method Chaining",
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "Missing Initial Value Trap",
-      icon: "⚠️",
-      tag: "DEBUGGING"
+      label: "Missing return in map",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Transformations Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Core Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,128 +50,126 @@ export const js11EssentialArrayMethodsContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "Declarative Transformations vs Mutable Loops",
-    bigPicture: "Modern JavaScript avoids manual for loops with push() when transforming data. Higher-order methods (map, filter, reduce) produce fresh new data structures without mutating the original source array.",
-    analogy: "Like a factory assembly line: raw parts enter on a conveyor belt. A filter station removes defective parts, a painting station transforms each part, and an assembly station combines them into a finished product.",
-    diagram: "+--------------------------------------------------------+\n| Original: [10, 25, 40]                                 |\n+--------------------------------------------------------+\n  |                                                    |\n  v .filter(n => n >= 20)                              v .map(n => n * 2)\n[25, 40] (Kept matching items)                       [20, 50, 80] (Transformed)\n  \\\n   ---> .reduce((acc, n) => acc + n, 0) --> 65 (Single Value)",
-    breakdownTitle: "The Big Three Methods",
+    title: "Transforming Arrays with map and filter",
+    bigPicture: "`map` transforms every element into a new array, while `filter` extracts only items that pass a test. Both methods are immutable and leave the original array untouched.",
+    breakdownTitle: "The Big 3 Array Methods",
     breakdownItems: [
       {
-        title: "map() (1-to-1 Transform)",
-        desc: "Transforms every element in the array into a new value, always returning a new array of identical length."
+        title: "map() for Transformations",
+        desc: "Transforms each item and returns a new array of the same length."
       },
       {
-        title: "filter() (Subset Selection)",
-        desc: "Evaluates each item with a boolean test. If true, the item is kept in the new array; if false, it is dropped."
+        title: "filter() for Subsets",
+        desc: "Tests each item and returns a new array with only the elements that return true."
       },
       {
-        title: "reduce() (Many-to-One Accumulation)",
-        desc: "Iterates through the list carrying an accumulator, condensing the entire array into a single result (number, object, or string)."
+        title: "find() for First Match",
+        desc: "Returns the very first element matching the condition, or undefined if not found."
       }
     ]
   },
   part2: {
-    title: "map and filter in Action",
-    intro: "Use map to transform elements and filter to select subsets.",
+    title: "How map, filter, and find Work",
+    intro: "Observe how each method accepts an arrow callback to process items.",
     cards: [
       {
         number: "01",
         tag: "Transform",
-        title: "map()",
-        description: "Returns a brand new array where each element is the return value of your callback.",
-        codeSnippet: "const prices = [10, 20, 30];\nconst withTax = prices.map(p => p * 1.1);\nconsole.log(withTax); // Output: [11, 22, 33]\nconsole.log(prices);  // Output: [10, 20, 30] (Untouched!)",
+        title: "array.map()",
+        description: "Transforms each item into a new format or calculation.",
+        codeSnippet: "const prices = [10, 20, 30];\nconst withTax = prices.map(price => price * 1.1);\nconsole.log(withTax);\n// Output: [11, 22, 33]",
         color: "emerald"
       },
       {
         number: "02",
         tag: "Filter",
-        title: "filter()",
-        description: "Returns a new array containing only elements where your callback returned true.",
-        codeSnippet: "const users = [\n  { name: \"Alex\", active: true },\n  { name: \"Sam\", active: false }\n];\nconst activeUsers = users.filter(u => u.active);\nconsole.log(activeUsers); // Output: [{ name: 'Alex', active: true }]",
+        title: "array.filter()",
+        description: "Keeps only items that return true for the test condition.",
+        codeSnippet: "const scores = [45, 80, 92, 60];\nconst passed = scores.filter(score => score >= 70);\nconsole.log(passed);\n// Output: [80, 92]",
         color: "cyan"
       },
       {
         number: "03",
-        tag: "Pipeline",
-        title: "Chaining Transformations",
-        description: "Chain methods together cleanly to produce complex data transformations.",
-        codeSnippet: "const numbers = [1, 2, 3, 4, 5, 6];\nconst result = numbers\n  .filter(n => n % 2 === 0)\n  .map(n => n * 10);\nconsole.log(result); // Output: [20, 40, 60]",
+        tag: "Locate",
+        title: "array.find()",
+        description: "Returns the first matching item directly (not an array).",
+        codeSnippet: "const users = [{ id: 1, name: \"Maya\" }, { id: 2, name: \"Alex\" }];\nconst found = users.find(u => u.id === 2);\nconsole.log(found.name);\n// Output: Alex",
         color: "purple"
       }
     ],
     rule: {
-      title: "Immutability Rule",
-      content: "map, filter, and reduce NEVER mutate the source array. They calculate and return new values, preserving original state."
+      title: "The Callback Return Rule",
+      content: "Inside map, return the new transformed value. Inside filter, return true to keep the item or false to drop it."
     }
   },
   part3: {
-    title: "The reduce() Accumulator Mental Model",
-    intro: "Understand how reduce passes the accumulator between iterations step by step.",
+    title: "Chaining Array Methods Together",
+    intro: "Because map and filter return new arrays, you can connect them in a pipeline.",
     points: [
       {
-        title: "The Accumulator Snowball",
-        content: "Think of the accumulator (acc) like rolling a snowball down a hill: on each step, the next item is added to the snowball, and whatever you return becomes the starting accumulator for the next step.",
-        codeSnippet: "const scores = [10, 20, 30];\nconst total = scores.reduce((acc, curr) => acc + curr, 0);\nconsole.log(total); // Output: 60"
+        title: "1. Filter First, Transform Second",
+        content: "A common pattern: remove unwanted items first, then transform the remaining items.",
+        codeSnippet: "const numbers = [1, 2, 3, 4, 5, 6];\nconst doubledEvens = numbers\n  .filter(n => n % 2 === 0) // Keeps [2, 4, 6]\n  .map(n => n * 2);          // Becomes [4, 8, 12]\nconsole.log(doubledEvens); // Output: [4, 8, 12]"
       },
       {
-        title: "Step-by-Step Iteration Tracing",
-        content: "Step 0 (Start): acc = 0\nStep 1: acc = 0, curr = 10 -> returns 10\nStep 2: acc = 10, curr = 20 -> returns 30\nStep 3: acc = 30, curr = 30 -> returns 60\nFinal Return: 60",
-        codeSnippet: "const nums = [1, 2, 3, 4];\nconst product = nums.reduce((acc, curr) => acc * curr, 1);\nconsole.log(product); // Output: 24"
+        title: "2. Working with Lists of Objects",
+        content: "In web apps, you frequently filter collections of products or users and pluck out specific properties.",
+        codeSnippet: "const products = [\n  { name: \"Laptop\", inStock: true, price: 999 },\n  { name: \"Phone\", inStock: false, price: 699 },\n  { name: \"Tablet\", inStock: true, price: 499 }\n];\nconst inStockNames = products\n  .filter(p => p.inStock)\n  .map(p => p.name);\nconsole.log(inStockNames); // Output: ['Laptop', 'Tablet']"
       },
       {
-        title: "Grouping Data with reduce()",
-        content: "reduce is not just for numbers; it can accumulate into objects or maps to group items by category.",
-        codeSnippet: "const pets = [\"dog\", \"cat\", \"dog\", \"bird\", \"dog\"];\nconst counts = pets.reduce((acc, pet) => {\n  acc[pet] = (acc[pet] || 0) + 1;\n  return acc;\n}, {});\nconsole.log(counts); // Output: { dog: 3, cat: 1, bird: 1 }"
+        title: "3. Totaling with reduce()",
+        content: "reduce() accumulates all items in an array down to a single value, such as a grand total.",
+        codeSnippet: "const cart = [25, 40, 15];\nconst total = cart.reduce((sum, item) => sum + item, 0);\nconsole.log(\"Grand total:\", total); // Output: Grand total: 80"
       }
     ]
   },
   part4: {
-    title: "The Classic reduce Trap: Missing Initial Value",
+    title: "Common Trap: Forgetting return Inside map",
     bad: {
-      title: "❌ Omitting Initial Value with Object Arrays",
-      code: "const cart = [{ price: 10 }, { price: 25 }];\n// Bug: No initial value! acc starts as the FIRST OBJECT ({ price: 10 })\n// Then adds { price: 10 } + 25 -> \"[object Object]25\"\nconst total = cart.reduce((acc, item) => acc + item.price);\nconsole.log(total); // Output: \"[object Object]25\" (Critical Bug!)",
-      explanation: "When you omit the second argument to reduce, JavaScript sets the accumulator to the first array item. For object arrays, this causes string concatenation errors."
+      title: "❌ Forgetting return in Multi-Line map",
+      code: "const nums = [1, 2, 3];\nconst doubled = nums.map(n => {\n  n * 2; // BUG: No explicit return!\n});\nconsole.log(doubled);\n// Output: [undefined, undefined, undefined]",
+      explanation: "When using curly braces in an arrow function inside map, you must include an explicit return keyword, or each element becomes undefined."
     },
     good: {
-      title: "✅ Always Supply the Initial Value Explicitly",
-      code: "const cart = [{ price: 10 }, { price: 25 }];\n// Safe: 0 is explicitly passed as the initial accumulator\nconst total = cart.reduce((acc, item) => acc + item.price, 0);\nconsole.log(total); // Output: 35 (Correct!)",
-      explanation: "Explicitly passing 0 as the initial value guarantees that the accumulator is always a number from the very first item."
+      title: "✅ Use Single-Line Implicit Return",
+      code: "const nums = [1, 2, 3];\nconst doubled = nums.map(n => n * 2); // Clean implicit return\nconsole.log(doubled);\n// Output: [2, 4, 6]",
+      explanation: "Single-line arrow functions return automatically, preventing undefined bugs."
     }
   },
   part5: {
-    title: "Array Transformations Sandbox",
-    intro: "Use filter, map, and reduce to process a shopping cart list.",
-    starterCode: "const orders = [\n  { id: 1, item: \"Mechanical Keyboard\", price: 120, delivered: true },\n  { id: 2, item: \"USB-C Cable\", price: 15, delivered: false },\n  { id: 3, item: \"Gaming Mouse\", price: 80, delivered: true },\n  { id: 4, item: \"Desk Mat\", price: 25, delivered: true }\n];\n\n// 1. Filter only delivered orders:\nconst delivered = orders.filter(o => o.delivered);\n\n// 2. Map to extract item names:\nconst itemNames = delivered.map(o => o.item);\n\n// 3. Reduce to calculate total delivered revenue:\nconst totalDelivered = delivered.reduce((acc, o) => acc + o.price, 0);\n\nconsole.log(\"Delivered items:\", itemNames);\nconsole.log(\"Total delivered revenue: $\" + totalDelivered);\n"
+    title: "Interactive Code Playground",
+    intro: "Filter active users and transform their names into an formatted uppercase list.",
+    starterCode: "const members = [\n  { name: \"Alex\", active: true, points: 120 },\n  { name: \"Sam\", active: false, points: 40 },\n  { name: \"Maya\", active: true, points: 250 }\n];\n\n// 1. Filter for active members:\nconst activeMembers = members.filter(m => m.active);\nconsole.log(\"Active count:\", activeMembers.length);\n\n// 2. Map to extract formatted badges:\nconst badges = activeMembers.map(m => `${m.name.toUpperCase()} (${m.points} pts)`);\nconsole.log(\"Badges:\", badges);\n\n// 3. Find the top member:\nconst topMember = members.find(m => m.points > 200);\nconsole.log(\"Top member found:\", topMember?.name);\n"
   },
   part6: {
-    title: "Key Takeaways: Array Transformations",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Immutable Operations",
-        desc: "map, filter, and reduce create new arrays and values without modifying original data."
+        title: "map() Always Preserves Length",
+        desc: "Transforms each element into a new item, returning an array of identical length."
       },
       {
-        title: "The reduce Accumulator",
-        desc: "The return value of each step becomes the accumulator for the next step."
+        title: "filter() Selects Subsets",
+        desc: "Returns only elements where the callback returns true."
       },
       {
-        title: "Always Pass Initial Value",
-        desc: "Always pass the initial value (0, {}, []) to reduce to prevent crashes and coercion bugs."
+        title: "Original Arrays are Untouched",
+        desc: "These methods return new arrays without mutating the source data."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "What happens if you run `[].reduce((acc, n) => acc + n)` without an initial value?",
+      question: "What is the primary difference between array.map() and array.filter()?",
       options: [
-        "It returns 0 by default",
-        "It throws a TypeError: Reduce of empty array with no initial value",
-        "It returns undefined",
-        "It returns an empty array []"
+        "map transforms every item into a new array of the same length; filter returns only items that pass a true/false condition",
+        "map alters the original array, while filter creates a copy",
+        "filter can only be used on numbers, while map works on strings",
+        "There is no difference; they are aliases for the same function"
       ],
-      correctIndex: 1,
-      explanation: "If you call reduce on an empty array without supplying an initial value, JavaScript throws a runtime TypeError because there is no element to use as the starting accumulator."
+      correctIndex: 0,
+      explanation: "array.map() applies a transformation to every element, producing a new array with the exact same number of items. array.filter() tests each item against a condition, returning only the items that pass."
     }
   }
 };

@@ -9,38 +9,38 @@ export const js02VariablesAndDataTypesContent: StandardLessonContent = {
     {
       id: "part1",
       label: "Declaring Variables",
-      icon: "📦",
-      tag: "FOUNDATION"
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
       label: "const vs let",
-      icon: "⚡",
-      tag: "SYNTAX"
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
       label: "Primitive Types",
-      icon: "🏷️",
-      tag: "TYPES"
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "Reassignment Error",
-      icon: "⚠️",
-      tag: "TRAPS"
+      label: "Reassigning const",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Variables Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Summary Takeaways",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "SUMMARY"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,128 +50,126 @@ export const js02VariablesAndDataTypesContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "Storing Values in Memory",
-    bigPicture: "Variables store values in memory so you can reuse them throughout your program. Modern JavaScript uses const and let to declare variables.",
-    analogy: "A variable is like a labeled container: the variable name is the label, and the stored data is what is inside.",
-    diagram: "+----------------+       +-------------------------+\n|   const role   | ----> |       \"Frontend\"        |  (Locked: cannot reassign)\n+----------------+       +-------------------------+\n|   let count    | ----> |           10            |  (Flexible: can reassign)\n+----------------+       +-------------------------+",
-    breakdownTitle: "Quick Declaration Rules",
+    title: "Declaring Variables",
+    bigPicture: "Variables store data in your program. In modern JavaScript, use `const` by default for fixed values, and `let` only when a value needs to be reassigned.",
+    breakdownTitle: "Modern Declaration Rules",
     breakdownItems: [
       {
         title: "Default to const",
-        desc: "Use const for all variables by default. It guarantees the variable reference will never be reassigned."
+        desc: "Use const for all variables by default to prevent accidental reassignment bugs."
       },
       {
-        title: "Use let Only for Reassignment",
-        desc: "Use let only when a value must change later, such as a loop counter or accumulator."
+        title: "Use let for Changing Values",
+        desc: "Use let only when a value must be reassigned later, like counters or loop accumulators."
       },
       {
-        title: "Avoid var",
-        desc: "var is legacy syntax that causes confusing scope and hoisting bugs in modern applications."
+        title: "Never Use var",
+        desc: "var is legacy syntax with confusing hoisting behavior. Always use const and let."
       }
     ]
   },
   part2: {
-    title: "const and let Syntax",
-    intro: "Two keywords define all variables in modern JavaScript.",
+    title: "const and let in Action",
+    intro: "Two keywords handle all variable declarations in modern JavaScript.",
     cards: [
       {
         number: "01",
         tag: "Immutable",
-        title: "const (Default)",
-        description: "Creates a read-only variable reference that cannot be reassigned.",
-        codeSnippet: "const port = 3000;\n// port = 8080; // TypeError: Assignment to constant variable\nconsole.log(port); // Output: 3000",
+        title: "const (Default Choice)",
+        description: "Creates a permanent variable binding that cannot be reassigned to a new value.",
+        codeSnippet: "const maxScore = 100;\nconsole.log(maxScore); // Output: 100\n// maxScore = 200; // Error! Cannot reassign const",
         color: "emerald"
       },
       {
         number: "02",
         tag: "Reassignable",
-        title: "let (When Changing)",
-        description: "Allows reassigning the variable to a new value later.",
-        codeSnippet: "let score = 0;\nscore = 10; // Perfectly valid\nconsole.log(score); // Output: 10",
+        title: "let (When Value Changes)",
+        description: "Allows reassigning the variable to a different value later in the code.",
+        codeSnippet: "let score = 0;\nscore = 15; // Reassignment works cleanly\nconsole.log(score); // Output: 15",
         color: "cyan"
       },
       {
         number: "03",
         tag: "Inspection",
         title: "typeof Operator",
-        description: "Returns a string describing the data type of any value.",
-        codeSnippet: "console.log(typeof \"text\"); // Output: string\nconsole.log(typeof 42);     // Output: number\nconsole.log(typeof true);   // Output: boolean",
+        description: "Returns a string describing the category of data stored inside any variable.",
+        codeSnippet: "console.log(typeof \"Hello\"); // Output: string\nconsole.log(typeof 42);      // Output: number\nconsole.log(typeof true);    // Output: boolean",
         color: "purple"
       }
     ],
     rule: {
-      title: "Declaration Rule",
-      content: "Always write const first. Only change it to let if you find an explicit reason to reassign the variable."
+      title: "The Best Practice Rule",
+      content: "Write const by default. Only change it to let when you find a specific reason why the variable needs to be reassigned."
     }
   },
   part3: {
     title: "The Core Primitive Types",
-    intro: "JavaScript primitives represent immutable single values.",
+    intro: "Primitives are basic, single values that represent fundamental data.",
     points: [
       {
-        title: "Strings & Numbers",
-        content: "Strings represent text enclosed in quotes. Numbers represent integers and decimals.",
-        codeSnippet: "const name = \"LearnCraft\";\nconst rating = 4.9;\nconsole.log(name, rating); // Output: LearnCraft 4.9"
+        title: "1. String (Text)",
+        content: "Represents textual information wrapped in quotes ('single' or \"double\").",
+        codeSnippet: "const username = \"Alex\";\nconsole.log(username); // Output: Alex"
       },
       {
-        title: "Booleans",
-        content: "Booleans have only two possible states: true or false.",
-        codeSnippet: "const isActive = true;\nconst isLocked = false;\nconsole.log(isActive, isLocked); // Output: true false"
+        title: "2. Number & Boolean",
+        content: "Numbers represent integers and decimals. Booleans have only two states: true or false.",
+        codeSnippet: "const age = 25;\nconst isVerified = true;\nconsole.log(age, isVerified); // Output: 25 true"
       },
       {
-        title: "null and undefined",
-        content: "undefined means a variable has been declared but not assigned a value. null represents an intentional empty value.",
-        codeSnippet: "let emptyValue;\nconsole.log(emptyValue); // Output: undefined\nconst user = null;\nconsole.log(user);       // Output: null"
+        title: "3. null and undefined",
+        content: "undefined means a variable has been declared but not given a value yet. null represents an intentional, deliberate empty value.",
+        codeSnippet: "let notAssignedYet;\nconsole.log(notAssignedYet); // Output: undefined\nconst userAddress = null;   // Explicitly empty\nconsole.log(userAddress);    // Output: null"
       }
     ]
   },
   part4: {
-    title: "Common Mistake: Reassigning const",
+    title: "Common Trap: Reassigning a const Variable",
     bad: {
-      title: "❌ Reassigning a const Variable",
-      code: "const maxLimit = 100;\nmaxLimit = 150;\n// TypeError: Assignment to constant variable",
-      explanation: "Attempting to assign a new value to a const variable throws a fatal runtime TypeError."
+      title: "❌ Attempting to Reassign a const",
+      code: "const maxLimit = 50;\nmaxLimit = 75;\n// TypeError: Assignment to constant variable",
+      explanation: "JavaScript prevents changing what a const variable holds. Attempting to assign a new value causes a fatal TypeError."
     },
     good: {
-      title: "✅ Use let When Reassigning",
-      code: "let limit = 100;\nlimit = 150; // Valid reassignment\nconsole.log(limit); // Output: 150",
-      explanation: "Declare variables that change over time with let."
+      title: "✅ Use let When Values Need to Change",
+      code: "let limit = 50;\nlimit = 75; // Allowed because limit was declared with let\nconsole.log(limit); // Output: 75",
+      explanation: "If you know a value will change as the program runs, declare it with let right from the start."
     }
   },
   part5: {
-    title: "Variables Sandbox",
-    intro: "Practice declaring variables with const and let and logging their types.",
-    starterCode: "// 1. Declare a constant site name:\nconst siteName = \"LearnCraft\";\n\n// 2. Declare a counter with let and increment it:\nlet counter = 1;\ncounter = counter + 1;\n\nconsole.log(siteName, \"Counter:\", counter);\nconsole.log(\"Type of counter:\", typeof counter);\n"
+    title: "Interactive Code Playground",
+    intro: "Declare a constant site title and a dynamic counter using let. Observe how reassigning let works.",
+    starterCode: "// 1. Declare a constant site name:\nconst platform = \"LearnCraft\";\n\n// 2. Declare a counter with let and update it:\nlet counter = 1;\ncounter = counter + 1;\n\nconsole.log(\"Platform:\", platform);\nconsole.log(\"Counter value:\", counter);\nconsole.log(\"Type of counter:\", typeof counter);\n"
   },
   part6: {
-    title: "Key Takeaways: Variables",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
         title: "Use const by Default",
-        desc: "Keeps code predictable by preventing accidental reassignments."
+        desc: "Declare every variable with const unless you specifically know it needs to be reassigned."
       },
       {
-        title: "Use let for Mutable Values",
-        desc: "Use let only when a value needs to be updated."
+        title: "Use let for Changing Values",
+        desc: "Use let for counters, totals, and state values that must be updated later."
       },
       {
-        title: "Primitive Types",
-        desc: "string, number, boolean, null, and undefined are the core primitives."
+        title: "Check Types with typeof",
+        desc: "Use typeof to quickly inspect whether a variable holds a string, number, boolean, or object."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "Which keyword should you use by default when declaring a variable in JavaScript?",
+      question: "Which keyword should you use by default when creating a variable in modern JavaScript?",
       options: [
-        "const",
-        "let",
-        "var",
-        "def"
+        "const, because it prevents accidental reassignment and makes code predictable",
+        "var, because it works the same in every version of JavaScript",
+        "let, because const variables can never be read after creation",
+        "def, because it defines functions and variables together"
       ],
       correctIndex: 0,
-      explanation: "Always default to const. Only use let when you explicitly know the variable's value must be reassigned later."
+      explanation: "Modern JavaScript best practice is to declare all variables with const by default, and only switch to let when you explicitly need to reassign the value."
     }
   }
 };

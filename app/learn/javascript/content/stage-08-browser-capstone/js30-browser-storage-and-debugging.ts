@@ -4,43 +4,43 @@ export const js30BrowserStorageAndDebuggingContent: StandardLessonContent = {
   slug: "js30-browser-storage-and-debugging",
   code: "JS-30",
   title: "Saving Data in the Browser",
-  subtitle: "Persist data across sessions with localStorage, distinguish sessionStorage and cookies, and master modern DevTools debugging strategies.",
+  subtitle: "Persist user data across browser refreshes with localStorage, and debug code with browser DevTools.",
   sections: [
     {
       id: "part1",
-      label: "Client Storage Options",
-      icon: "💾",
-      tag: "FOUNDATION"
+      label: "Browser Storage",
+      icon: "🧠",
+      tag: "CORE CONCEPT"
     },
     {
       id: "part2",
       label: "localStorage & JSON",
-      icon: "⚡",
-      tag: "STORAGE"
+      icon: "⚙️",
+      tag: "SYNTAX & RULES"
     },
     {
       id: "part3",
       label: "DevTools Debugging",
-      icon: "🛠️",
-      tag: "DEBUGGING"
+      icon: "📖",
+      tag: "STEP-BY-STEP"
     },
     {
       id: "part4",
-      label: "Synchronous Storage Trap",
-      icon: "⚠️",
-      tag: "PERFORMANCE"
+      label: "Object Stringification Trap",
+      icon: "🛡️",
+      tag: "COMMON PITFALL"
     },
     {
       id: "part5",
-      label: "Storage Sandbox",
-      icon: "🚀",
-      tag: "PRACTICE"
+      label: "Code Playground",
+      icon: "💻",
+      tag: "PLAYGROUND"
     },
     {
       id: "part6",
-      label: "Curriculum Summary",
+      label: "Key Takeaways",
       icon: "🎓",
-      tag: "GRADUATION"
+      tag: "KEY TAKEAWAYS"
     },
     {
       id: "part7",
@@ -50,127 +50,126 @@ export const js30BrowserStorageAndDebuggingContent: StandardLessonContent = {
     }
   ],
   part1: {
-    title: "Client-Side Persistence Options",
-    bigPicture: "Modern web applications store state on the user's device to persist settings, shopping carts, and cached data across page reloads and browser restarts.",
-    analogy: "Like a notebook in your desk drawer: instead of calling the server for your preferences every morning, you open your notebook (localStorage) and immediately see your saved notes.",
-    diagram: "+---------------------+----------------------+---------------------+\n| FEATURE             | localStorage         | sessionStorage      |\n+---------------------+----------------------+---------------------+\n| Lifetime            | Permanent            | Tab session only    |\n| Storage Capacity    | ~5 MB per origin     | ~5 MB per tab       |\n| Accessible Across   | All tabs on origin   | Current tab only    |\n| API Nature          | Synchronous          | Synchronous         |\n+---------------------+----------------------+---------------------+",
-    breakdownTitle: "Storage Comparison",
+    title: "Saving Data in the Browser",
+    bigPicture: "`localStorage` saves key-value string data persistently across browser reloads. Combine it with `JSON.stringify()` and `JSON.parse()` to persist complex state like themes or auth tokens.",
+    breakdownTitle: "Key Storage & Debugging Features",
     breakdownItems: [
       {
-        title: "localStorage",
-        desc: "Persists indefinitely until explicitly cleared by the user or code. Shared across all tabs under the same origin."
+        title: "localStorage.setItem()",
+        desc: "Saves a key-value text pair persistently in the browser storage."
       },
       {
-        title: "sessionStorage",
-        desc: "Scoped to a single browser tab. Cleared automatically as soon as that tab is closed."
+        title: "localStorage.getItem()",
+        desc: "Retrieves a stored string by key, returning null if not found."
       },
       {
-        title: "HTTP Cookies",
-        desc: "Smaller (~4KB) data sent automatically with every HTTP request, primarily used for authentication session tokens."
+        title: "Browser DevTools",
+        desc: "Inspect active storage in the Application tab and set breakpoints in the Sources tab."
       }
     ]
   },
   part2: {
-    title: "Working with localStorage and JSON",
-    intro: "localStorage only stores strings. Use JSON.stringify and JSON.parse to store complex objects.",
+    title: "localStorage and sessionStorage with JSON",
+    intro: "Because localStorage only stores text strings, combine it with JSON for objects and arrays.",
     cards: [
       {
         number: "01",
-        tag: "Set & Get",
-        title: "setItem & getItem",
-        description: "Save and retrieve string values using key-value methods.",
-        codeSnippet: "// Storing and retrieving plain strings:\nlocalStorage.setItem(\"theme\", \"dark\");\nconst currentTheme = localStorage.getItem(\"theme\");\nconsole.log(currentTheme); // Output: dark",
+        tag: "Save",
+        title: "Saving Simple Strings",
+        description: "Store text directly using a unique key name.",
+        codeSnippet: "localStorage.setItem(\"theme\", \"dark\");\nconsole.log(localStorage.getItem(\"theme\"));\n// Output: dark",
         color: "emerald"
       },
       {
         number: "02",
         tag: "Objects",
-        title: "Storing Objects with JSON",
-        description: "Serialize objects to JSON strings before storing, and parse upon retrieval.",
-        codeSnippet: "const user = { name: \"Alex\", xp: 450 };\nlocalStorage.setItem(\"userProfile\", JSON.stringify(user));\n\nconst cached = JSON.parse(localStorage.getItem(\"userProfile\") || \"{}\");\nconsole.log(cached.xp); // Output: 450",
+        title: "Saving Objects with JSON",
+        description: "Always stringify objects before saving, and parse them when reading.",
+        codeSnippet: "const user = { name: \"Maya\", level: 5 };\nlocalStorage.setItem(\"user\", JSON.stringify(user));\n\nconst loaded = JSON.parse(localStorage.getItem(\"user\"));\nconsole.log(loaded.name); // Output: Maya",
         color: "cyan"
       },
       {
         number: "03",
-        tag: "Cleanup",
-        title: "removeItem & clear",
-        description: "Delete specific keys or wipe the entire origin storage.",
-        codeSnippet: "localStorage.removeItem(\"theme\"); // Deletes single key\nlocalStorage.clear(); // Wipes all data for this domain",
+        tag: "Remove",
+        title: "Removing Data",
+        description: "Delete specific keys or clear all stored data.",
+        codeSnippet: "localStorage.removeItem(\"tempToken\"); // Removes single key\nlocalStorage.clear();               // Clears all keys",
         color: "purple"
       }
     ],
     rule: {
-      title: "String Storage Rule",
-      content: "localStorage converts non-strings to strings automatically. If you store an object without JSON.stringify, it saves as '[object Object]', corrupting your data."
+      title: "The String-Only Rule",
+      content: "localStorage can ONLY store plain text strings. Always serialize objects with JSON.stringify() before storing them."
     }
   },
   part3: {
-    title: "DevTools Debugging Strategies",
-    intro: "Professional techniques to diagnose and fix bugs without endless console.logs.",
+    title: "Debugging with Console and DevTools",
+    intro: "Modern debugging tools inside browser DevTools (F12 or Inspect).",
     points: [
       {
-        title: "1. The debugger Statement & Breakpoints",
-        content: "Insert the debugger statement in your code to automatically pause execution and open DevTools to inspect variables.",
-        codeSnippet: "function calculateTax(price) {\n  debugger; // Pauses execution in DevTools when open!\n  return price * 0.15;\n}"
+        title: "1. Structured Logging with console.table()",
+        content: "Format arrays of objects into clean, readable tabular data in the browser console.",
+        codeSnippet: "const users = [\n  { id: 1, name: \"Maya\", role: \"Admin\" },\n  { id: 2, name: \"Alex\", role: \"Editor\" }\n];\nconsole.table(users); // Displays a clean spreadsheet-like table!"
       },
       {
-        title: "2. console.table() for Arrays & Objects",
-        content: "Render arrays of objects as clean, sortable tabular data in the console.",
-        codeSnippet: "const users = [\n  { id: 1, name: \"Alice\", role: \"Admin\" },\n  { id: 2, name: \"Bob\", role: \"User\" }\n];\nconsole.table(users); // Formats as beautiful table in console"
+        title: "2. Setting Breakpoints in DevTools",
+        content: "Open the Sources tab in DevTools and click on a line number to set a breakpoint. JavaScript will freeze on that line, letting you hover over variables to see their live values.",
+        codeSnippet: "// Tip: You can also write the 'debugger;' statement directly in your code!"
       },
       {
-        title: "3. Application & Network Tab Inspection",
-        content: "Use the Application tab in DevTools to inspect localStorage keys live, and the Network tab to check payload timings and headers."
+        title: "3. Inspecting the Application Tab",
+        content: "Open DevTools -> Application -> Storage -> Local Storage to view, edit, or delete stored keys in real time.",
+        codeSnippet: "// Visual inspector lets you see live keys and values instantly"
       }
     ]
   },
   part4: {
-    title: "Common Pitfall: Storing Objects Without JSON.stringify()",
+    title: "Common Trap: Storing Objects as '[object Object]'",
     bad: {
-      title: "❌ Direct Object Storage Corrupts to '[object Object]'",
-      code: "const cart = { items: [\"Keyboard\"], count: 1 };\n// Bug: localStorage calls String(cart) -> '[object Object]'!\nlocalStorage.setItem(\"cart\", cart);\n\nconst saved = localStorage.getItem(\"cart\");\nconsole.log(saved); // Output: \"[object Object]\" (Data is lost forever!)",
-      explanation: "localStorage only stores strings. Passing a raw object causes it to be coerced to the useless string '[object Object]'."
+      title: "❌ Saving an Object Directly to localStorage",
+      code: "const settings = { darkMode: true, zoom: 100 };\n// BUG: Passed object directly without JSON.stringify!\nlocalStorage.setItem(\"settings\", settings);\nconsole.log(localStorage.getItem(\"settings\"));\n// Output: \"[object Object]\" (Data is ruined!)",
+      explanation: "Because localStorage expects a string, it automatically converts settings using .toString(), resulting in the useless string '[object Object]'."
     },
     good: {
-      title: "✅ Always Serialize with JSON.stringify()",
-      code: "const cart = { items: [\"Keyboard\"], count: 1 };\n// Safe: Converts object into valid JSON string\nlocalStorage.setItem(\"cart\", JSON.stringify(cart));\n\nconst saved = JSON.parse(localStorage.getItem(\"cart\") || \"null\");\nconsole.log(saved.items[0]); // Output: Keyboard (Fully preserved!)",
-      explanation: "JSON.stringify preserves properties accurately so they can be parsed back into real objects."
+      title: "✅ Serialize with JSON.stringify()",
+      code: "const settings = { darkMode: true, zoom: 100 };\n// Correct: Serialize to JSON text string first:\nlocalStorage.setItem(\"settings\", JSON.stringify(settings));\nconst retrieved = JSON.parse(localStorage.getItem(\"settings\"));\nconsole.log(retrieved.darkMode);\n// Output: true (Preserved perfectly!)",
+      explanation: "Using JSON.stringify() preserves the complete object structure cleanly in storage."
     }
   },
   part5: {
-    title: "Storage & State Sandbox",
-    intro: "Build a safe storage helper that encapsulates JSON serialization and deserialization.",
-    starterCode: "// Safe storage wrapper with automatic JSON handling:\nconst SafeStorage = {\n  save(key, value) {\n    try {\n      const serialized = JSON.stringify(value);\n      console.log(`[Storage Saved] '${key}':`, serialized);\n      return true;\n    } catch (err) {\n      console.error(\"Storage failed:\", err);\n      return false;\n    }\n  },\n  load(key, fallback = null) {\n    // Simulated retrieval:\n    return fallback;\n  }\n};\n\nSafeStorage.save(\"appSettings\", { theme: \"dark\", volume: 80 });\nconsole.log(\"JavaScript curriculum completed!\");\n"
+    title: "Interactive Code Playground",
+    intro: "Save user configuration into the mock localStorage runtime and inspect tabular output with console.table().",
+    starterCode: "// 1. Saving structured preferences:\nconst userConfig = {\n  activeTheme: \"dark-mode\",\n  editorFontSize: 14,\n  autoSave: true\n};\n\nlocalStorage.setItem(\"learncraft_config\", JSON.stringify(userConfig));\n\n// 2. Reading and parsing preferences back:\nconst savedConfig = JSON.parse(localStorage.getItem(\"learncraft_config\") || \"{}\");\nconsole.log(\"Restored editor font size:\", savedConfig.editorFontSize);\n\n// 3. Structured console debugging:\nconst debugMetrics = [\n  { metric: \"LoadTime\", valueMs: 140, status: \"PASS\" },\n  { metric: \"StorageQuota\", valueMs: 12, status: \"PASS\" }\n];\nconsole.table(debugMetrics);\n"
   },
   part6: {
-    title: "Congratulations: Full JavaScript Curriculum Complete!",
+    title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Client-Side Storage",
-        desc: "Use localStorage for permanent data, sessionStorage for tab-scoped data."
+        title: "localStorage Survives Reloads",
+        desc: "Use localStorage to remember settings, themes, and cart items across sessions."
       },
       {
-        title: "Always Serialize with JSON",
-        desc: "Serialize objects with JSON.stringify() before writing to localStorage."
+        title: "Always Use JSON for Objects",
+        desc: "Store with JSON.stringify(obj) and restore with JSON.parse(str)."
       },
       {
-        title: "DevTools Mastery",
-        desc: "Leverage debugger breakpoints, console.table(), and network tabs for rapid debugging."
+        title: "Use DevTools Breakpoints",
+        desc: "Freeze execution in the Sources tab to inspect live variable values step by step."
       }
     ]
   },
   part7: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "What happens if you store an object directly into localStorage using `localStorage.setItem('user', { id: 1 })`?",
+      question: "What happens if you store an object directly into localStorage using localStorage.setItem('user', userObj) without JSON.stringify?",
       options: [
-        "The object is automatically converted into a structured JSON string",
-        "The object is converted to the string '[object Object]', permanently losing its properties",
-        "JavaScript throws a fatal TypeError: Object cannot be stored",
-        "The browser opens an IndexedDB transaction automatically"
+        "The object is automatically converted to the useless string '[object Object]' and its properties are lost",
+        "JavaScript automatically deep-clones the object into memory",
+        "The browser throws a fatal StorageError",
+        "It stores the object in binary database format"
       ],
-      correctIndex: 1,
-      explanation: "Because `localStorage` only stores strings, it calls `String(obj)` on non-string arguments, resulting in the literal string `'[object Object]'` and losing all properties. You must use `JSON.stringify()`."
+      correctIndex: 0,
+      explanation: "localStorage only stores strings. If you pass an object directly, JavaScript calls .toString() on it, which produces the string '[object Object]', permanently losing your data unless you serialize with JSON.stringify."
     }
   }
 };
