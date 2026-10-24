@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { prisma } from "@/lib/prisma";
+import { prisma, isRealDatabaseConfigured } from "@/lib/prisma";
 import { getAuthenticatedUserId } from "@/lib/auth-helper";
 
 const ProgressPayloadSchema = z.object({
@@ -21,25 +21,34 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Exclude internal JSON serialization storage records and only select fields needed for curriculum tracking
-    const progress = await prisma.progress.findMany({
-      where: {
-        userId,
-        module: {
-          notIn: ["__user_notes__", "__user_bookmarks__", "__gamification__"],
-        },
-      },
-      select: {
-        module: true,
-        completed: true,
-        score: true,
-        activeModule: true,
-        updatedAt: true,
-      },
-      orderBy: { updatedAt: "desc" },
-    });
+    if (!isRealDatabaseConfigured) {
+      return NextResponse.json({ success: true, data: [] });
+    }
 
-    return NextResponse.json({ success: true, data: progress });
+    try {
+      // Exclude internal JSON serialization storage records and only select fields needed for curriculum tracking
+      const progress = await prisma.progress.findMany({
+        where: {
+          userId,
+          module: {
+            notIn: ["__user_notes__", "__user_bookmarks__", "__gamification__"],
+          },
+        },
+        select: {
+          module: true,
+          completed: true,
+          score: true,
+          activeModule: true,
+          updatedAt: true,
+        },
+        orderBy: { updatedAt: "desc" },
+      });
+
+      return NextResponse.json({ success: true, data: progress });
+    } catch (dbError) {
+      console.warn("Database unreachable in /api/progress GET, returning empty list:", dbError);
+      return NextResponse.json({ success: true, data: [] });
+    }
   } catch (error: any) {
     console.error("Fetch Progress Error:", error);
     const message =
@@ -86,20 +95,27 @@ export async function POST(req: NextRequest) {
       totalModules,
     } = parseResult.data;
 
-    const existing = await (prisma.progress as any).findUnique({
-      where: {
-        userId_module: {
-          userId,
-          module,
-        },
-      },
-      select: {
-        completed: true,
-        score: true,
-        activeModule: true,
-        completedModules: true,
-      },
-    });
+    let existing: any = null;
+    if (isRealDatabaseConfigured) {
+      try {
+        existing = await (prisma.progress as any).findUnique({
+          where: {
+            userId_module: {
+              userId,
+              module,
+            },
+          },
+          select: {
+            completed: true,
+            score: true,
+            activeModule: true,
+            completedModules: true,
+          },
+        });
+      } catch {
+        existing = null;
+      }
+    }
 
     // Merge completed modules list
     let mergedCompletedModules: string[] = existing?.completedModules || [];
@@ -141,37 +157,66 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const progress = await (prisma.progress as any).upsert({
-      where: {
-        userId_module: {
+    if (!isRealDatabaseConfigured) {
+      return NextResponse.json({
+        success: true,
+        progress: {
+          module,
+          completed: shouldBeCompleted,
+          score: calculatedScore,
+          activeModule: activeModule ?? null,
+          updatedAt: new Date().toISOString(),
+        },
+        localOnly: true,
+      });
+    }
+
+    try {
+      const progress = await (prisma.progress as any).upsert({
+        where: {
+          userId_module: {
+            userId,
+            module,
+          },
+        },
+        update: {
+          completed: shouldBeCompleted,
+          score: calculatedScore,
+          activeModule: activeModule !== undefined ? activeModule : (existing?.activeModule ?? null),
+          completedModules: mergedCompletedModules,
+        },
+        create: {
           userId,
           module,
+          completed: shouldBeCompleted,
+          score: calculatedScore,
+          activeModule: activeModule ?? null,
+          completedModules: mergedCompletedModules,
         },
-      },
-      update: {
-        completed: shouldBeCompleted,
-        score: calculatedScore,
-        activeModule: activeModule !== undefined ? activeModule : (existing?.activeModule ?? null),
-        completedModules: mergedCompletedModules,
-      },
-      create: {
-        userId,
-        module,
-        completed: shouldBeCompleted,
-        score: calculatedScore,
-        activeModule: activeModule ?? null,
-        completedModules: mergedCompletedModules,
-      },
-      select: {
-        module: true,
-        completed: true,
-        score: true,
-        activeModule: true,
-        updatedAt: true,
-      },
-    });
+        select: {
+          module: true,
+          completed: true,
+          score: true,
+          activeModule: true,
+          updatedAt: true,
+        },
+      });
 
-    return NextResponse.json({ success: true, progress });
+      return NextResponse.json({ success: true, progress });
+    } catch (dbError) {
+      console.warn("Database unreachable in /api/progress POST, saved locally:", dbError);
+      return NextResponse.json({
+        success: true,
+        progress: {
+          module,
+          completed: shouldBeCompleted,
+          score: calculatedScore,
+          activeModule: activeModule ?? null,
+          updatedAt: new Date().toISOString(),
+        },
+        localOnly: true,
+      });
+    }
   } catch (error: any) {
     console.error("Progress Sync Error:", error);
     const message =

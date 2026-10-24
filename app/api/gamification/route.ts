@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
+import { prisma, isRealDatabaseConfigured } from "@/lib/prisma";
+import { getAuthenticatedUserId } from "@/lib/auth-helper";
 import { calculateLevelInfo } from "@/lib/gamification";
 import type { UserGamificationState, DailyActivityRecord, XPLogEntry } from "@/types/gamification";
 
@@ -36,39 +36,7 @@ const GamificationSyncSchema = z.object({
   recentXPLogs: z.array(XPLogSchema).optional().default([]),
 });
 
-async function getAuthenticatedUserId(req: NextRequest): Promise<string | null> {
-  // 1. Check database sessionToken directly from cookies
-  const token =
-    req.cookies.get("authjs.session-token")?.value ||
-    req.cookies.get("__Secure-authjs.session-token")?.value ||
-    req.cookies.get("next-auth.session-token")?.value ||
-    req.cookies.get("__Secure-next-auth.session-token")?.value;
 
-  if (token) {
-    const dbSession = await prisma.session.findUnique({
-      where: { sessionToken: token },
-      select: { userId: true, expires: true },
-    });
-    if (dbSession && dbSession.expires > new Date()) {
-      return dbSession.userId;
-    }
-  }
-
-  // 2. NextAuth session fallback
-  try {
-    const session = (await (auth as any)()) || (await (auth as any)(req));
-    if (session?.user?.id) return session.user.id;
-    if (session?.user?.email) {
-      const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        select: { id: true },
-      });
-      if (user?.id) return user.id;
-    }
-  } catch {}
-
-  return null;
-}
 
 function mergeStates(
   local: z.infer<typeof GamificationSyncSchema>,
@@ -158,23 +126,32 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const record = await (prisma.progress as any).findUnique({
-      where: {
-        userId_module: {
-          userId,
-          module: "__gamification__",
-        },
-      },
-    });
-
-    if (!record || !record.completedModules || record.completedModules.length === 0) {
+    if (!isRealDatabaseConfigured) {
       return NextResponse.json({ success: true, state: null });
     }
 
     try {
-      const state = JSON.parse(record.completedModules[0]);
-      return NextResponse.json({ success: true, state });
-    } catch {
+      const record = await (prisma.progress as any).findUnique({
+        where: {
+          userId_module: {
+            userId,
+            module: "__gamification__",
+          },
+        },
+      });
+
+      if (!record || !record.completedModules || record.completedModules.length === 0) {
+        return NextResponse.json({ success: true, state: null });
+      }
+
+      try {
+        const state = JSON.parse(record.completedModules[0]);
+        return NextResponse.json({ success: true, state });
+      } catch {
+        return NextResponse.json({ success: true, state: null });
+      }
+    } catch (dbError) {
+      console.warn("Database unreachable in /api/gamification GET, using local state:", dbError);
       return NextResponse.json({ success: true, state: null });
     }
   } catch (error: any) {
@@ -212,49 +189,66 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Check existing cloud record
-    const existing = await (prisma.progress as any).findUnique({
-      where: {
-        userId_module: {
-          userId,
-          module: "__gamification__",
-        },
-      },
-    });
-
+    // Check existing cloud record if database available
+    let existing: any = null;
     let existingState: UserGamificationState | null = null;
-    if (existing && existing.completedModules && existing.completedModules.length > 0) {
+
+    if (isRealDatabaseConfigured) {
       try {
-        existingState = JSON.parse(existing.completedModules[0]);
-      } catch {}
+        existing = await (prisma.progress as any).findUnique({
+          where: {
+            userId_module: {
+              userId,
+              module: "__gamification__",
+            },
+          },
+        });
+
+        if (existing && existing.completedModules && existing.completedModules.length > 0) {
+          try {
+            existingState = JSON.parse(existing.completedModules[0]);
+          } catch {}
+        }
+      } catch {
+        existingState = null;
+      }
     }
 
     const merged = mergeStates(parseResult.data, existingState);
 
-    await (prisma.progress as any).upsert({
-      where: {
-        userId_module: {
+    if (!isRealDatabaseConfigured) {
+      return NextResponse.json({ success: true, state: merged, localOnly: true });
+    }
+
+    try {
+      await (prisma.progress as any).upsert({
+        where: {
+          userId_module: {
+            userId,
+            module: "__gamification__",
+          },
+        },
+        update: {
+          score: merged.totalXP,
+          activeModule: merged.lastActiveDate,
+          completedModules: [JSON.stringify(merged)],
+          completed: true,
+        },
+        create: {
           userId,
           module: "__gamification__",
+          score: merged.totalXP,
+          activeModule: merged.lastActiveDate,
+          completedModules: [JSON.stringify(merged)],
+          completed: true,
         },
-      },
-      update: {
-        score: merged.totalXP,
-        activeModule: merged.lastActiveDate,
-        completedModules: [JSON.stringify(merged)],
-        completed: true,
-      },
-      create: {
-        userId,
-        module: "__gamification__",
-        score: merged.totalXP,
-        activeModule: merged.lastActiveDate,
-        completedModules: [JSON.stringify(merged)],
-        completed: true,
-      },
-    });
+      });
 
-    return NextResponse.json({ success: true, state: merged });
+      return NextResponse.json({ success: true, state: merged });
+    } catch (dbError) {
+      console.warn("Database unreachable in /api/gamification POST, saved locally:", dbError);
+      return NextResponse.json({ success: true, state: merged, localOnly: true });
+    }
   } catch (error: any) {
     console.error("Gamification Sync Error:", error);
     const message =
