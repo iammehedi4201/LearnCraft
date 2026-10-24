@@ -15,6 +15,8 @@ import { JAVASCRIPT_LEGACY_SLUG_MAP } from "@/app/learn/javascript/data/javascri
 import { TYPESCRIPT_LEGACY_SLUG_MAP } from "@/app/learn/typescript/data/typescript-curriculum";
 import { NEXTJS_MODULE_QUIZZES } from "./nextjs-quizzes";
 import { NEXTJS_LEGACY_SLUG_MAP } from "@/app/learn/nextjs/data/nextjs-curriculum";
+import { NESTJS_MODULE_QUIZZES } from "./nestjs-quizzes";
+import { NESTJS_LEGACY_SLUG_MAP } from "@/app/learn/nestjs/data/nestjs-curriculum";
 
 export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
   // ──────────────────────────────────────────────────────────────────────────
@@ -33,6 +35,10 @@ export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
   // NEXT.JS CURRICULUM QUIZZES
   // ──────────────────────────────────────────────────────────────────────────
   ...NEXTJS_MODULE_QUIZZES,
+  // ──────────────────────────────────────────────────────────────────────────
+  // NESTJS CURRICULUM QUIZZES
+  // ──────────────────────────────────────────────────────────────────────────
+  ...NESTJS_MODULE_QUIZZES,
 
   // ──────────────────────────────────────────────────────────────────────────
   // REACT: RC-01 — Thinking in React & Modern Mental Models
@@ -200,6 +206,8 @@ export function getQuizBySlug(trackKey: string, lessonSlug: string): ModuleQuiz 
     resolvedSlug = TYPESCRIPT_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
   } else if (normTrack === "nextjs" && NEXTJS_LEGACY_SLUG_MAP[resolvedSlug]) {
     resolvedSlug = NEXTJS_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
+  } else if (normTrack === "nestjs" && NESTJS_LEGACY_SLUG_MAP[resolvedSlug]) {
+    resolvedSlug = NESTJS_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
   }
 
   // 1. Check exact match in curated registry

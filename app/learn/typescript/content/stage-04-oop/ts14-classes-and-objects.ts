@@ -4,7 +4,7 @@ export const ts14ClassesAndObjectsContent: StandardLessonContent = {
   slug: "ts14-classes-and-objects",
   code: "TS-14",
   title: "Classes, Objects, and Constructors",
-  subtitle: "Understand blueprints, instances, and object initialization in TypeScript.",
+  subtitle: "Master blueprints, instances, and the 4 foundational pillars of OOP in TypeScript.",
   difficulty: "Easy",
   scenario: {
     question: "You need to model shopping cart items with a name and price, and display each item's details. How would you structure this using a class and constructor?",
@@ -20,41 +20,47 @@ export const ts14ClassesAndObjectsContent: StandardLessonContent = {
     { id: "part7", label: "Summary & Key Takeaways", icon: "🎓" },
   ],
   part1: {
-    title: "Classes, Objects, and Constructors",
-    bigPicture: "A class is a blueprint that defines the structure and actions for objects. An object is a concrete instance created with 'new'. The constructor is the initialization function that sets up property values when an object is created.",
+    title: "Classes, Objects, and the 4 Pillars of OOP",
+    bigPicture: "A class is a blueprint that defines properties and behaviors. An object is a concrete living instance created with 'new'. The constructor initializes instance data. Classes serve as the foundation for Object-Oriented Programming (OOP) and its 4 core pillars: Encapsulation, Abstraction, Inheritance, and Polymorphism.",
     codeSnippet: `class User {
   name: string;
   role: string;
 
+  // The constructor runs automatically when 'new User()' is called
   constructor(name: string, role: string) {
     this.name = name;
     this.role = role;
   }
 
+  // A method shared by all instances
   introduce(): string {
     return \`\${this.name} is a \${this.role}.\`;
   }
 }
 
-// Creating concrete object instances from the blueprint
+// Creating concrete object instances from the blueprint:
 const user1 = new User("Rina", "Designer");
 const user2 = new User("Mehedi", "Engineer");
 
 console.log(user1.introduce()); // "Rina is a Designer."
 console.log(user2.introduce()); // "Mehedi is an Engineer."`,
-    breakdownTitle: "Key Parts Explained",
+    breakdownTitle: "Key Concepts Explained",
     breakdownItems: [
       {
         title: "1. Class Blueprint",
-        desc: "Defines what properties (name, role) and methods (introduce()) every created instance will have.",
+        desc: "Defines the shape, properties (name, role), and methods (introduce()) that every created instance will have.",
       },
       {
         title: "2. Constructor Function",
-        desc: "Runs automatically when 'new User()' is called to initialize each object's initial data.",
+        desc: "Executes automatically when 'new' is called, safely initializing each object's unique property values.",
       },
       {
         title: "3. Object Instances",
-        desc: "Each instance (user1, user2) holds its own unique property values in memory.",
+        desc: "Each instance (user1, user2) holds its own distinct values in memory while sharing the same class methods.",
+      },
+      {
+        title: "4. The 4 OOP Pillars Roadmap",
+        desc: "Classes enable: 1) Encapsulation (protecting data), 2) Abstraction (hiding complexity), 3) Inheritance (reusing code), and 4) Polymorphism (many forms).",
       },
     ],
   },
@@ -168,8 +174,8 @@ console.log(item2.display());`,
         desc: "Constructors run upon instantiation to initialize instance properties.",
       },
       {
-        title: "3. Methods",
-        desc: "Functions defined inside classes operate on instance data via 'this'.",
+        title: "3. The 4 OOP Pillars",
+        desc: "Classes form the bedrock for Encapsulation, Abstraction, Inheritance, and Polymorphism.",
       },
     ],
     nextLessonPreview: {
@@ -178,3 +184,4 @@ console.log(item2.display());`,
     },
   },
 };
+

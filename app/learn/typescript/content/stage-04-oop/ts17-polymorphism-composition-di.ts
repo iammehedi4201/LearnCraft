@@ -20,64 +20,73 @@ export const ts17PolymorphismCompositionDiContent: StandardLessonContent = {
     { id: "part7", label: "Summary & Key Takeaways", icon: "🎓" },
   ],
   part1: {
-    title: "Polymorphism, Composition, and Dependency Injection",
-    bigPicture: "Polymorphism lets different classes share the same contract. Composition builds objects using helper objects ('has-a'). Dependency Injection provides those helper objects through constructor parameters instead of hardcoding 'new', making systems modular and easily testable.",
-    codeSnippet: `// 1. The Contract (Interface)
-interface PaymentProcessor {
-  processPayment(amount: number): boolean;
+    title: "Polymorphism: The 4th Pillar of OOP & Loose Coupling",
+    bigPicture: "Polymorphism literally means 'many forms'. It allows different child classes to share the exact same method signature (like processPayment(amount)), while each executes its own distinct behavior. In modern TypeScript architecture, Polymorphism combines with Composition ('has-a') and Dependency Injection (DI) to build flexible, testable systems without brittle if/else chains.",
+    codeSnippet: `// 1. The Base Contract: All payments share this interface
+abstract class Payment {
+  abstract processPayment(amount: number): void;
 }
 
-// 2. Polymorphic Implementation A (Real)
-class StripeProcessor implements PaymentProcessor {
-  processPayment(amount: number): boolean {
-    console.log(\`Charged $\${amount} via Stripe.\`);
-    return true;
+// 2. Concrete Form A: Credit Card
+class CreditCardPayment extends Payment {
+  constructor(private cardNumber: string) {
+    super();
+  }
+
+  override processPayment(amount: number): void {
+    const last4 = this.cardNumber.slice(-4);
+    console.log(\`💳 Charging $\${amount} to card ending in \${last4}\`);
   }
 }
 
-// 3. Polymorphic Implementation B (Test Mock)
-class MockProcessor implements PaymentProcessor {
-  processPayment(amount: number): boolean {
-    console.log(\`[MOCK] Simulated payment of $\${amount}.\`);
-    return true;
+// 3. Concrete Form B: Mobile Payment (bKash)
+class MobilePayment extends Payment {
+  constructor(private phone: string) {
+    super();
+  }
+
+  override processPayment(amount: number): void {
+    console.log(\`📱 Sending $\${amount} via mobile wallet to \${this.phone}\`);
   }
 }
 
-// 4. Composition & Dependency Injection
-class OrderService {
-  // Dependency Injection: OrderService receives processor via constructor
-  // Composition: OrderService 'has a' PaymentProcessor
-  constructor(private readonly paymentProcessor: PaymentProcessor) {}
-
-  checkout(orderId: string, total: number): void {
-    console.log(\`Starting checkout for order \${orderId}...\`);
-    const success = this.paymentProcessor.processPayment(total);
-    if (success) {
-      console.log(\`Order \${orderId} successfully completed!\`);
-    }
+// 4. Concrete Form C: Cash
+class CashPayment extends Payment {
+  override processPayment(amount: number): void {
+    console.log(\`💵 Received $\${amount} in physical cash\`);
   }
 }
 
-// Production:
-const realOrder = new OrderService(new StripeProcessor());
-realOrder.checkout("ORD-1", 120);
+// Polymorphic function: works with ANY Payment form!
+function checkout(paymentMethod: Payment, amount: number): void {
+  paymentMethod.processPayment(amount);
+}
 
-// Automated Testing: Swap implementation with zero changes to OrderService!
-const testOrder = new OrderService(new MockProcessor());
-testOrder.checkout("ORD-TEST", 50);`,
-    breakdownTitle: "The 3 Concepts Explained",
+// Single loop, different behaviors — zero if/else needed!
+const payments: Payment[] = [
+  new CreditCardPayment("4111222233334444"),
+  new MobilePayment("+8801700000000"),
+  new CashPayment(),
+];
+
+payments.forEach((p) => checkout(p, 99.99));`,
+    breakdownTitle: "Polymorphism & Architecture Explained",
     breakdownItems: [
       {
-        title: "1. Polymorphism (Many Shapes)",
-        desc: "StripeProcessor and MockProcessor both implement PaymentProcessor, so OrderService works identically with either.",
+        title: "1. Pillar 4: Polymorphism ('Many Forms')",
+        desc: "CreditCard, MobilePayment, and CashPayment all implement processPayment(), so the checkout function handles any of them seamlessly.",
       },
       {
-        title: "2. Composition ('Has-A')",
-        desc: "OrderService 'has a' PaymentProcessor instead of inheriting from it, avoiding fragile inheritance hierarchies.",
+        title: "2. Eliminating if/else Chains",
+        desc: "Instead of checking 'if (type === \"card\")' with a 20-line ladder, you let each object handle its own behavior directly.",
       },
       {
-        title: "3. Dependency Injection (DI)",
-        desc: "Instead of calling 'new StripeProcessor()' inside OrderService, dependencies are passed into the constructor from outside.",
+        title: "3. Composition Over Inheritance ('Has-A')",
+        desc: "An OrderService 'has a' Payment processor instead of inheriting from it, keeping classes small, focused, and loosely coupled.",
+      },
+      {
+        title: "4. Dependency Injection (DI)",
+        desc: "Dependencies are passed into constructors from the outside rather than created with hardcoded 'new', making testing effortless.",
       },
     ],
   },
@@ -91,8 +100,8 @@ testOrder.checkout("ORD-TEST", 50);`,
       {
         number: "01",
         tag: "FLEXIBILITY",
-        title: "Polymorphism",
-        description: "Write functions and classes that depend on interface contracts rather than concrete implementations.",
+        title: "Pillar 4: Polymorphism",
+        description: "Write functions and classes that depend on base contracts rather than concrete implementations.",
         color: "purple",
       },
       {
@@ -116,12 +125,12 @@ testOrder.checkout("ORD-TEST", 50);`,
     intro: "Here is why these concepts are central to modern TypeScript architecture:",
     points: [
       {
-        title: "1. Classes become isolated and testable",
-        content: "Because OrderService receives its processor from the outside, you can test it without making real network or payment calls.",
+        title: "1. Eliminating massive if/else chains",
+        content: "When you add a 4th payment method (like CryptoPayment), you don't touch existing checkout code. You simply create a new class.",
       },
       {
-        title: "2. Swapping providers requires zero code changes",
-        content: "If you switch payment providers or database drivers, your business logic classes remain untouched.",
+        title: "2. Classes become isolated and testable",
+        content: "Because OrderService receives its processor from the outside, you can test it without making real network or payment calls.",
       },
       {
         title: "3. Composition prevents deep hierarchy bugs",
@@ -132,49 +141,65 @@ testOrder.checkout("ORD-TEST", 50);`,
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Hardcoding Dependencies with 'new'",
-      code: `class OrderService {\n  private processor: StripeProcessor;\n\n  constructor() {\n    // ❌ Hardcoded 'new' permanently locks OrderService to Stripe:\n    this.processor = new StripeProcessor();\n  }\n}`,
-      explanation: "Creating dependencies with 'new' inside a class makes it impossible to substitute mock objects during automated testing.",
+      title: "Using Massive if/else Chains Instead of Polymorphism",
+      code: `function checkout(type: string, amount: number) {\n  // ❌ Fragile type-checking ladder:\n  if (type === "card") chargeCard(amount);\n  else if (type === "mobile") sendMobile(amount);\n  else if (type === "cash") acceptCash(amount);\n}`,
+      explanation: "Checking types manually creates brittle if/else chains that must be updated every time a new payment method is introduced.",
     },
     good: {
-      title: "Constructor Dependency Injection",
-      code: `class OrderService {\n  // ✅ Injected via constructor parameter:\n  constructor(private readonly processor: PaymentProcessor) {}\n}`,
-      explanation: "Accepting an interface dependency through constructor parameters keeps your class loosely coupled and easily testable.",
+      title: "Clean Polymorphic Dispatch",
+      code: `function checkout(paymentMethod: Payment, amount: number): void {\n  // ✅ The object handles its own behavior!\n  paymentMethod.processPayment(amount);\n}`,
+      explanation: "With polymorphism, adding a new payment class requires zero changes to existing checkout or business logic functions.",
     },
   },
   part5: {
     title: "Interactive Code Sandbox",
     intro: "Run this code to see how polymorphism and dependency injection allow swappable behavior:",
-    starterCode: `interface MessageService {
-  sendMessage(to: string, text: string): void;
+    starterCode: `abstract class Payment {
+  abstract processPayment(amount: number): void;
 }
 
-class EmailService implements MessageService {
-  sendMessage(to: string, text: string): void {
-    console.log(\`[Email] Sent to \${to}: \${text}\`);
+class CreditCardPayment extends Payment {
+  constructor(private cardNumber: string) {
+    super();
+  }
+
+  processPayment(amount: number): void {
+    console.log(\`💳 Paid $\${amount} with Card ending in \${this.cardNumber.slice(-4)}\`);
   }
 }
 
-class SmsService implements MessageService {
-  sendMessage(to: string, text: string): void {
-    console.log(\`[SMS] Sent to \${to}: \${text}\`);
+class MobilePayment extends Payment {
+  constructor(private phone: string) {
+    super();
+  }
+
+  processPayment(amount: number): void {
+    console.log(\`📱 Paid $\${amount} via Mobile Wallet (\${this.phone})\`);
   }
 }
 
-class UserNotifier {
-  // Dependency Injection: UserNotifier accepts any MessageService
-  constructor(private readonly messageService: MessageService) {}
-
-  notifyUser(user: string, message: string): void {
-    this.messageService.sendMessage(user, message);
+class CashPayment extends Payment {
+  processPayment(amount: number): void {
+    console.log(\`💵 Paid $\${amount} in Cash\`);
   }
 }
 
-const emailNotifier = new UserNotifier(new EmailService());
-emailNotifier.notifyUser("rina@example.com", "Your order has shipped!");
+// OrderService uses Dependency Injection to receive any Payment
+class OrderService {
+  constructor(private readonly paymentMethod: Payment) {}
 
-const smsNotifier = new UserNotifier(new SmsService());
-smsNotifier.notifyUser("+1-555-0199", "Your verification code is 4920.");`,
+  completeOrder(orderId: string, total: number): void {
+    console.log(\`Processing order \${orderId}...\`);
+    this.paymentMethod.processPayment(total);
+    console.log(\`Order \${orderId} complete! ✅\`);
+  }
+}
+
+const order1 = new OrderService(new CreditCardPayment("4111222233334444"));
+order1.completeOrder("ORD-101", 149.99);
+
+const order2 = new OrderService(new MobilePayment("+8801700000000"));
+order2.completeOrder("ORD-102", 45.00);`,
   },
   part6: {
     title: "Knowledge Check Quiz",
@@ -194,16 +219,16 @@ smsNotifier.notifyUser("+1-555-0199", "Your verification code is 4920.");`,
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "1. Polymorphism",
-        desc: "Different classes share the same interface contract and can be used interchangeably.",
+        title: "1. Pillar 4: Polymorphism",
+        desc: "Different classes share the same method contract and can be used interchangeably without type checks.",
       },
       {
         title: "2. Composition",
-        desc: "Prefer 'has-a' composition over deep inheritance trees for flexible architecture.",
+        desc: "Assemble systems with 'has-a' helper objects instead of deep, fragile inheritance trees.",
       },
       {
         title: "3. Dependency Injection",
-        desc: "Pass dependencies into constructors so classes are modular and easily testable.",
+        desc: "Pass dependencies into constructors so classes remain decoupled, modular, and easily testable.",
       },
     ],
     nextLessonPreview: {
@@ -212,3 +237,4 @@ smsNotifier.notifyUser("+1-555-0199", "Your verification code is 4920.");`,
     },
   },
 };
+

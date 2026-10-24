@@ -21,61 +21,64 @@ export const ts14ClassesAndImplementsContent: StandardLessonContent = {
   ],
   part1: {
     title: "The 4 Core Pillars of OOP",
-    bigPicture: "Object-Oriented Programming (OOP) is built on 4 foundational pillars: 1) Encapsulation (protecting data), 2) Abstraction (hiding complexity), 3) Inheritance (reusing code), and 4) Polymorphism (different objects responding to the same method).",
-    codeSnippet: `// 1. ABSTRACTION: An interface defines the contract
-interface Vehicle {
-  start(): void;
+    bigPicture: "Object-Oriented Programming (OOP) is built on 4 foundational pillars: 1) Encapsulation (protecting data like an ATM machine), 2) Abstraction (hiding complexity like a coffee machine), 3) Inheritance (reusing code like family traits), and 4) Polymorphism (different objects responding to the same method in many forms).",
+    codeSnippet: `// 1. ABSTRACTION: An interface hides complex details and defines the public contract
+interface Payment {
+  processPayment(amount: number): void;
 }
 
-// 2. ENCAPSULATION: Hiding internal data with 'private'
-class Car implements Vehicle {
-  // Private variable: outsiders cannot directly change fuel
-  private fuel: number = 50;
+// 2. ENCAPSULATION: Hiding sensitive internal data with 'private'
+class CreditCardPayment implements Payment {
+  // Private field: locked safe (like cash inside an ATM)
+  private balance: number = 1000;
 
-  constructor(public readonly model: string) {}
+  constructor(private readonly cardNumber: string) {}
 
-  start(): void {
-    if (this.fuel > 0) {
-      this.fuel -= 5;
-      console.log(\`\${this.model} engine started! Remaining fuel: \${this.fuel}L\`);
-    } else {
-      console.log(\`\${this.model} has no fuel!\`);
+  processPayment(amount: number): void {
+    if (amount <= 0 || amount > this.balance) {
+      console.log("❌ Transaction declined: Invalid amount or insufficient balance.");
+      return;
     }
-  }
-
-  getFuel(): number {
-    return this.fuel;
+    this.balance -= amount;
+    const last4 = this.cardNumber.slice(-4);
+    console.log(\`💳 Charged $\${amount} to card ending in \${last4}. Balance: $\${this.balance}\`);
   }
 }
 
-// 3. INHERITANCE: ElectricCar inherits model and structure from Car
-class ElectricCar extends Car {
-  constructor(model: string, public batteryPercent: number) {
-    super(model); // Calls Car's constructor
+// 3. INHERITANCE: CashPayment inherits base structure
+class CashPayment implements Payment {
+  processPayment(amount: number): void {
+    console.log(\`💵 Received $\${amount} in physical cash.\`);
   }
+}
 
-  // 4. POLYMORPHISM: Overrides start() with electric-specific behavior
-  override start(): void {
-    console.log(\`\${this.model} hums silently to life! Battery: \${this.batteryPercent}%\`);
-  }
-}`,
+// 4. POLYMORPHISM: checkout() handles ANY Payment form identically without if/else!
+function checkout(paymentMethod: Payment, amount: number): void {
+  paymentMethod.processPayment(amount);
+}
+
+const card = new CreditCardPayment("4111222233334444");
+const cash = new CashPayment();
+
+checkout(card, 150); // 💳 Charged $150 to card ending in 4444.
+checkout(cash, 50);  // 💵 Received $50 in physical cash.`,
     breakdownTitle: "The 4 Pillars in Easy Words",
     breakdownItems: [
       {
-        title: "1. Encapsulation (Protecting Data)",
-        desc: "Wrapping data and methods inside a class and using 'private' so external code cannot mutate critical properties directly.",
+        title: "1. Pillar 1: Encapsulation (ATM Analogy)",
+        desc: "You cannot reach inside an ATM and grab cash. You interact through public buttons (methods) that check your PIN and balance before dispensing.",
       },
       {
-        title: "2. Abstraction (Hiding Complexity)",
-        desc: "Using 'interface' and 'implements' to define what an object can do, without exposing the complex internal machinery.",
+        title: "2. Pillar 2: Abstraction (Coffee Machine Analogy)",
+        desc: "Pressing 'makeCoffee()' gives you hot espresso without needing to understand the complex internal boilers, grinders, and pressure pumps.",
       },
       {
-        title: "3. Inheritance (Reusing Code)",
-        desc: "Using 'extends' and 'super()' so child classes automatically inherit properties and methods from parent classes without copying code.",
+        title: "3. Pillar 3: Inheritance (Family Trait Analogy)",
+        desc: "Children inherit traits from parents. Child classes use 'extends' and 'super()' to get parent methods and properties for free without copying code.",
       },
       {
-        title: "4. Polymorphism (Many Shapes)",
-        desc: "Allowing different classes to share the same method name (like start()) while each implementing its own unique behavior.",
+        title: "4. Pillar 4: Polymorphism ('Many Forms')",
+        desc: "Different classes share the same method name (like processPayment()), each executing its own specialized behavior without type checking.",
       },
     ],
   },
@@ -119,29 +122,29 @@ class ElectricCar extends Car {
       },
       {
         title: "2. Abstraction makes code interchangeable",
-        content: "When code depends on an interface like Notifier or Vehicle, you only care that .send() or .start() exists, not the inner details.",
+        content: "When code depends on an interface like Payment or Notifier, callers only care that .processPayment() exists, not the inner machinery.",
       },
       {
         title: "3. Inheritance removes boilerplate",
-        content: "Common properties (like id, createdAt, updatedAt) live in a BaseEntity, and child entities inherit them automatically.",
+        content: "Common properties (like name, age, id, createdAt) live in a Base class, and child classes inherit them automatically.",
       },
       {
-        title: "4. Polymorphism enables flexible functions",
-        content: "A single testDrive(v: Vehicle) function can run on regular cars, trucks, or electric cars without needing separate functions for each.",
+        title: "4. Polymorphism eliminates massive if/else chains",
+        content: "A single checkout(paymentMethod: Payment) function works with cards, mobile wallets, or cash without checking types manually.",
       },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Exposing Public Mutable State",
+      title: "Making Everything Public Out of Laziness",
       code: `class BankAccount {\n  // ❌ Public state allows accidental corruption:\n  public balance: number = 100;\n}\n\nconst acc = new BankAccount();\nacc.balance = -500; // Unsafe!`,
       explanation: "Leaving variables public allows outside code to bypass validation rules and corrupt application state.",
     },
     good: {
-      title: "Encapsulation with Private Fields & Methods",
+      title: "Encapsulation with Private Fields & Guard Methods",
       code: `class BankAccount {\n  // ✅ Private state protected by controlled methods:\n  private balance: number = 100;\n\n  deposit(amount: number) {\n    if (amount > 0) this.balance += amount;\n  }\n\n  getBalance() { return this.balance; }\n}`,
-      explanation: "Keeping properties private ensures all changes must pass through validated methods.",
+      explanation: "Keeping properties private ensures all changes must pass through validated guard methods.",
     },
   },
   part5: {
@@ -205,20 +208,20 @@ testDrive(ev);     // Output: Tesla Model 3 starts silently!`,
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "1. Encapsulation",
-        desc: "Hide sensitive state with 'private' and control updates with methods.",
+        title: "1. Pillar 1: Encapsulation",
+        desc: "Protect sensitive state with 'private' and control updates with validated guard methods.",
       },
       {
-        title: "2. Abstraction",
-        desc: "Use interfaces and 'implements' to define clear rules for what classes must do.",
+        title: "2. Pillar 2: Abstraction",
+        desc: "Hide complex internal mechanics behind clean interfaces and public methods.",
       },
       {
-        title: "3. Inheritance",
-        desc: "Use 'extends' and 'super()' to share logic across parent and child classes.",
+        title: "3. Pillar 3: Inheritance",
+        desc: "Use 'extends' and 'super()' to share logic across parent and child classes for free.",
       },
       {
-        title: "4. Polymorphism",
-        desc: "Override methods so different classes can respond to the same action in their own unique way.",
+        title: "4. Pillar 4: Polymorphism",
+        desc: "Share method signatures so different classes handle actions in their own unique way.",
       },
     ],
     nextLessonPreview: {
@@ -227,3 +230,4 @@ testDrive(ev);     // Output: Tesla Model 3 starts silently!`,
     },
   },
 };
+

@@ -20,54 +20,72 @@ export const ts16InheritanceAbstractClassesContent: StandardLessonContent = {
     { id: "part7", label: "Summary & Key Takeaways", icon: "🎓" },
   ],
   part1: {
-    title: "Inheritance, Interfaces, and Abstract Classes",
-    bigPicture: "Inheritance lets a child class reuse code from a parent with 'extends' and 'super()'. Interfaces define pure contracts with no code. Abstract classes act as blueprints that can provide both shared completed methods and required abstract methods.",
-    codeSnippet: `// 1. Interface: Pure contract (no implementation)
-interface Logger {
-  log(message: string): void;
-}
+    title: "Inheritance & Abstract Classes: The 3rd Pillar of OOP",
+    bigPicture: "Inheritance allows a 'child' class to automatically receive all data and methods from a 'parent' class for free (like children inheriting traits from parents). Child classes use 'extends' and 'super()'. When a parent class should never be instantiated on its own, an 'abstract class' lets you share common methods while forcing child classes to implement specific abstract methods.",
+    codeSnippet: `// 1. Abstract Base Class: Shared code + required abstract contracts
+abstract class Animal {
+  constructor(public name: string, public age: number) {}
 
-// 2. Abstract Class: Cannot be instantiated with 'new'
-abstract class BaseNotifier implements Logger {
-  constructor(public senderName: string) {}
-
-  // Shared completed method
-  log(message: string): void {
-    console.log(\`[\${this.senderName}] Audit: \${message}\`);
+  // Shared concrete methods: all child classes get these for free!
+  eat(): void {
+    console.log(\`\${this.name} is eating 🍖 (inherited)\`);
   }
 
-  // Abstract method: Child classes MUST implement this!
-  abstract send(recipient: string, message: string): void;
-}
-
-// 3. Child Class inheriting from the abstract class
-class EmailNotifier extends BaseNotifier {
-  constructor(senderName: string, public emailServer: string) {
-    super(senderName); // Calls BaseNotifier constructor
+  sleep(): void {
+    console.log(\`\${this.name} is sleeping 😴 (inherited)\`);
   }
 
-  // Implementing the required abstract method
-  send(recipient: string, message: string): void {
-    this.log(\`Dispatching email to \${recipient}\`);
-    console.log(\`Sent via \${this.emailServer}: "\${message}"\`);
+  // Abstract method: every animal MUST implement its own sound!
+  abstract makeSound(): string;
+}
+
+// 2. Dog extends Animal: inherits name, age, eat(), sleep()
+class Dog extends Animal {
+  constructor(name: string, age: number, public breed: string) {
+    super(name, age); // Calls parent constructor!
+  }
+
+  makeSound(): string {
+    return "Woof! Woof! 🐕";
+  }
+
+  bark(): void {
+    console.log(\`\${this.name} (\${this.breed}) says: \${this.makeSound()}\`);
   }
 }
 
-const notifier = new EmailNotifier("LearnCraft", "mail.server.com");
-notifier.send("rina@example.com", "Welcome to OOP!");`,
-    breakdownTitle: "Key Differences",
+// 3. Cat extends Animal: inherits common logic, defines unique sound
+class Cat extends Animal {
+  makeSound(): string {
+    return "Meow! 🐱";
+  }
+}
+
+const myDog = new Dog("Buddy", 3, "Golden Retriever");
+myDog.eat();   // Inherited from Animal!
+myDog.sleep(); // Inherited from Animal!
+myDog.bark();  // Dog's own method
+
+const myCat = new Cat("Whiskers", 2);
+myCat.eat();   // Inherited from Animal!
+console.log(\`\${myCat.name} says: \${myCat.makeSound()}\`);`,
+    breakdownTitle: "Inheritance & Contracts Breakdown",
     breakdownItems: [
       {
-        title: "1. Inheritance (extends)",
-        desc: "Child class inherits all parent properties and methods, and calls super() to run the parent constructor.",
+        title: "1. Pillar 3: Inheritance (Family Trait Analogy)",
+        desc: "Children inherit traits from parents. In code, a child class uses 'extends' to get all parent properties and methods without copying code.",
       },
       {
-        title: "2. Interface (implements)",
-        desc: "Defines a strict contract for property names and method signatures with zero runtime code.",
+        title: "2. The super() Constructor Call",
+        desc: "Inside child constructors, super(...) calls the parent constructor to safely initialize inherited properties before child code runs.",
       },
       {
-        title: "3. Abstract Class",
-        desc: "A partially implemented base class that child classes extend. Cannot be instantiated with 'new'.",
+        title: "3. Abstract Classes (Blueprints for Blueprints)",
+        desc: "An abstract class cannot be instantiated with 'new'. It bundles shared concrete methods with required abstract methods child classes must implement.",
+      },
+      {
+        title: "4. Interfaces (Pure Contracts)",
+        desc: "While abstract classes can contain real implemented code, interfaces define pure shapes with zero runtime code.",
       },
     ],
   },
@@ -106,11 +124,11 @@ notifier.send("rina@example.com", "Welcome to OOP!");`,
     intro: "Here is how inheritance and abstract contracts organize code:",
     points: [
       {
-        title: "1. Eliminating duplicate code",
-        content: "Common logging, timestamping, or validation logic is written once in a base class and inherited by all children.",
+        title: "1. Eliminating duplicate code across related entities",
+        content: "Common properties (like name, age, id, timestamps) live in a single parent class, so child classes stay lean and focused.",
       },
       {
-        title: "2. Guaranteed implementation with abstract",
+        title: "2. Guaranteed implementation with abstract methods",
         content: "Marking a method 'abstract' forces every child class to provide its own implementation before TypeScript allows compilation.",
       },
       {
@@ -188,16 +206,16 @@ console.log(\`\${cat.name} says: \${cat.makeSound()}\`);`,
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "1. extends & super()",
-        desc: "Use extends for inheritance and super() to run the parent class constructor.",
+        title: "1. Pillar 3: Inheritance",
+        desc: "Child classes inherit all parent fields and methods using 'extends' and 'super()'.",
       },
       {
-        title: "2. Interfaces",
-        desc: "Pure type contracts that contain no runtime code; enforced with 'implements'.",
-      },
-      {
-        title: "3. Abstract Classes",
+        title: "2. Abstract Classes",
         desc: "Base classes that cannot be instantiated directly; mix concrete and abstract methods.",
+      },
+      {
+        title: "3. Interfaces",
+        desc: "Pure type contracts that contain no runtime code; enforced with 'implements'.",
       },
     ],
     nextLessonPreview: {
@@ -206,3 +224,4 @@ console.log(\`\${cat.name} says: \${cat.makeSound()}\`);`,
     },
   },
 };
+

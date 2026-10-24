@@ -20,48 +20,72 @@ export const ts15AccessModifiersEncapsulationContent: StandardLessonContent = {
     { id: "part7", label: "Summary & Key Takeaways", icon: "🎓" },
   ],
   part1: {
-    title: "Access Modifiers and Encapsulation",
-    bigPicture: "Access modifiers control who can read or change class fields: public (anywhere), private (class only), and protected (class and subclasses). Encapsulation means hiding internal data and requiring updates to pass through validated methods.",
+    title: "Encapsulation & Abstraction: The First Two Pillars",
+    bigPicture: "Encapsulation and Abstraction are the protective foundation of OOP. Encapsulation means keeping an object's data protected (like an ATM machine locking cash inside) and only allowing changes through validated 'guard' methods. Abstraction means hiding complex internal steps (like a TV remote or coffee machine) and exposing only simple, clean public buttons.",
     codeSnippet: `class BankAccount {
-  // 'private': completely hidden from outside callers
-  private balance: number = 0;
+  // 🔒 Private field: Hidden from outside callers (cash inside the ATM vault)
+  private balance: number;
 
-  // Parameter property shortcut: declares and assigns 'accountNumber' in one step!
-  constructor(public readonly accountNumber: string) {}
+  // Parameter property shortcut: declares & assigns accountNumber in 1 line!
+  constructor(public readonly accountNumber: string, initialBalance: number = 0) {
+    this.balance = initialBalance;
+  }
 
+  // Safe public method: validates rules BEFORE changing balance
   deposit(amount: number): void {
     if (amount <= 0) {
-      console.log("Deposit amount must be positive.");
+      console.log("❌ Deposit amount must be positive!");
       return;
     }
     this.balance += amount;
+    console.log(\`✅ Deposited $\${amount}. New balance: $\${this.balance}\`);
   }
 
+  // Safe public method: prevents overdrafts
+  withdraw(amount: number): void {
+    if (amount <= 0) {
+      console.log("❌ Withdrawal amount must be positive!");
+      return;
+    }
+    if (amount > this.balance) {
+      console.log(\`❌ Insufficient funds! Current balance: $\${this.balance}\`);
+      return;
+    }
+    this.balance -= amount;
+    console.log(\`✅ Withdrew $\${amount}. Remaining balance: $\${this.balance}\`);
+  }
+
+  // Read-only getter
   getBalance(): number {
     return this.balance;
   }
 }
 
-const account = new BankAccount("ACC-101");
-account.deposit(250);
-console.log(account.accountNumber); // "ACC-101" (public readonly)
-console.log(account.getBalance());   // 250 (safe read)
+const account = new BankAccount("ACC-101", 1000);
+account.deposit(500);
+account.withdraw(200);
+account.withdraw(5000); // ❌ Insufficient funds!
+console.log("Verified balance:", account.getBalance());
 
 // ❌ TypeScript Error: Property 'balance' is private!
-// account.balance = -100;`,
-    breakdownTitle: "Access Modifiers at a Glance",
+// account.balance = -999;`,
+    breakdownTitle: "Encapsulation & Abstraction Compared",
     breakdownItems: [
       {
-        title: "1. public (Default)",
-        desc: "Accessible from anywhere. Anyone can read and call it outside the class.",
+        title: "1. Pillar 1: Encapsulation (ATM Analogy)",
+        desc: "You cannot reach inside an ATM and grab cash. You interact through public buttons (methods) that check your PIN and balance before dispensing.",
       },
       {
-        title: "2. private",
-        desc: "Only accessible inside the declaring class. Prevents direct outside modification.",
+        title: "2. Pillar 2: Abstraction (Coffee Machine Analogy)",
+        desc: "You press 'makeCoffee()'. You don't need to know how the machine boils water, grinds beans, or brews. Complex internal steps are hidden.",
       },
       {
-        title: "3. protected & readonly",
-        desc: "Protected allows subclasses to access the field; readonly prevents reassigning values after creation.",
+        title: "3. Encapsulation vs Abstraction Difference",
+        desc: "Encapsulation PROTECTS data from corruption (the 'what' is guarded). Abstraction HIDES complexity from the user (the 'how' is hidden).",
+      },
+      {
+        title: "4. TypeScript Access Modifiers",
+        desc: "public (accessible anywhere), protected (accessible in class and subclasses), and private (accessible only within this class).",
       },
     ],
   },
@@ -69,7 +93,7 @@ console.log(account.getBalance());   // 250 (safe read)
     title: "Why and When to Use It",
     rule: {
       title: "The Encapsulation Invariant Rule",
-      content: "Keep mutable state private, validate all mutations inside methods, and expose read-only access where appropriate.",
+      content: "Keep mutable state private, validate all mutations inside guard methods, and expose simple, clean public interfaces.",
     },
     cards: [
       {
@@ -82,75 +106,88 @@ console.log(account.getBalance());   // 250 (safe read)
       {
         number: "02",
         tag: "PROTECTION",
-        title: "Encapsulation",
-        description: "Hide internal state so outside callers cannot corrupt data or bypass business validation rules.",
+        title: "Pillar 1: Encapsulation",
+        description: "Hide internal state behind private so outside code cannot corrupt data or bypass validation rules.",
         color: "cyan",
       },
       {
         number: "03",
-        tag: "SHORTCUT",
-        title: "Parameter Properties",
-        description: "Adding public, private, or readonly directly inside constructor arguments declares and sets fields in 1 line.",
+        tag: "SIMPLICITY",
+        title: "Pillar 2: Abstraction",
+        description: "Hide intricate implementation details and private helper steps behind intuitive public methods.",
         color: "emerald",
       },
     ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how access modifiers protect your application state:",
+    intro: "Here is how access modifiers and encapsulation safeguard real-world code:",
     points: [
       {
-        title: "1. Private fields prevent invalid states",
-        content: "If account balance was public, outside code could write account.balance = -999. Private forces changes through deposit().",
+        title: "1. Private fields prevent invalid application state",
+        content: "If account balance was public, outside code could write account.balance = -999. Private forces changes through deposit() and withdraw().",
       },
       {
-        title: "2. Parameter properties eliminate repetitive code",
-        content: "Instead of declaring fields, parameters, and this.x = x in 3 places, writing constructor(private x: number) does it in one line.",
+        title: "2. Parameter properties eliminate repetitive boilerplate",
+        content: "Instead of declaring fields, parameters, and this.x = x in 3 places, writing constructor(private balance: number) does it in one line.",
       },
       {
-        title: "3. Protected enables safe inheritance",
-        content: "Protected methods allow child classes to reuse internal logic while keeping it hidden from the rest of the application.",
+        title: "3. Protected enables safe inheritance for subclasses",
+        content: "Protected properties allow child classes to reuse internal logic while keeping those details hidden from the rest of the application.",
       },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Exposing Public Mutable State",
-      code: `class UserProfile {\n  // ❌ Public mutable state allows accidental corruption:\n  public passwordHash: string;\n\n  constructor(hash: string) {\n    this.passwordHash = hash;\n  }\n}\n\nconst user = new UserProfile("secret123");\nuser.passwordHash = ""; // Invalid!`,
-      explanation: "Leaving sensitive properties public allows outside code to bypass validation and corrupt object data.",
+      title: "Making Everything Public Out of Laziness",
+      code: `class BankAccount {\n  // ❌ Public mutable state allows accidental corruption:\n  public balance: number = 100;\n}\n\nconst acc = new BankAccount();\nacc.balance = -500; // Unsafe! Bypass all business rules`,
+      explanation: "Leaving variables public allows outside code to bypass validation rules and corrupt application state.",
     },
     good: {
-      title: "Encapsulation with Private Fields & Methods",
-      code: `class UserProfile {\n  // ✅ Private field with controlled update logic:\n  constructor(private passwordHash: string) {}\n\n  changePassword(oldPass: string, newPass: string): boolean {\n    if (this.verify(oldPass) && newPass.length >= 8) {\n      this.passwordHash = this.hash(newPass);\n      return true;\n    }\n    return false;\n  }\n  private verify(p: string) { return true; }\n  private hash(p: string) { return "hashed_" + p; }\n}`,
-      explanation: "Private fields force all changes to go through validated methods with proper security checks.",
+      title: "Encapsulation with Private Fields & Guard Methods",
+      code: `class BankAccount {\n  // ✅ Private state protected by controlled methods:\n  private balance: number = 100;\n\n  deposit(amount: number): void {\n    if (amount > 0) this.balance += amount;\n  }\n\n  getBalance(): number {\n    return this.balance;\n  }\n}`,
+      explanation: "Keeping properties private ensures all changes must pass through validated methods with proper business checks.",
     },
   },
   part5: {
     title: "Interactive Code Sandbox",
-    intro: "Run this code to see how encapsulation and parameter properties work:",
-    starterCode: `class Counter {
-  // 'private' count, initialized to 0
-  private count: number = 0;
+    intro: "Run this code to see how encapsulation and parameter properties protect state:",
+    starterCode: `class BankAccount {
+  private balance: number;
 
-  // Parameter property: step is public and readonly
-  constructor(public readonly step: number = 1) {}
-
-  increment(): void {
-    this.count += this.step;
+  constructor(public readonly owner: string, initialBalance: number = 0) {
+    this.balance = initialBalance;
   }
 
-  getCount(): number {
-    return this.count;
+  deposit(amount: number): void {
+    if (amount <= 0) {
+      console.log("❌ Deposit must be positive!");
+      return;
+    }
+    this.balance += amount;
+    console.log(\`✅ Deposited $\${amount}. Balance: $\${this.balance}\`);
+  }
+
+  withdraw(amount: number): void {
+    if (amount <= 0 || amount > this.balance) {
+      console.log(\`❌ Cannot withdraw $\${amount}. Available: $\${this.balance}\`);
+      return;
+    }
+    this.balance -= amount;
+    console.log(\`✅ Withdrew $\${amount}. Balance: $\${this.balance}\`);
+  }
+
+  getBalance(): number {
+    return this.balance;
   }
 }
 
-const counter = new Counter(5);
-counter.increment();
-counter.increment();
-
-console.log("Current step:", counter.step); // 5 (public)
-console.log("Total count:", counter.getCount()); // 10 (via getter)`,
+const account = new BankAccount("Mehedi", 500);
+account.deposit(250);
+account.withdraw(100);
+account.withdraw(1000); // ❌ Overdraft blocked!
+console.log("Final balance for " + account.owner + ": $" + account.getBalance());`,
   },
   part6: {
     title: "Knowledge Check Quiz",
@@ -170,21 +207,22 @@ console.log("Total count:", counter.getCount()); // 10 (via getter)`,
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "1. Access Modifiers",
-        desc: "Use private for internal secrets, protected for subclasses, and public for caller APIs.",
+        title: "1. Pillar 1: Encapsulation",
+        desc: "Protect data by keeping fields private and routing mutations through validated guard methods.",
       },
       {
-        title: "2. Encapsulation",
-        desc: "Hide raw data and expose validated methods to maintain data integrity.",
+        title: "2. Pillar 2: Abstraction",
+        desc: "Hide complex internal mechanics (like boiling coffee) behind intuitive public methods.",
       },
       {
-        title: "3. Parameter Properties",
-        desc: "Write constructor(private name: string) to declare and assign fields in one line.",
+        title: "3. Access Modifiers",
+        desc: "Use private for internal state, protected for inheritance, and public for caller APIs.",
       },
     ],
     nextLessonPreview: {
       title: "Inheritance, Interfaces, and Abstract Classes",
-      desc: "Learn how to reuse code with extends, define contracts with interfaces, and build base classes.",
+      desc: "Learn how child classes get parent code for free with extends and super().",
     },
   },
 };
+
