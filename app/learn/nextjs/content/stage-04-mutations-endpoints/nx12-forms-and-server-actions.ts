@@ -1,4 +1,4 @@
-  import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
+import { StandardLessonContent } from "@/components/curriculum/lesson-content-types";
 
 export const nx12FormsAndServerActionsContent: StandardLessonContent = {
   slug: "nx12-forms-and-server-actions",
