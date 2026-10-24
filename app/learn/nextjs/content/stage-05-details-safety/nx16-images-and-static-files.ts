@@ -7,8 +7,8 @@ export const nx16ImagesAndStaticFilesContent: StandardLessonContent = {
   subtitle: "Serve static assets from the public folder and optimize visuals using the next/image component.",
   difficulty: "Easy",
   scenario: {
-    question: "You saved a file as public/logo.png. What path can you use to show it on the website?",
-    answer: "Use /logo.png as the path. For image display and optimization, you can use next/image.",
+    question: "You saved a file as `public/logo.png`. What path can you use to show it on the website?",
+    answer: "Use `/logo.png` as the path. For image display and optimization, you can use `next/image`.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },

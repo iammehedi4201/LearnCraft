@@ -7,8 +7,8 @@ export const nx14RevalidatingDataContent: StandardLessonContent = {
   subtitle: "Cache public data with 'use cache' and refresh stale pages on-demand using revalidatePath, revalidateTag, and updateTag.",
   difficulty: "Difficult",
   scenario: {
-    question: "An admin changes a course title. The database has the new title, but the course list page still shows the old title. What should you investigate?",
-    answer: "Check which part of the data or page is cached and how it is refreshed. After the database update succeeds, refresh the correct page or tagged data using the revalidation method supported by your project's caching setup.",
+    question: "An admin changes a course title. The database has the new title, but the courses page still shows the old one. What should you check?",
+    answer: "Check whether the page is using cached data and whether the update flow refreshes the right route or data tag after the save succeeds.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },

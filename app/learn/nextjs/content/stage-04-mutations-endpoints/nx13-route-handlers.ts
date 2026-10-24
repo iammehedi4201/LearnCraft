@@ -7,8 +7,8 @@ export const nx13RouteHandlersContent: StandardLessonContent = {
   subtitle: "Build custom HTTP REST API endpoints in route.ts for external webhooks, mobile clients, and JSON responses.",
   difficulty: "Moderate",
   scenario: {
-    question: "A monitoring service needs to request /api/health and receive JSON showing whether your app is running. What should you create?",
-    answer: "Create app/api/health/route.ts and add a GET handler that returns a JSON response.",
+    question: "A monitoring service needs to request `/api/health` and receive JSON showing whether your app is running. What should you create?",
+    answer: "Create `app/api/health/route.ts` and add a `GET` handler that returns a JSON response.",
   },
   interviewQuestion: {
     question: "What is the difference between a Server Action and a Route Handler?",

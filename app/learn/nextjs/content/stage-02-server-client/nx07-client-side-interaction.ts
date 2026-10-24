@@ -7,7 +7,7 @@ export const nx07ClientSideInteractionContent: StandardLessonContent = {
   subtitle: "Use Client Components with React state and event handlers to build responsive, interactive interfaces.",
   difficulty: "Moderate",
   scenario: {
-    question: "You need a 'Show answer' button that reveals text after a click. What kind of component do you need and why?",
+    question: "You need a “Show answer” button that reveals text after a click. What kind of component do you need and why?",
     answer: "A Client Component, because it uses a click event and state to update the UI.",
   },
   sections: [

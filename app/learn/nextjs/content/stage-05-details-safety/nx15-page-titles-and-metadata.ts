@@ -8,7 +8,7 @@ export const nx15PageTitlesAndMetadataContent: StandardLessonContent = {
   difficulty: "Easy",
   scenario: {
     question: "Your course page still shows the website's default browser-tab title. How can you set a better title for that page?",
-    answer: "Export a metadata object from the page or use generateMetadata when the title depends on data.",
+    answer: "Export a `metadata` object from the page or use `generateMetadata` when the title depends on data.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },

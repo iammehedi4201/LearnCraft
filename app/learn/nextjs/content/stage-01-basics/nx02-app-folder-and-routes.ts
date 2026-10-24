@@ -7,8 +7,8 @@ export const nx02AppFolderAndRoutesContent: StandardLessonContent = {
   subtitle: "In the App Router, folders inside the app directory define the URLs of your website.",
   difficulty: "Easy",
   scenario: {
-    question: "You need to add an /about page. Which file do you create?",
-    answer: "Create app/about/page.tsx and export a React component from it.",
+    question: "You need to add an `/about` page. Which file do you create?",
+    answer: "Create `app/about/page.tsx` and export a React component from it.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },

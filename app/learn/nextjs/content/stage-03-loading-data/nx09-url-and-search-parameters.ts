@@ -7,8 +7,8 @@ export const nx09UrlAndSearchParametersContent: StandardLessonContent = {
   subtitle: "Read dynamic path parameters and query strings to drive filters, pagination, and shared URLs.",
   difficulty: "Moderate",
   scenario: {
-    question: "A learner selects 'beginner' courses, and the URL becomes /courses?level=beginner. Where do you read level?",
-    answer: "Read it from searchParams in the page, then use it to filter or load the matching courses.",
+    question: "A learner selects “beginner” courses, and the URL becomes `/courses?level=beginner`. Where do you read `level`?",
+    answer: "Read it from `searchParams` in the page, then use it to filter or load the matching courses.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },

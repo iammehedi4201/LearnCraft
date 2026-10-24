@@ -7,8 +7,8 @@ export const nx10LoadingUiContent: StandardLessonContent = {
   subtitle: "Use loading.tsx and React Suspense boundaries to display instant feedback while content loads.",
   difficulty: "Moderate",
   scenario: {
-    question: "Your course page takes a few seconds to load. You want to show 'Loading courses...' while Next.js loads the page. What can you add?",
-    answer: "Add a loading.tsx file in the relevant route folder and return the loading UI from it.",
+    question: "Your course page takes a few seconds to load. You want to show “Loading courses...” while Next.js loads the page. What can you add?",
+    answer: "Add a `loading.tsx` file in the relevant route folder and return the loading UI from it.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },

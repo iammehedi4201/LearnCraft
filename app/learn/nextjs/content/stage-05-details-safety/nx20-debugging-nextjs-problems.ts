@@ -7,8 +7,8 @@ export const nx20DebuggingNextjsProblemsContent: StandardLessonContent = {
   subtitle: "Systematically isolate, diagnose, and resolve common Next.js App Router errors with a practical checklist.",
   difficulty: "Moderate",
   scenario: {
-    question: "You get an error saying 'useState can only be used in a Client Component'. What should you check?",
-    answer: "Check that the component using useState is a Client Component with 'use client' at the top, or move the interactive part into a separate Client Component.",
+    question: "You get an error saying that `useState` can only be used in a Client Component. What should you check?",
+    answer: "Check that the component using `useState` is a Client Component and has `\"use client\"` at the top. Keep the client boundary as small as practical.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },

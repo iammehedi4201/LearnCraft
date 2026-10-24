@@ -4,8 +4,8 @@ export const nx01WhatIsNextjsContent: StandardLessonContent = {
   slug: "nx01-what-is-nextjs",
   code: "NX-01",
   title: "What Is Next.js?",
-  subtitle: "Next.js is a full-stack React framework that adds routing, server rendering, and data loading.",
-  difficulty: "Easy",
+  subtitle: "Next.js is a framework built on React that adds routing, server rendering, data loading, and request handling.",
+  difficulty: "Moderate",
   scenario: {
     question: "You want to build a website with a home page, product pages, and a way to load product data. Why might you use Next.js instead of only React?",
     answer: "React helps build the UI. Next.js also gives me routing and server-side tools to load data and build the full website in one framework.",
@@ -21,50 +21,39 @@ export const nx01WhatIsNextjsContent: StandardLessonContent = {
   ],
   part1: {
     title: "What Is Next.js?",
-    bigPicture: "React is a JavaScript library for building user interface components like buttons, cards, and forms. Next.js is a full-stack framework built on top of React. It gives you everything you need to build a complete production website out of the box: file-based routing, server-side rendering, automatic image optimization, and fast data fetching.",
+    bigPicture: "Next.js is a framework built on React. React helps you build UI components. Next.js adds tools for building a complete website, such as routing, server rendering, data loading, and ways to handle pages and requests.",
     analogy: "Think of React as a powerful car engine. It runs great, but an engine alone cannot get you to work. Next.js is the complete car: it takes that engine and adds the wheels, steering wheel, doors, headlights, and GPS so you can start driving immediately.",
     codeSnippet: `// app/page.tsx
-
-// 1. Next.js looks for default exported React components inside the app directory:
 export default function HomePage() {
-  // 2. You write standard React JSX code:
-  const platformName = "LearnCraft";
-
-  // 3. Next.js renders this on the server and sends ready-to-view HTML to the browser:
-  return (
-    <main>
-      <h1>Welcome to {platformName}</h1>
-      <p>Build full-stack web applications without configuring complex routers or bundlers.</p>
-    </main>
-  );
+  return <h1>Welcome to LearnCraft</h1>;
 }
 
-// Result: Visiting http://localhost:3000/ immediately displays this page!`,
-    breakdownTitle: "How This Works Step by Step",
+// When a user visits '/', Next.js uses this file to show the home page.`,
+    breakdownTitle: "How the Example Works Step-by-Step",
     breakdownItems: [
       {
-        title: "1. File Location (app/page.tsx)",
-        desc: "Next.js uses file-system routing. Placing a file at 'app/page.tsx' automatically maps it to your website's home page URL ('/').",
+        title: "1. Component Definition",
+        desc: "HomePage is the component that describes this page.",
       },
       {
-        title: "2. Standard React JSX",
-        desc: "You do not need to learn a new syntax. You write familiar React functions and JSX elements like <h1> and <p>.",
+        title: "2. JSX Heading Output",
+        desc: "The function returns an <h1> heading.",
       },
       {
-        title: "3. Server Rendering by Default",
-        desc: "Next.js runs this component on the server first. The browser receives complete HTML with 'LearnCraft' already inside, which is super fast and great for Google SEO.",
+        title: "3. Route Mapping (/)",
+        desc: "Next.js shows that heading when the user opens '/'.",
       },
       {
-        title: "4. Zero-Config Tooling",
-        desc: "In pure React, you have to manually configure Webpack, Babel, and React Router. Next.js does all of that automatically behind the scenes.",
+        title: "4. Server-Rendered HTML",
+        desc: "Next.js renders this on the server by default and sends ready-to-view HTML to the browser.",
       },
     ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      title: "Framework vs Library Rule",
-      content: "Use React when you only need UI components inside an existing project. Use Next.js when you are building a complete website that needs pages, links, server data, and SEO.",
+      title: "Why It Matters",
+      content: "You can build pages and app features without setting up routing and every server feature yourself.",
     },
     cards: [
       {

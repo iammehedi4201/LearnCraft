@@ -7,7 +7,7 @@ export const nx17EnvironmentVariablesAndSecretsContent: StandardLessonContent = 
   subtitle: "Manage sensitive API keys and configuration safely with server-only variables and the NEXT_PUBLIC_ prefix.",
   difficulty: "Moderate",
   scenario: {
-    question: "Your app needs a private payment-provider key. Should you use NEXT_PUBLIC_PAYMENT_API_KEY?",
+    question: "Your app needs a private payment-provider key. Should you use `NEXT_PUBLIC_PAYMENT_API_KEY`?",
     answer: "No. Keep the key in a server-only environment variable and use it from server-side code.",
   },
   sections: [

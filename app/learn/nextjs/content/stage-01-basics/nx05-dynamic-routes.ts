@@ -7,8 +7,8 @@ export const nx05DynamicRoutesContent: StandardLessonContent = {
   subtitle: "Use square brackets [id] to create a single reusable page template that handles thousands of different URLs.",
   difficulty: "Moderate",
   scenario: {
-    question: "You want a page for /courses/1 and /courses/2 without creating a folder for every course number. How do you name the folder?",
-    answer: "Use square brackets for the dynamic segment, such as app/courses/[courseId]/page.tsx.",
+    question: "You have hundreds of courses. You want `/courses/12` and `/courses/25` to show different courses using the same page. How can you do that?",
+    answer: "Create `app/courses/[courseId]/page.tsx`, read `courseId` from `params`, and use it to load the correct course.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },

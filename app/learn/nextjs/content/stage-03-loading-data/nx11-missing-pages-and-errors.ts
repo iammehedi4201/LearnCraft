@@ -7,8 +7,8 @@ export const nx11MissingPagesAndErrorsContent: StandardLessonContent = {
   subtitle: "Respond to missing records with notFound() and catch runtime failures with error.tsx boundaries.",
   difficulty: "Moderate",
   scenario: {
-    question: "A user opens /courses/999, but course 999 does not exist. Should you show a generic server error?",
-    answer: "No. Call notFound() and show a not-found page because the requested course does not exist.",
+    question: "A user opens `/courses/999`, but course 999 does not exist. Should you show a generic server error?",
+    answer: "No. Call `notFound()` and show a not-found page because the requested course does not exist.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },

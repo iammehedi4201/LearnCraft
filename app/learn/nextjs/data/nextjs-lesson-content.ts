@@ -13,7 +13,7 @@ import { ALL_NEXTJS_LESSONS } from "../content";
 export const NEXTJS_SECTIONS: LessonSectionItem[] = [
   { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },
   { id: "part2", label: "Why It Matters & Rules", icon: "⚙️" },
-  { id: "part3", label: "How It Works in Practice", tag: "IN PRACTICE", icon: "🎯" },
+  { id: "part3", label: "Real-World Scenarios & Practice", tag: "SCENARIOS & PRACTICE", icon: "🎯" },
   { id: "part4", label: "Common Pitfalls & Fixes", icon: "🛡️" },
   { id: "part5", label: "Interactive Code Sandbox", icon: "💻" },
   { id: "part6", label: "Knowledge Check Quiz", icon: "🎯" },

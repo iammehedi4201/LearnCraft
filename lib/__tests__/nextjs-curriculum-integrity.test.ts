@@ -170,4 +170,35 @@ describe("Next.js Curriculum Integrity & Health Suite", () => {
     expect(legacyResolved).toBeDefined();
     expect(legacyResolved?.id).toBe("quiz-nextjs-nx01");
   });
+
+  it("verifies all 21 lessons match the pedagogical difficulty ratings from LearnCraft specification", () => {
+    const expectedDifficulties: Record<string, "Easy" | "Moderate" | "Difficult"> = {
+      "nx01-what-is-nextjs": "Moderate",
+      "nx02-app-folder-and-routes": "Easy",
+      "nx03-pages-and-layouts": "Moderate",
+      "nx04-moving-between-pages-with-link": "Easy",
+      "nx05-dynamic-routes": "Moderate",
+      "nx06-server-and-client-components": "Difficult",
+      "nx07-client-side-interaction": "Moderate",
+      "nx08-fetching-data-server-component": "Moderate",
+      "nx09-url-and-search-parameters": "Moderate",
+      "nx10-loading-ui": "Moderate",
+      "nx11-missing-pages-and-errors": "Moderate",
+      "nx12-forms-and-server-actions": "Difficult",
+      "nx13-route-handlers": "Moderate",
+      "nx14-revalidating-data": "Difficult",
+      "nx15-page-titles-and-metadata": "Easy",
+      "nx16-images-and-static-files": "Easy",
+      "nx17-environment-variables-and-secrets": "Moderate",
+      "nx18-authentication-and-authorization": "Difficult",
+      "nx19-validating-user-input": "Moderate",
+      "nx20-debugging-nextjs-problems": "Moderate",
+      "nx21-website-performance-optimization": "Difficult",
+    };
+
+    for (const [slug, expectedDiff] of Object.entries(expectedDifficulties)) {
+      const content = getNextjsLessonContent(slug);
+      expect(content.difficulty, `Difficulty mismatch for ${slug}`).toBe(expectedDiff);
+    }
+  });
 });
