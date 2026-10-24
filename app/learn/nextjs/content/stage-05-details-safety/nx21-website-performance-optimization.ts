@@ -182,7 +182,7 @@ export default async function CoursesPage({
   },
   part5: {
     title: "Interactive Code Sandbox",
-    description: "Explore a modern Next.js performance pattern combining parallel fetching, pagination, and asset optimization:",
+    intro: "Explore a modern Next.js performance pattern combining parallel fetching, pagination, and asset optimization:",
     starterCode: `import Image from "next/image";
 
 // Simulated high-performance Server Component
@@ -233,15 +233,9 @@ async function fetchItems(page: number, limit: number) {
     { id: 2, title: "Server Actions & Form Security", level: "Intermediate" },
   ];
 }
-
 async function fetchCatalogStats() {
   return { totalCount: 42 };
 }`,
-    sandboxInstructions: [
-      "1. Notice how Promise.all executes fetchItems and fetchCatalogStats concurrently.",
-      "2. Observe how page and pageSize prevent loading the entire dataset into memory.",
-      "3. Notice the Image component width, height, and sizes props preventing Cumulative Layout Shift.",
-    ],
   },
   part6: {
     title: "Knowledge Check Quiz",

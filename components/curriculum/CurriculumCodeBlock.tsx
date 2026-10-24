@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 
 function CopyIcon({ className = "w-3.5 h-3.5" }: { className?: string }) {
   return (
