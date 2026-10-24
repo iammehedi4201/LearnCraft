@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Nav } from "@/components/nav";
-import { useTheme } from "@/components/theme-provider";
+import { useTheme } from "@/components/providers";
 import { InteractiveGrid } from "@/components/interactive-grid";
 
 // Color token definition structure for documentation rendering

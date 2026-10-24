@@ -10,7 +10,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { openAuthModal } from "@/components/auth-modal";
+import { openAuthModal } from "@/components/auth";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/app/learn/components/Footer";
 import { InteractiveGrid } from "@/components/interactive-grid";

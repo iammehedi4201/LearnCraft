@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/nav";
-import { ModuleGuide } from "@/components/module-guide";
+import { ModuleGuide } from "@/components/curriculum/ModuleGuide";
 import { LessonNavFooter } from "../components/lesson-nav-footer";
 import { useModuleProgress } from "../hooks/use-module-progress";
 

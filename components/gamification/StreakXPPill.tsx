@@ -11,7 +11,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { openAuthModal } from "@/components/auth-modal";
+import { openAuthModal } from "@/components/auth";
 import {
   getGamificationState,
   syncGamificationWithCloud,

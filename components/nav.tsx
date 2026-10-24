@@ -21,7 +21,7 @@ import {
   type SkillRoadmap,
 } from "@/lib/roadmap-data";
 import { TechIcon } from "@/components/roadmap/TechIcon";
-import { AuthModal, openAuthModal } from "@/components/auth-modal";
+import { AuthModal, openAuthModal } from "@/components/auth";
 import { StreakXPPill } from "@/components/gamification/StreakXPPill";
 import { getLocalNotes } from "@/lib/notes-bookmarks";
 

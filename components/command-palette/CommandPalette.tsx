@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "@/components/theme-provider";
+import { useTheme } from "@/components/providers";
 import {
   searchLearnCraft,
   getRecentSearches,

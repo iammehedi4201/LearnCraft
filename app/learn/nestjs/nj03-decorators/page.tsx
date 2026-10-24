@@ -9,7 +9,7 @@ import { Nav } from "@/components/nav";
 import { LessonNavFooter } from "../components/lesson-nav-footer";
 import { useModuleProgress } from "../hooks/use-module-progress";
 
-import { ModuleGuide } from "@/components/module-guide";
+import { ModuleGuide } from "@/components/curriculum/ModuleGuide";
 import { AuthSecuritySection } from "./components/auth-security-section";
 import { BeginnerMistakesSection } from "./components/beginner-mistakes-section";
 import { CachingErrorSection } from "./components/caching-error-section";

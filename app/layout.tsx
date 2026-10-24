@@ -3,12 +3,11 @@ import { Inter, Rajdhani, Manrope } from "next/font/google";
 import "./globals.css";
 import "@/components/reading-mode/reading-control-panel.css";
 import "@/components/playground/playground.css";
-import { ThemeProvider, QueryProvider } from "@/components/providers";
+import { ThemeProvider, QueryProvider, WebVitals } from "@/components/providers";
 import { RevisionProvider } from "@/context/revision-context";
 import { SessionProvider } from "next-auth/react";
 import { Suspense } from "react";
 import { GlobalOverlays } from "@/components/global-overlays";
-import { WebVitals } from "@/components/web-vitals";
 
 const inter = Inter({
   subsets: ["latin"],
