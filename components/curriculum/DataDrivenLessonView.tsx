@@ -1395,41 +1395,78 @@ export function DataDrivenLessonView({
       <Nav />
 
       <div className="relative z-10 max-w-6xl xl:max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
-        {/* Module Header & Breadcrumb Row */}
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <Link
-            href={trackHref}
-            className="inline-flex items-center gap-1.5 text-slate-400 hover:text-purple-300 transition-colors font-medium group"
-          >
-            <span className="transition-transform group-hover:-translate-x-0.5">←</span>
-            <span>{trackTitle} Curriculum</span>
-          </Link>
-          <div className="flex items-center gap-2">
+        {/* Modern Glassmorphic Module Header & Breadcrumb Bar */}
+        <div className="mb-5 flex flex-col md:flex-row md:items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-white/[0.025] border border-white/[0.07] backdrop-blur-md shadow-lg shadow-black/20 hover:border-white/[0.12] transition-colors">
+          {/* Left: Interactive Breadcrumb Navigation */}
+          <div className="flex items-center gap-2 flex-wrap min-w-0">
+            <Link
+              href={trackHref}
+              className="group inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-purple-500/15 border border-white/[0.08] hover:border-purple-500/30 text-slate-300 hover:text-white text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm shrink-0"
+            >
+              <svg className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-300 transition-transform group-hover:-translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+              <span>{trackTitle} Curriculum</span>
+            </Link>
+
             {_stageName && (
-              <span className="text-[11px] font-medium text-slate-400 hidden sm:inline">
-                {_stageName} ·
-              </span>
+              <div className="flex items-center gap-2 min-w-0">
+                <svg className="w-3 h-3 text-slate-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+                <span className="text-xs text-slate-400 font-medium truncate max-w-[140px] sm:max-w-[200px]" title={_stageName}>
+                  {_stageName}
+                </span>
+              </div>
             )}
-            <span className="text-[10px] font-mono text-purple-300 font-bold bg-purple-500/15 px-2.5 py-0.5 rounded-full border border-purple-500/25">
-              {lesson.code}
-            </span>
-            {(content.difficulty || lesson.difficulty) && (
-              <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full border ${
-                (content.difficulty || lesson.difficulty)?.toLowerCase() === "easy"
-                  ? "text-emerald-400 bg-emerald-500/15 border-emerald-500/25"
-                  : (content.difficulty || lesson.difficulty)?.toLowerCase() === "moderate"
-                  ? "text-amber-400 bg-amber-500/15 border-amber-500/25"
-                  : "text-rose-400 bg-rose-500/15 border-rose-500/25"
-              }`}>
-                {(content.difficulty || lesson.difficulty)}
+
+            <div className="hidden lg:flex items-center gap-2 min-w-0">
+              <svg className="w-3 h-3 text-slate-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+              <span className="text-xs text-slate-200 font-semibold truncate max-w-[220px]" title={lesson.title}>
+                {lesson.title}
               </span>
-            )}
-            <span className="text-slate-300 font-semibold truncate max-w-[200px] sm:max-w-lg md:max-w-xl">
-              {lesson.title}
+            </div>
+          </div>
+
+          {/* Right: Cohesive Metadata Badges Cluster */}
+          <div className="flex items-center gap-2 shrink-0 flex-wrap">
+            {/* Lesson Code Pill */}
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl font-mono text-[11px] font-bold text-purple-300 bg-purple-500/10 border border-purple-500/25 shadow-sm shadow-purple-500/10">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+              <span>{lesson.code}</span>
             </span>
+
+            {/* Difficulty Pill */}
+            {(content.difficulty || lesson.difficulty) && (() => {
+              const diff = (content.difficulty || lesson.difficulty);
+              const isEasy = diff?.toLowerCase() === "easy";
+              const isModerate = diff?.toLowerCase() === "moderate";
+              return (
+                <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl font-mono text-[11px] font-bold border shadow-sm ${
+                  isEasy
+                    ? "text-emerald-300 bg-emerald-500/10 border-emerald-500/25 shadow-emerald-500/5"
+                    : isModerate
+                    ? "text-amber-300 bg-amber-500/10 border-amber-500/25 shadow-amber-500/5"
+                    : "text-rose-300 bg-rose-500/10 border-rose-500/25 shadow-rose-500/5"
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${
+                    isEasy ? "bg-emerald-400" : isModerate ? "bg-amber-400" : "bg-rose-400"
+                  }`} />
+                  <span>{diff}</span>
+                </span>
+              );
+            })()}
+
+            {/* Reading / Study Time Pill */}
             {lesson.minutes && (
-              <span className="text-[11px] font-mono text-slate-400 hidden sm:inline">
-                ⏱️ {lesson.minutes} min
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl font-mono text-[11px] font-medium text-slate-300 bg-white/[0.04] border border-white/[0.08] shadow-sm">
+                <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                <span>{lesson.minutes} min</span>
               </span>
             )}
           </div>
