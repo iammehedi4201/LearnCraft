@@ -7,8 +7,8 @@ export const nx20DebuggingNextjsProblemsContent: StandardLessonContent = {
   subtitle: "Systematically isolate, diagnose, and resolve common Next.js App Router errors with a practical checklist.",
   difficulty: "Moderate",
   scenario: {
-    question: "You get an error saying that useState can only be used in a Client Component. What should you check?",
-    answer: "Check that the component using useState is a Client Component and has 'use client' at the top. Keep the client boundary as small as practical.",
+    question: "You get an error saying 'useState can only be used in a Client Component'. What should you check?",
+    answer: "Check that the component using useState is a Client Component with 'use client' at the top, or move the interactive part into a separate Client Component.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },
@@ -21,127 +21,149 @@ export const nx20DebuggingNextjsProblemsContent: StandardLessonContent = {
   ],
   part1: {
     title: "Debugging Next.js Problems",
-    bigPicture: "When a Next.js page fails, first identify where the problem happens: a wrong file name, an incorrect route, a Server/Client Component mismatch, a failed data request, a missing environment variable, or a TypeScript compilation error.",
-    codeSnippet: `// Practical Debugging Checklist:
-// 1. Read the first useful error message, not just the last line.
-// 2. Check the file path and route convention (e.g. page.tsx vs index.tsx).
-// 3. Check whether the code uses browser APIs or event handlers in a Server Component.
-// 4. Check data requests and their response status codes.
-// 5. Check environment variables and whether they are available in the current environment.
-// 6. Make one change at a time, then run the relevant checks again.`,
-    breakdownTitle: "Common Error Categories",
+    bigPicture: "When a Next.js app shows a red error screen, don't panic! 90% of Next.js beginner errors fall into three simple buckets: using React state in a Server Component, mismatching HTML during hydration, or typos in file names. The secret to fast debugging is knowing WHERE to look: Server errors log in your VS Code terminal, while Client errors log in your browser DevTools console.",
+    codeSnippet: `// ❌ THE #1 MOST COMMON NEXT.JS ERROR:
+// Error: "useState can only be used in a Client Component."
+
+// app/counter/page.tsx (This is a Server Component by default!)
+import { useState } from "react";
+
+export default function Counter() {
+  // 💥 CRASH: Server Components run on Node.js and cannot hold interactive state!
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
+
+// ─────────────────────────────────────────────────────────────
+// ✅ THE 1-LINE FIX: Add "use client" at the very top of the file!
+// ─────────────────────────────────────────────────────────────
+"use client"; // Tells Next.js to enable React hooks and event listeners!
+
+import { useState } from "react";
+
+export default function Counter() {
+  const [count, setCount] = useState(0); // ✅ Works perfectly!
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}`,
+    breakdownTitle: "The 3-Step Debugging Checklist",
     breakdownItems: [
       {
-        title: "Boundary Mismatch",
-        desc: "Using useState, useEffect, or window inside a Server Component without 'use client'.",
+        title: "1. Look at Where It Logged",
+        desc: "If the error appears in your terminal, it happened on the server (Server Component or Server Action). If it appears in browser DevTools, it happened on the client.",
       },
       {
-        title: "File Convention Typos",
-        desc: "Naming a file Page.tsx with a capital P, or using Pages Router naming like _app.tsx.",
+        title: "2. Read the First Useful Line",
+        desc: "Don't get overwhelmed by long stack traces. Look at the very top line for the exact file name (e.g. app/courses/page.tsx) and line number.",
       },
       {
-        title: "Missing Environment Variables",
-        desc: "Calling a database or Stripe API when process.env.API_KEY is undefined on local or preview environments.",
+        title: "3. Check Special File Names",
+        desc: "Make sure special files are all lowercase: page.tsx (not Page.tsx), layout.tsx, loading.tsx, error.tsx, and not-found.tsx.",
       },
     ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      title: "Systematic Debugging Rule",
-      content: "Don't guess randomly. Isolate the failing layer: identify if the failure is build-time, server-render-time, or client-hydration-time.",
+      title: "Systematic Isolation Rule",
+      content: "Don't make random changes to package.json or dependencies. First identify if the failure is: (1) a build typo, (2) a server boundary mismatch, or (3) a client hydration issue.",
     },
     cards: [
       {
         number: "01",
-        tag: "READ TERMINAL",
-        title: "First Useful Line",
-        description: "The top of the error stack contains the exact file and line number; bottom lines are usually Next.js internal frames.",
+        tag: "SERVER VS CLIENT",
+        title: "Terminal vs DevTools",
+        description: "Server Components log to your command line terminal. Client Components log to the browser DevTools console.",
         color: "purple",
       },
       {
         number: "02",
-        tag: "ISOLATE BOUNDARY",
-        title: "Check Environment",
-        description: "Look at whether the error printed in your VS Code terminal (server) or your browser DevTools console (client).",
+        tag: "TOP OF STACK",
+        title: "Read the Top Line",
+        description: "The top line of the error tells you the exact component and line number. Ignore the internal Next.js node_modules frames.",
         color: "cyan",
       },
       {
         number: "03",
-        tag: "ITERATE",
-        title: "One Fix at a Time",
-        description: "Apply one targeted fix and re-test to verify causality rather than changing multiple files at once.",
+        tag: "HYDRATION ERROR",
+        title: "Hydration Mismatches",
+        description: "Happens when server HTML differs from browser render (e.g. using new Date() or window before component mounts).",
         color: "emerald",
       },
     ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how to resolve the most common Next.js bugs:",
+    intro: "How to fix the 3 most frequent Next.js App Router errors:",
     points: [
       {
-        title: "1. useState in Server Component error",
-        content: "Add 'use client' at the top of the file, or extract the interactive piece into a small Client Component.",
+        title: "1. 'useState / useEffect only in Client Component'",
+        content: "Fix: Add 'use client' at the very top of the file, or move the interactive button into a separate component file marked with 'use client'.",
       },
       {
-        title: "2. Hydration mismatch error",
-        content: "Occurs when server HTML differs from initial client render (e.g. rendering new Date().toLocaleTimeString() or checking window). Use useEffect for client-only timestamps.",
+        title: "2. 'Text content did not match server-rendered HTML'",
+        content: "Fix: Occurs when rendering client-only values like window.innerWidth or new Date() on initial load. Use an useEffect to set state only after mounting in the browser.",
       },
       {
-        title: "3. 404 Route Not Found",
-        content: "Verify that the folder has a page.tsx file spelled in all lowercase letters, and check route group parentheses.",
+        title: "3. 'Module not found / Can't resolve'",
+        content: "Fix: Verify your import path and check that required packages are installed in package.json dependencies.",
       },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Hydration Mismatch from Date.now() or window",
-      code: `// Rendering dynamic browser values during initial SSR:
-export default function Clock() {
-  // Server generates time X, but by hydration client time is X+1!
-  // Next.js warns: Text content does not match server-rendered HTML!
-  return <p>Current time: {new Date().toLocaleTimeString()}</p>;
+      title: "Directly Rendering Browser-Only Values (Hydration Crash)",
+      code: `// ❌ HYDRATION ERROR: Server HTML and Browser HTML will not match!
+"use client";
+
+export default function TimeDisplay() {
+  // Server renders at 10:00:00 AM, but by the time the browser loads,
+  // it is 10:00:02 AM! React detects the mismatch and crashes with a warning!
+  return <p>Current Time: {new Date().toLocaleTimeString()}</p>;
 }`,
-      explanation: "Server and client must produce identical initial HTML. Differences trigger React hydration warnings.",
+      explanation: "Initial client render must match the server HTML exactly. Values that change between server and browser cause hydration errors.",
     },
     good: {
-      title: "Mounting Client-Only Values with useEffect",
-      code: `"use client";
+      title: "Wait Until Component Mounts with useEffect",
+      code: `// ✅ CLEAN FIX: Render browser-specific values after mount
+"use client";
 import { useState, useEffect } from "react";
 
-export default function Clock() {
-  const [time, setTime] = useState<string | null>(null);
+export default function TimeDisplay() {
+  const [time, setTime] = useState("");
 
   useEffect(() => {
+    // Only runs in the browser AFTER hydration succeeds:
     setTime(new Date().toLocaleTimeString());
   }, []);
 
-  if (!time) return <p>Loading time...</p>;
-  return <p>Current time: {time}</p>;
+  return <p>Current Time: {time || "Loading time..."}</p>;
 }`,
-      explanation: "Renders consistent placeholder HTML on server and updates cleanly after hydration.",
+      explanation: "Using useEffect ensures the initial HTML matches the server, avoiding any hydration mismatch warnings.",
     },
   },
   part5: {
     title: "Interactive Code Sandbox",
-    intro: "Explore a safe client-only mounted pattern:",
-    starterCode: `"use client";
+    intro: "Here is the standard mounted pattern used in production to safely render browser-only data:",
+    starterCode: `// app/components/ClientOnlyValue.tsx
+"use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function SafeBrowserRender() {
-  const [mounted, setMounted] = useState(false);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    // Runs only in the browser window:
+    setIsClient(true);
   }, []);
 
   return (
-    <div style={{ padding: "1rem", border: "1px solid #333" }}>
-      <h4>Safe Hydration Pattern</h4>
+    <div style={{ padding: "1rem", border: "1px solid #d1d5db", borderRadius: "6px" }}>
+      <h4>Hydration-Safe Component</h4>
       <p>
-        Status: {mounted ? "✅ Hydrated in browser window" : "⏳ Pre-rendered on server"}
+        Status: {isClient ? "✅ Running in browser window" : "⏳ Server pre-render"}
       </p>
     </div>
   );
@@ -150,32 +172,36 @@ export default function SafeBrowserRender() {
   part6: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "Where should you first look when a Next.js Server Component throws a runtime error?",
+      question: "You get an error saying 'useState can only be used in a Client Component'. What is the correct fix?",
       options: [
-        "In your terminal / server console output, looking at the first lines of the error stack",
-        "In your computer's BIOS settings",
-        "In your browser's history tab",
-        "In your router's WiFi password settings",
+        "Add 'use client' at the top of the component file, or extract the interactive piece into a Client Component",
+        "Delete the useState hook and never make interactive apps",
+        "Reboot your computer and reinstall Windows",
+        "Rename the file from .tsx to .css",
       ],
       correctIndex: 0,
-      explanation: "Server Components execute on the server, so their logs and error stacks appear in the Node.js / server terminal console.",
+      explanation: "React state hooks like useState require client-side interactivity. Adding 'use client' declares that component as a Client Component.",
     },
   },
   part7: {
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Follow the Checklist",
-        desc: "Check file paths, Server/Client boundaries, network statuses, and environment variables.",
+        title: "Terminal = Server",
+        desc: "Errors in Server Components, database queries, and Server Actions log to your VS Code terminal.",
       },
       {
-        title: "Terminal vs DevTools",
-        desc: "Server errors log to the terminal; Client errors log to browser DevTools.",
+        title: "DevTools = Client",
+        desc: "Errors in event listeners, client hooks, and hydration log to your browser DevTools console.",
       },
       {
-        title: "Hydration Consistency",
-        desc: "Ensure initial server HTML and initial client render match exactly to prevent hydration warnings.",
+        title: "Read First Line",
+        desc: "The top of the error stack contains the exact file path and line number you need to fix.",
       },
     ],
+    nextLessonPreview: {
+      title: "Website Performance Optimization",
+      desc: "Master Core Web Vitals, next/image optimization, parallel data loading, and server-side database pagination.",
+    },
   },
 };

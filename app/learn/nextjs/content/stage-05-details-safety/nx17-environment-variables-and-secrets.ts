@@ -21,31 +21,47 @@ export const nx17EnvironmentVariablesAndSecretsContent: StandardLessonContent = 
   ],
   part1: {
     title: "Environment Variables and Secrets",
-    bigPicture: "Environment variables store settings outside your source code. They are used for API keys, database URLs, and environment configuration. Variables without a NEXT_PUBLIC_ prefix are strictly server-only. Variables prefixed with NEXT_PUBLIC_ are bundled into client browser JavaScript.",
+    bigPicture: "Web applications need sensitive configuration values like database connection strings, payment secret keys, and third-party API tokens. You must never hardcode these into your source code. Next.js loads environment variables from a '.env.local' file. Variables without a prefix are strictly server-only. Variables prefixed with 'NEXT_PUBLIC_' are sent to the user's browser.",
+    analogy: "Imagine running a bank. The master combination to the heavy steel vault in the back room is a server-only variable (like PAYMENT_SECRET_KEY)—only authorized bank staff on the server side can see it. The public customer service phone number painted on the front window is a NEXT_PUBLIC_ variable—anyone walking by can read it.",
     codeSnippet: `// .env.local
-DATABASE_URL="postgresql://user:secret@localhost:5432/mydb"
-PAYMENT_SECRET_KEY="sk_live_xyz123"
-NEXT_PUBLIC_ANALYTICS_ID="G-XYZ999"
+# 1. Private secret keys (STRICTLY SERVER-ONLY):
+DATABASE_URL="postgresql://admin:secret123@localhost:5432/learncraft"
+STRIPE_SECRET_KEY="sk_live_99887766"
 
-// Read on the server (Server Component, Action, Route Handler):
-const dbUrl = process.env.DATABASE_URL;
-const secretKey = process.env.PAYMENT_SECRET_KEY;
+# 2. Public variables visible to the browser:
+NEXT_PUBLIC_ANALYTICS_ID="G-XYZ12345"
 
-// Read in the browser (Client Component):
-const analyticsId = process.env.NEXT_PUBLIC_ANALYTICS_ID;`,
-    breakdownTitle: "Exposure Boundaries",
+// -------------------------------------------------------------
+// app/actions.ts (Server-side code):
+export async function processPayment() {
+  // 3. Perfectly safe: accessible only on the server
+  const key = process.env.STRIPE_SECRET_KEY;
+}
+
+// app/components/Analytics.tsx (Client Component):
+"use client";
+export default function Analytics() {
+  // 4. Accessible in the browser because of the NEXT_PUBLIC_ prefix:
+  const id = process.env.NEXT_PUBLIC_ANALYTICS_ID;
+  return <div>Tracking ID: {id}</div>;
+}`,
+    breakdownTitle: "How This Works Step by Step",
     breakdownItems: [
       {
-        title: "Server-Only Variables (Default)",
-        desc: "Without the prefix, variables are completely invisible to the client bundle and safe for database passwords and private keys.",
+        title: "1. The .env.local File",
+        desc: "Next.js automatically loads key-value pairs from .env.local into process.env when your development server starts. No third-party packages like dotenv are needed.",
       },
       {
-        title: "NEXT_PUBLIC_ Prefix",
-        desc: "Inlines the variable into the browser JavaScript bundle during build time. Anyone can inspect it in DevTools.",
+        title: "2. Server-Only by Default",
+        desc: "Any variable without 'NEXT_PUBLIC_' (like STRIPE_SECRET_KEY) is stripped from client bundles. If browser code attempts to read process.env.STRIPE_SECRET_KEY, Next.js returns undefined to prevent leaks.",
       },
       {
-        title: ".env.local Git Exclusion",
-        desc: "Always include .env.local in .gitignore so developers never accidentally commit live production secrets to GitHub.",
+        title: "3. The NEXT_PUBLIC_ Prefix",
+        desc: "Adding 'NEXT_PUBLIC_' tells Next.js to replace that variable with its literal value inside the browser JavaScript bundle during build time. Use this only for public IDs or hostnames.",
+      },
+      {
+        title: "4. Version Control Git Exclusion",
+        desc: "Always keep '.env.local' listed in your '.gitignore' file. This guarantees that team members never accidentally commit private database credentials or credit card API keys to GitHub.",
       },
     ],
   },
@@ -103,13 +119,13 @@ const analyticsId = process.env.NEXT_PUBLIC_ANALYTICS_ID;`,
       title: "Prefixing a Private Key with NEXT_PUBLIC_",
       code: `// .env.local
 NEXT_PUBLIC_STRIPE_SECRET_KEY="sk_live_99999" // ❌ HUGE SECURITY RISK!
-// Bundled into browser JavaScript and visible to any user or attacker`,
+// Bundled into browser JavaScript and visible to any user in DevTools!`,
       explanation: "Using NEXT_PUBLIC_ on private credentials exposes them in plain text inside client-side JS bundles.",
     },
     good: {
-      title: "Keeping Private Keys on the Server",
+      title: "Keeping Private Keys Strictly on the Server",
       code: `// .env.local
-STRIPE_SECRET_KEY="sk_live_99999" // ✅ Server-only
+STRIPE_SECRET_KEY="sk_live_99999" // ✅ Server-only (hidden from browser)
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_live_11111" // ✅ Safe for client
 
 // Read in app/actions.ts (Server Action):

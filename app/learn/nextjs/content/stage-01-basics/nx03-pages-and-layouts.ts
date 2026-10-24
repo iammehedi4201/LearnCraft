@@ -21,36 +21,52 @@ export const nx03PagesAndLayoutsContent: StandardLessonContent = {
   ],
   part1: {
     title: "Pages and Layouts",
-    bigPicture: "A page shows the content for a route. A layout provides UI shared by pages, such as a header, navigation, or footer. Layouts can be nested, so a group of pages can share its own layout.",
-    codeSnippet: `// app/layout.tsx (Required Root Layout)
+    bigPicture: "Think of a layout as a picture frame and a page as the picture inside! A layout.tsx file wraps around your pages to share persistent elements like navigation bars, sidebars, and footers. When users click between pages, only the inside content ({children}) changes — the layout stays in place without re-rendering or losing state.",
+    codeSnippet: `// 1. app/layout.tsx — The Shared Frame (Root Layout)
 import type { ReactNode } from "react";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <header>LearnCraft Navigation</header>
-        {children}
-        <footer>© 2026 LearnCraft</footer>
+        {/* Navigation bar is written ONCE here: */}
+        <nav style={{ padding: "1rem", borderBottom: "1px solid #ccc" }}>
+          <strong>LearnCraft</strong> | <a href="/">Home</a> | <a href="/about">About</a>
+        </nav>
+
+        {/* The active page appears inside {children}: */}
+        <main style={{ padding: "1rem" }}>{children}</main>
+
+        <footer style={{ padding: "1rem", borderTop: "1px solid #ccc" }}>
+          © 2026 LearnCraft
+        </footer>
       </body>
     </html>
   );
 }
 
-// The 'children' value is the page or nested layout shown inside the shared layout.`,
-    breakdownTitle: "Layout Mechanics",
+// 2. app/page.tsx — The Home Page (inserted into {children} at '/')
+export default function HomePage() {
+  return <h1>Welcome to the Home Page</h1>;
+}
+
+// 3. app/about/page.tsx — The About Page (inserted into {children} at '/about')
+export default function AboutPage() {
+  return <h1>About LearnCraft</h1>;
+}`,
+    breakdownTitle: "How This Works Step by Step",
     breakdownItems: [
       {
-        title: "Root Layout is Required",
-        desc: "app/layout.tsx is mandatory in the App Router and must define <html> and <body> tags.",
+        title: "1. The {children} Prop",
+        desc: "Next.js automatically passes the current page component as the {children} prop into RootLayout.",
       },
       {
-        title: "State Preservation",
-        desc: "When users navigate between child pages, the layout does not re-render or lose client state.",
+        title: "2. The Shared Shell",
+        desc: "The <nav> and <footer> are defined once in layout.tsx. You never have to copy-paste them into every page.",
       },
       {
-        title: "Nestable Structure",
-        desc: "Folders like app/dashboard/layout.tsx can wrap only dashboard subpages with a sidebar.",
+        title: "3. Fast Page Switching",
+        desc: "When navigating from '/' to '/about', Next.js only swaps the content inside <main>{children}</main>. The layout never unmounts.",
       },
     ],
   },
@@ -63,102 +79,113 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     cards: [
       {
         number: "01",
-        tag: "DRY",
+        tag: "NO DUPLICATION",
         title: "Don't Repeat Yourself",
-        description: "Shared navigation bars and footers are written once and inherited by all child routes.",
+        description: "Shared navigation bars, themes, and global footers are written once and inherited by all child routes.",
         color: "purple",
       },
       {
         number: "02",
         tag: "PERSISTENCE",
-        title: "Preserves State",
-        description: "Layouts stay mounted when switching sibling routes; form inputs or scroll positions in sidebars don't reset.",
+        title: "Preserves State & Scroll",
+        description: "Layouts stay mounted when switching between pages. Sidebar scroll positions and search inputs never reset.",
         color: "cyan",
       },
       {
         number: "03",
-        tag: "HIERARCHY",
-        title: "Nested Layouts",
-        description: "Subfolders can define their own layout.tsx, nesting their UI inside the parent layout.",
+        tag: "NESTED LAYOUTS",
+        title: "Section-Specific Layouts",
+        description: "Subfolders like app/dashboard/layout.tsx can add a dashboard sidebar that only affects dashboard subpages.",
         color: "emerald",
       },
     ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how layouts and pages coordinate UI:",
+    intro: "Here is how to think about layouts when structuring your application:",
     points: [
       {
-        title: "1. Root HTML wrapper",
-        content: "app/layout.tsx wraps every single page on the site, holding the global head tags, fonts, and header.",
+        title: "1. Root layout is mandatory",
+        content: "Every Next.js app requires app/layout.tsx. It must contain the <html> and <body> tags because it wraps every page in your project.",
       },
       {
-        title: "2. The children prop",
-        content: "Next.js automatically passes the current page component as the children prop into the layout.",
+        title: "2. Nested layouts nest automatically",
+        content: "If you create app/courses/layout.tsx, Next.js automatically places it inside the root layout. It creates a hierarchy: RootLayout -> CoursesLayout -> CoursePage.",
       },
       {
-        title: "3. Sectional sub-layouts",
-        content: "app/courses/layout.tsx can add a course sidebar that only appears on /courses and /courses/123, without affecting /about.",
+        title: "3. Layouts do not re-render",
+        content: "When users navigate between sibling pages, React keeps the layout component alive in memory. Only the {children} slot updates with new content.",
       },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Duplicating Navigation in Every Page",
-      code: `// app/page.tsx
-export default function HomePage() {
+      title: "Copy-Pasting Navigation into Every Page",
+      code: `// ❌ BAD PRACTICE: Duplicating Navbar in every file
+// app/page.tsx
+export default function Home() {
   return (
     <div>
-      <Navbar /> {/* Duplicated on every page */}
-      <h1>Home</h1>
+      <Navbar /> {/* Repeated in 50 different pages! */}
+      <h1>Home Content</h1>
     </div>
   );
 }
 
 // app/about/page.tsx
-export default function AboutPage() {
+export default function About() {
   return (
     <div>
-      <Navbar /> {/* Re-renders from scratch on navigation */}
-      <h1>About</h1>
+      <Navbar /> {/* If Navbar changes, you must edit 50 files! */}
+      <h1>About Content</h1>
     </div>
   );
 }`,
-      explanation: "Copying Navbar into every page causes it to unmount and remount on navigation, losing focus and state.",
+      explanation: "Copy-pasting navigation components forces every page to re-render the navbar from scratch on navigation and makes maintenance painful.",
     },
     good: {
-      title: "Using a Shared Layout",
-      code: `// app/layout.tsx
+      title: "Define Once in layout.tsx",
+      code: `// ✅ CLEAN NEXT.JS PRACTICE: Write once in layout.tsx
+// app/layout.tsx
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html>
       <body>
-        <Navbar /> {/* Rendered once, preserved across route changes */}
-        {children}
+        <Navbar /> {/* Rendered once, shared everywhere! */}
+        <main>{children}</main>
       </body>
     </html>
   );
 }`,
-      explanation: "Placing Navbar in the layout keeps it permanently mounted while only the changing child page swaps.",
+      explanation: "Layouts keep your code DRY (Don't Repeat Yourself), preserve component state during navigation, and improve performance.",
     },
   },
   part5: {
     title: "Interactive Code Sandbox",
-    intro: "Explore how a nested layout wraps page content:",
-    starterCode: `// app/courses/layout.tsx
-export default function CoursesLayout({ children }: { children: React.ReactNode }) {
+    intro: "Here is how a clean root layout wraps pages with a persistent header and footer:",
+    starterCode: `// app/layout.tsx
+import React from "react";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div style={{ display: "flex", gap: "2rem", padding: "1rem" }}>
-      <aside style={{ width: "200px", borderRight: "1px solid #ddd" }}>
-        <h3>Course Tracks</h3>
-        <ul>
-          <li>Next.js</li>
-          <li>TypeScript</li>
-          <li>React</li>
-        </ul>
-      </aside>
-      <main style={{ flex: 1 }}>{children}</main>
+    <div style={{ fontFamily: "sans-serif", maxWidth: "600px", margin: "0 auto" }}>
+      <header style={{ padding: "1rem 0", borderBottom: "2px solid #6366f1" }}>
+        <h2>LearnCraft Architecture</h2>
+      </header>
+
+      {/* The active page content renders here: */}
+      <section style={{ padding: "1.5rem 0" }}>
+        {children}
+      </section>
+
+      <footer style={{ padding: "1rem 0", borderTop: "1px solid #e5e7eb", color: "#6b7280" }}>
+        <small>© 2026 LearnCraft Educational Platform</small>
+      </footer>
     </div>
   );
 }`,
@@ -166,36 +193,36 @@ export default function CoursesLayout({ children }: { children: React.ReactNode 
   part6: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "What happens to the RootLayout component when a user navigates between two sibling pages?",
+      question: "What is the main benefit of putting a navigation bar in layout.tsx instead of copying it into every page.tsx?",
       options: [
-        "The layout remains mounted and preserves its state; only the child page changes",
-        "The layout completely unmounts, reloads the browser, and resets all state",
-        "The layout throws an error if it contains any HTML elements",
-        "The layout is permanently deleted from the browser cache",
+        "It is written once, shared by all pages, and does not re-render when switching pages",
+        "It makes the website only work on mobile phones",
+        "It encrypts the navigation bar so users cannot inspect it",
+        "It deletes all CSS styles from the application",
       ],
       correctIndex: 0,
-      explanation: "Next.js layouts are state-preserving. When navigating between sibling routes, the layout does not unmount or lose its state; only the changing children page slot is swapped.",
+      explanation: "Layouts persist across page transitions, prevent duplicate code, and avoid re-rendering shared UI like headers and footers.",
     },
   },
   part7: {
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Shared UI Primitives",
-        desc: "Layouts define UI that is shared across multiple pages in a route segment.",
+        title: "The Frame & The Picture",
+        desc: "Layout is the persistent frame; pages are the interchangeable pictures rendered inside {children}.",
       },
       {
-        title: "State Preserving",
-        desc: "Layouts do not unmount during navigation, maintaining scroll and component state.",
+        title: "Root Layout Required",
+        desc: "app/layout.tsx is mandatory and must contain <html> and <body> tags.",
       },
       {
-        title: "Mandatory Root",
-        desc: "app/layout.tsx is required and must contain <html> and <body> tags.",
+        title: "Preserves State",
+        desc: "Layouts stay mounted when switching sibling routes, preserving user scroll and input states.",
       },
     ],
     nextLessonPreview: {
       title: "Moving Between Pages with Link",
-      desc: "Learn how the Next.js Link component enables instant, client-side navigation without full page reloads.",
+      desc: "Learn how the Next.js Link component gives you instant, smooth client-side page transitions.",
     },
   },
 };

@@ -21,36 +21,48 @@ export const nx09UrlAndSearchParametersContent: StandardLessonContent = {
   ],
   part1: {
     title: "URL Parameters and Search Parameters",
-    bigPicture: "A dynamic route parameter comes from the path (e.g. /courses/42 -> courseId = '42'), while a search parameter comes after '?' in the URL (e.g. /courses?level=beginner -> level = 'beginner'). In modern App Router versions, searchParams is asynchronous.",
+    bigPicture: "There are two ways to pass information in a URL. A route parameter (params) is part of the path structure, like '/courses/42' identifying course #42. A search parameter (searchParams) comes after the '?' symbol, like '/courses?level=beginner&sort=newest', used for filtering, searching, and pagination. In modern Next.js, searchParams is received as a Promise in page props and must be awaited.",
+    analogy: "Think of an encyclopedia set. The volume number embossed on the book spine is the route parameter ('/encyclopedia/volume-5'). The colored sticky tabs you place inside to filter topics are the search parameters ('?topic=dinosaurs&view=pictures'). The book is the page, and the tabs filter what you see.",
     codeSnippet: `// app/courses/page.tsx
-export default async function CoursesPage({
-  searchParams,
-}: {
+// 1. Next.js supplies searchParams as a Promise in page props:
+interface CoursesPageProps {
   searchParams: Promise<{ level?: string; sort?: string }>;
-}) {
+}
+
+export default async function CoursesPage({ searchParams }: CoursesPageProps) {
+  // 2. Await the searchParams Promise to extract the query values:
   const { level, sort } = await searchParams;
 
+  // 3. Use fallbacks for optional parameters:
+  const activeLevel = level ?? "all levels";
+  const activeSort = sort ?? "newest";
+
+  // 4. Render HTML filtered by the URL query parameters:
   return (
-    <div>
-      <h1>Courses</h1>
-      <p>Selected level: {level ?? "all levels"}</p>
-      <p>Sort order: {sort ?? "newest"}</p>
-    </div>
+    <main>
+      <h1>Course Catalog</h1>
+      <p>Filtering by: <strong>{activeLevel}</strong></p>
+      <p>Sort order: <strong>{activeSort}</strong></p>
+    </main>
   );
 }`,
-    breakdownTitle: "Key Differences",
+    breakdownTitle: "How This Works Step by Step",
     breakdownItems: [
       {
-        title: "Path Parameters (params)",
-        desc: "Defines the identity of a specific resource in the folder path (e.g. /courses/[courseId]).",
+        title: "1. Type the searchParams Promise",
+        desc: "In modern Next.js, searchParams is an asynchronous Promise containing an object of optional strings: Promise<{ level?: string; sort?: string }>.",
       },
       {
-        title: "Search Parameters (searchParams)",
-        desc: "Optional modifiers after the '?' character used for filtering, searching, and pagination.",
+        title: "2. await searchParams",
+        desc: "Because the component is an async Server Component, you must write 'const { level } = await searchParams' before reading any values.",
       },
       {
-        title: "Awaited in Modern Next.js",
-        desc: "Like params, searchParams is received as a Promise in page props and must be awaited.",
+        title: "3. Provide Fallback Defaults",
+        desc: "Query parameters are optional. If a user visits '/courses' without '?level=', 'level' will be undefined. Use the nullish coalescing operator (level ?? 'all levels') to provide safe fallbacks.",
+      },
+      {
+        title: "4. Filter Directly on the Server",
+        desc: "You can pass 'level' directly into your database query (e.g. db.course.findMany({ where: { level } })). The database only returns matching courses, keeping payloads small and fast.",
       },
     ],
   },
@@ -58,20 +70,20 @@ export default async function CoursesPage({
     title: "Why and When to Use It",
     rule: {
       title: "Shareable URL Rule",
-      content: "Store filters and pagination state in searchParams so users can bookmark and share the exact state of the page.",
+      content: "Store filters, search keywords, and pagination page numbers in searchParams so users can copy the URL and share their exact view with anyone.",
     },
     cards: [
       {
         number: "01",
         tag: "SHAREABLE",
         title: "Bookmarkable State",
-        description: "Storing query state in the URL means sending the link to a coworker reproduces the exact filtered view.",
+        description: "Storing filters in the URL means sending the link to a coworker reproduces the exact filtered catalog view.",
         color: "purple",
       },
       {
         number: "02",
         tag: "SERVER DRIVEN",
-        title: "Server Filtering",
+        title: "Server-Side Filtering",
         description: "The Server Component reads searchParams and filters database queries before sending HTML to the client.",
         color: "cyan",
       },
@@ -86,7 +98,7 @@ export default async function CoursesPage({
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how to work with search parameters:",
+    intro: "Here is how to work with search parameters cleanly:",
     points: [
       {
         title: "1. Navigation triggers search params",
@@ -98,18 +110,18 @@ export default async function CoursesPage({
       },
       {
         title: "3. Passing to data queries",
-        content: "Pass the extracted level filter directly into your database query: const courses = await db.findMany({ level }).",
+        content: "Pass the extracted level filter directly into your database query: const courses = await db.findMany({ where: { level } }).",
       },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Reading searchParams in Layouts",
+      title: "Reading searchParams in Layout Files",
       code: `// app/courses/layout.tsx
 // ❌ searchParams is NOT supported in layout props!
 export default function CoursesLayout({ children, searchParams }: any) {
-  // searchParams will be undefined here
+  // searchParams will always be undefined here!
   return <div>{children}</div>;
 }`,
       explanation: "Next.js layouts do NOT re-render when search parameters change, so searchParams is only available on page.tsx.",

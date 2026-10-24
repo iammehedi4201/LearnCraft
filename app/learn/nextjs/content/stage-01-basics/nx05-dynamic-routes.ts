@@ -4,11 +4,11 @@ export const nx05DynamicRoutesContent: StandardLessonContent = {
   slug: "nx05-dynamic-routes",
   code: "NX-05",
   title: "Dynamic Routes",
-  subtitle: "Dynamic segments like [courseId] let one page show different content based on the URL path.",
+  subtitle: "Use square brackets [id] to create a single reusable page template that handles thousands of different URLs.",
   difficulty: "Moderate",
   scenario: {
-    question: "You have hundreds of courses. You want /courses/12 and /courses/25 to show different courses using the same page. How can you do that?",
-    answer: "Create app/courses/[courseId]/page.tsx, read courseId from params, and use it to load the correct course.",
+    question: "You want a page for /courses/1 and /courses/2 without creating a folder for every course number. How do you name the folder?",
+    answer: "Use square brackets for the dynamic segment, such as app/courses/[courseId]/page.tsx.",
   },
   sections: [
     { id: "part1", label: "Core Concept & Syntax", icon: "🧠" },
@@ -21,163 +21,193 @@ export const nx05DynamicRoutesContent: StandardLessonContent = {
   ],
   part1: {
     title: "Dynamic Routes",
-    bigPicture: "A dynamic route lets one page show different content based on part of the URL. Put a route name in square brackets, such as [courseId]. In current App Router versions, params is asynchronous.",
+    bigPicture: "Imagine an online store with 10,000 products. You wouldn't want to create 10,000 separate folders! In Next.js, wrapping a folder name in square brackets like [courseId] creates a Dynamic Route. One single page.tsx file acts as a smart template that dynamically loads and displays content based on whatever value appears in the URL.",
     codeSnippet: `// app/courses/[courseId]/page.tsx
-export default async function CoursePage({
+
+// In modern Next.js App Router, 'params' is received as a Promise:
+export default async function CourseDetailPage({
   params,
 }: {
   params: Promise<{ courseId: string }>;
 }) {
+  // Step 1: Await the params Promise to extract the URL segment
   const { courseId } = await params;
 
-  return <h1>Course: {courseId}</h1>;
+  // Step 2: Render the page using that specific ID
+  return (
+    <main>
+      <h1>Course Details</h1>
+      <p>Currently viewing course ID: <strong>{courseId}</strong></p>
+    </main>
+  );
 }
 
-// Visiting '/courses/42' gives courseId the value '42'.`,
-    breakdownTitle: "Dynamic Segment Primitives",
+// How URLs map to this file:
+// /courses/react-101   -> courseId is "react-101"
+// /courses/nextjs-deep -> courseId is "nextjs-deep"
+// /courses/42          -> courseId is "42"`,
+    breakdownTitle: "How This Works Step by Step",
     breakdownItems: [
       {
-        title: "Bracket Syntax",
-        desc: "Wrapping a folder name in square brackets [paramName] captures that portion of the URL.",
+        title: "1. The Square Bracket Syntax [paramName]",
+        desc: "Naming a folder [courseId] tells Next.js: 'This part of the URL is a variable, not a fixed word.'",
       },
       {
-        title: "Async params Promise",
-        desc: "In modern Next.js App Router, params is provided as a Promise that must be awaited.",
+        title: "2. The params Promise",
+        desc: "Next.js passes the captured URL value into your page component via the params prop.",
       },
       {
-        title: "Reusable Page Template",
-        desc: "One single file handles thousands of distinct items, such as blog posts, user profiles, or products.",
+        title: "3. const { courseId } = await params",
+        desc: "You await params to get the value. If the user visited /courses/42, courseId is '42'. You can use this ID to fetch that course from your database.",
       },
     ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      title: "Dynamic Segment Rule",
-      content: "Use dynamic segments whenever the exact route segment is determined by database IDs, slugs, or user input.",
+      title: "The Dynamic Template Rule",
+      content: "Use square brackets [param] whenever multiple items share the same page layout but show different data based on an ID, username, or slug in the URL.",
     },
     cards: [
       {
         number: "01",
-        tag: "SCALE",
-        title: "Scale Without Duplication",
-        description: "Instead of hardcoding a folder for every course or blog post, a single dynamic template serves all of them.",
+        tag: "SCALABILITY",
+        title: "One Template for Thousands",
+        description: "A single [slug]/page.tsx file can serve 100,000 blog posts or user profiles without creating duplicate code.",
         color: "purple",
       },
       {
         number: "02",
-        tag: "ASYNC",
-        title: "Awaited Params",
-        description: "Modern Next.js passes params as a Promise, ensuring compatibility with streaming and concurrent features.",
+        tag: "CLEAN URLS",
+        title: "Human-Readable Slugs",
+        description: "Dynamic segments can be numbers (/courses/42) or descriptive slugs (/courses/learn-nextjs) for optimal SEO.",
         color: "cyan",
       },
       {
         number: "03",
-        tag: "FLEXIBLE",
-        title: "Data Driving UI",
-        description: "The extracted ID or slug parameter is passed directly to your database query or API fetch function.",
+        tag: "ASYNC PARAMS",
+        title: "Awaited in Modern Next.js",
+        description: "Next.js makes params a Promise so it can stream page headers before waiting for slow route parameters.",
         color: "emerald",
       },
     ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how dynamic segments route and load data:",
+    intro: "Here is how to design dynamic routes in production applications:",
     points: [
       {
-        title: "1. Defining the dynamic folder",
-        content: "Create app/courses/[courseId]/page.tsx. Any URL matching /courses/anything routes to this page.",
+        title: "1. Matching the folder name to the variable",
+        content: "If your folder is named [courseId], the extracted property will be params.courseId. If named [slug], it will be params.slug.",
       },
       {
-        title: "2. Awaiting the parameters",
-        content: "Inside the async page function, write const { courseId } = await params to extract the string value.",
+        title: "2. Fetching real data with the ID",
+        content: "Once you extract courseId, pass it directly to your database: const course = await db.course.findUnique({ where: { id: courseId } }).",
       },
       {
-        title: "3. Loading matching data",
-        content: "Use courseId to look up the specific course in your database and render its title, description, and lessons.",
+        title: "3. Catch-all dynamic segments",
+        content: "For docs or complex hierarchies with multiple slashes (e.g. /docs/react/hooks/usestate), use [...slug] to capture an array of all path segments.",
       },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Accessing params Synchronously in Modern Next.js",
-      code: `// Synchronous access in Next.js 15+ causes a runtime warning/error:
-export default function CoursePage({
-  params,
-}: {
-  params: { courseId: string }; // Outdated synchronous pattern
-}) {
-  return <h1>Course: {params.courseId}</h1>;
+      title: "Creating Fixed Folders for Every Single Item",
+      code: `// ❌ BAD: Creating hardcoded folders for every item!
+// app/courses/1/page.tsx
+// app/courses/2/page.tsx
+// app/courses/3/page.tsx
+// ... app/courses/1000/page.tsx
+
+export default function CourseOne() {
+  return <h1>Course 1</h1>;
 }`,
-      explanation: "In modern Next.js App Router, params is asynchronous and must be typed as Promise<{ param: string }> and awaited.",
+      explanation: "Manually creating static folders for dynamic database items creates an unmaintainable project that cannot scale.",
     },
     good: {
-      title: "Awaiting params Cleanly",
-      code: `// Modern, type-safe Next.js async params pattern:
+      title: "One Dynamic Folder with [paramName]",
+      code: `// ✅ CLEAN: One dynamic segment folder handles all items!
+// app/courses/[courseId]/page.tsx
+
+export default async function CourseDetailPage({
+  params,
+}: {
+  params: Promise<{ courseId: string }>;
+}) {
+  const { courseId } = await params;
+  const course = await getCourseFromDb(courseId);
+
+  return (
+    <article>
+      <h1>{course.title}</h1>
+      <p>{course.description}</p>
+    </article>
+  );
+}`,
+      explanation: "A single dynamic route template serves every current and future course automatically from your database.",
+    },
+  },
+  part5: {
+    title: "Interactive Code Sandbox",
+    intro: "Try this dynamic route component. Notice how params is awaited to display the dynamic courseId:",
+    starterCode: `// app/courses/[courseId]/page.tsx
+import React from "react";
+
 export default async function CoursePage({
   params,
 }: {
   params: Promise<{ courseId: string }>;
 }) {
-  const { courseId } = await params;
-  return <h1>Course: {courseId}</h1>;
-}`,
-      explanation: "Awaiting params is fully compliant with the modern App Router and guarantees correct concurrent execution.",
-    },
-  },
-  part5: {
-    title: "Interactive Code Sandbox",
-    intro: "Explore how an async dynamic route extracts URL parameters:",
-    starterCode: `// app/courses/[courseId]/page.tsx
-interface CoursePageProps {
-  params: Promise<{ courseId: string }>;
-}
-
-export default async function CoursePage({ params }: CoursePageProps) {
+  // Simulate awaiting the route parameter from Next.js:
   const { courseId } = await params;
 
   return (
-    <article>
-      <h2>Active Course ID: {courseId}</h2>
-      <p>Now loading data from database for course #{courseId}...</p>
-    </article>
+    <div style={{ fontFamily: "sans-serif", padding: "1.5rem" }}>
+      <span style={{ background: "#e0e7ff", color: "#4338ca", padding: "4px 8px", borderRadius: "4px", fontSize: "12px" }}>
+        DYNAMIC ROUTE
+      </span>
+      <h2 style={{ marginTop: "12px" }}>Course ID: {courseId}</h2>
+      <p style={{ color: "#4b5563" }}>
+        This single file responds to any URL matching /courses/[courseId]!
+      </p>
+    </div>
   );
 }`,
   },
   part6: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "How should page components access dynamic route parameters in modern Next.js App Router?",
+      question: "If your folder is named app/products/[productId], how do you read the productId inside the page component?",
       options: [
-        "By typing params as Promise<{ [key: string]: string }> and using await params inside an async component",
-        "By reading window.location.pathname with regular expressions",
-        "By importing a global singleton from 'next/router'",
+        "By awaiting the params prop: const { productId } = await params",
         "By writing a custom Webpack plugin for every dynamic URL",
+        "By inspecting document.title in the browser console",
+        "By renaming the file to index.html",
       ],
       correctIndex: 0,
-      explanation: "Modern Next.js App Router delivers route params as a Promise in page props, requiring async component functions and await params.",
+      explanation: "Next.js provides dynamic path segments via the params Promise prop, matching the exact folder name inside the square brackets.",
     },
   },
   part7: {
     title: "Summary & Key Takeaways",
     takeaways: [
       {
-        title: "Bracket Folder Syntax",
-        desc: "[courseId] captures dynamic URL path segments into parameters.",
+        title: "Square Bracket Syntax",
+        desc: "Folders wrapped in [brackets] act as dynamic parameters in the URL.",
       },
       {
-        title: "Async Parameters",
-        desc: "params is a Promise in current App Router versions and must be awaited.",
+        title: "Await params",
+        desc: "In modern Next.js App Router, params is a Promise that must be awaited.",
       },
       {
-        title: "One Template for Many",
-        desc: "One dynamic page file serves hundreds or thousands of database-driven records.",
+        title: "Single Reusable Template",
+        desc: "One dynamic page file serves unlimited items from your database or API.",
       },
     ],
     nextLessonPreview: {
-      title: "Server Components and Client Components",
-      desc: "Master the fundamental boundary: understand when code runs on the server vs in the browser.",
+      title: "Server and Client Components",
+      desc: "Learn the core mental model of React Server Components: server data preparation vs client interactivity.",
     },
   },
 };

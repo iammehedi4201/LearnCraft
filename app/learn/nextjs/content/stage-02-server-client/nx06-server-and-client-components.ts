@@ -25,156 +25,181 @@ export const nx06ServerAndClientComponentsContent: StandardLessonContent = {
   ],
   part1: {
     title: "Server Components and Client Components",
-    bigPicture: "Next.js has two kinds of components for different jobs. A Server Component prepares content on the server and is a great place to load data. A Client Component lets part of the page respond to user actions like button clicks. Components are Server Components by default.",
-    codeSnippet: `// Example 1: Server Component (app/courses/page.tsx)
-type Course = { id: number; title: string };
+    bigPicture: "Next.js uses two kinds of components that work as a team. By default, every component is a Server Component — it runs on your server, loads data, and sends fast HTML to the browser with zero extra JavaScript. When you need interactive features like button clicks, input typing, or useState, you add 'use client' at the top of that specific component. The best practice is to keep the main page as a Server Component and import small Client Components for the buttons!",
+    codeSnippet: `// 1. app/courses/FavoriteButton.tsx — The Client Component ("use client")
+"use client"; // Tells Next.js: this component runs in the browser for interactivity!
 
-export default async function CoursesPage() {
-  const response = await fetch("https://jsonplaceholder.typicode.com/posts");
-  const courses: Course[] = await response.json();
+import { useState } from "react";
+
+export default function FavoriteButton({ courseTitle }: { courseTitle: string }) {
+  const [isSaved, setIsSaved] = useState(false);
 
   return (
-    <main>
-      <h1>Courses</h1>
-      {courses.slice(0, 5).map((course) => (
-        <p key={course.id}>{course.title}</p>
-      ))}
-    </main>
+    <button onClick={() => setIsSaved(!isSaved)}>
+      {isSaved ? "⭐ Saved" : "☆ Save"}
+    </button>
   );
 }
 
-// Example 2: Client Component (app/courses/FavoriteButton.tsx)
-"use client";
-import { useState } from "react";
+// 2. app/courses/page.tsx — The Server Component (Default)
+// Notice: NO "use client" here! This runs safely on your server.
+import FavoriteButton from "./FavoriteButton"; // Import the client button!
 
-export default function FavoriteButton() {
-  const [saved, setSaved] = useState(false);
+export default async function CoursesPage() {
+  // Directly load data on the server:
+  const courses = [
+    { id: 1, title: "Next.js App Router Masterclass" },
+    { id: 2, title: "TypeScript Architecture" },
+  ];
+
   return (
-    <button onClick={() => setSaved(!saved)}>
-      {saved ? "Saved" : "Add to favorites"}
-    </button>
+    <main>
+      <h1>Available Courses</h1>
+      <ul>
+        {courses.map((course) => (
+          <li key={course.id}>
+            <span>{course.title}</span>
+            {/* Embed the interactive Client button right inside the Server list: */}
+            <FavoriteButton courseTitle={course.title} />
+          </li>
+        ))}
+      </ul>
+    </main>
   );
 }`,
-    breakdownTitle: "Component Responsibilities",
+    breakdownTitle: "How This Teamwork Works Step by Step",
     breakdownItems: [
       {
-        title: "Server Component (Default)",
-        desc: "Executes on the server, fetches data directly, keeps heavy libraries off the client bundle, and outputs HTML.",
+        title: "1. Server Component Runs First",
+        desc: "CoursesPage runs on the server, fetches data from the database, and creates the HTML list. Zero data-fetching JavaScript is sent to the client.",
       },
       {
-        title: "Client Component ('use client')",
-        desc: "Opt-in directive placed at the top of the file enabling React hooks (useState, useEffect) and event listeners (onClick).",
+        title: "2. Client Component Island ('use client')",
+        desc: "FavoriteButton is marked with 'use client' because it needs onClick and useState to change colors when clicked.",
       },
       {
-        title: "Initial Pre-Rendering",
-        desc: "Client Components still render initial HTML on the server during the first load; they are not blank while downloading JS.",
+        title: "3. Direct Composition",
+        desc: "The Server Component imports and renders <FavoriteButton /> directly. Next.js only downloads JavaScript for that button, keeping the page lightning-fast!",
       },
     ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      title: "Decision Rule",
-      content: "Does this part only need to show content, or must it respond to user interactions? Use Server Components for data display, and isolate Client Components to interactive islands.",
+      title: "The Island Architecture Rule",
+      content: "Keep entire pages as Server Components by default. Push 'use client' down to the smallest leaves of your component tree (like buttons, modals, and search inputs).",
     },
     cards: [
       {
         number: "01",
         tag: "SERVER DEFAULT",
-        title: "Server Components",
-        description: "Zero client JavaScript bundle impact, direct access to server resources, and ideal for data-fetching pages.",
+        title: "Server Components (Default)",
+        description: "Best for: fetching data, accessing databases, reading private API secrets, and displaying content with zero client JS.",
         color: "purple",
       },
       {
         number: "02",
-        tag: "INTERACTIVE",
-        title: "Client Components",
-        description: "Marked with 'use client' to handle state, effects, and browser event listeners like click and submit.",
+        tag: "CLIENT DIRECTIVE",
+        title: "Client Components ('use client')",
+        description: "Best for: onClick, onChange, useState, useEffect, browser APIs (localStorage, window), and custom UI animations.",
         color: "cyan",
       },
       {
         number: "03",
-        tag: "ISLANDS",
-        title: "Keep Boundaries Small",
-        description: "Do not turn entire pages into Client Components; keep the client boundary small and focused on interactive controls.",
+        tag: "HYBRID BENEFIT",
+        title: "Best of Both Worlds",
+        description: "You get the lightning speed and SEO of server rendering, combined with the instant interactivity of React state.",
         color: "emerald",
       },
     ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how to combine Server and Client Components on the same page:",
+    intro: "Here are the 3 golden rules for combining Server and Client Components:",
     points: [
       {
-        title: "1. The Server Component parent",
-        content: "app/courses/page.tsx stays an async Server Component. It queries your database or API and constructs the main HTML layout.",
+        title: "1. Can a Server Component import a Client Component?",
+        content: "YES! This is the most common pattern. Your Server Component page imports a Client Component (like <FavoriteButton />) and renders it.",
       },
       {
-        title: "2. The interactive Client leaf",
-        content: "Inside the course list, you embed <FavoriteButton />. Only that small button ships interactive JavaScript to the client browser.",
+        title: "2. Can a Client Component import a Server Component?",
+        content: "NOT directly with an import statement. But you CAN pass a Server Component as a child: <ClientModal>{<ServerDataList />}</ClientModal>.",
       },
       {
-        title: "3. Secret safety",
-        content: "Never put database connection strings or private secret keys in Client Component files, because client code can be viewed by anyone in DevTools.",
+        title: "3. Where do secrets live?",
+        content: "Never put database connection strings or secret API keys in a Client Component file. Anyone can inspect client code in browser DevTools.",
       },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Marking the Whole Page as Client Component",
-      code: `"use client"; // In app/courses/page.tsx
-// Makes the entire page ship JS to the browser
-// Loses direct server database access and SEO benefits`,
-      explanation: "Putting 'use client' on the entire page bloats the JavaScript bundle and forces client-side data fetching.",
+      title: "Turning the Entire Page into a Client Component",
+      code: `// ❌ BAD: Putting "use client" at the top of the whole page!
+"use client";
+import { useState, useEffect } from "react";
+
+export default function CoursesPage() {
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    // 💥 Lost server rendering! User sees blank screen until JS downloads!
+    fetch("/api/courses").then(r => r.json()).then(setCourses);
+  }, []);
+
+  return <div>{/* 200 lines of page layout */}</div>;
+}`,
+      explanation: "Making the entire page a Client Component forces the browser to download huge JavaScript bundles and loses the speed and SEO of Server Components.",
     },
     good: {
-      title: "Isolating Interactive Leaves",
-      code: `// app/courses/page.tsx (Server Component)
+      title: "Server Page with an Isolated Client Button",
+      code: `// ✅ CLEAN: Server page stays fast; only the button is a Client Component!
+// app/courses/page.tsx (Server Component)
 import FavoriteButton from "./FavoriteButton";
 
 export default async function CoursesPage() {
-  const courses = await getCourses(); // Server fetch
+  const courses = await fetchCoursesOnServer(); // Fast & Direct!
+
   return (
-    <div>
-      {courses.map((c) => (
+    <main>
+      <h1>Courses</h1>
+      {courses.map(c => (
         <div key={c.id}>
-          <span>{c.title}</span>
-          <FavoriteButton /> {/* Isolated Client Component */}
+          <h3>{c.title}</h3>
+          <FavoriteButton courseId={c.id} />
         </div>
       ))}
-    </div>
+    </main>
   );
 }`,
-      explanation: "The page remains a fast, lightweight Server Component while the button handles user interaction.",
+      explanation: "Only the interactive button downloads JavaScript. The rest of the page arrives as instant, lightweight HTML.",
     },
   },
   part5: {
     title: "Interactive Code Sandbox",
-    intro: "Explore how an interactive Client Component is structured:",
-    starterCode: `"use client";
+    intro: "Observe how clean this separation is: the server component loads data, while the client component handles clicks:",
+    starterCode: `// 1. Client Component for interactivity:
+"use client";
+import React, { useState } from "react";
 
-import { useState } from "react";
+export function CounterButton() {
+  const [likes, setLikes] = useState(0);
+  return (
+    <button onClick={() => setLikes(likes + 1)} style={{ padding: "6px 12px", cursor: "pointer" }}>
+      👍 {likes} Likes
+    </button>
+  );
+}
 
-export default function FavoriteToggle({ courseTitle }: { courseTitle: string }) {
-  const [isFavorite, setIsFavorite] = useState(false);
+// 2. Server Component for data display:
+export default function CourseCard() {
+  const course = { title: "Next.js Architecture", author: "LearnCraft" };
 
   return (
-    <div style={{ border: "1px solid #333", padding: "1rem", borderRadius: "8px" }}>
-      <h4>{courseTitle}</h4>
-      <button
-        onClick={() => setIsFavorite(!isFavorite)}
-        style={{
-          background: isFavorite ? "#ef4444" : "#4f46e5",
-          color: "white",
-          border: "none",
-          padding: "6px 12px",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        {isFavorite ? "♥ Favorited" : "♡ Add to Favorites"}
-      </button>
+    <div style={{ padding: "1rem", border: "1px solid #e5e7eb", borderRadius: "8px", maxWidth: "320px" }}>
+      <h3>{course.title}</h3>
+      <p style={{ color: "#6b7280" }}>By {course.author}</p>
+      <CounterButton />
     </div>
   );
 }`,
@@ -182,15 +207,15 @@ export default function FavoriteToggle({ courseTitle }: { courseTitle: string })
   part6: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "Which component should you choose for a page that only fetches and displays product information with no buttons or forms?",
+      question: "You are building a blog post page with a comment like button. What is the best architecture?",
       options: [
-        "A Server Component, because it prepares data on the server without adding client JS bundle weight",
-        "A Client Component with 'use client', because Server Components cannot display HTML",
-        "A Web Worker running inside an iframe",
-        "A manual Redux store with 10 custom reducers",
+        "Keep the blog post page as a Server Component and make only the like button a Client Component",
+        "Make the entire blog page a Client Component with 'use client' at the top",
+        "Never use buttons in Next.js applications",
+        "Delete all React components and write raw PHP",
       ],
       correctIndex: 0,
-      explanation: "If a component only needs to fetch and display data, Server Components are ideal. They execute on the server and add zero JavaScript to the client bundle.",
+      explanation: "Keep the page as a Server Component for instant HTML rendering and SEO, and isolate Client Components ('use client') only to interactive controls like buttons.",
     },
   },
   part7: {
@@ -198,20 +223,20 @@ export default function FavoriteToggle({ courseTitle }: { courseTitle: string })
     takeaways: [
       {
         title: "Server by Default",
-        desc: "All App Router components are Server Components unless explicitly marked with 'use client'.",
+        desc: "All App Router components run on the server unless explicitly marked with 'use client'.",
       },
       {
-        title: "Client for Interaction",
-        desc: "Use 'use client' only when needing state, effects, or browser event listeners.",
+        title: "Client for Interactivity",
+        desc: "Use 'use client' when you need onClick, onChange, useState, useEffect, or browser APIs.",
       },
       {
-        title: "Security Boundary",
-        desc: "Never place database connections or private secret keys inside Client Component files.",
+        title: "Keep Client Leaves Small",
+        desc: "Do not turn full pages into client components; keep the interactive boundary as small as possible.",
       },
     ],
     nextLessonPreview: {
       title: "Client-Side Interaction with State and Events",
-      desc: "Learn how React useState and event handlers work inside Client Components to build responsive UI.",
+      desc: "Deep dive into how React useState and event handlers work inside Client Components.",
     },
   },
 };

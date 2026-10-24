@@ -25,127 +25,155 @@ export const nx13RouteHandlersContent: StandardLessonContent = {
   ],
   part1: {
     title: "Route Handlers",
-    bigPicture: "A Route Handler defines an HTTP endpoint in a route.ts file. Use one when an external client or another service needs an API endpoint, or when you need a custom HTTP response such as webhooks, file downloads, or health checks.",
-    codeSnippet: `// app/api/health/route.ts
-export function GET() {
-  return Response.json({ status: "ok", timestamp: Date.now() });
+    bigPicture: "While page.tsx returns visual HTML for website visitors, a route.ts file returns raw data (like JSON) for API clients. In Next.js, this is called a Route Handler. You use it whenever an external service needs to talk to your backend — such as a Stripe payment webhook, a mobile app (iOS/Android), or a public REST API.",
+    codeSnippet: `// app/api/courses/route.ts
+// This file responds to HTTP requests at "/api/courses"
+
+// 1. Handle HTTP GET requests (reading data or query params):
+export async function GET(request: Request) {
+  // Extract query parameters like "/api/courses?category=nextjs"
+  const { searchParams } = new URL(request.url);
+  const category = searchParams.get("category") ?? "all";
+
+  const courses = [
+    { id: 1, title: "Next.js App Router", category: "nextjs" },
+    { id: 2, title: "TypeScript Mastery", category: "typescript" },
+  ];
+
+  // Return standard JSON to the caller:
+  return Response.json({ category, courses });
 }
 
-// Opening '/api/health' in a browser or tool like curl sends a GET request
-// and returns this JSON response.`,
-    breakdownTitle: "Supported HTTP Verbs",
+// 2. Handle HTTP POST requests (receiving JSON from external clients):
+export async function POST(request: Request) {
+  // Read incoming JSON body:
+  const body = await request.json();
+
+  if (!body.title) {
+    return Response.json({ error: "Title is required" }, { status: 400 });
+  }
+
+  // Save to database and return a 201 Created status:
+  return Response.json({ success: true, item: body }, { status: 201 });
+}`,
+    breakdownTitle: "How This Works Step by Step",
     breakdownItems: [
       {
-        title: "Named HTTP Method Exports",
-        desc: "Export functions named GET, POST, PUT, PATCH, DELETE, HEAD, or OPTIONS to handle specific methods.",
+        title: "1. The route.ts File Convention",
+        desc: "Creating route.ts inside any folder creates an HTTP endpoint at that folder path (e.g. app/api/courses/route.ts -> /api/courses).",
       },
       {
-        title: "Standard Web Request/Response",
-        desc: "Uses modern Web APIs (Request, Response, Headers) without proprietary Express req/res objects.",
+        title: "2. Exporting HTTP Method Names",
+        desc: "You export functions named after standard HTTP verbs: GET, POST, PUT, DELETE, or PATCH. Next.js routes incoming requests to the matching function.",
       },
       {
-        title: "Cannot Share Folder with page.tsx",
-        desc: "A route folder can have either page.tsx OR route.ts, never both at the same level.",
+        title: "3. Response.json() and Status Codes",
+        desc: "Uses the modern web standard Response.json() to return formatted JSON and optional HTTP status codes like { status: 201 } or { status: 400 }.",
       },
     ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      title: "Action vs Route Handler Rule",
-      content: "Use Server Actions for internal UI mutations like submitting forms. Use Route Handlers for external consumers like third-party webhooks, mobile apps, and public REST APIs.",
+      title: "Server Action vs Route Handler Rule",
+      content: "Use Server Actions when handling UI actions like website forms. Use Route Handlers when building HTTP endpoints for mobile apps, external webhooks (like Stripe), or public APIs.",
     },
     cards: [
       {
         number: "01",
         tag: "WEBHOOKS",
-        title: "Third-Party Hooks",
-        description: "Services like Stripe or GitHub require dedicated HTTP POST webhook endpoints to deliver events.",
+        title: "Third-Party Webhooks",
+        description: "Services like Stripe, GitHub, or Shopify require an HTTP POST URL to notify your app when events happen.",
         color: "purple",
       },
       {
         number: "02",
-        tag: "STANDARDS",
-        title: "Web Standards",
-        description: "Built on standard Request and Response objects, making them portable and easy to understand.",
+        tag: "MOBILE APPS",
+        title: "iOS & Android Backends",
+        description: "Mobile apps cannot run Next.js Server Components; they fetch JSON directly from your Route Handlers.",
         color: "cyan",
       },
       {
         number: "03",
-        tag: "CUSTOM FORMATS",
-        title: "Binary & Custom Data",
-        description: "Perfect for generating dynamic SVG badges, PDF downloads, RSS feeds, and XML sitemaps.",
+        tag: "NO PAGE CONFLICT",
+        title: "Never Mix with page.tsx",
+        description: "A single folder can contain page.tsx OR route.ts, never both. Keep API endpoints inside an /api subfolder.",
         color: "emerald",
       },
     ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how to structure real Route Handlers:",
+    intro: "Here is how to think about Route Handlers in production apps:",
     points: [
       {
-        title: "1. Handling GET queries",
-        content: "Export export async function GET(request: Request). Extract query strings using new URL(request.url).searchParams.",
+        title: "1. Request and Response are Web Standards",
+        content: "Route Handlers use standard Web API Request and Response objects. You don't need Express req/res or third-party middleware packages.",
       },
       {
-        title: "2. Handling POST bodies",
-        content: "Read JSON payloads with const body = await request.json(). Verify signatures for third-party webhooks.",
+        title: "2. Reading request headers and cookies",
+        content: "You can read cookies and authorization tokens directly using request.headers.get('Authorization') or the next/headers cookies() helper.",
       },
       {
-        title: "3. Returning status codes",
-        content: "Return custom statuses: return Response.json({ error: 'Not found' }, { status: 404 }).",
+        title: "3. Don't use Route Handlers for standard forms",
+        content: "If you are submitting a form from your Next.js website, use Server Actions (Lesson 12). Route Handlers are meant for external HTTP consumers.",
       },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Colocating page.tsx and route.ts in Same Folder",
-      code: `// app/courses/
-//   page.tsx   <- Route conflict!
-//   route.ts   <- Next.js throws build error!`,
-      explanation: "A single route segment cannot serve both an HTML page and a raw HTTP route handler. Next.js will throw a build conflict.",
+      title: "Placing page.tsx and route.ts in the Same Folder",
+      code: `// ❌ WRONG: Conflict in the same folder!
+// app/courses/page.tsx   (Returns HTML for /courses)
+// app/courses/route.ts  (Returns JSON for /courses)
+
+// 💥 Next.js Build Error:
+// "A route cannot have both a page and a route handler in the same segment."`,
+      explanation: "Next.js cannot serve both a web page and an API endpoint at the exact same URL. Keep API endpoints inside an app/api/ folder.",
     },
     good: {
-      title: "Isolating Route Handlers in /api Subfolder",
-      code: `// app/courses/page.tsx      -> /courses (HTML Page)
-// app/api/courses/route.ts  -> /api/courses (JSON REST API)`,
-      explanation: "Separating API handlers under an /api folder prevents collisions and keeps the architecture clean.",
+      title: "Isolate API Endpoints Under /api",
+      code: `// ✅ CLEAN STRUCTURE: Separate UI and API routes
+// app/courses/page.tsx      -> Shows the web page at "/courses"
+// app/api/courses/route.ts  -> Serves JSON for external clients at "/api/courses"
+
+export async function GET() {
+  return Response.json({ status: "ok" });
+}`,
+      explanation: "Placing Route Handlers in an api/ directory organizes your endpoints clearly and avoids route conflicts.",
     },
   },
   part5: {
     title: "Interactive Code Sandbox",
-    intro: "Explore how a Route Handler processes a POST request:",
-    starterCode: `// app/api/courses/route.ts
-export async function POST(request: Request) {
-  try {
-    const data = await request.json();
+    intro: "Here is how a clean GET Route Handler returns structured JSON data:",
+    starterCode: `// app/api/health/route.ts
+// Simulated Next.js Route Handler
 
-    if (!data.title) {
-      return Response.json({ error: "Missing required field: title" }, { status: 400 });
-    }
+export function GET(request: Request) {
+  const url = new URL(request.url);
+  const service = url.searchParams.get("service") || "main-api";
 
-    return Response.json({
-      success: true,
-      created: { id: "c_123", title: data.title },
-    }, { status: 201 });
-  } catch {
-    return Response.json({ error: "Invalid JSON payload" }, { status: 400 });
-  }
+  return Response.json({
+    status: "healthy",
+    service,
+    uptime: "99.98%",
+    timestamp: new Date().toISOString(),
+  });
 }`,
   },
   part6: {
     title: "Knowledge Check Quiz",
     quiz: {
-      question: "When should you prefer a Route Handler (route.ts) over a Server Action ('use server')?",
+      question: "When should you write a Route Handler (route.ts) instead of a Server Action?",
       options: [
-        "When external services need an HTTP endpoint (like a Stripe webhook or mobile app API)",
-        "When handling an internal form submit button inside an existing page",
-        "When you want to display an interactive button in the browser",
-        "When styling text with CSS",
+        "When an external system like a Stripe webhook or mobile app needs to call your backend via an HTTP endpoint",
+        "When you want to change the background color of a button",
+        "Only when writing Python scripts",
+        "Whenever a user clicks a link to another page",
       ],
       correctIndex: 0,
-      explanation: "Route Handlers provide standard HTTP REST endpoints for external consumers and webhooks. Internal UI mutations are better served by Server Actions.",
+      explanation: "Route Handlers provide custom HTTP REST endpoints for external consumers like webhooks and mobile apps, while Server Actions are best for internal UI form submissions.",
     },
   },
   part7: {
@@ -153,20 +181,20 @@ export async function POST(request: Request) {
     takeaways: [
       {
         title: "Named HTTP Exports",
-        desc: "Export GET, POST, DELETE functions from route.ts to handle specific HTTP methods.",
+        desc: "Export functions named GET, POST, PUT, DELETE to handle standard HTTP requests.",
       },
       {
-        title: "Standard Web APIs",
-        desc: "Uses standard Request and Response objects directly.",
+        title: "Web Standards",
+        desc: "Uses standard Request and Response.json() without requiring Express.",
       },
       {
-        title: "Route Conflict Rule",
-        desc: "Cannot colocate page.tsx and route.ts in the exact same directory.",
+        title: "Separate from Pages",
+        desc: "Keep Route Handlers inside an app/api/ directory to avoid conflicting with page.tsx routes.",
       },
     ],
     nextLessonPreview: {
       title: "Revalidating Data After a Change",
-      desc: "Learn how revalidatePath and revalidateTag purge stale cache and update rendered pages immediately.",
+      desc: "Learn how to purge stale cached pages and update UI instantly with revalidatePath and revalidateTag.",
     },
   },
 };

@@ -21,37 +21,45 @@ export const nx02AppFolderAndRoutesContent: StandardLessonContent = {
   ],
   part1: {
     title: "The app Folder and Routes",
-    bigPicture: "In the App Router, folders inside app help define URLs. A page.tsx file makes that route a page.",
-    codeSnippet: `// File-system route structure:
+    bigPicture: "In the Next.js App Router, you do not write code to configure URL paths. Instead, your folders define your URLs! Creating a folder inside the app directory creates a URL segment, and creating a file named 'page.tsx' inside that folder makes it a publicly accessible web page.",
+    analogy: "Think of organizing files in folders on your computer. If you create a folder called 'about', you put everything related to 'about' inside it. In Next.js, that folder automatically becomes the web address '/about', and 'page.tsx' is the front door that visitors see when they open that address.",
+    codeSnippet: `// Project folder structure:
 // app/
-//   page.tsx          -> /
+//   page.tsx              -> Maps to: http://localhost:3000/
 //   about/
-//     page.tsx        -> /about
-//   contact/
-//     page.tsx        -> /contact
+//     page.tsx            -> Maps to: http://localhost:3000/about
+//     TeamList.tsx        -> Private component (NOT a public URL!)
+//   courses/
+//     page.tsx            -> Maps to: http://localhost:3000/courses
 
 // app/about/page.tsx
+// 1. Export a default React component from page.tsx:
 export default function AboutPage() {
+  // 2. Return the JSX content for the /about route:
   return (
     <main>
       <h1>About LearnCraft</h1>
-      <p>We teach modern full-stack web technologies.</p>
+      <p>We teach modern full-stack web development step by step.</p>
     </main>
   );
 }`,
-    breakdownTitle: "Route Mapping Rules",
+    breakdownTitle: "How This Works Step by Step",
     breakdownItems: [
       {
-        title: "Folders Define Segments",
-        desc: "Each nested folder represents a segment in the URL path (e.g. app/courses -> /courses).",
+        title: "1. Folder Name = URL Segment",
+        desc: "Creating a folder named 'about' inside 'app' creates the '/about' route segment. Nesting another folder like 'app/about/team' creates '/about/team'.",
       },
       {
-        title: "page.tsx Makes It Public",
-        desc: "A route is only publicly accessible if it contains a page.tsx (or page.js) file.",
+        title: "2. The Special 'page.tsx' File",
+        desc: "Next.js specifically looks for a file named 'page.tsx' (or page.js). Without page.tsx, a folder is just a private organizational container and cannot be visited by users.",
       },
       {
-        title: "Colocated Files Stay Private",
-        desc: "Non-page files inside route folders (like Button.tsx or helper.ts) are not publicly accessible routes.",
+        title: "3. Default Component Export",
+        desc: "Your page component must be exported as the 'default' export (e.g., export default function AboutPage()). Next.js uses this function to render the page HTML.",
+      },
+      {
+        title: "4. Safe File Colocation",
+        desc: "You can keep helper components, tests, and CSS files right inside the route folder (like TeamList.tsx). Because it is not named page.tsx, Next.js keeps it private and never exposes it as a URL.",
       },
     ],
   },
@@ -59,47 +67,47 @@ export default function AboutPage() {
     title: "Why and When to Use It",
     rule: {
       title: "File-System Routing Rule",
-      content: "The file structure directly mirrors the URL structure, making it immediately clear where every page is located.",
+      content: "The folder structure directly mirrors the website's URLs. Only folders containing a page.tsx file become publicly reachable routes in the browser.",
     },
     cards: [
       {
         number: "01",
         tag: "CONVENTION",
         title: "Predictable URLs",
-        description: "Looking at the folder structure tells you exactly what URL each page responds to.",
+        description: "Looking at your project directory tells you immediately where every URL lives without checking any routing configuration files.",
         color: "purple",
       },
       {
         number: "02",
         tag: "LEAF FILE",
-        title: "Special 'page.tsx' File",
-        description: "Only folders containing a page.tsx file become publicly reachable routes in the browser.",
+        title: "The Special 'page.tsx'",
+        description: "Only folders containing page.tsx are accessible in the browser, returning clean 404s for folders without a page file.",
         color: "cyan",
       },
       {
         number: "03",
         tag: "SAFETY",
         title: "Safe Colocation",
-        description: "You can keep components, tests, and styles right inside the route folder without accidentally creating public routes.",
+        description: "Store helper components, unit tests, and styles right inside the route folder without accidentally turning them into public pages.",
         color: "emerald",
       },
     ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how to structure real routes in the App Router:",
+    intro: "Here is how real web routes are structured in the App Router:",
     points: [
       {
-        title: "1. Top-level landing page",
-        content: "app/page.tsx maps directly to the root domain URL (/).",
+        title: "1. The root landing page",
+        content: "The file at 'app/page.tsx' represents the homepage of your website (http://localhost:3000/).",
       },
       {
         title: "2. Nested sub-pages",
-        content: "Creating app/courses/page.tsx creates the /courses route, while app/courses/web/page.tsx creates /courses/web.",
+        content: "Creating 'app/courses/page.tsx' creates the '/courses' page. Creating 'app/courses/nextjs/page.tsx' creates '/courses/nextjs'.",
       },
       {
-        title: "3. Component colocation",
-        content: "You can add app/about/TeamCard.tsx to hold helper UI without making /about/TeamCard a route.",
+        title: "3. Keeping helper files private",
+        content: "If you add 'app/about/TeamCard.tsx', you can import it inside 'app/about/page.tsx'. Visitors cannot visit '/about/TeamCard' directly because it is not named page.tsx.",
       },
     ],
   },
@@ -107,22 +115,21 @@ export default function AboutPage() {
     title: "Common Pitfall vs Clean Solution",
     bad: {
       title: "Naming the File Incorrectly",
-      code: `// app/about/index.tsx  (Pages Router convention, NOT App Router)
-// Or:
-// app/about/about.tsx  (Does not create a route in App Router)
+      code: `// app/about/about.tsx  ❌ Does NOT create a route!
+// app/about/index.tsx  ❌ Old Pages Router convention, not App Router!
 export default function About() {
   return <h1>About</h1>;
 }`,
-      explanation: "In Next.js App Router, using index.tsx or custom names like about.tsx does not make the route available. You must use page.tsx.",
+      explanation: "In the Next.js App Router, custom file names like about.tsx or index.tsx do not create public routes. You will get a 404 error.",
     },
     good: {
-      title: "Using the Standard page.tsx Convention",
-      code: `// app/about/page.tsx
+      title: "Using the Standard page.tsx File Name",
+      code: `// app/about/page.tsx  ✅ Correct!
 export default function AboutPage() {
-  return <h1>About</h1>;
+  return <h1>About LearnCraft</h1>;
 }
-// Correctly creates the /about route!`,
-      explanation: "Next.js App Router specifically looks for page.tsx to expose a public route.",
+// Visiting http://localhost:3000/about works immediately!`,
+      explanation: "Next.js App Router specifically requires the exact file name 'page.tsx' to publish a route.",
     },
   },
   part5: {

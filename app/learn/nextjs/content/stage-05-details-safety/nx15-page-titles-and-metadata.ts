@@ -21,41 +21,53 @@ export const nx15PageTitlesAndMetadataContent: StandardLessonContent = {
   ],
   part1: {
     title: "Page Titles and Metadata",
-    bigPicture: "Metadata describes a page to browsers and search services. It can include the page title, description, and social media preview tags. In the App Router, a Server Component can export metadata for a page or layout.",
+    bigPicture: "Metadata is the information that describes your page to browsers, search engines like Google, and social media platforms. It controls the text displayed in the browser tab, the search result snippet on Google, and the preview card on Twitter or Discord. In Next.js, Server Components can export a static 'metadata' object or a dynamic 'generateMetadata' function.",
+    analogy: "If your web page is a package sitting on a supermarket shelf, the component JSX is what is inside the box. The 'metadata' is the label printed on the outside: the title, description, and barcode that shoppers and cashiers read before opening the package.",
     codeSnippet: `// app/courses/page.tsx
+// 1. Import the Metadata type from Next.js:
 import type { Metadata } from "next";
 
+// 2. Export a metadata object from your Server Component page:
 export const metadata: Metadata = {
-  title: "LearnCraft Courses",
-  description: "Learn modern programming step by step.",
+  title: "Full-Stack Courses | LearnCraft",
+  description: "Master Next.js, TypeScript, and modern backend architecture step by step.",
 };
 
+// 3. Export your default React page component:
 export default function CoursesPage() {
-  return <h1>Courses</h1>;
+  return (
+    <main>
+      <h1>Browse All Courses</h1>
+      <p>Select a learning track below.</p>
+    </main>
+  );
 }
 
-// Next.js automatically injects <title> and <meta name="description">
-// into the HTML <head> element.`,
-    breakdownTitle: "Metadata Mechanics",
+// Next.js automatically injects <title> and <meta name="description"> into the HTML <head>!`,
+    breakdownTitle: "How This Works Step by Step",
     breakdownItems: [
       {
-        title: "Static metadata Export",
-        desc: "Export an object named metadata conforming to Next.js Metadata type for static titles and descriptions.",
+        title: "1. Type-Safe Metadata Object",
+        desc: "Importing 'Metadata' from 'next' provides TypeScript autocomplete for all standard HTML meta tags, including OpenGraph and Twitter cards.",
       },
       {
-        title: "generateMetadata Function",
-        desc: "For dynamic pages (e.g. /courses/[id]), export async function generateMetadata to fetch the title from a database.",
+        title: "2. Automatic <head> Injection",
+        desc: "You never need to manually write <head> or <title> tags in your JSX. Next.js extracts the exported 'metadata' object and injects proper HTML tags into the document head on the server.",
       },
       {
-        title: "Layout Inheritance",
-        desc: "Root layouts set default fallback titles; nested pages override or template them with title.template.",
+        title: "3. Server Component Only",
+        desc: "Next.js must read metadata before sending the initial HTML payload to Google crawlers, so metadata exports are only valid in Server Components (no 'use client').",
+      },
+      {
+        title: "4. Dynamic Titles with generateMetadata",
+        desc: "For dynamic routes (e.g. /courses/[id]), export 'async function generateMetadata({ params })' to fetch the course title from your database and set it dynamically.",
       },
     ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      title: "Metadata Rule",
+      title: "Descriptive Metadata Rule",
       content: "Always provide unique, descriptive titles and meta descriptions for pages to improve SEO and user tab recognition.",
     },
     cards: [
@@ -63,7 +75,7 @@ export default function CoursesPage() {
         number: "01",
         tag: "SEO",
         title: "Search Ranking",
-        description: "Search engines use the page title and description snippet to rank and present your website in results.",
+        description: "Google uses the page title and description snippet to rank and present your website in search results.",
         color: "purple",
       },
       {
@@ -77,7 +89,7 @@ export default function CoursesPage() {
         number: "03",
         tag: "SOCIAL SHARES",
         title: "OpenGraph Cards",
-        description: "Adding openGraph metadata creates rich preview cards with images when links are shared on Slack or Twitter.",
+        description: "Adding openGraph metadata creates rich preview cards with images when links are shared on Slack, Discord, or Twitter.",
         color: "emerald",
       },
     ],
@@ -104,11 +116,11 @@ export default function CoursesPage() {
     title: "Common Pitfall vs Clean Solution",
     bad: {
       title: "Exporting Metadata from a Client Component",
-      code: `"use client"; // ❌ Error!
+      code: `"use client"; // ❌ Next.js compiler error!
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { // Will throw a Next.js build error
-  title: "My Page",
+export const metadata: Metadata = {
+  title: "My Interactive Page",
 };`,
       explanation: "Next.js can only read metadata exports from Server Components. Putting metadata in a Client Component fails compilation.",
     },
@@ -116,14 +128,14 @@ export const metadata: Metadata = { // Will throw a Next.js build error
       title: "Keeping Metadata in a Server Component Parent",
       code: `// app/courses/page.tsx (Server Component)
 import type { Metadata } from "next";
-import InteractiveClientView from "./InteractiveClientView";
+import InteractiveCourseList from "./InteractiveCourseList"; // 'use client'
 
 export const metadata: Metadata = {
   title: "Courses | LearnCraft",
 };
 
 export default function Page() {
-  return <InteractiveClientView />;
+  return <InteractiveCourseList />;
 }`,
       explanation: "Keep metadata in the Server Component page wrapper and import interactive client UI components as children.",
     },

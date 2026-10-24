@@ -21,66 +21,77 @@ export const nx04MovingBetweenPagesWithLinkContent: StandardLessonContent = {
   ],
   part1: {
     title: "Moving Between Pages with Link",
-    bigPicture: "Use Next.js Link to navigate between routes in your app. It supports client-side navigation and Next.js navigation improvements without reloading the whole browser window.",
-    codeSnippet: `import Link from "next/link";
+    bigPicture: "In traditional websites, clicking a link causes the browser to reload the whole window, flash white, and reset all JavaScript state. In Next.js, the <Link> component performs fast client-side navigation: it only downloads and updates the new page content while keeping your existing layout intact.",
+    analogy: "Clicking a standard HTML <a> tag is like closing your book completely, walking over to the shelf, and opening a brand-new book. Next.js <Link> is like smoothly flipping to the next page in the book already in your hands: instant, effortless, and you never lose your place.",
+    codeSnippet: `// app/components/Navbar.tsx
+// 1. Import Link from next/link:
+import Link from "next/link";
 
-export default function HomePage() {
+export default function Navbar() {
   return (
-    <nav>
-      <Link href="/courses">View courses</Link>
+    <nav style={{ display: "flex", gap: "16px" }}>
+      {/* 2. Point to internal routes using href: */}
+      <Link href="/">Home</Link>
+      <Link href="/courses">Courses</Link>
       <Link href="/about">About Us</Link>
     </nav>
   );
-}`,
-    breakdownTitle: "Link Features",
+}
+
+// Result: Clicking 'Courses' swaps the page instantly with NO full-page reload!`,
+    breakdownTitle: "How This Works Step by Step",
     breakdownItems: [
       {
-        title: "Client-Side Transition",
-        desc: "Clicking a Link updates the URL and replaces the page content without triggering a full page refresh.",
+        title: "1. import Link from 'next/link'",
+        desc: "Next.js provides a specialized React component that intercepts normal browser link clicks.",
       },
       {
-        title: "Automatic Prefetching",
-        desc: "Next.js automatically prefetches linked pages in the background as they enter the user's viewport.",
+        title: "2. Automatic Viewport Prefetching",
+        desc: "When a <Link> appears in the user's viewport (on screen), Next.js automatically downloads the code for that page in the background before the user even clicks it.",
       },
       {
-        title: "Accessibility Friendly",
-        desc: "Renders standard HTML <a> tags under the hood, ensuring search engines and screen readers can crawl links.",
+        title: "3. Client-Side Page Swapping",
+        desc: "When clicked, Next.js updates the browser URL and replaces the active page component without refreshing the browser window.",
+      },
+      {
+        title: "4. Preserves Component State",
+        desc: "Because there is no hard refresh, your header, footer, audio players, or form states in parent layouts are never interrupted.",
       },
     ],
   },
   part2: {
     title: "Why and When to Use It",
     rule: {
-      title: "Client Navigation Rule",
-      content: "Always use <Link> for internal app navigation. Use regular <a> tags only for external websites outside your app.",
+      title: "Navigation Component Rule",
+      content: "Always use <Link> for internal pages inside your Next.js application. Use standard HTML <a> tags only for external websites (e.g., https://github.com).",
     },
     cards: [
       {
         number: "01",
         tag: "SPEED",
         title: "Instant Navigation",
-        description: "Because only the necessary route segment is updated, page transitions feel instant to the user.",
+        description: "Because only the necessary page segment is updated, page transitions feel as fast as a native mobile app.",
         color: "purple",
       },
       {
         number: "02",
         tag: "PREFETCH",
-        title: "Viewport Prefetching",
-        description: "Next.js preloads the route payload in production before the user even clicks the link.",
+        title: "Automatic Prefetching",
+        description: "Next.js preloads the route payload in production before the user clicks, making the transition virtually zero-delay.",
         color: "cyan",
       },
       {
         number: "03",
         tag: "STATE",
-        title: "Retains Client State",
-        description: "Unlike browser hard reloads, client-side transitions don't blow away current React state in layouts.",
+        title: "Retains Layout State",
+        description: "Unlike browser hard reloads, client-side transitions don't blow away current React state in shared layouts.",
         color: "emerald",
       },
     ],
   },
   part3: {
     title: "How It Works in Practice",
-    intro: "Here is how to navigate cleanly across routes:",
+    intro: "Here is how to navigate cleanly across routes in your app:",
     points: [
       {
         title: "1. Basic internal link",
@@ -88,27 +99,27 @@ export default function HomePage() {
       },
       {
         title: "2. Links with query parameters",
-        content: "You can pass strings like <Link href=\"/courses?level=beginner\"> or URL objects.",
+        content: "You can pass query parameters directly in the string: <Link href=\"/courses?level=beginner\">.",
       },
       {
-        title: "3. External URLs",
-        content: "For external links (e.g. href=\"https://github.com\"), use standard HTML <a href=\"...\"> instead of Next.js Link.",
+        title: "3. External websites",
+        content: "For external links (e.g. href=\"https://google.com\"), use standard HTML <a href=\"...\"> with target=\"_blank\" rel=\"noopener noreferrer\".",
       },
     ],
   },
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Using HTML <a> for Internal Routes",
-      code: `// Flashes blank screen and reloads the entire browser!
+      title: "Using HTML <a> for Internal App Routes",
+      code: `// ❌ Flashes blank screen and reloads the entire browser window:
 export default function Navbar() {
   return <a href="/courses">Courses</a>;
 }`,
       explanation: "Standard <a> tags cause a hard page reload, losing client state and negating Next.js performance optimizations.",
     },
     good: {
-      title: "Using Next.js <Link>",
-      code: `// Instant SPA-like transition with background prefetching
+      title: "Using the Next.js <Link> Component",
+      code: `// ✅ Instant SPA-like transition with background prefetching:
 import Link from "next/link";
 
 export default function Navbar() {

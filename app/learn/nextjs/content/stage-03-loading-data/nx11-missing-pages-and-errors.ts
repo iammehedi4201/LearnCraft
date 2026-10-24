@@ -21,37 +21,47 @@ export const nx11MissingPagesAndErrorsContent: StandardLessonContent = {
   ],
   part1: {
     title: "Handling Missing Pages and Errors",
-    bigPicture: "Different problems need different responses. not-found.tsx shows a clear 404 page when a resource does not exist. error.tsx provides a fallback UI for unexpected runtime crashes. The notFound() function stops rendering the current route when a record is missing.",
+    bigPicture: "Web applications encounter two different kinds of problems. An expected absence happens when a user types an ID that does not exist in your database (e.g., '/courses/999'). An unexpected error happens when your database goes offline or code crashes. Next.js handles expected missing records using 'notFound()' and 'not-found.tsx', while catching crashes using 'error.tsx'.",
+    analogy: "If you walk into a bookstore and ask for a book that does not exist, the clerk politely says 'Sorry, we do not carry that title'—that is notFound(). But if a water pipe suddenly bursts in the cafe corner, a caution barrier is put up while the rest of the bookstore stays open—that is error.tsx isolating a crash.",
     codeSnippet: `// app/courses/[courseId]/page.tsx
 import { notFound } from "next/navigation";
 
-export default async function CoursePage({
-  params,
-}: {
+interface CoursePageProps {
   params: Promise<{ courseId: string }>;
-}) {
-  const { courseId } = await params;
-  const course = await findCourse(courseId);
+}
 
+export default async function CoursePage({ params }: CoursePageProps) {
+  // 1. Await the route parameter:
+  const { courseId } = await params;
+
+  // 2. Query the database:
+  const course = await db.course.findUnique({ where: { id: courseId } });
+
+  // 3. If the record does not exist, call notFound():
   if (!course) {
-    notFound(); // Triggers not-found.tsx
+    notFound(); // Halts rendering and triggers not-found.tsx!
   }
 
+  // 4. If found, render the valid course page:
   return <h1>{course.title}</h1>;
 }`,
-    breakdownTitle: "Error Primitives",
+    breakdownTitle: "How This Works Step by Step",
     breakdownItems: [
       {
-        title: "notFound() Function",
-        desc: "Terminates rendering immediately and triggers the closest not-found.tsx UI with a 404 status code.",
+        title: "1. Await the Course ID",
+        desc: "In modern Next.js, 'params' is a Promise. We await it to extract the requested 'courseId' from the URL.",
       },
       {
-        title: "not-found.tsx",
-        desc: "Dedicated UI shown when a route does not exist or when notFound() is invoked.",
+        title: "2. Query the Database",
+        desc: "We search for the course in the database. If the record does not exist, 'course' returns null.",
       },
       {
-        title: "error.tsx (Client Component)",
-        desc: "Catches unexpected runtime exceptions in a route segment and provides a reset() function to retry rendering.",
+        title: "3. Trigger notFound()",
+        desc: "Calling 'notFound()' from 'next/navigation' immediately stops rendering the component and instructs Next.js to display your custom 'not-found.tsx' with an official HTTP 404 status code.",
+      },
+      {
+        title: "4. Catch Runtime Crashes with error.tsx",
+        desc: "If the database server itself is down, it throws an unexpected exception. Next.js catches this error in 'error.tsx' so the header and navigation remain usable while showing a 'Try again' button.",
       },
     ],
   },
@@ -59,28 +69,28 @@ export default async function CoursePage({
     title: "Why and When to Use It",
     rule: {
       title: "Error Categorization Rule",
-      content: "Distinguish between expected missing items (use notFound()) and unexpected system crashes (caught by error.tsx).",
+      content: "Distinguish between expected missing items (call notFound() to show a friendly 404) and unexpected system exceptions (caught by error.tsx).",
     },
     cards: [
       {
         number: "01",
         tag: "404 NOT FOUND",
         title: "Expected Absences",
-        description: "A user typing an invalid ID is normal behavior; display a helpful 404 with links back to the home page.",
+        description: "A user typing an invalid ID is normal behavior; display a helpful 404 with links back to the course catalog.",
         color: "purple",
       },
       {
         number: "02",
         tag: "CRASH RESILIENCE",
         title: "Segment Isolation",
-        description: "An error in one segment does not bring down the entire app; the rest of your layout and navigation remains usable.",
+        description: "An error in one nested page does not crash your entire website; navigation and layout stay active.",
         color: "cyan",
       },
       {
         number: "03",
         tag: "RECOVERY",
         title: "The reset() Function",
-        description: "error.tsx receives a reset callback that lets users retry rendering without refreshing the whole browser.",
+        description: "error.tsx receives a reset callback that lets users retry rendering without refreshing the entire browser window.",
         color: "emerald",
       },
     ],
@@ -106,18 +116,19 @@ export default async function CoursePage({
   part4: {
     title: "Common Pitfall vs Clean Solution",
     bad: {
-      title: "Making error.tsx a Server Component",
+      title: "Forgetting 'use client' on error.tsx",
       code: `// app/courses/error.tsx
-// ❌ Missing 'use client' directive
+// ❌ Missing 'use client' directive!
 export default function ErrorPage({ error }: { error: Error }) {
-  return <div>Something went wrong: {error.message}</div>;
+  // Build error: error.tsx must be a Client Component!
+  return <div>Something broke: {error.message}</div>;
 }`,
       explanation: "Next.js error boundaries MUST be Client Components so they can catch client-side render errors and trigger reset() retries.",
     },
     good: {
-      title: "Declaring error.tsx as a Client Component",
+      title: "Declaring error.tsx as a Client Component with reset()",
       code: `// app/courses/error.tsx
-"use client"; // Required for error boundaries
+"use client"; // ✅ Required for error boundaries
 
 export default function ErrorPage({
   error,
@@ -127,13 +138,13 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   return (
-    <div>
+    <div style={{ padding: "2rem" }}>
       <h2>Could not load courses</h2>
       <button onClick={() => reset()}>Try again</button>
     </div>
   );
 }`,
-      explanation: "Correctly handles runtime failures with an interactive retry button.",
+      explanation: "Correctly handles runtime failures with an interactive retry button that attempts to re-render the segment.",
     },
   },
   part5: {
