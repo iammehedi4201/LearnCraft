@@ -13,7 +13,7 @@ Before recommending new features, here's what interviewers would already see:
 | **Gamification** | XP engine, streaks, levels, streak freeze, local+cloud sync | ✅ Engagement system |
 | **Spaced Repetition** | SM-2 algorithm, review scheduling, retention curves, annotations | ✅ Shows algorithmic thinking |
 | **Roadmaps** | Skill-based + role-based learning paths, category filtering | ✅ Content architecture |
-| **Auth** | GitHub OAuth via NextAuth v5 + Prisma adapter | ✅ Standard |
+| **Auth** | Google OAuth via NextAuth v5 + Prisma adapter | ✅ Standard |
 | **Persistence** | Local-first architecture with cloud sync to PostgreSQL | ✅ Offline-first thinking |
 | **Testing** | 95 tests (Vitest), curriculum state tests, notes tests, gamification tests | ✅ Testing discipline |
 | **CI/CD** | GitHub Actions workflow | ✅ Basic |

@@ -310,9 +310,7 @@ DATABASE_URL="postgresql://user:password@ep-sample-pooler.us-east-2.aws.neon.tec
 AUTH_SECRET="your-strong-random-auth-secret-key"
 NEXTAUTH_URL="http://localhost:3000"
 
-# OAuth Authentication Providers (Optional for local development)
-GITHUB_ID=""
-GITHUB_SECRET=""
+# Google OAuth Authentication (Optional for local development)
 GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
 ```

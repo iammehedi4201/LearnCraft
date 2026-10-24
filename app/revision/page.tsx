@@ -240,14 +240,14 @@ export default function QuickRevisionPage(): JSX.Element {
             <div className="flex items-center gap-2">
               <span className="text-amber-400">💾</span>
               <span>
-                <strong className="text-white">Local Practice Active</strong> — Spaced repetition reviews are scheduled in this browser. Sign in with GitHub to persist your mastery and streak.
+                <strong className="text-white">Local Practice Active</strong> — Spaced repetition reviews are scheduled in this browser. Sign in with Google to persist your mastery and streak.
               </span>
             </div>
             <button
               onClick={() => openAuthModal()}
               className="px-3 py-1 rounded-lg bg-white/[0.08] hover:bg-white/[0.15] text-white font-bold text-xs transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer self-start sm:self-auto"
             >
-              <span>Sign in with GitHub</span>
+              <span>Sign in with Google</span>
               <span className="text-purple-400">→</span>
             </button>
           </div>
