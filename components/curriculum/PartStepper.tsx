@@ -10,6 +10,7 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
+import { useEffect, useState } from "react";
 import type { LessonSectionItem } from "./lesson-content-types";
 
 export interface PartStepperProps {
@@ -35,6 +36,8 @@ export interface PartStepperProps {
   sticky?: boolean;
   /** Whether the stepper is rendered as a floating bar */
   floating?: boolean;
+  /** Optional override for whether the stepper is currently in scrolled state */
+  isScrolled?: boolean;
 }
 
 export function PartStepper({
@@ -49,7 +52,25 @@ export function PartStepper({
   className = "",
   sticky = true,
   floating = true,
+  isScrolled: controlledIsScrolled,
 }: PartStepperProps): JSX.Element {
+  const [internalIsScrolled, setInternalIsScrolled] = useState(false);
+  const isScrolled = controlledIsScrolled !== undefined ? controlledIsScrolled : internalIsScrolled;
+
+  useEffect(() => {
+    if (controlledIsScrolled !== undefined) return;
+
+    const handleScroll = () => {
+      // Top left and top right border radiuses are hidden when scrolling (> 20px).
+      // Otherwise (at rest at top of page), full rounded-2xl border radius is preserved.
+      setInternalIsScrolled(window.scrollY > 20);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [controlledIsScrolled]);
+
   const currentSection = sections[currentIndex];
   const currentTitle = currentSection
     ? getPartTitle
@@ -90,12 +111,17 @@ export function PartStepper({
     }
   };
 
-  // Floating bar styling: flat top edge (no top border-radius), rounded bottom corners, subtle shadow, ~95% opaque dark background with blur
+  // Floating bar styling:
+  // When scrolling, top-left and top-right border radiuses are hidden (rounded-t-none rounded-b-2xl)
+  // to seamlessly dock against the top edge or navbar.
+  // Otherwise (when not scrolling / at resting position), full rounded-2xl border radius is preserved.
+  const cornerRadius = isScrolled ? "rounded-t-none rounded-b-2xl" : "rounded-2xl";
+
   const floatingStyles = floating
-    ? "sticky z-30 transition-[top] duration-300 ease-out motion-reduce:transition-none rounded-t-none rounded-b-2xl bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] hover:border-white/[0.14] shadow-xl shadow-black/40 px-4 sm:px-6 py-3 sm:py-3.5 relative overflow-hidden"
+    ? `sticky z-30 transition-[top,border-radius] duration-300 ease-out motion-reduce:transition-none ${cornerRadius} bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] hover:border-white/[0.14] shadow-xl shadow-black/40 px-4 sm:px-6 py-3 sm:py-3.5 relative overflow-hidden`
     : sticky
     ? "sticky top-0 sm:top-14 z-30 bg-[#0E121B]/95 backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/30 px-4 sm:px-6 py-3"
-    : "relative rounded-t-none rounded-b-2xl bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] p-4";
+    : `relative ${cornerRadius} bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] p-4`;
 
   return (
     <div

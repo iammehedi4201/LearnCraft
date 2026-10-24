@@ -100,6 +100,41 @@ describe("PartStepper Scroll-Spy Component", () => {
     expect(html).toContain("top:var(--navbar-offset, 0px)");
     expect(html).toContain("bg-[#0E121B]/95");
   });
+
+  it("preserves full border radius (rounded-2xl) when not scrolling at top of page", () => {
+    const html = renderToStaticMarkup(
+      <PartStepper
+        sections={dummySections}
+        activeSectionId="part1"
+        currentIndex={0}
+        onSelectPart={vi.fn()}
+        getStepState={() => "todo"}
+        progressPercent={0}
+        floating={true}
+        isScrolled={false}
+      />
+    );
+
+    expect(html).toContain("rounded-2xl");
+    expect(html).not.toContain("rounded-t-none");
+  });
+
+  it("hides top-left and top-right border radius when scrolling (rounded-t-none rounded-b-2xl)", () => {
+    const html = renderToStaticMarkup(
+      <PartStepper
+        sections={dummySections}
+        activeSectionId="part1"
+        currentIndex={0}
+        onSelectPart={vi.fn()}
+        getStepState={() => "todo"}
+        progressPercent={0}
+        floating={true}
+        isScrolled={true}
+      />
+    );
+
+    expect(html).toContain("rounded-t-none rounded-b-2xl");
+  });
 });
 
 describe("DataDrivenLessonView Single Vertical Layout", () => {
@@ -192,8 +227,8 @@ describe("DataDrivenLessonView Single Vertical Layout", () => {
     expect(html).toContain("scroll-mt-36");
     expect(html).toContain("scroll-margin-top:calc(var(--navbar-offset, 64px) + 76px)");
 
-    // Floating stepper styling: flat top, rounded bottom, border, shadow, backdrop blur
-    expect(html).toContain("rounded-b-2xl");
+    // Floating stepper styling: full rounded corners at rest, border, shadow, backdrop blur
+    expect(html).toContain("rounded-2xl");
     expect(html).toContain("shadow-xl");
     expect(html).toContain("backdrop-blur");
     expect(html).toContain("var(--navbar-offset");
