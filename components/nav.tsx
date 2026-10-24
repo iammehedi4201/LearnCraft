@@ -24,6 +24,7 @@ import { TechIcon } from "@/components/roadmap/TechIcon";
 import { AuthModal, openAuthModal } from "@/components/auth";
 import { StreakXPPill } from "@/components/gamification/StreakXPPill";
 import { getLocalNotes } from "@/lib/notes-bookmarks";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 export function Nav() {
   return (
@@ -858,17 +859,11 @@ function UserNavMenu({
         title="User Menu & Study Hub"
       >
         <div className="relative">
-          {session.user.image ? (
-            <img
-              src={session.user.image}
-              alt={session.user.name || "Avatar"}
-              className="w-6 h-6 rounded-lg object-cover ring-1 ring-white/10"
-            />
-          ) : (
-            <div className="w-6 h-6 rounded-lg bg-purple-600 text-white flex items-center justify-center text-[10px] font-bold">
-              {session.user.name?.charAt(0) || "U"}
-            </div>
-          )}
+          <UserAvatar
+            src={session.user.image}
+            name={session.user.name}
+            size="sm"
+          />
           {syncStatus === "synced" && (
             <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full bg-emerald-400 ring-2 ring-[#0E121B]" />
           )}
@@ -897,17 +892,11 @@ function UserNavMenu({
           {/* User Info Header */}
           <div className="p-3 pb-2.5 border-b border-white/[0.06] mb-1">
             <div className="flex items-center gap-3 mb-2">
-              {session.user.image ? (
-                <img
-                  src={session.user.image}
-                  alt={session.user.name || "Avatar"}
-                  className="w-9 h-9 rounded-xl object-cover ring-1 ring-white/10 shrink-0"
-                />
-              ) : (
-                <div className="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
-                  {session.user.name?.charAt(0) || "U"}
-                </div>
-              )}
+              <UserAvatar
+                src={session.user.image}
+                name={session.user.name}
+                size="lg"
+              />
               <div className="min-w-0 flex-1">
                 <h4 className="text-sm font-bold text-white truncate">
                   {session.user.name || "Learner"}
@@ -1027,17 +1016,11 @@ function MobileAuthButton({ onAction }: { onAction?: () => void }) {
     return (
       <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06]">
         <div className="flex items-center gap-2.5">
-          {session.user.image ? (
-            <img
-              src={session.user.image}
-              alt={session.user.name || "User avatar"}
-              className="w-6 h-6 rounded-lg object-cover ring-1 ring-white/10"
-            />
-          ) : (
-            <div className="w-6 h-6 rounded-lg bg-ds-feature-base text-ds-static-white flex items-center justify-center text-[10px] font-bold">
-              {session.user.name?.charAt(0) || "U"}
-            </div>
-          )}
+          <UserAvatar
+            src={session.user.image}
+            name={session.user.name}
+            size="sm"
+          />
           <span className="text-xs font-bold text-white truncate max-w-[120px]">
             {session.user.name || "Learner"}
           </span>

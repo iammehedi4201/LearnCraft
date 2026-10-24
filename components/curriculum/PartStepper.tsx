@@ -92,35 +92,61 @@ export function PartStepper({
 
   // Floating bar styling: rounded corners, borderless, subtle shadow, ~95% opaque dark background with blur
   const floatingStyles = floating
-    ? "sticky z-30 transition-[top] duration-300 ease-out motion-reduce:transition-none rounded-2xl bg-[#0E121B]/95 backdrop-blur-md shadow-xl shadow-black/30 px-5 sm:px-6 py-3 sm:py-3.5"
+    ? "sticky z-30 transition-[top] duration-300 ease-out motion-reduce:transition-none rounded-2xl bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] hover:border-purple-500/20 shadow-xl shadow-[0_12px_36px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.06)] px-4 sm:px-6 py-3 sm:py-3.5 relative overflow-hidden"
     : sticky
-    ? "sticky top-0 sm:top-14 z-30 bg-[#0E121B]/95 backdrop-blur-md"
-    : "";
+    ? "sticky top-0 sm:top-14 z-30 bg-[#0E121B]/95 backdrop-blur-xl border-b border-white/[0.06] shadow-lg shadow-black/20 px-4 sm:px-6 py-3"
+    : "relative rounded-2xl bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] p-4";
 
   return (
     <div
       style={floating ? { top: "var(--navbar-offset, 0px)" } : undefined}
-      className={`space-y-2.5 transition-colors ${floatingStyles} ${className}`}
+      className={`space-y-3 transition-colors ${floatingStyles} ${className}`}
     >
+      {/* Ambient background aura & top border specular highlight */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-purple-500/[0.03] via-transparent to-indigo-500/[0.03]" />
+      <div className="pointer-events-none absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-purple-400/25 to-transparent" />
+
       {/* Label Row: Current Part title on left, Progress % on right */}
-      <div className="flex items-center justify-between gap-3 text-xs sm:text-sm">
-        <div className="flex items-center gap-1.5 min-w-0 font-medium">
-          <span className="text-slate-400 font-mono text-[11px] sm:text-xs shrink-0">
+      <div className="relative flex items-center justify-between gap-3 text-xs sm:text-sm">
+        <div className="flex items-center gap-2 min-w-0">
+          {/* Pill Badge for Step Count */}
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-300 font-mono text-[11px] font-semibold tracking-wide shrink-0 shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse shadow-[0_0_8px_rgba(192,132,252,0.8)]" />
             Part {currentIndex + 1} of {sections.length}
           </span>
-          <span className="text-slate-600 font-normal">·</span>
-          <span className="text-purple-300 font-semibold truncate">
-            {currentTitle}
-          </span>
+          <span className="text-white/20 select-none">·</span>
+          <div className="flex items-center gap-1.5 min-w-0">
+            {currentSection?.icon && (
+              <span className="text-sm select-none shrink-0" aria-hidden="true">
+                {currentSection.icon}
+              </span>
+            )}
+            <span className="text-white font-semibold text-xs sm:text-sm tracking-tight truncate drop-shadow-sm">
+              {currentTitle}
+            </span>
+          </div>
         </div>
 
-        <div className="flex items-center gap-1 shrink-0 font-mono text-xs font-bold text-slate-400">
-          <span>{progressPercent}%</span>
+        {/* Progress % Pill */}
+        <div className="flex items-center shrink-0">
+          {progressPercent === 100 ? (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-xs font-bold shadow-sm">
+              <svg className="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span>{progressPercent}%</span>
+            </div>
+          ) : (
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300 font-mono text-xs font-bold shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_6px_rgba(192,132,252,0.8)]" />
+              <span>{progressPercent}%</span>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Segments Row: 7 equal-width clickable segments */}
-      <nav aria-label="Lesson parts" className="w-full">
+      <nav aria-label="Lesson parts" className="relative w-full">
         <div className="flex items-center gap-1.5 sm:gap-2 w-full">
           {sections.map((section, index) => {
             const state = getStepState(index);
@@ -133,15 +159,16 @@ export function PartStepper({
               : section.label || section.title || `Part ${index + 1}`;
 
             // Segment styling:
-            // - Completed: filled with purple
-            // - Current: highlighted with bright purple and glow
-            // - Upcoming: muted/dim
-            let segmentStyle = "bg-white/[0.08] hover:bg-white/[0.18]";
+            // - Completed: rich jewel gradient with subtle reflection
+            // - Current: bright glowing gradient with ambient aura
+            // - Upcoming: clean frosted glass trough
+            let segmentStyle = "bg-white/[0.08] hover:bg-white/[0.18] border border-white/[0.04]";
             if (isActive) {
               segmentStyle =
-                "bg-purple-400 ring-2 ring-purple-400/60 shadow-[0_0_12px_rgba(192,132,252,0.65)]";
+                "bg-purple-400 bg-gradient-to-r from-purple-400 via-fuchsia-400 to-indigo-400 ring-2 ring-purple-400/60 shadow-[0_0_16px_rgba(192,132,252,0.65),inset_0_1px_1px_rgba(255,255,255,0.5)]";
             } else if (isDone) {
-              segmentStyle = "bg-purple-600 hover:bg-purple-500";
+              segmentStyle =
+                "bg-purple-600 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 border border-purple-400/20 shadow-[0_0_8px_rgba(147,51,234,0.3),inset_0_1px_0_rgba(255,255,255,0.2)]";
             }
 
             return (
@@ -153,17 +180,34 @@ export function PartStepper({
                 aria-current={isActive ? "step" : undefined}
                 aria-label={`Part ${index + 1}: ${partTitle}`}
                 title={`Part ${index + 1}: ${partTitle}`}
-                className={`group relative flex-1 min-w-0 h-1.5 sm:h-2 rounded-full transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E121B] ${
+                className={`group relative flex-1 min-w-0 h-2 sm:h-2.5 rounded-full transition-all duration-300 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E121B] hover:scale-y-125 ${
                   isDisabled ? "opacity-35 cursor-not-allowed" : ""
                 } ${segmentStyle}`}
               >
                 {/* Desktop hover tooltip */}
                 <div
                   role="tooltip"
-                  className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden md:group-hover:flex flex-col items-center z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
+                  className="pointer-events-none absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 hidden md:group-hover:flex flex-col items-center z-40 opacity-0 group-hover:opacity-100 transition-all duration-150 transform group-hover:-translate-y-0.5"
                 >
-                  <div className="px-2.5 py-1 rounded-md bg-[#161C28] border border-white/10 text-[11px] font-medium text-slate-200 whitespace-nowrap shadow-xl">
-                    Part {index + 1} · {partTitle}
+                  <div className="px-3 py-1.5 rounded-xl bg-[#161C28]/95 backdrop-blur-xl border border-white/10 text-[11px] font-medium text-slate-200 whitespace-nowrap shadow-2xl flex items-center gap-2">
+                    {section.icon && (
+                      <span className="text-xs select-none" aria-hidden="true">
+                        {section.icon}
+                      </span>
+                    )}
+                    <span className="font-semibold text-white">Part {index + 1}</span>
+                    <span className="text-slate-500">·</span>
+                    <span className="text-slate-300 max-w-[180px] truncate">{partTitle}</span>
+                    {isDone && (
+                      <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded font-mono font-bold">
+                        ✓ Done
+                      </span>
+                    )}
+                    {isActive && (
+                      <span className="text-[10px] text-purple-300 bg-purple-500/10 px-1.5 py-0.5 rounded font-mono font-bold">
+                        Active
+                      </span>
+                    )}
                   </div>
                   <div className="w-2 h-2 bg-[#161C28] rotate-45 -mt-1 border-r border-b border-white/10" />
                 </div>
