@@ -9,6 +9,8 @@ interface CurriculumCardCodeProps {
   defaultWrap?: boolean;
   heightClass?: string;
   className?: string;
+  onExpand?: () => void;
+  showExpand?: boolean;
 }
 
 const KEYWORDS = new Set([
@@ -26,7 +28,7 @@ const TYPES = new Set([
   "Promise", "Record", "Array", "Map", "Set", "Partial", "Required", "Pick", "Omit"
 ]);
 
-function WrapIcon({ className = "w-3 h-3" }: { className?: string }) {
+export function WrapIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 12h13a4 4 0 0 1 4 4v0a4 4 0 0 1-4 4H10" />
@@ -35,7 +37,7 @@ function WrapIcon({ className = "w-3 h-3" }: { className?: string }) {
   );
 }
 
-function CopyIcon({ className = "w-3 h-3" }: { className?: string }) {
+export function CopyIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
@@ -44,7 +46,7 @@ function CopyIcon({ className = "w-3 h-3" }: { className?: string }) {
   );
 }
 
-function CheckIcon({ className = "w-3 h-3" }: { className?: string }) {
+export function CheckIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="20 6 9 17 4 12" />
@@ -52,7 +54,7 @@ function CheckIcon({ className = "w-3 h-3" }: { className?: string }) {
   );
 }
 
-function ExpandIcon({ className = "w-3 h-3" }: { className?: string }) {
+export function ExpandIcon({ className = "w-3 h-3" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="15 3 21 3 21 9" />
@@ -63,7 +65,7 @@ function ExpandIcon({ className = "w-3 h-3" }: { className?: string }) {
   );
 }
 
-function CloseIcon({ className = "w-4 h-4" }: { className?: string }) {
+export function CloseIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="18" y1="6" x2="6" y2="18" />
@@ -72,12 +74,12 @@ function CloseIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
-interface Token {
+export interface Token {
   type: "keyword" | "string" | "literal" | "type" | "comment" | "plain";
   text: string;
 }
 
-function highlightLine(line: string): Token[] {
+export function highlightLine(line: string): Token[] {
   const trimmed = line.trim();
   if (trimmed.startsWith("//") || trimmed.startsWith("#")) {
     return [{ type: "comment", text: line }];
@@ -122,6 +124,8 @@ export function CurriculumCardCode({
   defaultWrap = true,
   heightClass = "h-[195px]",
   className = "",
+  onExpand,
+  showExpand = false,
 }: CurriculumCardCodeProps): JSX.Element {
   const [isWrapped, setIsWrapped] = useState<boolean>(defaultWrap);
   const [copied, setCopied] = useState<boolean>(false);
@@ -242,12 +246,18 @@ export function CurriculumCardCode({
 
           {/* Action Controls: Expand (if vertically scrollable) | Word Wrap Toggle | Copy */}
           <div className="flex items-center gap-1.5">
-            {/* Expand Feature: Only displays when code is vertically scrollable */}
-            {isScrollable && (
+            {/* Expand Feature: Displays when code is vertically scrollable or showExpand is set */}
+            {(isScrollable || showExpand) && (
               <button
                 type="button"
-                onClick={() => setIsModalOpen(true)}
-                title="Expand full code in wide modal (Esc to close)"
+                onClick={() => {
+                  if (onExpand) {
+                    onExpand();
+                  } else {
+                    setIsModalOpen(true);
+                  }
+                }}
+                title={onExpand ? "Expand side-by-side comparison (Esc to close)" : "Expand full code in wide modal (Esc to close)"}
                 aria-label="Expand code view"
                 className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono transition-all border bg-purple-500/10 text-purple-300 border-purple-500/25 hover:bg-purple-500/20 hover:text-white hover:border-purple-500/40 cursor-pointer shadow-sm active:scale-95"
               >

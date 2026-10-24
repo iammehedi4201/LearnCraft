@@ -21,6 +21,7 @@
  */
 
 import { useState, useEffect, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { Nav } from "@/components/nav";
 import { InteractiveGrid } from "@/components/interactive-grid";
@@ -33,7 +34,15 @@ import {
 } from "./lesson-content-types";
 import { recordActivity } from "@/lib/gamification";
 import { PartStepper } from "./PartStepper";
-import { CurriculumCardCode } from "./CurriculumCardCode";
+import {
+  CurriculumCardCode,
+  highlightLine,
+  WrapIcon,
+  CopyIcon,
+  CheckIcon,
+  ExpandIcon,
+  CloseIcon,
+} from "./CurriculumCardCode";
 
 function renderFormattedText(text?: string): React.ReactNode {
   if (!text) return null;
@@ -50,6 +59,342 @@ function renderFormattedText(text?: string): React.ReactNode {
     ) : (
       part
     )
+  );
+}
+
+interface ComparisonSideData {
+  title: string;
+  code: string;
+  explanation: string;
+}
+
+interface SideBySideComparisonModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  bad: ComparisonSideData;
+  good: ComparisonSideData;
+  problem?: string;
+  whyItMatters?: string;
+}
+
+function SideBySideComparisonModal({
+  isOpen,
+  onClose,
+  bad,
+  good,
+  problem,
+  whyItMatters,
+}: SideBySideComparisonModalProps): JSX.Element | null {
+  const [isWrapped, setIsWrapped] = useState<boolean>(true);
+  const [badCopied, setBadCopied] = useState<boolean>(false);
+  const [goodCopied, setGoodCopied] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Handle ESC key and lock body scroll while modal is active
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [isOpen, onClose]);
+
+  const badLines = useMemo(() => (bad.code ? bad.code.split("\n") : []), [bad.code]);
+  const goodLines = useMemo(() => (good.code ? good.code.split("\n") : []), [good.code]);
+
+  const handleCopyCode = async (code: string, isBad: boolean) => {
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(code);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = code;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+      }
+      if (isBad) {
+        setBadCopied(true);
+        setTimeout(() => setBadCopied(false), 2000);
+      } else {
+        setGoodCopied(true);
+        setTimeout(() => setGoodCopied(false), 2000);
+      }
+    } catch (err) {
+      console.error("Failed to copy comparison code", err);
+    }
+  };
+
+  if (!isOpen || !mounted || typeof document === "undefined") {
+    return null;
+  }
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-black/85 backdrop-blur-md transition-opacity duration-200"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="comparison-modal-title"
+    >
+      <div
+        className="relative w-full max-w-7xl max-h-[94vh] flex flex-col rounded-2xl bg-[#070913] border border-purple-500/30 shadow-2xl shadow-purple-950/60 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Top Header */}
+        <div className="h-12 px-4 sm:px-6 bg-[#0B0F1E] border-b border-white/[0.08] flex items-center justify-between shrink-0 select-none">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-rose-500/80" />
+              <span className="w-3 h-3 rounded-full bg-amber-500/80" />
+              <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
+            </div>
+            <div className="h-4 w-px bg-white/10" />
+            <div className="flex items-center gap-2">
+              <span className="text-purple-400 font-bold text-sm hidden sm:inline">⚡</span>
+              <h3
+                id="comparison-modal-title"
+                className="text-xs sm:text-sm font-mono font-bold text-slate-100 tracking-wide"
+              >
+                Side-by-Side Comparison: Anti-Pattern vs Production Solution
+              </h3>
+            </div>
+            <span className="hidden md:inline-flex text-[10px] sm:text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25">
+              Interactive Diff
+            </span>
+          </div>
+
+          {/* Modal Header Actions: Wrap & Close */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsWrapped((prev) => !prev)}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors border cursor-pointer ${
+                isWrapped
+                  ? "bg-purple-500/20 text-purple-300 border-purple-500/30 font-semibold"
+                  : "bg-white/[0.04] text-slate-400 border-white/[0.08] hover:text-slate-200 hover:bg-white/[0.08]"
+              }`}
+              title={isWrapped ? "Word wrap is ON (click to disable)" : "Word wrap is OFF (click to wrap)"}
+            >
+              <WrapIcon className={`w-3.5 h-3.5 ${isWrapped ? "text-purple-300" : "text-slate-400"}`} />
+              <span className="hidden sm:inline">Wrap</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono text-slate-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] transition-colors cursor-pointer"
+              title="Close comparison modal (Esc)"
+            >
+              <CloseIcon className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Close</span>
+              <kbd className="hidden md:inline-block px-1.5 py-0.5 rounded text-[10px] bg-white/[0.08] text-slate-400 border border-white/[0.08]">
+                ESC
+              </kbd>
+            </button>
+          </div>
+        </div>
+
+        {/* Optional Problem Banner */}
+        {problem && (
+          <div className="px-4 sm:px-6 py-2.5 bg-amber-500/[0.07] border-b border-amber-500/20 text-amber-200 text-xs flex items-center gap-2 select-none shrink-0">
+            <span className="text-amber-400 font-bold shrink-0">⚠️ Core Architectural Challenge:</span>
+            <span className="text-slate-300 truncate sm:whitespace-normal">{problem}</span>
+          </div>
+        )}
+
+        {/* Side-by-Side Code Viewport Grid */}
+        <div className="flex-1 overflow-y-auto p-3 sm:p-5 grid grid-cols-1 lg:grid-cols-2 gap-4 bg-[#04060C]">
+          {/* Left Column: Anti-Pattern */}
+          <div className="flex flex-col rounded-xl bg-rose-950/10 border border-rose-500/30 overflow-hidden shadow-lg shadow-rose-950/20">
+            <div className="h-10 px-3 sm:px-4 bg-rose-950/30 border-b border-rose-500/20 flex items-center justify-between shrink-0 select-none">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shrink-0" />
+                <span className="text-xs font-mono font-bold text-rose-300 uppercase tracking-wide truncate">
+                  ❌ {bad.title || "Anti-Pattern"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleCopyCode(bad.code, true)}
+                className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono transition-colors border border-rose-500/25 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 cursor-pointer"
+                title="Copy anti-pattern code"
+              >
+                {badCopied ? (
+                  <>
+                    <CheckIcon className="w-3 h-3 text-emerald-400" />
+                    <span className="text-emerald-300">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <CopyIcon className="w-3 h-3 text-rose-300" />
+                    <span>Copy</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Code lines with line numbers */}
+            <div className="flex-1 max-h-[48vh] sm:max-h-[54vh] overflow-y-auto p-3 sm:p-4 bg-[#060812] text-xs font-mono leading-relaxed text-slate-200 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20">
+              {badLines.map((line, idx) => {
+                const tokens = highlightLine(line);
+                return (
+                  <div key={idx} className="flex gap-3 min-h-[1.35rem] hover:bg-rose-500/[0.04] rounded px-1 -mx-1 group">
+                    <span className="select-none text-rose-400/40 group-hover:text-rose-400/70 font-mono text-xs w-7 sm:w-8 text-right shrink-0 pt-0.5 border-r border-rose-500/20 pr-2 transition-colors">
+                      {idx + 1}
+                    </span>
+                    <div
+                      className={`flex-1 ${
+                        isWrapped
+                          ? "whitespace-pre-wrap break-words [overflow-wrap:anywhere]"
+                          : "whitespace-pre overflow-x-auto"
+                      }`}
+                    >
+                      {tokens.length === 0 ? (
+                        <span>&nbsp;</span>
+                      ) : (
+                        tokens.map((token, tIdx) => {
+                          let tokenClass = "text-slate-200";
+                          if (token.type === "keyword") tokenClass = "text-purple-400 font-semibold";
+                          else if (token.type === "string") tokenClass = "text-amber-300";
+                          else if (token.type === "literal") tokenClass = "text-cyan-300 font-medium";
+                          else if (token.type === "type") tokenClass = "text-sky-300";
+                          else if (token.type === "comment") tokenClass = "text-emerald-400/85 italic font-sans text-[11px] sm:text-xs";
+
+                          return (
+                            <span key={tIdx} className={tokenClass}>
+                              {token.text}
+                            </span>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Anti-Pattern Explanation Footer */}
+            <div className="p-3.5 bg-rose-950/25 border-t border-rose-500/20 text-xs text-rose-200/90 leading-relaxed mt-auto">
+              <strong className="text-rose-300 block mb-1 font-bold uppercase tracking-wider text-[11px]">
+                ⚠️ Why This Fails:
+              </strong>
+              <p>{renderFormattedText(bad.explanation)}</p>
+            </div>
+          </div>
+
+          {/* Right Column: Production Solution */}
+          <div className="flex flex-col rounded-xl bg-emerald-950/10 border border-emerald-500/30 overflow-hidden shadow-lg shadow-emerald-950/20">
+            <div className="h-10 px-3 sm:px-4 bg-emerald-950/30 border-b border-emerald-500/20 flex items-center justify-between shrink-0 select-none">
+              <div className="flex items-center gap-2 overflow-hidden">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
+                <span className="text-xs font-mono font-bold text-emerald-300 uppercase tracking-wide truncate">
+                  ✅ {good.title || "Production Solution"}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => handleCopyCode(good.code, false)}
+                className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono transition-colors border border-emerald-500/25 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 cursor-pointer"
+                title="Copy production solution code"
+              >
+                {goodCopied ? (
+                  <>
+                    <CheckIcon className="w-3 h-3 text-emerald-400" />
+                    <span className="text-emerald-300">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <CopyIcon className="w-3 h-3 text-emerald-300" />
+                    <span>Copy</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Code lines with line numbers */}
+            <div className="flex-1 max-h-[48vh] sm:max-h-[54vh] overflow-y-auto p-3 sm:p-4 bg-[#060812] text-xs font-mono leading-relaxed text-slate-200 scrollbar-thin scrollbar-thumb-white/10 hover:scrollbar-thumb-white/20">
+              {goodLines.map((line, idx) => {
+                const tokens = highlightLine(line);
+                return (
+                  <div key={idx} className="flex gap-3 min-h-[1.35rem] hover:bg-emerald-500/[0.04] rounded px-1 -mx-1 group">
+                    <span className="select-none text-emerald-400/40 group-hover:text-emerald-400/70 font-mono text-xs w-7 sm:w-8 text-right shrink-0 pt-0.5 border-r border-emerald-500/20 pr-2 transition-colors">
+                      {idx + 1}
+                    </span>
+                    <div
+                      className={`flex-1 ${
+                        isWrapped
+                          ? "whitespace-pre-wrap break-words [overflow-wrap:anywhere]"
+                          : "whitespace-pre overflow-x-auto"
+                      }`}
+                    >
+                      {tokens.length === 0 ? (
+                        <span>&nbsp;</span>
+                      ) : (
+                        tokens.map((token, tIdx) => {
+                          let tokenClass = "text-slate-200";
+                          if (token.type === "keyword") tokenClass = "text-purple-400 font-semibold";
+                          else if (token.type === "string") tokenClass = "text-amber-300";
+                          else if (token.type === "literal") tokenClass = "text-cyan-300 font-medium";
+                          else if (token.type === "type") tokenClass = "text-sky-300";
+                          else if (token.type === "comment") tokenClass = "text-emerald-400/85 italic font-sans text-[11px] sm:text-xs";
+
+                          return (
+                            <span key={tIdx} className={tokenClass}>
+                              {token.text}
+                            </span>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Production Solution Explanation Footer */}
+            <div className="p-3.5 bg-emerald-950/25 border-t border-emerald-500/20 text-xs text-emerald-200/90 leading-relaxed mt-auto">
+              <strong className="text-emerald-300 block mb-1 font-bold uppercase tracking-wider text-[11px]">
+                🛡️ Production Solution Benefit:
+              </strong>
+              <p>{renderFormattedText(good.explanation)}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal Bottom Bar */}
+        <div className="px-4 sm:px-6 py-2.5 bg-[#0B0F1E] border-t border-white/[0.08] flex items-center justify-between text-xs select-none shrink-0">
+          {whyItMatters ? (
+            <div className="flex items-center gap-2 text-purple-200 truncate pr-4">
+              <span className="text-purple-400 font-bold shrink-0">💡 Production Impact:</span>
+              <span className="text-slate-300 truncate">{whyItMatters}</span>
+            </div>
+          ) : (
+            <span className="text-slate-400">Architectural Side-by-Side Comparison</span>
+          )}
+          <span className="text-slate-500 text-[11px] shrink-0 hidden sm:inline">
+            Press <kbd className="px-1.5 py-0.5 rounded bg-white/[0.08] text-slate-300 border border-white/[0.08]">Esc</kbd> to return
+          </span>
+        </div>
+      </div>
+    </div>,
+    document.body
   );
 }
 
@@ -119,6 +464,7 @@ export function DataDrivenLessonView({
 
   const [selectedQuizAnswer, setSelectedQuizAnswer] = useState<number | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
+  const [isComparisonModalOpen, setIsComparisonModalOpen] = useState<boolean>(false);
 
   // Active section ref to prevent redundant re-renders during scrolling
   const activeSectionRef = useRef(activeSection);
@@ -687,11 +1033,24 @@ export function DataDrivenLessonView({
               <span>{sec.icon || "⚠️"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · PATTERNS & TRAPS`}</span>
             </div>
-            {isCompleted && (
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
-                ✓ Read
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {badComparison && goodComparison && (
+                <button
+                  type="button"
+                  onClick={() => setIsComparisonModalOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30 hover:bg-purple-500/25 hover:text-white hover:border-purple-500/50 transition-all cursor-pointer shadow-sm active:scale-95"
+                  title="Expand side-by-side comparison (Esc to close)"
+                >
+                  <ExpandIcon className="w-3.5 h-3.5 text-purple-300" />
+                  <span>Expand Side-by-Side</span>
+                </button>
+              )}
+              {isCompleted && (
+                <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                  ✓ Read
+                </span>
+              )}
+            </div>
           </div>
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             {content.part4?.title || sec.label || getSectionLabel(sec, index)}
@@ -725,6 +1084,8 @@ export function DataDrivenLessonView({
                     title="Anti-Pattern"
                     heightClass="h-[180px]"
                     defaultWrap={true}
+                    showExpand={true}
+                    onExpand={() => setIsComparisonModalOpen(true)}
                   />
                 </div>
               </div>
@@ -747,6 +1108,8 @@ export function DataDrivenLessonView({
                     title="Production Solution"
                     heightClass="h-[180px]"
                     defaultWrap={true}
+                    showExpand={true}
+                    onExpand={() => setIsComparisonModalOpen(true)}
                   />
                 </div>
               </div>
@@ -768,6 +1131,18 @@ export function DataDrivenLessonView({
               <p className="text-slate-300">{content.part4.whyItMatters}</p>
             </div>
           </div>
+        )}
+
+        {/* Side-by-Side Comparison Expand Modal */}
+        {badComparison && goodComparison && (
+          <SideBySideComparisonModal
+            isOpen={isComparisonModalOpen}
+            onClose={() => setIsComparisonModalOpen(false)}
+            bad={badComparison}
+            good={goodComparison}
+            problem={content.part4?.problem}
+            whyItMatters={content.part4?.whyItMatters}
+          />
         )}
       </section>
     );
