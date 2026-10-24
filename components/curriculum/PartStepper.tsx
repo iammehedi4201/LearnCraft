@@ -102,10 +102,6 @@ export function PartStepper({
       style={floating ? { top: "var(--navbar-offset, 0px)" } : undefined}
       className={`space-y-3 transition-colors ${floatingStyles} ${className}`}
     >
-      {/* Ambient background aura & top border specular highlight */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-purple-500/[0.03] via-transparent to-indigo-500/[0.03]" />
-      <div className="pointer-events-none absolute top-0 left-1/4 right-1/4 h-[1px] bg-gradient-to-r from-transparent via-purple-400/25 to-transparent" />
-
       {/* Label Row: Current Part title on left, Progress % on right */}
       <div className="relative flex items-center justify-between gap-3 text-xs sm:text-sm">
         <div className="flex items-center gap-2 min-w-0">
@@ -158,17 +154,13 @@ export function PartStepper({
               ? getPartTitle(section, index)
               : section.label || section.title || `Part ${index + 1}`;
 
-            // Segment styling:
-            // - Completed: rich jewel gradient with subtle reflection
-            // - Current: bright glowing gradient with ambient aura
-            // - Upcoming: clean frosted glass trough
-            let segmentStyle = "bg-white/[0.08] hover:bg-white/[0.18] border border-white/[0.04]";
+            // Segment styling with solid, clean colors (no multi-color gradients)
+            let segmentStyle = "bg-white/[0.08] hover:bg-white/[0.18]";
             if (isActive) {
               segmentStyle =
-                "bg-purple-400 bg-gradient-to-r from-purple-400 via-fuchsia-400 to-indigo-400 ring-2 ring-purple-400/60 shadow-[0_0_16px_rgba(192,132,252,0.65),inset_0_1px_1px_rgba(255,255,255,0.5)]";
+                "bg-purple-400 ring-2 ring-purple-400/60 shadow-[0_0_12px_rgba(192,132,252,0.5)]";
             } else if (isDone) {
-              segmentStyle =
-                "bg-purple-600 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 border border-purple-400/20 shadow-[0_0_8px_rgba(147,51,234,0.3),inset_0_1px_0_rgba(255,255,255,0.2)]";
+              segmentStyle = "bg-purple-600 hover:bg-purple-500";
             }
 
             return (
