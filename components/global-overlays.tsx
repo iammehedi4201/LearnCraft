@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 
 const ReadingControlPanel = dynamic(
   () =>
-    import("@/components/reading-control-panel").then(
+    import("@/components/reading-mode/reading-control-panel").then(
       (mod) => mod.ReadingControlPanel
     ),
   { ssr: false }

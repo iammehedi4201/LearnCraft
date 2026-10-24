@@ -1,0 +1,165 @@
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ *  Reading Control Panel — Styles
+ *  Aligned with the Figma-exported LearnCraft Design System tokens.
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ── Google Fonts: Lexend (dyslexia-friendly) ── */
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&display=swap");
+
+/* ── Root-level reading variables ── */
+:root {
+  --reading-font-size: 16px;
+  --reading-line-height: 1.7;
+}
+
+/* ── Sepia theme variables (preserved for compatibility if sepia class exists) ── */
+.sepia {
+  --background: #f4ecd8;
+  --foreground: #433422;
+  --primary: #b8860b;
+  --primary-foreground: #ffffff;
+  --glass-bg: rgba(244, 236, 216, 0.85);
+  --glass-border: rgba(184, 134, 11, 0.2);
+}
+
+/* ── Dyslexia-friendly font ── */
+.font-dyslexia,
+.font-dyslexia body,
+.font-dyslexia p,
+.font-dyslexia li,
+.font-dyslexia span,
+.font-dyslexia td,
+.font-dyslexia th,
+.font-dyslexia pre,
+.font-dyslexia code,
+.font-dyslexia blockquote {
+  font-family: "Lexend", sans-serif !important;
+  letter-spacing: 0.02em;
+}
+
+/* ── Focus mode: hide sidebars & nav, center content ── */
+.focus-mode header,
+.focus-mode nav,
+.focus-mode aside,
+.focus-mode [data-sidebar],
+.focus-mode footer,
+.focus-mode header + div {
+  display: none !important;
+}
+.focus-mode main {
+  max-width: 80rem !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-top: 1rem  !important;
+}
+
+/* ── Apply reading font-size & line-height to content areas ── */
+body:not(.rcp-root) {
+  font-size: var(--reading-font-size);
+  line-height: var(--reading-line-height);
+}
+
+p:not(.rcp-root *),
+li:not(.rcp-root *),
+td:not(.rcp-root *),
+th:not(.rcp-root *),
+blockquote:not(.rcp-root *),
+.reading-content {
+  font-size: var(--reading-font-size);
+  line-height: var(--reading-line-height);
+}
+
+/* Keep the panel's own text at a fixed size */
+.rcp-root,
+.rcp-root * {
+  font-size: revert;
+  line-height: revert;
+}
+
+/* ── Panel Positioning & Animations ── */
+.rcp-root {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .rcp-root {
+    bottom: 16px;
+    right: 16px;
+    gap: 8px;
+  }
+}
+
+.rcp-panel {
+  position: absolute;
+  bottom: 56px;
+  right: 0;
+  width: 340px;
+  transform-origin: bottom right;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px) scale(0.95);
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    visibility 0.25s ease;
+}
+
+.rcp-panel--open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* Pulse ring animation behind trigger */
+@keyframes rcp-pulse {
+  0%, 100% { opacity: 0; transform: scale(1); }
+  50% { opacity: 0.15; transform: scale(1.15); }
+}
+
+.rcp-pulse-animation::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 18px;
+  background: var(--state-feature-base);
+  opacity: 0;
+  z-index: -1;
+  animation: rcp-pulse 2.5s ease-in-out infinite;
+}
+
+@media (max-width: 400px) {
+  .rcp-root {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .rcp-panel {
+    width: calc(100vw - 32px);
+    right: 0;
+    bottom: 60px;
+  }
+}
+
+/* Scrollbar for panel body */
+.rcp-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.rcp-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.rcp-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 999px;
+}
+
+.dark .rcp-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}

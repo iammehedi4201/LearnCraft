@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Rajdhani, Manrope } from "next/font/google";
 import "./globals.css";
-import "@/components/reading-control-panel.css";
+import "@/components/reading-mode/reading-control-panel.css";
 import "@/components/playground/playground.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { QueryProvider } from "@/components/query-provider";
+import { ThemeProvider, QueryProvider } from "@/components/providers";
 import { RevisionProvider } from "@/context/revision-context";
 import { SessionProvider } from "next-auth/react";
 import { Suspense } from "react";
