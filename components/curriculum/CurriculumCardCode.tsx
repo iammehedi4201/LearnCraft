@@ -6,6 +6,7 @@ import { createPortal } from "react-dom";
 interface CurriculumCardCodeProps {
   code: string;
   title?: string;
+  modalTitle?: string;
   defaultWrap?: boolean;
   heightClass?: string;
   className?: string;
@@ -121,6 +122,7 @@ export function highlightLine(line: string): Token[] {
 export function CurriculumCardCode({
   code,
   title = "Example",
+  modalTitle,
   defaultWrap = true,
   heightClass = "h-[195px]",
   className = "",
@@ -368,7 +370,7 @@ export function CurriculumCardCode({
                 </div>
                 <div className="h-4 w-px bg-white/10" />
                 <h3 id="expanded-code-title" className="text-xs sm:text-sm font-mono font-bold text-slate-200">
-                  {title}
+                  {modalTitle || title}
                 </h3>
                 <span className="text-[10px] sm:text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25">
                   {lines.length} lines

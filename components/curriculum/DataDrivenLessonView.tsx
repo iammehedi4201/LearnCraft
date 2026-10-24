@@ -1082,10 +1082,10 @@ export function DataDrivenLessonView({
                   <CurriculumCardCode
                     code={badComparison.code}
                     title="Anti-Pattern"
+                    modalTitle={`❌ Anti-Pattern: ${badComparison.title}`}
                     heightClass="h-[180px]"
                     defaultWrap={true}
                     showExpand={true}
-                    onExpand={() => setIsComparisonModalOpen(true)}
                   />
                 </div>
               </div>
@@ -1106,10 +1106,10 @@ export function DataDrivenLessonView({
                   <CurriculumCardCode
                     code={goodComparison.code}
                     title="Production Solution"
+                    modalTitle={`✅ Production Solution: ${goodComparison.title}`}
                     heightClass="h-[180px]"
                     defaultWrap={true}
                     showExpand={true}
-                    onExpand={() => setIsComparisonModalOpen(true)}
                   />
                 </div>
               </div>
