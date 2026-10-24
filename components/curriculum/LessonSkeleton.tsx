@@ -43,7 +43,7 @@ export function LessonSkeleton(): JSX.Element {
         </div>
 
         {/* Top Borderless Stepper Skeleton (matching PartStepper) */}
-        <div className="rounded-2xl bg-[#0E121B]/95 backdrop-blur-md shadow-xl shadow-black/30 px-5 sm:px-6 py-3 sm:py-3.5 mb-6 space-y-2.5">
+        <div className="rounded-t-none rounded-b-2xl bg-[#0E121B]/95 backdrop-blur-md shadow-xl shadow-black/30 px-5 sm:px-6 py-3 sm:py-3.5 mb-6 space-y-2.5">
           {/* Label Row */}
           <div className="flex items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-2">

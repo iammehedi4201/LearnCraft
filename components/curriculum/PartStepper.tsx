@@ -90,12 +90,12 @@ export function PartStepper({
     }
   };
 
-  // Floating bar styling: rounded corners, borderless, subtle shadow, ~95% opaque dark background with blur
+  // Floating bar styling: flat top edge (no top border-radius), rounded bottom corners, subtle shadow, ~95% opaque dark background with blur
   const floatingStyles = floating
-    ? "sticky z-30 transition-[top] duration-300 ease-out motion-reduce:transition-none rounded-2xl bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] hover:border-white/[0.14] shadow-xl shadow-black/40 px-4 sm:px-6 py-3 sm:py-3.5 relative overflow-hidden"
+    ? "sticky z-30 transition-[top] duration-300 ease-out motion-reduce:transition-none rounded-t-none rounded-b-2xl bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] hover:border-white/[0.14] shadow-xl shadow-black/40 px-4 sm:px-6 py-3 sm:py-3.5 relative overflow-hidden"
     : sticky
     ? "sticky top-0 sm:top-14 z-30 bg-[#0E121B]/95 backdrop-blur-xl border-b border-white/[0.08] shadow-lg shadow-black/30 px-4 sm:px-6 py-3"
-    : "relative rounded-2xl bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] p-4";
+    : "relative rounded-t-none rounded-b-2xl bg-[#0E121B]/95 backdrop-blur-xl border border-white/[0.08] p-4";
 
   return (
     <div

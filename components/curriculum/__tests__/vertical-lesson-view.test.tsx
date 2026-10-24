@@ -79,8 +79,8 @@ describe("PartStepper Scroll-Spy Component", () => {
 
     expect(html).toContain("Part 3 of 7");
     expect(html).toContain("Mental Model &amp; Structure");
-    expect(html).toContain("bg-white/40"); // Done segment fill
-    expect(html).toContain("bg-white"); // Active segment highlight
+    expect(html).toContain("bg-white/40"); // Done segment fill (monochrome)
+    expect(html).toContain("bg-white"); // Active segment highlight (monochrome)
   });
 
   it("pins to viewport top with 0px gap fallback to prevent unwanted space when scrolling down", () => {
@@ -192,8 +192,8 @@ describe("DataDrivenLessonView Single Vertical Layout", () => {
     expect(html).toContain("scroll-mt-36");
     expect(html).toContain("scroll-margin-top:calc(var(--navbar-offset, 64px) + 76px)");
 
-    // Floating stepper styling: rounded-2xl, border, shadow, backdrop blur
-    expect(html).toContain("rounded-2xl");
+    // Floating stepper styling: flat top, rounded bottom, border, shadow, backdrop blur
+    expect(html).toContain("rounded-b-2xl");
     expect(html).toContain("shadow-xl");
     expect(html).toContain("backdrop-blur");
     expect(html).toContain("var(--navbar-offset");
