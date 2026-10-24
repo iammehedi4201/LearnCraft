@@ -79,8 +79,8 @@ describe("PartStepper Scroll-Spy Component", () => {
 
     expect(html).toContain("Part 3 of 7");
     expect(html).toContain("Mental Model &amp; Structure");
-    expect(html).toContain("bg-purple-600"); // Done segment fill
-    expect(html).toContain("bg-purple-400"); // Active segment highlight
+    expect(html).toContain("bg-white/40"); // Done segment fill
+    expect(html).toContain("bg-white"); // Active segment highlight
   });
 
   it("pins to viewport top with 0px gap fallback to prevent unwanted space when scrolling down", () => {
