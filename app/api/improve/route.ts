@@ -42,7 +42,6 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { z } from "zod";
-import { auth } from "@/auth";
 import type { SectionFileMeta } from "@/lib/improvement-detector";
 import {
   detectImprovement,
@@ -102,6 +101,7 @@ async function checkDevToolsAccess(req: NextRequest): Promise<NextResponse | nul
 
   if (!isDev) {
     try {
+      const { auth } = await import("@/auth");
       const session = (await (auth as any)()) || (await (auth as any)(req));
       if (!session?.user) {
         return NextResponse.json(

@@ -1,5 +1,4 @@
 import { NextRequest } from "next/server";
-import { auth } from "@/auth";
 import { prisma, isRealDatabaseConfigured } from "@/lib/prisma";
 
 /**
@@ -29,9 +28,11 @@ export async function getAuthenticatedUserId(req: NextRequest): Promise<string |
 
   // 2. NextAuth session fallback
   try {
+    const { auth } = await import("@/auth");
     const session = (await (auth as any)()) || (await (auth as any)(req));
     if (session?.user?.id) return session.user.id;
   } catch {}
 
   return null;
 }
+

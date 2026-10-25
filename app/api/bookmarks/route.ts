@@ -4,10 +4,13 @@ import { prisma } from "@/lib/prisma";
 import { getAuthenticatedUserId } from "@/lib/auth-helper";
 import type { CodeBookmark } from "@/types/notes-bookmarks";
 
+export const dynamic = "force-dynamic";
+
 const BookmarkSchema = z.object({
   id: z.string(),
   trackKey: z.string(),
   lessonSlug: z.string(),
+
   sectionId: z.string().optional(),
   title: z.string(),
   code: z.string(),
