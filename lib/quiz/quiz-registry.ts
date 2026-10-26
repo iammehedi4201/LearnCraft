@@ -17,6 +17,7 @@ import { NEXTJS_MODULE_QUIZZES } from "./nextjs-quizzes";
 import { NEXTJS_LEGACY_SLUG_MAP } from "@/app/learn/nextjs/data/nextjs-curriculum";
 import { NESTJS_MODULE_QUIZZES } from "./nestjs-quizzes";
 import { NESTJS_LEGACY_SLUG_MAP } from "@/app/learn/nestjs/data/nestjs-curriculum";
+import { NODEJS_LEGACY_SLUG_MAP } from "@/app/learn/nodejs/data/nodejs-curriculum";
 
 export const CURATED_MODULE_QUIZZES: ModuleQuiz[] = [
   // ──────────────────────────────────────────────────────────────────────────
@@ -208,6 +209,8 @@ export function getQuizBySlug(trackKey: string, lessonSlug: string): ModuleQuiz 
     resolvedSlug = NEXTJS_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
   } else if (normTrack === "nestjs" && NESTJS_LEGACY_SLUG_MAP[resolvedSlug]) {
     resolvedSlug = NESTJS_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
+  } else if (normTrack === "nodejs" && NODEJS_LEGACY_SLUG_MAP[resolvedSlug]) {
+    resolvedSlug = NODEJS_LEGACY_SLUG_MAP[resolvedSlug].toLowerCase();
   }
 
   // 1. Check exact match in curated registry

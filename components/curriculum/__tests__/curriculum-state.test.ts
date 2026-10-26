@@ -753,15 +753,15 @@ const nodejsCourse = getNodejsCourse();
 
   it("10.1: Brand-new user (0 lessons completed)", () => {
     const state = getCurriculumState(nodejsCourse, { completedLessonIds: [], prereqConfirmed: false });
-    assert(state.totalLessonsCount === 24, `Total lessons should be 24, got ${state.totalLessonsCount}`);
-    assert(state.phases.length === 8, `Total phases should be 8, got ${state.phases.length}`);
+    assert(state.totalLessonsCount === 20, `Total lessons should be 20, got ${state.totalLessonsCount}`);
+    assert(state.phases.length === 6, `Total phases should be 6, got ${state.phases.length}`);
     assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
     assert(state.phases[0].doneSteps === 0, `Phase 1 done steps should be 0, got ${state.phases[0].doneSteps}`);
     assert(state.phases[0].lessons[0].status === "current", "Lesson 1 should be current");
     assert(state.currentLesson?.code === "NODE-01", `Current lesson code should be NODE-01, got ${state.currentLesson?.code}`);
     assert(state.showPrerequisitesCard === true, "Prereq card should show on first visit");
-    assert(state.currentStepChip === "START HERE · STEP 1 OF 3", `Chip should be 'START HERE · STEP 1 OF 3', got '${state.currentStepChip}'`);
+    assert(state.currentStepChip === "START HERE · STEP 1 OF 4", `Chip should be 'START HERE · STEP 1 OF 4', got '${state.currentStepChip}'`);
     console.log("  ✓ 10.1 Authoritative Node.js initial state verified");
   });
 
@@ -774,38 +774,39 @@ const nodejsCourse = getNodejsCourse();
     assert(state.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed");
     assert(state.phases[0].lessons[1].status === "current", "Lesson 2 should be current");
     assert(state.currentLesson?.code === "NODE-02", `Current lesson should be NODE-02, got ${state.currentLesson?.code}`);
-    assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 3", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 3', got '${state.currentStepChip}'`);
+    assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 4", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 4', got '${state.currentStepChip}'`);
     console.log("  ✓ 10.2 Authoritative Node.js single lesson completion verified");
   });
 
-  it("10.3: User completes Phase 1 (3 lessons) -> Phase 2 unlocks (NODE-04)", () => {
+  it("10.3: User completes Phase 1 (4 lessons) -> Phase 2 unlocks (NODE-05)", () => {
     const phase1Slugs = [
       "node01-what-is-nodejs",
-      "node02-nodejs-vs-browser",
-      "node03-event-loop-and-async-io",
+      "node02-start-and-run-a-nodejs-project",
+      "node03-what-are-npm-and-packages",
+      "node04-import-and-export-code",
     ];
     const state = getCurriculumState(nodejsCourse, { completedLessonIds: phase1Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 3, `Completed count should be 3, got ${state.completedLessonsCount}`);
+    assert(state.completedLessonsCount === 4, `Completed count should be 4, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 1, `Completed phases should be 1, got ${state.completedPhases.length}`);
     assert(state.phases[0].status === "completed", "Phase 1 should be completed");
     assert(state.phases[1].status === "current", "Phase 2 should be current");
-    assert(state.currentLesson?.code === "NODE-04", `Current lesson should be NODE-04, got ${state.currentLesson?.code}`);
-    assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 2", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 2', got '${state.currentStepChip}'`);
+    assert(state.currentLesson?.code === "NODE-05", `Current lesson should be NODE-05, got ${state.currentLesson?.code}`);
+    assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 3", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 3', got '${state.currentStepChip}'`);
     console.log("  ✓ 10.3 Authoritative Node.js Phase 1 completion and Phase 2 unlock verified");
   });
 
-  it("10.4: User completes all 8 phases (all 24 lessons) -> Capstone unlocks!", () => {
-    const all24Slugs = getAllNodeLessons().map((l) => l.slug);
-    assert(all24Slugs.length === 24, `Expected 24 Node.js lesson slugs, got ${all24Slugs.length}`);
+  it("10.4: User completes all 6 phases (all 20 lessons) -> Capstone unlocks!", () => {
+    const all20Slugs = getAllNodeLessons().map((l) => l.slug);
+    assert(all20Slugs.length === 20, `Expected 20 Node.js lesson slugs, got ${all20Slugs.length}`);
   
-    const state = getCurriculumState(nodejsCourse, { completedLessonIds: all24Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 24, `Completed count should be 24, got ${state.completedLessonsCount}`);
-    assert(state.completedPhases.length === 8, `All 8 phases should be completed, got ${state.completedPhases.length}`);
+    const state = getCurriculumState(nodejsCourse, { completedLessonIds: all20Slugs, prereqConfirmed: true });
+    assert(state.completedLessonsCount === 20, `Completed count should be 20, got ${state.completedLessonsCount}`);
+    assert(state.completedPhases.length === 6, `All 6 phases should be completed, got ${state.completedPhases.length}`);
     assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
     assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);
     assert(state.isCourseComplete === true, "Course should be marked complete");
-    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 8 phases");
-    console.log("  ✓ 10.4 All 8 phases finished -> Node.js Capstone successfully unlocked verified!");
+    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 6 phases");
+    console.log("  ✓ 10.4 All 6 phases finished -> Node.js Capstone successfully unlocked verified!");
   });
 
 

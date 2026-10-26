@@ -501,7 +501,7 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     category: "backend",
     level: "beginner-advanced",
     status: "available",
-    totalLessons: 24,
+    totalLessons: 20,
     stages: nodejsStages,
     learnPath: "/learn/nodejs",
     badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",

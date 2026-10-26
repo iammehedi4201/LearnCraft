@@ -2,13 +2,15 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * NODE.JS CURRICULUM DATA LAYER — LEARNCRAFT
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * Authoritative curriculum metadata for Node.js:
- * 8 Phases, 24 Lessons, Capstone Project & Pedagogical Metadata.
- * 
+ * Authoritative 6-Stage, 20-Lesson curriculum metadata for pure Node.js:
+ * 6 Stages, 20 Lessons, Capstone Project & Pedagogical Progression.
+ *
  * Strict Topic Boundary: Pure Node.js runtime only.
  * Teaches runtime architecture, V8 + libuv, Event Loop, non-blocking I/O,
- * CommonJS & ESM, core modules (fs, path, os, process), EventEmitter, Buffers,
- * Streams, native HTTP server, async I/O, error handling, debugging & testing.
+ * CommonJS & ESM, core modules (fs, path, process), EventEmitter, Buffers,
+ * Streams, native HTTP server, fetch, validation, debugging & testing.
+ *
+ * Full backward-compatibility with all legacy lesson slugs and aliases.
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
@@ -22,6 +24,7 @@ export interface LessonMeta {
   desc: string;
   path: string;
   tag: "CORE" | "RUNTIME" | "STREAMS" | "HTTP" | "PATTERNS" | "CAPSTONE";
+  difficulty?: "Easy" | "Moderate" | "Difficult" | string;
   estimatedMinutes: number;
   prerequisite?: string;
 }
@@ -99,9 +102,9 @@ export const NODEJS_PREREQUISITES: PrerequisiteTopicMeta[] = [
     title: "JavaScript Fundamentals",
     desc: "Functions, arrow syntax, objects, arrays, Promises, async/await, closures, and ES modules.",
     tag: "Required Foundation",
-    badge: "Core JS",
+    badge: "JS",
     path: "/learn/javascript",
-    level: "Intermediate",
+    level: "Beginner",
   },
 ];
 
@@ -109,44 +112,44 @@ export const NODEJS_RELATED_TOPICS: RelatedTopicMeta[] = [
   {
     id: "rel-express",
     title: "Express.js",
-    desc: "Lightweight web layer, middleware pipeline, and production REST API development on Node.js.",
-    badge: "Web Layer",
+    desc: "Minimal and flexible web application framework built on top of Node.js.",
+    badge: "Web Framework",
     path: "/learn/express",
   },
   {
     id: "rel-nestjs",
     title: "NestJS",
-    desc: "Enterprise backend architecture, microservices, and dependency injection on Node.js.",
-    badge: "Framework",
+    desc: "Enterprise architecture framework with dependency injection and TypeScript.",
+    badge: "Enterprise",
     path: "/learn/nestjs",
   },
   {
-    id: "rel-ts",
-    title: "TypeScript",
-    desc: "Add strict static typing, interfaces, and compile-time guarantees to Node.js backends.",
-    badge: "Language",
-    path: "/learn/typescript",
+    id: "rel-postgresql",
+    title: "PostgreSQL",
+    desc: "Relational database querying, joins, constraints, and ACID transactions.",
+    badge: "Database",
+    path: "/learn/postgresql",
   },
 ];
 
 // ─────────────────────────────────────────────────────────────
-// Final Capstone Project (Pure Node.js Core Server)
+// Final Capstone Project
 // ─────────────────────────────────────────────────────────────
 
 export const NODEJS_CAPSTONE: CapstoneProjectMeta = {
-  id: "capstone-task-server",
-  stageNumber: 8,
-  slug: "file-and-task-server",
+  id: "nodejs-capstone-task-server",
+  stageNumber: 6,
+  slug: "task-server",
   title: "File & Task Management Server",
-  subtitle: "Final Node.js Capstone Project",
-  desc: "Architect a complete, production-grade backend server strictly using Node.js core modules: HTTP request routing, streaming file storage, EventEmitter audit logging, and graceful process signals.",
+  subtitle: "Pure Node.js Core Capstone Project",
+  desc: "Architect a production-grade backend server strictly using Node.js core modules—native HTTP routing, streaming file storage, EventEmitter audit logging, and graceful process signals.",
   path: "/learn/nodejs/projects/task-server",
-  badge: "🟢 Capstone",
-  xpReward: 300,
+  badge: "🛠️ Final Capstone",
+  xpReward: 200,
   estimatedMinutes: 60,
-  prerequisites: ["NODE-07", "NODE-09", "NODE-11", "NODE-14", "NODE-18"],
+  prerequisites: ["NODE-01", "NODE-04", "NODE-06", "NODE-12", "NODE-13", "NODE-14", "NODE-17", "NODE-19", "NODE-20"],
   skillsTaught: [
-    "Native HTTP request parsing and URL routing without external frameworks",
+    "Native HTTP request routing and JSON response streaming without third-party frameworks",
     "Streaming file uploads and downloads with backpressure and memory efficiency",
     "Custom EventEmitter pub/sub for audit logs and lifecycle notifications",
     "Environment configuration and robust async error handling",
@@ -157,17 +160,17 @@ export const NODEJS_CAPSTONE: CapstoneProjectMeta = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// Stages & All 24 Node.js Lessons
+// Stages & All 20 Node.js Lessons
 // ─────────────────────────────────────────────────────────────
 
 export const NODEJS_STAGES: StageMeta[] = [
   {
     id: "stage-1",
     stageNumber: 1,
-    name: "Node.js Fundamentals & Runtime Model",
-    subtitle: "V8 Engine, Globals & The Event Loop",
-    milestone: "Understand what Node.js is, how it executes outside the browser, and the non-blocking event-driven model.",
-    description: "Learn why Node.js was created, the V8 execution engine, globals like process, and how the call stack and event loop coordinate async I/O.",
+    name: "Understand Node.js and Start a Project",
+    subtitle: "Runtime Fundamentals, npm & Modules",
+    milestone: "Understand what Node.js is, initialize projects with npm, and import/export code between files.",
+    description: "Learn how Node.js runs JavaScript outside the browser, initialize package.json, install packages, and structure modular files.",
     theme: {
       badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
       dot: "bg-purple-400",
@@ -180,44 +183,59 @@ export const NODEJS_STAGES: StageMeta[] = [
         code: "NODE-01",
         stepNumber: 1,
         slug: "node01-what-is-nodejs",
-        name: "What Is Node.js? The JavaScript Server Runtime & V8 Engine",
-        desc: "Why Node.js exists, running JavaScript outside the browser, the V8 engine, and libuv.",
+        name: "What Is Node.js?",
+        desc: "Learn why Node.js exists, how it executes JavaScript outside browsers, and where it is useful.",
         path: "/learn/nodejs/node01-what-is-nodejs",
         tag: "CORE",
+        difficulty: "Easy",
         estimatedMinutes: 15,
         prerequisite: "None",
       },
       {
         code: "NODE-02",
         stepNumber: 2,
-        slug: "node02-nodejs-vs-browser",
-        name: "Node.js vs Browser: Globals, process & The Runtime Environment",
-        desc: "Key differences from browser JS: no window/document, globalThis, process, and operating system access.",
-        path: "/learn/nodejs/node02-nodejs-vs-browser",
+        slug: "node02-start-and-run-a-nodejs-project",
+        name: "Start and Run a Node.js Project",
+        desc: "Initialize a project folder with npm init, create entrypoint scripts, and configure ES modules.",
+        path: "/learn/nodejs/node02-start-and-run-a-nodejs-project",
         tag: "CORE",
-        estimatedMinutes: 20,
+        difficulty: "Easy",
+        estimatedMinutes: 15,
         prerequisite: "NODE-01",
       },
       {
         code: "NODE-03",
         stepNumber: 3,
-        slug: "node03-event-loop-and-async-io",
-        name: "The Event Loop & Non-Blocking I/O: Call Stack, Libuv & Queues",
-        desc: "How Node.js executes code: Call Stack, Libuv Thread Pool, Event Loop phases, and Microtask queues.",
-        path: "/learn/nodejs/node03-event-loop-and-async-io",
-        tag: "RUNTIME",
-        estimatedMinutes: 25,
+        slug: "node03-what-are-npm-and-packages",
+        name: "What Are npm and Packages?",
+        desc: "Install reusable code packages, manage dependencies, and understand package-lock.json.",
+        path: "/learn/nodejs/node03-what-are-npm-and-packages",
+        tag: "CORE",
+        difficulty: "Easy",
+        estimatedMinutes: 15,
         prerequisite: "NODE-02",
+      },
+      {
+        code: "NODE-04",
+        stepNumber: 4,
+        slug: "node04-import-and-export-code",
+        name: "Import and Export Code Between Files",
+        desc: "Split code into maintainable modules using modern ES module export and import syntax.",
+        path: "/learn/nodejs/node04-import-and-export-code",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 20,
+        prerequisite: "NODE-03",
       },
     ],
   },
   {
     id: "stage-2",
     stageNumber: 2,
-    name: "Modules & Package Management",
-    subtitle: "CommonJS, ES Modules & npm",
-    milestone: "Master code organization across files using require/import and manage external dependencies with npm.",
-    description: "Learn CommonJS vs ES Modules, module caching, package.json scripts, SemVer versioning, and package-lock.json.",
+    name: "Work with Files and Settings",
+    subtitle: "Environment Variables, Filesystem & Path Resolution",
+    milestone: "Read environment variables safely, manipulate files with promises, and handle cross-platform file paths.",
+    description: "Learn safe environment variable access, file reading/writing with node:fs/promises, and OS-safe path resolution.",
     theme: {
       badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
       dot: "bg-purple-400",
@@ -227,36 +245,50 @@ export const NODEJS_STAGES: StageMeta[] = [
     },
     lessons: [
       {
-        code: "NODE-04",
-        stepNumber: 4,
-        slug: "node04-commonjs-vs-esm",
-        name: "CommonJS vs ES Modules: require vs import & Module Boundaries",
-        desc: "require and module.exports vs import and export, module caching, and setting 'type': 'module'.",
-        path: "/learn/nodejs/node04-commonjs-vs-esm",
-        tag: "CORE",
-        estimatedMinutes: 20,
-        prerequisite: "NODE-03",
-      },
-      {
         code: "NODE-05",
         stepNumber: 5,
-        slug: "node05-npm-and-package-json",
-        name: "npm, package.json & Dependencies: Scripts, SemVer & Lockfiles",
-        desc: "Managing dependencies, devDependencies, package scripts, semantic versioning (^ vs ~), and lockfiles.",
-        path: "/learn/nodejs/node05-npm-and-package-json",
+        slug: "node05-read-environment-variables-safely",
+        name: "Read Environment Variables Safely",
+        desc: "Configure runtime settings with process.env, convert types, and keep secrets out of source code.",
+        path: "/learn/nodejs/node05-read-environment-variables-safely",
         tag: "CORE",
+        difficulty: "Moderate",
         estimatedMinutes: 20,
         prerequisite: "NODE-04",
+      },
+      {
+        code: "NODE-06",
+        stepNumber: 6,
+        slug: "node06-read-and-write-files",
+        name: "Read and Write Files",
+        desc: "Read and write disk files asynchronously with node:fs/promises, utf8 encodings, and top-level await.",
+        path: "/learn/nodejs/node06-read-and-write-files",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 25,
+        prerequisite: "NODE-05",
+      },
+      {
+        code: "NODE-07",
+        stepNumber: 7,
+        slug: "node07-why-the-path-module-matters",
+        name: "Why the path Module Matters",
+        desc: "Construct cross-platform file paths across Windows and POSIX systems with path.join().",
+        path: "/learn/nodejs/node07-why-the-path-module-matters",
+        tag: "CORE",
+        difficulty: "Easy",
+        estimatedMinutes: 15,
+        prerequisite: "NODE-06",
       },
     ],
   },
   {
     id: "stage-3",
     stageNumber: 3,
-    name: "Core APIs: File System & Paths",
-    subtitle: "path, fs & Modern fs/promises",
-    milestone: "Read, write, and manipulate files and directories safely across different operating systems.",
-    description: "Learn path.join and path.resolve, sync vs async file operations, directory traversal, and modern fs/promises with async/await.",
+    name: "Understand Asynchronous JavaScript in Node.js",
+    subtitle: "Non-Blocking I/O, async/await, Event Loop & Errors",
+    milestone: "Master the non-blocking execution model, async/await control flow, event loop mechanics, and error handling.",
+    description: "Learn how Node.js manages concurrency, event loop phases, microtasks vs timers, and try/catch error traps.",
     theme: {
       badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
       dot: "bg-purple-400",
@@ -266,47 +298,62 @@ export const NODEJS_STAGES: StageMeta[] = [
     },
     lessons: [
       {
-        code: "NODE-06",
-        stepNumber: 6,
-        slug: "node06-path-module-and-filenames",
-        name: "The Path Module: path.join, resolve & Cross-Platform Paths",
-        desc: "Handle file paths safely across Windows and POSIX using path.join, path.resolve, and __dirname.",
-        path: "/learn/nodejs/node06-path-module-and-filenames",
-        tag: "CORE",
-        estimatedMinutes: 20,
-        prerequisite: "NODE-05",
-      },
-      {
-        code: "NODE-07",
-        stepNumber: 7,
-        slug: "node07-fs-module-reading-writing",
-        name: "The File System (fs): Async Reading, Writing & Directories",
-        desc: "Read files, write outputs, append logs, create directories, and inspect file stats with fs.",
-        path: "/learn/nodejs/node07-fs-module-reading-writing",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "NODE-06",
-      },
-      {
         code: "NODE-08",
         stepNumber: 8,
-        slug: "node08-fs-promises-safe-operations",
-        name: "fs/promises & Safe File Operations: Modern async/await I/O",
-        desc: "Use fs/promises for clean async/await file manipulation with robust error handling.",
-        path: "/learn/nodejs/node08-fs-promises-safe-operations",
-        tag: "CORE",
+        slug: "node08-synchronous-vs-asynchronous-work",
+        name: "Synchronous vs. Asynchronous Work",
+        desc: "Understand non-blocking execution and why synchronous file calls stall concurrent request traffic.",
+        path: "/learn/nodejs/node08-synchronous-vs-asynchronous-work",
+        tag: "RUNTIME",
+        difficulty: "Moderate",
         estimatedMinutes: 20,
         prerequisite: "NODE-07",
+      },
+      {
+        code: "NODE-09",
+        stepNumber: 9,
+        slug: "node09-use-async-and-await",
+        name: "Use async and await",
+        desc: "Write clean, sequential-looking asynchronous logic with Promises, async functions, and await.",
+        path: "/learn/nodejs/node09-use-async-and-await",
+        tag: "RUNTIME",
+        difficulty: "Moderate",
+        estimatedMinutes: 20,
+        prerequisite: "NODE-08",
+      },
+      {
+        code: "NODE-10",
+        stepNumber: 10,
+        slug: "node10-understand-the-event-loop",
+        name: "Understand the Event Loop",
+        desc: "Learn how the event loop coordinates timers, callbacks, and call stacks without blocking.",
+        path: "/learn/nodejs/node10-understand-the-event-loop",
+        tag: "RUNTIME",
+        difficulty: "Difficult",
+        estimatedMinutes: 30,
+        prerequisite: "NODE-09",
+      },
+      {
+        code: "NODE-11",
+        stepNumber: 11,
+        slug: "node11-handle-errors-with-try-catch",
+        name: "Handle Errors with try...catch",
+        desc: "Trap exceptions and Promise rejections cleanly without crashing the Node.js server.",
+        path: "/learn/nodejs/node11-handle-errors-with-try-catch",
+        tag: "PATTERNS",
+        difficulty: "Moderate",
+        estimatedMinutes: 20,
+        prerequisite: "NODE-10",
       },
     ],
   },
   {
     id: "stage-4",
     stageNumber: 4,
-    name: "Events, Buffers & Binary Data",
-    subtitle: "EventEmitter & Raw Memory Management",
-    milestone: "Harness event-driven pub/sub architecture and handle binary chunks and raw byte buffers.",
-    description: "Learn the EventEmitter class, event listening/emitting, Buffer allocation, encodings (utf-8, hex, base64), and binary safety.",
+    name: "Handle Events and Data",
+    subtitle: "EventEmitter, Buffers & Streaming I/O",
+    milestone: "Harness publisher/subscriber event architecture and stream large files with minimal RAM consumption.",
+    description: "Learn EventEmitter pub/sub, binary Buffers, Readable and Writable streams, and pipeline backpressure.",
     theme: {
       badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
       dot: "bg-purple-400",
@@ -316,36 +363,38 @@ export const NODEJS_STAGES: StageMeta[] = [
     },
     lessons: [
       {
-        code: "NODE-09",
-        stepNumber: 9,
-        slug: "node09-event-emitter-pattern",
-        name: "The EventEmitter: Custom Events, Listeners & Observers",
-        desc: "Create pub/sub event systems with EventEmitter, register on/once listeners, and prevent memory leaks.",
-        path: "/learn/nodejs/node09-event-emitter-pattern",
+        code: "NODE-12",
+        stepNumber: 12,
+        slug: "node12-events-and-eventemitter",
+        name: "Events and EventEmitter",
+        desc: "Decouple application modules using Node.js EventEmitter pub/sub listeners and custom events.",
+        path: "/learn/nodejs/node12-events-and-eventemitter",
         tag: "CORE",
+        difficulty: "Moderate",
         estimatedMinutes: 25,
-        prerequisite: "NODE-08",
+        prerequisite: "NODE-11",
       },
       {
-        code: "NODE-10",
-        stepNumber: 10,
-        slug: "node10-buffers-and-binary-data",
-        name: "Buffers & Binary Data: Raw Memory, Hex & Encodings",
-        desc: "Allocate fixed-size raw memory chunks, convert encodings (utf8, hex, base64), and manipulate bytes.",
-        path: "/learn/nodejs/node10-buffers-and-binary-data",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "NODE-09",
+        code: "NODE-13",
+        stepNumber: 13,
+        slug: "node13-buffers-and-streams",
+        name: "Buffers and Streams",
+        desc: "Store binary bytes in Buffers and stream multi-gigabyte files piece-by-piece with stream.pipeline.",
+        path: "/learn/nodejs/node13-buffers-and-streams",
+        tag: "STREAMS",
+        difficulty: "Difficult",
+        estimatedMinutes: 30,
+        prerequisite: "NODE-12",
       },
     ],
   },
   {
     id: "stage-5",
     stageNumber: 5,
-    name: "Streams & High-Performance I/O",
-    subtitle: "Readable, Writable, Pipes & Backpressure",
-    milestone: "Stream gigabytes of data chunk-by-chunk with minimal memory consumption and backpressure handling.",
-    description: "Learn Readable and Writable streams, stream piping with pipeline(), Transform streams for compression, and managing backpressure.",
+    name: "Build Basic Server Features",
+    subtitle: "Native HTTP Server & Outgoing API Requests",
+    milestone: "Build an HTTP web server from scratch with node:http and call third-party APIs using native fetch.",
+    description: "Learn http.createServer, status codes, headers, response streaming, and native fetch API requests.",
     theme: {
       badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
       dot: "bg-purple-400",
@@ -354,148 +403,39 @@ export const NODEJS_STAGES: StageMeta[] = [
       textAccent: "text-purple-400",
     },
     lessons: [
-      {
-        code: "NODE-11",
-        stepNumber: 11,
-        slug: "node11-streams-readable-writable",
-        name: "Streams Fundamentals: Readable, Writable & Memory Efficiency",
-        desc: "Process large files chunk by chunk without blowing memory: createReadStream and createWriteStream.",
-        path: "/learn/nodejs/node11-streams-readable-writable",
-        tag: "STREAMS",
-        estimatedMinutes: 25,
-        prerequisite: "NODE-10",
-      },
-      {
-        code: "NODE-12",
-        stepNumber: 12,
-        slug: "node12-piping-and-backpressure",
-        name: "Piping Streams & Backpressure: pipeline() & Transform Streams",
-        desc: "Connect data pipes safely with stream.pipeline(), handle backpressure, and transform chunks on the fly.",
-        path: "/learn/nodejs/node12-piping-and-backpressure",
-        tag: "STREAMS",
-        estimatedMinutes: 25,
-        prerequisite: "NODE-11",
-      },
-    ],
-  },
-  {
-    id: "stage-6",
-    stageNumber: 6,
-    name: "HTTP with Node.js Core",
-    subtitle: "http Server, Routing & Request Bodies",
-    milestone: "Build a raw HTTP web server from scratch without external frameworks to understand how web backends work.",
-    description: "Learn http.createServer, parsing method and url, status codes, headers, streaming request JSON payloads, and basic router logic.",
-    theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
-    },
-    lessons: [
-      {
-        code: "NODE-13",
-        stepNumber: 13,
-        slug: "node13-http-module-server-basics",
-        name: "The http Module: Creating a Server & The Request/Response Cycle",
-        desc: "Create an HTTP server with http.createServer, inspect incoming requests, and send responses.",
-        path: "/learn/nodejs/node13-http-module-server-basics",
-        tag: "HTTP",
-        estimatedMinutes: 25,
-        prerequisite: "NODE-12",
-      },
       {
         code: "NODE-14",
         stepNumber: 14,
-        slug: "node14-http-routing-and-json",
-        name: "Routing & Headers: Methods, URLs & Sending JSON Responses",
-        desc: "Route GET/POST/DELETE requests manually, set Content-Type headers, and serialize JSON responses.",
-        path: "/learn/nodejs/node14-http-routing-and-json",
+        slug: "node14-understand-http-requests-and-responses",
+        name: "Understand HTTP Requests and Responses",
+        desc: "Create an HTTP server with http.createServer, route URLs, set status codes, and send responses.",
+        path: "/learn/nodejs/node14-understand-http-requests-and-responses",
         tag: "HTTP",
+        difficulty: "Moderate",
         estimatedMinutes: 25,
         prerequisite: "NODE-13",
       },
       {
         code: "NODE-15",
         stepNumber: 15,
-        slug: "node15-parsing-http-request-bodies",
-        name: "Parsing Request Bodies: Streaming Payloads & Content-Types",
-        desc: "Collect streaming request chunks (req.on('data')), concatenate buffers, and safely parse JSON payloads.",
-        path: "/learn/nodejs/node15-parsing-http-request-bodies",
+        slug: "node15-make-an-http-request-with-fetch",
+        name: "Make an HTTP Request with fetch",
+        desc: "Request data from external APIs using Node's native fetch and handle HTTP status codes properly.",
+        path: "/learn/nodejs/node15-make-an-http-request-with-fetch",
         tag: "HTTP",
+        difficulty: "Moderate",
         estimatedMinutes: 25,
         prerequisite: "NODE-14",
       },
     ],
   },
   {
-    id: "stage-7",
-    stageNumber: 7,
-    name: "Architecture, Error Handling & Process Management",
-    subtitle: "process.env, Error Traps & Graceful Shutdown",
-    milestone: "Architect resilient Node.js applications with environment configs, error hierarchies, and signal handling.",
-    description: "Learn process.env, unhandledRejection, uncaughtException, SIGTERM/SIGINT listeners, graceful cleanup, and modular layered design.",
-    theme: {
-      badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-      dot: "bg-purple-400",
-      border: "border-purple-500/30",
-      bgSubtle: "bg-purple-500/[0.03]",
-      textAccent: "text-purple-400",
-    },
-    lessons: [
-      {
-        code: "NODE-16",
-        stepNumber: 16,
-        slug: "node16-process-env-and-configuration",
-        name: "Process Object, Environment Variables & Configuration",
-        desc: "Load and validate environment variables with process.env, manage configuration files, and avoid hardcoding secrets.",
-        path: "/learn/nodejs/node16-process-env-and-configuration",
-        tag: "PATTERNS",
-        estimatedMinutes: 20,
-        prerequisite: "NODE-15",
-      },
-      {
-        code: "NODE-17",
-        stepNumber: 17,
-        slug: "node17-error-handling-and-exit-codes",
-        name: "Error Handling: try/catch, unhandledRejection & Exit Codes",
-        desc: "Catch sync and async errors, handle unhandledRejection/uncaughtException, and exit cleanly with process.exit().",
-        path: "/learn/nodejs/node17-error-handling-and-exit-codes",
-        tag: "PATTERNS",
-        estimatedMinutes: 25,
-        prerequisite: "NODE-16",
-      },
-      {
-        code: "NODE-18",
-        stepNumber: 18,
-        slug: "node18-graceful-shutdown-signals",
-        name: "Graceful Shutdown: Handling SIGTERM, SIGINT & Connection Teardown",
-        desc: "Intercept termination signals (SIGTERM/SIGINT), close active HTTP connections, and exit cleanly.",
-        path: "/learn/nodejs/node18-graceful-shutdown-signals",
-        tag: "PATTERNS",
-        estimatedMinutes: 20,
-        prerequisite: "NODE-17",
-      },
-      {
-        code: "NODE-19",
-        stepNumber: 19,
-        slug: "node19-application-architecture-clean-design",
-        name: "Node.js Application Architecture: Modular Organization Without Frameworks",
-        desc: "Organize clean directories (controllers, services, repositories, utils) and maintain clear boundaries.",
-        path: "/learn/nodejs/node19-application-architecture-clean-design",
-        tag: "PATTERNS",
-        estimatedMinutes: 25,
-        prerequisite: "NODE-18",
-      },
-    ],
-  },
-  {
-    id: "stage-8",
-    stageNumber: 8,
-    name: "Debugging, Testing & Capstone",
-    subtitle: "node:test Runner, Debugging & Capstone Project",
-    milestone: "Debug server crashes with Node Inspector, write automated tests with node:test, and build the final Capstone.",
-    description: "Learn Node Inspector debugging, the built-in node:test test runner, core interview questions, and build the File & Task Management Server.",
+    id: "stage-6",
+    stageNumber: 6,
+    name: "Protect and Maintain the Application",
+    subtitle: "Validation, Exit Codes, Debugging, Testing & Performance",
+    milestone: "Validate untrusted inputs, manage process exits, debug with inspector, write automated tests, and keep servers responsive.",
+    description: "Learn input validation, process.exitCode, node --inspect debugging, the built-in node:test runner, and capping CPU load.",
     theme: {
       badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
       dot: "bg-purple-400",
@@ -506,59 +446,64 @@ export const NODEJS_STAGES: StageMeta[] = [
     capstone: NODEJS_CAPSTONE,
     lessons: [
       {
+        code: "NODE-16",
+        stepNumber: 16,
+        slug: "node16-validate-input-and-avoid-trusting-users",
+        name: "Validate Input and Avoid Trusting Users",
+        desc: "Sanitize request data, prevent mass-assignment vulnerabilities, and enforce server-side validation.",
+        path: "/learn/nodejs/node16-validate-input-and-avoid-trusting-users",
+        tag: "PATTERNS",
+        difficulty: "Moderate",
+        estimatedMinutes: 25,
+        prerequisite: "NODE-15",
+      },
+      {
+        code: "NODE-17",
+        stepNumber: 17,
+        slug: "node17-use-process-and-exit-codes",
+        name: "Use process and Exit Codes",
+        desc: "Communicate task success or failure to the shell using process.exitCode without premature aborts.",
+        path: "/learn/nodejs/node17-use-process-and-exit-codes",
+        tag: "CORE",
+        difficulty: "Easy",
+        estimatedMinutes: 15,
+        prerequisite: "NODE-16",
+      },
+      {
+        code: "NODE-18",
+        stepNumber: 18,
+        slug: "node18-debug-nodejs-code",
+        name: "Debug Node.js Code",
+        desc: "Diagnose logic errors with node --inspect, connect DevTools, and verify fixes systematically.",
+        path: "/learn/nodejs/node18-debug-nodejs-code",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 20,
+        prerequisite: "NODE-17",
+      },
+      {
+        code: "NODE-19",
+        stepNumber: 19,
+        slug: "node19-write-basic-tests",
+        name: "Write Basic Tests",
+        desc: "Write unit tests using Node's built-in node:test runner and node:assert/strict assertions.",
+        path: "/learn/nodejs/node19-write-basic-tests",
+        tag: "CORE",
+        difficulty: "Moderate",
+        estimatedMinutes: 25,
+        prerequisite: "NODE-18",
+      },
+      {
         code: "NODE-20",
         stepNumber: 20,
-        slug: "node20-debugging-node-inspector",
-        name: "Debugging Node.js: Stack Traces, Inspector & Profiling",
-        desc: "Diagnose bugs with node --inspect, connect Chrome DevTools, set breakpoints, and read complex stack traces.",
-        path: "/learn/nodejs/node20-debugging-node-inspector",
-        tag: "CORE",
-        estimatedMinutes: 20,
-        prerequisite: "NODE-19",
-      },
-      {
-        code: "NODE-21",
-        stepNumber: 21,
-        slug: "node21-testing-with-node-test-runner",
-        name: "Testing with Node.js Built-in Test Runner & Assertions (node:test)",
-        desc: "Write unit and integration tests with node:test and node:assert without third-party test libraries.",
-        path: "/learn/nodejs/node21-testing-with-node-test-runner",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "NODE-20",
-      },
-      {
-        code: "NODE-22",
-        stepNumber: 22,
-        slug: "node22-best-practices-and-anti-patterns",
-        name: "Node.js Best Practices & Common Anti-Patterns",
-        desc: "Avoid blocking the event loop with synchronous calls, prevent unhandled promise rejections, and secure configurations.",
-        path: "/learn/nodejs/node22-best-practices-and-anti-patterns",
+        slug: "node20-keep-a-nodejs-application-responsive",
+        name: "Keep a Node.js Application Responsive",
+        desc: "Avoid blocking the single JavaScript thread with synchronous loops and offload heavy CPU tasks.",
+        path: "/learn/nodejs/node20-keep-a-nodejs-application-responsive",
         tag: "PATTERNS",
+        difficulty: "Moderate",
         estimatedMinutes: 25,
-        prerequisite: "NODE-21",
-      },
-      {
-        code: "NODE-23",
-        stepNumber: 23,
-        slug: "node23-core-interview-concepts",
-        name: "Node.js Core Interview Concepts & Behavioral Scenarios",
-        desc: "Master classic Node.js interview questions: Event Loop phases, process.nextTick vs setImmediate, and stream backpressure.",
-        path: "/learn/nodejs/node23-core-interview-concepts",
-        tag: "CORE",
-        estimatedMinutes: 25,
-        prerequisite: "NODE-22",
-      },
-      {
-        code: "NODE-24",
-        stepNumber: 24,
-        slug: "node24-nodejs-capstone-project",
-        name: "Node.js Capstone: File & Task Management Server",
-        desc: "Build a complete, modular backend server from scratch using pure Node.js core modules.",
-        path: "/learn/nodejs/node24-nodejs-capstone-project",
-        tag: "CAPSTONE",
-        estimatedMinutes: 60,
-        prerequisite: "NODE-23",
+        prerequisite: "NODE-19",
       },
     ],
   },
@@ -566,86 +511,149 @@ export const NODEJS_STAGES: StageMeta[] = [
 
 export const NODEJS_PROGRESSION_PHASES: ProgressionPhaseMeta[] = [
   {
-    id: "fundamentals",
+    id: "understand-nodejs",
     phaseNumber: 1,
-    label: "Fundamentals & Runtime",
+    label: "Understand Node.js & Start a Project",
     tag: "Phase 01",
-    desc: "What is Node.js, V8 engine, runtime differences from browser & the Event Loop",
-    scope: "Runtime & Event Loop",
+    desc: "What is Node.js, running scripts, npm package management, and ES modules",
+    scope: "Runtime & Modules",
     icon: "layers",
-    lessonCodes: ["NODE-01", "NODE-02", "NODE-03"],
+    lessonCodes: ["NODE-01", "NODE-02", "NODE-03", "NODE-04"],
   },
   {
-    id: "modules-packages",
+    id: "files-settings",
     phaseNumber: 2,
-    label: "Modules & npm",
+    label: "Work with Files and Settings",
     tag: "Phase 02",
-    desc: "CommonJS vs ES Modules, module caching, package.json scripts & SemVer dependencies",
-    scope: "Modules & Packages",
+    desc: "Environment variables with process.env, async file I/O, and cross-platform path resolution",
+    scope: "Files & Settings",
     icon: "server",
-    lessonCodes: ["NODE-04", "NODE-05"],
+    lessonCodes: ["NODE-05", "NODE-06", "NODE-07"],
   },
   {
-    id: "core-fs-paths",
+    id: "async-javascript",
     phaseNumber: 3,
-    label: "File System & Paths",
+    label: "Asynchronous JavaScript & Event Loop",
     tag: "Phase 03",
-    desc: "Cross-platform path handling, fs reading/writing & modern fs/promises async I/O",
-    scope: "File System & Path",
+    desc: "Non-blocking execution model, async/await, event loop mechanics, and try/catch error traps",
+    scope: "Async & Event Loop",
     icon: "zap",
-    lessonCodes: ["NODE-06", "NODE-07", "NODE-08"],
+    lessonCodes: ["NODE-08", "NODE-09", "NODE-10", "NODE-11"],
   },
   {
-    id: "events-buffers",
+    id: "events-data",
     phaseNumber: 4,
-    label: "Events & Buffers",
+    label: "Handle Events and Data",
     tag: "Phase 04",
-    desc: "EventEmitter pub/sub pattern, raw memory Buffers & byte encodings",
-    scope: "Events & Binary Data",
+    desc: "EventEmitter pub/sub patterns, raw binary Buffers, and stream pipeline backpressure",
+    scope: "Events & Streaming",
     icon: "shield",
-    lessonCodes: ["NODE-09", "NODE-10"],
+    lessonCodes: ["NODE-12", "NODE-13"],
   },
   {
-    id: "streams-io",
+    id: "server-features",
     phaseNumber: 5,
-    label: "Streams & High-Perf I/O",
+    label: "Build Basic Server Features",
     tag: "Phase 05",
-    desc: "Readable, Writable, Transform streams, stream.pipeline() & backpressure management",
-    scope: "Streaming I/O",
-    icon: "zap",
-    lessonCodes: ["NODE-11", "NODE-12"],
-  },
-  {
-    id: "http-core",
-    phaseNumber: 6,
-    label: "HTTP with Node.js Core",
-    tag: "Phase 06",
-    desc: "http.createServer, manual URL routing, JSON responses & streaming request body parsing",
-    scope: "Native HTTP Server",
+    desc: "Native HTTP web server, request routing, status codes, and outgoing fetch calls",
+    scope: "Native HTTP & Fetch",
     icon: "server",
-    lessonCodes: ["NODE-13", "NODE-14", "NODE-15"],
+    lessonCodes: ["NODE-14", "NODE-15"],
   },
   {
-    id: "arch-error-shutdown",
-    phaseNumber: 7,
-    label: "Architecture & Process",
-    tag: "Phase 07",
-    desc: "Environment configuration, error hierarchies, SIGTERM graceful shutdown & modular architecture",
-    scope: "Process & Architecture",
-    icon: "shield",
-    lessonCodes: ["NODE-16", "NODE-17", "NODE-18", "NODE-19"],
-  },
-  {
-    id: "debugging-capstone",
-    phaseNumber: 8,
-    label: "Debugging, Testing & Capstone",
-    tag: "Phase 08",
-    desc: "Node Inspector debugging, node:test runner, interview scenarios & final Capstone Server",
-    scope: "Testing & Capstone",
+    id: "protect-maintain",
+    phaseNumber: 6,
+    label: "Protect and Maintain Application",
+    tag: "Phase 06",
+    desc: "Input validation, process exit codes, node --inspect debugging, node:test runner, and responsiveness",
+    scope: "Maintenance & Testing",
     icon: "layers",
-    lessonCodes: ["NODE-20", "NODE-21", "NODE-22", "NODE-23", "NODE-24"],
+    lessonCodes: ["NODE-16", "NODE-17", "NODE-18", "NODE-19", "NODE-20"],
   },
 ];
+
+// ─────────────────────────────────────────────────────────────
+// Legacy Slug & Code Mapping (Full Backward-Compatibility)
+// ─────────────────────────────────────────────────────────────
+
+export const NODEJS_LEGACY_SLUG_MAP: Record<string, string> = {
+  // Direct matches
+  "node01-what-is-nodejs": "node01-what-is-nodejs",
+  "node02-start-and-run-a-nodejs-project": "node02-start-and-run-a-nodejs-project",
+  "node03-what-are-npm-and-packages": "node03-what-are-npm-and-packages",
+  "node04-import-and-export-code": "node04-import-and-export-code",
+  "node05-read-environment-variables-safely": "node05-read-environment-variables-safely",
+  "node06-read-and-write-files": "node06-read-and-write-files",
+  "node07-why-the-path-module-matters": "node07-why-the-path-module-matters",
+  "node08-synchronous-vs-asynchronous-work": "node08-synchronous-vs-asynchronous-work",
+  "node09-use-async-and-await": "node09-use-async-and-await",
+  "node10-understand-the-event-loop": "node10-understand-the-event-loop",
+  "node11-handle-errors-with-try-catch": "node11-handle-errors-with-try-catch",
+  "node12-events-and-eventemitter": "node12-events-and-eventemitter",
+  "node13-buffers-and-streams": "node13-buffers-and-streams",
+  "node14-understand-http-requests-and-responses": "node14-understand-http-requests-and-responses",
+  "node15-make-an-http-request-with-fetch": "node15-make-an-http-request-with-fetch",
+  "node16-validate-input-and-avoid-trusting-users": "node16-validate-input-and-avoid-trusting-users",
+  "node17-use-process-and-exit-codes": "node17-use-process-and-exit-codes",
+  "node18-debug-nodejs-code": "node18-debug-nodejs-code",
+  "node19-write-basic-tests": "node19-write-basic-tests",
+  "node20-keep-a-nodejs-application-responsive": "node20-keep-a-nodejs-application-responsive",
+
+  // Short slug aliases
+  node01: "node01-what-is-nodejs",
+  node02: "node02-start-and-run-a-nodejs-project",
+  node03: "node03-what-are-npm-and-packages",
+  node04: "node04-import-and-export-code",
+  node05: "node05-read-environment-variables-safely",
+  node06: "node06-read-and-write-files",
+  node07: "node07-why-the-path-module-matters",
+  node08: "node08-synchronous-vs-asynchronous-work",
+  node09: "node09-use-async-and-await",
+  node10: "node10-understand-the-event-loop",
+  node11: "node11-handle-errors-with-try-catch",
+  node12: "node12-events-and-eventemitter",
+  node13: "node13-buffers-and-streams",
+  node14: "node14-understand-http-requests-and-responses",
+  node15: "node15-make-an-http-request-with-fetch",
+  node16: "node16-validate-input-and-avoid-trusting-users",
+  node17: "node17-use-process-and-exit-codes",
+  node18: "node18-debug-nodejs-code",
+  node19: "node19-write-basic-tests",
+  node20: "node20-keep-a-nodejs-application-responsive",
+
+  // Legacy aliases from previous 24-lesson structure
+  "node02-nodejs-vs-browser": "node02-start-and-run-a-nodejs-project",
+  "node03-event-loop-and-async-io": "node10-understand-the-event-loop",
+  "node04-commonjs-vs-esm": "node04-import-and-export-code",
+  "node05-npm-and-package-json": "node03-what-are-npm-and-packages",
+  "node06-path-module-and-filenames": "node07-why-the-path-module-matters",
+  "node07-fs-module-reading-writing": "node06-read-and-write-files",
+  "node08-fs-promises-safe-operations": "node06-read-and-write-files",
+  "node09-event-emitter-pattern": "node12-events-and-eventemitter",
+  "node10-buffers-and-binary-data": "node13-buffers-and-streams",
+  "node11-streams-readable-writable": "node13-buffers-and-streams",
+  "node12-piping-and-backpressure": "node13-buffers-and-streams",
+  "node13-http-module-server-basics": "node14-understand-http-requests-and-responses",
+  "node14-http-routing-and-json": "node14-understand-http-requests-and-responses",
+  "node15-parsing-http-request-bodies": "node14-understand-http-requests-and-responses",
+  "node16-process-env-and-configuration": "node05-read-environment-variables-safely",
+  "node17-error-handling-and-exit-codes": "node11-handle-errors-with-try-catch",
+  "node18-graceful-shutdown-signals": "node17-use-process-and-exit-codes",
+  "node19-application-architecture-clean-design": "node20-keep-a-nodejs-application-responsive",
+  "node20-debugging-node-inspector": "node18-debug-nodejs-code",
+  "node21-testing-with-node-test-runner": "node19-write-basic-tests",
+  "node22-best-practices-and-anti-patterns": "node20-keep-a-nodejs-application-responsive",
+  "node23-core-interview-concepts": "node20-keep-a-nodejs-application-responsive",
+  "node24-nodejs-capstone-project": "node20-keep-a-nodejs-application-responsive",
+
+  // Interview Question cross-reference aliases
+  "node02-event-loop-libuv": "node10-understand-the-event-loop",
+  "node03-modules-cjs-vs-esm": "node04-import-and-export-code",
+  "node04-event-emitter-pattern": "node12-events-and-eventemitter",
+  "node05-streams-and-buffers": "node13-buffers-and-streams",
+  "node06-native-http-server": "node14-understand-http-requests-and-responses",
+  "node08-worker-threads-and-cluster": "node20-keep-a-nodejs-application-responsive",
+};
 
 // ─────────────────────────────────────────────────────────────
 // Helper Functions
@@ -660,35 +668,42 @@ export function getStages(): StageMeta[] {
 }
 
 export function getLessonBySlug(slug: string): LessonMeta | undefined {
+  if (!slug) return undefined;
+  const raw = slug.toLowerCase().trim();
+  const resolvedSlug = NODEJS_LEGACY_SLUG_MAP[raw] || raw;
+
   return getAllLessons().find(
     (l) =>
-      l.slug === slug || l.path.endsWith(`/${slug}`) || l.path.includes(slug)
+      l.slug.toLowerCase() === resolvedSlug ||
+      l.slug.toLowerCase() === raw ||
+      l.code.toLowerCase() === raw ||
+      l.code.toLowerCase().replace("-", "") === raw ||
+      l.path.endsWith(`/${resolvedSlug}`) ||
+      l.path.endsWith(`/${raw}`)
   );
 }
 
 export function getLessonByCode(code: string): LessonMeta | undefined {
+  if (!code) return undefined;
+  const raw = code.toUpperCase().trim();
   return getAllLessons().find(
-    (l) => l.code.toUpperCase() === code.toUpperCase()
+    (l) => l.code.toUpperCase() === raw || l.code.replace("-", "").toUpperCase() === raw
   );
 }
 
 export function getStageByLessonSlug(slug: string): StageMeta | undefined {
+  const lesson = getLessonBySlug(slug);
+  if (!lesson) return undefined;
   return NODEJS_STAGES.find((stage) =>
-    stage.lessons.some(
-      (l) =>
-        l.slug === slug || l.path.endsWith(`/${slug}`) || l.path.includes(slug)
-    )
+    stage.lessons.some((l) => l.slug === lesson.slug)
   );
 }
 
 export function getNextLesson(currentSlug: string): LessonMeta | null {
   const all = getAllLessons();
-  const index = all.findIndex(
-    (l) =>
-      l.slug === currentSlug ||
-      l.path.endsWith(`/${currentSlug}`) ||
-      l.path.includes(currentSlug)
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const index = all.findIndex((l) => l.slug === current.slug);
   if (index >= 0 && index < all.length - 1) {
     return all[index + 1];
   }
@@ -697,12 +712,9 @@ export function getNextLesson(currentSlug: string): LessonMeta | null {
 
 export function getPrevLesson(currentSlug: string): LessonMeta | null {
   const all = getAllLessons();
-  const index = all.findIndex(
-    (l) =>
-      l.slug === currentSlug ||
-      l.path.endsWith(`/${currentSlug}`) ||
-      l.path.includes(currentSlug)
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const index = all.findIndex((l) => l.slug === current.slug);
   if (index > 0) {
     return all[index - 1];
   }
@@ -760,4 +772,3 @@ export function getNodejsCourse(): Course {
     })),
   };
 }
-
