@@ -1,15 +1,18 @@
 /**
  * MongoDB Curriculum Data Layer — LearnCraft
- * 10 Phases, 26 In-Depth Lessons, and 1 Comprehensive Capstone Project.
+ * 5 Parts/Phases, 20 Authoritative Lessons, and 1 Comprehensive Capstone Project.
+ * Mapped directly from the official curriculum specification.
  *
  * Strict Topic Boundary: Pure MongoDB database only.
  * Focuses on document data model, BSON types, CRUD operations, query operators,
  * array/nested manipulation, data modeling (embedding vs referencing),
- * schema validation, the aggregation pipeline, indexes, explain plans,
- * transactions, and query debugging.
+ * schema validation, indexes, explain plans, pagination, aggregation pipeline,
+ * $lookup joins, atomic updates, transactions, database security, backups,
+ * replication, and scaling.
  */
 
 import type { Course } from "@/components/curriculum/types";
+import { MONGODB_LEGACY_SLUG_MAP } from "../content";
 
 export interface LessonMeta {
   code: string;
@@ -54,101 +57,56 @@ export const MONGODB_PROGRESSION_PHASES: PhaseMeta[] = [
   {
     id: "fundamentals",
     phaseNumber: 1,
-    name: "MongoDB Fundamentals & Document Model",
-    label: "Phase 01: MongoDB Fundamentals & Document Model",
-    desc: "Understand why MongoDB exists, how the document model differs from rows/tables, BSON data types, mongosh, and Compass GUI.",
-    scope: "Document Model · Databases & Collections · BSON Types · Tools",
+    name: "Understand MongoDB",
+    label: "Phase 01: Understand MongoDB",
+    desc: "Understand document databases, why documents feel natural for applications, database hierarchy, BSON types, and navigating with mongosh.",
+    scope: "What Is MongoDB · Databases, Collections & BSON · Working with mongosh",
     lessonCodes: ["MDB-01", "MDB-02", "MDB-03"],
   },
   {
     id: "crud-operations",
     phaseNumber: 2,
-    name: "Core CRUD Operations",
-    label: "Phase 02: Core CRUD Operations",
-    desc: "Master creating, reading, updating, and deleting documents using insertOne, find, updateOne, and delete operations.",
-    scope: "insertOne / insertMany · find / findOne · updateOne · deleteOne",
-    lessonCodes: ["MDB-04", "MDB-05", "MDB-06", "MDB-07"],
+    name: "Create, Find, Change, and Delete Data",
+    label: "Phase 02: Create, Find, Change, and Delete Data",
+    desc: "Master creating, reading, updating, and deleting documents using insertOne, find, query operators, projections, update operators, and safe deletion.",
+    scope: "Insert Documents · Find Documents · Query Operators · Projections & Sorting · Update Documents · Delete Safely",
+    lessonCodes: ["MDB-04", "MDB-05", "MDB-06", "MDB-07", "MDB-08", "MDB-09"],
   },
   {
-    id: "query-operators",
+    id: "organize-data",
     phaseNumber: 3,
-    name: "Deep Querying & Filtering Operators",
-    label: "Phase 03: Deep Querying & Filtering Operators",
-    desc: "Filter documents with precision using comparison, logical, element, and regex operators alongside sorting and pagination.",
-    scope: "Comparison ($gt, $lte) · Logical ($and, $or) · $in · Pagination",
-    lessonCodes: ["MDB-08", "MDB-09", "MDB-10"],
+    name: "Organize Data the Right Way",
+    label: "Phase 03: Organize Data the Right Way",
+    desc: "Model data effectively using arrays, embedded documents with dot notation, embedding vs referencing trade-offs, and schema validation with $jsonSchema.",
+    scope: "Arrays & Embedded Docs · Embedding vs Referencing · Schema Validation",
+    lessonCodes: ["MDB-10", "MDB-11", "MDB-12"],
   },
   {
-    id: "arrays-nested",
+    id: "efficient-queries",
     phaseNumber: 4,
-    name: "Arrays & Nested Document Manipulation",
-    label: "Phase 04: Arrays & Nested Document Manipulation",
-    desc: "Query sub-documents with dot notation and manipulate array fields cleanly using $push, $pull, $addToSet, and positional operators.",
-    scope: "Dot Notation · Array Queries · $push & $pull · Positional $",
-    lessonCodes: ["MDB-11", "MDB-12"],
+    name: "Find and Work with Data Efficiently",
+    label: "Phase 04: Find and Work with Data Efficiently",
+    desc: "Accelerate query performance with indexes, inspect query plans using explain(), paginate large collections, and build multi-stage aggregation pipelines with $lookup.",
+    scope: "Indexes · explain() Profiling · Pagination · Aggregation Pipeline · $lookup Joins",
+    lessonCodes: ["MDB-13", "MDB-14", "MDB-15", "MDB-16", "MDB-17"],
   },
   {
-    id: "data-modeling",
+    id: "data-safety",
     phaseNumber: 5,
-    name: "Data Modeling & Schema Design",
-    label: "Phase 05: Data Modeling & Schema Design",
-    desc: "Model real-world relationships by understanding when to embed vs when to reference based on access patterns and document size limits.",
-    scope: "Embedding vs Referencing · 1-to-N Relationships · Unbounded Growth",
-    lessonCodes: ["MDB-13", "MDB-14", "MDB-15"],
-  },
-  {
-    id: "schema-validation",
-    phaseNumber: 6,
-    name: "Schema Validation & Data Integrity",
-    label: "Phase 06: Schema Validation & Data Integrity",
-    desc: "Harness flexible schemas safely by enforcing collection-level rules with $jsonSchema, required fields, and validation actions.",
-    scope: "$jsonSchema Validation · Required Keys · Validation Action",
-    lessonCodes: ["MDB-16", "MDB-17"],
-  },
-  {
-    id: "aggregation",
-    phaseNumber: 7,
-    name: "The Aggregation Pipeline",
-    label: "Phase 07: The Aggregation Pipeline",
-    desc: "Transform, group, unwind, and join collections using multi-stage aggregation pipelines for rich analytical queries.",
-    scope: "$match & $project · $group & Metrics · $unwind · $lookup Joins",
-    lessonCodes: ["MDB-18", "MDB-19", "MDB-20", "MDB-21"],
-  },
-  {
-    id: "indexes-performance",
-    phaseNumber: 8,
-    name: "Indexes & Query Performance",
-    label: "Phase 08: Indexes & Query Performance",
-    desc: "Accelerate reads and prevent full collection scans using single-field, compound, and unique indexes guided by the ESR rule.",
-    scope: "B-Tree Indexes · Compound Indexes · explain() · The ESR Rule",
-    lessonCodes: ["MDB-22", "MDB-23"],
-  },
-  {
-    id: "transactions",
-    phaseNumber: 9,
-    name: "Transactions & Consistency",
-    label: "Phase 09: Transactions & Consistency",
-    desc: "Understand single-document atomicity guarantees, multi-document ACID transactions with sessions, and consistency trade-offs.",
-    scope: "Document Atomicity · Client Sessions · Multi-Doc ACID Transactions",
-    lessonCodes: ["MDB-24"],
-  },
-  {
-    id: "debugging-mastery",
-    phaseNumber: 10,
-    name: "Performance, Debugging & Best Practices",
-    label: "Phase 10: Performance, Debugging & Best Practices",
-    desc: "Diagnose slow queries, avoid common antipatterns like massive arrays, and apply production security and sizing checklists.",
-    scope: "Slow Query Diagnosis · Anti-Patterns · Production Best Practices",
-    lessonCodes: ["MDB-25", "MDB-26"],
+    name: "Keep Data Correct and Safe",
+    label: "Phase 05: Keep Data Correct and Safe",
+    desc: "Safeguard production databases with single-document atomicity, multi-document transactions, security basics, environment variables, backups, replication, and sharding.",
+    scope: "Atomic Updates & Transactions · Security Basics · Backups, Replication & Scaling",
+    lessonCodes: ["MDB-18", "MDB-19", "MDB-20"],
   },
 ];
 
 export const MONGODB_LESSONS: LessonMeta[] = [
-  // Phase 1: Fundamentals & Document Model
+  // Phase 1: Understand MongoDB
   {
     code: "MDB-01",
     slug: "mdb01-what-is-mongodb",
-    name: "What Is MongoDB & Why Documents?",
+    name: "What Is MongoDB?",
     phaseId: "fundamentals",
     phaseNumber: 1,
     stepNumber: 1,
@@ -160,8 +118,8 @@ export const MONGODB_LESSONS: LessonMeta[] = [
   },
   {
     code: "MDB-02",
-    slug: "mdb02-databases-collections-bson",
-    name: "Databases, Collections & BSON Data Types",
+    slug: "mdb02-databases-collections-documents-and-bson",
+    name: "Databases, Collections, Documents, and BSON",
     phaseId: "fundamentals",
     phaseNumber: 1,
     stepNumber: 2,
@@ -169,13 +127,13 @@ export const MONGODB_LESSONS: LessonMeta[] = [
     estimatedMinutes: 20,
     xpReward: 60,
     prerequisite: "MDB-01",
-    path: "/learn/mongodb/mdb02-databases-collections-bson",
+    path: "/learn/mongodb/mdb02-databases-collections-documents-and-bson",
     color: "emerald",
   },
   {
     code: "MDB-03",
-    slug: "mdb03-mongosh-and-compass",
-    name: "Working with the Mongo Shell (mongosh) & Compass",
+    slug: "mdb03-working-with-mongodb-using-mongosh",
+    name: "Working with MongoDB Using mongosh",
     phaseId: "fundamentals",
     phaseNumber: 1,
     stepNumber: 3,
@@ -183,15 +141,15 @@ export const MONGODB_LESSONS: LessonMeta[] = [
     estimatedMinutes: 20,
     xpReward: 60,
     prerequisite: "MDB-02",
-    path: "/learn/mongodb/mdb03-mongosh-and-compass",
+    path: "/learn/mongodb/mdb03-working-with-mongodb-using-mongosh",
     color: "emerald",
   },
 
-  // Phase 2: Core CRUD Operations
+  // Phase 2: Create, Find, Change, and Delete Data
   {
     code: "MDB-04",
-    slug: "mdb04-create-insert",
-    name: "Inserting Documents (insertOne & insertMany)",
+    slug: "mdb04-insert-documents",
+    name: "Insert Documents",
     phaseId: "crud-operations",
     phaseNumber: 2,
     stepNumber: 4,
@@ -199,331 +157,237 @@ export const MONGODB_LESSONS: LessonMeta[] = [
     estimatedMinutes: 20,
     xpReward: 60,
     prerequisite: "MDB-03",
-    path: "/learn/mongodb/mdb04-create-insert",
+    path: "/learn/mongodb/mdb04-insert-documents",
     color: "emerald",
   },
   {
     code: "MDB-05",
-    slug: "mdb05-read-find-projections",
-    name: "Reading Documents (find, findOne & Projections)",
+    slug: "mdb05-find-documents",
+    name: "Find Documents",
     phaseId: "crud-operations",
     phaseNumber: 2,
     stepNumber: 5,
     desc: "Retrieve documents matching criteria and shape network payloads with projection to return only requested fields.",
-    estimatedMinutes: 25,
-    xpReward: 70,
+    estimatedMinutes: 20,
+    xpReward: 60,
     prerequisite: "MDB-04",
-    path: "/learn/mongodb/mdb05-read-find-projections",
+    path: "/learn/mongodb/mdb05-find-documents",
     color: "emerald",
   },
   {
     code: "MDB-06",
-    slug: "mdb06-update-operators",
-    name: "Updating Documents ($set, $inc, $unset & updateOne)",
+    slug: "mdb06-filter-documents-with-query-operators",
+    name: "Filter Documents with Query Operators",
     phaseId: "crud-operations",
     phaseNumber: 2,
     stepNumber: 6,
-    desc: "Perform atomic in-place updates using $set, modify counters with $inc, remove fields with $unset, and avoid full document replacement.",
+    desc: "Filter documents with precision using comparison, logical, element, and regex operators alongside sorting and pagination.",
     estimatedMinutes: 25,
     xpReward: 70,
     prerequisite: "MDB-05",
-    path: "/learn/mongodb/mdb06-update-operators",
+    path: "/learn/mongodb/mdb06-filter-documents-with-query-operators",
     color: "emerald",
   },
   {
     code: "MDB-07",
-    slug: "mdb07-delete-documents",
-    name: "Deleting Documents (deleteOne & deleteMany)",
+    slug: "mdb07-choose-fields-sort-results-and-limit-results",
+    name: "Choose Fields, Sort Results, and Limit Results",
     phaseId: "crud-operations",
     phaseNumber: 2,
     stepNumber: 7,
-    desc: "Remove specific documents or multiple records safely using query filters, inspect deletedCount, and implement soft delete flags.",
+    desc: "Shape query results with field projections (inclusion and exclusion), ascending and descending sorts, and result limits.",
     estimatedMinutes: 20,
     xpReward: 60,
     prerequisite: "MDB-06",
-    path: "/learn/mongodb/mdb07-delete-documents",
+    path: "/learn/mongodb/mdb07-choose-fields-sort-results-and-limit-results",
     color: "emerald",
   },
-
-  // Phase 3: Querying MongoDB
   {
     code: "MDB-08",
-    slug: "mdb08-comparison-logical-operators",
-    name: "Comparison ($gt, $lte, $in) & Logical ($and, $or) Operators",
-    phaseId: "query-operators",
-    phaseNumber: 3,
+    slug: "mdb08-update-documents",
+    name: "Update Documents",
+    phaseId: "crud-operations",
+    phaseNumber: 2,
     stepNumber: 8,
-    desc: "Build expressive query filters matching ranges, lists of allowable values with $in, and composite boolean logic with $and and $or.",
+    desc: "Perform atomic in-place updates using $set, modify counters with $inc, remove fields with $unset, and avoid full document replacement.",
     estimatedMinutes: 25,
     xpReward: 70,
     prerequisite: "MDB-07",
-    path: "/learn/mongodb/mdb08-comparison-logical-operators",
+    path: "/learn/mongodb/mdb08-update-documents",
     color: "emerald",
   },
   {
     code: "MDB-09",
-    slug: "mdb09-element-evaluation-operators",
-    name: "Element & Evaluation Operators ($exists, $type, $regex)",
-    phaseId: "query-operators",
-    phaseNumber: 3,
+    slug: "mdb09-delete-documents-safely",
+    name: "Delete Documents Safely",
+    phaseId: "crud-operations",
+    phaseNumber: 2,
     stepNumber: 9,
-    desc: "Check for optional field presence with $exists, verify BSON types with $type, and perform case-insensitive text matching with $regex.",
+    desc: "Remove specific documents or multiple records safely using query filters, inspect deletedCount, and implement soft delete flags.",
     estimatedMinutes: 20,
     xpReward: 60,
     prerequisite: "MDB-08",
-    path: "/learn/mongodb/mdb09-element-evaluation-operators",
-    color: "emerald",
-  },
-  {
-    code: "MDB-10",
-    slug: "mdb10-sort-limit-pagination",
-    name: "Cursor Methods: Sorting, Limiting & Pagination",
-    phaseId: "query-operators",
-    phaseNumber: 3,
-    stepNumber: 10,
-    desc: "Order query results with sort(), restrict batch sizes with limit(), and contrast skip() offset pagination with fast range-based cursor pagination.",
-    estimatedMinutes: 25,
-    xpReward: 70,
-    prerequisite: "MDB-09",
-    path: "/learn/mongodb/mdb10-sort-limit-pagination",
+    path: "/learn/mongodb/mdb09-delete-documents-safely",
     color: "emerald",
   },
 
-  // Phase 4: Arrays & Embedded Documents
+  // Phase 3: Organize Data the Right Way
   {
-    code: "MDB-11",
-    slug: "mdb11-querying-arrays-nested",
-    name: "Querying Arrays & Nested Objects with Dot Notation",
-    phaseId: "arrays-nested",
-    phaseNumber: 4,
-    stepNumber: 11,
-    desc: "Inspect nested document keys using dot notation and query arrays containing primitives or objects using $elemMatch.",
+    code: "MDB-10",
+    slug: "mdb10-arrays-and-embedded-documents",
+    name: "Arrays and Embedded Documents",
+    phaseId: "organize-data",
+    phaseNumber: 3,
+    stepNumber: 10,
+    desc: "Query sub-documents with dot notation and manipulate array fields cleanly using $push, $pull, $addToSet, and positional operators.",
     estimatedMinutes: 25,
     xpReward: 70,
+    prerequisite: "MDB-09",
+    path: "/learn/mongodb/mdb10-arrays-and-embedded-documents",
+    color: "emerald",
+  },
+  {
+    code: "MDB-11",
+    slug: "mdb11-embedding-vs-referencing-related-data",
+    name: "Embedding vs. Referencing Related Data",
+    phaseId: "organize-data",
+    phaseNumber: 3,
+    stepNumber: 11,
+    desc: "Model real-world relationships by understanding when to embed vs when to reference based on access patterns and document size limits.",
+    estimatedMinutes: 30,
+    xpReward: 80,
     prerequisite: "MDB-10",
-    path: "/learn/mongodb/mdb11-querying-arrays-nested",
+    path: "/learn/mongodb/mdb11-embedding-vs-referencing-related-data",
     color: "emerald",
   },
   {
     code: "MDB-12",
-    slug: "mdb12-updating-arrays-operators",
-    name: "Updating Arrays ($push, $pull, $addToSet & Positional $)",
-    phaseId: "arrays-nested",
-    phaseNumber: 4,
+    slug: "mdb12-schema-validation",
+    name: "Schema Validation",
+    phaseId: "organize-data",
+    phaseNumber: 3,
     stepNumber: 12,
-    desc: "Append elements with $push, ensure uniqueness with $addToSet, remove items with $pull, and update matching array items with positional $ operator.",
+    desc: "Harness flexible schemas safely by enforcing collection-level rules with $jsonSchema, required fields, and validation actions.",
     estimatedMinutes: 25,
-    xpReward: 80,
+    xpReward: 70,
     prerequisite: "MDB-11",
-    path: "/learn/mongodb/mdb12-updating-arrays-operators",
+    path: "/learn/mongodb/mdb12-schema-validation",
     color: "emerald",
   },
 
-  // Phase 5: Data Modeling
+  // Phase 4: Find and Work with Data Efficiently
   {
     code: "MDB-13",
-    slug: "mdb13-embedding-vs-referencing",
-    name: "Embedding vs Referencing: The Core Design Decision",
-    phaseId: "data-modeling",
-    phaseNumber: 5,
+    slug: "mdb13-indexes",
+    name: "Indexes",
+    phaseId: "efficient-queries",
+    phaseNumber: 4,
     stepNumber: 13,
-    desc: "Evaluate application read/write access patterns to choose between embedded sub-documents for fast atomic reads vs references for shared data.",
-    estimatedMinutes: 30,
-    xpReward: 80,
+    desc: "Accelerate reads and prevent full collection scans using single-field, compound, and unique indexes guided by query patterns.",
+    estimatedMinutes: 25,
+    xpReward: 70,
     prerequisite: "MDB-12",
-    path: "/learn/mongodb/mdb13-embedding-vs-referencing",
+    path: "/learn/mongodb/mdb13-indexes",
     color: "emerald",
   },
   {
     code: "MDB-14",
-    slug: "mdb14-modeling-relationships",
-    name: "Modeling 1-to-1, 1-to-Many & Many-to-Many Relationships",
-    phaseId: "data-modeling",
-    phaseNumber: 5,
+    slug: "mdb14-check-a-query-with-explain",
+    name: "Check a Query with explain()",
+    phaseId: "efficient-queries",
+    phaseNumber: 4,
     stepNumber: 14,
-    desc: "Design real-world schemas: 1-to-few embedded, 1-to-many referenced, 1-to-squillions parent references, and 2-way reference arrays.",
-    estimatedMinutes: 30,
-    xpReward: 80,
+    desc: "Profile queries with explain('executionStats'), compare COLLSCAN vs IXSCAN, and verify winning plans.",
+    estimatedMinutes: 25,
+    xpReward: 70,
     prerequisite: "MDB-13",
-    path: "/learn/mongodb/mdb14-modeling-relationships",
+    path: "/learn/mongodb/mdb14-check-a-query-with-explain",
     color: "emerald",
   },
   {
     code: "MDB-15",
-    slug: "mdb15-denormalization-unbounded-growth",
-    name: "Denormalization Strategies & Preventing Unbounded Growth",
-    phaseId: "data-modeling",
-    phaseNumber: 5,
+    slug: "mdb15-pagination",
+    name: "Pagination",
+    phaseId: "efficient-queries",
+    phaseNumber: 4,
     stepNumber: 15,
-    desc: "Avoid the 16MB document size ceiling, prevent array performance degradation, and duplicate critical snapshot data safely.",
-    estimatedMinutes: 25,
-    xpReward: 80,
+    desc: "Implement reliable pagination using skip() and limit(), and scale large datasets using range-based keyset queries.",
+    estimatedMinutes: 20,
+    xpReward: 60,
     prerequisite: "MDB-14",
-    path: "/learn/mongodb/mdb15-denormalization-unbounded-growth",
+    path: "/learn/mongodb/mdb15-pagination",
     color: "emerald",
   },
-
-  // Phase 6: Schema Validation
   {
     code: "MDB-16",
-    slug: "mdb16-schema-validation-rules",
-    name: "JSON Schema Validation Rules with $jsonSchema",
-    phaseId: "schema-validation",
-    phaseNumber: 6,
+    slug: "mdb16-aggregation-pipeline",
+    name: "Aggregation Pipeline",
+    phaseId: "efficient-queries",
+    phaseNumber: 4,
     stepNumber: 16,
-    desc: "Define collection validators with $jsonSchema to guarantee required fields, document structure, and mathematical range constraints.",
-    estimatedMinutes: 25,
+    desc: "Transform, group, unwind, and aggregate collections using multi-stage pipelines ($match, $group, $sort, $project).",
+    estimatedMinutes: 30,
     xpReward: 80,
     prerequisite: "MDB-15",
-    path: "/learn/mongodb/mdb16-schema-validation-rules",
+    path: "/learn/mongodb/mdb16-aggregation-pipeline",
     color: "emerald",
   },
   {
     code: "MDB-17",
-    slug: "mdb17-enforcing-validation-actions",
-    name: "Enforcing Validation Actions & Modifying Existing Schemas",
-    phaseId: "schema-validation",
-    phaseNumber: 6,
+    slug: "mdb17-combine-data-with-lookup",
+    name: "Combine Data with $lookup",
+    phaseId: "efficient-queries",
+    phaseNumber: 4,
     stepNumber: 17,
-    desc: "Configure validationAction (error vs warn), validationLevel (strict vs moderate), inspect write failures, and update rules with collMod.",
-    estimatedMinutes: 20,
+    desc: "Join documents across separate collections within aggregation pipelines using indexed $lookup stages.",
+    estimatedMinutes: 25,
     xpReward: 70,
     prerequisite: "MDB-16",
-    path: "/learn/mongodb/mdb17-enforcing-validation-actions",
+    path: "/learn/mongodb/mdb17-combine-data-with-lookup",
     color: "emerald",
   },
 
-  // Phase 7: Aggregation Pipeline
+  // Phase 5: Keep Data Correct and Safe
   {
     code: "MDB-18",
-    slug: "mdb18-aggregation-pipeline-model",
-    name: "The Aggregation Pipeline: $match & $project",
-    phaseId: "aggregation",
-    phaseNumber: 7,
+    slug: "mdb18-atomic-updates-and-transactions",
+    name: "Atomic Updates and Transactions",
+    phaseId: "data-safety",
+    phaseNumber: 5,
     stepNumber: 18,
-    desc: "Build a solid mental model of aggregation pipelines as multi-stage data factories, filtering early with $match and reshaping with $project.",
+    desc: "Understand single-document atomicity guarantees, multi-document ACID transactions with sessions, and consistency trade-offs.",
     estimatedMinutes: 25,
-    xpReward: 80,
+    xpReward: 70,
     prerequisite: "MDB-17",
-    path: "/learn/mongodb/mdb18-aggregation-pipeline-model",
+    path: "/learn/mongodb/mdb18-atomic-updates-and-transactions",
     color: "emerald",
   },
   {
     code: "MDB-19",
-    slug: "mdb19-group-metrics-accumulation",
-    name: "Grouping & Computing Metrics ($group, $sum, $avg)",
-    phaseId: "aggregation",
-    phaseNumber: 7,
+    slug: "mdb19-database-security-basics",
+    name: "Database Security Basics",
+    phaseId: "data-safety",
+    phaseNumber: 5,
     stepNumber: 19,
-    desc: "Aggregate document groups by key, calculate sums, averages, min/max values, and collect sub-lists with $push accumulator expressions.",
-    estimatedMinutes: 30,
-    xpReward: 90,
+    desc: "Protect sensitive data with authentication, least-privilege RBAC, environment variables, and network encryption.",
+    estimatedMinutes: 20,
+    xpReward: 60,
     prerequisite: "MDB-18",
-    path: "/learn/mongodb/mdb19-group-metrics-accumulation",
+    path: "/learn/mongodb/mdb19-database-security-basics",
     color: "emerald",
   },
   {
     code: "MDB-20",
-    slug: "mdb20-unwind-array-processing",
-    name: "Array Deconstruction ($unwind) & Count Stages",
-    phaseId: "aggregation",
-    phaseNumber: 7,
+    slug: "mdb20-backups-replication-and-scaling",
+    name: "Backups, Replication, and Scaling — The Basic Idea",
+    phaseId: "data-safety",
+    phaseNumber: 5,
     stepNumber: 20,
-    desc: "Deconstruct array fields into separate stream documents with $unwind to calculate per-tag or per-item statistics and count records with $count.",
+    desc: "Understand the differences between disaster recovery backups, replica set high availability, and sharding for horizontal scale.",
     estimatedMinutes: 25,
-    xpReward: 80,
+    xpReward: 70,
     prerequisite: "MDB-19",
-    path: "/learn/mongodb/mdb20-unwind-array-processing",
-    color: "emerald",
-  },
-  {
-    code: "MDB-21",
-    slug: "mdb21-lookup-collection-joins",
-    name: "Joining Collections with $lookup (Left Outer Joins)",
-    phaseId: "aggregation",
-    phaseNumber: 7,
-    stepNumber: 21,
-    desc: "Perform cross-collection joins with $lookup, merge related referenced data into sub-arrays, and filter joined datasets efficiently.",
-    estimatedMinutes: 30,
-    xpReward: 90,
-    prerequisite: "MDB-20",
-    path: "/learn/mongodb/mdb21-lookup-collection-joins",
-    color: "emerald",
-  },
-
-  // Phase 8: Indexes & Query Performance
-  {
-    code: "MDB-22",
-    slug: "mdb22-indexes-fundamentals",
-    name: "How Indexes Work: Single-Field, Compound & Unique",
-    phaseId: "indexes-performance",
-    phaseNumber: 8,
-    stepNumber: 22,
-    desc: "Understand B-Tree index structures, create single and compound indexes with createIndex, enforce uniqueness, and evaluate index storage costs.",
-    estimatedMinutes: 25,
-    xpReward: 80,
-    prerequisite: "MDB-21",
-    path: "/learn/mongodb/mdb22-indexes-fundamentals",
-    color: "emerald",
-  },
-  {
-    code: "MDB-23",
-    slug: "mdb23-explain-plan-esr-rule",
-    name: "Analyzing Queries with explain() & The ESR Rule",
-    phaseId: "indexes-performance",
-    phaseNumber: 8,
-    stepNumber: 23,
-    desc: "Interpret winningPlan (COLLSCAN vs IXSCAN), check totalDocsExamined vs nReturned, and apply the Equality, Sort, Range (ESR) rule.",
-    estimatedMinutes: 30,
-    xpReward: 90,
-    prerequisite: "MDB-22",
-    path: "/learn/mongodb/mdb23-explain-plan-esr-rule",
-    color: "emerald",
-  },
-
-  // Phase 9: Transactions & Consistency
-  {
-    code: "MDB-24",
-    slug: "mdb24-atomicity-multi-doc-transactions",
-    name: "Document Atomicity vs Multi-Document ACID Transactions",
-    phaseId: "transactions",
-    phaseNumber: 9,
-    stepNumber: 24,
-    desc: "Leverage single-document atomic writes and execute multi-document ACID transactions with ClientSession, commitTransaction, and abortTransaction.",
-    estimatedMinutes: 30,
-    xpReward: 90,
-    prerequisite: "MDB-23",
-    path: "/learn/mongodb/mdb24-atomicity-multi-doc-transactions",
-    color: "emerald",
-  },
-
-  // Phase 10: Performance, Debugging & Best Practices
-  {
-    code: "MDB-25",
-    slug: "mdb25-debugging-anti-patterns",
-    name: "Debugging Slow Queries & Common Schema Anti-Patterns",
-    phaseId: "debugging-mastery",
-    phaseNumber: 10,
-    stepNumber: 25,
-    desc: "Diagnose and fix the top MongoDB issues: unindexed regex, massive growing arrays, premature referencing, and missing projections.",
-    estimatedMinutes: 25,
-    xpReward: 80,
-    prerequisite: "MDB-24",
-    path: "/learn/mongodb/mdb25-debugging-anti-patterns",
-    color: "emerald",
-  },
-  {
-    code: "MDB-26",
-    slug: "mdb26-production-best-practices",
-    name: "Production Best Practices, Sizing & Security Checklist",
-    phaseId: "debugging-mastery",
-    phaseNumber: 10,
-    stepNumber: 26,
-    desc: "Review the final production checklist: connection pooling concepts, working set sizing (RAM fitting), index audits, and principle of least privilege.",
-    estimatedMinutes: 25,
-    xpReward: 100,
-    prerequisite: "MDB-25",
-    path: "/learn/mongodb/mdb26-production-best-practices",
+    path: "/learn/mongodb/mdb20-backups-replication-and-scaling",
     color: "emerald",
   },
 ];
@@ -564,7 +428,7 @@ export const MONGODB_PREREQUISITES = {
 
 export const MONGODB_CAPSTONE: CapstoneProjectMeta = {
   id: "capstone-ecommerce-database",
-  stageNumber: 11,
+  stageNumber: 6,
   slug: "ecommerce-database",
   title: "ShopSphere — E-Commerce Database Architecture & Analytics Engine",
   subtitle: "Final MongoDB Capstone Project",
@@ -619,7 +483,7 @@ export const MONGODB_STAGES: StageMeta[] = MONGODB_PROGRESSION_PHASES.map((phase
     textAccent: "text-purple-400",
   },
   lessons: MONGODB_LESSONS.filter((l) => l.phaseId === phase.id),
-  capstone: phase.phaseNumber === 10 ? MONGODB_CAPSTONE : undefined,
+  capstone: phase.phaseNumber === 5 ? MONGODB_CAPSTONE : undefined,
 }));
 
 // ─────────────────────────────────────────────────────────────
@@ -666,9 +530,25 @@ export function getAllLessons(): LessonMeta[] {
 }
 
 export function getLessonBySlug(slug: string): LessonMeta | undefined {
-  return MONGODB_LESSONS.find(
-    (l) => l.slug.toLowerCase() === slug.toLowerCase() || l.code.toLowerCase() === slug.toLowerCase()
+  if (!slug) return MONGODB_LESSONS[0];
+  const normalized = slug.toLowerCase().trim();
+
+  // 1. Direct match on slug or code
+  const directMatch = MONGODB_LESSONS.find(
+    (l) => l.slug.toLowerCase() === normalized || l.code.toLowerCase() === normalized
   );
+  if (directMatch) return directMatch;
+
+  // 2. Check legacy alias map
+  const mappedSlug = MONGODB_LEGACY_SLUG_MAP[normalized];
+  if (mappedSlug) {
+    const aliasMatch = MONGODB_LESSONS.find(
+      (l) => l.slug.toLowerCase() === mappedSlug.toLowerCase() || l.code.toLowerCase() === mappedSlug.toLowerCase()
+    );
+    if (aliasMatch) return aliasMatch;
+  }
+
+  return undefined;
 }
 
 export function getLessonsByPhaseId(phaseId: string): LessonMeta[] {
@@ -682,17 +562,17 @@ export function getStageByLessonSlug(slug: string): PhaseMeta | undefined {
 }
 
 export function getNextLesson(currentSlug: string): LessonMeta | null {
-  const idx = MONGODB_LESSONS.findIndex(
-    (l) => l.slug.toLowerCase() === currentSlug.toLowerCase() || l.code.toLowerCase() === currentSlug.toLowerCase()
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const idx = MONGODB_LESSONS.findIndex((l) => l.slug === current.slug);
   if (idx === -1 || idx === MONGODB_LESSONS.length - 1) return null;
   return MONGODB_LESSONS[idx + 1];
 }
 
 export function getPrevLesson(currentSlug: string): LessonMeta | null {
-  const idx = MONGODB_LESSONS.findIndex(
-    (l) => l.slug.toLowerCase() === currentSlug.toLowerCase() || l.code.toLowerCase() === currentSlug.toLowerCase()
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const idx = MONGODB_LESSONS.findIndex((l) => l.slug === current.slug);
   if (idx <= 0) return null;
   return MONGODB_LESSONS[idx - 1];
 }
@@ -738,4 +618,3 @@ export function getMongoDBCourse(): Course {
     })),
   };
 }
-

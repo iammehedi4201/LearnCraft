@@ -3,7 +3,8 @@
  * LocalStorage caching with PostgreSQL /api/progress persistence sync.
  */
 
-import { MONGODB_LESSONS, LessonMeta } from "./mongodb-curriculum";
+import { MONGODB_LESSONS, LessonMeta, getLessonBySlug } from "./mongodb-curriculum";
+import { MONGODB_LEGACY_SLUG_MAP } from "../content";
 
 const STORAGE_KEY = "learncraft_mongodb_progress_v1";
 const GOAL_KEY = "learncraft_mongodb_goal_v1";
@@ -38,30 +39,31 @@ function saveState(state: ProgressState) {
 
 export function isLessonComplete(slugOrCode: string): boolean {
   const state = getStoredState();
-  const slugLower = slugOrCode.toLowerCase();
-  const lesson = MONGODB_LESSONS.find(
-    (l) => l.slug.toLowerCase() === slugLower || l.code.toLowerCase() === slugLower
-  );
-  if (!lesson) return state.completedLessons.includes(slugLower);
+  const slugLower = slugOrCode.toLowerCase().trim();
+  const lesson = getLessonBySlug(slugLower);
+  if (!lesson) {
+    const mapped = MONGODB_LEGACY_SLUG_MAP[slugLower];
+    return state.completedLessons.includes(slugLower) || (mapped ? state.completedLessons.includes(mapped) : false);
+  }
   return (
     state.completedLessons.includes(lesson.slug.toLowerCase()) ||
-    state.completedLessons.includes(lesson.code.toLowerCase())
+    state.completedLessons.includes(lesson.code.toLowerCase()) ||
+    Boolean(MONGODB_LEGACY_SLUG_MAP[slugLower] && state.completedLessons.includes(MONGODB_LEGACY_SLUG_MAP[slugLower]))
   );
 }
 
 export async function toggleLessonComplete(slugOrCode: string): Promise<boolean> {
   const state = getStoredState();
-  const lesson = MONGODB_LESSONS.find(
-    (l) => l.slug.toLowerCase() === slugOrCode.toLowerCase() || l.code.toLowerCase() === slugOrCode.toLowerCase()
-  );
-  const targetKey = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const slugLower = slugOrCode.toLowerCase().trim();
+  const lesson = getLessonBySlug(slugLower);
+  const targetKey = lesson ? lesson.slug.toLowerCase() : slugLower;
   const codeKey = lesson ? lesson.code.toLowerCase() : "";
 
-  const isCompleted = state.completedLessons.includes(targetKey) || (codeKey && state.completedLessons.includes(codeKey));
+  const isCompleted = isLessonComplete(slugOrCode);
   let updatedList: string[];
 
   if (isCompleted) {
-    updatedList = state.completedLessons.filter((k) => k !== targetKey && k !== codeKey);
+    updatedList = state.completedLessons.filter((k) => k !== targetKey && k !== codeKey && k !== slugLower);
   } else {
     updatedList = [...state.completedLessons, targetKey];
     if (codeKey) updatedList.push(codeKey);
@@ -95,13 +97,12 @@ export function getProgress(): ProgressState {
 
 export async function unmarkLessonComplete(slugOrCode: string): Promise<void> {
   const state = getStoredState();
-  const lesson = MONGODB_LESSONS.find(
-    (l) => l.slug.toLowerCase() === slugOrCode.toLowerCase() || l.code.toLowerCase() === slugOrCode.toLowerCase()
-  );
-  const targetKey = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const slugLower = slugOrCode.toLowerCase().trim();
+  const lesson = getLessonBySlug(slugLower);
+  const targetKey = lesson ? lesson.slug.toLowerCase() : slugLower;
   const codeKey = lesson ? lesson.code.toLowerCase() : "";
 
-  const updatedList = state.completedLessons.filter((k) => k !== targetKey && k !== codeKey);
+  const updatedList = state.completedLessons.filter((k) => k !== targetKey && k !== codeKey && k !== slugLower);
   const newState: ProgressState = {
     ...state,
     completedLessons: updatedList,
@@ -128,14 +129,10 @@ export async function markLessonComplete(slugOrCode: string): Promise<void> {
 }
 
 export function getOverallProgress(): { completedCount: number; totalCount: number; percent: number } {
-  const state = getStoredState();
   const completedSet = new Set<string>();
 
   MONGODB_LESSONS.forEach((lesson) => {
-    if (
-      state.completedLessons.includes(lesson.slug.toLowerCase()) ||
-      state.completedLessons.includes(lesson.code.toLowerCase())
-    ) {
+    if (isLessonComplete(lesson.slug)) {
       completedSet.add(lesson.slug);
     }
   });
@@ -148,12 +145,8 @@ export function getOverallProgress(): { completedCount: number; totalCount: numb
 }
 
 export function getNextRecommendedLesson(): LessonMeta | null {
-  const state = getStoredState();
   for (const lesson of MONGODB_LESSONS) {
-    const isDone =
-      state.completedLessons.includes(lesson.slug.toLowerCase()) ||
-      state.completedLessons.includes(lesson.code.toLowerCase());
-    if (!isDone) return lesson;
+    if (!isLessonComplete(lesson.slug)) return lesson;
   }
   return null;
 }
@@ -170,7 +163,7 @@ export function getActiveLesson(): LessonMeta | null {
   try {
     const saved = localStorage.getItem(CURRENT_KEY);
     if (saved) {
-      const match = MONGODB_LESSONS.find((l) => l.slug.toLowerCase() === saved.toLowerCase());
+      const match = getLessonBySlug(saved);
       if (match) return match;
     }
   } catch {}
