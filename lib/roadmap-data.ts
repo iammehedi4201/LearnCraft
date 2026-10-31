@@ -529,7 +529,7 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     category: "database",
     level: "beginner-advanced",
     status: "available",
-    totalLessons: 29,
+    totalLessons: 22,
     stages: postgresqlStages,
     learnPath: "/learn/postgresql",
     badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",

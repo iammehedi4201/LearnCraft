@@ -1,16 +1,20 @@
 /**
  * PostgreSQL Curriculum Data Layer — LearnCraft
- * 11 Phases, 29 In-Depth Lessons, and 1 Comprehensive Capstone Project.
+ * 4 Phases, 22 Authoritative Lessons, and 1 Comprehensive Capstone Project.
  *
  * Strict Topic Boundary: Pure PostgreSQL relational database only.
- * Focuses on relational model, databases/schemas/tables, data types, DDL/DML,
- * filtering/sorting/pagination, joins (INNER, LEFT, RIGHT, FULL), modeling relationships,
- * aggregation, HAVING, CTEs, window functions, upserts (ON CONFLICT), normalization (1NF-3NF),
- * JSONB, constraints, referential actions, transactions (ACID), isolation levels,
- * B-Tree indexes, EXPLAIN / EXPLAIN ANALYZE, query debugging, and production best practices.
+ * Focuses on relational model, databases/tables/rows/columns, core data types,
+ * constraints (PRIMARY KEY, NOT NULL, UNIQUE, CHECK, DEFAULT, FOREIGN KEY),
+ * CRUD operations, WHERE/ORDER BY/LIMIT/ILIKE, NULL three-valued logic,
+ * relationships & foreign keys, joins (INNER, LEFT), aggregates & GROUP BY & HAVING,
+ * subqueries & CTEs (WITH), UPDATE with RETURNING, ACID transactions, normalization,
+ * B-Tree indexes, EXPLAIN (ANALYZE, BUFFERS), views, JSONB, pagination (LIMIT/OFFSET vs Keyset),
+ * SQL injection prevention with parameterized queries, database roles & permissions,
+ * and pg_dump / pg_restore backups.
  */
 
 import type { Course } from "@/components/curriculum/types";
+import { POSTGRESQL_LEGACY_SLUG_MAP } from "../content";
 
 export interface LessonMeta {
   code: string;
@@ -53,116 +57,53 @@ export interface CapstoneProjectMeta {
 
 export const POSTGRESQL_PROGRESSION_PHASES: PhaseMeta[] = [
   {
-    id: "fundamentals",
+    id: "understand-postgresql-and-tables",
     phaseNumber: 1,
-    name: "PostgreSQL Fundamentals & Relational Model",
-    label: "Phase 01: PostgreSQL Fundamentals & Relational Model",
-    desc: "Understand what PostgreSQL is, why the relational model excels for structured data, the cluster/database/schema hierarchy, and core data types.",
-    scope: "Relational Paradigm · Database vs Schema · Data Types · psql Tools",
-    lessonCodes: ["PG-01", "PG-02", "PG-03"],
+    name: "Understand PostgreSQL and Tables",
+    label: "Phase 01: Understand PostgreSQL and Tables",
+    desc: "Understand what PostgreSQL is, how data is organized into tables, rows, and columns, master common data types, enforce domain constraints, and execute foundational CRUD operations.",
+    scope: "PostgreSQL Architecture · Databases vs Tables · Data Types · Constraints · CRUD Basics",
+    lessonCodes: ["PG-01", "PG-02", "PG-03", "PG-04", "PG-05"],
   },
   {
-    id: "tables-crud",
+    id: "find-and-combine-data",
     phaseNumber: 2,
-    name: "Defining Tables & Core CRUD Operations",
-    label: "Phase 02: Defining Tables & Core CRUD Operations",
-    desc: "Create tables cleanly with DDL, insert records, project columns, execute safe updates and deletes, and leverage PostgreSQL's RETURNING clause.",
-    scope: "CREATE TABLE · INSERT · SELECT · UPDATE · DELETE · RETURNING",
-    lessonCodes: ["PG-04", "PG-05", "PG-06", "PG-07"],
+    name: "Find and Combine Data",
+    label: "Phase 02: Find and Combine Data",
+    desc: "Filter, sort, and limit queries, navigate three-valued NULL logic, connect tables with foreign keys, combine data with INNER and LEFT joins, and group metrics with HAVING and CTEs.",
+    scope: "WHERE & ILIKE · NULL Logic · Foreign Keys · INNER & LEFT JOIN · Aggregation · CTEs",
+    lessonCodes: ["PG-06", "PG-07", "PG-08", "PG-09", "PG-10", "PG-11"],
   },
   {
-    id: "filtering-pagination",
+    id: "keep-data-correct-and-safe",
     phaseNumber: 3,
-    name: "Filtering, Sorting & Result Control",
-    label: "Phase 03: Filtering, Sorting & Result Control",
-    desc: "Filter rows with precision using WHERE, master SQL's three-valued NULL logic, and implement performant sorting and pagination.",
-    scope: "WHERE Clauses · Three-Valued NULL · ORDER BY · LIMIT & OFFSET · Keyset",
-    lessonCodes: ["PG-08", "PG-09", "PG-10"],
+    name: "Keep Data Correct and Safe",
+    label: "Phase 03: Keep Data Correct and Safe",
+    desc: "Safely modify rows with RETURNING, protect multi-step workflows with ACID transactions, design normalized schemas, accelerate queries with B-Tree indexes, inspect EXPLAIN plans, encapsulate logic in views, and query JSONB.",
+    scope: "RETURNING · ACID Transactions · Normalization · Indexes · EXPLAIN ANALYZE · Views · JSONB",
+    lessonCodes: ["PG-12", "PG-13", "PG-14", "PG-15", "PG-16", "PG-17", "PG-18"],
   },
   {
-    id: "relationships-joins",
+    id: "work-with-data-efficiently-and-safely",
     phaseNumber: 4,
-    name: "Relationships & Multi-Table Joins",
-    label: "Phase 04: Relationships & Multi-Table Joins",
-    desc: "Connect data with foreign keys and master INNER, LEFT, RIGHT joins alongside 1-to-1, 1-to-many, and many-to-many junction table designs.",
-    scope: "Foreign Keys · INNER JOIN · LEFT JOIN · Junction Tables",
-    lessonCodes: ["PG-11", "PG-12", "PG-13", "PG-14"],
-  },
-  {
-    id: "aggregation-ctes",
-    phaseNumber: 5,
-    name: "Aggregation & Analytical Queries",
-    label: "Phase 05: Aggregation & Analytical Queries",
-    desc: "Compute summary metrics with aggregate functions, filter groups with HAVING, and construct clean multi-step queries with Common Table Expressions (CTEs).",
-    scope: "COUNT/SUM/AVG · GROUP BY · HAVING · Subqueries · CTEs (WITH)",
-    lessonCodes: ["PG-15", "PG-16", "PG-17"],
-  },
-  {
-    id: "advanced-features",
-    phaseNumber: 6,
-    name: "Window Functions & Idempotent Upserts",
-    label: "Phase 06: Window Functions & Idempotent Upserts",
-    desc: "Calculate running metrics and rankings with window functions (OVER / PARTITION BY) and execute atomic upserts with ON CONFLICT.",
-    scope: "Window Functions · ROW_NUMBER & RANK · ON CONFLICT DO UPDATE",
-    lessonCodes: ["PG-18", "PG-19"],
-  },
-  {
-    id: "data-modeling",
-    phaseNumber: 7,
-    name: "Relational Modeling, Normalization & JSONB",
-    label: "Phase 07: Relational Modeling, Normalization & JSONB",
-    desc: "Structure relational schemas using 1NF, 2NF, and 3NF, identify when to denormalize for read speed, and leverage semi-structured JSONB columns.",
-    scope: "1NF, 2NF, 3NF · Normalization vs Denormalization · JSONB Columns",
-    lessonCodes: ["PG-20", "PG-21", "PG-22"],
-  },
-  {
-    id: "constraints-integrity",
-    phaseNumber: 8,
-    name: "Constraints & Data Integrity",
-    label: "Phase 08: Constraints & Data Integrity",
-    desc: "Enforce strict data validity at the database boundary using CHECK, UNIQUE, and NOT NULL, and manage cascades with ON DELETE referential actions.",
-    scope: "CHECK Constraints · UNIQUE & NOT NULL · ON DELETE CASCADE/RESTRICT",
-    lessonCodes: ["PG-23", "PG-24"],
-  },
-  {
-    id: "transactions-concurrency",
-    phaseNumber: 9,
-    name: "Transactions, ACID & Concurrency",
-    label: "Phase 09: Transactions, ACID & Concurrency",
-    desc: "Guarantee all-or-nothing atomicity with BEGIN, COMMIT, and ROLLBACK, and navigate concurrent reads and writes across transaction isolation levels.",
-    scope: "ACID Guarantees · BEGIN/COMMIT/ROLLBACK · Isolation Levels · Row Locks",
-    lessonCodes: ["PG-25", "PG-26"],
-  },
-  {
-    id: "indexes-performance",
-    phaseNumber: 10,
-    name: "Indexes & Query Performance",
-    label: "Phase 10: Indexes & Query Performance",
-    desc: "Accelerate reads and prevent sequential table scans using B-Tree and compound indexes, and dissect execution plans with EXPLAIN ANALYZE.",
-    scope: "B-Tree Indexes · Compound Indexes · EXPLAIN ANALYZE · Seq vs Index Scan",
-    lessonCodes: ["PG-27", "PG-28"],
-  },
-  {
-    id: "debugging-mastery",
-    phaseNumber: 11,
-    name: "Debugging & Production Best Practices",
-    label: "Phase 11: Debugging & Production Best Practices",
-    desc: "Diagnose common constraint errors and slow queries, avoid anti-patterns, and apply production checklists for connection pooling and schema migrations.",
-    scope: "Error Diagnosis · Missing Foreign Key Indexes · Pooling · Production Sizing",
-    lessonCodes: ["PG-29"],
+    name: "Work with Data Efficiently and Safely",
+    label: "Phase 04: Work with Data Efficiently and Safely",
+    desc: "Implement scalable Keyset cursor pagination, eliminate SQL injection vulnerabilities using parameterized queries, enforce least privilege with database roles, and perform regular backup and restore drills.",
+    scope: "Keyset Pagination · Parameterized Queries · Database Roles & Permissions · pg_dump & pg_restore",
+    lessonCodes: ["PG-19", "PG-20", "PG-21", "PG-22"],
   },
 ];
 
 export const POSTGRESQL_LESSONS: LessonMeta[] = [
-  // Phase 1: PostgreSQL Fundamentals & Relational Model
+  // Phase 1: Understand PostgreSQL and Tables
   {
     code: "PG-01",
     slug: "pg01-what-is-postgresql",
-    name: "What Is PostgreSQL & The Relational Paradigm",
-    phaseId: "fundamentals",
+    name: "What Is PostgreSQL?",
+    phaseId: "understand-postgresql-and-tables",
     phaseNumber: 1,
     stepNumber: 1,
-    desc: "Understand what PostgreSQL is, why the relational model organizes data into strict tables, and how ACID guarantees protect data integrity.",
+    desc: "Understand what PostgreSQL is, why relational databases excel for persistent structured storage, and how applications query tables using SQL.",
     estimatedMinutes: 15,
     xpReward: 50,
     path: "/learn/postgresql/pg01-what-is-postgresql",
@@ -170,484 +111,329 @@ export const POSTGRESQL_LESSONS: LessonMeta[] = [
   },
   {
     code: "PG-02",
-    slug: "pg02-databases-schemas-tables",
-    name: "PostgreSQL Hierarchy: Databases, Schemas & Tables",
-    phaseId: "fundamentals",
+    slug: "pg02-database-table-row-column",
+    name: "Database, Table, Row, and Column",
+    phaseId: "understand-postgresql-and-tables",
     phaseNumber: 1,
     stepNumber: 2,
-    desc: "Explore PostgreSQL's multi-tenant architecture: database clusters, logical databases, schemas (public vs tenant), and table relations.",
+    desc: "Master relational hierarchy: databases hold tables, tables represent entity types, rows represent records, and columns represent typed fields.",
     estimatedMinutes: 20,
     xpReward: 60,
     prerequisite: "PG-01",
-    path: "/learn/postgresql/pg02-databases-schemas-tables",
+    path: "/learn/postgresql/pg02-database-table-row-column",
     color: "purple",
   },
   {
     code: "PG-03",
-    slug: "pg03-core-data-types",
-    name: "Core Data Types: Integers, Text, Decimals & Timestamps",
-    phaseId: "fundamentals",
+    slug: "pg03-common-data-types",
+    name: "Common PostgreSQL Data Types",
+    phaseId: "understand-postgresql-and-tables",
     phaseNumber: 1,
     stepNumber: 3,
-    desc: "Select the optimal column data types: INT vs BIGINT, VARCHAR vs TEXT, financial accuracy with NUMERIC/DECIMAL, TIMESTAMPTZ, and UUIDs.",
+    desc: "Select the optimal column data types: INTEGER vs BIGINT, TEXT, exact decimals with NUMERIC(10, 2), TIMESTAMPTZ, and UUIDs.",
     estimatedMinutes: 20,
     xpReward: 60,
     prerequisite: "PG-02",
-    path: "/learn/postgresql/pg03-core-data-types",
+    path: "/learn/postgresql/pg03-common-data-types",
     color: "purple",
   },
-
-  // Phase 2: Defining Tables & Core CRUD Operations
   {
     code: "PG-04",
-    slug: "pg04-create-table-ddl",
-    name: "Defining Tables: CREATE TABLE & Safe Alterations",
-    phaseId: "tables-crud",
-    phaseNumber: 2,
+    slug: "pg04-create-tables-and-constraints",
+    name: "Create Tables and Add Constraints",
+    phaseId: "understand-postgresql-and-tables",
+    phaseNumber: 1,
     stepNumber: 4,
-    desc: "Author clean table schemas with column defaults, auto-incrementing identity keys, and safely add or drop columns with ALTER TABLE.",
-    estimatedMinutes: 20,
-    xpReward: 60,
+    desc: "Define tables with PRIMARY KEY, NOT NULL, UNIQUE, CHECK, and DEFAULT constraints to enforce data integrity at the database boundary.",
+    estimatedMinutes: 25,
+    xpReward: 70,
     prerequisite: "PG-03",
-    path: "/learn/postgresql/pg04-create-table-ddl",
+    path: "/learn/postgresql/pg04-create-tables-and-constraints",
     color: "purple",
   },
   {
     code: "PG-05",
-    slug: "pg05-insert-and-select",
-    name: "Inserting & Reading Rows (INSERT INTO & SELECT)",
-    phaseId: "tables-crud",
-    phaseNumber: 2,
+    slug: "pg05-crud-operations",
+    name: "Insert, Read, Update, and Delete Data (CRUD)",
+    phaseId: "understand-postgresql-and-tables",
+    phaseNumber: 1,
     stepNumber: 5,
-    desc: "Insert single and batch rows, understand column projections, avoid the pitfalls of SELECT *, and use column aliases for readable outputs.",
-    estimatedMinutes: 20,
-    xpReward: 60,
-    prerequisite: "PG-04",
-    path: "/learn/postgresql/pg05-insert-and-select",
-    color: "purple",
-  },
-  {
-    code: "PG-06",
-    slug: "pg06-update-and-delete",
-    name: "Modifying & Deleting Data (UPDATE, DELETE & Safety Guards)",
-    phaseId: "tables-crud",
-    phaseNumber: 2,
-    stepNumber: 6,
-    desc: "Update specific rows with atomic increments, remove rows safely using WHERE filters, and understand soft deletes vs physical deletes.",
+    desc: "Execute the four core CRUD operations and understand why you must always verify the WHERE condition before running UPDATE or DELETE.",
     estimatedMinutes: 25,
     xpReward: 70,
+    prerequisite: "PG-04",
+    path: "/learn/postgresql/pg05-crud-operations",
+    color: "purple",
+  },
+
+  // Phase 2: Find and Combine Data
+  {
+    code: "PG-06",
+    slug: "pg06-filter-sort-limit",
+    name: "Filter, Sort, and Limit Results",
+    phaseId: "find-and-combine-data",
+    phaseNumber: 2,
+    stepNumber: 6,
+    desc: "Filter rows with WHERE, sort results deterministically with ORDER BY, restrict output volume with LIMIT, and search case-insensitively with ILIKE.",
+    estimatedMinutes: 20,
+    xpReward: 60,
     prerequisite: "PG-05",
-    path: "/learn/postgresql/pg06-update-and-delete",
+    path: "/learn/postgresql/pg06-filter-sort-limit",
     color: "purple",
   },
   {
     code: "PG-07",
-    slug: "pg07-returning-clause",
-    name: "PostgreSQL Superpower: The RETURNING Clause",
-    phaseId: "tables-crud",
+    slug: "pg07-null-and-missing-values",
+    name: "NULL and Missing Values",
+    phaseId: "find-and-combine-data",
     phaseNumber: 2,
     stepNumber: 7,
-    desc: "Eliminate roundtrip queries by returning generated IDs, mutated timestamps, or deleted snapshots directly from INSERT, UPDATE, and DELETE.",
+    desc: "Master SQL's three-valued logic (TRUE, FALSE, UNKNOWN) and understand why you must always use IS NULL and IS NOT NULL instead of = NULL.",
     estimatedMinutes: 20,
     xpReward: 60,
     prerequisite: "PG-06",
-    path: "/learn/postgresql/pg07-returning-clause",
+    path: "/learn/postgresql/pg07-null-and-missing-values",
     color: "purple",
   },
-
-  // Phase 3: Filtering, Sorting & Result Control
   {
     code: "PG-08",
-    slug: "pg08-where-filtering-operators",
-    name: "Filtering Rows: WHERE, Comparison & Logical Operators",
-    phaseId: "filtering-pagination",
-    phaseNumber: 3,
+    slug: "pg08-relationships-and-foreign-keys",
+    name: "Relationships and Foreign Keys",
+    phaseId: "find-and-combine-data",
+    phaseNumber: 2,
     stepNumber: 8,
-    desc: "Combine complex filter predicates using =, <>, >, <=, IN, BETWEEN, AND, OR, NOT, and case-insensitive pattern matching with ILIKE.",
+    desc: "Model one-to-many relationships by connecting child rows to parent primary keys with REFERENCES foreign key constraints.",
     estimatedMinutes: 25,
     xpReward: 70,
     prerequisite: "PG-07",
-    path: "/learn/postgresql/pg08-where-filtering-operators",
+    path: "/learn/postgresql/pg08-relationships-and-foreign-keys",
     color: "purple",
   },
   {
     code: "PG-09",
-    slug: "pg09-null-three-valued-logic",
-    name: "The Three-Valued Logic of NULL in SQL",
-    phaseId: "filtering-pagination",
-    phaseNumber: 3,
+    slug: "pg09-join-related-tables",
+    name: "JOIN — Read Data from Related Tables",
+    phaseId: "find-and-combine-data",
+    phaseNumber: 2,
     stepNumber: 9,
-    desc: "Master SQL's TRUE/FALSE/UNKNOWN logic: why NULL = NULL is never true, how to check IS NULL, and providing safe fallback values with COALESCE.",
-    estimatedMinutes: 20,
-    xpReward: 60,
+    desc: "Combine related records across tables using INNER JOIN and preserve unmatched left-table records using inclusive LEFT JOINs.",
+    estimatedMinutes: 30,
+    xpReward: 80,
     prerequisite: "PG-08",
-    path: "/learn/postgresql/pg09-null-three-valued-logic",
+    path: "/learn/postgresql/pg09-join-related-tables",
     color: "purple",
   },
   {
     code: "PG-10",
-    slug: "pg10-ordering-and-pagination",
-    name: "Ordering & Pagination: ORDER BY, LIMIT, OFFSET & Keyset",
-    phaseId: "filtering-pagination",
-    phaseNumber: 3,
+    slug: "pg10-aggregate-functions-group-by-having",
+    name: "Aggregate Functions, GROUP BY, and HAVING",
+    phaseId: "find-and-combine-data",
+    phaseNumber: 2,
     stepNumber: 10,
-    desc: "Order records deterministically, implement UI pagination, and understand why large OFFSET values cause severe performance degradation.",
-    estimatedMinutes: 25,
-    xpReward: 70,
+    desc: "Calculate summary metrics with COUNT, SUM, and AVG, segment records with GROUP BY, and filter grouped calculations with HAVING.",
+    estimatedMinutes: 30,
+    xpReward: 80,
     prerequisite: "PG-09",
-    path: "/learn/postgresql/pg10-ordering-and-pagination",
+    path: "/learn/postgresql/pg10-aggregate-functions-group-by-having",
+    color: "purple",
+  },
+  {
+    code: "PG-11",
+    slug: "pg11-subqueries-and-ctes",
+    name: "Subqueries and Common Table Expressions (CTEs)",
+    phaseId: "find-and-combine-data",
+    phaseNumber: 2,
+    stepNumber: 11,
+    desc: "Break complex analytical transformations into clean, readable, modular steps using nested subqueries and named CTEs with the WITH clause.",
+    estimatedMinutes: 30,
+    xpReward: 80,
+    prerequisite: "PG-10",
+    path: "/learn/postgresql/pg11-subqueries-and-ctes",
     color: "purple",
   },
 
-  // Phase 4: Relationships & Multi-Table Joins
-  {
-    code: "PG-11",
-    slug: "pg11-primary-foreign-keys",
-    name: "Primary Keys & Foreign Key References",
-    phaseId: "relationships-joins",
-    phaseNumber: 4,
-    stepNumber: 11,
-    desc: "Define entity identities with PRIMARY KEY and establish relational constraints with FOREIGN KEY ... REFERENCES to guarantee referential integrity.",
-    estimatedMinutes: 25,
-    xpReward: 70,
-    prerequisite: "PG-10",
-    path: "/learn/postgresql/pg11-primary-foreign-keys",
-    color: "purple",
-  },
+  // Phase 3: Keep Data Correct and Safe
   {
     code: "PG-12",
-    slug: "pg12-inner-join-multi-table",
-    name: "Combining Related Tables: INNER JOIN",
-    phaseId: "relationships-joins",
-    phaseNumber: 4,
+    slug: "pg12-update-and-returning",
+    name: "UPDATE Carefully and Use RETURNING",
+    phaseId: "keep-data-correct-and-safe",
+    phaseNumber: 3,
     stepNumber: 12,
-    desc: "Connect records across tables where foreign keys match, understand table aliases, and query data across three or more joined tables.",
+    desc: "Execute targeted updates and eliminate extra SELECT roundtrips by returning mutated or inserted rows directly using PostgreSQL's RETURNING clause.",
     estimatedMinutes: 25,
-    xpReward: 80,
+    xpReward: 70,
     prerequisite: "PG-11",
-    path: "/learn/postgresql/pg12-inner-join-multi-table",
+    path: "/learn/postgresql/pg12-update-and-returning",
     color: "purple",
   },
   {
     code: "PG-13",
-    slug: "pg13-outer-joins-left-right",
-    name: "Preserving Unmatched Data: LEFT JOIN & RIGHT JOIN",
-    phaseId: "relationships-joins",
-    phaseNumber: 4,
+    slug: "pg13-transactions-and-acid",
+    name: "Transactions and ACID",
+    phaseId: "keep-data-correct-and-safe",
+    phaseNumber: 3,
     stepNumber: 13,
-    desc: "Include parent records even when related child rows are missing, and locate orphans or inactive records using LEFT JOIN ... WHERE child.id IS NULL.",
-    estimatedMinutes: 25,
+    desc: "Guarantee all-or-nothing execution with BEGIN, COMMIT, and ROLLBACK, and master the four ACID guarantees that protect financial data.",
+    estimatedMinutes: 30,
     xpReward: 80,
     prerequisite: "PG-12",
-    path: "/learn/postgresql/pg13-outer-joins-left-right",
+    path: "/learn/postgresql/pg13-transactions-and-acid",
     color: "purple",
   },
   {
     code: "PG-14",
-    slug: "pg14-modeling-cardinality",
-    name: "Modeling Relationships: 1-to-1, 1-to-N & Junction Tables",
-    phaseId: "relationships-joins",
-    phaseNumber: 4,
+    slug: "pg14-database-design-and-normalization",
+    name: "Database Design and Normalization",
+    phaseId: "keep-data-correct-and-safe",
+    phaseNumber: 3,
     stepNumber: 14,
-    desc: "Design real-world relational models: 1-to-1 with unique foreign keys, 1-to-many child foreign keys, and many-to-many junction bridge tables.",
+    desc: "Design clean relational schemas to eliminate redundancy, avoid update anomalies, and maintain a strict single source of truth.",
     estimatedMinutes: 30,
     xpReward: 80,
     prerequisite: "PG-13",
-    path: "/learn/postgresql/pg14-modeling-cardinality",
+    path: "/learn/postgresql/pg14-database-design-and-normalization",
     color: "purple",
   },
-
-  // Phase 5: Aggregation & Analytical Queries
   {
     code: "PG-15",
-    slug: "pg15-aggregate-functions-group-by",
-    name: "Aggregate Functions & Grouping (COUNT, SUM, AVG, GROUP BY)",
-    phaseId: "aggregation-ctes",
-    phaseNumber: 5,
+    slug: "pg15-indexes-find-rows-faster",
+    name: "Indexes — Find Rows Faster",
+    phaseId: "keep-data-correct-and-safe",
+    phaseNumber: 3,
     stepNumber: 15,
-    desc: "Calculate aggregate statistics over datasets, group rows by category with GROUP BY, and combine counts and sums into executive summary reports.",
+    desc: "Accelerate query lookups with B-Tree indexes, identify when to index foreign keys, and balance read speed against insert/update overhead.",
     estimatedMinutes: 25,
-    xpReward: 80,
+    xpReward: 70,
     prerequisite: "PG-14",
-    path: "/learn/postgresql/pg15-aggregate-functions-group-by",
+    path: "/learn/postgresql/pg15-indexes-find-rows-faster",
     color: "purple",
   },
   {
     code: "PG-16",
-    slug: "pg16-having-vs-where",
-    name: "Filtering Aggregated Groups: HAVING vs WHERE",
-    phaseId: "aggregation-ctes",
-    phaseNumber: 5,
+    slug: "pg16-query-plan-explain",
+    name: "Read a Query Plan with EXPLAIN",
+    phaseId: "keep-data-correct-and-safe",
+    phaseNumber: 3,
     stepNumber: 16,
-    desc: "Master SQL's execution order: why WHERE filters rows before aggregation and HAVING filters aggregated group metrics (e.g., HAVING COUNT(*) > 5).",
-    estimatedMinutes: 20,
-    xpReward: 70,
+    desc: "Dissect optimizer query execution plans, identify sequential table scans vs index scans, and measure actual execution with EXPLAIN (ANALYZE, BUFFERS).",
+    estimatedMinutes: 30,
+    xpReward: 80,
     prerequisite: "PG-15",
-    path: "/learn/postgresql/pg16-having-vs-where",
+    path: "/learn/postgresql/pg16-query-plan-explain",
     color: "purple",
   },
   {
     code: "PG-17",
-    slug: "pg17-subqueries-and-ctes",
-    name: "Subqueries & Common Table Expressions (CTEs with WITH)",
-    phaseId: "aggregation-ctes",
-    phaseNumber: 5,
+    slug: "pg17-views",
+    name: "Views",
+    phaseId: "keep-data-correct-and-safe",
+    phaseNumber: 3,
     stepNumber: 17,
-    desc: "Transform deeply nested unreadable subqueries into clear, sequential Common Table Expressions using the WITH clause for complex data pipelines.",
-    estimatedMinutes: 25,
-    xpReward: 80,
+    desc: "Encapsulate reusable, complex queries into virtual tables that simplify application code, centralize business logic, and protect sensitive columns.",
+    estimatedMinutes: 20,
+    xpReward: 60,
     prerequisite: "PG-16",
-    path: "/learn/postgresql/pg17-subqueries-and-ctes",
+    path: "/learn/postgresql/pg17-views",
     color: "purple",
   },
-
-  // Phase 6: Window Functions & Practical Capabilities
   {
     code: "PG-18",
-    slug: "pg18-window-functions",
-    name: "Window Functions: ROW_NUMBER, RANK & OVER (PARTITION BY)",
-    phaseId: "advanced-features",
-    phaseNumber: 6,
+    slug: "pg18-jsonb-store-and-read",
+    name: "JSONB — Store and Read JSON Data",
+    phaseId: "keep-data-correct-and-safe",
+    phaseNumber: 3,
     stepNumber: 18,
-    desc: "Compute running totals, rankings, and moving averages across row partitions without collapsing individual rows like GROUP BY does.",
-    estimatedMinutes: 30,
-    xpReward: 90,
-    prerequisite: "PG-17",
-    path: "/learn/postgresql/pg18-window-functions",
-    color: "purple",
-  },
-  {
-    code: "PG-19",
-    slug: "pg19-upserts-on-conflict",
-    name: "Idempotent Inserts: ON CONFLICT DO UPDATE / NOTHING",
-    phaseId: "advanced-features",
-    phaseNumber: 6,
-    stepNumber: 19,
-    desc: "Handle duplicate key conflicts gracefully and atomically: update existing rows using the EXCLUDED pseudo-table or ignore conflicts with DO NOTHING.",
+    desc: "Leverage hybrid relational-document storage in PostgreSQL by storing semi-structured JSON payloads and extracting fields with the ->> operator.",
     estimatedMinutes: 25,
-    xpReward: 80,
-    prerequisite: "PG-18",
-    path: "/learn/postgresql/pg19-upserts-on-conflict",
+    xpReward: 70,
+    prerequisite: "PG-17",
+    path: "/learn/postgresql/pg18-jsonb-store-and-read",
     color: "purple",
   },
 
-  // Phase 7: Relational Data Modeling & Normalization
+  // Phase 4: Work with Data Efficiently and Safely
+  {
+    code: "PG-19",
+    slug: "pg19-pagination-limit-offset-keyset",
+    name: "Pagination — Return Data in Small Pages",
+    phaseId: "work-with-data-efficiently-and-safely",
+    phaseNumber: 4,
+    stepNumber: 19,
+    desc: "Avoid transferring massive datasets using LIMIT/OFFSET pagination, and master high-performance Keyset cursor pagination for large tables.",
+    estimatedMinutes: 25,
+    xpReward: 70,
+    prerequisite: "PG-18",
+    path: "/learn/postgresql/pg19-pagination-limit-offset-keyset",
+    color: "purple",
+  },
   {
     code: "PG-20",
-    slug: "pg20-normalization-1nf-2nf-3nf",
-    name: "Database Normalization: 1NF, 2NF & 3NF Made Simple",
-    phaseId: "data-modeling",
-    phaseNumber: 7,
+    slug: "pg20-safe-queries-and-sql-injection",
+    name: "Safe Queries and SQL Injection",
+    phaseId: "work-with-data-efficiently-and-safely",
+    phaseNumber: 4,
     stepNumber: 20,
-    desc: "Eliminate update anomalies and duplicate data: atomic columns (1NF), full key dependencies (2NF), and removing transitive dependencies (3NF).",
+    desc: "Protect your database against SQL injection vulnerabilities by separating SQL syntax from user data using parameterized queries ($1, $2).",
     estimatedMinutes: 30,
-    xpReward: 90,
+    xpReward: 80,
     prerequisite: "PG-19",
-    path: "/learn/postgresql/pg20-normalization-1nf-2nf-3nf",
+    path: "/learn/postgresql/pg20-safe-queries-and-sql-injection",
     color: "purple",
   },
   {
     code: "PG-21",
-    slug: "pg21-strategic-denormalization",
-    name: "Strategic Denormalization & Read Optimization",
-    phaseId: "data-modeling",
-    phaseNumber: 7,
+    slug: "pg21-database-roles-and-permissions",
+    name: "Database Roles and Permissions",
+    phaseId: "work-with-data-efficiently-and-safely",
+    phaseNumber: 4,
     stepNumber: 21,
-    desc: "Recognize when strict normalization hurts read performance, store immutable snapshots (historical item pricing), and balance consistency vs speed.",
+    desc: "Apply the principle of least privilege using PostgreSQL database roles, schemas, and granular GRANT permissions instead of using superusers.",
     estimatedMinutes: 25,
-    xpReward: 80,
+    xpReward: 70,
     prerequisite: "PG-20",
-    path: "/learn/postgresql/pg21-strategic-denormalization",
+    path: "/learn/postgresql/pg21-database-roles-and-permissions",
     color: "purple",
   },
   {
     code: "PG-22",
-    slug: "pg22-jsonb-semi-structured-data",
-    name: "Working with Semi-Structured Data: PostgreSQL JSONB",
-    phaseId: "data-modeling",
-    phaseNumber: 7,
+    slug: "pg22-backups-and-restoring-data",
+    name: "Backups and Restoring Data",
+    phaseId: "work-with-data-efficiently-and-safely",
+    phaseNumber: 4,
     stepNumber: 22,
-    desc: "Store dynamic document attributes in binary JSON (JSONB), query nested keys with -> and ->>, index with GIN, and know when relational beats JSONB.",
+    desc: "Implement reliable disaster recovery using pg_dump custom format archives and verify data safety through regular automated restore drills.",
     estimatedMinutes: 25,
-    xpReward: 80,
-    prerequisite: "PG-21",
-    path: "/learn/postgresql/pg22-jsonb-semi-structured-data",
-    color: "purple",
-  },
-
-  // Phase 8: Constraints & Data Integrity
-  {
-    code: "PG-23",
-    slug: "pg23-constraints-integrity",
-    name: "Integrity Constraints: UNIQUE, NOT NULL & CHECK",
-    phaseId: "constraints-integrity",
-    phaseNumber: 8,
-    stepNumber: 23,
-    desc: "Defend your database at the engine level: enforce valid non-negative quantities with CHECK, guarantee unique emails, and reject invalid states.",
-    estimatedMinutes: 25,
-    xpReward: 80,
-    prerequisite: "PG-22",
-    path: "/learn/postgresql/pg23-constraints-integrity",
-    color: "purple",
-  },
-  {
-    code: "PG-24",
-    slug: "pg24-foreign-key-referential-actions",
-    name: "Referential Actions: ON DELETE CASCADE vs RESTRICT",
-    phaseId: "constraints-integrity",
-    phaseNumber: 8,
-    stepNumber: 24,
-    desc: "Control what happens when referenced rows are removed: safely delete child line items with CASCADE or protect critical records with RESTRICT.",
-    estimatedMinutes: 20,
     xpReward: 70,
-    prerequisite: "PG-23",
-    path: "/learn/postgresql/pg24-foreign-key-referential-actions",
-    color: "purple",
-  },
-
-  // Phase 9: Transactions, ACID & Concurrency
-  {
-    code: "PG-25",
-    slug: "pg25-transactions-acid-foundations",
-    name: "ACID Foundations: BEGIN, COMMIT & ROLLBACK",
-    phaseId: "transactions-concurrency",
-    phaseNumber: 9,
-    stepNumber: 25,
-    desc: "Guarantee all-or-nothing atomicity for multi-step mutations (e.g., money transfers), handle operational failures with ROLLBACK, and define savepoints.",
-    estimatedMinutes: 25,
-    xpReward: 80,
-    prerequisite: "PG-24",
-    path: "/learn/postgresql/pg25-transactions-acid-foundations",
-    color: "purple",
-  },
-  {
-    code: "PG-26",
-    slug: "pg26-isolation-levels-concurrency",
-    name: "Concurrency & Transaction Isolation Levels",
-    phaseId: "transactions-concurrency",
-    phaseNumber: 9,
-    stepNumber: 26,
-    desc: "Navigate concurrent database access: understand dirty reads, non-repeatable reads, READ COMMITTED vs SERIALIZABLE, and row locking with SELECT FOR UPDATE.",
-    estimatedMinutes: 30,
-    xpReward: 90,
-    prerequisite: "PG-25",
-    path: "/learn/postgresql/pg26-isolation-levels-concurrency",
-    color: "purple",
-  },
-
-  // Phase 10: Indexes & Query Performance
-  {
-    code: "PG-27",
-    slug: "pg27-indexes-btree-compound",
-    name: "How Indexes Work: B-Tree, Compound & Unique Indexes",
-    phaseId: "indexes-performance",
-    phaseNumber: 10,
-    stepNumber: 27,
-    desc: "Understand B-Tree search trees, craft multi-column compound indexes using the leftmost prefix rule, and account for write overhead and index maintenance.",
-    estimatedMinutes: 25,
-    xpReward: 80,
-    prerequisite: "PG-26",
-    path: "/learn/postgresql/pg27-indexes-btree-compound",
-    color: "purple",
-  },
-  {
-    code: "PG-28",
-    slug: "pg28-explain-analyze-query-plans",
-    name: "Dissecting Execution Plans: EXPLAIN & EXPLAIN ANALYZE",
-    phaseId: "indexes-performance",
-    phaseNumber: 10,
-    stepNumber: 28,
-    desc: "Read PostgreSQL execution plans: Seq Scan vs Index Scan vs Bitmap Index Scan, estimated startup vs actual execution time, and locating bottlenecks.",
-    estimatedMinutes: 30,
-    xpReward: 90,
-    prerequisite: "PG-27",
-    path: "/learn/postgresql/pg28-explain-analyze-query-plans",
-    color: "purple",
-  },
-
-  // Phase 11: Debugging & Production Best Practices
-  {
-    code: "PG-29",
-    slug: "pg29-debugging-production-best-practices",
-    name: "Debugging Common PostgreSQL Errors & Production Best Practices",
-    phaseId: "debugging-mastery",
-    phaseNumber: 11,
-    stepNumber: 29,
-    desc: "Decipher constraint violations, index missing foreign keys, understand connection pooling sizing, and follow safe zero-downtime migration checklists.",
-    estimatedMinutes: 30,
-    xpReward: 90,
-    prerequisite: "PG-28",
-    path: "/learn/postgresql/pg29-debugging-production-best-practices",
+    prerequisite: "PG-21",
+    path: "/learn/postgresql/pg22-backups-and-restoring-data",
     color: "purple",
   },
 ];
 
 // ─────────────────────────────────────────────────────────────
-// Prerequisites
-// ─────────────────────────────────────────────────────────────
-
-export interface PrerequisiteItem {
-  id: string;
-  title: string;
-  desc: string;
-  category: "required" | "recommended";
-  icon: string;
-}
-
-export const POSTGRESQL_PREREQUISITES: PrerequisiteItem[] = [
-  {
-    id: "req-prog",
-    title: "Basic Programming Concepts",
-    desc: "Variables, conditions, functions, and understanding how backend software manipulates data.",
-    category: "required",
-    icon: "💻",
-  },
-  {
-    id: "req-data",
-    title: "Understanding of Structured Data",
-    desc: "Familiarity with tabular records (rows and columns) and basic primitive types (numbers, text).",
-    category: "required",
-    icon: "📊",
-  },
-  {
-    id: "rec-cli",
-    title: "Command-Line Basics",
-    desc: "Running basic commands in a terminal or console shell for tools like psql.",
-    category: "recommended",
-    icon: "⌨️",
-  },
-  {
-    id: "rec-sql",
-    title: "SQL Fundamentals (Optional)",
-    desc: "Basic familiarity with SQL syntax helps, though all essential concepts are taught directly.",
-    category: "recommended",
-    icon: "🐘",
-  },
-];
-
-// ─────────────────────────────────────────────────────────────
-// Capstone Project Specification
+// Capstone Project Definition
 // ─────────────────────────────────────────────────────────────
 
 export const POSTGRESQL_CAPSTONE: CapstoneProjectMeta = {
   id: "capstone-ecommerce-db",
-  stageNumber: 12,
+  stageNumber: 4,
   slug: "ecommerce-database",
   title: "ShopSphere — Relational Database Architecture & Analytics Engine",
   subtitle: "Production Schema Design, Referential Integrity, ACID Checkout & Performance Tuning",
-  desc: "Design and implement a complete, highly-scalable relational e-commerce database. Define 3NF normalized tables with foreign keys and check constraints, write complex analytical joins and CTEs, execute an atomic inventory-safe checkout transaction, create compound B-Tree indexes, and verify performance with EXPLAIN ANALYZE.",
+  desc: "Design and implement a complete, highly-scalable relational e-commerce database. Define normalized tables with foreign keys and check constraints, write complex analytical joins and CTEs, execute an atomic inventory-safe checkout transaction, create B-Tree indexes, and verify performance with EXPLAIN ANALYZE.",
   path: "/learn/postgresql/projects/ecommerce-database",
   badge: "Capstone",
   xpReward: 500,
   estimatedMinutes: 90,
   keyFeatures: [
-    "Normalized 3NF schema: users, categories, products, orders, order_items, inventory",
-    "Integrity constraints: CHECK (price > 0), UNIQUE (email), NOT NULL and status ENUMs",
-    "Foreign keys with referential actions (ON DELETE RESTRICT vs CASCADE)",
-    "Idempotent inventory upsert using INSERT INTO ... ON CONFLICT (product_id) DO UPDATE",
-    "Multi-step ACID checkout transaction with row locking (SELECT ... FOR UPDATE) and balance transfer",
-    "Executive analytical reporting using CTEs, window functions (RANK() OVER), and GROUP BY",
-    "Compound index on (status, created_at DESC) and execution plan verification with EXPLAIN ANALYZE",
+    "Normalized schema: customers, products, orders, order_items, and categories",
+    "Integrity constraints: CHECK (price >= 0), UNIQUE (email, sku), and NOT NULL fields",
+    "Foreign keys with referential actions (REFERENCES customers(id))",
+    "Multi-step ACID checkout transaction with BEGIN, COMMIT, and ROLLBACK",
+    "Executive analytical reporting using CTEs (WITH), aggregates, and GROUP BY / HAVING",
+    "Query plan optimization with B-Tree indexes and EXPLAIN (ANALYZE, BUFFERS)",
+    "Parameterized query integration preventing SQL injection vulnerabilities",
   ],
 };
 
@@ -686,7 +472,7 @@ export const POSTGRESQL_STAGES: StageMeta[] = POSTGRESQL_PROGRESSION_PHASES.map(
     textAccent: "text-purple-400",
   },
   lessons: POSTGRESQL_LESSONS.filter((l) => l.phaseId === phase.id),
-  capstone: phase.phaseNumber === 11 ? POSTGRESQL_CAPSTONE : undefined,
+  capstone: phase.phaseNumber === 4 ? POSTGRESQL_CAPSTONE : undefined,
 }));
 
 // ─────────────────────────────────────────────────────────────
@@ -733,33 +519,43 @@ export function getAllLessons(): LessonMeta[] {
 }
 
 export function getLessonBySlug(slug: string): LessonMeta | undefined {
-  return POSTGRESQL_LESSONS.find(
-    (l) => l.slug.toLowerCase() === slug.toLowerCase() || l.code.toLowerCase() === slug.toLowerCase()
+  const normalized = slug?.toLowerCase();
+  const directMatch = POSTGRESQL_LESSONS.find(
+    (l) => l.slug.toLowerCase() === normalized || l.code.toLowerCase() === normalized
   );
+  if (directMatch) return directMatch;
+
+  // Fallback to legacy slug alias
+  const mappedSlug = POSTGRESQL_LEGACY_SLUG_MAP[normalized];
+  if (mappedSlug) {
+    return POSTGRESQL_LESSONS.find((l) => l.slug.toLowerCase() === mappedSlug.toLowerCase());
+  }
+
+  return undefined;
 }
 
 export function getLessonsByPhaseId(phaseId: string): LessonMeta[] {
   return POSTGRESQL_LESSONS.filter((l) => l.phaseId === phaseId);
 }
 
-export function getStageByLessonSlug(slug: string): PhaseMeta | undefined {
+export function getStageByLessonSlug(slug: string): StageMeta | undefined {
   const lesson = getLessonBySlug(slug);
   if (!lesson) return undefined;
-  return POSTGRESQL_PROGRESSION_PHASES.find((p) => p.id === lesson.phaseId);
+  return POSTGRESQL_STAGES.find((s) => s.id === lesson.phaseId);
 }
 
 export function getNextLesson(currentSlug: string): LessonMeta | null {
-  const idx = POSTGRESQL_LESSONS.findIndex(
-    (l) => l.slug.toLowerCase() === currentSlug.toLowerCase() || l.code.toLowerCase() === currentSlug.toLowerCase()
-  );
+  const lesson = getLessonBySlug(currentSlug);
+  if (!lesson) return null;
+  const idx = POSTGRESQL_LESSONS.findIndex((l) => l.slug === lesson.slug);
   if (idx === -1 || idx === POSTGRESQL_LESSONS.length - 1) return null;
   return POSTGRESQL_LESSONS[idx + 1];
 }
 
 export function getPrevLesson(currentSlug: string): LessonMeta | null {
-  const idx = POSTGRESQL_LESSONS.findIndex(
-    (l) => l.slug.toLowerCase() === currentSlug.toLowerCase() || l.code.toLowerCase() === currentSlug.toLowerCase()
-  );
+  const lesson = getLessonBySlug(currentSlug);
+  if (!lesson) return null;
+  const idx = POSTGRESQL_LESSONS.findIndex((l) => l.slug === lesson.slug);
   if (idx <= 0) return null;
   return POSTGRESQL_LESSONS[idx - 1];
 }
@@ -783,7 +579,7 @@ export function getPostgresqlCourse(): Course {
     capstone: {
       title: POSTGRESQL_CAPSTONE.title,
       description:
-        "Your finish line: architect and optimize a complete, production-grade PostgreSQL relational database featuring 3NF normalization, foreign key cascades, ACID transactions with row locks, and window function analytics.",
+        "Your finish line: architect and optimize a complete, production-grade PostgreSQL relational database featuring normalized tables, foreign keys, ACID transactions, and query plan optimization with EXPLAIN ANALYZE.",
       href: POSTGRESQL_CAPSTONE.path,
     },
     phases: POSTGRESQL_PROGRESSION_PHASES.map((phase) => ({

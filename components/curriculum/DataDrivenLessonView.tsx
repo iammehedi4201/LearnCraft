@@ -46,20 +46,98 @@ import {
 
 function renderFormattedText(text?: string): React.ReactNode {
   if (!text) return null;
-  const parts = text.split(/`([^`]+)`/g);
+  const parts = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
   if (parts.length === 1) return text;
-  return parts.map((part, i) =>
-    i % 2 === 1 ? (
-      <code
-        key={i}
-        className="px-1.5 py-0.5 rounded bg-white/[0.08] text-purple-300 font-mono text-[11px] sm:text-xs border border-white/[0.08]"
-      >
-        {part}
-      </code>
-    ) : (
-      part
-    )
-  );
+  return parts.map((part, i) => {
+    if (part.startsWith("`") && part.endsWith("`") && part.length >= 2) {
+      return (
+        <code
+          key={i}
+          className="px-1.5 py-0.5 rounded bg-white/[0.08] text-purple-300 font-mono text-[11px] sm:text-xs border border-white/[0.08]"
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+    if (part.startsWith("**") && part.endsWith("**") && part.length >= 4) {
+      return (
+        <strong key={i} className="font-semibold text-white">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return part;
+  });
+}
+
+function renderFormattedBlock(
+  text?: string,
+  className = "text-sm sm:text-base text-slate-300 leading-relaxed"
+): React.ReactNode {
+  if (!text) return null;
+
+  // Single-line prose without lists or newlines
+  if (!text.includes("\n") && !text.startsWith("- ") && !text.startsWith("* ")) {
+    return <p className={className}>{renderFormattedText(text)}</p>;
+  }
+
+  const rawParagraphs = text.split(/\n\s*\n/);
+  const elements: React.ReactNode[] = [];
+
+  rawParagraphs.forEach((rawP, pIdx) => {
+    const rawLines = rawP.split("\n").map((l) => l.trim()).filter(Boolean);
+    if (rawLines.length === 0) return;
+
+    let currentPara: string[] = [];
+    let currentList: string[] = [];
+
+    const flushPara = (key: string) => {
+      if (currentPara.length > 0) {
+        elements.push(
+          <p key={key} className={className}>
+            {renderFormattedText(currentPara.join(" "))}
+          </p>
+        );
+        currentPara = [];
+      }
+    };
+
+    const flushList = (key: string) => {
+      if (currentList.length > 0) {
+        elements.push(
+          <ul key={key} className="space-y-2 my-2.5 pl-1">
+            {currentList.map((item, itemIdx) => (
+              <li
+                key={itemIdx}
+                className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed"
+              >
+                <span className="text-purple-400 mt-1 select-none text-[10px] shrink-0">
+                  ◆
+                </span>
+                <span className="flex-1">{renderFormattedText(item)}</span>
+              </li>
+            ))}
+          </ul>
+        );
+        currentList = [];
+      }
+    };
+
+    rawLines.forEach((line, lineIdx) => {
+      if (line.startsWith("- ") || line.startsWith("* ")) {
+        flushPara(`p-${pIdx}-${lineIdx}`);
+        currentList.push(line.replace(/^[-*]\s+/, ""));
+      } else {
+        flushList(`l-${pIdx}-${lineIdx}`);
+        currentPara.push(line);
+      }
+    });
+
+    flushPara(`p-${pIdx}-end`);
+    flushList(`l-${pIdx}-end`);
+  });
+
+  return <div className="space-y-3">{elements}</div>;
 }
 
 interface ComparisonSideData {
@@ -295,7 +373,7 @@ function SideBySideComparisonModal({
               <strong className="text-rose-300 block mb-1 font-bold uppercase tracking-wider text-[11px]">
                 ⚠️ Why This Fails:
               </strong>
-              <p>{renderFormattedText(bad.explanation)}</p>
+              {renderFormattedBlock(bad.explanation, "text-xs text-rose-200/90 leading-relaxed")}
             </div>
           </div>
 
@@ -373,7 +451,7 @@ function SideBySideComparisonModal({
               <strong className="text-emerald-300 block mb-1 font-bold uppercase tracking-wider text-[11px]">
                 🛡️ Production Solution Benefit:
               </strong>
-              <p>{renderFormattedText(good.explanation)}</p>
+              {renderFormattedBlock(good.explanation, "text-xs text-emerald-200/90 leading-relaxed")}
             </div>
           </div>
         </div>
@@ -671,11 +749,7 @@ export function DataDrivenLessonView({
           <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             {title}
           </h1>
-          {explanation && (
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              {explanation}
-            </p>
-          )}
+          {explanation && renderFormattedBlock(explanation, "text-sm sm:text-base text-slate-300 leading-relaxed")}
         </div>
 
         {/* Core Code Snippet */}
@@ -696,9 +770,7 @@ export function DataDrivenLessonView({
             <div className="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider font-mono">
               <span>💡 Real-World Analogy</span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              {content.part1.analogy}
-            </p>
+            {renderFormattedBlock(content.part1.analogy, "text-xs sm:text-sm text-slate-300 leading-relaxed")}
           </div>
         )}
 
@@ -756,11 +828,8 @@ export function DataDrivenLessonView({
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             {content.part2?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
-          {content.part2?.intro && (
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              {content.part2.intro}
-            </p>
-          )}
+          {content.part2?.intro &&
+            renderFormattedBlock(content.part2.intro, "text-sm sm:text-base text-slate-300 leading-relaxed")}
         </div>
 
         {/* Concepts Grid */}
@@ -778,9 +847,9 @@ export function DataDrivenLessonView({
                   <h3 className="text-base font-bold text-white tracking-tight group-hover:text-purple-200 transition-colors">
                     {concept.name}
                   </h3>
-                  <p className="text-xs text-slate-300 leading-relaxed mt-2">
-                    {renderFormattedText(concept.desc)}
-                  </p>
+                  <div className="text-xs text-slate-300 leading-relaxed mt-2">
+                    {renderFormattedBlock(concept.desc, "text-xs text-slate-300 leading-relaxed")}
+                  </div>
                 </div>
                 {concept.codeSnippet && (
                   <div className="mt-auto w-full pt-1">
@@ -818,9 +887,9 @@ export function DataDrivenLessonView({
                       {card.title}
                     </h3>
                   </div>
-                  <p className="text-xs text-slate-300 leading-relaxed mt-1">
-                    {renderFormattedText(card.description)}
-                  </p>
+                  <div className="text-xs text-slate-300 leading-relaxed mt-1">
+                    {renderFormattedBlock(card.description, "text-xs text-slate-300 leading-relaxed")}
+                  </div>
                 </div>
                 {card.codeSnippet && (
                   <div className="mt-auto w-full pt-1">
@@ -871,11 +940,8 @@ export function DataDrivenLessonView({
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             {content.part3?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
-          {content.part3?.intro && (
-            <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              {content.part3.intro}
-            </p>
-          )}
+          {content.part3?.intro &&
+            renderFormattedBlock(content.part3.intro, "text-sm sm:text-base text-slate-300 leading-relaxed")}
         </div>
 
         {/* Deep Dives */}
@@ -894,9 +960,7 @@ export function DataDrivenLessonView({
                     {dive.heading}
                   </h3>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  {dive.content}
-                </p>
+                {renderFormattedBlock(dive.content, "text-xs sm:text-sm text-slate-300 leading-relaxed")}
                 {dive.bulletPoints && dive.bulletPoints.length > 0 && (
                   <ul className="text-xs sm:text-sm text-slate-300 space-y-2 list-disc pl-5 pt-1">
                     {dive.bulletPoints.map((bp, bpIdx) => (
@@ -924,9 +988,7 @@ export function DataDrivenLessonView({
                     {pt.title}
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                  {renderFormattedText(pt.content)}
-                </p>
+                {renderFormattedBlock(pt.content, "text-xs sm:text-sm text-slate-300 leading-relaxed")}
                 {pt.codeSnippet && (
                   <div className="pt-2">
                     <CurriculumCardCode
@@ -966,9 +1028,7 @@ export function DataDrivenLessonView({
                 <span>💡</span>
                 <span>Simple Answer</span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
-                {renderFormattedText(content.scenario.answer)}
-              </p>
+              {renderFormattedBlock(content.scenario.answer, "text-xs sm:text-sm text-slate-200 leading-relaxed font-sans")}
             </div>
           </div>
         )}
@@ -990,9 +1050,7 @@ export function DataDrivenLessonView({
                 <span>💬</span>
                 <span>Sample Interview Answer (Easy English)</span>
               </div>
-              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed font-sans">
-                {renderFormattedText(content.interviewQuestion.answer)}
-              </p>
+              {renderFormattedBlock(content.interviewQuestion.answer, "text-xs sm:text-sm text-slate-200 leading-relaxed font-sans")}
             </div>
           </div>
         )}
@@ -1065,7 +1123,7 @@ export function DataDrivenLessonView({
               <strong className="text-amber-300 block mb-0.5 font-bold uppercase tracking-wide text-xs">
                 Core Architectural Challenge
               </strong>
-              <p className="text-slate-300">{content.part4.problem}</p>
+              {renderFormattedBlock(content.part4.problem, "text-slate-300 text-xs sm:text-sm leading-relaxed")}
             </div>
           </div>
         )}
@@ -1089,9 +1147,7 @@ export function DataDrivenLessonView({
                   />
                 </div>
               </div>
-              <p className="text-xs text-rose-300/80 leading-relaxed mt-auto">
-                {renderFormattedText(badComparison.explanation)}
-              </p>
+              {renderFormattedBlock(badComparison.explanation, "text-xs text-rose-300/80 leading-relaxed mt-auto")}
             </div>
           )}
 
@@ -1113,9 +1169,7 @@ export function DataDrivenLessonView({
                   />
                 </div>
               </div>
-              <p className="text-xs text-emerald-300/80 leading-relaxed mt-auto">
-                {renderFormattedText(goodComparison.explanation)}
-              </p>
+              {renderFormattedBlock(goodComparison.explanation, "text-xs text-emerald-300/80 leading-relaxed mt-auto")}
             </div>
           )}
         </div>
@@ -1128,7 +1182,7 @@ export function DataDrivenLessonView({
               <strong className="text-purple-300 block mb-0.5 font-bold uppercase tracking-wide text-xs">
                 Why This Matters in Production
               </strong>
-              <p className="text-slate-300">{content.part4.whyItMatters}</p>
+              {renderFormattedBlock(content.part4.whyItMatters, "text-slate-300 text-xs sm:text-sm leading-relaxed")}
             </div>
           </div>
         )}
@@ -1171,9 +1225,8 @@ export function DataDrivenLessonView({
           <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
             {content.part5?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
-          {content.part5?.intro && (
-            <p className="text-sm text-slate-300 leading-relaxed">{content.part5.intro}</p>
-          )}
+          {content.part5?.intro &&
+            renderFormattedBlock(content.part5.intro, "text-sm text-slate-300 leading-relaxed")}
         </div>
 
         <Playground
