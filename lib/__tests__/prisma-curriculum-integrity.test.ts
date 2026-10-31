@@ -143,3 +143,4 @@ describe("Prisma Authoritative Curriculum Integrity Test Suite", () => {
     expect(getPrismaLessonContent("pri02-prisma-architecture-workflow").code).toBe("PRI-02");
   });
 });
+
