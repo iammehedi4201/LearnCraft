@@ -1,14 +1,19 @@
 /**
- * Prisma Curriculum Data Layer — LearnCraft
- * 10 Progressive Phases, 27 In-Depth Lessons, and 1 Comprehensive Capstone Project.
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * PRISMA ORM CURRICULUM DATA LAYER — AUTHORITATIVE IMPLEMENTATION
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * Authoritative 5 Progressive Phases, 20 Core Lessons, and 1 Comprehensive Capstone.
+ * Directly maps to LearnCraft's authoritative Prisma ORM curriculum.
  *
- * Strict Topic Boundary: Pure Prisma ORM & Data-Access Layer only.
- * Focuses on Prisma Schema modeling, Prisma Client CRUD, Relations (1:1, 1:N, M:N),
- * Nested operations, Filtering & Pagination, Migrations & Schema Evolution,
- * Transactions & Concurrency, Error Handling, and Generated Types.
+ * Strict Curriculum Boundaries:
+ * Pure Prisma ORM data-access layer only (schema modeling, Prisma Client CRUD,
+ * relations, migrations, transactions, error handling, performance & connections).
+ * No Prisma Accelerate/Pulse commercial upsells, no Docker/deployment tangents.
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
 import type { Course } from "@/components/curriculum/types";
+import { PRISMA_LEGACY_SLUG_MAP } from "../content";
 
 export interface LessonMeta {
   code: string;
@@ -61,583 +66,370 @@ export interface PrerequisiteItem {
 
 export const PRISMA_PROGRESSION_PHASES: PhaseMeta[] = [
   {
-    id: "fundamentals",
+    id: "understand-prisma-orm",
     phaseNumber: 1,
-    name: "Prisma Fundamentals & Architecture",
-    label: "Phase 01: Prisma Fundamentals & Architecture",
-    desc: "Understand what Prisma is, why ORMs bridge applications to databases, the declarative schema single source of truth, and project setup.",
-    scope: "What is Prisma · High-Level Architecture · Prisma CLI & Project Setup",
-    lessonCodes: ["PRI-01", "PRI-02", "PRI-03"],
+    name: "Understand Prisma ORM",
+    label: "Phase 01: Understand Prisma ORM",
+    desc: "Understand what Prisma ORM is, how it connects your application to relational databases, schema configuration, and data modeling.",
+    scope: "What is Prisma · Project Setup · Schema & Models · Field Types & Attributes",
+    lessonCodes: ["PRI-01", "PRI-02", "PRI-03", "PRI-04"],
   },
   {
-    id: "data-modeling",
+    id: "use-prisma-client",
     phaseNumber: 2,
-    name: "Prisma Schema & Data Modeling",
-    label: "Phase 02: Prisma Schema & Data Modeling",
-    desc: "Define entity models, scalar field types, primary keys, defaults, constraints, enums, and database column/table mappings.",
-    scope: "Models & Fields · Scalar Types · @id, @default & @unique · Enums & @map",
-    lessonCodes: ["PRI-04", "PRI-05", "PRI-06"],
+    name: "Use Prisma Client",
+    label: "Phase 02: Use Prisma Client",
+    desc: "Master Prisma Client generation, CRUD mutations, filtering, sorting, and selective column projection.",
+    scope: "Prisma Client Setup · create & read · update & delete · where & orderBy · select",
+    lessonCodes: ["PRI-05", "PRI-06", "PRI-07", "PRI-08", "PRI-09"],
   },
   {
-    id: "relations",
+    id: "work-with-related-data",
     phaseNumber: 3,
-    name: "Relations & Structural Connections",
-    label: "Phase 03: Relations & Structural Connections",
-    desc: "Master connections between models: Foreign keys vs virtual relation fields, 1-to-1, 1-to-many, and implicit vs explicit many-to-many.",
-    scope: "Relational Mental Model · One-to-One · One-to-Many · Many-to-Many",
-    lessonCodes: ["PRI-07", "PRI-08", "PRI-09"],
-  },
-  {
-    id: "client-crud",
-    phaseNumber: 4,
-    name: "Prisma Client Fundamentals & Core CRUD",
-    label: "Phase 04: Prisma Client Fundamentals & Core CRUD",
-    desc: "Generate the typed client, instantiate singletons safely, and perform foundational reads and mutations.",
-    scope: "Prisma Client Setup · findUnique & findMany · create, update & delete",
+    name: "Work with Related Data",
+    label: "Phase 03: Work with Related Data",
+    desc: "Connect entities with foreign keys, load related records with include and nested select, and execute atomic nested writes.",
+    scope: "Relationships & Foreign Keys · include vs nested select · Nested Writes & connect",
     lessonCodes: ["PRI-10", "PRI-11", "PRI-12"],
   },
   {
-    id: "relation-queries",
-    phaseNumber: 5,
-    name: "Querying Relations & Nested Operations",
-    label: "Phase 05: Querying Relations & Nested Operations",
-    desc: "Eagerly load related data with include and select, execute atomic nested writes, and link existing entities with connect.",
-    scope: "include vs select · Nested Creates · connect & connectOrCreate · disconnect",
+    id: "keep-schema-and-data-safe",
+    phaseNumber: 4,
+    name: "Keep the Schema and Data Safe",
+    label: "Phase 04: Keep the Schema and Data Safe",
+    desc: "Track schema changes with Prisma Migrate, seed development environments, inspect records visually with Studio, and handle error codes.",
+    scope: "Migrations · Prisma Studio & Seeding · Error Handling & P2002/P2025 Codes",
     lessonCodes: ["PRI-13", "PRI-14", "PRI-15"],
   },
   {
-    id: "filtering-pagination",
-    phaseNumber: 6,
-    name: "Filtering, Sorting & Pagination",
-    label: "Phase 06: Filtering, Sorting & Pagination",
-    desc: "Express complex application queries with comparison operators, relation filters (some/every/none), and offset vs cursor pagination.",
-    scope: "Comparison & Logical Filters · some / every / none · Offset vs Cursor Pagination",
-    lessonCodes: ["PRI-16", "PRI-17", "PRI-18"],
-  },
-  {
-    id: "migrations",
-    phaseNumber: 7,
-    name: "Migrations & Schema Evolution",
-    label: "Phase 07: Migrations & Schema Evolution",
-    desc: "Translate schema changes into deterministic SQL migrations, manage deployment with migrate deploy, and compare with db push.",
-    scope: "How Migrations Work · prisma migrate dev · Migration History · db push",
-    lessonCodes: ["PRI-19", "PRI-20", "PRI-21"],
-  },
-  {
-    id: "transactions",
-    phaseNumber: 8,
-    name: "Transactions & Concurrency Control",
-    label: "Phase 08: Transactions & Concurrency Control",
-    desc: "Ensure atomic consistency across multiple operations with sequential batch transactions and interactive callback transactions.",
-    scope: "Why Transactions · Batch $transaction · Interactive $transaction · Rollbacks",
-    lessonCodes: ["PRI-22", "PRI-23", "PRI-24"],
-  },
-  {
-    id: "errors-debugging",
-    phaseNumber: 9,
-    name: "Error Handling & Diagnostic Debugging",
-    label: "Phase 09: Error Handling & Diagnostic Debugging",
-    desc: "Identify Prisma error codes (P2002, P2025, P1001), enable query logging, inspect execution plans, and browse data with Prisma Studio.",
-    scope: "Prisma Error Codes · KnownRequestError · Query Logging · Prisma Studio",
-    lessonCodes: ["PRI-25", "PRI-26"],
-  },
-  {
-    id: "types-production",
-    phaseNumber: 10,
-    name: "Generated Types & Production Architecture",
-    label: "Phase 10: Generated Types & Production Architecture",
-    desc: "Leverage generated types and payload helpers, prevent connection exhaustion in serverless/Node, and build clean data access repositories.",
-    scope: "Prisma.UserGetPayload · Input Types · Singleton Pattern · Repository Design",
-    lessonCodes: ["PRI-27"],
+    id: "reliability-and-performance",
+    phaseNumber: 5,
+    name: "Reliability and Performance",
+    label: "Phase 05: Reliability and Performance",
+    desc: "Ensure ACID transactions, implement high-performance pagination, optimize queries with indexes, manage connection pools, and run safe raw SQL.",
+    scope: "Transactions · Pagination · Indexes & Performance · Connection Pooling · Raw SQL",
+    lessonCodes: ["PRI-16", "PRI-17", "PRI-18", "PRI-19", "PRI-20"],
   },
 ];
 
 export const PRISMA_LESSONS: LessonMeta[] = [
-  // Phase 1: Fundamentals & Architecture
+  // Phase 1: Understand Prisma ORM (Lessons 1 - 4)
   {
     code: "PRI-01",
     slug: "pri01-what-is-prisma",
-    name: "What Is Prisma & Where It Fits in Modern Architecture",
-    phaseId: "fundamentals",
+    name: "What Is Prisma ORM?",
+    phaseId: "understand-prisma-orm",
     phaseNumber: 1,
     stepNumber: 1,
-    desc: "Understand what Prisma is, why applications need a typed data-access layer, and how Prisma eliminates raw SQL string headaches.",
-    estimatedMinutes: 20,
+    desc: "Understand what Prisma ORM is, why applications need a typed data-access layer, and how Prisma queries relational databases safely.",
+    estimatedMinutes: 15,
     xpReward: 80,
     path: "/learn/prisma/pri01-what-is-prisma",
   },
   {
     code: "PRI-02",
-    slug: "pri02-prisma-architecture-workflow",
-    name: "Prisma Architecture: Schema, Engine & Generation Workflow",
-    phaseId: "fundamentals",
+    slug: "pri02-prisma-project-setup-and-main-files",
+    name: "Prisma Project Setup and Main Files",
+    phaseId: "understand-prisma-orm",
     phaseNumber: 1,
     stepNumber: 2,
-    desc: "Explore how the Prisma Schema acts as the single source of truth, how prisma generate compiles types, and the query engine role.",
-    estimatedMinutes: 25,
-    xpReward: 90,
+    desc: "Explore the main files of a Prisma project: schema.prisma, configuration files, generated Prisma Client, and migrations directory.",
+    estimatedMinutes: 20,
+    xpReward: 85,
     prerequisite: "PRI-01",
-    path: "/learn/prisma/pri02-prisma-architecture-workflow",
+    path: "/learn/prisma/pri02-prisma-project-setup-and-main-files",
   },
   {
     code: "PRI-03",
-    slug: "pri03-project-setup-and-cli",
-    name: "Project Setup, Prisma CLI & Project Structure",
-    phaseId: "fundamentals",
+    slug: "pri03-prisma-schema-and-models",
+    name: "Prisma Schema and Models",
+    phaseId: "understand-prisma-orm",
     phaseNumber: 1,
     stepNumber: 3,
-    desc: "Initialize Prisma in a modern project with prisma init, configure DATABASE_URL, and explore the schema.prisma directory layout.",
-    estimatedMinutes: 25,
-    xpReward: 90,
+    desc: "Define application entities, tables, fields, and constraints using declarative Prisma schema models.",
+    estimatedMinutes: 20,
+    xpReward: 85,
     prerequisite: "PRI-02",
-    path: "/learn/prisma/pri03-project-setup-and-cli",
+    path: "/learn/prisma/pri03-prisma-schema-and-models",
   },
-
-  // Phase 2: Prisma Schema & Data Modeling
   {
     code: "PRI-04",
-    slug: "pri04-models-fields-scalar-types",
-    name: "Modeling Entities: Models, Fields & Scalar Types",
-    phaseId: "data-modeling",
-    phaseNumber: 2,
+    slug: "pri04-field-types-and-schema-attributes",
+    name: "Field Types and Schema Attributes",
+    phaseId: "understand-prisma-orm",
+    phaseNumber: 1,
     stepNumber: 4,
-    desc: "Declare data models in Prisma schema and choose the right scalar types: String, Int, BigInt, Float, Decimal, DateTime, Boolean, and Json.",
-    estimatedMinutes: 25,
+    desc: "Use scalar types (String, Int, Decimal, DateTime), optional nullable fields, and default value attributes.",
+    estimatedMinutes: 20,
     xpReward: 90,
     prerequisite: "PRI-03",
-    path: "/learn/prisma/pri04-models-fields-scalar-types",
+    path: "/learn/prisma/pri04-field-types-and-schema-attributes",
   },
+
+  // Phase 2: Use Prisma Client (Lessons 5 - 9)
   {
     code: "PRI-05",
-    slug: "pri05-ids-defaults-and-attributes",
-    name: "Primary Keys, Defaults & Unique Constraints",
-    phaseId: "data-modeling",
+    slug: "pri05-what-is-prisma-client",
+    name: "What Is Prisma Client?",
+    phaseId: "use-prisma-client",
     phaseNumber: 2,
     stepNumber: 5,
-    desc: "Enforce integrity with @id, @default(autoincrement()), @default(uuid()), @default(now()), and @unique constraint attributes.",
-    estimatedMinutes: 25,
-    xpReward: 95,
+    desc: "Learn how Prisma Client is generated from the schema and provides typed methods for reading and changing data.",
+    estimatedMinutes: 20,
+    xpReward: 90,
     prerequisite: "PRI-04",
-    path: "/learn/prisma/pri05-ids-defaults-and-attributes",
+    path: "/learn/prisma/pri05-what-is-prisma-client",
   },
   {
     code: "PRI-06",
-    slug: "pri06-enums-mapping-and-indexes",
-    name: "Enums, Field Mapping & Table Indexes",
-    phaseId: "data-modeling",
+    slug: "pri06-create-and-read-records",
+    name: "Create and Read Records",
+    phaseId: "use-prisma-client",
     phaseNumber: 2,
     stepNumber: 6,
-    desc: "Define strict enum types, map application camelCase names to snake_case database tables with @map and @@map, and declare @@index.",
+    desc: "Insert rows with create() and read data with findMany(), findUnique(), and findFirst().",
     estimatedMinutes: 25,
     xpReward: 95,
     prerequisite: "PRI-05",
-    path: "/learn/prisma/pri06-enums-mapping-and-indexes",
+    path: "/learn/prisma/pri06-create-and-read-records",
   },
-
-  // Phase 3: Relations & Structural Connections
   {
     code: "PRI-07",
-    slug: "pri07-relations-mental-model",
-    name: "Relational Mental Model: Foreign Keys vs Relation Fields",
-    phaseId: "relations",
-    phaseNumber: 3,
+    slug: "pri07-update-and-delete-records",
+    name: "Update and Delete Records",
+    phaseId: "use-prisma-client",
+    phaseNumber: 2,
     stepNumber: 7,
-    desc: "Understand the core Prisma distinction between physical scalar foreign keys and virtual Prisma relation fields.",
+    desc: "Modify existing records with update() and remove rows safely with delete() and deleteMany().",
     estimatedMinutes: 25,
     xpReward: 95,
     prerequisite: "PRI-06",
-    path: "/learn/prisma/pri07-relations-mental-model",
+    path: "/learn/prisma/pri07-update-and-delete-records",
   },
   {
     code: "PRI-08",
-    slug: "pri08-one-to-one-and-one-to-many",
-    name: "One-to-One & One-to-Many Relations",
-    phaseId: "relations",
-    phaseNumber: 3,
+    slug: "pri08-filtering-and-sorting-data",
+    name: "Filtering and Sorting Data",
+    phaseId: "use-prisma-client",
+    phaseNumber: 2,
     stepNumber: 8,
-    desc: "Configure 1:1 user-profile connections and 1:N author-posts relations using @relation(fields: [...], references: [...]) with cascade rules.",
-    estimatedMinutes: 30,
-    xpReward: 100,
+    desc: "Filter results using where conditions and sort records with orderBy in ascending or descending order.",
+    estimatedMinutes: 25,
+    xpReward: 95,
     prerequisite: "PRI-07",
-    path: "/learn/prisma/pri08-one-to-one-and-one-to-many",
+    path: "/learn/prisma/pri08-filtering-and-sorting-data",
   },
   {
     code: "PRI-09",
-    slug: "pri09-many-to-many-relations",
-    name: "Many-to-Many Relations: Implicit vs Explicit Join Models",
-    phaseId: "relations",
-    phaseNumber: 3,
+    slug: "pri09-select-only-the-fields-you-need",
+    name: "Select Only the Fields You Need",
+    phaseId: "use-prisma-client",
+    phaseNumber: 2,
     stepNumber: 9,
-    desc: "Model M:N relationships: Understand when to let Prisma manage implicit join tables vs when to define explicit junction models with custom fields.",
-    estimatedMinutes: 30,
-    xpReward: 100,
+    desc: "Use select to retrieve only the required fields, protecting sensitive data and reducing payload sizes.",
+    estimatedMinutes: 20,
+    xpReward: 90,
     prerequisite: "PRI-08",
-    path: "/learn/prisma/pri09-many-to-many-relations",
+    path: "/learn/prisma/pri09-select-only-the-fields-you-need",
   },
 
-  // Phase 4: Prisma Client Core CRUD
+  // Phase 3: Work with Related Data (Lessons 10 - 12)
   {
     code: "PRI-10",
-    slug: "pri10-generating-instantiating-client",
-    name: "Generating & Instantiating Prisma Client",
-    phaseId: "client-crud",
-    phaseNumber: 4,
+    slug: "pri10-understand-relationships-between-models",
+    name: "Understand Relationships Between Models",
+    phaseId: "work-with-related-data",
+    phaseNumber: 3,
     stepNumber: 10,
-    desc: "Run prisma generate to compile tailored TypeScript bindings, instantiate PrismaClient, and prevent connection pool leaks with singletons.",
+    desc: "Connect models using relation scalar fields (foreign keys) and virtual relation fields with @relation.",
     estimatedMinutes: 25,
-    xpReward: 90,
+    xpReward: 100,
     prerequisite: "PRI-09",
-    path: "/learn/prisma/pri10-generating-instantiating-client",
+    path: "/learn/prisma/pri10-understand-relationships-between-models",
   },
   {
     code: "PRI-11",
-    slug: "pri11-reading-records-find-queries",
-    name: "Reading Records: findUnique, findFirst & findMany",
-    phaseId: "client-crud",
-    phaseNumber: 4,
+    slug: "pri11-read-related-records-with-include-and-nested-select",
+    name: "Read Related Records with include and Nested select",
+    phaseId: "work-with-related-data",
+    phaseNumber: 3,
     stepNumber: 11,
-    desc: "Execute targeted reads with findUnique (enforcing unique criteria), findFirst for conditional searches, and findMany for collections.",
+    desc: "Eagerly load related models with include or fetch specific nested subsets with nested select.",
     estimatedMinutes: 25,
-    xpReward: 95,
+    xpReward: 100,
     prerequisite: "PRI-10",
-    path: "/learn/prisma/pri11-reading-records-find-queries",
+    path: "/learn/prisma/pri11-read-related-records-with-include-and-nested-select",
   },
   {
     code: "PRI-12",
-    slug: "pri12-writing-records-mutations",
-    name: "Writing Records: create, update, upsert & delete",
-    phaseId: "client-crud",
-    phaseNumber: 4,
+    slug: "pri12-create-related-records-with-nested-writes",
+    name: "Create Related Records with Nested Writes",
+    phaseId: "work-with-related-data",
+    phaseNumber: 3,
     stepNumber: 12,
-    desc: "Perform data mutations: create new records, update existing ones, execute idempotent upsert operations, and handle batch createMany.",
+    desc: "Create and connect parent and child records in a single atomic database operation using nested writes.",
     estimatedMinutes: 25,
-    xpReward: 95,
+    xpReward: 100,
     prerequisite: "PRI-11",
-    path: "/learn/prisma/pri12-writing-records-mutations",
+    path: "/learn/prisma/pri12-create-related-records-with-nested-writes",
   },
 
-  // Phase 5: Querying Relations & Nested Operations
+  // Phase 4: Keep the Schema and Data Safe (Lessons 13 - 15)
   {
     code: "PRI-13",
-    slug: "pri13-including-and-selecting-relations",
-    name: "Fetching Related Data: include vs select",
-    phaseId: "relation-queries",
-    phaseNumber: 5,
+    slug: "pri13-what-are-prisma-migrations",
+    name: "What Are Prisma Migrations?",
+    phaseId: "keep-schema-and-data-safe",
+    phaseNumber: 4,
     stepNumber: 13,
-    desc: "Master eager loading with include, shape precise JSON payloads using nested select, and avoid N+1 query performance anti-patterns.",
-    estimatedMinutes: 30,
+    desc: "Evolve database schemas deterministically across environments using prisma migrate dev and deploy.",
+    estimatedMinutes: 25,
     xpReward: 100,
     prerequisite: "PRI-12",
-    path: "/learn/prisma/pri13-including-and-selecting-relations",
+    path: "/learn/prisma/pri13-what-are-prisma-migrations",
   },
   {
     code: "PRI-14",
-    slug: "pri14-nested-writes-connect-create",
-    name: "Nested Writes: Nested Create, connect & connectOrCreate",
-    phaseId: "relation-queries",
-    phaseNumber: 5,
+    slug: "pri14-prisma-studio-and-seed-data",
+    name: "Prisma Studio and Seed Data",
+    phaseId: "keep-schema-and-data-safe",
+    phaseNumber: 4,
     stepNumber: 14,
-    desc: "Create parent and children atomically in a single query, link existing records via connect, and handle idempotent connectOrCreate.",
-    estimatedMinutes: 30,
-    xpReward: 100,
+    desc: "Visually browse database records with Prisma Studio and populate development environments using seed scripts.",
+    estimatedMinutes: 20,
+    xpReward: 90,
     prerequisite: "PRI-13",
-    path: "/learn/prisma/pri14-nested-writes-connect-create",
+    path: "/learn/prisma/pri14-prisma-studio-and-seed-data",
   },
   {
     code: "PRI-15",
-    slug: "pri15-updating-disconnecting-relations",
-    name: "Updating & Disconnecting Related Records",
-    phaseId: "relation-queries",
-    phaseNumber: 5,
+    slug: "pri15-handle-prisma-errors",
+    name: "Handle Prisma Errors",
+    phaseId: "keep-schema-and-data-safe",
+    phaseNumber: 4,
     stepNumber: 15,
-    desc: "Safely unlink relationships using disconnect, replace connections with set, and clean up dependent children without orphan leaks.",
-    estimatedMinutes: 25,
+    desc: "Catch and handle PrismaClientKnownRequestError codes (P2002, P2025) to provide helpful user feedback.",
+    estimatedMinutes: 20,
     xpReward: 95,
     prerequisite: "PRI-14",
-    path: "/learn/prisma/pri15-updating-disconnecting-relations",
+    path: "/learn/prisma/pri15-handle-prisma-errors",
   },
 
-  // Phase 6: Filtering, Sorting & Pagination
+  // Phase 5: Reliability and Performance (Lessons 16 - 20)
   {
     code: "PRI-16",
-    slug: "pri16-filtering-comparison-logical",
-    name: "Advanced Filtering: Comparisons & Logical Operators",
-    phaseId: "filtering-pagination",
-    phaseNumber: 6,
+    slug: "pri16-transactions",
+    name: "Transactions",
+    phaseId: "reliability-and-performance",
+    phaseNumber: 5,
     stepNumber: 16,
-    desc: "Filter results using comparison operators (equals, lt, gt, in), string filters (contains, startsWith, mode: insensitive), and AND/OR/NOT.",
+    desc: "Ensure all-or-nothing atomicity across multiple operations using batch and interactive $transaction.",
     estimatedMinutes: 25,
-    xpReward: 95,
+    xpReward: 100,
     prerequisite: "PRI-15",
-    path: "/learn/prisma/pri16-filtering-comparison-logical",
+    path: "/learn/prisma/pri16-transactions",
   },
   {
     code: "PRI-17",
-    slug: "pri17-relation-filters",
-    name: "Relation Filters: some, every & none",
-    phaseId: "filtering-pagination",
-    phaseNumber: 6,
+    slug: "pri17-pagination",
+    name: "Pagination",
+    phaseId: "reliability-and-performance",
+    phaseNumber: 5,
     stepNumber: 17,
-    desc: "Query parent models based on criteria in related collections using some (at least one matches), every (all match), and none.",
-    estimatedMinutes: 25,
+    desc: "Paginate large datasets using offset-based (skip/take) and cursor-based pagination strategies.",
+    estimatedMinutes: 20,
     xpReward: 95,
     prerequisite: "PRI-16",
-    path: "/learn/prisma/pri17-relation-filters",
+    path: "/learn/prisma/pri17-pagination",
   },
   {
     code: "PRI-18",
-    slug: "pri18-sorting-and-pagination",
-    name: "Sorting & Pagination: Offset vs Cursor-Based Pagination",
-    phaseId: "filtering-pagination",
-    phaseNumber: 6,
+    slug: "pri18-indexes-and-query-performance",
+    name: "Indexes and Query Performance",
+    phaseId: "reliability-and-performance",
+    phaseNumber: 5,
     stepNumber: 18,
-    desc: "Sort with orderBy and implement pagination: Understand the trade-offs between offset pagination (skip/take) and scalable cursor pagination.",
-    estimatedMinutes: 30,
-    xpReward: 100,
+    desc: "Accelerate query lookups and enforce uniqueness using @@index and @@unique schema attributes.",
+    estimatedMinutes: 20,
+    xpReward: 95,
     prerequisite: "PRI-17",
-    path: "/learn/prisma/pri18-sorting-and-pagination",
+    path: "/learn/prisma/pri18-indexes-and-query-performance",
   },
-
-  // Phase 7: Migrations & Schema Evolution
   {
     code: "PRI-19",
-    slug: "pri19-migrations-and-development",
-    name: "How Migrations Work & Development Workflow (migrate dev)",
-    phaseId: "migrations",
-    phaseNumber: 7,
+    slug: "pri19-reuse-prisma-client-and-manage-connections",
+    name: "Reuse Prisma Client and Manage Connections",
+    phaseId: "reliability-and-performance",
+    phaseNumber: 5,
     stepNumber: 19,
-    desc: "Learn why migrations exist, how prisma migrate dev detects schema changes, generates timestamped SQL, and synchronizes the local database.",
-    estimatedMinutes: 30,
+    desc: "Prevent connection exhaustion in Node.js and Next.js applications using global singleton client patterns.",
+    estimatedMinutes: 25,
     xpReward: 100,
     prerequisite: "PRI-18",
-    path: "/learn/prisma/pri19-migrations-and-development",
+    path: "/learn/prisma/pri19-reuse-prisma-client-and-manage-connections",
   },
   {
     code: "PRI-20",
-    slug: "pri20-applying-migrations-production",
-    name: "Applying Migrations & Production Deployment (migrate deploy)",
-    phaseId: "migrations",
-    phaseNumber: 7,
+    slug: "pri20-use-raw-sql-only-when-needed",
+    name: "Use Raw SQL Only When Needed",
+    phaseId: "reliability-and-performance",
+    phaseNumber: 5,
     stepNumber: 20,
-    desc: "Understand CI/CD migration deployment using prisma migrate deploy, and examine how the _prisma_migrations metadata table tracks execution state.",
+    desc: "Execute safe parameterized raw SQL queries using $queryRaw and $executeRaw without SQL injection risks.",
     estimatedMinutes: 25,
-    xpReward: 95,
+    xpReward: 100,
     prerequisite: "PRI-19",
-    path: "/learn/prisma/pri20-applying-migrations-production",
-  },
-  {
-    code: "PRI-21",
-    slug: "pri21-migration-safety-and-db-push",
-    name: "Migration Safety, Database Drift & Prototyping (db push)",
-    phaseId: "migrations",
-    phaseNumber: 7,
-    stepNumber: 21,
-    desc: "Diagnose database schema drift, learn when to use prisma db push for rapid prototyping without migration history, and handle safe resets.",
-    estimatedMinutes: 25,
-    xpReward: 95,
-    prerequisite: "PRI-20",
-    path: "/learn/prisma/pri21-migration-safety-and-db-push",
-  },
-
-  // Phase 8: Transactions & Concurrency
-  {
-    code: "PRI-22",
-    slug: "pri22-batch-transactions",
-    name: "Transaction Concepts & Sequential Batch Transactions",
-    phaseId: "transactions",
-    phaseNumber: 8,
-    stepNumber: 22,
-    desc: "Understand ACID atomicity in application logic and bundle multiple independent operations into a single round-trip with prisma.$transaction([]).",
-    estimatedMinutes: 25,
-    xpReward: 95,
-    prerequisite: "PRI-21",
-    path: "/learn/prisma/pri22-batch-transactions",
-  },
-  {
-    code: "PRI-23",
-    slug: "pri23-interactive-transactions",
-    name: "Interactive Transactions ($transaction async callback)",
-    phaseId: "transactions",
-    phaseNumber: 8,
-    stepNumber: 23,
-    desc: "Execute complex dependent transactions where writes depend on sequential reads using prisma.$transaction(async (tx) => ...) with auto-rollback.",
-    estimatedMinutes: 30,
-    xpReward: 105,
-    prerequisite: "PRI-22",
-    path: "/learn/prisma/pri23-interactive-transactions",
-  },
-  {
-    code: "PRI-24",
-    slug: "pri24-concurrency-and-rollbacks",
-    name: "Handling Concurrency & Rollbacks Gracefully",
-    phaseId: "transactions",
-    phaseNumber: 8,
-    stepNumber: 24,
-    desc: "Handle concurrent data modifications safely, implement optimistic concurrency control with version fields, and handle rollback exceptions cleanly.",
-    estimatedMinutes: 25,
-    xpReward: 95,
-    prerequisite: "PRI-23",
-    path: "/learn/prisma/pri24-concurrency-and-rollbacks",
-  },
-
-  // Phase 9: Error Handling & Diagnostic Debugging
-  {
-    code: "PRI-25",
-    slug: "pri25-prisma-error-codes-handling",
-    name: "Common Prisma Error Codes (P2002, P2025, P1001) & Handling",
-    phaseId: "errors-debugging",
-    phaseNumber: 9,
-    stepNumber: 25,
-    desc: "Catch and differentiate PrismaClientKnownRequestError: Handle P2002 (Unique constraint), P2025 (Record not found), and P1001 (Connection failure).",
-    estimatedMinutes: 25,
-    xpReward: 95,
-    prerequisite: "PRI-24",
-    path: "/learn/prisma/pri25-prisma-error-codes-handling",
-  },
-  {
-    code: "PRI-26",
-    slug: "pri26-query-logging-and-debugging",
-    name: "Query Logging, Diagnostic Inspection & Prisma Studio",
-    phaseId: "errors-debugging",
-    phaseNumber: 9,
-    stepNumber: 26,
-    desc: "Configure log levels to inspect executed queries and timing metrics, diagnose slow operations, and inspect raw data visually via Prisma Studio.",
-    estimatedMinutes: 25,
-    xpReward: 90,
-    prerequisite: "PRI-25",
-    path: "/learn/prisma/pri26-query-logging-and-debugging",
-  },
-
-  // Phase 10: Type Safety & Production Architecture
-  {
-    code: "PRI-27",
-    slug: "pri27-generated-types-production-architecture",
-    name: "Generated Types, Payloads & Production Architecture",
-    phaseId: "types-production",
-    phaseNumber: 10,
-    stepNumber: 27,
-    desc: "Extract complex return types with Prisma.UserGetPayload, utilize UserCreateInput, and organize Prisma within a robust, framework-neutral repository layer.",
-    estimatedMinutes: 30,
-    xpReward: 105,
-    prerequisite: "PRI-26",
-    path: "/learn/prisma/pri27-generated-types-production-architecture",
-  },
-];
-
-export const PRISMA_PREREQUISITES: PrerequisiteItem[] = [
-  {
-    id: "basic-programming",
-    title: "Basic Programming & Logic",
-    badge: "Core",
-    category: "required",
-    icon: "💻",
-    desc: "Variables, functions, async/await promises, and error handling fundamentals.",
-    path: "/learn/javascript",
-  },
-  {
-    id: "data-structures",
-    title: "JSON & Data Structures",
-    badge: "Objects",
-    category: "required",
-    icon: "📦",
-    desc: "Objects, nested keys, arrays of records, and basic data types.",
-    path: "/learn/typescript",
-  },
-  {
-    id: "database-concept",
-    title: "Basic Database Concept",
-    badge: "Tables",
-    category: "recommended",
-    icon: "🗄️",
-    desc: "Understanding that databases store records in tables with relations and primary keys.",
-    path: "/learn/postgresql",
+    path: "/learn/prisma/pri20-use-raw-sql-only-when-needed",
   },
 ];
 
 export const PRISMA_CAPSTONE: CapstoneProjectMeta = {
-  id: "capstone-orderflow-engine",
-  stageNumber: 11,
+  id: "orderflow-engine",
+  stageNumber: 5,
   slug: "orderflow-engine",
-  title: "OrderFlow — Enterprise Multi-Entity Data Access Engine",
-  subtitle: "Production Prisma Schema, Migrations, Nested Writes & Interactive Transactions",
-  desc: "Design and implement a complete, production-grade Prisma data-access layer for an enterprise order fulfillment system. Define 4 connected models with 1:1, 1:N, and M:N relations, execute atomic checkout transactions with row-safe inventory updates, implement cursor pagination, handle P2002/P2025 error codes gracefully, and generate type-safe payload queries.",
+  title: "OrderFlow: Enterprise Transaction Engine",
+  subtitle: "Production Prisma data-access architecture with multi-model relations, migrations, and interactive transactions.",
+  desc: "Synthesize all 20 lessons: Design an enterprise ordering schema, write automated SQL migrations, execute atomic nested writes, and run interactive transactions.",
   path: "/learn/prisma/projects/orderflow-engine",
-  badge: "💎 Capstone",
+  badge: "Capstone Project",
   xpReward: 500,
-  estimatedMinutes: 90,
+  estimatedMinutes: 120,
   keyFeatures: [
-    "Prisma Schema with User, Profile, Product, Category, and Order models",
-    "Configured 1:1, 1:N, and M:N relations with foreign keys and referential actions",
-    "Declarative SQL migrations workflow with prisma migrate dev",
-    "Nested create and connect queries linking order items and customers atomically",
-    "Interactive transaction ($transaction) verifying stock and deducting inventory with rollback protection",
-    "Production Prisma Client singleton with connection pooling and query logging",
+    "Declarative multi-model schema with 1:1, 1:N, and M:N relationships",
+    "Timestamped SQL migration pipeline with version-controlled evolution",
+    "Atomic nested creates and upserts for order items and customer accounts",
+    "Interactive $transaction callback managing stock decrement and ledger credits",
+    "Safe parameterized $queryRaw reporting with custom TypeScript payload types",
   ],
 };
 
-export interface StageMeta {
-  id: string;
-  stageNumber: number;
-  name: string;
-  subtitle: string;
-  milestone?: string;
-  description: string;
-  theme?: {
-    badge: string;
-    dot: string;
-    border: string;
-    bgSubtle: string;
-    textAccent: string;
-  };
-  lessons: LessonMeta[];
-  capstone?: CapstoneProjectMeta;
-}
-
-export const PRISMA_STAGES: StageMeta[] = PRISMA_PROGRESSION_PHASES.map((phase) => ({
-  id: phase.id,
-  stageNumber: phase.phaseNumber,
-  name: phase.name,
-  subtitle: phase.scope,
-  description: phase.desc,
-  theme: {
-    badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-    dot: "bg-purple-400",
-    border: "border-purple-500/30",
-    bgSubtle: "bg-purple-500/[0.03]",
-    textAccent: "text-purple-400",
-  },
-  lessons: PRISMA_LESSONS.filter((l) => l.phaseId === phase.id),
-  capstone: phase.phaseNumber === 10 ? PRISMA_CAPSTONE : undefined,
-}));
-
-export const PRISMA_RELATED_TOPICS = [
+export const PRISMA_PREREQUISITES: PrerequisiteItem[] = [
   {
-    id: "rel-postgresql",
-    title: "PostgreSQL",
-    desc: "Master relational table modeling, indexes, ACID, and SQL joins that underpin relational Prisma schemas.",
+    id: "ts-types",
+    title: "TypeScript Fundamentals",
+    badge: "Language",
+    category: "required",
+    icon: "📘",
+    desc: "Understanding static types, interfaces, generics, async/await, and promises in TypeScript.",
+    path: "/learn/typescript",
+  },
+  {
+    id: "relational-db",
+    title: "Relational Database Concepts",
     badge: "Database",
+    category: "required",
+    icon: "🗄️",
+    desc: "Tables, rows, columns, primary keys, foreign keys, and basic SQL operations.",
     path: "/learn/postgresql",
   },
   {
-    id: "rel-mongodb",
-    title: "MongoDB",
-    desc: "Explore document models, collections, and aggregation to see how Prisma connects to non-relational databases.",
-    badge: "Database",
-    path: "/learn/mongodb",
-  },
-  {
-    id: "rel-express",
-    title: "Express.js",
-    desc: "Integrate Prisma Client into lightweight REST API route handlers and middleware pipelines.",
-    badge: "Framework",
-    path: "/learn/express",
-  },
-  {
-    id: "rel-nestjs",
-    title: "NestJS",
-    desc: "Inject Prisma Client into modular NestJS services and repository providers across enterprise microservices.",
-    badge: "Framework",
-    path: "/learn/nestjs",
+    id: "nodejs-runtime",
+    title: "Node.js Runtime Basics",
+    badge: "Runtime",
+    category: "recommended",
+    icon: "🟢",
+    desc: "npm packages, environment variables via .env, and asynchronous event loops.",
+    path: "/learn/nodejs",
   },
 ];
 
@@ -645,10 +437,19 @@ export function getAllLessons(): LessonMeta[] {
   return PRISMA_LESSONS;
 }
 
-export function getLessonBySlug(slug: string): LessonMeta | undefined {
-  return PRISMA_LESSONS.find(
-    (l) => l.slug.toLowerCase() === slug.toLowerCase() || l.code.toLowerCase() === slug.toLowerCase()
+export function getLessonBySlug(slugOrCode: string): LessonMeta | undefined {
+  const normalized = slugOrCode?.toLowerCase();
+  const directMatch = PRISMA_LESSONS.find(
+    (l) => l.slug.toLowerCase() === normalized || l.code.toLowerCase() === normalized
   );
+  if (directMatch) return directMatch;
+
+  const mappedSlug = PRISMA_LEGACY_SLUG_MAP[normalized];
+  if (mappedSlug) {
+    return PRISMA_LESSONS.find((l) => l.slug.toLowerCase() === mappedSlug.toLowerCase());
+  }
+
+  return undefined;
 }
 
 export function getLessonsByPhaseId(phaseId: string): LessonMeta[] {
@@ -662,22 +463,43 @@ export function getStageByLessonSlug(slug: string): PhaseMeta | undefined {
 }
 
 export function getNextLesson(currentSlug: string): LessonMeta | null {
-  const idx = PRISMA_LESSONS.findIndex(
-    (l) => l.slug.toLowerCase() === currentSlug.toLowerCase() || l.code.toLowerCase() === currentSlug.toLowerCase()
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const idx = PRISMA_LESSONS.findIndex((l) => l.slug === current.slug);
   if (idx === -1 || idx === PRISMA_LESSONS.length - 1) return null;
   return PRISMA_LESSONS[idx + 1];
 }
 
 export function getPrevLesson(currentSlug: string): LessonMeta | null {
-  const idx = PRISMA_LESSONS.findIndex(
-    (l) => l.slug.toLowerCase() === currentSlug.toLowerCase() || l.code.toLowerCase() === currentSlug.toLowerCase()
-  );
+  const current = getLessonBySlug(currentSlug);
+  if (!current) return null;
+  const idx = PRISMA_LESSONS.findIndex((l) => l.slug === current.slug);
   if (idx <= 0) return null;
   return PRISMA_LESSONS[idx - 1];
 }
 
 export const PROGRESSION_PHASES = PRISMA_PROGRESSION_PHASES;
+
+export interface StageMeta {
+  id: string;
+  stageNumber: number;
+  name: string;
+  subtitle: string;
+  description: string;
+  lessons: LessonMeta[];
+}
+
+export const PRISMA_STAGES: StageMeta[] = PRISMA_PROGRESSION_PHASES.map((phase) => ({
+  id: phase.id,
+  stageNumber: phase.phaseNumber,
+  name: phase.name,
+  subtitle: phase.scope,
+  description: phase.desc,
+  lessons: phase.lessonCodes
+    .map((code) => PRISMA_LESSONS.find((l) => l.code === code))
+    .filter((l): l is LessonMeta => l !== undefined),
+}));
+
 
 export function getPrismaCourse(): Course {
   const allLessons = getAllLessons();
@@ -718,4 +540,3 @@ export function getPrismaCourse(): Course {
     })),
   };
 }
-

@@ -44,7 +44,7 @@ export function JourneyView({
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-purple-300 bg-purple-500/10 border border-purple-500/20 px-2.5 py-0.5 rounded-lg">
-              Phase {phase.phaseNumber.toString().padStart(2, "0")} of 10
+              Phase {phase.phaseNumber.toString().padStart(2, "0")} of {PRISMA_PROGRESSION_PHASES.length}
             </span>
             <span className="text-slate-500 hidden sm:inline">·</span>
             <span className="text-xs font-mono text-slate-400 font-medium">

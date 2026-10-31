@@ -3,7 +3,8 @@
  * LocalStorage caching with PostgreSQL /api/progress persistence sync.
  */
 
-import { PRISMA_LESSONS, LessonMeta } from "./prisma-curriculum";
+import { PRISMA_LESSONS, LessonMeta, getLessonBySlug } from "./prisma-curriculum";
+import { PRISMA_LEGACY_SLUG_MAP } from "../content";
 
 const STORAGE_KEY = "learncraft_prisma_progress_v1";
 const GOAL_KEY = "learncraft_prisma_goal_v1";
@@ -38,40 +39,38 @@ function saveState(state: ProgressState) {
 
 export function isLessonComplete(slugOrCode: string): boolean {
   const state = getStoredState();
-  const slugLower = slugOrCode.toLowerCase();
-  const lesson = PRISMA_LESSONS.find(
-    (l) => l.slug.toLowerCase() === slugLower || l.code.toLowerCase() === slugLower
-  );
-  if (!lesson) return state.completedLessons.includes(slugLower);
+  const slugLower = slugOrCode.toLowerCase().trim();
+  const lesson = getLessonBySlug(slugLower);
+  if (!lesson) {
+    const mapped = PRISMA_LEGACY_SLUG_MAP[slugLower];
+    return state.completedLessons.includes(slugLower) || (mapped ? state.completedLessons.includes(mapped) : false);
+  }
   return (
     state.completedLessons.includes(lesson.slug.toLowerCase()) ||
-    state.completedLessons.includes(lesson.code.toLowerCase())
+    state.completedLessons.includes(lesson.code.toLowerCase()) ||
+    Boolean(PRISMA_LEGACY_SLUG_MAP[slugLower] && state.completedLessons.includes(PRISMA_LEGACY_SLUG_MAP[slugLower]))
   );
 }
 
 export async function toggleLessonComplete(slugOrCode: string): Promise<boolean> {
   const state = getStoredState();
-  const lesson = PRISMA_LESSONS.find(
-    (l) => l.slug.toLowerCase() === slugOrCode.toLowerCase() || l.code.toLowerCase() === slugOrCode.toLowerCase()
-  );
-  const targetKey = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const slugLower = slugOrCode.toLowerCase().trim();
+  const lesson = getLessonBySlug(slugLower);
+  const targetKey = lesson ? lesson.slug.toLowerCase() : slugLower;
   const codeKey = lesson ? lesson.code.toLowerCase() : "";
 
-  const isCompleted = state.completedLessons.includes(targetKey) || (codeKey && state.completedLessons.includes(codeKey));
+  const isCompleted = isLessonComplete(slugOrCode);
+  let updatedList: string[];
 
-  let nextCompleted: string[];
   if (isCompleted) {
-    nextCompleted = state.completedLessons.filter(
-      (k) => k !== targetKey && k !== codeKey
-    );
+    updatedList = state.completedLessons.filter((k) => k !== targetKey && k !== codeKey && k !== slugLower);
   } else {
-    nextCompleted = [...state.completedLessons, targetKey];
-    if (codeKey) nextCompleted.push(codeKey);
+    updatedList = Array.from(new Set([...state.completedLessons, targetKey, codeKey].filter(Boolean)));
   }
 
   saveState({
     ...state,
-    completedLessons: Array.from(new Set(nextCompleted)),
+    completedLessons: updatedList,
   });
 
   // Background server sync
@@ -98,14 +97,13 @@ export function getProgress(): ProgressState {
 
 export async function unmarkLessonComplete(slugOrCode: string): Promise<void> {
   const state = getStoredState();
-  const lesson = PRISMA_LESSONS.find(
-    (l) => l.slug.toLowerCase() === slugOrCode.toLowerCase() || l.code.toLowerCase() === slugOrCode.toLowerCase()
-  );
-  const targetKey = lesson ? lesson.slug.toLowerCase() : slugOrCode.toLowerCase();
+  const slugLower = slugOrCode.toLowerCase().trim();
+  const lesson = getLessonBySlug(slugLower);
+  const targetKey = lesson ? lesson.slug.toLowerCase() : slugLower;
   const codeKey = lesson ? lesson.code.toLowerCase() : "";
 
   const nextCompleted = state.completedLessons.filter(
-    (k) => k !== targetKey && k !== codeKey
+    (k) => k !== targetKey && k !== codeKey && k !== slugLower
   );
 
   saveState({
@@ -138,12 +136,15 @@ export function getOverallProgress(): { completedCount: number; totalCount: numb
   const state = getStoredState();
   const completedSet = new Set<string>();
 
-  PRISMA_LESSONS.forEach((lesson) => {
-    if (
-      state.completedLessons.includes(lesson.slug.toLowerCase()) ||
-      state.completedLessons.includes(lesson.code.toLowerCase())
-    ) {
+  state.completedLessons.forEach((id) => {
+    const lesson = getLessonBySlug(id);
+    if (lesson) {
       completedSet.add(lesson.slug);
+    } else {
+      const mapped = PRISMA_LEGACY_SLUG_MAP[id.toLowerCase()];
+      if (mapped) {
+        completedSet.add(mapped);
+      }
     }
   });
 
@@ -155,12 +156,8 @@ export function getOverallProgress(): { completedCount: number; totalCount: numb
 }
 
 export function getNextRecommendedLesson(): LessonMeta | null {
-  const state = getStoredState();
   for (const lesson of PRISMA_LESSONS) {
-    const isDone =
-      state.completedLessons.includes(lesson.slug.toLowerCase()) ||
-      state.completedLessons.includes(lesson.code.toLowerCase());
-    if (!isDone) return lesson;
+    if (!isLessonComplete(lesson.slug)) return lesson;
   }
   return null;
 }
@@ -181,31 +178,30 @@ export function getCurrentLesson(): string | null {
   }
 }
 
-export function getActiveLesson(): LessonMeta | null {
-  if (typeof window === "undefined") return PRISMA_LESSONS[0];
-  try {
-    const saved = localStorage.getItem(CURRENT_KEY);
-    if (saved) {
-      const match = PRISMA_LESSONS.find((l) => l.slug.toLowerCase() === saved.toLowerCase());
-      if (match) return match;
-    }
-  } catch {}
-  return getNextRecommendedLesson() || PRISMA_LESSONS[0];
+export function getActiveLesson(): LessonMeta {
+  const currentSlug = getCurrentLesson();
+  if (currentSlug) {
+    const lesson = getLessonBySlug(currentSlug);
+    if (lesson) return lesson;
+  }
+  const next = getNextRecommendedLesson();
+  return next || PRISMA_LESSONS[0];
 }
 
-export function setGoal(phaseId: string): void {
+export function setWeeklyGoal(days: number): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(GOAL_KEY, phaseId);
+    localStorage.setItem(GOAL_KEY, days.toString());
   } catch {}
 }
 
-export function getGoal(): string | null {
-  if (typeof window === "undefined") return null;
+export function getWeeklyGoal(): number {
+  if (typeof window === "undefined") return 3;
   try {
-    return localStorage.getItem(GOAL_KEY);
+    const raw = localStorage.getItem(GOAL_KEY);
+    return raw ? parseInt(raw, 10) : 3;
   } catch {
-    return null;
+    return 3;
   }
 }
 
@@ -219,15 +215,16 @@ export async function fetchProgressFromDB(): Promise<void> {
       ? data.completedLessonCodes
       : Array.isArray(data.completedLessonIds)
       ? data.completedLessonIds
-      : Array.isArray(data.completedLessons)
-      ? data.completedLessons
       : [];
     if (serverCodes.length > 0) {
       const state = getStoredState();
-      const combined = Array.from(
-        new Set([...state.completedLessons, ...serverCodes.map((c: string) => c.toLowerCase())])
+      const merged = Array.from(
+        new Set([...state.completedLessons, ...serverCodes.map((s: string) => s.toLowerCase())])
       );
-      saveState({ ...state, completedLessons: combined });
+      saveState({
+        ...state,
+        completedLessons: merged,
+      });
     }
   } catch {}
 }

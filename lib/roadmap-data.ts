@@ -487,7 +487,7 @@ export const SKILL_ROADMAPS: SkillRoadmap[] = [
     category: "frontend",
     level: "beginner-advanced",
     status: "available",
-    totalLessons: 27,
+    totalLessons: 20,
     stages: reactStages,
     learnPath: "/learn/react",
     badgeColor: "bg-purple-500/15 text-purple-300 border-purple-500/30",

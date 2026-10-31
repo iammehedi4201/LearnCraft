@@ -1097,15 +1097,15 @@ const prismaCourse = getPrismaCourse();
 
   it("15.1: Brand-new user (0 lessons completed)", () => {
     const state = getCurriculumState(prismaCourse, { completedLessonIds: [], prereqConfirmed: false });
-    assert(state.totalLessonsCount === 27, `Total lessons should be 27, got ${state.totalLessonsCount}`);
-    assert(state.phases.length === 10, `Total phases should be 10, got ${state.phases.length}`);
+    assert(state.totalLessonsCount === 20, `Total lessons should be 20, got ${state.totalLessonsCount}`);
+    assert(state.phases.length === 5, `Total phases should be 5, got ${state.phases.length}`);
     assert(state.completedLessonsCount === 0, `Completed count should be 0, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 0, `Completed phases should be 0, got ${state.completedPhases.length}`);
     assert(state.phases[0].doneSteps === 0, `Phase 1 done steps should be 0, got ${state.phases[0].doneSteps}`);
     assert(state.phases[0].lessons[0].status === "current", "Lesson 1 should be current");
     assert(state.currentLesson?.code === "PRI-01", `Current lesson code should be PRI-01, got ${state.currentLesson?.code}`);
     assert(state.showPrerequisitesCard === true, "Prereq card should show on first visit");
-    assert(state.currentStepChip === "START HERE · STEP 1 OF 3", `Chip should be 'START HERE · STEP 1 OF 3', got '${state.currentStepChip}'`);
+    assert(state.currentStepChip === "START HERE · STEP 1 OF 4", `Chip should be 'START HERE · STEP 1 OF 4', got '${state.currentStepChip}'`);
     console.log("  ✓ 15.1 Authoritative Prisma initial state verified");
   });
 
@@ -1118,38 +1118,39 @@ const prismaCourse = getPrismaCourse();
     assert(state.phases[0].lessons[0].status === "completed", "Lesson 1 should be completed");
     assert(state.phases[0].lessons[1].status === "current", "Lesson 2 should be current");
     assert(state.currentLesson?.code === "PRI-02", `Current lesson should be PRI-02, got ${state.currentLesson?.code}`);
-    assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 3", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 3', got '${state.currentStepChip}'`);
+    assert(state.currentStepChip === "YOUR NEXT STEP · STEP 2 OF 4", `Chip should be 'YOUR NEXT STEP · STEP 2 OF 4', got '${state.currentStepChip}'`);
     console.log("  ✓ 15.2 Authoritative Prisma single lesson completion verified");
   });
 
-  it("15.3: User completes Phase 1 (3 lessons) -> Phase 2 unlocks (PRI-04)", () => {
+  it("15.3: User completes Phase 1 (4 lessons) -> Phase 2 unlocks (PRI-05)", () => {
     const phase1Slugs = [
       "pri01-what-is-prisma",
-      "pri02-prisma-architecture-workflow",
-      "pri03-project-setup-and-cli",
+      "pri02-prisma-project-setup-and-main-files",
+      "pri03-prisma-schema-and-models",
+      "pri04-field-types-and-schema-attributes",
     ];
     const state = getCurriculumState(prismaCourse, { completedLessonIds: phase1Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 3, `Completed count should be 3, got ${state.completedLessonsCount}`);
+    assert(state.completedLessonsCount === 4, `Completed count should be 4, got ${state.completedLessonsCount}`);
     assert(state.completedPhases.length === 1, `Completed phases should be 1, got ${state.completedPhases.length}`);
     assert(state.phases[0].status === "completed", "Phase 1 should be completed");
     assert(state.phases[1].status === "current", "Phase 2 should be current");
-    assert(state.currentLesson?.code === "PRI-04", `Current lesson should be PRI-04, got ${state.currentLesson?.code}`);
-    assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 3", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 3', got '${state.currentStepChip}'`);
+    assert(state.currentLesson?.code === "PRI-05", `Current lesson should be PRI-05, got ${state.currentLesson?.code}`);
+    assert(state.currentStepChip === "PHASE 2 UNLOCKED · STEP 1 OF 5", `Chip should be 'PHASE 2 UNLOCKED · STEP 1 OF 5', got '${state.currentStepChip}'`);
     console.log("  ✓ 15.3 Authoritative Prisma Phase 1 completion and Phase 2 unlock verified");
   });
 
-  it("15.4: User completes all 10 phases (all 27 lessons) -> Capstone unlocks!", () => {
-    const all27Slugs = getAllPrismaLessons().map((l) => l.slug);
-    assert(all27Slugs.length === 27, `Expected 27 Prisma lesson slugs, got ${all27Slugs.length}`);
+  it("15.4: User completes all 5 phases (all 20 lessons) -> Capstone unlocks!", () => {
+    const all20Slugs = getAllPrismaLessons().map((l) => l.slug);
+    assert(all20Slugs.length === 20, `Expected 20 Prisma lesson slugs, got ${all20Slugs.length}`);
   
-    const state = getCurriculumState(prismaCourse, { completedLessonIds: all27Slugs, prereqConfirmed: true });
-    assert(state.completedLessonsCount === 27, `Completed count should be 27, got ${state.completedLessonsCount}`);
-    assert(state.completedPhases.length === 10, `All 10 phases should be completed, got ${state.completedPhases.length}`);
+    const state = getCurriculumState(prismaCourse, { completedLessonIds: all20Slugs, prereqConfirmed: true });
+    assert(state.completedLessonsCount === 20, `Completed count should be 20, got ${state.completedLessonsCount}`);
+    assert(state.completedPhases.length === 5, `All 5 phases should be completed, got ${state.completedPhases.length}`);
     assert(state.remainingPhases.length === 0, `Remaining phases should be 0, got ${state.remainingPhases.length}`);
     assert(state.progressPercent === 100, `Progress should be 100%, got ${state.progressPercent}%`);
     assert(state.isCourseComplete === true, "Course should be marked complete");
-    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 10 phases");
-    console.log("  ✓ 15.4 All 10 phases finished -> Prisma Capstone successfully unlocked verified!");
+    assert(state.isCapstoneUnlocked === true, "Capstone project MUST be unlocked after finishing all 5 phases");
+    console.log("  ✓ 15.4 All 5 phases finished -> Prisma Capstone successfully unlocked verified!");
   });
 
 
