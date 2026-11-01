@@ -219,7 +219,7 @@ export function Hero() {
 
   return (
     <section className="relative pt-20 pb-20 lg:pt-36 lg:pb-24 overflow-hidden">
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Side: Content */}
           <div className="max-w-2xl">
@@ -231,7 +231,7 @@ export function Hero() {
               <span className="text-xs font-bold tracking-wider text-ds-info-dark uppercase">Studio Grade Learning</span>
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-bold tracking-tighter text-ds-text-strong mb-8 leading-[0.9] text-balance">
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tighter text-ds-text-strong mb-6 sm:mb-8 leading-[0.95] sm:leading-[0.9] text-balance">
               Master the <span className="inline-block bg-clip-text text-transparent bg-gradient-to-r from-ds-feature-base to-ds-info-base">Modern Web</span>
             </h1>
 

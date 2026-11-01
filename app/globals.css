@@ -494,4 +494,17 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(148, 163, 184, 0.2) transparent;
   }
+
+  /* Utility classes to hide scrollbars cross-browser while preserving touch scroll */
+  .scrollbar-none::-webkit-scrollbar,
+  .no-scrollbar::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  .scrollbar-none,
+  .no-scrollbar {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+  }
 }

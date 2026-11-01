@@ -236,53 +236,53 @@ function SideBySideComparisonModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Header */}
-        <div className="h-12 px-4 sm:px-6 bg-[#0B0F1E] border-b border-white/[0.08] flex items-center justify-between shrink-0 select-none">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-              <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-              <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
+        <div className="min-h-[44px] h-auto py-2 px-3 sm:px-6 bg-[#0B0F1E] border-b border-white/[0.08] flex items-center justify-between shrink-0 select-none gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-2">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-500/80" />
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-500/80" />
+              <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500/80" />
             </div>
-            <div className="h-4 w-px bg-white/10" />
-            <div className="flex items-center gap-2">
-              <span className="text-purple-400 font-bold text-sm hidden sm:inline">⚡</span>
+            <div className="h-4 w-px bg-white/10 shrink-0" />
+            <div className="flex items-center gap-1.5 min-w-0">
+              <span className="text-purple-400 font-bold text-sm hidden sm:inline shrink-0">⚡</span>
               <h3
                 id="comparison-modal-title"
-                className="text-xs sm:text-sm font-mono font-bold text-slate-100 tracking-wide"
+                className="text-xs sm:text-sm font-mono font-bold text-slate-100 tracking-wide truncate min-w-0"
               >
                 Side-by-Side Comparison: Anti-Pattern vs Production Solution
               </h3>
             </div>
-            <span className="hidden md:inline-flex text-[10px] sm:text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25">
+            <span className="hidden md:inline-flex text-[10px] sm:text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25 shrink-0 whitespace-nowrap">
               Interactive Diff
             </span>
           </div>
 
           {/* Modal Header Actions: Wrap & Close */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               type="button"
               onClick={() => setIsWrapped((prev) => !prev)}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors border cursor-pointer ${
+              className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-1 rounded-lg text-xs font-mono transition-colors border cursor-pointer whitespace-nowrap ${
                 isWrapped
                   ? "bg-purple-500/20 text-purple-300 border-purple-500/30 font-semibold"
                   : "bg-white/[0.04] text-slate-400 border-white/[0.08] hover:text-slate-200 hover:bg-white/[0.08]"
               }`}
               title={isWrapped ? "Word wrap is ON (click to disable)" : "Word wrap is OFF (click to wrap)"}
             >
-              <WrapIcon className={`w-3.5 h-3.5 ${isWrapped ? "text-purple-300" : "text-slate-400"}`} />
+              <WrapIcon className={`w-3.5 h-3.5 shrink-0 ${isWrapped ? "text-purple-300" : "text-slate-400"}`} />
               <span className="hidden sm:inline">Wrap</span>
             </button>
 
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono text-slate-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] transition-colors cursor-pointer"
+              className="flex items-center justify-center p-1 sm:px-2.5 sm:py-1 rounded-lg text-xs font-mono text-slate-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] transition-colors cursor-pointer shrink-0"
               title="Close comparison modal (Esc)"
             >
-              <CloseIcon className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Close</span>
-              <kbd className="hidden md:inline-block px-1.5 py-0.5 rounded text-[10px] bg-white/[0.08] text-slate-400 border border-white/[0.08]">
+              <CloseIcon className="w-3.5 h-3.5 shrink-0" />
+              <span className="hidden sm:inline ml-1">Close</span>
+              <kbd className="hidden md:inline-block ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-white/[0.08] text-slate-400 border border-white/[0.08]">
                 ESC
               </kbd>
             </button>
@@ -722,14 +722,14 @@ export function DataDrivenLessonView({
     return (
       <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-[11px] sm:text-xs font-mono font-bold border border-purple-500/20 whitespace-nowrap shrink-0">
               <span>{sec.icon || "✨"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · CORE CONCEPT`}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap shrink-0">
               {(content.difficulty || lesson.difficulty) && (
-                <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border ${
+                <span className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full border whitespace-nowrap shrink-0 ${
                   (content.difficulty || lesson.difficulty)?.toLowerCase() === "easy"
                     ? "text-emerald-400 bg-emerald-500/15 border-emerald-500/25"
                     : (content.difficulty || lesson.difficulty)?.toLowerCase() === "moderate"
@@ -740,13 +740,13 @@ export function DataDrivenLessonView({
                 </span>
               )}
               {isCompleted && (
-                <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                <span className="text-[11px] sm:text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold whitespace-nowrap shrink-0">
                   ✓ Read
                 </span>
               )}
             </div>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight break-words">
             {title}
           </h1>
           {explanation && renderFormattedBlock(explanation, "text-sm sm:text-base text-slate-300 leading-relaxed")}
@@ -814,18 +814,18 @@ export function DataDrivenLessonView({
     return (
       <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-[11px] sm:text-xs font-mono font-bold border border-purple-500/20 whitespace-nowrap shrink-0">
               <span>{sec.icon || "🧩"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · CORE MECHANICS`}</span>
             </div>
             {isCompleted && (
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+              <span className="text-[11px] sm:text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold whitespace-nowrap shrink-0">
                 ✓ Read
               </span>
             )}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight break-words">
             {content.part2?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
           {content.part2?.intro &&
@@ -926,18 +926,18 @@ export function DataDrivenLessonView({
     return (
       <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-[11px] sm:text-xs font-mono font-bold border border-purple-500/20 whitespace-nowrap shrink-0">
               <span>{sec.icon || "🎯"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · DEEP DIVE & STRUCTURE`}</span>
             </div>
             {isCompleted && (
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+              <span className="text-[11px] sm:text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold whitespace-nowrap shrink-0">
                 ✓ Read
               </span>
             )}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight break-words">
             {content.part3?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
           {content.part3?.intro &&
@@ -1086,31 +1086,31 @@ export function DataDrivenLessonView({
     return (
       <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-[11px] sm:text-xs font-mono font-bold border border-purple-500/20 whitespace-nowrap shrink-0">
               <span>{sec.icon || "⚠️"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · PATTERNS & TRAPS`}</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 shrink-0">
               {badComparison && goodComparison && (
                 <button
                   type="button"
                   onClick={() => setIsComparisonModalOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30 hover:bg-purple-500/25 hover:text-white hover:border-purple-500/50 transition-all cursor-pointer shadow-sm active:scale-95"
+                  className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-mono font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30 hover:bg-purple-500/25 hover:text-white hover:border-purple-500/50 transition-all cursor-pointer shadow-sm active:scale-95 whitespace-nowrap shrink-0"
                   title="Expand side-by-side comparison (Esc to close)"
                 >
-                  <ExpandIcon className="w-3.5 h-3.5 text-purple-300" />
-                  <span>Expand Side-by-Side</span>
+                  <ExpandIcon className="w-3.5 h-3.5 text-purple-300 shrink-0" />
+                  <span className="hidden xs:inline">Expand </span><span>Side-by-Side</span>
                 </button>
               )}
               {isCompleted && (
-                <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+                <span className="text-[11px] sm:text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold whitespace-nowrap shrink-0">
                   ✓ Read
                 </span>
               )}
             </div>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight break-words">
             {content.part4?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
         </div>
@@ -1211,32 +1211,35 @@ export function DataDrivenLessonView({
     return (
       <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-[11px] sm:text-xs font-mono font-bold border border-purple-500/20 whitespace-nowrap shrink-0">
               <span>{sec.icon || "⚡"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · INTERACTIVE SANDBOX`}</span>
             </div>
             {isCompleted && (
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+              <span className="text-[11px] sm:text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold whitespace-nowrap shrink-0">
                 ✓ Run Verified
               </span>
             )}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight break-words">
             {content.part5?.title || sec.label || getSectionLabel(sec, index)}
           </h2>
           {content.part5?.intro &&
             renderFormattedBlock(content.part5.intro, "text-sm text-slate-300 leading-relaxed")}
         </div>
 
-        <Playground
-          key={lesson.slug}
-          runtime={effectiveRuntime as any}
-          starterCode={content.part5?.starterCode || ""}
-          onRun={() => {
-            markSectionComplete(sec.id);
-          }}
-        />
+        <div className="pt-2 pb-2">
+          <Playground
+            key={lesson.slug}
+            runtime={effectiveRuntime as any}
+            language={playgroundRuntime === "sql" ? "SQL" : undefined}
+            starterCode={content.part5?.starterCode || ""}
+            onRun={() => {
+              markSectionComplete(sec.id);
+            }}
+          />
+        </div>
       </section>
     );
   };
@@ -1251,18 +1254,18 @@ export function DataDrivenLessonView({
     return (
       <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-[11px] sm:text-xs font-mono font-bold border border-purple-500/20 whitespace-nowrap shrink-0">
               <span>{sec.icon || "🎓"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · SUMMARY & KEY TAKEAWAYS`}</span>
             </div>
             {isCompleted && (
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+              <span className="text-[11px] sm:text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold whitespace-nowrap shrink-0">
                 ✓ Read
               </span>
             )}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight break-words">
             {title || getSectionLabel(sec, index) || "Summary & Key Takeaways"}
           </h2>
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
@@ -1304,18 +1307,18 @@ export function DataDrivenLessonView({
     return (
       <section id={domId} data-section-id={sec.id} {...sectionProps}>
         <div className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-xs font-mono font-bold border border-purple-500/20">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-purple-500/10 text-purple-300 text-[11px] sm:text-xs font-mono font-bold border border-purple-500/20 whitespace-nowrap shrink-0">
               <span>{sec.icon || "🎯"}</span>
               <span>{sec.tag ? `PART 0${index + 1} · ${sec.tag}` : `PART 0${index + 1} · KNOWLEDGE CHECK QUIZ`}</span>
             </div>
             {isCompleted && (
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold">
+              <span className="text-[11px] sm:text-xs font-mono text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-2.5 py-0.5 rounded-full flex items-center gap-1 font-semibold whitespace-nowrap shrink-0">
                 ✓ Passed
               </span>
             )}
           </div>
-          <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight break-words">
             {quizTitle || "Check Your Understanding"}
           </h2>
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
@@ -1390,7 +1393,7 @@ export function DataDrivenLessonView({
             )}
 
             {/* Extended Assessment CTA */}
-            <div className="pt-2 flex items-center justify-between border-t border-white/[0.06] text-xs">
+            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-white/[0.06] text-xs">
               <span className="text-slate-400">Ready for full code prediction & challenge questions?</span>
               <Link
                 href={`/quiz/${trackKey}/${lesson.slug}`}
@@ -1407,13 +1410,14 @@ export function DataDrivenLessonView({
   };
 
   // ─── End of Page: Single "Next lesson →" button ─────────────────────────────
+  // ─── End of Page: Single "Next lesson →" button ─────────────────────────────
   const renderEndOfPageCTA = () => {
     const nextLessonUrl = nextLesson ? `${trackHref}/${nextLesson.slug}` : trackHref;
 
     return (
-      <div className="pt-8 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="text-xs text-slate-400">
-          <span className="text-emerald-400 font-medium flex items-center gap-1.5">
+      <div className="pt-8 pb-28 sm:pb-14 border-t border-white/[0.08] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="text-xs text-slate-400 text-center sm:text-left">
+          <span className="text-emerald-400 font-medium flex items-center justify-center sm:justify-start gap-1.5">
             <span>✓</span> All {sections.length} parts completed! Ready for the next lesson.
           </span>
         </div>
@@ -1424,7 +1428,7 @@ export function DataDrivenLessonView({
             onClick={() => {
               completeLesson();
             }}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3 rounded-xl font-bold text-sm transition-all duration-200 bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
           >
             <span>Next lesson →</span>
           </Link>
@@ -1434,7 +1438,7 @@ export function DataDrivenLessonView({
             onClick={() => {
               completeLesson();
             }}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-200 bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3 rounded-xl font-bold text-sm transition-all duration-200 bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-900/30 cursor-pointer hover:scale-[1.02]"
           >
             <span>Complete Course 🎓</span>
           </button>
@@ -1448,9 +1452,71 @@ export function DataDrivenLessonView({
       <Nav />
 
       <div className="relative z-10 max-w-6xl xl:max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
-        {/* Modern Glassmorphic Module Header & Breadcrumb Bar */}
-        <div className="mb-5 flex flex-col md:flex-row md:items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-white/[0.025] border border-white/[0.07] backdrop-blur-md shadow-lg shadow-black/20 hover:border-white/[0.12] transition-colors">
-          {/* Left: Interactive Breadcrumb Navigation */}
+        {/* Mobile View: High-Density, Sleek, Unified 2-Row Lesson Navigation Card */}
+        <div className="md:hidden mb-4 p-3 rounded-2xl bg-[#0E121B]/95 border border-white/[0.08] shadow-lg shadow-black/20 backdrop-blur-xl space-y-2.5">
+          {/* Top Row: Track Back Link on Left + Metadata Badges on Right */}
+          <div className="flex items-center justify-between gap-2">
+            <Link
+              href={trackHref}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-95 border border-white/[0.08] hover:border-purple-500/30 text-slate-200 text-xs font-semibold transition-all shadow-sm shrink-0"
+            >
+              <svg className="w-3.5 h-3.5 text-purple-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+              <span>{trackTitle}</span>
+            </Link>
+
+            {/* Badges: Code + Difficulty + Study Time */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-mono text-[10px] font-bold text-purple-300 bg-purple-500/10 border border-purple-500/25">
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+                <span>{lesson.code}</span>
+              </span>
+
+              {(content.difficulty || lesson.difficulty) && (() => {
+                const diff = (content.difficulty || lesson.difficulty);
+                const isEasy = diff?.toLowerCase() === "easy";
+                const isModerate = diff?.toLowerCase() === "moderate";
+                return (
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-mono text-[10px] font-bold border ${
+                    isEasy
+                      ? "text-emerald-300 bg-emerald-500/10 border-emerald-500/25"
+                      : isModerate
+                      ? "text-amber-300 bg-amber-500/10 border-amber-500/25"
+                      : "text-rose-300 bg-rose-500/10 border-rose-500/25"
+                  }`}>
+                    <span className={`w-1 h-1 rounded-full ${isEasy ? "bg-emerald-400" : isModerate ? "bg-amber-400" : "bg-rose-400"}`} />
+                    <span>{diff}</span>
+                  </span>
+                );
+              })()}
+
+              {lesson.minutes && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-mono text-[10px] font-medium text-slate-400 bg-white/[0.04] border border-white/[0.08]">
+                  <span>{lesson.minutes}m</span>
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Bottom Row: Stage Name Context */}
+          {_stageName && (
+            <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between gap-2 text-[11px]">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-purple-400/80 shrink-0" />
+                <span className="text-slate-300 font-medium truncate" title={_stageName}>
+                  {_stageName}
+                </span>
+              </div>
+              <span className="text-[10px] font-mono text-purple-400/70 shrink-0 uppercase tracking-wider font-semibold">
+                Curriculum
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Desktop View: Spacious Breadcrumb & Metadata Cluster */}
+        <div className="hidden md:flex mb-5 items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-white/[0.025] border border-white/[0.07] backdrop-blur-md shadow-lg shadow-black/20 hover:border-white/[0.12] transition-colors">
           <div className="flex items-center gap-2 flex-wrap min-w-0">
             <Link
               href={trackHref}
@@ -1467,7 +1533,7 @@ export function DataDrivenLessonView({
                 <svg className="w-3 h-3 text-slate-600 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="9 18 15 12 9 6" />
                 </svg>
-                <span className="text-xs text-slate-400 font-medium truncate max-w-[140px] sm:max-w-[200px]" title={_stageName}>
+                <span className="text-xs text-slate-400 font-medium truncate max-w-[220px]" title={_stageName}>
                   {_stageName}
                 </span>
               </div>
@@ -1483,15 +1549,12 @@ export function DataDrivenLessonView({
             </div>
           </div>
 
-          {/* Right: Cohesive Metadata Badges Cluster */}
           <div className="flex items-center gap-2 shrink-0 flex-wrap">
-            {/* Lesson Code Pill */}
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl font-mono text-[11px] font-bold text-purple-300 bg-purple-500/10 border border-purple-500/25 shadow-sm shadow-purple-500/10">
               <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
               <span>{lesson.code}</span>
             </span>
 
-            {/* Difficulty Pill */}
             {(content.difficulty || lesson.difficulty) && (() => {
               const diff = (content.difficulty || lesson.difficulty);
               const isEasy = diff?.toLowerCase() === "easy";
@@ -1512,7 +1575,6 @@ export function DataDrivenLessonView({
               );
             })()}
 
-            {/* Reading / Study Time Pill */}
             {lesson.minutes && (
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl font-mono text-[11px] font-medium text-slate-300 bg-white/[0.04] border border-white/[0.08] shadow-sm">
                 <svg className="w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1543,7 +1605,7 @@ export function DataDrivenLessonView({
         {/* Focused Centered Lesson Card */}
         <main className="w-full flex flex-col rounded-2xl bg-[#0E121B] border border-white/[0.08] shadow-2xl relative">
           {/* Card Content: Dynamic Sections rendered in configured order */}
-          <div className="p-6 sm:p-8 lg:p-10 flex-1 space-y-12 sm:space-y-14">
+          <div className="p-4 sm:p-8 lg:p-10 pb-8 sm:pb-12 flex-1 space-y-10 sm:space-y-14">
             {sections.map((sec, idx) => {
               let partNode: JSX.Element | null = null;
               if (sec.id === "part1") partNode = renderPart1(sec, idx);

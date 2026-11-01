@@ -122,7 +122,7 @@ export function UnifiedLessonNavBar({
             }`}
           >
             <span aria-hidden="true">←</span>
-            <span>{`Previous ${labelText.toLowerCase()}`}</span>
+            <span>Previous</span><span className="hidden sm:inline">{` ${labelText.toLowerCase()}`}</span>
           </button>
         </div>
 
@@ -145,7 +145,7 @@ export function UnifiedLessonNavBar({
               aria-label={`Next ${labelText.toLowerCase()}`}
               className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600 hover:bg-purple-500 text-white shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
-              <span>{`Next ${labelText.toLowerCase()}`}</span>
+              <span>Next</span><span className="hidden sm:inline">{` ${labelText.toLowerCase()}`}</span>
               <span aria-hidden="true">→</span>
             </button>
           ) : isLessonCompleted ? (

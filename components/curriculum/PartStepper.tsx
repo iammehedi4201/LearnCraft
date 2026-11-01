@@ -132,9 +132,10 @@ export function PartStepper({
       <div className="relative flex items-center justify-between gap-3 text-xs sm:text-sm">
         <div className="flex items-center gap-2 min-w-0">
           {/* Pill Badge for Step Count */}
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.1] text-slate-200 font-mono text-[11px] font-medium tracking-wide shrink-0 shadow-sm">
+          <span className="inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-0.5 rounded-full bg-white/[0.06] border border-white/[0.1] text-slate-200 font-mono text-[11px] font-medium tracking-wide shrink-0 shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-            Part {currentIndex + 1} of {sections.length}
+            <span className="sm:hidden">P{currentIndex + 1}/{sections.length}</span>
+            <span className="hidden sm:inline">Part {currentIndex + 1} of {sections.length}</span>
           </span>
           <span className="text-white/20 select-none">·</span>
           <div className="flex items-center gap-1.5 min-w-0">

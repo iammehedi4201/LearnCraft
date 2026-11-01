@@ -87,11 +87,11 @@ blockquote:not(.rcp-root *),
   gap: 10px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
   .rcp-root {
-    bottom: 16px;
-    right: 16px;
-    gap: 8px;
+    bottom: 12px;
+    right: 12px;
+    gap: 6px;
   }
 }
 
@@ -133,14 +133,15 @@ blockquote:not(.rcp-root *),
   animation: rcp-pulse 2.5s ease-in-out infinite;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .rcp-root {
-    bottom: 16px;
-    right: 16px;
+    bottom: 12px;
+    right: 12px;
   }
 
   .rcp-panel {
     width: calc(100vw - 32px);
+    max-width: 360px;
     right: 0;
     bottom: 60px;
   }

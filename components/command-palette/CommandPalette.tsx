@@ -208,7 +208,7 @@ export function CommandPalette(): JSX.Element | null {
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-start justify-center pt-12 sm:pt-20 px-3 sm:px-6 pb-6"
+      className="fixed inset-0 z-[9999] flex items-start justify-center pt-4 sm:pt-20 px-3 sm:px-6 pb-6"
       role="dialog"
       aria-modal="true"
       aria-label="Command Palette and Global Search"
@@ -293,7 +293,7 @@ export function CommandPalette(): JSX.Element | null {
         </div>
 
         {/* Category Filter Pills */}
-        <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/[0.06] bg-[#0A0D17] overflow-x-auto scrollbar-none">
+        <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/[0.06] bg-[#0A0D17] overflow-x-auto scrollbar-none no-scrollbar">
           {CATEGORY_TABS.map((tab) => {
             const isActive = activeCategory === tab.id;
             return (
@@ -515,7 +515,7 @@ export function CommandPalette(): JSX.Element | null {
         </div>
 
         {/* Modal Footer Keyboard Hints */}
-        <div className="px-4 py-3 bg-[#080B12] border-t border-white/[0.06] flex items-center justify-between text-[11px] text-slate-400 font-mono">
+        <div className="hidden sm:flex px-4 py-3 bg-[#080B12] border-t border-white/[0.06] items-center justify-between text-[11px] text-slate-400 font-mono">
           <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
             <span className="flex items-center gap-1">
               <kbd className="px-1.5 py-0.5 rounded bg-white/[0.08] text-slate-300 border border-white/[0.1]">↑↓</kbd>

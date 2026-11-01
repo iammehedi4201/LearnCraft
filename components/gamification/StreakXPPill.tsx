@@ -64,7 +64,7 @@ export function StreakXPPill(): JSX.Element {
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/40 text-xs font-bold text-white transition-all cursor-pointer shadow-sm group"
+        className="flex items-center gap-1.5 px-2.5 sm:px-3 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/40 text-xs font-bold text-white transition-all cursor-pointer shadow-sm group shrink-0"
         title="View Daily Streak & XP Mastery"
       >
         {/* Streak Flame */}
@@ -87,7 +87,14 @@ export function StreakXPPill(): JSX.Element {
 
       {/* Popover Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-3 w-80 rounded-2xl bg-[#0E121B]/95 backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-5 z-50 animate-in fade-in zoom-in-95 duration-150">
+        <>
+          {/* Mobile backdrop for outside tap dismissal */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs sm:hidden z-40"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="fixed left-3 right-3 top-[68px] mx-auto max-w-[340px] sm:max-w-none sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-3 sm:w-80 rounded-2xl bg-[#0E121B]/95 backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-5 z-50 animate-in fade-in zoom-in-95 duration-150">
           {/* Header */}
           <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
             <div className="flex items-center gap-2">
@@ -181,6 +188,7 @@ export function StreakXPPill(): JSX.Element {
             </button>
           )}
         </div>
+        </>
       )}
     </div>
   );

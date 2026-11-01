@@ -121,6 +121,18 @@ function NavContent(): JSX.Element {
 
   const [notesCount, setNotesCount] = useState<number>(0);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileMenuOpen]);
+
   useEffect(() => {
     const updateNotesCount = () => {
       try {
@@ -334,16 +346,16 @@ function NavContent(): JSX.Element {
           isVisible || isMenuOpen || isMobileMenuOpen
             ? "translate-y-0"
             : "-translate-y-full"
-        } ${isScrolled ? "pt-0 px-0" : "pt-6 px-6"}`}
+        } ${isScrolled ? "pt-0 px-0" : "pt-0 px-0 md:pt-6 md:px-6"}`}
       >
         <nav
-          className={`transition-all duration-500 w-full border border-ds-stroke-soft shadow-sm pointer-events-auto ${
+          className={`transition-all duration-300 w-full pointer-events-auto ${
             isScrolled
-              ? "h-14 bg-ds-bg-white/80 backdrop-blur-md rounded-none border-x-0 border-t-0"
-              : "max-w-[95rem] h-16 bg-ds-bg-white/90 backdrop-blur-xl rounded-2xl hover:border-ds-feature-base/30 shadow-lg shadow-black/5"
+              ? "h-14 bg-[#0E121B]/95 backdrop-blur-xl rounded-none border-b border-white/[0.08] shadow-md shadow-black/30"
+              : "h-14 md:h-16 max-w-[95rem] bg-[#0E121B]/95 backdrop-blur-xl rounded-none md:rounded-2xl border-b md:border border-white/[0.08] hover:border-purple-500/30 shadow-lg shadow-black/20"
           }`}
         >
-          <div className="max-w-[95rem] mx-auto h-full px-6 flex items-center justify-between">
+          <div className="max-w-[95rem] mx-auto h-full px-3.5 sm:px-4 md:px-6 flex items-center justify-between">
             <div className="flex items-center gap-8">
               {/* Logo */}
               <Link
@@ -351,7 +363,7 @@ function NavContent(): JSX.Element {
                 prefetch={true}
                 className="group flex items-center gap-2.5 font-black tracking-tight text-ds-text-strong"
               >
-                <div className="relative h-8 w-8 overflow-hidden rounded-xl border border-ds-stroke-soft shadow-sm group-hover:scale-105 transition-all duration-300">
+                <div className="relative h-9 w-9 overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.04] p-0.5 shadow-sm group-hover:scale-105 group-hover:border-purple-500/40 transition-all duration-300">
                   <img
                     src="/logo.png"
                     alt="LearnCraft Logo"
@@ -584,13 +596,13 @@ function NavContent(): JSX.Element {
               </div>
             </div>
 
-            {/* Right Side Actions — Clean & Streamlined */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            {/* Right Side Actions — Clean, Uniform & Cohesive */}
+            <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
               {/* Global Search Palette Trigger */}
               <button
                 type="button"
                 onClick={() => window.dispatchEvent(new CustomEvent("learncraft-open-command-palette"))}
-                className="flex items-center gap-2 px-3 py-1.5 text-xs text-ds-text-sub hover:text-ds-text-strong bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/40 rounded-xl transition-all duration-200 cursor-pointer shadow-sm group"
+                className="w-9 h-9 sm:w-auto flex items-center justify-center sm:px-3 text-xs text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/40 rounded-xl transition-all duration-200 cursor-pointer shadow-sm group shrink-0"
                 aria-label="Open search command palette"
                 title="Search lessons, tracks, roadmaps, notes (Cmd+K / Ctrl+K)"
               >
@@ -603,8 +615,8 @@ function NavContent(): JSX.Element {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
-                <span className="hidden md:inline font-medium text-slate-300 group-hover:text-white">Search</span>
-                <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-slate-400 bg-white/[0.06] border border-white/[0.1] rounded-md">
+                <span className="hidden md:inline font-medium text-slate-300 group-hover:text-white sm:ml-2">Search</span>
+                <kbd className="hidden lg:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-slate-400 bg-white/[0.06] border border-white/[0.1] rounded-md sm:ml-2">
                   <span>⌘K</span>
                 </kbd>
               </button>
@@ -618,7 +630,7 @@ function NavContent(): JSX.Element {
               ) : (
                 <button
                   onClick={openAuthModal}
-                  className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 border border-white/[0.08] text-white text-xs font-bold rounded-xl hover:bg-white/[0.06] hover:border-purple-500/40 transition-all cursor-pointer shadow-sm"
+                  className="hidden sm:flex items-center gap-2 px-3.5 h-9 border border-white/[0.08] text-white text-xs font-bold rounded-xl bg-white/[0.04] hover:bg-white/[0.08] hover:border-purple-500/40 transition-all cursor-pointer shadow-sm shrink-0"
                 >
                   <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
                     <path
@@ -646,10 +658,10 @@ function NavContent(): JSX.Element {
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-                className="md:hidden p-2 rounded-xl text-ds-text-sub hover:text-ds-text-strong bg-ds-bg-weak border border-ds-stroke-soft"
+                className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl text-slate-300 hover:text-white bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/40 transition-all cursor-pointer shadow-sm active:scale-95 shrink-0"
                 aria-label="Toggle navigation menu"
               >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   {isMobileMenuOpen ? (
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   ) : (
@@ -660,9 +672,15 @@ function NavContent(): JSX.Element {
             </div>
           </div>
 
-          {/* Mobile Collapsible Menu */}
+          {/* Mobile Full-Screen Backdrop & Drawer */}
           {isMobileMenuOpen && (
-            <div className="md:hidden border-t border-white/[0.06] bg-[#0E121B] px-5 py-4 space-y-4 rounded-b-2xl shadow-xl max-h-[80vh] overflow-y-auto">
+            <>
+              <div
+                className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 md:hidden animate-in fade-in duration-200"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-hidden="true"
+              />
+              <div className="fixed top-14 inset-x-0 bottom-0 z-50 md:hidden bg-[#0E121B] border-t border-white/[0.08] flex flex-col overflow-y-auto px-5 py-4 space-y-4 pb-24 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
               {/* Category Filter Chips on Mobile */}
               <div className="space-y-2">
                 <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
@@ -731,7 +749,7 @@ function NavContent(): JSX.Element {
                     <span>🔍</span>
                     <span>Search & Command Palette</span>
                   </div>
-                  <span className="text-[10px] font-mono text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded">⌘K</span>
+                  <span className="text-[10px] font-mono text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded">Tap</span>
                 </button>
 
                 <Link
@@ -801,10 +819,11 @@ function NavContent(): JSX.Element {
                 </div>
               </div>
             </div>
+            </>
           )}
         </nav>
       </header>
-      <div className="h-[100px] w-full pointer-events-none" />
+      <div className="h-14 md:h-24 w-full pointer-events-none" />
       <AuthModal />
     </>
   );
@@ -855,7 +874,7 @@ function UserNavMenu({
       {/* Profile Trigger Button */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="flex items-center gap-2 p-1 pl-1.5 pr-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/30 transition-all cursor-pointer group"
+        className="flex items-center gap-1.5 p-1 pl-1.5 pr-2 h-9 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] hover:border-purple-500/30 transition-all cursor-pointer group shrink-0 shadow-sm"
         title="User Menu & Study Hub"
       >
         <div className="relative">
@@ -888,7 +907,14 @@ function UserNavMenu({
 
       {/* User Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl bg-[#0E121B]/95 backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-2 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
+        <>
+          {/* Mobile backdrop for outside tap dismissal */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs sm:hidden z-40"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="fixed left-3 right-3 top-[68px] mx-auto max-w-[340px] sm:max-w-none sm:absolute sm:inset-auto sm:right-0 sm:top-full sm:mt-2 sm:w-72 sm:w-80 rounded-2xl bg-[#0E121B]/95 backdrop-blur-2xl border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.8)] p-2 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
           {/* User Info Header */}
           <div className="p-3 pb-2.5 border-b border-white/[0.06] mb-1">
             <div className="flex items-center gap-3 mb-2">
@@ -995,6 +1021,7 @@ function UserNavMenu({
             <span>Sign Out</span>
           </button>
         </div>
+        </>
       )}
     </div>
   );

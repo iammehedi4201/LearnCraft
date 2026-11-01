@@ -1288,12 +1288,32 @@
   }
   
   .playground-btn {
-    padding: 0.4375rem 0.5rem;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.65rem;
   }
 
   .playground-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
     gap: 0.25rem;
     padding: 0.375rem 0.5rem;
+  }
+
+  .playground-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .playground-toolbar-left,
+  .playground-toolbar-right {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+
+  .playground-highlight-layer,
+  .playground-textarea {
+    padding: 12px 24px 16px 12px !important;
   }
 }
 

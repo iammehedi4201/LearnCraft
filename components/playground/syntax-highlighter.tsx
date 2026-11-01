@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 // Token pattern regular expressions (ordered by precedence)
 const TOKEN_RULES: { type: string; regex: RegExp; className: string }[] = [
   // Multi-line and single-line comments
-  { type: "comment", regex: /^(\/\*[\s\S]*?\*\/|\/\/[^\n]*)/, className: "pl-token-comment" },
+  { type: "comment", regex: /^(\/\*[\s\S]*?\*\/|\/\/[^\n]*|--[^\n]*)/, className: "pl-token-comment" },
   
   // Strings (single-quoted, double-quoted, template literals)
   { type: "string", regex: /^("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)/, className: "pl-token-string" },

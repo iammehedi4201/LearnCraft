@@ -378,7 +378,7 @@ export function ReadingControlPanel() {
           id="lesson-notes-trigger"
           onClick={() => setIsNotesOpen((prev) => !prev)}
           title="Study Notes & Bookmarks (Ctrl+J)"
-          className={`relative h-11 px-3.5 sm:px-4 rounded-2xl border cursor-pointer flex items-center gap-2.5 transition-all duration-300 active:scale-95 shadow-lg group backdrop-blur-xl ${
+          className={`relative h-10 w-10 sm:w-auto sm:h-11 px-0 sm:px-4 rounded-xl sm:rounded-2xl border cursor-pointer flex items-center justify-center sm:justify-start gap-2.5 transition-all duration-300 active:scale-95 shadow-lg group backdrop-blur-xl ${
             isNotesOpen
               ? "bg-[#251b3b] border-purple-500/70 text-purple-200 shadow-[0_0_25px_rgba(168,85,247,0.4)]"
               : "bg-[#0e121b]/90 hover:bg-[#161c2a] border-white/[0.1] hover:border-purple-500/40 text-slate-200 hover:text-white shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(168,85,247,0.25)]"
@@ -405,11 +405,11 @@ export function ReadingControlPanel() {
             </svg>
           </div>
 
-          <span className="text-xs font-bold tracking-tight">Notes</span>
+          <span className="text-xs font-bold tracking-tight hidden sm:inline">Notes</span>
 
           {hasNotes && (
             <span
-              className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_#c084fc] animate-pulse"
+              className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_#c084fc] animate-pulse absolute top-1.5 right-1.5 sm:static sm:top-auto sm:right-auto"
               title="Notes saved for this lesson"
             />
           )}
@@ -424,7 +424,7 @@ export function ReadingControlPanel() {
       <button
         id="rcp-trigger"
         onClick={() => setIsOpen(!isOpen)}
-        className={`relative w-11 h-11 rounded-2xl border cursor-pointer flex items-center justify-center transition-all duration-300 active:scale-95 shadow-lg group backdrop-blur-xl ${
+        className={`relative w-10 h-10 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl border cursor-pointer flex items-center justify-center transition-all duration-300 active:scale-95 shadow-lg group backdrop-blur-xl ${
           isOpen
             ? "bg-rose-500/20 border-rose-500/50 text-rose-300 shadow-[0_0_25px_rgba(244,63,94,0.4)]"
             : "bg-[#0e121b]/90 hover:bg-[#161c2a] border-white/[0.1] hover:border-white/20 text-slate-200 hover:text-white shadow-[0_8px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_8px_30px_rgba(255,255,255,0.1)]"

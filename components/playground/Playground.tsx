@@ -67,6 +67,14 @@ export function Playground({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCopyToast, setShowCopyToast] = useState(false);
 
+  // Sync starter code if updated or loaded asynchronously
+  useEffect(() => {
+    const nextCode = exercise?.starterCode ?? starterCode;
+    if (nextCode && !code) {
+      setCode(nextCode);
+    }
+  }, [exercise?.starterCode, starterCode, code]);
+
   // ─── History & Snapshots State ───
   const contextKey = exercise?.id || `${runtimeType}_${language || "code"}`;
   const [snapshots, setSnapshots] = useState<PlaygroundSnapshot[]>([]);
