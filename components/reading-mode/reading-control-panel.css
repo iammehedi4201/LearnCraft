@@ -81,7 +81,7 @@ blockquote:not(.rcp-root *),
   position: fixed;
   bottom: 24px;
   right: 24px;
-  z-index: 9999;
+  z-index: 40;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -163,4 +163,11 @@ blockquote:not(.rcp-root *),
 
 .dark .rcp-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.1);
+}
+
+
+/* Hide reading panel when code playground is fullscreen */
+body.playground-fullscreen-active .rcp-root,
+body.playground-fullscreen-active #reading-control-panel {
+  display: none !important;
 }

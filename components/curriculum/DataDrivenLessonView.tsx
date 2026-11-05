@@ -76,12 +76,17 @@ function renderFormattedBlock(
 ): React.ReactNode {
   if (!text) return null;
 
+  // Normalize escaped \n and auto-expand inline dash bullets e.g. ": - **Database:**"
+  const normalized = text
+    .replace(/\\n/g, "\n")
+    .replace(/([:.]\s*)-\s+\**/g, "$1\n\n- **");
+
   // Single-line prose without lists or newlines
-  if (!text.includes("\n") && !text.startsWith("- ") && !text.startsWith("* ")) {
-    return <p className={className}>{renderFormattedText(text)}</p>;
+  if (!normalized.includes("\n") && !normalized.startsWith("- ") && !normalized.startsWith("* ")) {
+    return <p className={className}>{renderFormattedText(normalized)}</p>;
   }
 
-  const rawParagraphs = text.split(/\n\s*\n/);
+  const rawParagraphs = normalized.split(/\n\s*\n/);
   const elements: React.ReactNode[] = [];
 
   rawParagraphs.forEach((rawP, pIdx) => {
@@ -1204,7 +1209,7 @@ export function DataDrivenLessonView({
 
   // ─── Part 5: Interactive Code Sandbox ──────────────────────────────────────
   const renderPart5 = (sec: LessonSectionItem, index: number) => {
-    const effectiveRuntime = playgroundRuntime === "sql" ? "javascript" : playgroundRuntime;
+    const effectiveRuntime = playgroundRuntime;
     const isCompleted = completedSections.has(sec.id);
     const domId = `part-${index + 1}`;
 
@@ -1454,20 +1459,21 @@ export function DataDrivenLessonView({
       <div className="relative z-10 max-w-6xl xl:max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
         {/* Mobile View: High-Density, Sleek, Unified 2-Row Lesson Navigation Card */}
         <div className="md:hidden mb-4 p-3 rounded-2xl bg-[#0E121B]/95 border border-white/[0.08] shadow-lg shadow-black/20 backdrop-blur-xl space-y-2.5">
-          {/* Top Row: Track Back Link on Left + Metadata Badges on Right */}
-          <div className="flex items-center justify-between gap-2">
+          {/* Top Row: Track Back Link on Left + Metadata Badges on Right (Responsive & Non-overflowing) */}
+          <div className="flex items-center justify-between gap-2 min-w-0">
             <Link
               href={trackHref}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-95 border border-white/[0.08] hover:border-purple-500/30 text-slate-200 text-xs font-semibold transition-all shadow-sm shrink-0"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] active:scale-95 border border-white/[0.08] hover:border-purple-500/30 text-slate-200 text-xs font-semibold transition-all shadow-sm shrink-0 min-w-0 max-w-[135px] xs:max-w-none"
             >
               <svg className="w-3.5 h-3.5 text-purple-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                 <polyline points="15 18 9 12 15 6" />
               </svg>
-              <span>{trackTitle}</span>
+              <span className="truncate">{trackTitle}</span>
+              <span className="hidden sm:inline text-slate-400 font-normal">Curriculum</span>
             </Link>
 
             {/* Badges: Code + Difficulty + Study Time */}
-            <div className="flex items-center gap-1.5 shrink-0">
+            <div className="flex items-center gap-1 xs:gap-1.5 flex-wrap justify-end min-w-0">
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg font-mono text-[10px] font-bold text-purple-300 bg-purple-500/10 border border-purple-500/25">
                 <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
                 <span>{lesson.code}</span>
@@ -1501,15 +1507,10 @@ export function DataDrivenLessonView({
 
           {/* Bottom Row: Stage Name Context */}
           {_stageName && (
-            <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between gap-2 text-[11px]">
-              <div className="flex items-center gap-1.5 min-w-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-400/80 shrink-0" />
-                <span className="text-slate-300 font-medium truncate" title={_stageName}>
-                  {_stageName}
-                </span>
-              </div>
-              <span className="text-[10px] font-mono text-purple-400/70 shrink-0 uppercase tracking-wider font-semibold">
-                Curriculum
+            <div className="pt-2 border-t border-white/[0.06] flex items-start gap-1.5 text-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400/80 shrink-0 mt-1" />
+              <span className="text-slate-200 font-medium leading-snug flex-1" title={_stageName}>
+                {_stageName}
               </span>
             </div>
           )}

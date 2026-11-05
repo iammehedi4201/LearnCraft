@@ -3,11 +3,11 @@
 // ═══════════════════════════════════════════════════════════
 //
 // Returns the correct runtime implementation for a given type.
-// V1: Only TypeScript and JavaScript are supported.
-// Future runtimes can be registered here without changing the UI.
+// Supports TypeScript, JavaScript, SQL, and PostgreSQL.
 
 import type { PlaygroundRuntime, PlaygroundRuntimeType } from "../types";
 import { TypeScriptRuntime } from "./typescript-runtime";
+import { SqlRuntime } from "./sql-runtime";
 
 const COMING_SOON_RUNTIMES: Partial<Record<PlaygroundRuntimeType, string>> = {
   html: "HTML",
@@ -16,8 +16,6 @@ const COMING_SOON_RUNTIMES: Partial<Record<PlaygroundRuntimeType, string>> = {
   nextjs: "Next.js",
   nestjs: "NestJS",
   node: "Node.js",
-  postgresql: "PostgreSQL",
-  sql: "SQL",
   prisma: "Prisma",
 };
 
@@ -28,10 +26,14 @@ export function createRuntime(type: PlaygroundRuntimeType): PlaygroundRuntime {
     case "javascript":
       return new TypeScriptRuntime();
 
+    case "sql":
+    case "postgresql":
+      return new SqlRuntime();
+
     default: {
       const label = COMING_SOON_RUNTIMES[type] || type;
       throw new Error(
-        `Runtime "${label}" is coming soon! Currently only TypeScript and JavaScript are supported.`
+        `Runtime "${label}" is coming soon! Currently only TypeScript, JavaScript, and SQL are supported.`
       );
     }
   }

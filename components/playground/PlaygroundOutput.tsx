@@ -36,7 +36,14 @@ export function PlaygroundOutput({
     <div className="playground-output-panel">
       {/* Header */}
       <div className="playground-output-header">
-        <span className="playground-output-title">Console</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <span className="playground-output-title">Console</span>
+          {lines.length > 0 && (
+            <span className="playground-duration" style={{ marginLeft: 0 }}>
+              {lines.length} {lines.length === 1 ? "line" : "lines"}
+            </span>
+          )}
+        </div>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           {duration !== undefined && (
             <span className="playground-duration">{duration}ms</span>
@@ -68,8 +75,11 @@ export function PlaygroundOutput({
             <span className="playground-output-placeholder-text">
               Click Run to see output
             </span>
-            <span className="playground-output-placeholder-hint">
+            <span className="playground-output-placeholder-hint hidden sm:inline">
               or press Ctrl + Enter
+            </span>
+            <span className="playground-output-placeholder-hint sm:hidden">
+              Tap ▶ Run below to execute
             </span>
           </div>
         ) : (

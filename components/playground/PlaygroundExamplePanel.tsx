@@ -52,8 +52,8 @@ export function PlaygroundExamplePanel({
       <div className="playground-panel-header playground-example-header">
         <div className="playground-panel-header-left">
           <span className="playground-panel-icon">📖</span>
-          <span className="playground-panel-title">Example & Reference</span>
-          <span className="playground-panel-badge playground-panel-badge--readonly">
+          <span className="playground-panel-title truncate">Example & Reference</span>
+          <span className="playground-panel-badge playground-panel-badge--readonly hidden xs:inline-flex">
             Read Only
           </span>
         </div>
@@ -64,7 +64,8 @@ export function PlaygroundExamplePanel({
             title="Load this example into your practice editor"
           >
             <span className="playground-panel-action-icon">{loadedToPractice ? "✓" : "⚡"}</span>
-            <span>{loadedToPractice ? "Copied to Practice!" : "Copy to Practice"}</span>
+            <span className="hidden sm:inline">{loadedToPractice ? "Copied to Practice!" : "Copy to Practice"}</span>
+            <span className="sm:hidden">{loadedToPractice ? "Copied!" : "To Practice"}</span>
           </button>
           <button
             className="playground-panel-action-btn"

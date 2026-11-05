@@ -10,8 +10,9 @@
  */
 
 import { useState, useEffect, useRef, useMemo, Suspense } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { reconcileCloudProgress } from "@/lib/progress-sync";
 import { clearAllClientCaches } from "@/lib/query-client";
@@ -43,6 +44,15 @@ interface CategoryMeta {
   description: string;
   upcomingTopics: string[];
 }
+
+const MOBILE_CATEGORIES: { id: CoreCategory; label: string; icon: string; description: string }[] = [
+  { id: "language", label: "Languages", icon: "💻", description: "Core languages, static typing & runtime internals" },
+  { id: "frontend", label: "Frontend", icon: "🎨", description: "Component architecture, hooks & modern full-stack frameworks" },
+  { id: "backend", label: "Backend", icon: "⚙️", description: "Enterprise backend architecture, microservices & REST APIs" },
+  { id: "database", label: "Databases & ORM", icon: "🗄️", description: "Relational SQL, document stores & type-safe data access" },
+  { id: "state-management", label: "State", icon: "🔄", description: "Predictable client store architectures & unidirectional flow" },
+  { id: "architecture", label: "System Design", icon: "📐", description: "Distributed systems, scalability & design patterns" },
+];
 
 const CATEGORIES: CategoryMeta[] = [
   {
@@ -96,15 +106,186 @@ const CATEGORIES: CategoryMeta[] = [
   },
 ];
 
+
+// ─── Individual Technology Brand Color Accents for Curriculum Drawer ───
+const TRACK_ACCENTS: Record<
+  string,
+  {
+    bg: string;
+    border: string;
+    badgeBg: string;
+    badgeText: string;
+    tag: string;
+  }
+> = {
+  typescript: {
+    bg: "bg-blue-500/[0.06] hover:bg-blue-500/[0.12]",
+    border: "border-blue-500/20 hover:border-blue-400/50",
+    badgeBg: "bg-blue-500/15",
+    badgeText: "text-blue-300",
+    tag: "Language",
+  },
+  javascript: {
+    bg: "bg-amber-400/[0.06] hover:bg-amber-400/[0.12]",
+    border: "border-amber-400/20 hover:border-amber-300/50",
+    badgeBg: "bg-amber-400/15",
+    badgeText: "text-amber-300",
+    tag: "Language",
+  },
+  react: {
+    bg: "bg-cyan-400/[0.06] hover:bg-cyan-400/[0.12]",
+    border: "border-cyan-400/20 hover:border-cyan-300/50",
+    badgeBg: "bg-cyan-400/15",
+    badgeText: "text-cyan-300",
+    tag: "Frontend",
+  },
+  nextjs: {
+    bg: "bg-white/[0.05] hover:bg-white/[0.1]",
+    border: "border-white/20 hover:border-white/40",
+    badgeBg: "bg-white/10",
+    badgeText: "text-white",
+    tag: "Full-Stack",
+  },
+  redux: {
+    bg: "bg-purple-500/[0.06] hover:bg-purple-500/[0.12]",
+    border: "border-purple-500/20 hover:border-purple-400/50",
+    badgeBg: "bg-purple-500/15",
+    badgeText: "text-purple-300",
+    tag: "State Management",
+  },
+  nodejs: {
+    bg: "bg-emerald-500/[0.06] hover:bg-emerald-500/[0.12]",
+    border: "border-emerald-500/20 hover:border-emerald-400/50",
+    badgeBg: "bg-emerald-500/15",
+    badgeText: "text-emerald-300",
+    tag: "Runtime",
+  },
+  express: {
+    bg: "bg-amber-500/[0.06] hover:bg-amber-500/[0.12]",
+    border: "border-amber-500/20 hover:border-amber-400/50",
+    badgeBg: "bg-amber-500/15",
+    badgeText: "text-amber-300",
+    tag: "Backend",
+  },
+  expressjs: {
+    bg: "bg-amber-500/[0.06] hover:bg-amber-500/[0.12]",
+    border: "border-amber-500/20 hover:border-amber-400/50",
+    badgeBg: "bg-amber-500/15",
+    badgeText: "text-amber-300",
+    tag: "Backend",
+  },
+  nestjs: {
+    bg: "bg-rose-500/[0.06] hover:bg-rose-500/[0.12]",
+    border: "border-rose-500/20 hover:border-rose-400/50",
+    badgeBg: "bg-rose-500/15",
+    badgeText: "text-rose-300",
+    tag: "Enterprise",
+  },
+  postgresql: {
+    bg: "bg-sky-500/[0.06] hover:bg-sky-500/[0.12]",
+    border: "border-sky-500/20 hover:border-sky-400/50",
+    badgeBg: "bg-sky-500/15",
+    badgeText: "text-sky-300",
+    tag: "SQL Database",
+  },
+  postgres: {
+    bg: "bg-sky-500/[0.06] hover:bg-sky-500/[0.12]",
+    border: "border-sky-500/20 hover:border-sky-400/50",
+    badgeBg: "bg-sky-500/15",
+    badgeText: "text-sky-300",
+    tag: "SQL Database",
+  },
+  mongodb: {
+    bg: "bg-emerald-500/[0.06] hover:bg-emerald-500/[0.12]",
+    border: "border-emerald-500/20 hover:border-emerald-400/50",
+    badgeBg: "bg-emerald-500/15",
+    badgeText: "text-emerald-300",
+    tag: "NoSQL Database",
+  },
+  mongo: {
+    bg: "bg-emerald-500/[0.06] hover:bg-emerald-500/[0.12]",
+    border: "border-emerald-500/20 hover:border-emerald-400/50",
+    badgeBg: "bg-emerald-500/15",
+    badgeText: "text-emerald-300",
+    tag: "NoSQL Database",
+  },
+  prisma: {
+    bg: "bg-indigo-500/[0.06] hover:bg-indigo-500/[0.12]",
+    border: "border-indigo-500/20 hover:border-indigo-400/50",
+    badgeBg: "bg-indigo-500/15",
+    badgeText: "text-indigo-300",
+    tag: "Type-Safe ORM",
+  },
+  "system-design": {
+    bg: "bg-purple-500/[0.06] hover:bg-purple-500/[0.12]",
+    border: "border-purple-500/20 hover:border-purple-400/50",
+    badgeBg: "bg-purple-500/15",
+    badgeText: "text-purple-300",
+    tag: "Architecture",
+  },
+  oop: {
+    bg: "bg-teal-500/[0.06] hover:bg-teal-500/[0.12]",
+    border: "border-teal-500/20 hover:border-teal-400/50",
+    badgeBg: "bg-teal-500/15",
+    badgeText: "text-teal-300",
+    tag: "OOP Paradigms",
+  },
+};
+
+const DEFAULT_TRACK_ACCENT = {
+  bg: "bg-white/[0.04] hover:bg-white/[0.08]",
+  border: "border-white/[0.08] hover:border-purple-500/40",
+  badgeBg: "bg-purple-500/15",
+  badgeText: "text-purple-300",
+  tag: "Track",
+};
+
 function NavContent(): JSX.Element {
   const { data: session } = useSession();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname() || "";
+  const initialCategory: CoreCategory = useMemo(() => {
+    const p = pathname.toLowerCase();
+    if (p.includes("postgres") || p.includes("mongo") || p.includes("prisma") || p.includes("database")) return "database";
+    if (p.includes("react") || p.includes("next")) return "frontend";
+    if (p.includes("node") || p.includes("express") || p.includes("nest")) return "backend";
+    if (p.includes("redux")) return "state-management";
+    if (p.includes("system") || p.includes("oop")) return "architecture";
+    return "language";
+  }, [pathname]);
+
   const [activeCategory, setActiveCategory] = useState<CoreCategory>("language");
   const [searchQuery, setSearchQuery] = useState("");
-  const [mobileActiveCategory, setMobileActiveCategory] = useState<CoreCategory>("language");
+  const [mobileActiveCategory, setMobileActiveCategory] = useState<CoreCategory>(initialCategory);
+  const [mobileSearchQuery, setMobileSearchQuery] = useState("");
+
+  // Sync active category when opening mobile menu to match current page
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      setMobileActiveCategory(initialCategory);
+      setMobileSearchQuery("");
+    }
+  }, [isMobileMenuOpen, initialCategory]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Close mobile drawer on Escape key
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isMobileMenuOpen]);
 
   const menuRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -313,6 +494,31 @@ function NavContent(): JSX.Element {
 
     return map;
   }, []);
+
+  // Skills to display in the mobile drawer (strictly 1 category at a time or instant search)
+  const mobileSkillsToDisplay = useMemo(() => {
+    const query = mobileSearchQuery.trim().toLowerCase();
+    if (query) {
+      return SKILL_ROADMAPS.filter(
+        (s) =>
+          s.status === "available" &&
+          s.learnPath &&
+          (s.title.toLowerCase().includes(query) ||
+            s.description.toLowerCase().includes(query) ||
+            s.slug.toLowerCase().includes(query) ||
+            s.category.toLowerCase().includes(query))
+      );
+    }
+
+    if (mobileActiveCategory === "database") {
+      return [
+        ...(availableSkillsByCategory.database || []),
+        ...(availableSkillsByCategory.orm || []),
+      ];
+    }
+
+    return availableSkillsByCategory[mobileActiveCategory] || [];
+  }, [mobileActiveCategory, mobileSearchQuery, availableSkillsByCategory]);
 
   // Filter available skills based on search query or active category
   const displayedSkills = useMemo(() => {
@@ -672,159 +878,297 @@ function NavContent(): JSX.Element {
             </div>
           </div>
 
-          {/* Mobile Full-Screen Backdrop & Drawer */}
-          {isMobileMenuOpen && (
-            <>
-              <div
-                className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 md:hidden animate-in fade-in duration-200"
-                onClick={() => setIsMobileMenuOpen(false)}
-                aria-hidden="true"
-              />
-              <div className="fixed top-14 inset-x-0 bottom-0 z-50 md:hidden bg-[#0E121B] border-t border-white/[0.08] flex flex-col overflow-y-auto px-5 py-4 space-y-4 pb-24 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-200">
-              {/* Category Filter Chips on Mobile */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                  Curriculum
+
+        </nav>
+      </header>
+      <div className="h-14 md:h-24 w-full pointer-events-none" />
+      <AuthModal />
+
+      {/* ─── Mobile Navigation Drawer Portal (Category-Focused Learning Hub) ─── */}
+      {isMobileMenuOpen && mounted && typeof document !== "undefined" && createPortal(
+        <div
+          className="fixed inset-0 z-[99999] md:hidden bg-[#070913]/98 backdrop-blur-2xl flex flex-col text-slate-100 font-sans animate-in fade-in duration-200"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile Curriculum Navigation"
+        >
+          {/* Top Header Bar */}
+          <div className="h-14 px-4 bg-[#0B0F1E]/90 backdrop-blur-md border-b border-white/[0.08] flex items-center justify-between shrink-0 select-none shadow-sm">
+            <Link
+              href="/learn"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center gap-2.5 active:scale-95 transition-transform"
+            >
+              <div className="h-8 w-8 overflow-hidden rounded-xl border border-white/[0.1] bg-white/[0.05] p-0.5 shadow-sm">
+                <img
+                  src="/logo.png"
+                  alt="LearnCraft Logo"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-base font-display font-black tracking-tight text-white">
+                  LearnCraft
                 </span>
-                <div className="flex flex-wrap gap-1.5 pb-2">
-                  {CATEGORIES.map((cat) => {
-                    const hasLive = (availableSkillsByCategory[cat.id] || []).length > 0;
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25">
+                  CURRICULUM
+                </span>
+              </div>
+            </Link>
+
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/[0.06] hover:bg-white/[0.12] active:scale-90 border border-white/[0.1] text-slate-300 hover:text-white transition-all cursor-pointer shadow-sm"
+              aria-label="Close navigation menu"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          {/* Scrollable Content Container */}
+          <div className="flex-1 overflow-y-auto px-4 py-3.5 space-y-3.5 pb-24 scrollbar-thin scrollbar-thumb-white/10">
+            {/* Quick Search */}
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                <svg className="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                value={mobileSearchQuery}
+                onChange={(e) => setMobileSearchQuery(e.target.value)}
+                placeholder="Search topics (e.g. PostgreSQL, React, NestJS)..."
+                className="w-full pl-9 pr-9 py-2.5 bg-white/[0.04] hover:bg-white/[0.06] focus:bg-[#0B0F24] border border-white/[0.1] focus:border-purple-500/60 rounded-xl text-xs text-white placeholder-slate-400 focus:outline-none transition-all shadow-inner"
+              />
+              {mobileSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setMobileSearchQuery("")}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white text-xs font-bold"
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Category Selector Tabs (NO "All Tracks" — Always Focused on One Category) */}
+            {!mobileSearchQuery && (
+              <div className="space-y-1.5">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 px-0.5">
+                  Choose Category
+                </span>
+                <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 -mx-4 px-4">
+                  {MOBILE_CATEGORIES.map((cat) => {
+                    const isSelected = mobileActiveCategory === cat.id;
+                    const count =
+                      cat.id === "database"
+                        ? (availableSkillsByCategory.database || []).length + (availableSkillsByCategory.orm || []).length
+                        : (availableSkillsByCategory[cat.id] || []).length;
+
                     return (
                       <button
                         key={cat.id}
-                        onClick={() => setMobileActiveCategory(cat.id)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                          mobileActiveCategory === cat.id
-                            ? "bg-purple-600 text-white"
-                            : "bg-white/[0.04] text-slate-400"
+                        type="button"
+                        onClick={() => {
+                          setMobileActiveCategory(cat.id);
+                          setMobileSearchQuery("");
+                        }}
+                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap shrink-0 flex items-center gap-1.5 cursor-pointer active:scale-95 ${
+                          isSelected
+                            ? "bg-purple-600 text-white shadow-lg shadow-purple-600/30 border border-purple-400/40"
+                            : "bg-white/[0.04] text-slate-400 hover:text-white hover:bg-white/[0.08] border border-white/[0.06]"
                         }`}
                       >
-                        {cat.icon} {cat.label} {!hasLive ? "(Soon)" : ""}
+                        <span>{cat.icon}</span>
+                        <span>{cat.label}</span>
+                        <span
+                          className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md font-bold ${
+                            isSelected ? "bg-white/20 text-white" : "bg-white/[0.06] text-slate-500"
+                          }`}
+                        >
+                          {count}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
               </div>
+            )}
 
-              {/* Mobile Skill Items */}
-              <div className="space-y-1.5 max-h-[260px] overflow-y-auto">
-                {(availableSkillsByCategory[mobileActiveCategory] || []).length > 0 ? (
-                  availableSkillsByCategory[mobileActiveCategory].map((skill) => (
+            {/* Current Category Info Banner (Shows only the selected domain context) */}
+            <div className="p-3 rounded-2xl bg-gradient-to-r from-purple-950/30 to-indigo-950/20 border border-purple-500/20 flex items-center justify-between">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">
+                    {mobileSearchQuery
+                      ? "🔍"
+                      : MOBILE_CATEGORIES.find((c) => c.id === mobileActiveCategory)?.icon || "📚"}
+                  </span>
+                  <span className="text-xs font-bold text-white tracking-wide">
+                    {mobileSearchQuery
+                      ? "Search Results"
+                      : MOBILE_CATEGORIES.find((c) => c.id === mobileActiveCategory)?.label || "Curriculum"}
+                  </span>
+                  <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[10px] font-mono font-bold">
+                    {mobileSkillsToDisplay.length} {mobileSkillsToDisplay.length === 1 ? "track" : "tracks"}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-300/80 mt-1 line-clamp-1">
+                  {mobileSearchQuery
+                    ? `Showing tracks matching "${mobileSearchQuery}"`
+                    : MOBILE_CATEGORIES.find((c) => c.id === mobileActiveCategory)?.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Focused Tracks List (Only 2 or 3 tracks at a time, never all 12 at once!) */}
+            {mobileSkillsToDisplay.length > 0 ? (
+              <div className="space-y-2.5">
+                {mobileSkillsToDisplay.map((skill) => {
+                  const accent = TRACK_ACCENTS[skill.slug] || DEFAULT_TRACK_ACCENT;
+                  return (
                     <Link
                       key={skill.slug}
                       href={skill.learnPath}
+                      prefetch={true}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="flex items-center justify-between p-2 rounded-xl hover:bg-white/[0.04] text-xs font-bold text-white"
+                      className={`relative flex flex-col p-3.5 rounded-2xl ${accent.bg} border ${accent.border} transition-all duration-200 active:scale-[0.98] group shadow-sm hover:shadow-md space-y-2`}
                     >
-                      <div className="flex items-center gap-2.5">
-                        <TechIcon slug={skill.slug} className="w-4 h-4" />
-                        <span>{skill.title}</span>
-                      </div>
-                      <span className="text-[10px] px-2 py-0.5 rounded-full text-emerald-400 bg-emerald-500/10 font-bold">
-                        {skill.totalLessons} lessons
-                      </span>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="p-3 rounded-xl bg-white/[0.02] text-xs text-slate-400">
-                    <span className="text-amber-400 font-bold block mb-1">
-                      {CATEGORIES.find((c) => c.id === mobileActiveCategory)?.label} Tracks — Coming Soon
-                    </span>
-                    Interactive tracks for this category are currently in development.
-                  </div>
-                )}
-              </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-10 h-10 rounded-xl bg-black/40 border border-white/10 flex items-center justify-center p-2 shadow-inner group-hover:scale-105 transition-transform shrink-0">
+                            <TechIcon slug={skill.slug} className="w-5 h-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="text-sm font-bold text-white group-hover:text-purple-300 transition-colors block truncate">
+                              {skill.title}
+                            </span>
+                            <span className="text-[10px] font-mono text-emerald-400 font-semibold block">
+                              {skill.totalLessons} interactive lessons
+                            </span>
+                          </div>
+                        </div>
 
-              {/* Mobile Revision & Roadmaps link */}
-              <div className="pt-2 border-t border-white/[0.06] flex flex-col gap-2">
+                        <span
+                          className={`text-[9px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${accent.badgeBg} ${accent.badgeText} border border-white/10 shrink-0`}
+                        >
+                          {accent.tag}
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-slate-300 leading-relaxed font-normal">
+                        {skill.description}
+                      </p>
+
+                      <div className="flex items-center justify-between pt-2 border-t border-white/[0.06] text-xs">
+                        <span className="text-[11px] font-medium text-slate-400 group-hover:text-purple-300 transition-colors">
+                          Start learning track
+                        </span>
+                        <div className="flex items-center gap-1 text-purple-400 font-bold group-hover:translate-x-1 transition-transform">
+                          <span>Explore</span>
+                          <span>→</span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="p-8 text-center rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-2">
+                <span className="text-2xl">🔍</span>
+                <p className="text-xs text-slate-400">
+                  No tracks found matching "{mobileSearchQuery}"
+                </p>
                 <button
                   type="button"
-                  onClick={() => {
-                    setIsMobileMenuOpen(false);
-                    window.dispatchEvent(new CustomEvent("learncraft-open-command-palette"));
-                  }}
-                  className="w-full flex items-center justify-between p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-white text-xs font-bold"
+                  onClick={() => setMobileSearchQuery("")}
+                  className="px-3 py-1.5 rounded-xl bg-purple-600/30 text-purple-300 text-xs font-bold"
                 >
-                  <div className="flex items-center gap-2">
-                    <span>🔍</span>
-                    <span>Search & Command Palette</span>
-                  </div>
-                  <span className="text-[10px] font-mono text-purple-300 bg-purple-500/20 px-2 py-0.5 rounded">Tap</span>
+                  Clear search
                 </button>
+              </div>
+            )}
 
-                <Link
-                  href="/dashboard"
-                  prefetch={true}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30 text-white text-xs font-bold"
-                >
-                  <div className="flex items-center gap-2">
-                    <span>📊</span>
-                    <span>Analytics Dashboard</span>
-                  </div>
-                  <span className="text-purple-400">→</span>
-                </Link>
-
+            {/* Quick Study Navigation Dock */}
+            <div className="space-y-2 pt-2 border-t border-white/[0.08]">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 px-0.5">
+                Study Tools & Resources
+              </span>
+              <div className="grid grid-cols-2 gap-2">
                 <Link
                   href="/notes"
                   prefetch={true}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white text-xs font-bold"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] active:scale-[0.98] border border-white/[0.06] text-white text-xs font-bold transition-all"
                 >
-                  <div className="flex items-center gap-2">
-                    <span>📝</span>
-                    <span>My Study Notes</span>
+                  <span className="text-base">📝</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="truncate">Notes</span>
+                      {notesCount > 0 && (
+                        <span className="px-1.5 py-0.2 rounded-full bg-purple-500/20 text-purple-300 text-[9px] font-mono font-bold">
+                          {notesCount}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-[9px] font-normal text-slate-400 block">Saved Highlights</span>
                   </div>
-                  {notesCount > 0 && (
-                    <span className="px-2 py-0.5 rounded-full bg-white/10 text-white text-[10px] font-mono">
-                      {notesCount}
-                    </span>
-                  )}
                 </Link>
 
                 <Link
                   href="/interview"
                   prefetch={true}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white text-xs font-bold"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] active:scale-[0.98] border border-white/[0.06] text-white text-xs font-bold transition-all"
                 >
-                  <div className="flex items-center gap-2">
-                    <span>🎯</span>
-                    <span>Interview Preparation</span>
+                  <span className="text-base">🎯</span>
+                  <div className="min-w-0">
+                    <span className="block truncate">Interviews</span>
+                    <span className="text-[9px] font-normal text-slate-400 block">Practice Questions</span>
                   </div>
-                  <span className="text-purple-400">→</span>
                 </Link>
 
                 <Link
                   href="/revision"
                   prefetch={true}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-ds-feature-base text-ds-static-white text-xs font-bold"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] active:scale-[0.98] border border-white/[0.06] text-white text-xs font-bold transition-all"
                 >
-                  <span>Quick Revision</span>
+                  <span className="text-base">⚡</span>
+                  <div className="min-w-0">
+                    <span className="block truncate">Revision</span>
+                    <span className="text-[9px] font-normal text-slate-400 block">Spaced Flashcards</span>
+                  </div>
                 </Link>
+
                 <Link
                   href="/roadmaps"
                   prefetch={true}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white text-xs font-bold"
+                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] active:scale-[0.98] border border-white/[0.06] text-white text-xs font-bold transition-all"
                 >
-                  <span>Explore All Roadmaps</span>
-                  <span className="text-purple-400">→</span>
+                  <span className="text-base">🗺️</span>
+                  <div className="min-w-0">
+                    <span className="block truncate">Roadmaps</span>
+                    <span className="text-[9px] font-normal text-slate-400 block">All Careers & Paths</span>
+                  </div>
                 </Link>
-
-                {/* Mobile Auth button */}
-                <div className="pt-1">
-                  <MobileAuthButton onAction={() => setIsMobileMenuOpen(false)} />
-                </div>
               </div>
             </div>
-            </>
-          )}
-        </nav>
-      </header>
-      <div className="h-14 md:h-24 w-full pointer-events-none" />
-      <AuthModal />
+
+            {/* User Profile / Authentication Section */}
+            <div className="pt-3 border-t border-white/[0.08]">
+              <MobileAuthButton onAction={() => setIsMobileMenuOpen(false)} />
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }

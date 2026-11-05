@@ -241,7 +241,7 @@ export function CurriculumCardCode({
               <span className="w-2 h-2 rounded-full bg-amber-500/60" />
               <span className="w-2 h-2 rounded-full bg-emerald-500/60" />
             </div>
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400 pl-0.5 truncate max-w-[100px] xs:max-w-[160px] sm:max-w-none">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-slate-300 pl-0.5 truncate whitespace-nowrap min-w-0 flex-1 block">
               {title}
             </span>
           </div>
@@ -360,9 +360,9 @@ export function CurriculumCardCode({
             className="relative w-full max-w-5xl max-h-[90vh] flex flex-col rounded-2xl bg-[#070913] border border-purple-500/30 shadow-2xl shadow-purple-950/60 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
+            {/* Modal Header — Mobile Optimized & Non-overlapping */}
             <div className="min-h-[44px] h-auto py-2 px-3 sm:px-6 bg-[#0B0F1E] border-b border-white/[0.08] flex items-center justify-between shrink-0 select-none gap-2">
-              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1 mr-1.5">
                 <div className="flex items-center gap-1.5 shrink-0">
                   <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-500/80" />
                   <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-500/80" />
@@ -371,53 +371,55 @@ export function CurriculumCardCode({
                 <div className="h-4 w-px bg-white/10 shrink-0" />
                 <h3
                   id="expanded-code-title"
-                  className="text-xs sm:text-sm font-mono font-bold text-slate-200 truncate min-w-0"
+                  className="text-xs sm:text-sm font-mono font-bold text-slate-200 truncate whitespace-nowrap flex-1 min-w-0 block"
                   title={modalTitle || title}
                 >
                   {modalTitle || title}
                 </h3>
-                <span className="text-[10px] sm:text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25 shrink-0 whitespace-nowrap hidden xs:inline-flex">
+                <span className="text-[10px] sm:text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/25 shrink-0 whitespace-nowrap hidden md:inline-flex">
                   {lines.length} lines
                 </span>
               </div>
 
-              {/* Modal Actions */}
-              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              {/* Modal Actions — Compact on Mobile */}
+              <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                 {/* Modal Word Wrap */}
                 <button
                   type="button"
                   onClick={() => setIsModalWrapped((prev) => !prev)}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors border cursor-pointer ${
+                  className={`flex items-center justify-center p-1.5 sm:px-2.5 sm:py-1 rounded-lg text-xs font-mono transition-colors border cursor-pointer ${
                     isModalWrapped
                       ? "bg-purple-500/20 text-purple-300 border-purple-500/30 font-semibold"
                       : "bg-white/[0.04] text-slate-400 border-white/[0.08] hover:text-slate-200 hover:bg-white/[0.08]"
                   }`}
                   title={isModalWrapped ? "Word wrap is ON (click to disable)" : "Word wrap is OFF (click to wrap)"}
+                  aria-label="Toggle word wrap"
                 >
                   <WrapIcon className={`w-3.5 h-3.5 ${isModalWrapped ? "text-purple-300" : "text-slate-400"}`} />
-                  <span className="hidden sm:inline">Wrap</span>
+                  <span className="hidden md:inline ml-1">Wrap</span>
                 </button>
 
                 {/* Modal Copy Button */}
                 <button
                   type="button"
                   onClick={handleModalCopy}
-                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono transition-colors border cursor-pointer ${
+                  className={`flex items-center justify-center p-1.5 sm:px-2.5 sm:py-1 rounded-lg text-xs font-mono transition-colors border cursor-pointer ${
                     modalCopied
                       ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30 font-semibold"
                       : "bg-white/[0.04] text-slate-400 border-white/[0.08] hover:text-slate-200 hover:bg-white/[0.08]"
                   }`}
                   title="Copy full code"
+                  aria-label="Copy code"
                 >
                   {modalCopied ? (
                     <>
                       <CheckIcon className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>Copied!</span>
+                      <span className="hidden md:inline ml-1">Copied!</span>
                     </>
                   ) : (
                     <>
                       <CopyIcon className="w-3.5 h-3.5 text-slate-400" />
-                      <span>Copy</span><span className="hidden sm:inline"> Code</span>
+                      <span className="hidden md:inline ml-1">Copy Code</span>
                     </>
                   )}
                 </button>
@@ -426,12 +428,13 @@ export function CurriculumCardCode({
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex items-center justify-center p-1 sm:px-2.5 sm:py-1 rounded-lg text-xs font-mono text-slate-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] transition-colors cursor-pointer shrink-0"
+                  className="flex items-center justify-center p-1.5 sm:px-2.5 sm:py-1 rounded-lg text-xs font-mono text-slate-300 hover:text-white bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.1] transition-colors cursor-pointer shrink-0"
                   title="Close modal (Esc)"
+                  aria-label="Close modal"
                 >
                   <CloseIcon className="w-3.5 h-3.5 shrink-0" />
-                  <span className="hidden sm:inline ml-1">Close</span>
-                  <kbd className="hidden md:inline-block px-1.5 py-0.5 rounded text-[10px] bg-white/[0.08] text-slate-400 border border-white/[0.08]">
+                  <span className="hidden md:inline ml-1">Close</span>
+                  <kbd className="hidden md:inline-block px-1.5 py-0.5 rounded text-[10px] bg-white/[0.08] text-slate-400 border border-white/[0.08] ml-1.5">
                     ESC
                   </kbd>
                 </button>

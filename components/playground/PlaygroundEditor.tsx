@@ -712,6 +712,9 @@ export function PlaygroundEditor({
     const textarea = textareaRef.current;
     if (!textarea) return;
 
+    // Ensure initial scroll layers are synced immediately on mount
+    syncScrollLayers();
+
     const handleNativeScroll = () => {
       syncScrollLayers();
     };
@@ -791,6 +794,7 @@ export function PlaygroundEditor({
         <textarea
           ref={textareaRef}
           className="playground-textarea"
+          style={{ backgroundColor: "transparent", color: "#F8FAFC", WebkitTextFillColor: "#F8FAFC" }}
           value={value}
           onChange={handleChange}
           onKeyDown={handleKeyDown}

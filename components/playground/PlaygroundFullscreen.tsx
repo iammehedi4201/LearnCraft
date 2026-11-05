@@ -27,11 +27,13 @@ export function PlaygroundFullscreen({
   useEffect(() => {
     if (isOpen) {
       document.addEventListener("keydown", handleKeyDown);
-      // Prevent body scroll
+      // Prevent body scroll and hide background reading controls
       document.body.style.overflow = "hidden";
+      document.body.classList.add("playground-fullscreen-active");
       return () => {
         document.removeEventListener("keydown", handleKeyDown);
         document.body.style.overflow = "";
+        document.body.classList.remove("playground-fullscreen-active");
       };
     }
   }, [isOpen, handleKeyDown]);

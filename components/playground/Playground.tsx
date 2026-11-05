@@ -12,7 +12,7 @@
 //   <Playground runtime="typescript" starterCode={code} />
 //   <Playground runtime="typescript" exercise={exercise} />
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import type {
   PlaygroundProps,
   PlaygroundRuntime as IPlaygroundRuntime,
@@ -41,7 +41,7 @@ import { EnhancedCodeBlock } from "../enhanced-code-display";
 import "./playground.css";
 
 export function Playground({
-  runtime: runtimeType,
+  runtime: runtimeTypeProp = "typescript",
   language,
   starterCode,
   exercise,
@@ -51,6 +51,13 @@ export function Playground({
   onRun,
 }: PlaygroundProps) {
   const exampleCode = exercise?.starterCode ?? starterCode ?? "";
+
+  // Normalize runtime type (auto-detect SQL from language="sql" or runtime="sql"|"postgresql")
+  const runtimeType = useMemo(() => {
+    if (runtimeTypeProp === "sql" || runtimeTypeProp === "postgresql") return "sql";
+    if (language?.toLowerCase() === "sql" || language?.toLowerCase() === "postgresql") return "sql";
+    return runtimeTypeProp || "typescript";
+  }, [runtimeTypeProp, language]);
 
   // ─── State ───
   const [code, setCode] = useState<string>(exampleCode);
@@ -163,6 +170,11 @@ export function Playground({
 
   const handleRun = useCallback(async () => {
     if (isRunning) return;
+
+    // Automatically switch to console on mobile devices so learner sees output immediately
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setMobileTab("console");
+    }
 
     const is3Pane = isFullscreen && expandedLayoutMode === "3-pane";
     const rawCode = is3Pane ? practiceCode : code;
@@ -583,6 +595,18 @@ export function Playground({
   const parsedBaseHeight = parseInt(height || "200", 10) || 200;
   const dynamicBodyHeight = `${Math.max(lineCount * 24 + 44, parsedBaseHeight)}px`;
 
+  // ─── Mobile View Tabs State ───
+  const [mobileTab, setMobileTab] = useState<"editor" | "console" | "example">("editor");
+
+  const effectiveMobileTab = useMemo(() => {
+    if (is3PaneMode) {
+      if (mobileTab === "example") return "example";
+      if (mobileTab === "console") return "console";
+      return "editor";
+    }
+    return mobileTab === "console" ? "console" : "editor";
+  }, [is3PaneMode, mobileTab]);
+
   const playgroundContent = (
     <div
       className={`playground ${className} ${isFullscreen ? "playground--fullscreen" : ""}`}
@@ -600,13 +624,14 @@ export function Playground({
 
           {/* Mode Switcher in Fullscreen */}
           {isFullscreen && (
-            <div className="playground-mode-toggle">
+            <div className="playground-mode-toggle hidden lg:inline-flex">
               <button
                 className={`playground-mode-btn ${expandedLayoutMode === "3-pane" ? "playground-mode-btn--active" : ""}`}
                 onClick={() => setExpandedLayoutMode("3-pane")}
                 title="3-Section Workspace: Example | Practice | Output"
               >
-                3 Panes (Example + Practice)
+                <span>3 Panes</span>
+                <span className="hidden md:inline"> (Example + Practice)</span>
               </button>
               <button
                 className={`playground-mode-btn ${expandedLayoutMode === "2-pane" ? "playground-mode-btn--active" : ""}`}
@@ -644,6 +669,50 @@ export function Playground({
         </div>
       )}
 
+      
+      {/* ─── Mobile View Tabs (Visible on screens <= 768px) ─── */}
+      <div className="playground-mobile-tabs" role="tablist" aria-label="Playground Workspace Tabs">
+        {is3PaneMode && (
+          <button
+            type="button"
+            role="tab"
+            aria-selected={effectiveMobileTab === "example"}
+            className={`playground-mobile-tab ${effectiveMobileTab === "example" ? "playground-mobile-tab--active" : ""}`}
+            onClick={() => setMobileTab("example")}
+          >
+            <span className="playground-mobile-tab-icon">💡</span>
+            <span>Example</span>
+          </button>
+        )}
+
+        <button
+          type="button"
+          role="tab"
+          aria-selected={effectiveMobileTab === "editor"}
+          className={`playground-mobile-tab ${effectiveMobileTab === "editor" ? "playground-mobile-tab--active" : ""}`}
+          onClick={() => setMobileTab("editor")}
+        >
+          <span className="playground-mobile-tab-icon">{is3PaneMode ? "⚡" : "💻"}</span>
+          <span>{is3PaneMode ? "Practice" : "Code Editor"}</span>
+        </button>
+
+        <button
+          type="button"
+          role="tab"
+          aria-selected={effectiveMobileTab === "console"}
+          className={`playground-mobile-tab ${effectiveMobileTab === "console" ? "playground-mobile-tab--active" : ""}`}
+          onClick={() => setMobileTab("console")}
+        >
+          <span className="playground-mobile-tab-icon">📟</span>
+          <span>Console</span>
+          {error ? (
+            <span className="playground-mobile-tab-dot playground-mobile-tab-dot--error" title="Error in execution" />
+          ) : output.length > 0 ? (
+            <span className="playground-mobile-tab-dot playground-mobile-tab-dot--active" title="Has output" />
+          ) : null}
+        </button>
+      </div>
+
       {/* Split Body Container */}
       <div
         ref={bodyRef}
@@ -662,14 +731,17 @@ export function Playground({
           <>
             {/* Section 1: Example & Reference Panel */}
             <div
-              className="playground-example-panel"
+              className={`playground-example-panel ${effectiveMobileTab !== "example" ? "playground-panel--mobile-hidden" : ""}`}
               style={{ flex: `0 0 ${ratio1}%`, width: `${ratio1}%` }}
             >
               <PlaygroundExamplePanel
                 code={exampleCode}
                 language={displayLanguage}
                 exercise={exercise}
-                onCopyToPractice={() => setPracticeCode(exampleCode)}
+                onCopyToPractice={() => {
+                  setPracticeCode(exampleCode);
+                  setMobileTab("editor");
+                }}
               />
             </div>
 
@@ -710,7 +782,7 @@ export function Playground({
 
             {/* Section 2: Practice Workspace Panel (Starts Empty!) */}
             <div
-              className="playground-editor-panel playground-practice-panel"
+              className={`playground-editor-panel playground-practice-panel ${effectiveMobileTab !== "editor" ? "playground-panel--mobile-hidden" : ""}`}
               style={{ flex: `0 0 ${ratio2}%`, width: `${ratio2}%` }}
             >
               <div className="playground-panel-header playground-practice-header">
@@ -723,7 +795,16 @@ export function Playground({
                     Editable
                   </span>
                 </div>
-                <div className="playground-panel-header-right">
+                <div className="playground-panel-header-right flex items-center gap-1.5">
+                  {!practiceCode && (
+                    <button
+                      className="playground-panel-action-btn text-purple-300 hover:text-white"
+                      onClick={() => setPracticeCode(exampleCode)}
+                      title="Load starter code into practice workspace"
+                    >
+                      ⚡ Load Starter
+                    </button>
+                  )}
                   <button
                     className="playground-panel-action-btn"
                     onClick={handleReset}
@@ -785,7 +866,7 @@ export function Playground({
 
             {/* Section 3: Output Show Panel */}
             <div
-              className="playground-output-panel"
+              className={`playground-output-panel ${effectiveMobileTab !== "console" ? "playground-panel--mobile-hidden" : ""}`}
               style={{
                 flex: `0 0 ${100 - ratio1 - ratio2}%`,
                 width: `${100 - ratio1 - ratio2}%`,
@@ -810,7 +891,7 @@ export function Playground({
           <>
             {/* Editor Panel */}
             <div
-              className="playground-editor-panel"
+              className={`playground-editor-panel ${effectiveMobileTab !== "editor" ? "playground-panel--mobile-hidden" : ""}`}
               style={{ flex: `0 0 ${splitRatio}%`, width: `${splitRatio}%` }}
             >
               <PlaygroundEditor
@@ -860,7 +941,7 @@ export function Playground({
 
             {/* Console Output Panel */}
             <div
-              className="playground-output-panel"
+              className={`playground-output-panel ${effectiveMobileTab !== "console" ? "playground-panel--mobile-hidden" : ""}`}
               style={{
                 flex: `0 0 ${100 - splitRatio}%`,
                 width: `${100 - splitRatio}%`,
